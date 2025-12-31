@@ -1,0 +1,350 @@
+﻿using Numerics.Data;
+using Numerics.Distributions;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+
+namespace NumericControls
+{
+    /// <summary>
+    /// Interaction logic for UncertainOrderedDataTableEditor.xaml
+    /// </summary>
+    public partial class UncertainOrderedDataTableEditor : UserControl
+    {
+        public static DependencyProperty AddRemoveRowsProperty = DependencyProperty.Register(nameof(AddRemoveRows), typeof(bool), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(true));
+        public bool AddRemoveRows
+        {
+            get { return (bool)GetValue(AddRemoveRowsProperty); }
+            set { SetValue(AddRemoveRowsProperty, value); }
+        }
+
+        public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata("X Data"));
+        public string XColumnHeader
+        {
+            get { return (string)GetValue(XColumnHeaderProperty); }
+            set { SetValue(XColumnHeaderProperty, value); }
+        }
+
+        public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata("Y Data"));
+        public string YColumnHeader
+        {
+            get { return (string)GetValue(YColumnHeaderProperty); }
+            set { SetValue(YColumnHeaderProperty, value); }
+        }
+
+        public static DependencyProperty IsStrictXProperty = DependencyProperty.Register(nameof(IsStrictX), typeof(bool), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(false, PropertyChanged_Callback));
+        public bool IsStrictX
+        {
+            get { return (bool)GetValue(IsStrictXProperty); }
+            set { SetValue(IsStrictXProperty, value); }
+        }
+
+        public static DependencyProperty IsStrictYProperty = DependencyProperty.Register(nameof(IsStrictY), typeof(bool), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(false, PropertyChanged_Callback));
+        public bool IsStrictY
+        {
+            get { return (bool)GetValue(IsStrictYProperty); }
+            set { SetValue(IsStrictYProperty, value); }
+        }
+
+        public static DependencyProperty OrderXProperty = DependencyProperty.Register(nameof(OrderX), typeof(SortOrder), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(SortOrder.Ascending, PropertyChanged_Callback));
+        public SortOrder OrderX
+        {
+            get { return (SortOrder)GetValue(OrderXProperty); }
+            set { SetValue(OrderXProperty, value); }
+        }
+
+        public static DependencyProperty OrderYProperty = DependencyProperty.Register(nameof(OrderY), typeof(SortOrder), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(SortOrder.Ascending, PropertyChanged_Callback));
+        public SortOrder OrderY
+        {
+            get { return (SortOrder)GetValue(OrderYProperty); }
+            set { SetValue(OrderYProperty, value); }
+        }
+
+        private static void PropertyChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
+            // 
+            foreach (var dist in thisControl._distributions)
+            {
+                dist.OrderX = thisControl.OrderX;
+                dist.OrderY = thisControl.OrderY;
+                dist.StrictX = thisControl.IsStrictX;
+                dist.StrictY = thisControl.IsStrictY;
+            }
+        }
+
+        public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(double), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
+        public double MaximumX
+        {
+            get { return (double)GetValue(MaximumXProperty); }
+            set { SetValue(MaximumXProperty, value); }
+        }
+
+        public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(double), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(double.MinValue));
+        public double MinimumX
+        {
+            get { return (double)GetValue(MinimumXProperty); }
+            set { SetValue(MinimumXProperty, value); }
+        }
+
+        public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
+        public double MaximumY
+        {
+            get { return (double)GetValue(MaximumYProperty); }
+            set { SetValue(MaximumYProperty, value); }
+        }
+
+        public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(double.MinValue));
+        public double MinimumY
+        {
+            get { return (double)GetValue(MinimumYProperty); }
+            set { SetValue(MinimumYProperty, value); }
+        }
+
+        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(false));
+        public bool IsReadOnly
+        {
+            get { return (bool)GetValue(IsReadOnlyProperty); }
+            set { SetValue(IsReadOnlyProperty, value); }
+        }
+
+        public static DependencyProperty ShowToolBarProperty = DependencyProperty.Register(nameof(ShowToolBar), typeof(bool), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(false));
+        public bool ShowToolBar
+        {
+            get { return (bool)GetValue(ShowToolBarProperty); }
+            set { SetValue(ShowToolBarProperty, value); }
+        }
+
+        public static DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.Register(nameof(ColumnHeaderStyle), typeof(Style), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(null));
+        public Style ColumnHeaderStyle
+        {
+            get { return (Style)GetValue(ColumnHeaderStyleProperty); }
+            set { SetValue(ColumnHeaderStyleProperty, value); }
+        }
+
+        public static DependencyProperty CellStyleProperty = DependencyProperty.Register(nameof(CellStyle), typeof(Style), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(null));
+        public Style CellStyle
+        {
+            get { return (Style)GetValue(CellStyleProperty); }
+            set { SetValue(CellStyleProperty, value); }
+        }
+
+        
+                    public static DependencyProperty DistributionSelectorMaxWidthProperty = DependencyProperty.Register(nameof(DistributionSelectorMaxWidth), typeof(double), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
+        public double DistributionSelectorMaxWidth
+        {
+            get { return (double)GetValue(DistributionSelectorMaxWidthProperty); }
+            set { SetValue(DistributionSelectorMaxWidthProperty, value); }
+        }
+
+        public static DependencyProperty SelectedUncertainOrderedDataProperty = DependencyProperty.Register(nameof(SelectedUncertainOrderedData), typeof(UncertainOrderedPairedData), typeof(UncertainOrderedDataTableEditor), new PropertyMetadata(null, SelectedUncertainData_Callback));
+        private bool _settingSelected = false;
+
+        private static void SelectedUncertainData_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d == null) return;
+            if (d.GetType() != typeof(UncertainOrderedDataTableEditor)) return;
+            UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
+            if (thisControl._updatingSelected == true) return;
+            // Using collection changed to update the other distribution options caused issues with event handlers not being let go when the control was closed.
+
+            UncertainOrderedPairedData newData = e.NewValue as UncertainOrderedPairedData;
+            if (newData == null) return;
+
+            // Get distribution index
+            int index = -1;
+            for (int i = 0; i < thisControl._distributions.Count; i++)
+            {
+                if (thisControl._distributions[i].Distribution == newData.Distribution)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            // Check if current distribution is supported
+            if (index == -1)
+            {
+                thisControl.CurveUncertaintyComboBox.SelectedIndex = -1;
+                return;
+            }
+            // 
+            // If thisControl._distributions(index).Equals(newData) = False Then
+            thisControl._settingSelected = true;
+            thisControl.CurveUncertaintyComboBox.SelectedIndex = -1;
+            thisControl._distributions[index] = newData;
+            thisControl.CurveUncertaintyComboBox.SelectedIndex = index;
+            for (int i = 0; i < thisControl._distributions.Count; i++)
+            {
+                if (i == index)
+                    continue;
+                thisControl._distributions[i] = thisControl._distributions[i].Clone();
+            }
+
+            thisControl._settingSelected = false;
+        }
+
+        private bool _updatingSelected = false;
+
+        private void CurveUncertaintyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_settingSelected == true) return;
+            _updatingSelected = true;
+            // 
+            if (CurveUncertaintyComboBox.SelectedIndex >= 0)
+            {
+                SelectedUncertainOrderedData = _distributions[CurveUncertaintyComboBox.SelectedIndex];
+            }
+            else
+            {
+                SelectedUncertainOrderedData = null;
+            }
+
+            _updatingSelected = false;
+        }
+
+        /// <summary>
+        /// Get and set the selected probability distribution.
+        /// </summary>
+        public UncertainOrderedPairedData SelectedUncertainOrderedData
+        {
+            get { return (UncertainOrderedPairedData)GetValue(SelectedUncertainOrderedDataProperty); }
+            set { SetValue(SelectedUncertainOrderedDataProperty, value); }
+        }
+
+        private ObservableCollection<UncertainOrderedPairedData> _distributions = new ObservableCollection<UncertainOrderedPairedData>();
+
+        /// <summary>
+        /// Dependency property for the control distribution options.
+        /// </summary>
+        public static DependencyProperty DistributionOptionsProperty = DependencyProperty.Register(nameof(DistributionOptions), typeof(IList<UnivariateDistributionType>), typeof(UncertainOrderedDataTableEditor), new PropertyMetadata(null, DistributionOptionsCallback));
+
+        /// <summary>
+        /// Gets and sets the distribution options.
+        /// </summary>
+        public IList<UnivariateDistributionType> DistributionOptions
+        {
+            get { return (IList<UnivariateDistributionType>)GetValue(DistributionOptionsProperty); }
+            set { SetValue(DistributionOptionsProperty, value); }
+        }
+
+        /// <summary>
+        /// When the dependency property changes, this sets the distribution options.
+        /// </summary>
+        private static void DistributionOptionsCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
+            UnivariateDistributionBase distribution;
+            IList<UnivariateDistributionType> distOptions = e.NewValue as IList<UnivariateDistributionType>;
+            if (e.NewValue == null || distOptions == null)
+            {
+                thisControl.DistributionOptions = DefaultDistributionOptions;
+            }
+            else
+            {
+                // clear any distributions that should go
+                var toDelete = new List<UncertainOrderedPairedData>();
+                foreach (var dist in thisControl._distributions)
+                {
+                    if (distOptions.Contains(dist.Distribution) == false)
+                        toDelete.Add(dist);
+                }
+
+                foreach (var item in toDelete)
+                    thisControl._distributions.Remove(item);
+                // add any new ones.
+                foreach (var dist in distOptions)
+                {
+                    if (thisControl._distributions.Any(o => o.Distribution == dist)) continue;
+                    // 
+                    distribution = UnivariateDistributionFactory.CreateDistribution(dist);
+                    if (distribution == null) continue;
+                    // 
+                    var ordinates = new List<UncertainOrdinate>();
+                    for (int i = 0; i <= 1; i++)
+                        ordinates.Add(new UncertainOrdinate(i, UnivariateDistributionFactory.CreateDistribution(dist)));
+                    // 
+                    var uncertainData = new UncertainOrderedPairedData(ordinates, thisControl.IsStrictX, thisControl.OrderX, thisControl.IsStrictY, thisControl.OrderY, dist);
+                    thisControl._distributions.Add(uncertainData);
+                }
+            }
+            // 
+        }
+
+        /// <summary>
+        /// Currently does not support bivariate, empirical, or kernel density.
+        /// </summary>
+        /// <returns></returns>
+        public static List<UnivariateDistributionType> DefaultDistributionOptions
+        {
+            get
+            {
+                return ((UnivariateDistributionType[])Enum.GetValues(typeof(UnivariateDistributionType))).Where(o => (o != UnivariateDistributionType.Bernoulli) &
+                                                                                                                     (o != UnivariateDistributionType.Beta) &
+                                                                                                                     (o != UnivariateDistributionType.Binomial) &
+                                                                                                                     (o != UnivariateDistributionType.Cauchy) &
+                                                                                                                     (o != UnivariateDistributionType.ChiSquared) &
+                                                                                                                     (o != UnivariateDistributionType.CompetingRisks) &
+                                                                                                                     (o != UnivariateDistributionType.Empirical) &
+                                                                                                                     (o != UnivariateDistributionType.Geometric) &
+                                                                                                                     (o != UnivariateDistributionType.InverseChiSquared) &
+                                                                                                                     (o != UnivariateDistributionType.InverseGamma) &
+                                                                                                                     (o != UnivariateDistributionType.KappaFour) &
+                                                                                                                     (o != UnivariateDistributionType.KernelDensity) &
+                                                                                                                     (o != UnivariateDistributionType.Mixture) &
+                                                                                                                     (o != UnivariateDistributionType.NoncentralT) &
+                                                                                                                     (o != UnivariateDistributionType.UniformDiscrete) &
+                                                                                                                     (o != UnivariateDistributionType.Poisson)).ToList();
+            }
+        }
+
+        public event ColumnsAutoGeneratedEventHandler ColumnsAutoGenerated;
+
+        public delegate void ColumnsAutoGeneratedEventHandler(object sender, ObservableCollection<DataGridColumn> e);
+
+        public UncertainOrderedDataTableEditor()
+        {
+            // This call is required by the designer.
+            InitializeComponent();
+            // Add any initialization after the InitializeComponent() call.
+            ColumnHeaderStyle = (Style)FindResource("WrappedColumnHeaderStyle");
+            DistributionOptions = DefaultDistributionOptions;
+            CurveUncertaintyComboBox.ItemsSource = _distributions;
+            UncertainTableEditor.ValidationGrid.AutoGeneratedColumns += (object sender, EventArgs e) => ColumnsAutoGenerated?.Invoke(sender, UncertainTableEditor.ValidationGrid.Columns);
+        }
+
+        public void ForceGridValidation()
+        {
+            UncertainTableEditor.ForceGridValidation(); 
+        }
+
+        public void Refresh()
+        {
+            UncertainTableEditor.Refresh();
+        }
+
+    }
+
+    public class DistributionNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return "";
+            UncertainOrderedPairedData val = value as UncertainOrderedPairedData;
+            if (val == null) return "";
+            if (val.Count > 0) return val[0].Y.DisplayName;
+            return UnivariateDistributionFactory.CreateDistribution(val.Distribution).DisplayName;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+    }
+
+}

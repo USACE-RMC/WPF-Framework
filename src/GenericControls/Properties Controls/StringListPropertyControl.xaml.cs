@@ -1,0 +1,252 @@
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this library.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace GenericControls
+{
+    /// <summary>
+    /// A custom control for displaying and editing a list of strings usinng a DataGrid.
+    /// </summary>
+    public partial class StringListPropertyControl:UserControl
+    {
+        /// <summary>
+        /// Backing dependency property for <see cref="StringList"/>.
+        /// </summary>
+        public static DependencyProperty StringListProperty = DependencyProperty.Register(nameof(StringList), typeof(IList<string>), typeof(StringListPropertyControl), new PropertyMetadata(new List<string>(), StringListPropertyChanged_Callback));
+        /// <summary>
+        /// Gets/sets the list of strings displayed in the control.
+        /// </summary>
+        public IList<string> StringList
+        {
+            get
+            {
+                return (IList<string>)this.GetValue(StringListProperty);
+            }
+            set
+            {
+                this.SetValue(StringListProperty, value);
+            }
+        }
+        private IList<object> _internalList;
+
+        /// <summary>
+        /// Backign dependency property for <see cref="Title"/>
+        /// </summary>
+        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(StringListPropertyControl), new UIPropertyMetadata("Title"));
+        /// <summary>
+        /// gets/sets the title displayed alongside the string list.
+        /// </summary>
+        public string Title
+        {
+            get
+            {
+                return (string)this.GetValue(TitleProperty);
+            }
+            set
+            {
+                this.SetValue(TitleProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Handles updats when the <see cref="StringList"/> property changes.
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="e"></param>
+        private static void StringListPropertyChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d == null)
+                return;
+            if (d.GetType() != typeof(StringListPropertyControl))
+                return;
+            StringListPropertyControl thisControl = (StringListPropertyControl)d;
+            // 
+            thisControl.StringListDataGrid.ItemsSource = (IEnumerable)null;
+            if (e.NewValue == null)
+                thisControl.StringList = new List<string>(); // Exit Sub
+            thisControl._internalList = new List<object>(thisControl.StringList.Count);
+            for (int i = 0, loopTo = thisControl.StringList.Count - 1; i <= loopTo; i++)
+                thisControl._internalList.Add(new StringContainer(thisControl.StringList[i]));
+            thisControl.StringListDataGrid.ItemsSource = thisControl._internalList;
+        }
+
+        /// <summary>
+        /// Backing dependency property for <see cref="AddRemoveEnabled"/>
+        /// </summary>
+        public static DependencyProperty AddRemoveEnabledProperty = DependencyProperty.Register(nameof(AddRemoveEnabled), typeof(bool), typeof(StringListPropertyControl), new UIPropertyMetadata(true, AddRemoveEnabledChanged_Callback));
+        /// <summary>
+        /// gets/sets whether add/remove buttons are enabled on the control.
+        /// </summary>
+        public bool AddRemoveEnabled
+        {
+            get
+            {
+                return (bool)this.GetValue(AddRemoveEnabledProperty);
+            }
+            set
+            {
+                this.SetValue(AddRemoveEnabledProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Callback to enable or disable the add/remove functionality in the DataGrid.
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="e"></param>
+        private static void AddRemoveEnabledChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d == null)
+                return;
+            if (d.GetType() != typeof(StringListPropertyControl))
+                return;
+            StringListPropertyControl thisControl = (StringListPropertyControl)d;
+            thisControl.StringListDataGrid.CanUserAddInsertDeleteRows = (bool)e.NewValue;
+        }
+
+        /// <summary>
+        /// Selects all string cells in the DataGrid when the text block is called.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBlock_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.StringListDataGrid.SelectedCells.Clear();
+            foreach (var item in this.StringListDataGrid.Items)
+                this.StringListDataGrid.SelectedCells.Add(new DataGridCellInfo(item, this.StringColumn));
+        }
+
+        /// <summary>
+        /// Extracts the current string values from the DataGrid into a list.
+        /// </summary>
+        /// <returns></returns>
+        private IList<string> GetStringList()
+        {
+            var result = new List<string>();
+            for (int i = 0, loopTo = this.StringListDataGrid.Items.Count - 1; i <= loopTo; i++)
+            {
+                var c = this.StringListDataGrid.GetCell(i, 0);
+                if (c == null)
+                {
+                    result.Add("");
+                }
+                else if (c.Content.GetType() == typeof(TextBox))
+                {
+                    result.Add(((TextBox)c.Content).Text);
+                }
+                else if (c.Content.GetType() == typeof(TextBlock))
+                {
+                    result.Add(((TextBlock)c.Content).Text);
+                }
+                else
+                {
+                    result.Add(c.Content.ToString());
+                }
+            }
+            return result;
+        }
+        // Private Sub StringListDataGrid_SizeChanged(sender As Object, e As SizeChangedEventArgs)
+        // StringColumn.Width = New DataGridLength(StringListDataGrid.ActualWidth - 4, DataGridLengthUnitType.Star, StringListDataGrid.ActualWidth, StringListDataGrid.ActualWidth - 2)
+        // StringListDataGrid.UpdateLayout()
+        // StringColumn.Width = New DataGridLength(StringListDataGrid.ActualWidth - 3)
+
+        // End Sub
+
+        /// <summary>
+        /// Updates the string list when cell editing ends.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StringListDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            StringList = GetStringList();
+        }
+
+        /// <summary>
+        /// Updates the string list when rows are added.
+        /// </summary>
+        /// <param name="startrow"></param>
+        /// <param name="numrows"></param>
+        private void StringListDataGrid_RowsAdded(int startrow, int numrows)
+        {
+            StringList = GetStringList();
+        }
+
+        /// <summary>
+        /// Updates the string lsit when data are pasted.
+        /// </summary>
+        private void StringListDataGrid_DataPasted()
+        {
+            StringList = GetStringList();
+        }
+
+
+        // Private Sub Border_SizeChanged(sender As Object, e As SizeChangedEventArgs)
+        // StringColumn.Width = New DataGridLength(StringListDataGrid.ActualWidth - 3)
+        // StringListDataGrid.Width = 0
+        // UpdateLayout()
+        // StringListDataGrid.Width = border.ActualWidth - 5
+        // Debug.Print(border.ActualWidth.ToString)
+        // End Sub
+
+        /// <summary>
+        /// Internal container class used to wrap strings in the DataGrid.
+        /// </summary>
+        private class StringContainer
+        {
+            /// <summary>
+            /// The string value.
+            /// </summary>
+            public string TheString { get; set; }
+
+            /// <summary>
+            /// Initializes a new instance of <see cref="StringContainer"/> with an empty string.
+            /// </summary>
+            public StringContainer()
+            {
+                TheString = "";
+            }
+
+            /// <summary>
+            /// Initializes a new instance of <see cref="StringContainer"/> with a specific string.
+            /// </summary>
+            /// <param name="newString"></param>
+            public StringContainer(string newString)
+            {
+                TheString = newString;
+            }
+        }
+    }
+}

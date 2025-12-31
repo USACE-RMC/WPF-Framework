@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0-windows</TargetFrameworks>
+    <RootNamespace>GenericControls</RootNamespace>
+    <AssemblyName>GenericControls</AssemblyName>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>embedded</DebugType>
+
+    <Description>GenericControls is a flexible and reusable WPF control library built for rapid desktop application development. It provides a rich set of customizable, designer-friendly controls that simplify user interaction and data binding for common UI tasks.</Description>
+    <PackageProjectUrl>https://github.com/USACE-RMC/GenericControls</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/USACE-RMC/GenericControls</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Title>GenericControls</Title>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Company>USACE-RMC</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>WPF; controls; MVVM; user interface; NumericTextBox; ColorPicker; data binding; desktop</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageId>RMC.GenericControls</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Suppress XML documentation warnings: 1591=missing xml comment, 1587=xml comment not on valid member, 1570=badly formed XML, 1584/1658=bad cref, 1574=unresolved cref, 1573=missing param tag -->
+    <NoWarn>CS1591;CS1587;CS1570;CS1584;CS1658;CS1574;CS1573</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--https://github.com/dotnet/reproducible-builds-->
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <!--https://github.com/dotnet/sourcelink/tree/main-->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

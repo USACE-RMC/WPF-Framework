@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FrameworkUI"
+    xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls">
+
+    <!--Data Grid Toolbar style-->
+    <Style x:Key="DataGridToolbarStyle" TargetType="{x:Type cntrls:DataGridToolbar}">
+        <Setter Property="StackPanelButtonStyle" Value="{DynamicResource StackPanelButtonStyleBase}"/>
+        <Setter Property="StackPanelSeperatorStyle" Value="{DynamicResource VerticalSeparatorStyle}"/>
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="{x:Type cntrls:DataGridToolbar}" BasedOn="{StaticResource DataGridToolbarStyle}"/>
+
+</ResourceDictionary>

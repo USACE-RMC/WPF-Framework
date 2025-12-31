@@ -1,0 +1,318 @@
+﻿
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using Numerics.Data;
+using Numerics.Distributions;
+
+namespace NumericControls
+{
+    public class DistributionDataItem
+    {
+
+        private UncertainOrderedPairedData _data;
+        private bool _updatingData = false;
+        private double _maxXValue;
+        private double _minXValue;
+        private double _maxYValue;
+        private double _minYValue;
+        private bool _isStrictX;
+        private bool _isStrictY;
+        private SortOrder _xOrder;
+        private SortOrder _yOrder;
+        public static double RelativeDoubleTolerance = double.Epsilon;
+
+        public double MaxXValue
+        {
+            get { return _maxXValue; }
+            set
+            {
+                if (_maxXValue != value)
+                {
+                    _maxXValue = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxXValue)));
+                }
+            }
+        }
+
+        public double MinXValue
+        {
+            get { return _minXValue; }
+            set
+            {
+                if (_minXValue != value)
+                {
+                    _minXValue = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinXValue)));
+                }
+            }
+        }
+
+        public double MaxYValue
+        {
+            get { return _maxYValue; }
+            set
+            {
+                if (_maxYValue != value)
+                {
+                    _maxYValue = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxYValue)));
+                }
+            }
+        }
+
+        public double MinYValue
+        {
+            get { return _minYValue; }
+            set
+            {
+                if (_minYValue != value)
+                {
+                    _minYValue = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MinYValue)));
+                }
+            }
+        }
+
+        public bool IsStrictX
+        {
+            get { return _isStrictX; }
+            set
+            {
+                if (_isStrictX != value)
+                {
+                    _isStrictX = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsStrictX)));
+                }
+            }
+        }
+
+        public bool IsStrictY
+        {
+            get { return _isStrictY; }
+            set
+            {
+                if (_isStrictY != value)
+                {
+                    _isStrictY = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsStrictY)));
+                }
+            }
+        }
+
+        public SortOrder XOrder
+        {
+            get { return _xOrder; }
+            set
+            {
+                if (_xOrder != value)
+                {
+                    _xOrder = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(XOrder)));
+                }
+            }
+        }
+
+        public SortOrder YOrder
+        {
+            get { return _yOrder; }
+            set
+            {
+                if (_yOrder != value)
+                {
+                    _yOrder = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(YOrder)));
+                }
+            }
+        }
+
+        public UncertainOrderedPairedData Data
+        {
+            get { return _data; }
+            set
+            {
+                if (_data == null && value == null) return;
+                // 
+                if (_data == null || value == null)
+                {
+                    if (_data != null) _data.CollectionChanged -= DataCollectionChanged;
+                    _data = value;
+                    Refresh();
+                    if (_data != null) _data.CollectionChanged += DataCollectionChanged;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Data)));
+                }
+                // 
+                if (_data != value)
+                {
+                    _data.CollectionChanged -= DataCollectionChanged;
+                    _data = value;
+                    Refresh();
+                    _data.CollectionChanged += DataCollectionChanged;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Data)));
+                }
+            }
+        }
+
+        public UnivariateDistributionType Distribution { get; private set; }
+        public string DistributionName { get; private set; }
+        public ObservableCollection<object> DistributionRows { get; private set; } = new ObservableCollection<object>();
+
+        public event DataChangedEventHandler DataChanged;
+
+        public delegate void DataChangedEventHandler(int dataChangedIndex);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public DistributionDataItem(UncertainOrderedPairedData d, UnivariateDistributionType dType, double minX, double maxX, double minY, double maxY, bool strictX, bool strictY, SortOrder orderX, SortOrder orderY)
+        {
+            _data = d;
+            if (_data != null) _data.CollectionChanged += DataCollectionChanged;
+            Distribution = dType;
+            _minXValue = minX;
+            _maxXValue = maxX;
+            _minYValue = minY;
+            _maxYValue = maxY;
+            _isStrictX = strictX;
+            _isStrictY = strictY;
+            _xOrder = orderX;
+            _yOrder = orderY;
+            // 
+            DistributionName = UnivariateDistributionFactory.CreateDistribution(Distribution).DisplayName;
+            Refresh(); // minX, maxX, minY, maxY, strictX, strictY, orderX, orderY)
+        }
+        // Public Sub New(initialXValues As IEnumerable(Of Double), dType As UnivariateDistributionType, minX As Double, maxX As Double, minY As Double, maxY As Double, strictX As Boolean, strictY As Boolean, orderX As SortOrder, orderY As SortOrder)
+        // '
+        // Dim ordinates As New List(Of UncertainOrdinate)
+        // If IsNothing(initialXValues) Then
+        // For i As Int32 = 0 To 1
+        // ordinates.Add(New UncertainOrdinate(i, UnivariateDistributionFactory.CreateDistribution(Distribution)))
+        // Next
+        // Else
+        // For Each initialValue In initialXValues
+        // ordinates.Add(New UncertainOrdinate(initialValue, UnivariateDistributionFactory.CreateDistribution(Distribution)))
+        // Next
+        // End If
+        // _data = New UncertainOrderedPairedData(ordinates, IsStrictX, XOrder, IsStrictY, YOrder, Distribution)
+        // Distribution = dType
+        // _minXValue = minX
+        // _maxXValue = maxX
+        // _minYValue = minY
+        // _maxYValue = maxY
+        // _isStrictX = strictX
+        // _isStrictY = strictY
+        // _xOrder = orderX
+        // _yOrder = orderY
+        // '
+        // Refresh()
+        // End Sub
+        // Public Sub Update(d As UncertainOrderedPairedData, dType As UnivariateDistributionType, minX As Double, maxX As Double, minY As Double, maxY As Double, strictX As Boolean, strictY As Boolean, orderX As SortOrder, orderY As SortOrder)
+        // _data = d
+        // _Distribution = dType
+        // '
+        // Refresh(minX, maxX, minY, maxY, strictX, strictY, orderX, orderY)
+        // End Sub
+        private void DataCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (_updatingData == true) return;
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    {
+                        // If e.NewItems Is Nothing Then
+                        Refresh();
+                        break;
+                    }
+                // Else
+                // Dim rowItem As DistributionRowItem
+                // For Each item As UncertainOrdinate In e.NewItems
+                // Dim index As Int32 = _data.IndexOf(item)
+                // rowItem = New DistributionRowItem(item.X, item.Y, DistributionRows, MinXValue, MaxXValue, MinYValue, MaxYValue, IsStrictX, IsStrictY, XOrder, YOrder)
+                // AddHandler rowItem.PropertyChanged, AddressOf RowItem_PropertyChanged
+                // '
+                // DistributionRows.Insert(index, rowItem)
+                // Next
+                // End If
+                case NotifyCollectionChangedAction.Remove:
+                    {
+                        int startIndex = e.OldStartingIndex;
+                        if (startIndex == -1)
+                        {
+                            Refresh();
+                        }
+                        else
+                        {
+                            for (int i = 1; i <= e.OldItems.Count; i++)
+                                DistributionRows.RemoveAt(startIndex);
+                        }
+                        break;
+                    }
+                case NotifyCollectionChangedAction.Replace:
+                    {
+                        int index = _data.IndexOf((UncertainOrdinate)e.NewItems[0]);
+                        Refresh(index);
+                        break;
+                    }
+                default:
+                    {
+                        Refresh();
+                        break;
+                    }
+            }
+        }
+
+        public void Refresh() // minX As Double, maxX As Double, minY As Double, maxY As Double, strictX As Boolean, strictY As Boolean, orderX As SortOrder, orderY As SortOrder)
+        {
+            foreach (DistributionRowItem row in DistributionRows)
+                row.PropertyChanged -= RowItem_PropertyChanged;
+            DistributionRows.Clear();
+            if (Data == null) return;
+            DistributionRowItem rowItem;
+            foreach (var o in Data)
+            {
+                rowItem = new DistributionRowItem(o.X, o.Y, DistributionRows, MinXValue, MaxXValue, MinYValue, MaxYValue, IsStrictX, IsStrictY, XOrder, YOrder);
+                rowItem.PropertyChanged += RowItem_PropertyChanged;
+                // 
+                DistributionRows.Add(rowItem);
+            }
+        }
+
+        public void Refresh(int rowIndex) // minX As Double, maxX As Double, minY As Double, maxY As Double, strictX As Boolean, strictY As Boolean, orderX As SortOrder, orderY As SortOrder)
+        {
+            if (_data == null) return;
+            if ((rowIndex >= _data.Count) || (rowIndex < 0)) return;
+            ((DistributionRowItem)DistributionRows[rowIndex]).PropertyChanged -= RowItem_PropertyChanged;
+            // 
+            var rowItem = new DistributionRowItem(Data[rowIndex].X, Data[rowIndex].Y, DistributionRows, MinXValue, MaxXValue, MinYValue, MaxYValue, IsStrictX, IsStrictY, XOrder, YOrder);
+            rowItem.PropertyChanged += RowItem_PropertyChanged;
+            DistributionRows[rowIndex] = rowItem;
+        }
+
+        private void RowItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            _updatingData = true;
+            DistributionRowItem rItem = (DistributionRowItem)sender;
+            int dataIndex = DistributionRows.IndexOf(rItem);
+            _data[dataIndex] = new UncertainOrdinate(rItem.X, rItem.Distribution.Clone());
+            _updatingData = false;
+            DataChanged?.Invoke(dataIndex);
+        }
+
+        // Public Sub SetData(initialXValues As IEnumerable(Of Double)) 'minX As Double, maxX As Double, minY As Double, maxY As Double, isStrictX As Boolean, orderX As SortOrder, isStrictY As Boolean, orderY As SortOrder, initialXValues As IEnumerable(Of Double))
+        // '
+        // Dim ordinates As New List(Of UncertainOrdinate)
+        // If IsNothing(initialXValues) Then
+        // For i As Int32 = 0 To 1
+        // ordinates.Add(New UncertainOrdinate(i, UnivariateDistributionFactory.CreateDistribution(Distribution)))
+        // Next
+        // Else
+        // For Each initialValue In initialXValues
+        // ordinates.Add(New UncertainOrdinate(initialValue, UnivariateDistributionFactory.CreateDistribution(Distribution)))
+        // Next
+        // End If
+        // _data = New UncertainOrderedPairedData(ordinates, IsStrictX, XOrder, IsStrictY, YOrder, Distribution)
+        // '
+        // Refresh() 'minX, maxX, minY, maxY, IsStrictX, IsStrictY, orderX, orderY)
+        // End Sub
+
+    }
+}

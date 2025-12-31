@@ -1,0 +1,394 @@
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this library.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+
+namespace GenericControls
+{
+    /// <summary>
+    /// A custom WPF control for numeric input with validation for blank, negative, range, and format.
+    /// </summary>
+    public partial class NumericTextBox:UserControl
+    {
+        /// <summary>
+        /// gets/sets whether the input can be left blank.
+        /// </summary>
+        public bool CanBeBlank { get; set; }
+
+        /// <summary>
+        /// gets/sets whether the negative numbers are allowed. 
+        /// </summary>
+        public bool CanBeNegative { get; set; }
+
+        /// <summary>
+        /// Gets/sets whether only whole numbers are allowed.
+        /// </summary>
+        public bool IsWholeNumber { get; set; }
+
+        /// <summary>
+        /// gets/sets the maximum allowable value.
+        /// </summary>
+        public double MaxValue { get; set; } = double.MaxValue;
+
+        /// <summary>
+        /// gets/sets the minimum allowable value.
+        /// </summary>
+        public double MinValue { get; set; } = double.MinValue;
+
+        /// <summary>
+        /// Gets/sets whether the bounds (MinValue and MaxValue) are exclusive.
+        /// When true, values equal to the bounds are considered invalid.
+        /// When false (default), values equal to the bounds are valid.
+        /// </summary>
+        public bool BoundsAreExclusive { get; set; }
+
+        /// <summary>
+        /// Dependency property for read-only mode.
+        /// </summary>
+        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(NumericTextBox), new UIPropertyMetadata(false));
+        /// <summary>
+        /// gets/sets whether the textbox is read-only.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get
+            {
+                return (bool)this.GetValue(IsReadOnlyProperty);
+            }
+            set
+            {
+                this.SetValue(IsReadOnlyProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property indicating if the value exceeds the maximum allowed.
+        /// </summary>
+        public static readonly DependencyProperty AboveMaxValueProperty = DependencyProperty.Register(nameof(AboveMaxValue), typeof(bool), typeof(NumericTextBox), new FrameworkPropertyMetadata(false));
+        /// <summary>
+        /// gets/sets whether the value is above MaxValue.
+        /// </summary>
+        public bool AboveMaxValue
+        {
+            get
+            {
+                return (bool)this.GetValue(AboveMaxValueProperty);
+            }
+            private set
+            {
+                this.SetValue(AboveMaxValueProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property indicating if the value is below MinValue.
+        /// </summary>
+        public static readonly DependencyProperty BelowMinValueProperty = DependencyProperty.Register(nameof(BelowMinValue), typeof(bool), typeof(NumericTextBox), new FrameworkPropertyMetadata(false));
+        /// <summary>
+        /// gets/sets whether the value is below MinValue.
+        /// </summary>
+        public bool BelowMinValue
+        {
+            get
+            {
+                return (bool)this.GetValue(BelowMinValueProperty);
+            }
+            private set
+            {
+                this.SetValue(BelowMinValueProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property indicating if the current value is valid.
+        /// </summary>
+        public static readonly DependencyProperty ValueIsValidProperty = DependencyProperty.Register(nameof(ValueIsValid), typeof(bool), typeof(NumericTextBox), new FrameworkPropertyMetadata(true));
+        /// <summary>
+        /// gets/sets whether the current value is valid.
+        /// </summary>
+        public bool ValueIsValid
+        {
+            get
+            {
+                return (bool)this.GetValue(ValueIsValidProperty);
+            }
+            private set
+            {
+                this.SetValue(ValueIsValidProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property indicating if the current text is not numeric. 
+        /// </summary>
+        public static readonly DependencyProperty InvalidTextProperty = DependencyProperty.Register(nameof(InvalidText), typeof(bool), typeof(NumericTextBox), new FrameworkPropertyMetadata(false));
+        /// <summary>
+        /// gets/sets whether the text content is not a valid number.
+        /// </summary>
+        public bool InvalidText
+        {
+            get
+            {
+                return (bool)this.GetValue(InvalidTextProperty);
+            }
+            private set
+            {
+                this.SetValue(InvalidTextProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Dependency property for the Text content.
+        /// </summary>
+        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NumericTextBox), new UIPropertyMetadata(""));
+        /// <summary>
+        /// gets/sets the raw text content of the control.
+        /// </summary>
+        public string Text
+        {
+            get
+            {
+                return (string)this.GetValue(TextProperty);
+            }
+            set
+            {
+                this.SetValue(TextProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Raised when the text in the numeric box changes. 
+        /// </summary>
+        public event TextChangedEventHandler TextChanged;
+
+        /// <summary>
+        /// Delegate for the TextChanged event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public delegate void TextChangedEventHandler(object sender, TextChangedEventArgs e);
+
+        /// <summary>
+        /// Intializes a new instance of the <see cref="NumericTextBox"/> control.
+        /// </summary>
+        public NumericTextBox()
+        {
+            this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Focuses the numeric textbox.
+        /// </summary>
+        public void SetFocus()
+        {
+            this.NumericTBox.Focus();
+        }
+
+        /// <summary>
+        /// Handles the PreviewKeyDown event to prevent spacebar input.
+        /// </summary>
+        /// <param name="sender">Source of the event.</param>
+        /// <param name="e">Key event arguments.</param>
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+                e.Handled = true;
+        }
+
+        /// <summary>
+        /// Handles the PreviewTextInput event to restrict input to valid numeric characters,
+        /// including handling for decimals and negative signs depending on the control settings.
+        /// </summary>
+        /// <param name="sender">Source of the evnet.</param>
+        /// <param name="e">The text composition event arguments.</param>
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !NumberFormatHelper.IsValidNumericInput(
+                e.Text,
+                this.NumericTBox.Text,
+                this.NumericTBox.SelectionStart,
+                this.NumericTBox.SelectedText,
+                CanBeNegative,
+                !IsWholeNumber,
+                false);
+        }
+
+        /// <summary>
+        /// Handles the TextChanged event to validate the current text value based on configured constraints.
+        /// Sets flags for validity, bounds, and format.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            double doubleValue;
+            if (NumberFormatHelper.TryParseDouble(this.NumericTBox.Text, out doubleValue) == false)
+            {
+                // Allow valid partial inputs during typing (e.g., "-", ".", "-.")
+                if (string.IsNullOrEmpty(this.NumericTBox.Text) && CanBeBlank)
+                {
+                    ValueIsValid = true;
+                    InvalidText = false;
+                }
+                else if (NumberFormatHelper.IsValidPartialNumber(this.NumericTBox.Text))
+                {
+                    ValueIsValid = true;
+                    InvalidText = false;
+                }
+                else
+                {
+                    InvalidText = true;
+                    ValueIsValid = false;
+                }
+            }
+            else
+            {
+                InvalidText = false;
+                if (BoundsAreExclusive)
+                {
+                    AboveMaxValue = doubleValue >= MaxValue;
+                    BelowMinValue = doubleValue <= MinValue;
+                }
+                else
+                {
+                    AboveMaxValue = doubleValue > MaxValue;
+                    BelowMinValue = doubleValue < MinValue;
+                }
+                ValueIsValid = !(AboveMaxValue || BelowMinValue);
+            }
+            TextChanged?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        /// Selects all text in the textbox.
+        /// </summary>
+        public void SelectAll()
+        {
+            this.NumericTBox.SelectAll();
+        }
+
+        /// <summary>
+        /// Checks if the current value can be parsed as a valid double.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValidDouble()
+        {
+            double doubleValue;
+            return NumberFormatHelper.TryParseDouble(this.NumericTBox.Text, out doubleValue);
+        }
+
+        /// <summary>
+        /// Checks if the current value can be parsed as a valid float (single).
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValidSingle()
+        {
+            float singleValue;
+            return NumberFormatHelper.TryParseSingle(this.NumericTBox.Text, out singleValue);
+        }
+
+        /// <summary>
+        /// Checks if the current value can be parsed and is within integer bounds.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValidInteger()
+        {
+            if (IsValidDouble() == false)
+                return false;
+            double dblValue = GetValueAsDouble();
+
+            if (dblValue > int.MaxValue || dblValue < int.MinValue)
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the current value parsed as a double.
+        /// </summary>
+        /// <returns></returns>
+        public double GetValueAsDouble()
+        {
+            double doubleValue;
+            NumberFormatHelper.TryParseDouble(this.NumericTBox.Text, out doubleValue);
+            return doubleValue;
+        }
+
+        /// <summary>
+        /// Returns the current value parsed as a float.
+        /// </summary>
+        /// <returns></returns>
+        public float GetValueAsSingle()
+        {
+            float singleValue;
+            NumberFormatHelper.TryParseSingle(this.NumericTBox.Text, out singleValue);
+            return singleValue;
+        }
+
+        /// <summary>
+        /// Returns the current value parsed and rounded to an integer, clamped to int range.
+        /// </summary>
+        /// <returns></returns>
+        public int GetValueAsInteger()
+        {
+            double dblValue = GetValueAsDouble();
+
+            if (dblValue > int.MaxValue)
+                return int.MaxValue;
+            if (dblValue < int.MinValue)
+                return int.MinValue;
+            // 
+            return (int)Math.Round(dblValue);
+        }
+
+        /// <summary>
+        /// Handles the KeyUp event for the numeric text box. When the Enter key is pressed, 
+        /// this method forces the current text binding to update its source value.
+        /// </summary>
+        /// <param name="sender">Source of the event (should be a TextBox)</param>
+        /// <param name="e">The key event arguments containing information about the key press.</param>
+        private void NumericTBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox tBox = (TextBox)sender;
+                var prop = TextBox.TextProperty;
+                var binding = BindingOperations.GetBindingExpression(tBox, prop);
+                if (binding is not null)
+                {
+                    binding.UpdateSource();
+                }
+            }
+        }
+
+    }
+}

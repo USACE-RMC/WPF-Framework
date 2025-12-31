@@ -1,0 +1,413 @@
+// Copyright (c) USACE. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using SoftwareUpdate.Utilities;
+
+namespace SoftwareUpdate.GitHub
+{
+    /// <summary>
+    /// Implementation of <see cref="IUpdateService"/> that checks for updates on GitHub Releases.
+    /// </summary>
+    public class GitHubUpdateService : IUpdateService, IDisposable
+    {
+        private readonly HttpClient _httpClient;
+        private readonly object _lock = new object();
+        private UpdateState _state = UpdateState.Idle;
+        private UpdateInfo _availableUpdate;
+        private HashSet<string> _skippedVersions;
+        private bool _disposed;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GitHubUpdateService"/> class.
+        /// </summary>
+        /// <param name="options">The update options.</param>
+        public GitHubUpdateService(UpdateOptions options)
+        {
+            Options = options ?? throw new ArgumentNullException(nameof(options));
+            Options.Validate();
+
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(options.GitHubRepo, options.CurrentVersion?.ToString() ?? "1.0.0"));
+            _httpClient.Timeout = TimeSpan.FromSeconds(options.RequestTimeoutSeconds);
+
+            if (!string.IsNullOrEmpty(options.GitHubToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.GitHubToken);
+            }
+
+            LoadSkippedVersions();
+        }
+
+        /// <inheritdoc/>
+        public UpdateOptions Options { get; }
+
+        /// <inheritdoc/>
+        public UpdateState State
+        {
+            get { lock (_lock) return _state; }
+            private set { lock (_lock) _state = value; }
+        }
+
+        /// <inheritdoc/>
+        public UpdateInfo AvailableUpdate
+        {
+            get { lock (_lock) return _availableUpdate; }
+            private set { lock (_lock) _availableUpdate = value; }
+        }
+
+        /// <inheritdoc/>
+        public event EventHandler<UpdateCheckResult> UpdateCheckCompleted;
+
+        /// <inheritdoc/>
+        public event EventHandler<Exception> UpdateError;
+
+        /// <inheritdoc/>
+        public async Task<UpdateCheckResult> CheckForUpdateAsync(CancellationToken cancellationToken = default)
+        {
+            State = UpdateState.Checking;
+
+            try
+            {
+                var apiUrl = $"https://api.github.com/repos/{Options.GitHubOwner}/{Options.GitHubRepo}/releases";
+                var response = await _httpClient.GetAsync(apiUrl, cancellationToken).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                var jsonStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var releases = DeserializeReleases(jsonStream);
+
+                // Filter releases
+                var validReleases = releases
+                    .Where(r => !r.Draft)
+                    .Where(r => Options.IncludePreReleases || !r.PreRelease)
+                    .Where(r => SemanticVersion.TryParse(r.TagName, out _))
+                    .ToList();
+
+                if (!validReleases.Any())
+                {
+                    State = UpdateState.UpToDate;
+                    var result = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
+                    UpdateCheckCompleted?.Invoke(this, result);
+                    return result;
+                }
+
+                // Find matching asset in latest release
+                foreach (var release in validReleases.OrderByDescending(r => SemanticVersion.Parse(r.TagName)))
+                {
+                    var asset = FindMatchingAsset(release);
+                    if (asset == null) continue;
+
+                    var releaseVersion = SemanticVersion.Parse(release.TagName);
+
+                    if (releaseVersion > Options.CurrentVersion)
+                    {
+                        var updateInfo = new UpdateInfo
+                        {
+                            Version = releaseVersion,
+                            Name = release.Name ?? release.TagName,
+                            DownloadUrl = asset.BrowserDownloadUrl,
+                            DownloadSize = asset.Size,
+                            AssetName = asset.Name,
+                            ReleaseNotes = release.Body,
+                            PublishedAt = release.GetPublishedDateTime(),
+                            IsPreRelease = release.PreRelease,
+                            ReleasePageUrl = release.HtmlUrl
+                        };
+
+                        AvailableUpdate = updateInfo;
+                        var isSkipped = IsVersionSkipped(releaseVersion);
+                        State = UpdateState.UpdateAvailable;
+
+                        var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion, updateInfo, isSkipped);
+                        UpdateCheckCompleted?.Invoke(this, result);
+                        return result;
+                    }
+                }
+
+                State = UpdateState.UpToDate;
+                var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
+                UpdateCheckCompleted?.Invoke(this, noUpdateResult);
+                return noUpdateResult;
+            }
+            catch (Exception ex)
+            {
+                State = UpdateState.Error;
+                UpdateError?.Invoke(this, ex);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion, ex);
+                UpdateCheckCompleted?.Invoke(this, result);
+                return result;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<UpdateDownloadResult> DownloadUpdateAsync(
+            UpdateInfo update,
+            IProgress<UpdateDownloadProgress> progress = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (update == null)
+                throw new ArgumentNullException(nameof(update));
+
+            State = UpdateState.Downloading;
+
+            try
+            {
+                // Create temp directory for download
+                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo);
+                Directory.CreateDirectory(tempDir);
+
+                var tempFilePath = Path.Combine(tempDir, update.AssetName);
+
+                // Delete existing file if present
+                if (File.Exists(tempFilePath))
+                    File.Delete(tempFilePath);
+
+                using (var response = await _httpClient.GetAsync(update.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    var totalBytes = response.Content.Headers.ContentLength ?? update.DownloadSize;
+                    var downloadProgress = new UpdateDownloadProgress { TotalBytes = totalBytes };
+
+                    using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    using (var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                    {
+                        var buffer = new byte[8192];
+                        long totalRead = 0;
+                        int bytesRead;
+                        var stopwatch = Stopwatch.StartNew();
+                        long lastReportedBytes = 0;
+                        var lastReportTime = stopwatch.Elapsed;
+
+                        while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                        {
+                            await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                            totalRead += bytesRead;
+
+                            // Report progress
+                            if (progress != null)
+                            {
+                                var elapsed = stopwatch.Elapsed - lastReportTime;
+                                if (elapsed.TotalMilliseconds >= 100) // Report every 100ms max
+                                {
+                                    var bytesInInterval = totalRead - lastReportedBytes;
+                                    downloadProgress.BytesDownloaded = totalRead;
+                                    downloadProgress.BytesPerSecond = bytesInInterval / elapsed.TotalSeconds;
+                                    progress.Report(downloadProgress);
+
+                                    lastReportedBytes = totalRead;
+                                    lastReportTime = stopwatch.Elapsed;
+                                }
+                            }
+                        }
+
+                        // Final progress report
+                        if (progress != null)
+                        {
+                            downloadProgress.BytesDownloaded = totalRead;
+                            progress.Report(downloadProgress);
+                        }
+                    }
+                }
+
+                State = UpdateState.ReadyToInstall;
+                return UpdateDownloadResult.Successful(tempFilePath, update, update.DownloadSize);
+            }
+            catch (OperationCanceledException)
+            {
+                State = UpdateState.Idle;
+                return UpdateDownloadResult.Cancelled();
+            }
+            catch (Exception ex)
+            {
+                State = UpdateState.Error;
+                UpdateError?.Invoke(this, ex);
+                return UpdateDownloadResult.Failed(ex);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void InstallUpdateAndRestart(string downloadedFilePath)
+        {
+            if (string.IsNullOrEmpty(downloadedFilePath))
+                throw new ArgumentNullException(nameof(downloadedFilePath));
+
+            if (!File.Exists(downloadedFilePath))
+                throw new FileNotFoundException("Downloaded update file not found.", downloadedFilePath);
+
+            State = UpdateState.Installing;
+
+            var updaterPath = Options.ResolvedUpdaterPath;
+            if (!File.Exists(updaterPath))
+            {
+                throw new FileNotFoundException(
+                    $"Updater executable not found at '{updaterPath}'. " +
+                    "Ensure SoftwareUpdate.Updater.exe is deployed with your application.",
+                    updaterPath);
+            }
+
+            var currentPid = Process.GetCurrentProcess().Id;
+            var targetDir = Options.ResolvedInstallDirectory;
+            var mainExe = Options.ResolvedMainExecutableName;
+
+            var arguments = new StringBuilder();
+            arguments.Append($"--pid {currentPid} ");
+            arguments.Append($"--zip \"{downloadedFilePath}\" ");
+            arguments.Append($"--target \"{targetDir}\" ");
+            arguments.Append($"--exe \"{mainExe}\" ");
+
+            if (Options.CreateBackup)
+                arguments.Append("--backup ");
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = updaterPath,
+                Arguments = arguments.ToString(),
+                UseShellExecute = false,
+                CreateNoWindow = false
+            };
+
+            Process.Start(startInfo);
+
+            // Exit the current application
+            Environment.Exit(0);
+        }
+
+        /// <inheritdoc/>
+        public void SkipVersion(SemanticVersion version)
+        {
+            if (version == null) return;
+
+            lock (_lock)
+            {
+                _skippedVersions.Add(version.ToString());
+            }
+            SaveSkippedVersions();
+        }
+
+        /// <inheritdoc/>
+        public bool IsVersionSkipped(SemanticVersion version)
+        {
+            if (version == null) return false;
+
+            lock (_lock)
+            {
+                return _skippedVersions.Contains(version.ToString());
+            }
+        }
+
+        /// <inheritdoc/>
+        public void ClearSkippedVersions()
+        {
+            lock (_lock)
+            {
+                _skippedVersions.Clear();
+            }
+            SaveSkippedVersions();
+        }
+
+        /// <summary>
+        /// Finds an asset matching the configured pattern.
+        /// </summary>
+        private GitHubReleaseAsset FindMatchingAsset(GitHubRelease release)
+        {
+            if (release.Assets == null || !release.Assets.Any())
+                return null;
+
+            var pattern = Options.AssetNamePattern;
+            if (string.IsNullOrEmpty(pattern))
+                pattern = "*.zip";
+
+            // Convert glob pattern to regex
+            var regexPattern = "^" + Regex.Escape(pattern)
+                .Replace("\\*", ".*")
+                .Replace("\\?", ".") + "$";
+
+            var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+
+            return release.Assets.FirstOrDefault(a => regex.IsMatch(a.Name));
+        }
+
+        /// <summary>
+        /// Deserializes the GitHub releases JSON response.
+        /// </summary>
+        private List<GitHubRelease> DeserializeReleases(Stream jsonStream)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(List<GitHubRelease>));
+            return (List<GitHubRelease>)serializer.ReadObject(jsonStream);
+        }
+
+        /// <summary>
+        /// Loads skipped versions from disk.
+        /// </summary>
+        private void LoadSkippedVersions()
+        {
+            _skippedVersions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                var filePath = Options.ResolvedSkippedVersionsPath;
+                if (File.Exists(filePath))
+                {
+                    var lines = File.ReadAllLines(filePath);
+                    foreach (var line in lines)
+                    {
+                        if (!string.IsNullOrWhiteSpace(line))
+                            _skippedVersions.Add(line.Trim());
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors loading preferences
+            }
+        }
+
+        /// <summary>
+        /// Saves skipped versions to disk.
+        /// </summary>
+        private void SaveSkippedVersions()
+        {
+            try
+            {
+                var filePath = Options.ResolvedSkippedVersionsPath;
+                var dir = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(dir))
+                    Directory.CreateDirectory(dir);
+
+                lock (_lock)
+                {
+                    File.WriteAllLines(filePath, _skippedVersions);
+                }
+            }
+            catch
+            {
+                // Ignore errors saving preferences
+            }
+        }
+
+        /// <summary>
+        /// Disposes of the HTTP client.
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _httpClient?.Dispose();
+                _disposed = true;
+            }
+        }
+    }
+}

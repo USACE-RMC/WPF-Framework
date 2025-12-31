@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--File Menu-->
+    <ImageSource x:Key="NewProject">/FrameworkUI;component/Resources/NewProject.png</ImageSource>
+    <ImageSource x:Key="OpenProject">/FrameworkUI;component/Resources/OpenProject.png</ImageSource>
+    <ImageSource x:Key="Save">/FrameworkUI;component/Resources/Save.png</ImageSource>
+    <ImageSource x:Key="SaveAs">/FrameworkUI;component/Resources/SaveAs.png</ImageSource>
+    <ImageSource x:Key="SaveOptions">/FrameworkUI;component/Resources/SaveOptions.png</ImageSource>
+    <ImageSource x:Key="RecentProjects">/FrameworkUI;component/Resources/RecentProjects.png</ImageSource>
+    <ImageSource x:Key="Exit">/FrameworkUI;component/Resources/ShutDown.png</ImageSource>
+    <ImageSource x:Key="Browse">/FrameworkUI;component/Resources/Browse.png</ImageSource>
+    <ImageSource x:Key="Search">/FrameworkUI;component/Resources/Search.png</ImageSource>
+
+    <!--View Menu-->
+    <ImageSource x:Key="ProjectExplorer">/FrameworkUI;component/Resources/ProjectExplorer.png</ImageSource>
+    <ImageSource x:Key="MessageWindow">/FrameworkUI;component/Resources/MessageWindow.png</ImageSource>
+    <ImageSource x:Key="PropertiesWindow">/FrameworkUI;component/Resources/PropertiesWindow.png</ImageSource>
+    <ImageSource x:Key="AllWindows">/FrameworkUI;component/Resources/AllWindows.png</ImageSource>
+
+    <!--Project Menu-->
+    <ImageSource x:Key="Properties">/FrameworkUI;component/Resources/Properties.png</ImageSource>
+
+    <!--Tools Menu-->
+    <ImageSource x:Key="CompactProject">/FrameworkUI;component/Resources/CompressProject.png</ImageSource>
+    <ImageSource x:Key="ZipFile">/FrameworkUI;component/Resources/ZipFile.png</ImageSource>
+    <ImageSource x:Key="RestoreBackup">/FrameworkUI;component/Resources/RestoreBackup.png</ImageSource>
+    <ImageSource x:Key="Options">/FrameworkUI;component/Resources/Options.png</ImageSource>
+
+    <!--Window Menu-->
+    <ImageSource x:Key="CloseAllWindows">/FrameworkUI;component/Resources/CloseAllWindows.png</ImageSource>
+
+    <!--Help Menu-->
+    <ImageSource x:Key="Help">/FrameworkUI;component/Resources/Help.png</ImageSource>
+    <ImageSource x:Key="PDF">/FrameworkUI;component/Resources/PDF.png</ImageSource>
+    <ImageSource x:Key="TCU">/FrameworkUI;component/Resources/TCU.png</ImageSource>
+
+    <!--Edit Menu / Toolbar-->
+    <ImageSource x:Key="Undo">/FrameworkUI;component/Resources/Undo.png</ImageSource>
+    <ImageSource x:Key="Redo">/FrameworkUI;component/Resources/Redo.png</ImageSource>
+
+</ResourceDictionary>

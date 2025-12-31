@@ -1,0 +1,467 @@
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <RootNamespace>GenericControls</RootNamespace>
+    <AssemblyName>GenericControls</AssemblyName>
+    <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <MyType>Custom</MyType>
+    <Deterministic>true</Deterministic>
+    <ProjectGuid>{06DA8C1B-008E-45A0-BB3A-848017BA1C9E}</ProjectGuid>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <IncrementalBuild>true</IncrementalBuild>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>GenericControls.xml</DocumentationFile>
+    <NoWarn>42314</NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <IncrementalBuild>false</IncrementalBuild>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>GenericControls.xml</DocumentationFile>
+    <NoWarn>42314</NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DocumentationFile>GenericControls.xml</DocumentationFile>
+    <NoWarn>42314</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DocumentationFile>GenericControls.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42314</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="General Controls\ColorPickerPopup.xaml.vb">
+      <DependentUpon>ColorPickerPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\GridLengthControl.xaml.vb">
+      <DependentUpon>GridLengthControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\NumericSlider.xaml.vb">
+      <DependentUpon>NumericSlider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\NumericTextBox2.xaml.vb">
+      <DependentUpon>NumericTextBox2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\ThicknessControl.xaml.vb">
+      <DependentUpon>ThicknessControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\DateTimePropertyControl.xaml.vb">
+      <DependentUpon>DateTimePropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\FolderSelectorControl.xaml.vb">
+      <DependentUpon>FolderSelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\NumericSliderPropertyControl.xaml.vb">
+      <DependentUpon>NumericSliderPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\DirectorySelectorControl.xaml.vb">
+      <DependentUpon>DirectorySelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\FileSelectorControl.xaml.vb">
+      <DependentUpon>FileSelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\Point3DPropertyControl.xaml.vb">
+      <DependentUpon>Point3DPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Property Attributes\PropertyAttributes.xaml.vb">
+      <DependentUpon>PropertyAttributes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\ComboBoxItemTemplateSelector.vb" />
+    <Compile Include="Utilities\Converters.vb" />
+    <Compile Include="DataGrid\DataGridToolbar.xaml.vb">
+      <DependentUpon>DataGridToolbar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGrid\ValidationDataGrid.vb" />
+    <Compile Include="Utilities\ValidationRules.vb" />
+    <Page Include="General Controls\Color Picker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DataGrid\DataGridToolbar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Date and Time Controls\ClockControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Date and Time Controls\DateAndTimePickerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Date and Time Controls\DateAndTimeTextBoxControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="General Controls\ColorPickerPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\GridLengthControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\NumericSlider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\NumericTextBox2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\NumericUpDown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\NameDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="General Controls\NameTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\NumericTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\ThicknessControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\DateTimePropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\FolderSelectorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\NumericSliderPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\BooleanPropertyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\CalendarWeekRulePropertyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\ColorPropertyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\ContentPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\DirectorySelectorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\FileSelectorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\FontSelectorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\FontWeightSelectorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\HorizontalAlignmentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\LineStyleSelectorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\LineWidthSelectorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\NameTextPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\NumericAutoPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\NumericPropertyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\NumericPropertySelectorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\Point3DPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\PointPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\ResizeableTextPropertyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Properties Controls\StringListPropertyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\TextPropertyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Properties Controls\VerticalAlignmentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\ResizableTextBoxControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Property Attributes\PropertyAttributes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\GenericResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="General Controls\SeparatorWithHeader.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="General Controls\Color Picker.xaml.vb">
+      <DependentUpon>Color Picker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DataGrid\CopyPasteDataGrid.vb" />
+    <Compile Include="DataGrid\ValidationDataGridObjects\DataGridRowItem.vb" />
+    <Compile Include="DataGrid\ValidationDataGridObjects\PropertyRule.vb" />
+    <Compile Include="Date and Time Controls\ClockControl.xaml.vb">
+      <DependentUpon>ClockControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Date and Time Controls\DateAndTimePickerControl.xaml.vb">
+      <DependentUpon>DateAndTimePickerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Date and Time Controls\DateAndTimeTextBoxControl.xaml.vb">
+      <DependentUpon>DateAndTimeTextBoxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Adorners\DragAdorner.vb" />
+    <Compile Include="File Management\FolderBrowser.vb" />
+    <Compile Include="File Management\RecentFileList.vb" />
+    <Compile Include="Utilities\GeneralMethods.vb" />
+    <Compile Include="Adorners\InsertionAdorner.vb" />
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\NumericUpDown.xaml.vb">
+      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\NameDialog.xaml.vb">
+      <DependentUpon>NameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\NameTextBox.xaml.vb">
+      <DependentUpon>NameTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\NumericTextBox.xaml.vb">
+      <DependentUpon>NumericTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\BooleanPropertyControl.xaml.vb">
+      <DependentUpon>BooleanPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\CalendarWeekRulePropertyControl.xaml.vb">
+      <DependentUpon>CalendarWeekRulePropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\ColorPropertyControl.xaml.vb">
+      <DependentUpon>ColorPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\ContentPropertyControl.xaml.vb">
+      <DependentUpon>ContentPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\FontSelectorControl.xaml.vb">
+      <DependentUpon>FontSelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\FontWeightSelectorControl.xaml.vb">
+      <DependentUpon>FontWeightSelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\HorizontalAlignmentControl.xaml.vb">
+      <DependentUpon>HorizontalAlignmentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\LineStyleSelectorControl.xaml.vb">
+      <DependentUpon>LineStyleSelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\LineWidthSelectorControl.xaml.vb">
+      <DependentUpon>LineWidthSelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\NameTextPropertyControl.xaml.vb">
+      <DependentUpon>NameTextPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\NumericAutoPropertyControl.xaml.vb">
+      <DependentUpon>NumericAutoPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\NumericPropertyControl.xaml.vb">
+      <DependentUpon>NumericPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\NumericPropertySelectorControl.xaml.vb">
+      <DependentUpon>NumericPropertySelectorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\PointPropertyControl.xaml.vb">
+      <DependentUpon>PointPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\PropertyDefaults.vb" />
+    <Compile Include="Properties Controls\ResizeableTextPropertyControl.xaml.vb">
+      <DependentUpon>ResizeableTextPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\StringListPropertyControl.xaml.vb">
+      <DependentUpon>StringListPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\TextPropertyControl.xaml.vb">
+      <DependentUpon>TextPropertyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties Controls\VerticalAlignmentControl.xaml.vb">
+      <DependentUpon>VerticalAlignmentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\ResizableTextBoxControl.xaml.vb">
+      <DependentUpon>ResizableTextBoxControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="General Controls\SeparatorWithHeader.xaml.vb">
+      <DependentUpon>SeparatorWithHeader.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System.Threading.Tasks" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows" />
+    <Import Include="System.Windows.Controls" />
+    <Import Include="System.Windows.Data" />
+    <Import Include="System.Windows.Documents" />
+    <Import Include="System.Windows.Input" />
+    <Import Include="System.Windows.Shapes" />
+    <Import Include="System.Windows.Media" />
+    <Import Include="System.Windows.Media.Imaging" />
+    <Import Include="System.Windows.Navigation" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="My Project\AssemblyInfo.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\add_row.png" />
+    <Resource Include="Resources\copy.png" />
+    <Resource Include="Resources\copy_w_headers.png" />
+    <Resource Include="Resources\delete_row.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\insert_row.png" />
+    <Resource Include="Resources\paste.png" />
+    <Resource Include="Resources\select_all.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\sort-up.png" />
+    <Resource Include="Resources\sort-down.png" />
+    <Resource Include="Resources\ClearFilter.png" />
+    <Resource Include="Resources\SortASCFilter.png" />
+    <Resource Include="Resources\SortDSCFilter.png" />
+    <Resource Include="Resources\add_column.png" />
+    <Resource Include="Resources\delete_column.png" />
+    <Resource Include="Resources\insert_column.png" />
+    <Resource Include="Resources\CalendarIcon.png" />
+    <Content Include="Resources\WPFFolderBrowser.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+</Project>

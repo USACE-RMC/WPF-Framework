@@ -1,0 +1,474 @@
+﻿using GenericControls;
+using Numerics.Data;
+using OxyPlot;
+using System;
+using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using static Numerics.Data.Statistics.Histogram;
+
+namespace NumericControls
+{
+    /// <summary>
+    /// Interaction logic for MathEditorControl.xaml
+    /// </summary>
+    public partial class MathEditorControl : UserControl
+    {
+        private CopyPasteDataGrid _source = null;
+        private TimeSeries _series = null;
+        private DataGridCellInfo[] _selectedCells = null;
+        private List<int> _selectedValueRowIndices = new List<int>();
+        private bool _selectionConsecutive = false;
+
+        public MathEditorControl()
+        {
+            InitializeComponent();
+
+            List<MathFunctionType> operands = new List<MathFunctionType>();
+            List<MathFunctionType> nonOperands = new List<MathFunctionType>();
+            foreach (MathFunctionType fnc in (MathFunctionType[])Enum.GetValues(typeof(MathFunctionType)))
+            {
+                if (fnc == MathFunctionType.Add || fnc == MathFunctionType.Subtract ||
+                    fnc == MathFunctionType.Multiply || fnc == MathFunctionType.Divide ||
+                    fnc == MathFunctionType.Logarithm || fnc == MathFunctionType.Exponentiate)
+                { operands.Add(fnc); }
+                else
+                { nonOperands.Add(fnc); }
+            }
+
+            OperandItemsControl.ItemsSource = operands;
+            NoOperandItemsControl.ItemsSource = nonOperands;
+        }
+
+        public TimeSeries Series { get => _series; set => _series = value; }
+
+
+        public CopyPasteDataGrid Source
+        {
+            get => _source;
+            set
+            {
+                _source = value;
+                _selectedValueRowIndices.Clear();
+                _selectedCells = _source.SelectedCells.ToArray();
+                foreach (DataGridCellInfo cellInfo in _selectedCells)
+                {
+                    if (cellInfo.Column.DisplayIndex <= 1) { continue; }
+                    _selectedValueRowIndices.Add(_series.IndexOf(cellInfo.Item));
+                }
+                _selectionConsecutive = false;
+                if (_selectedValueRowIndices.Count > 0 && _selectedValueRowIndices.Count < _series.Count)
+                {
+                    _selectedValueRowIndices.Sort();
+                    _selectionConsecutive = true;
+                    for (int i = 0; i < _selectedValueRowIndices.Count; i++)
+                    {
+                        if (_selectedValueRowIndices[i] - i != _selectedValueRowIndices[0]) { _selectionConsecutive = false; break; }
+                    }
+
+                    if (_selectionConsecutive)
+                    {
+                        NotificationText.Text = $"Applies to rows {_selectedValueRowIndices[0] + 1} - {_selectedValueRowIndices[_selectedValueRowIndices.Count - 1] + 1}.";// +
+                                                                                                                                                                           //$"{Environment.NewLine}" +
+                                                                                                                                                                           //$"Selection is {(_selectionConsecutive == true ? "continuous" : "discontinuous")}." +
+                                                                                                                                                                           //$"{Environment.NewLine}" +
+                                                                                                                                                                           //$"(Rows {_selectedValueRowIndices[0] + 1} - {_selectedValueRowIndices[_selectedValueRowIndices.Count - 1] + 1})";
+                    }
+                    else
+                    {
+                        string rowsString = string.Empty;
+                        if (_selectedValueRowIndices.Count > 8)
+                        {
+                            rowsString = $"{_selectedValueRowIndices[0] + 1}, {_selectedValueRowIndices[1] + 1},...,{_selectedValueRowIndices[_selectedValueRowIndices.Count - 1] + 1}";
+                        }
+                        else
+                        {
+                            rowsString = string.Join(", ", _selectedValueRowIndices.Select(item => item + 1));
+                        }
+                        NotificationText.Text = $"Applies to rows {rowsString}.";// +
+                                                                                 //$"{Environment.NewLine}" +
+                                                                                 //$"Selection is {(_selectionConsecutive == true ? "continuous" : "discontinuous")}." +
+                                                                                 //$"{Environment.NewLine}" +
+                                                                                 //$"(Rows {rowsString})";
+                    }
+                }
+                else
+                {
+                    NotificationText.Text = "Applies to all.";
+                }
+            }
+        }
+
+        //private void Source_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        //{
+
+        //}
+
+        //private void MathButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (_source == null || _series == null) { return; }
+        //    Mouse.OverrideCursor = Cursors.Wait;
+
+        //    try
+        //    {
+        //        //ComboBox cmbo = (ComboBox)MathFunction.InnerContent;
+        //        //KeyValuePair<MathFunctionType, string> selectedFunction = (KeyValuePair<MathFunctionType, string>)cmbo.SelectedItem;
+        //        MathFunctionType functionType = MathFunctionType.Add; //(MathFunctionType)PresetItemsControl.SelectedItem; //selectedFunction.Key;
+
+        //        if (ValueTextBox.ValueIsValid == false)
+        //        {
+        //            //update text notification
+        //            NotificationText.Text = "*Operand is not valid for this operation.";
+        //        }
+
+        //        double value = ValueTextBox.Value;
+
+        //        if (_selectedValueRowIndices.Count == 0 || _selectedValueRowIndices.Count == _series.Count)
+        //        {
+        //            if (functionType == MathFunctionType.Add)
+        //            {
+        //                _series.Add(value);
+        //            }
+        //            else if (functionType == MathFunctionType.Subtract)
+        //            {
+        //                _series.Subtract(value);
+        //            }
+        //            else if (functionType == MathFunctionType.Multiply)
+        //            {
+        //                _series.Multiply(value);
+        //            }
+        //            else if (functionType == MathFunctionType.Divide)
+        //            {
+        //                _series.Divide(value);
+        //            }
+        //            else if (functionType == MathFunctionType.Exponentiate)
+        //            {
+        //                _series.Exponentiate(value);
+        //            }
+        //            else if (functionType == MathFunctionType.Logarithm)
+        //            {
+        //                _series.LogTransform(value);
+        //            }
+        //            else if (functionType == MathFunctionType.Inverse)
+        //            {
+        //                _series.Inverse();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (functionType == MathFunctionType.Add)
+        //            {
+        //                _series.Add(value, _selectedValueRowIndices);
+        //            }
+        //            else if (functionType == MathFunctionType.Subtract)
+        //            {
+        //                _series.Subtract(value, _selectedValueRowIndices);
+        //            }
+        //            else if (functionType == MathFunctionType.Multiply)
+        //            {
+        //                _series.Multiply(value, _selectedValueRowIndices);
+        //            }
+        //            else if (functionType == MathFunctionType.Divide)
+        //            {
+        //                _series.Divide(value, _selectedValueRowIndices);
+        //            }
+        //            else if (functionType == MathFunctionType.Exponentiate)
+        //            {
+        //                _series.Exponentiate(value, _selectedValueRowIndices);
+        //            }
+        //            else if (functionType == MathFunctionType.Logarithm)
+        //            {
+        //                _series.LogTransform(_selectedValueRowIndices, value);
+        //            }
+        //            else if (functionType == MathFunctionType.Inverse)
+        //            {
+        //                _series.Inverse();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        return;
+        //    }
+        //    finally
+        //    {
+        //        Mouse.OverrideCursor = null;
+        //    }
+        //}
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            if (btn == null) { return; }
+            var cntxt = btn.DataContext;
+            if (cntxt == null || cntxt.GetType() != typeof(MathFunctionType)) { return; }
+            //
+            if (_source == null || _series == null) { return; }
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            try
+            {
+                MathFunctionType functionType = (MathFunctionType)cntxt;
+
+                if (ValueTextBox.ValueIsValid == false)
+                {
+                    //update text notification
+                    NotificationText.Text = "*Operand is not valid for this operation.";
+                }
+
+                double value = ValueTextBox.Value;
+
+                ApplyFunctionToSeries(_series, functionType, value, _selectedValueRowIndices);
+
+                // Reselect cells
+                foreach (DataGridCellInfo cellInfo in _selectedCells)
+                {
+                    _source.SelectedCells.Add(cellInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+
+        }
+
+        public static void ApplyFunctionToSeries(TimeSeries series, MathFunctionType functionType, double value, List<int> indices)
+        {
+            //
+            if (series == null) { return; }
+
+            try
+            {
+                if (indices == null || indices.Count == 0 || indices.Count == series.Count)
+                {
+                    if (functionType == MathFunctionType.Add)
+                    {
+                        series.Add(value);
+                    }
+                    else if (functionType == MathFunctionType.Subtract)
+                    {
+                        series.Subtract(value);
+                    }
+                    else if (functionType == MathFunctionType.Multiply)
+                    {
+                        series.Multiply(value);
+                    }
+                    else if (functionType == MathFunctionType.Divide)
+                    {
+                        series.Divide(value);
+                    }
+                    else if (functionType == MathFunctionType.Exponentiate)
+                    {
+                        series.Exponentiate(value);
+                    }
+                    else if (functionType == MathFunctionType.Logarithm)
+                    {
+                        series.LogTransform(value);
+                    }
+                    else if (functionType == MathFunctionType.Inverse)
+                    {
+                        series.Inverse();
+                    }
+                    else if (functionType == MathFunctionType.Replace)
+                    {
+                        series.ReplaceMissingData(value);
+                    }
+                    else if (functionType == MathFunctionType.Interpolate)
+                    {
+                        series.InterpolateMissingData(series.Count);
+                    }
+                }
+                else
+                {
+                    if (functionType == MathFunctionType.Add)
+                    {
+                        series.Add(value, indices);
+                    }
+                    else if (functionType == MathFunctionType.Subtract)
+                    {
+                        series.Subtract(value, indices);
+                    }
+                    else if (functionType == MathFunctionType.Multiply)
+                    {
+                        series.Multiply(value, indices);
+                    }
+                    else if (functionType == MathFunctionType.Divide)
+                    {
+                        series.Divide(value, indices);
+                    }
+                    else if (functionType == MathFunctionType.Exponentiate)
+                    {
+                        series.Exponentiate(value, indices);
+                    }
+                    else if (functionType == MathFunctionType.Logarithm)
+                    {
+                        series.LogTransform(indices, value);
+                    }
+                    else if (functionType == MathFunctionType.Inverse)
+                    {
+                        series.Inverse(indices);
+                    }
+                    else if (functionType == MathFunctionType.Replace)
+                    {
+                        series.ReplaceMissingData(indices, value);
+                    }
+                    else if (functionType == MathFunctionType.Interpolate)
+                    {
+                        series.InterpolateMissingData(indices.Count, indices);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+
+        }
+        //private void MathFunctionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //ComboBox cmbo = (ComboBox)sender;
+        //KeyValuePair<MathFunctionType, string> selectedFunction = (KeyValuePair<MathFunctionType, string>)(cmbo.SelectedItem);
+        //MathFunctionType functionType = selectedFunction.Key;
+        //if (functionType == MathFunctionType.Add ||
+        //    functionType == MathFunctionType.Subtract ||
+        //    functionType == MathFunctionType.Multiply ||
+        //    functionType == MathFunctionType.Divide)
+        //{
+        //    OperandTextBlock.Text = "Value";
+        //    MathValue.Number = 0;
+        //    MathValue.Visibility = Visibility.Visible;
+        //}
+        //else if (functionType == MathFunctionType.Exponentiate)
+        //{
+        //    OperandTextBlock.Text = "Power";
+        //    MathValue.Number = 2;
+        //    MathValue.Visibility = Visibility.Visible;
+        //}
+        //else if (functionType == MathFunctionType.Logarithm)
+        //{
+        //    OperandTextBlock.Text = "Base";
+        //    MathValue.Number = 10;
+        //    MathValue.Visibility = Visibility.Visible;
+        //}
+        //else if (functionType == MathFunctionType.Inverse)
+        //{
+        //    OperandTextBlock.Text = "Value";
+        //    MathValue.Number = 0;
+        //    MathValue.Visibility = Visibility.Collapsed;
+        //}
+        //}
+    }
+
+    public class MathFunctionTypeToNameConverter : IValueConverter
+    {
+        public static string GetName(MathFunctionType fnc)
+        {
+            switch (fnc)
+            {
+                case MathFunctionType.Logarithm: return "Logarithmic Transform";
+                default: return fnc.ToString();
+            }
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
+
+            return GetName((MathFunctionType)value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MathFunctionTypeToTooltipConverter : IValueConverter
+    {
+        public static string GetTooltip(MathFunctionType fnc)
+        {
+            switch (fnc)
+            {
+                case MathFunctionType.Add: return "Add a constant to values. Missing values are kept as missing.";
+                case MathFunctionType.Subtract: return "Subtract a constant from values. Missing values are kept as missing.";
+                case MathFunctionType.Multiply: return "Multiply values by a constant. Missing values are kept as missing.";
+                case MathFunctionType.Divide: return "Divide values by a constant. Missing values are kept as missing.";
+                case MathFunctionType.Exponentiate: return "Raise values to a constant power. Missing values are kept as missing.";
+                case MathFunctionType.Logarithm: return "Log transform values in a specified base. Missing values are kept as missing.";
+                case MathFunctionType.Inverse: return "Replace values by its inverse (1/x). Missing values are kept as missing. Zero values are set to missing.";
+                case MathFunctionType.Replace: return "Replace missing data (Double.NaN) with a constant.";
+                case MathFunctionType.Interpolate: return "Interpolate missing data.";
+                default: return fnc.ToString();
+            }
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
+
+            return GetTooltip((MathFunctionType)value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MathFunctionTypeToIconConverter : IValueConverter
+    {
+        public static BitmapImage GetIcon(MathFunctionType fnc)
+        {
+            switch (fnc)
+            {
+                case MathFunctionType.Add: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorPlus_16x.png"));
+                case MathFunctionType.Subtract: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMinus_16x.png"));
+                case MathFunctionType.Multiply: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMultiply_16x.png"));
+                case MathFunctionType.Divide: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorDivide_16x.png"));
+                case MathFunctionType.Exponentiate: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorExp_16x.png"));
+                case MathFunctionType.Logarithm: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorLog_16x.png"));
+                case MathFunctionType.Inverse: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorInvert_16x.png"));
+                case MathFunctionType.Replace: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorReplace_16x.png"));
+                case MathFunctionType.Interpolate: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorInterpolate_16x.png"));
+                default: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png"));
+            }
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
+
+            return GetIcon((MathFunctionType)value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+}

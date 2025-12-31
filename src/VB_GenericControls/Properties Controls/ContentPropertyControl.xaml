@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="ContentPropertyControl" Name="ContentProperty"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GenericControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/GenericResources.xaml"/>
+                <ResourceDictionary>
+                    <local:BooleanToVisibilityConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid 
+        Height="{Binding ElementName=ContentProperty, Path=PropertyHeight, FallbackValue=22, TargetNullValue=22}" 
+        Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width=".001*"/>
+            <ColumnDefinition Width="{Binding ElementName=ContentProperty, Path=PropertyWidth, FallbackValue=10*}" 
+                              MaxWidth="{Binding ElementName=ContentProperty, Path=MaxPropertyWidth, FallbackValue=200}"
+                              MinWidth="{Binding ElementName=ContentProperty, Path=MinPropertyWidth, FallbackValue=10}"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0" Margin="0,0,3,0" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                   Text="{Binding ElementName=ContentProperty, Path=Title}"/>
+
+        <Line Style="{StaticResource DotLeaderLineStyle}"
+              Visibility="{Binding ShowLeaderLine, ElementName=ContentProperty, Converter={StaticResource BoolToVisConverter}}"/>
+
+        <ContentControl Grid.Column="2" SizeChanged="ControlSizeChanged"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Content="{Binding InnerContent, ElementName=ContentProperty}"/>
+    </Grid>
+</UserControl>

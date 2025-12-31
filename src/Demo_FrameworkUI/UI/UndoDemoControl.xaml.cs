@@ -1,0 +1,195 @@
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using Demo_ProjectUI.Project.Undo_Demo;
+using FrameworkInterfaces.Undo;
+
+namespace Demo_ProjectUI.UI
+{
+    /// <summary>
+    /// A demo control that showcases the undo/redo functionality.
+    /// </summary>
+    public partial class UndoDemoControl : UserControl
+    {
+        private UndoDemoElement _element;
+        private bool _isUpdatingUI = false;
+
+        public UndoDemoControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
+        /// Gets or sets the element being edited.
+        /// </summary>
+        public UndoDemoElement Element
+        {
+            get => _element;
+            set
+            {
+                _element = value;
+                if (_element != null)
+                {
+                    _element.PropertyChanged += Element_PropertyChanged;
+                    RefreshUI();
+                }
+            }
+        }
+
+        private void Element_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!_isUpdatingUI)
+            {
+                RefreshUI();
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the UI to reflect the current element state.
+        /// </summary>
+        private void RefreshUI()
+        {
+            if (_element == null) return;
+
+            _isUpdatingUI = true;
+            try
+            {
+                NameTextBox.Text = _element.Name ?? string.Empty;
+                CustomValueTextBox.Text = _element.CustomValue ?? string.Empty;
+                NumericValueTextBox.Text = _element.NumericValue.ToString();
+                BooleanValueCheckBox.IsChecked = _element.BooleanValue;
+                DateValuePicker.SelectedDate = _element.DateValue;
+
+                RefreshUndoRedoStacks();
+                UpdateButtonStates();
+            }
+            finally
+            {
+                _isUpdatingUI = false;
+            }
+        }
+
+        /// <summary>
+        /// Updates the undo/redo stack displays.
+        /// </summary>
+        private void RefreshUndoRedoStacks()
+        {
+            UndoStackListBox.Items.Clear();
+            RedoStackListBox.Items.Clear();
+
+            if (_element?.UndoManager == null) return;
+
+            var undoStack = _element.UndoManager.UndoStack;
+            var redoStack = _element.UndoManager.RedoStack;
+
+            foreach (var action in undoStack)
+            {
+                UndoStackListBox.Items.Add(action.Description);
+            }
+
+            foreach (var action in redoStack)
+            {
+                RedoStackListBox.Items.Add(action.Description);
+            }
+        }
+
+        /// <summary>
+        /// Updates the enabled state of the undo/redo buttons.
+        /// </summary>
+        private void UpdateButtonStates()
+        {
+            UndoButton.IsEnabled = _element?.UndoManager?.CanUndo == true;
+            RedoButton.IsEnabled = _element?.UndoManager?.CanRedo == true;
+        }
+
+        private void Property_Changed(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingUI || _element == null) return;
+
+            var textBox = sender as TextBox;
+            if (textBox == NameTextBox)
+            {
+                _element.Name = textBox.Text;
+            }
+            else if (textBox == CustomValueTextBox)
+            {
+                _element.CustomValue = textBox.Text;
+            }
+
+            RefreshUndoRedoStacks();
+            UpdateButtonStates();
+        }
+
+        private void NumericProperty_Changed(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingUI || _element == null) return;
+
+            if (int.TryParse(NumericValueTextBox.Text, out int value))
+            {
+                _element.NumericValue = value;
+                RefreshUndoRedoStacks();
+                UpdateButtonStates();
+            }
+        }
+
+        private void BooleanProperty_Changed(object sender, RoutedEventArgs e)
+        {
+            if (_isUpdatingUI || _element == null) return;
+
+            _element.BooleanValue = BooleanValueCheckBox.IsChecked == true;
+            RefreshUndoRedoStacks();
+            UpdateButtonStates();
+        }
+
+        private void DateProperty_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (_isUpdatingUI || _element == null) return;
+
+            if (DateValuePicker.SelectedDate.HasValue)
+            {
+                _element.DateValue = DateValuePicker.SelectedDate.Value;
+                RefreshUndoRedoStacks();
+                UpdateButtonStates();
+            }
+        }
+
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_element?.UndoManager?.CanUndo == true)
+            {
+                _element.UndoManager.Undo();
+                RefreshUI();
+            }
+        }
+
+        private void RedoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_element?.UndoManager?.CanRedo == true)
+            {
+                _element.UndoManager.Redo();
+                RefreshUI();
+            }
+        }
+
+        private void BatchUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_element == null) return;
+
+            // Demonstrate batch update - all changes will be undone together
+            _element.PerformBatchUpdate(
+                "Batch Updated Value",
+                999,
+                !_element.BooleanValue
+            );
+
+            RefreshUI();
+        }
+
+        private void ClearHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            _element?.UndoManager?.Clear();
+            RefreshUndoRedoStacks();
+            UpdateButtonStates();
+        }
+    }
+}

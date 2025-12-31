@@ -1,0 +1,217 @@
+﻿using GenericControls;
+using FrameworkUI.ProjectExplorer;
+using SoftwareUpdate;
+using SoftwareUpdate.GitHub;
+using SoftwareUpdate.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Diagnostics;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.TextFormatting;
+using System.Windows.Shell;
+using Themes;
+using Xceed.Wpf.AvalonDock.Layout;
+
+namespace Demo_ProjectUI
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+
+        public App()
+        {
+            var jList = new JumpList { ShowRecentCategory = false };
+            jList.Apply();
+            JumpList.SetJumpList(Application.Current, jList);
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            // Initialize theme system - this must be done before creating any UI
+            // ThemeService loads control templates and color palettes from the Themes library
+            // ThemeManager bridges to ThemeService and loads ProjectUI-specific resources
+            FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Light);
+
+            FrameworkUI.ShellPublicVariables.SoftwareVersionDate = "December 2025";
+            FrameworkUI.ShellPublicVariables.SoftwareExtension = ".fun";
+            FrameworkUI.UserSettings.CreateAutoRecoverBackup = false;
+
+            // Create the project model
+            Project.Project project = new Project.Project();//TotalRisk.Project.GetInstance()
+            var projectNode = new ExampleProjectNode(project);//{ Style = (Style)FindResource("TreeViewItemStyle") }
+
+            // Create and Show the Main Window
+            FrameworkUI.MainWindow mainWindow = new FrameworkUI.MainWindow(); //{ ProjectNode = projectNode }; 
+            mainWindow.ProjectNode = projectNode;
+
+            var treeGrid = new Grid();
+            //var treeStyle = (Style)FindResource("TreeViewStyle");
+            var itemStyle = (Style)FindResource("ElementNodeStyle");
+            ExplorerTreeView explorer = new ExplorerTreeView();
+            var layerCollection = new NodeCollection(null, explorer); //{ ShowCreateNewContextItem = false };
+            layerCollection.NodeHeader.HeaderText = "Layers";
+            var g = new NodeGroup(layerCollection, explorer) { IsCheckBoxNode = true };//, Style = itemStyle };
+            g.NodeHeader.HeaderText = "Grouped Items";
+            g.Add(CreateNode("Test 1", g, explorer, itemStyle));
+            g.Add(CreateNode("Test 2", g, explorer, itemStyle));
+            layerCollection.Add(g);
+            layerCollection.Add(CreateNode("Test 3", g, explorer,itemStyle));
+            layerCollection.Add(CreateNode("Test 4", g, explorer, itemStyle));
+            layerCollection.Add(CreateNode("Test 5", g, explorer, itemStyle));
+            layerCollection.Add(CreateNode("Test 6", g, explorer, itemStyle));
+            layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
+            layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
+            explorer.Items.Add(layerCollection);
+            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,/Demo_ProjectUI;component/Resources/Hazard_Icon.png")) };
+            treeGrid.Children.Add(explorer);
+            document.Content = treeGrid;
+            document.ContentId = "MapLayers"; //element.ParentCollection.Name
+            document.Title = "Map Layers";
+
+            mainWindow.OpenDocument(document, null);
+
+            // Open the Theme Demo document to demonstrate the new Themes library
+            var themeDemo = new LayoutDocument() { CanClose = false };
+            themeDemo.Content = new UI.ThemeDemoControl();
+            themeDemo.ContentId = "ThemeDemo";
+            themeDemo.Title = "Theme Demo";
+            mainWindow.OpenDocument(themeDemo, null);
+
+            // =================================================================
+            // SOFTWARE UPDATE SERVICE EXAMPLE
+            // =================================================================
+            // This demonstrates how to configure the SoftwareUpdate library
+            // for checking updates from GitHub releases.
+            //
+            // For RMC-BestFit, configure with actual values:
+            //   GitHubOwner = "USACE-RMC"
+            //   GitHubRepo = "RMC-BestFit"
+            //   CurrentVersion = your app's current version
+            //   AssetNamePattern = "RMC-BestFit.Version.*.zip"
+            // =================================================================
+
+            // Configure update options for your GitHub repository
+            var updateOptions = new UpdateOptions
+            {
+                // GitHub repository settings
+                GitHubOwner = "USACE-RMC",          // Your GitHub organization/user
+                GitHubRepo = "Demo-Project",         // Your repository name (change to actual repo)
+
+                // Current application version (parse from assembly or hardcode)
+                CurrentVersion = new SemanticVersion(1, 0, 0),
+
+                // Pattern to match release assets (supports * wildcard)
+                AssetNamePattern = "Demo-Project.*.zip",
+
+                // Include pre-release versions (beta, alpha, rc)
+                IncludePreReleases = false,
+
+                // Create backup before updating
+                CreateBackup = true,
+
+                // Auto-check for updates on startup (delay in milliseconds)
+                AutoCheckOnStartup = true,
+                AutoCheckDelayMs = 5000,  // 5 second delay after startup
+
+                // Name of main executable to restart after update
+                MainExecutableName = "Demo_ProjectUI.exe"
+            };
+
+            // Create the update service
+            var updateService = new GitHubUpdateService(updateOptions);
+
+            // Assign to MainWindow - this enables the "Check for Updates" menu item
+            mainWindow.UpdateService = updateService;
+
+            // Optional: Subscribe to update events for logging or custom handling
+            updateService.UpdateCheckCompleted += (s, result) =>
+            {
+                if (result.IsUpdateAvailable)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"Update available: {result.AvailableUpdate.Version}");
+                }
+            };
+
+            updateService.UpdateError += (s, ex) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"Update error: {ex.Message}");
+            };
+
+            // Optional: Trigger auto-check after startup delay
+            if (updateOptions.AutoCheckOnStartup)
+            {
+                AutoCheckForUpdatesAsync(mainWindow, updateService, updateOptions.AutoCheckDelayMs);
+            }
+
+            mainWindow.Show();
+        }
+
+        private Node CreateNode(string name, Node parent, ExplorerTreeView explorer, Style itemStyle)
+        {
+            var n = new SimpleNode(name,parent, explorer) { IsCheckBoxNode = true, Style=itemStyle };
+            return n;
+        }
+
+        /// <summary>
+        /// Automatically checks for updates after a delay and prompts the user if available.
+        /// </summary>
+        private async void AutoCheckForUpdatesAsync(FrameworkUI.MainWindow mainWindow, IUpdateService updateService, int delayMs)
+        {
+            try
+            {
+                // Wait for the application to fully initialize
+                await Task.Delay(delayMs);
+
+                // Check for updates
+                var result = await updateService.CheckForUpdateAsync();
+
+                if (result.IsUpdateAvailable && result.AvailableUpdate != null)
+                {
+                    // Don't prompt if the user has chosen to skip this version
+                    if (updateService.IsVersionSkipped(result.AvailableUpdate.Version))
+                        return;
+
+                    // Show update notification on the UI thread
+                    await mainWindow.Dispatcher.InvokeAsync(() =>
+                    {
+                        var message = $"A new version ({result.AvailableUpdate.Version}) is available.\n\n" +
+                                     $"You are currently running version {updateService.Options.CurrentVersion}.\n\n" +
+                                     "Would you like to download and install the update now?";
+
+                        var msgResult = MessageBox.Show(
+                            mainWindow,
+                            message,
+                            "Update Available",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Information);
+
+                        if (msgResult == MessageBoxResult.Yes)
+                        {
+                            // Trigger the same update flow as the menu item
+                            // The MainWindow's CheckForUpdates_Click handler will show the full dialog
+                            // For auto-update, we just notify - user can use menu to proceed
+                            mainWindow.ShowMessage(
+                                $"Use Tools → Check for Updates to download version {result.AvailableUpdate.Version}.",
+                                "Update Available");
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silently fail for auto-check - don't interrupt user's workflow
+                System.Diagnostics.Debug.WriteLine($"Auto-update check failed: {ex.Message}");
+            }
+        }
+    }
+}
