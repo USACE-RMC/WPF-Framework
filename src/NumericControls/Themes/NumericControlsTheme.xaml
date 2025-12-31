@@ -69,7 +69,6 @@
 
     <!-- Left-Aligned Column Header Style -->
     <Style x:Key="Left_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
-        <Setter Property="Background" Value="{DynamicResource DataGrid.Header.Background}"/>
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
         <Setter Property="ContentTemplate">
             <Setter.Value>
@@ -86,7 +85,6 @@
 
     <!-- Right-Aligned Column Header Style -->
     <Style x:Key="Right_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
-        <Setter Property="Background" Value="{DynamicResource DataGrid.Header.Background}"/>
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Right"/>
         <Setter Property="ContentTemplate">
@@ -104,7 +102,6 @@
 
     <!-- Wrapped Column Header Style -->
     <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
-        <Setter Property="Background" Value="{DynamicResource DataGrid.Header.Background}"/>
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Bottom"/>
