@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net481;net8.0-windows</TargetFrameworks>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>NumericControls</RootNamespace>
     <AssemblyName>NumericControls</AssemblyName>
     <Nullable>disable</Nullable>
@@ -21,11 +21,6 @@
     <Company>USACE-RMC</Company>
     <PackageTags>WPF; controls; numeric; statistics; distributions; data binding; desktop</PackageTags>
     <PackageId>RMC.NumericControls</PackageId>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- Suppress XML documentation warnings -->
-    <NoWarn>CS1591;CS1587;CS1570;CS1584;CS1658;CS1574;CS1573</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

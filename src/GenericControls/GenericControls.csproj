@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net481;net8.0-windows</TargetFrameworks>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>GenericControls</RootNamespace>
     <AssemblyName>GenericControls</AssemblyName>
     <Nullable>disable</Nullable>
@@ -26,11 +26,6 @@
     <PackageId>RMC.GenericControls</PackageId>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Suppress XML documentation warnings: 1591=missing xml comment, 1587=xml comment not on valid member, 1570=badly formed XML, 1584/1658=bad cref, 1574=unresolved cref, 1573=missing param tag -->
-    <NoWarn>CS1591;CS1587;CS1570;CS1584;CS1658;CS1574;CS1573</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <!--https://github.com/dotnet/reproducible-builds-->
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
@@ -45,8 +40,8 @@
   </ItemGroup>
 
   <!-- System.Drawing.Common is only needed for .NET Core/.NET 5+ (included in .NET Framework) -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-    <PackageReference Include="System.Drawing.Common" Version="8.0.11" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
