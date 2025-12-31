@@ -33,7 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Themes;
 
-namespace Demo_ProjectUI.UI
+namespace Demo_FrameworkUI.UI
 {
     /// <summary>
     /// Interaction logic for ThemeDemoControl.xaml

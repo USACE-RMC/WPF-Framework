@@ -1,19 +1,19 @@
 # Architecture Overview
 
-This document describes the architecture of the ProjectControls framework, including project dependencies, design patterns, and key components.
+This document describes the architecture of the WPF-Framework, including project dependencies, design patterns, and key components.
 
 ## Project Dependencies
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Demo_ProjectUI                        │
+│                      Demo_FrameworkUI                        │
 │                    (Example Application)                     │
 └─────────────────────────────────────────────────────────────┘
                               │
               ┌───────────────┼───────────────┐
               ▼               ▼               ▼
 ┌─────────────────┐  ┌─────────────┐  ┌─────────────┐
-│    FrameworkUI    │  │   Themes    │  │ GenericCtrls│
+│   FrameworkUI   │  │   Themes    │  │ GenericCtrls│
 │  (WPF UI Lib)   │  │ (Theming)   │  │  (Controls) │
 └─────────────────┘  └─────────────┘  └─────────────┘
          │                   │
@@ -26,10 +26,10 @@ This document describes the architecture of the ProjectControls framework, inclu
 
 ### Dependency Rules
 
-1. **FrameworkInterfaces** - No dependencies on other ProjectControls libraries
+1. **FrameworkInterfaces** - No dependencies on other WPF-Framework libraries
 2. **Themes** - No dependencies (fully independent)
 3. **FrameworkUI** - Depends on FrameworkInterfaces and Themes
-4. **Demo_ProjectUI** - Depends on all libraries (for demonstration)
+4. **Demo_FrameworkUI** - Depends on all libraries (for demonstration)
 
 ## Design Patterns
 

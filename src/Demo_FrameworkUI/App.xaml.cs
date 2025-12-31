@@ -41,7 +41,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using Xceed.Wpf.AvalonDock.Layout;
 
-namespace Demo_ProjectUI
+namespace Demo_FrameworkUI
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -101,7 +101,7 @@ namespace Demo_ProjectUI
             layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
             layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
             explorer.Items.Add(layerCollection);
-            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,/Demo_ProjectUI;component/Resources/Hazard_Icon.png")) };
+            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,/Demo_FrameworkUI;component/Resources/Hazard_Icon.png")) };
             treeGrid.Children.Add(explorer);
             document.Content = treeGrid;
             document.ContentId = "MapLayers"; //element.ParentCollection.Name
@@ -153,7 +153,7 @@ namespace Demo_ProjectUI
                 AutoCheckDelayMs = 5000,  // 5 second delay after startup
 
                 // Name of main executable to restart after update
-                MainExecutableName = "Demo_ProjectUI.exe"
+                MainExecutableName = "Demo_FrameworkUI.exe"
             };
 
             // Create the update service

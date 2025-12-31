@@ -1,6 +1,6 @@
 # Undo/Redo System Guide
 
-The ProjectControls framework includes a comprehensive undo/redo system that tracks property changes and collection operations, allowing users to reverse their actions.
+The WPF-Framework framework includes a comprehensive undo/redo system that tracks property changes and collection operations, allowing users to reverse their actions.
 
 ## Overview
 
@@ -344,7 +344,7 @@ undoManager.Execute(action);
 
 ## Demo Application
 
-See `Demo_ProjectUI/UI/UndoDemoControl.xaml` for a complete working example that demonstrates:
+See `Demo_FrameworkUI/UI/UndoDemoControl.xaml` for a complete working example that demonstrates:
 
 - Property change tracking
 - Batch operations

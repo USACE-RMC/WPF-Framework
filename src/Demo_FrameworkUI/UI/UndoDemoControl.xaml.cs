@@ -31,10 +31,10 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Demo_ProjectUI.Project.Undo_Demo;
+using Demo_FrameworkUI.Project.Undo_Demo;
 using FrameworkInterfaces.Undo;
 
-namespace Demo_ProjectUI.UI
+namespace Demo_FrameworkUI.UI
 {
     /// <summary>
     /// A demo control that showcases the undo/redo functionality.
