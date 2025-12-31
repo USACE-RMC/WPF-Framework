@@ -6,7 +6,6 @@
     <AssemblyName>FrameworkUI</AssemblyName>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
