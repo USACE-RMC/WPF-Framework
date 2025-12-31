@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3F2D4C7A-665D-4621-BEB7-F10213FE20E7}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Test_NumericControls</RootNamespace>
-    <AssemblyName>Test_NumericControls</AssemblyName>
+    <RootNamespace>Demo_NumericControls</RootNamespace>
+    <AssemblyName>Demo_NumericControls</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -123,6 +123,14 @@
     <ProjectReference Include="..\NumericControls\NumericControls.csproj">
       <Project>{076b29cf-41ec-45d1-a242-dacf6753fccc}</Project>
       <Name>NumericControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Themes\Themes.csproj">
+      <Project>{d38e5c62-dcb4-4c80-b5fc-80ced21fb4da}</Project>
+      <Name>Themes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj">
+      <Project>{4f8c9a88-f46c-4930-8d17-a7c79d0c4e2a}</Project>
+      <Name>GenericControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

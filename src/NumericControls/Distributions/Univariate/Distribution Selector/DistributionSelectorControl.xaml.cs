@@ -1,4 +1,5 @@
-﻿using Numerics.Data.Statistics;
+﻿using GenericControls;
+using Numerics.Data.Statistics;
 using Numerics.Distributions;
 using Numerics.Sampling;
 using OxyPlot.Wpf;
@@ -23,11 +24,51 @@ using System.Windows.Shapes;
 namespace NumericControls.Distributions.Univariate
 {
     /// <summary>
-    /// Interaction logic for DistributionSelectorControl.xaml
+    /// A comprehensive WPF user control for selecting, configuring, and visualizing univariate probability distributions.
+    /// Provides interactive parameter editing, PDF visualization, and statistical comparison with sample data.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The <see cref="DistributionSelectorControl"/> provides a complete interface for working with
+    /// probability distributions, including:
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description>A dropdown to select from available distribution types (Normal, LogNormal, Triangular, etc.)</description></item>
+    /// <item><description>A parameter grid for editing distribution parameters with real-time validation</description></item>
+    /// <item><description>An interactive PDF (Probability Density Function) plot</description></item>
+    /// <item><description>A summary statistics table comparing distribution and sample data</description></item>
+    /// <item><description>Automatic parameter estimation from sample data (when supported)</description></item>
+    /// <item><description>Goodness-of-fit statistics (RMSE, Chi-Squared, Kolmogorov-Smirnov)</description></item>
+    /// </list>
+    /// <para>
+    /// <b>Internationalization:</b> All numeric formatting and parsing uses <see cref="GenericControls.NumberFormatHelper"/>
+    /// for culture-aware number handling, supporting international decimal and thousands separators.
+    /// </para>
+    /// <para>
+    /// <b>Theming:</b> The control supports runtime theme switching via the Themes library.
+    /// Use <see cref="BackgroundColor"/> to customize the control's background, or let it inherit
+    /// from the application's current theme.
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// &lt;!-- XAML usage with data binding --&gt;
+    /// &lt;uni:DistributionSelectorControl
+    ///     SelectedDistribution="{Binding MyDistribution, Mode=TwoWay}"
+    ///     SampleData="{Binding MySampleData}"
+    ///     ShowPlot="True"
+    ///     ShowStatistics="True"/&gt;
+    /// </code>
+    /// </example>
+    /// <seealso cref="DistributionWithSelectorControl"/>
+    /// <seealso cref="DistributionSelectorPopup"/>
+    /// <seealso cref="Parameter"/>
+    /// <seealso cref="SummaryStatistic"/>
     public partial class DistributionSelectorControl : UserControl
     {
-
+        /// <summary>
+        /// The histogram series used to display sample data distribution.
+        /// </summary>
         private HistogramSeries _histogramSeries = new HistogramSeries()
         {
             Name = "Histogram",
@@ -59,7 +100,7 @@ namespace NumericControls.Distributions.Univariate
         private void InitializeControl()
         {
 
-            // Create summary statistics list
+            // Create summary statistics list (12 base stats + 3 goodness of fit stats = 15 total)
             SummaryStatisticsList.Add(new SummaryStatistic("Minimum", "", ""));
             SummaryStatisticsList.Add(new SummaryStatistic("Maximum", "", ""));
             SummaryStatisticsList.Add(new SummaryStatistic("Mean", "", ""));
@@ -72,6 +113,10 @@ namespace NumericControls.Distributions.Univariate
             SummaryStatisticsList.Add(new SummaryStatistic("50%", "", ""));
             SummaryStatisticsList.Add(new SummaryStatistic("75%", "", ""));
             SummaryStatisticsList.Add(new SummaryStatistic("95%", "", ""));
+            // Goodness of fit statistics (indices 12, 13, 14)
+            SummaryStatisticsList.Add(new SummaryStatistic("RMSE", "", " - "));
+            SummaryStatisticsList.Add(new SummaryStatistic("Chi-Squared", "", " - "));
+            SummaryStatisticsList.Add(new SummaryStatistic("K-S", "", " - "));
 
             // Bind the summary and parameter data tables
             ParametersTable.ItemsSource = ParameterList;
@@ -374,25 +419,26 @@ namespace NumericControls.Distributions.Univariate
                 DataStatsColumn.Visibility = Visibility.Visible;
                 var summaryPercentiles = Numerics.Data.Statistics.Statistics.SevenNumberSummary(SampleData);
                 var stats = Numerics.Data.Statistics.Statistics.ProductMoments(SampleData);
-                //var mode = Numerics.Mathematics.RootFinding.Brent.Solve((x) => { return stats[0] - (summaryPercentiles[0] + summaryPercentiles[6] + x) / 3; }, summaryPercentiles[0], summaryPercentiles[6]);
                 var mode = histogram.Mode;
 
-                SummaryStatisticsList[0].DataStat = summaryPercentiles[0].ToString("N4");
-                SummaryStatisticsList[1].DataStat = summaryPercentiles[6].ToString("N4");
-                SummaryStatisticsList[2].DataStat = stats[0].ToString("N4");
-                SummaryStatisticsList[3].DataStat = mode.ToString("N4");
-                SummaryStatisticsList[4].DataStat = stats[1].ToString("N4");
-                SummaryStatisticsList[5].DataStat = stats[2].ToString("N4");
-                SummaryStatisticsList[6].DataStat = stats[3].ToString("N4");
-                SummaryStatisticsList[7].DataStat = summaryPercentiles[1].ToString("N4");
-                SummaryStatisticsList[8].DataStat = summaryPercentiles[2].ToString("N4");
-                SummaryStatisticsList[9].DataStat = summaryPercentiles[3].ToString("N4");
-                SummaryStatisticsList[10].DataStat = summaryPercentiles[4].ToString("N4");
-                SummaryStatisticsList[11].DataStat = summaryPercentiles[5].ToString("N4");
+                // Use culture-aware formatting via NumberFormatHelper
+                SummaryStatisticsList[0].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[0], 4, false);
+                SummaryStatisticsList[1].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[6], 4, false);
+                SummaryStatisticsList[2].DataStat = NumberFormatHelper.FormatDouble(stats[0], 4, false);
+                SummaryStatisticsList[3].DataStat = NumberFormatHelper.FormatDouble(mode, 4, false);
+                SummaryStatisticsList[4].DataStat = NumberFormatHelper.FormatDouble(stats[1], 4, false);
+                SummaryStatisticsList[5].DataStat = NumberFormatHelper.FormatDouble(stats[2], 4, false);
+                SummaryStatisticsList[6].DataStat = NumberFormatHelper.FormatDouble(stats[3], 4, false);
+                SummaryStatisticsList[7].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[1], 4, false);
+                SummaryStatisticsList[8].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[2], 4, false);
+                SummaryStatisticsList[9].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[3], 4, false);
+                SummaryStatisticsList[10].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[4], 4, false);
+                SummaryStatisticsList[11].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[5], 4, false);
 
-                SummaryStatisticsList.Add(new SummaryStatistic("RMSE", "", " - "));
-                SummaryStatisticsList.Add(new SummaryStatistic("Chi-Squared", "", " - "));
-                SummaryStatisticsList.Add(new SummaryStatistic("K-S", "", " - "));
+                // Reset goodness of fit stats (will be updated in UpdateDistributionStats)
+                SummaryStatisticsList[12].DataStat = " - ";
+                SummaryStatisticsList[13].DataStat = " - ";
+                SummaryStatisticsList[14].DataStat = " - ";
 
                 SummaryTable.Items.Refresh();
 
@@ -443,10 +489,11 @@ namespace NumericControls.Distributions.Univariate
             {
                 string[,] paramString = currentDistribution.ParametersToString;
                 string[] paramNames = currentDistribution.GetParameterPropertyNames;
-                // Update parameter grid
+                // Update parameter grid with culture-aware parsing
                 for (int i = 0; i < paramString.GetLength(0); i++)
                 {
-                    if (double.TryParse(paramString[i, 1], out double paramValue) == false) { paramValue = double.NaN; }
+                    // Use NumberFormatHelper for culture-aware parsing of parameter values
+                    if (NumberFormatHelper.TryParseDouble(paramString[i, 1], out double paramValue) == false) { paramValue = double.NaN; }
                     Parameter param = new Parameter(paramNames[i], paramString[i, 0], paramValue);
                     param.PropertyChanged += ParameterPropertyChanged;
                     ParameterList.Add(param);
@@ -636,43 +683,50 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Update the summary statistics.
+        /// Update the summary statistics with culture-aware formatting.
         /// </summary>
         private void UpdateDistributionStats()
         {
             // Distribution
             if ((SelectedDistribution == null) || (SelectedDistribution.ParametersValid == false))
             {
-                SummaryStatisticsList[0].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[1].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[2].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[3].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[4].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[5].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[6].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[7].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[8].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[9].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[10].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[11].DistStat = double.NaN.ToString("N4");
+                // Use culture-aware formatting for NaN values
+                string nanValue = NumberFormatHelper.FormatDouble(double.NaN, 4, false);
+                SummaryStatisticsList[0].DistStat = nanValue;
+                SummaryStatisticsList[1].DistStat = nanValue;
+                SummaryStatisticsList[2].DistStat = nanValue;
+                SummaryStatisticsList[3].DistStat = nanValue;
+                SummaryStatisticsList[4].DistStat = nanValue;
+                SummaryStatisticsList[5].DistStat = nanValue;
+                SummaryStatisticsList[6].DistStat = nanValue;
+                SummaryStatisticsList[7].DistStat = nanValue;
+                SummaryStatisticsList[8].DistStat = nanValue;
+                SummaryStatisticsList[9].DistStat = nanValue;
+                SummaryStatisticsList[10].DistStat = nanValue;
+                SummaryStatisticsList[11].DistStat = nanValue;
+                // Reset goodness of fit stats
+                SummaryStatisticsList[12].DistStat = " - ";
+                SummaryStatisticsList[13].DistStat = " - ";
+                SummaryStatisticsList[14].DistStat = " - ";
                 SummaryTable.Items.Refresh();
             }
             else
             {
-                SummaryStatisticsList[0].DistStat = SelectedDistribution.Minimum.ToString("N4");
-                SummaryStatisticsList[1].DistStat = SelectedDistribution.Maximum.ToString("N4");
-                SummaryStatisticsList[2].DistStat = SelectedDistribution.Mean.ToString("N4");
-                SummaryStatisticsList[3].DistStat = SelectedDistribution.Mode.ToString("N4");
-                SummaryStatisticsList[4].DistStat = SelectedDistribution.StandardDeviation.ToString("N4");
-                SummaryStatisticsList[5].DistStat = SelectedDistribution.Skewness.ToString("N4");
-                SummaryStatisticsList[6].DistStat = SelectedDistribution.Kurtosis.ToString("N4");
-                SummaryStatisticsList[7].DistStat = SelectedDistribution.InverseCDF(0.05d).ToString("N4");
-                SummaryStatisticsList[8].DistStat = SelectedDistribution.InverseCDF(0.25d).ToString("N4");
-                SummaryStatisticsList[9].DistStat = SelectedDistribution.InverseCDF(0.5d).ToString("N4");
-                SummaryStatisticsList[10].DistStat = SelectedDistribution.InverseCDF(0.75d).ToString("N4");
-                SummaryStatisticsList[11].DistStat = SelectedDistribution.InverseCDF(0.95d).ToString("N4");
+                // Use culture-aware formatting via NumberFormatHelper
+                SummaryStatisticsList[0].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.Minimum, 4, false);
+                SummaryStatisticsList[1].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.Maximum, 4, false);
+                SummaryStatisticsList[2].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.Mean, 4, false);
+                SummaryStatisticsList[3].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.Mode, 4, false);
+                SummaryStatisticsList[4].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.StandardDeviation, 4, false);
+                SummaryStatisticsList[5].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.Skewness, 4, false);
+                SummaryStatisticsList[6].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.Kurtosis, 4, false);
+                SummaryStatisticsList[7].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.InverseCDF(0.05d), 4, false);
+                SummaryStatisticsList[8].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.InverseCDF(0.25d), 4, false);
+                SummaryStatisticsList[9].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.InverseCDF(0.5d), 4, false);
+                SummaryStatisticsList[10].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.InverseCDF(0.75d), 4, false);
+                SummaryStatisticsList[11].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.InverseCDF(0.95d), 4, false);
 
-                // Add Goodness of fit stats
+                // Add Goodness of fit stats with culture-aware formatting
                 if (SampleData != null && DistributionCanEstimate() == true)
                 {
                     var data = SampleData.ToArray();
@@ -681,12 +735,18 @@ namespace NumericControls.Distributions.Univariate
                     var rmse = GoodnessOfFit.RMSE(SampleData, SelectedDistribution);
                     var chi = GoodnessOfFit.ChiSquared(data, SelectedDistribution);
                     var ks = GoodnessOfFit.KolmogorovSmirnov(data, SelectedDistribution);
-                    
-                    SummaryStatisticsList[12].DistStat = rmse.ToString("N4");
-                    SummaryStatisticsList[13].DistStat = chi.ToString("N4");
-                    SummaryStatisticsList[14].DistStat = ks.ToString("N4");
-                }
 
+                    SummaryStatisticsList[12].DistStat = NumberFormatHelper.FormatDouble(rmse, 4, false);
+                    SummaryStatisticsList[13].DistStat = NumberFormatHelper.FormatDouble(chi, 4, false);
+                    SummaryStatisticsList[14].DistStat = NumberFormatHelper.FormatDouble(ks, 4, false);
+                }
+                else
+                {
+                    // Reset goodness of fit stats when not applicable
+                    SummaryStatisticsList[12].DistStat = " - ";
+                    SummaryStatisticsList[13].DistStat = " - ";
+                    SummaryStatisticsList[14].DistStat = " - ";
+                }
 
                 SummaryTable.Items.Refresh();
             }

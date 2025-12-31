@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_FrameworkUI", "src\Dem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo_GenericControls", "src\Demo_GenericControls\Demo_GenericControls.csproj", "{E5F6A7B8-C901-2345-EF01-6789ABCDEF01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_NumericControls", "src\Demo_NumericControls\Test_NumericControls.csproj", "{3F2D4C7A-665D-4621-BEB7-F10213FE20E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_NumericControls", "src\Demo_NumericControls\Demo_NumericControls.csproj", "{3F2D4C7A-665D-4621-BEB7-F10213FE20E7}"
 EndProject
 
 # Test Projects

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Xml;
 using System.Xml.Linq;
@@ -12,12 +13,26 @@ using NumericControls;
 using Numerics.Data;
 using Numerics.Distributions;
 using Numerics.Sampling;
+using Themes;
 
-namespace Test_NumericControls
+namespace Demo_NumericControls
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Main window for the NumericControls demonstration application.
+    /// Demonstrates the usage of various NumericControls with theme support.
     /// </summary>
+    /// <remarks>
+    /// This demo showcases:
+    /// <list type="bullet">
+    /// <item><description>Distribution Selector controls for univariate probability distributions</description></item>
+    /// <item><description>Uncertain Curve Editor for ordered paired data with uncertainty</description></item>
+    /// <item><description>Curve Editor for standard ordered paired data</description></item>
+    /// <item><description>Time Series Table for temporal data management</description></item>
+    /// <item><description>Bin Definition control for stratification options</description></item>
+    /// <item><description>Bivariate CDF control for two-dimensional empirical distributions</description></item>
+    /// <item><description>Runtime theme switching (Light, Blue, Dark)</description></item>
+    /// </list>
+    /// </remarks>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public List<UnivariateDistributionBase> DistOptions
@@ -266,6 +281,24 @@ namespace Test_NumericControls
         private void MinutesItem_Selected(object sender, RoutedEventArgs e)
         {
             TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneMinute, new DateTime(1980, 7, 30), new DateTime(1980, 7, 30, 23, 59, 0), 10); ;
+        }
+
+        /// <summary>
+        /// Handles the theme selection change event.
+        /// Switches the application theme based on user selection.
+        /// </summary>
+        /// <param name="sender">The ComboBox that triggered the event.</param>
+        /// <param name="e">Event arguments containing selection change information.</param>
+        private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ThemeComboBox?.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string themeName = selectedItem.Content?.ToString() ?? "Light";
+                if (ThemeResourceHelper.TryParseTheme(themeName, out Theme theme))
+                {
+                    ThemeService.Instance.SetTheme(theme);
+                }
+            }
         }
     }
 }
