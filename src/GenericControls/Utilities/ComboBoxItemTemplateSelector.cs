@@ -1,7 +1,7 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -37,6 +37,14 @@ namespace GenericControls
     /// A custom <see cref="DataTemplateSelector"/> that chooses between two templates based on 
     /// whether the ComboBox item is being rendered in the dropdown list or in the selected item display.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ComboBoxItemTemplateSelector : DataTemplateSelector
     {
         /// <summary>

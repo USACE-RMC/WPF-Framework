@@ -1,4 +1,34 @@
-﻿using System;
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -14,8 +44,10 @@ namespace FrameworkUI
     /// </summary>
     /// <remarks>
     /// <para>
-    ///     Authors:
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
     /// </para>
     /// </remarks>
     public class FileSizeManager
@@ -57,7 +89,15 @@ namespace FrameworkUI
 
         #region Events
 
+        /// <summary>
+        /// Occurs when the file size management operation reports progress or completion status.
+        /// </summary>
         public static event ReportProgressEventHandler ReportProgress;
+
+        /// <summary>
+        /// Delegate for the <see cref="ReportProgress"/> event.
+        /// </summary>
+        /// <param name="message">A message describing the progress or status.</param>
         public delegate void ReportProgressEventHandler(string message);
 
         #endregion
@@ -122,6 +162,8 @@ namespace FrameworkUI
         /// <summary>
         /// Background worker for performing file compaction.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private static void BackgroundWorker_Dowork(object sender, DoWorkEventArgs e)
         {
             // Sleep for 1 second to give appearance that the compaction is doing some work
@@ -141,6 +183,8 @@ namespace FrameworkUI
         /// <summary>
         /// Background worker progress changed.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private static void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             // This gives the perception that the optimization is taking some time and actually doing something meaningful.
@@ -163,6 +207,8 @@ namespace FrameworkUI
         /// <summary>
         /// Report status when the compression worker has completed.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private static void BackgroundWorker_WorkerComplete(object sender, RunWorkerCompletedEventArgs e)
         {
             // Stop and clean up timer
@@ -207,6 +253,8 @@ namespace FrameworkUI
         /// <summary>
         /// Timer used to update the progress bar.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private static void Timer_Tick(object sender, EventArgs e)
         {
             // Get the temp journal file name
@@ -246,6 +294,7 @@ namespace FrameworkUI
         /// Gets the file size of the project file. Returns a long.
         /// </summary>
         /// <param name="fileName">The full file name.</param>
+        /// <returns>The file size in bytes.</returns>
         public static long GetFileSize(string fileName)
         {
             return new FileInfo(fileName).Length; 
@@ -255,6 +304,7 @@ namespace FrameworkUI
         /// Gets the file size of the file in a standard text format; e.g., 12.14 MB.
         /// </summary>
         /// <param name="fileName">The full file name.</param>
+        /// <returns>A formatted string representing the file size.</returns>
         public static string GetFileSizeText(string fileName)
         {
             return FormatBytes((ulong)GetFileSize(fileName));

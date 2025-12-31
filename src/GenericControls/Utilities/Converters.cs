@@ -1,7 +1,7 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -43,6 +43,14 @@ namespace GenericControls
     /// <summary>
     /// Reverses a boolean value in both directions (true <-> false).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ReverseBooleanConverter : IValueConverter
     {
         /// <summary>
@@ -83,6 +91,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a boolean value to a Color, using specified value for true and false.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BooleanToColorConverter : IValueConverter
     {
         /// <summary>
@@ -149,6 +165,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a boolean value to a Brush, using specfied values for true and false.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BooleanToBrushConverter : IValueConverter
     {
         /// <summary>
@@ -215,6 +239,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a boolean value to a string, using specified true/false strings.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BooleanToTextConverter : IValueConverter
     {
         /// <summary>
@@ -289,6 +321,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a boolean value to a double, using a specified true/false values.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BooleanToDoubleConverter : IValueConverter
     {
         /// <summary>
@@ -365,6 +405,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a <see cref="Visibility"/> value to a boolean based on configured values for each visibility state.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class VisibilityToBooleanConverter : IValueConverter
     {
         /// <summary>
@@ -453,6 +501,14 @@ namespace GenericControls
     /// <summary>
     /// Returns true if a numeric value is within the specified inclusive range.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class InRangeConverter : IValueConverter
     {
         /// <summary>
@@ -513,6 +569,14 @@ namespace GenericControls
     /// <summary>
     /// Always returns <see cref="Visibility.Visible"/> regardless of input.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class AlwaysVisibleConverter : IValueConverter
     {
         /// <summary>
@@ -546,6 +610,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a <see cref="DateTime"/> value to a formatted time segment string (hour, minute, second, or meridian)
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class TimeTextConverter : DependencyObject, IValueConverter
     {
         /// <summary>
@@ -644,6 +716,14 @@ namespace GenericControls
     /// <summary>
     /// Adjusts a width value to account for the vertical scrollbar width in a <see cref="DataGrid"/>
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DataGridWidthConverter : IValueConverter
     {
         /// <summary>
@@ -682,6 +762,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a double value to a <see cref="Thickness"/> with optional side inclusion flags.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleToThicknessConverter : IValueConverter
     {
 
@@ -750,6 +838,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a <see cref="Thickness"/> to the average of all four sides.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ThicknessToDoubleConverter : IValueConverter
     {
         /// <summary>
@@ -790,6 +886,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a <see cref="Color"/> to a <see cref="SolidColorBrush"/> and vice versa.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ColorToSolidBrushConverter : IValueConverter
     {
         /// <summary>
@@ -826,6 +930,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a <see cref="System.Drawing.Color"/> to a <see cref="SolidColorBrush"/> and vice versa.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DrawingColorToSolidColorBrushConverter : IValueConverter
     {
         /// <summary>
@@ -869,6 +981,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a string or font name to a <see cref="FontFamily"/>.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class FontToFontFamilyConverter : IValueConverter
     {
         /// <summary>
@@ -905,6 +1025,14 @@ namespace GenericControls
     /// <summary>
     /// Convertts a <see cref="FontFamily"/> to a string and vice versa.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class FontFamilyToFontStringConverter : IValueConverter
     {
         /// <summary>
@@ -941,6 +1069,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between integer and double values.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class IntToDoubleConverter : IValueConverter
     {
         /// <summary>
@@ -978,6 +1114,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between a double and its string representation.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleToStringConverter : IValueConverter
     {
         /// <summary>
@@ -1016,6 +1160,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between string and double types.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class StringToDoubleConverter : IValueConverter
     {
         /// <summary>
@@ -1054,6 +1206,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between <see cref="double"/> and <see cref="DataGridLength"/> values.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleToDataGridLengthConverter : IValueConverter
     {
         /// <summary>
@@ -1102,6 +1262,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between <see cref="double"/> and <see cref="GridLength"/> values.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleToGridLengthConverter : IValueConverter
     {
         /// <summary>
@@ -1150,6 +1318,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between <see cref="double"/> and <see cref="CornerRadius"/> values.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleToCornerRadiusConverter : IValueConverter
     {
         /// <summary>
@@ -1199,6 +1375,14 @@ namespace GenericControls
     /// <summary>
     /// Converts between <see cref="Vector"/> and <see cref="Point"/>.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class VectorToPointConverter : IValueConverter
     {
         /// <summary>
@@ -1243,6 +1427,14 @@ namespace GenericControls
     /// <summary>
     /// Computes the width of a single tab in a <see cref="TabControl"/> based on the number of items and actual width.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class TabSizeConverter : IMultiValueConverter
     {
         /// <summary>
@@ -1280,6 +1472,14 @@ namespace GenericControls
     /// <summary>
     /// Converts special <see cref="double"/> values to string representations such as "N/A" or infinity, and vice versa.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleToNAConverter : IValueConverter
     {
         /// <summary>
@@ -1352,6 +1552,14 @@ namespace GenericControls
     /// <summary>
     /// Converts strings representing special numeric values to "N/A" if they are invalid or special (NaN, inf).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class StringToNAConverter : IValueConverter
     {
         /// <summary>
@@ -1399,6 +1607,14 @@ namespace GenericControls
     /// <summary>
     /// Converts a <see cref="SolidColorBrush"/> to a lighter semi-transparent variant used for gridlines.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class GridlineColorLightConverter : IValueConverter
     {
         /// <summary>

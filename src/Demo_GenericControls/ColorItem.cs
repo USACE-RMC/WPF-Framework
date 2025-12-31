@@ -1,7 +1,7 @@
-﻿/**
+﻿/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -26,7 +26,7 @@
 * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* **/
+*/
 using System.ComponentModel;
 using System.Windows.Media;
 
@@ -35,6 +35,14 @@ namespace Demo_GenericControls
     /// <summary>
     /// Represents a named color with change notification support.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ColorItem : INotifyPropertyChanged
     {
 

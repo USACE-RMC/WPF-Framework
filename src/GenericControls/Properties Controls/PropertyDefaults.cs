@@ -1,7 +1,7 @@
 ﻿/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -32,8 +32,16 @@ using System.Windows;
 namespace GenericControls
 {
     /// <summary>
-    /// Setting Property defaults constants to be used in the Properties controls 
+    /// Provides default constants for property control dimensions and widths.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class PropertyDefaults
     {
         public static double DefaultMaxPropertyWidth = double.PositiveInfinity;

@@ -1,7 +1,7 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -40,6 +40,14 @@ namespace GenericControls
     /// A custom TextBox control that validates user input based on a character limit, 
     /// disallowed characters, disallowed duplicate strings, and blank input rules.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class NameTextBox
     {
         /// <summary>

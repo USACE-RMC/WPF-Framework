@@ -1,7 +1,7 @@
 ﻿/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -38,15 +38,46 @@ namespace GenericControls
 {
 
     /// <summary>
-/// The following class is based off the solution from https://www.codeproject.com/Articles/23731/RecentFileList-a-WPF-MRU.
-/// It has been converted to VB.NET and modified to only support Most Recently Used (MRU) through registry.
-/// </summary>
+    /// Manages a Most Recently Used (MRU) file list with menu integration and registry persistence.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// Based on the solution from https://www.codeproject.com/Articles/23731/RecentFileList-a-WPF-MRU.
+    /// Converted and modified to support MRU through Windows Registry.
+    /// </para>
+    /// </remarks>
     public class RecentFileList : Separator
     {
+        /// <summary>
+        /// Interface for persisting recent file lists to storage.
+        /// </summary>
         public interface IPersist
         {
+            /// <summary>
+            /// Retrieves the list of recent files.
+            /// </summary>
+            /// <param name="max">Maximum number of files to retrieve.</param>
+            /// <returns>List of recent file paths.</returns>
             List<string> RecentFiles(int max);
+
+            /// <summary>
+            /// Inserts a file into the recent files list.
+            /// </summary>
+            /// <param name="filepath">The file path to insert.</param>
+            /// <param name="max">Maximum number of files to maintain.</param>
             void InsertFile(string filepath, int max);
+
+            /// <summary>
+            /// Removes a file from the recent files list.
+            /// </summary>
+            /// <param name="filepath">The file path to remove.</param>
+            /// <param name="max">Maximum number of files to check.</param>
             void RemoveFile(string filepath, int max);
         }
 
@@ -98,10 +129,16 @@ namespace GenericControls
     /// </summary>
         public string MenuItemFormatTenPlus { get; set; }
 
+        /// <summary>
+        /// Delegate for customizing menu item text.
+        /// </summary>
+        /// <param name="index">The index of the menu item.</param>
+        /// <param name="filepath">The file path.</param>
+        /// <returns>The customized menu item text.</returns>
         public delegate string GetMenuItemTextDelegate(int index, string filepath);
 
         /// <summary>
-        /// Gets/sets the delegates the string to customize the text shown in each menu item.
+        /// Gets/sets the delegate to customize the text shown in each menu item.
         /// </summary>
         public GetMenuItemTextDelegate GetMenuItemTextHandler { get; set; }
 
@@ -469,6 +506,9 @@ namespace GenericControls
         /// </summary>
         public class MenuClickEventArgs : EventArgs
         {
+            /// <summary>
+            /// Gets the file path associated with the clicked menu item.
+            /// </summary>
             public string Filepath
             {
                 get
@@ -482,6 +522,10 @@ namespace GenericControls
             }
             private string m_Filepath;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MenuClickEventArgs"/> class.
+            /// </summary>
+            /// <param name="filepath">The file path associated with the event.</param>
             public MenuClickEventArgs(string filepath)
             {
                 Filepath = filepath;
@@ -538,8 +582,19 @@ namespace GenericControls
         /// <summary>
         /// Provides static access to common assembly attributes for the current application.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b> Authors: </b>
+        /// <list type="bullet">
+        ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+        /// </list>
+        /// </para>
+        /// </remarks>
         private sealed class ApplicationAttributes
         {
+            /// <summary>
+            /// Private constructor to prevent instantiation.
+            /// </summary>
             private ApplicationAttributes()
             {
             }
@@ -705,8 +760,16 @@ namespace GenericControls
 
         // -----------------------------------------------------------------------------------------
         /// <summary>
-        /// Implements recent file list persistence using the Windows Registry. 
+        /// Implements recent file list persistence using the Windows Registry.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b> Authors: </b>
+        /// <list type="bullet">
+        ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+        /// </list>
+        /// </para>
+        /// </remarks>
         private class RegistryPersister : IPersist
         {
             /// <summary>
@@ -734,7 +797,7 @@ namespace GenericControls
             }
 
             /// <summary>
-            /// Returns the registry value key for a given index
+            /// Returns the registry value key name for a given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns>A string-formatted registry key name.</returns>
@@ -744,7 +807,7 @@ namespace GenericControls
             }
 
             /// <summary>
-            /// Returns the list of recent files from the registry.
+            /// Retrieves the list of recent files from the registry.
             /// </summary>
             /// <param name="max">The maximum number of files to return.</param>
             /// <returns>A list of file paths.</returns>

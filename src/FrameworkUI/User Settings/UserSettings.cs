@@ -1,4 +1,34 @@
-﻿using System;
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Xml;
@@ -12,110 +42,114 @@ namespace FrameworkUI
     /// <remarks>
     /// <para>
     ///     Authors:
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </para>
+/// <para>
+/// <b> Authors: </b>
+/// <list type="bullet">
+///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+/// </list>
+/// </para>
     /// </remarks>
     public class UserSettings
     {
 
         /// <summary>
-        /// Gets and sets whether the user agreed to the terms and conditions for use.
+        /// Gets or sets whether the user agreed to the terms and conditions for use.
         /// </summary>
         public static bool UserAgreedToTCU { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets the color theme.
+        /// Gets or sets the color theme.
         /// </summary>
         public static string ColorTheme { get; set; } = "Light";
 
         /// <summary>
-        /// Gets and sets whether to save window layout.
+        /// Gets or sets whether to save window layout.
         /// </summary>
         public static bool SaveWindowLayout { get; set; } = true;
 
         /// <summary>
-        /// Gets and sets the maximum number of window menu items to show.
+        /// Gets or sets the maximum number of window menu items to show.
         /// </summary>
         public static int MaxWindowMenuItems { get; set; } = 10;
 
         /// <summary>
-        /// Gets and sets the maximum number of recent file items to show.
+        /// Gets or sets the maximum number of recent file items to show.
         /// </summary>
         public static int MaxRecentFileItems { get; set; } = 10;
 
         /// <summary>
-        /// Gets and sets whether to show the Undo/Redo buttons on the toolbar.
+        /// Gets or sets whether to show the Undo/Redo buttons on the toolbar.
         /// </summary>
         public static bool ShowUndoRedoButtons { get; set; } = true;
 
         /// <summary>
-        /// Gets and sets whether to compress the project file on close.
+        /// Gets or sets whether to compress the project file on close.
         /// </summary>
         public static bool CompressProjectFileOnClose { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets whether to create an AutoRecover backup file.
+        /// Gets or sets whether to create an AutoRecover backup file.
         /// </summary>
         public static bool CreateAutoRecoverBackup { get; set; } = true;
 
         /// <summary>
-        /// Gets and sets the AutoRecover interval.
+        /// Gets or sets the AutoRecover interval.
         /// </summary>
         public static int AutoRecoverInterval { get; set; } = 30;
 
         /// <summary>
-        /// Gets and sets whether to keep the last backup version if the file were to unexpectedly close.
+        /// Gets or sets whether to keep the last backup version if the file were to unexpectedly close.
         /// </summary>
         public static bool KeepLastBackupVersion { get; set; } = true;
 
         /// <summary>
-        /// Gets and sets whether error messages beep.
+        /// Gets or sets whether error messages beep.
         /// </summary>
         public static bool ErrorBeep { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets whether warning messages beep.
+        /// Gets or sets whether warning messages beep.
         /// </summary>
         public static bool WarningBeep { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets whether messages beep.
+        /// Gets or sets whether messages beep.
         /// </summary>
         public static bool MessageBeep { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets whether event messages beep.
+        /// Gets or sets whether event messages beep.
         /// </summary>
         public static bool EventBeep { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets the error message color.
+        /// Gets or sets the error message color.
         /// </summary>
         public static System.Drawing.Color ErrorColor { get; set; } = System.Drawing.Color.Red;
 
         /// <summary>
-        /// Gets and sets the warning message color.
+        /// Gets or sets the warning message color.
         /// </summary>
         public static System.Drawing.Color WarningColor { get; set; } = System.Drawing.Color.DarkOrange;
 
         /// <summary>
-        /// Gets and sets the message color.
+        /// Gets or sets the message color.
         /// </summary>
         public static System.Drawing.Color MessageColor { get; set; } = System.Drawing.Color.Blue;
 
         /// <summary>
-        /// Gets and sets the event message color.
+        /// Gets or sets the event message color.
         /// </summary>
         public static System.Drawing.Color EventColor { get; set; } = System.Drawing.Color.Black;
 
         /// <summary>
-        /// Gets and sets the default folder location.
+        /// Gets or sets the default folder location.
         /// </summary>
         public static string DefaultLocation { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
 
         /// <summary>
-        /// Gets and sets the default output value decimal digits.
+        /// Gets or sets the default output value decimal digits.
         /// </summary>
         public static int DefaultValueDigits
         {
@@ -136,7 +170,7 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Gets and sets the value string format
+        /// Gets or sets the value string format
         /// </summary>
         /// <returns></returns>
         public static string ValueStringFormat

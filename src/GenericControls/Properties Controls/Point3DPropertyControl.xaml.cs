@@ -1,7 +1,7 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -38,6 +38,14 @@ namespace GenericControls
     /// <summary>
     /// A WPF UserControl for binding and editing a 3D point (X,Y,Z) with decimal precision, title, and layout properties.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class Point3DPropertyControl : UserControl, INotifyPropertyChanged
     {
         /// <summary>

@@ -1,4 +1,34 @@
-﻿using System;
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,8 +43,16 @@ using FrameworkInterfaces;
 namespace FrameworkUI.MessageWindow
 {
     /// <summary>
-    /// Interaction logic for MessageWindowControl.xaml
+    /// Interaction logic for MessageWindowControl.xaml providing a filterable message display window.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class MessageWindowControl : UserControl
     {
         /// <summary>
@@ -39,7 +77,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(SolidColorBrush), typeof(MessageWindowControl), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.White)));
 
         /// <summary>
-        /// Get and set the message window background color.
+        /// Gets or sets the message window background color.
         /// </summary>
         public SolidColorBrush BackgroundColor
         {
@@ -53,7 +91,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty StackPanelBackgroundColorProperty = DependencyProperty.Register(nameof(StackPanelBackgroundColor), typeof(SolidColorBrush), typeof(MessageWindowControl), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.White)));
 
         /// <summary>
-        /// Get and set the stack panel background color.
+        /// Gets or sets the stack panel background color.
         /// </summary>
         public SolidColorBrush StackPanelBackgroundColor
         {
@@ -67,7 +105,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty StackPanelSeperatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeperatorStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the stack panel separator style.
+        /// Gets or sets the stack panel separator style.
         /// </summary>
         public Style StackPanelSeperatorStyle
         {
@@ -81,7 +119,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty StackPanelButtonStyleProperty = DependencyProperty.Register(nameof(StackPanelButtonStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the stack panel button style.
+        /// Gets or sets the stack panel button style.
         /// </summary>
         public Style StackPanelButtonStyle
         {
@@ -95,7 +133,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty StackPanelPressedButtonStyleProperty = DependencyProperty.Register(nameof(StackPanelPressedButtonStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the stack panel pressed button style.
+        /// Gets or sets the stack panel pressed button style.
         /// </summary>
         public Style StackPanelPressedButtonStyle
         {
@@ -109,7 +147,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty CenterColumnHeaderStyleProperty = DependencyProperty.Register(nameof(CenterColumnHeaderStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the center header column style.
+        /// Gets or sets the center header column style.
         /// </summary>
         public Style CenterColumnHeaderStyle
         {
@@ -123,7 +161,7 @@ namespace FrameworkUI.MessageWindow
         public static DependencyProperty LeftColumnHeaderStyleProperty = DependencyProperty.Register(nameof(LeftColumnHeaderStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the left column header style.
+        /// Gets or sets the left column header style.
         /// </summary>
         public Style LeftColumnHeaderStyle
         {
@@ -142,6 +180,10 @@ namespace FrameworkUI.MessageWindow
         private bool _showMessages = false;
         private bool _showEvents = false;
 
+        /// <summary>
+        /// Handles the removal of messages from the message window.
+        /// </summary>
+        /// <param name="oldMessages">The messages that were removed.</param>
         private void MessageWindowControl_MessagesRemoved(IMessageItem[] oldMessages)
         {
             foreach (IMessageItem oldMessage in oldMessages)
@@ -198,6 +240,10 @@ namespace FrameworkUI.MessageWindow
             MyDataGrid.Items.Refresh();
         }
 
+        /// <summary>
+        /// Handles the addition of new messages to the message window.
+        /// </summary>
+        /// <param name="newMessages">The messages that were added.</param>
         private void MessageWindowControl_MessagesAdded(IMessageItem[] newMessages)
         {
             foreach (IMessageItem newMessage in newMessages)
@@ -291,6 +337,9 @@ namespace FrameworkUI.MessageWindow
             ClearFiltersButton.Style = StackPanelButtonStyle;
         }
 
+        /// <summary>
+        /// Refreshes the filtered items based on current filter settings.
+        /// </summary>
         private void RefreshFilteredItems()
         {
             _filteredMessages.Clear();
@@ -308,6 +357,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// On click, update message window filter.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void ErrorsButton_Click(object sender, RoutedEventArgs e)
         {
             if (_showErrors == true)
@@ -336,6 +387,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// On click, update message window filter.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void WarningsButton_Click(object sender, RoutedEventArgs e)
         {
             if (_showWarnings == true)
@@ -363,6 +416,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// On click, update message window filter.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void MessagesButton_Click(object sender, RoutedEventArgs e)
         {
             if (_showMessages == true)
@@ -390,6 +445,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// On click, update message window filter.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void EventsButton_Click(object sender, RoutedEventArgs e)
         {
             if (_showEvents == true)
@@ -417,6 +474,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// Clear all message window filters.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void ClearFiltersButton_Click(object sender, RoutedEventArgs e)
         {
             _showErrors = true;
@@ -438,6 +497,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// Export message window to text file.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void ExportToTextFileButton_Click(object sender, RoutedEventArgs e)
         {
             // open save dialog form
@@ -456,6 +517,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// Clear data grid selection when focus is lost.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void MyDataGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             MyDataGrid.UnselectAll();
@@ -464,6 +527,8 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// On double click, execute action for message window item click.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void MyDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (MyDataGrid.SelectedItems == null || MyDataGrid.SelectedItems.Count != 1) return;
