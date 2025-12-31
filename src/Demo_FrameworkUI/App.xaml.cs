@@ -34,19 +34,11 @@ using SoftwareUpdate;
 using SoftwareUpdate.GitHub;
 using SoftwareUpdate.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Diagnostics;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.TextFormatting;
 using System.Windows.Shell;
-using Themes;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace Demo_ProjectUI
