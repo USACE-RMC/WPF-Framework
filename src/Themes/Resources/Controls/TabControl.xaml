@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Themes"
-    xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls">
-    <cntrls:TabSizeConverter x:Key="TabSizeConverter" />
+    xmlns:local="clr-namespace:Themes">
+    <local:TabSizeConverter x:Key="TabSizeConverter" />
 
     <!--Style for Tab Control-->
     <Style x:Key="TabControlStyle" TargetType="{x:Type TabControl}">
