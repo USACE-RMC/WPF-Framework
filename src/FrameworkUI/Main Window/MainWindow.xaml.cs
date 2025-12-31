@@ -148,8 +148,9 @@ namespace FrameworkUI
                 ThemeManager.SetTheme(ThemeColor.Light);
             }
             // 
-            // Dummy call using OxyplotControls and Avalon Themes method so that the dlls will be copied with the ProjectUI control.
-            var oxyDummy = new OxyplotControls.OxySeriesColorConverter();
+            // Dummy call using Avalon Themes method so that the dlls will be copied with the ProjectUI control.
+            // Note: OxyplotControls reference removed - external dependency not included in this repository
+            // var oxyDummy = new OxyplotControls.OxySeriesColorConverter();
             var avalonDummy = new Xceed.Wpf.AvalonDock.Themes.Vs2013BlueTheme();
         }
 

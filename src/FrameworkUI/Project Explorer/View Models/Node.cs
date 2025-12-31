@@ -29,7 +29,7 @@
 */
 
 using GenericControls;
-using OxyplotControls;
+// using OxyplotControls; // External dependency not included in this repository
 using FrameworkInterfaces;
 using System;
 using System.Collections;
