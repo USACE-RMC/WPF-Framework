@@ -35,7 +35,6 @@ using System.Windows;
 using System.Windows.Controls;
 using FrameworkInterfaces;
 using Xceed.Wpf.AvalonDock.Layout;
-using Control = System.Windows.Controls.Control;
 
 namespace FrameworkUI
 {

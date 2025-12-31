@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using Control = System.Windows.Controls.Control;
 
 namespace FrameworkUI
 {

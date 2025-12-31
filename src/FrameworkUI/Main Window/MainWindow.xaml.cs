@@ -51,7 +51,6 @@ using GenericControls;
 using SoftwareUpdate;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
-using Control = System.Windows.Controls.Control;
 
 namespace FrameworkUI
 {
