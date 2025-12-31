@@ -1,7 +1,7 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -38,6 +38,14 @@ namespace GenericControls
     /// <summary>
     /// A wrapper class that exposes minimum and maximum values as dependency properties for use in WPF bindings.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class RangeWrapper : DependencyObject
     {
         /// <summary>
@@ -106,6 +114,14 @@ namespace GenericControls
     /// <summary>
     /// A validation rule that checks whether a numeric input falls within a specified range defined by a <see cref="RangeWrapper'"/> 
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class RangeValidationRule : ValidationRule
     {
         /// <summary>
@@ -160,6 +176,14 @@ namespace GenericControls
     /// <summary>
     /// A proxy class used to expose data context from a non-visual element into XAML binding scenarios.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BindingProxy : Freezable
     {
         /// <summary>

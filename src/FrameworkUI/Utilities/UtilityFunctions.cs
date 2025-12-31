@@ -1,4 +1,34 @@
-﻿using System;
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -13,16 +43,34 @@ using System.Windows.Media.Imaging;
 namespace FrameworkUI
 {
     /// <summary>
-    /// Utility functions. 
+    /// Utility functions for common operations in the framework.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class UtilityFunctions
     {
 
+        /// <summary>
+        /// Converts a UTF-8 string to a byte array.
+        /// </summary>
+        /// <param name="str">The string to convert.</param>
+        /// <returns>A byte array representing the UTF-8 encoded string.</returns>
         public static byte[] UTF8StringToBytes(string str)
         {
             return Encoding.UTF8.GetBytes(str);
         }
 
+        /// <summary>
+        /// Converts a UTF-8 byte array to a string.
+        /// </summary>
+        /// <param name="bytes">The byte array to convert.</param>
+        /// <returns>A string decoded from the UTF-8 byte array.</returns>
         public static string UTF8BytesToString(byte[] bytes)
         {
             return Encoding.UTF8.GetString(bytes);
@@ -32,6 +80,7 @@ namespace FrameworkUI
         /// Function used to convert an integer to a color.
         /// </summary>
         /// <param name="ARGB">Alpha, red, green, blue as integer.</param>
+        /// <returns>A Color object created from the ARGB integer value.</returns>
         public static System.Drawing.Color IntegerToColor(ref int ARGB)
         {
             var Bytes = BitConverter.GetBytes(ARGB);
@@ -46,6 +95,7 @@ namespace FrameworkUI
         /// Gets the free space available on the drive.
         /// </summary>
         /// <param name="driveName">Drive name.</param>
+        /// <returns>The available free space on the drive in bytes.</returns>
         public static long GetAvailableDriveSpace(string driveName)
         {
             var allDrives = DriveInfo.GetDrives();
@@ -85,7 +135,7 @@ namespace FrameworkUI
         /// This method is taken from Joe Woodbury's article at: http://www.codeproject.com/KB/cs/mrutoolstripmenu.aspx
         /// </para>
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>A shortened pathname string.</returns>
         public static string ShortenPathname(string pathname, int maxLength)
         {
             if (pathname.Length <= maxLength)
@@ -199,7 +249,11 @@ namespace FrameworkUI
         /// </summary>
         private static int menuNameCounter = 0;
 
-
+        /// <summary>
+        /// Clones a MenuItem including all its properties and sub-items.
+        /// </summary>
+        /// <param name="sourceItem">The source MenuItem to clone.</param>
+        /// <returns>A deep copy of the MenuItem with all properties and sub-items.</returns>
         public static MenuItem Clone(this MenuItem sourceItem)
         {
             MenuItem copyItem = new MenuItem();
@@ -276,6 +330,12 @@ namespace FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Gets all routed event handlers for a specific routed event on a UI element.
+        /// </summary>
+        /// <param name="element">The UI element to get handlers from.</param>
+        /// <param name="routedEvent">The routed event to get handlers for.</param>
+        /// <returns>An array of delegates representing the event handlers, or null if none exist.</returns>
         public static Delegate[] GetRoutedEventHandlers(UIElement element, RoutedEvent routedEvent)
         {
             if (element == null || routedEvent == null) { throw new ArgumentNullException(); }

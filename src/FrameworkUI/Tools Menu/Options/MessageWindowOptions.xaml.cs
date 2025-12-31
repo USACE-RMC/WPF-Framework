@@ -1,16 +1,48 @@
-﻿using System.Windows;
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace FrameworkUI
 {
     /// <summary>
-    /// Interaction logic for MessageWindowOptions.xaml
+    /// Interaction logic for MessageWindowOptions.xaml providing message window settings configuration.
     /// </summary>
     /// <remarks>
     /// <para>
-    ///     Authors:
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
     /// </para>
     /// </remarks>
     public partial class MessageWindowOptions : UserControl
@@ -32,7 +64,7 @@ namespace FrameworkUI
         public static DependencyProperty ErrorBeepProperty = DependencyProperty.Register(nameof(ErrorBeep), typeof(bool), typeof(MessageWindowOptions), new UIPropertyMetadata(true));
 
         /// <summary>
-        /// Gets and sets whether error messages beep.
+        /// Gets or sets whether error messages beep.
         /// </summary>
         public bool ErrorBeep
         {
@@ -46,7 +78,7 @@ namespace FrameworkUI
         public static DependencyProperty WarningBeepProperty = DependencyProperty.Register(nameof(WarningBeep), typeof(bool), typeof(MessageWindowOptions), new UIPropertyMetadata(true));
 
         /// <summary>
-        /// Gets and sets whether warning messages beep.
+        /// Gets or sets whether warning messages beep.
         /// </summary>
         public bool WarningBeep
         {
@@ -60,7 +92,7 @@ namespace FrameworkUI
         public static DependencyProperty MessageBeepProperty = DependencyProperty.Register(nameof(MessageBeep), typeof(bool), typeof(MessageWindowOptions), new UIPropertyMetadata(false));
 
         /// <summary>
-        /// Gets and sets whether messages beep.
+        /// Gets or sets whether messages beep.
         /// </summary>
         public bool MessageBeep
         {
@@ -74,7 +106,7 @@ namespace FrameworkUI
         public static DependencyProperty EventBeepProperty = DependencyProperty.Register(nameof(EventBeep), typeof(bool), typeof(MessageWindowOptions), new UIPropertyMetadata(false));
 
         /// <summary>
-        /// Gets and sets whether event messages beep.
+        /// Gets or sets whether event messages beep.
         /// </summary>
         public bool EventBeep
         {
@@ -88,7 +120,7 @@ namespace FrameworkUI
         public static DependencyProperty ErrorColorProperty = DependencyProperty.Register(nameof(ErrorColor), typeof(SolidColorBrush), typeof(MessageWindowOptions), new UIPropertyMetadata(Brushes.Black));
 
         /// <summary>
-        /// Get and set the error message color.
+        /// Gets or sets the error message color.
         /// </summary>
         public SolidColorBrush ErrorColor
         {
@@ -102,7 +134,7 @@ namespace FrameworkUI
         public static DependencyProperty WarningColorProperty = DependencyProperty.Register(nameof(WarningColor), typeof(SolidColorBrush), typeof(MessageWindowOptions), new UIPropertyMetadata(Brushes.Black));
 
         /// <summary>
-        /// Get and set the warning message color.
+        /// Gets or sets the warning message color.
         /// </summary>
         public SolidColorBrush WarningColor
         {
@@ -116,7 +148,7 @@ namespace FrameworkUI
         public static DependencyProperty MessageColorProperty = DependencyProperty.Register(nameof(MessageColor), typeof(SolidColorBrush), typeof(MessageWindowOptions), new UIPropertyMetadata(Brushes.Black));
 
         /// <summary>
-        /// Get and set the message color.
+        /// Gets or sets the message color.
         /// </summary>
         public SolidColorBrush MessageColor
         {
@@ -130,7 +162,7 @@ namespace FrameworkUI
         public static DependencyProperty EventColorProperty = DependencyProperty.Register(nameof(EventColor), typeof(SolidColorBrush), typeof(MessageWindowOptions), new UIPropertyMetadata(Brushes.Black));
 
         /// <summary>
-        /// Get and set the event message color.
+        /// Gets or sets the event message color.
         /// </summary>
         public SolidColorBrush EventColor
         {

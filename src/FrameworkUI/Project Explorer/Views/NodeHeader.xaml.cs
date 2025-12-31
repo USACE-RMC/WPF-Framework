@@ -1,4 +1,34 @@
-﻿using System;
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
@@ -37,7 +67,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty HeaderTextProperty = DependencyProperty.Register(nameof(HeaderText), typeof(string), typeof(NodeHeader), new FrameworkPropertyMetadata("Header"));
 
         /// <summary>
-        /// Gets and sets the header text.
+        /// Gets or sets the header text.
         /// </summary>
         public string HeaderText
         {
@@ -51,7 +81,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty HeaderDescriptionProperty = DependencyProperty.Register(nameof(HeaderDescription), typeof(string), typeof(NodeHeader), new FrameworkPropertyMetadata("Description"));
 
         /// <summary>
-        /// Gets and sets the header description.
+        /// Gets or sets the header description.
         /// </summary>
         public string HeaderDescription
         {
@@ -65,7 +95,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty HeaderFontWeightProperty = DependencyProperty.Register(nameof(HeaderFontWeight), typeof(FontWeight), typeof(NodeHeader), new FrameworkPropertyMetadata(FontWeights.Normal));
 
         /// <summary>
-        /// Gets and sets the header font weight.
+        /// Gets or sets the header font weight.
         /// </summary>
         public FontWeight HeaderFontWeight
         {
@@ -79,7 +109,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty HeaderFontSizeProperty = DependencyProperty.Register(nameof(HeaderFontSize), typeof(double), typeof(NodeHeader), new FrameworkPropertyMetadata(12d));
 
         /// <summary>
-        /// Gets and sets the header font size.
+        /// Gets or sets the header font size.
         /// </summary>
         public double HeaderFontSize
         {
@@ -93,7 +123,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty ExpandedImageProperty = DependencyProperty.Register(nameof(ExpandedImage), typeof(ImageSource), typeof(NodeHeader), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the image for the TreeViewItem header when expanded.
+        /// Gets or sets the image for the TreeViewItem header when expanded.
         /// </summary>
         public ImageSource ExpandedImage
         {
@@ -107,7 +137,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty StaticImageProperty = DependencyProperty.Register(nameof(StaticImage), typeof(ImageSource), typeof(NodeHeader), new FrameworkPropertyMetadata(null));
 
         /// <summary>
-        /// Gets and sets the static image for the TreeViewItem header.
+        /// Gets or sets the static image for the TreeViewItem header.
         /// </summary>
         public ImageSource StaticImage
         {
@@ -163,7 +193,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty ImageVisibilityProperty = DependencyProperty.Register(nameof(ImageVisibility), typeof(Visibility), typeof(NodeHeader), new FrameworkPropertyMetadata(Visibility.Visible));
 
         /// <summary>
-        /// Gets and sets the visibility of the TreeViewItem header image.
+        /// Gets or sets the visibility of the TreeViewItem header image.
         /// </summary>
         public Visibility ImageVisibility
         {
@@ -177,7 +207,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty ShowAsteriskProperty = DependencyProperty.Register(nameof(ShowAsterisk), typeof(bool), typeof(NodeHeader), new UIPropertyMetadata(false));
 
         /// <summary>
-        /// Gets and sets whether to show an asterisk next to the header text.
+        /// Gets or sets whether to show an asterisk next to the header text.
         /// </summary>
         public bool ShowAsterisk
         {
@@ -191,7 +221,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty ShowToolTipProperty = DependencyProperty.Register(nameof(ShowToolTip), typeof(bool), typeof(NodeHeader), new UIPropertyMetadata(true));
 
         /// <summary>
-        /// Gets and sets whether to show the header tooltip.
+        /// Gets or sets whether to show the header tooltip.
         /// </summary>
         public bool ShowToolTip
         {
@@ -205,7 +235,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty RenameTextProperty = DependencyProperty.Register(nameof(RenameText), typeof(string), typeof(NodeHeader), new FrameworkPropertyMetadata(""));
 
         /// <summary>
-        /// Gets and sets the rename text box text.
+        /// Gets or sets the rename text box text.
         /// </summary>
         public string RenameText
         {
@@ -219,7 +249,7 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty ShowRenameTextBoxProperty = DependencyProperty.Register(nameof(ShowRenameTextBox), typeof(bool), typeof(NodeHeader), new UIPropertyMetadata(false));
 
         /// <summary>
-        /// Gets and sets whether to show the header tooltip.
+        /// Gets or sets whether to show the header tooltip.
         /// </summary>
         public bool ShowRenameTextBox
         {

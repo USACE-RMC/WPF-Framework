@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FrameworkInterfaces\FrameworkInterfaces.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
     <ProjectReference Include="..\SoftwareUpdate\SoftwareUpdate.csproj" />

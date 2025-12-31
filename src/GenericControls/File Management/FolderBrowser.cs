@@ -1,7 +1,7 @@
 ﻿/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -38,32 +38,21 @@ namespace GenericControls
 {
 
     /// <summary>
-/// Folder browser dialog.
-/// </summary>
-/// <remarks>
-/// <para>
-///     Authors:
-///     Josip Medved
-///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil 
-/// </para>
-/// <para>
-/// Versions:
-///     <list type="bullet">
-///         <item><description>
-///         Originally created in 2-02-2012 by Josip Medved <see href = "https://www.medo64.com/2011/12/openfolderdialog/"/>.
-///         </description></item>
-///         <item><description>
-///         July 2019 - Haden Smith made changes to this to make it compatible with WPF. Changed the name to "FolderBrowserDialog" and added Title property./>.
-///         </description></item>
-///         <item>
-///         <description>
-///         June 2020 - Haden added the ability to use Window rather than IWin32Window. 
-///         If we need a better WPF solution we can use <see href = "https://github.com/McNeight/WpfFolderBrowser"/>.
-///         </description>
-///         </item>
-///     </list>
-/// </para>
-/// </remarks>
+    /// Provides a WPF-compatible folder browser dialog for selecting directories.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    ///     <item> Josip Medved (original implementation) </item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// Originally created in 2-02-2012 by Josip Medved. Modified for WPF compatibility by Haden Smith in July 2019.
+    /// June 2020 - Added support for Window rather than IWin32Window.
+    /// </para>
+    /// </remarks>
     public class FolderBrowser
     {
 
@@ -93,17 +82,30 @@ namespace GenericControls
         #region WPF32Window Wrapper Class
 
         /// <summary>
-    /// Helper wrapper class to convert a WPF window to a IWin32Window.
-    /// </summary>
+        /// Helper wrapper class to convert a WPF window to a IWin32Window.
+        /// </summary>
         private class Wpf32Window : IWin32Window
         {
+            /// <summary>
+            /// Gets the window handle.
+            /// </summary>
             public IntPtr Handle { get; private set; }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Wpf32Window"/> class.
+            /// </summary>
+            /// <param name="wpfWindow">The WPF window to wrap.</param>
             public Wpf32Window(Window wpfWindow)
             {
                 if (wpfWindow is null)
                     wpfWindow = GetDefaultOwnerWindow();
                 Handle = new WindowInteropHelper(wpfWindow).Handle;
             }
+
+            /// <summary>
+            /// Gets the default owner window from the current application.
+            /// </summary>
+            /// <returns>The application's main window, or null if none exists.</returns>
             private Window GetDefaultOwnerWindow()
             {
                 Window defaultWindow = null;
@@ -232,26 +234,42 @@ namespace GenericControls
 
     #region Native Methods for Creating Dialog Window
 
+    /// <summary>
+    /// Contains native Windows API methods and COM interfaces for file dialog functionality.
+    /// </summary>
     internal sealed class NativeMethods
     {
+        /// <summary>
+        /// Private constructor to prevent instantiation.
+        /// </summary>
         private NativeMethods()
         {
         }
 
         #region Constants
 
+        /// <summary>Folder picker mode flag.</summary>
         public const uint FOS_PICKFOLDERS = 32U;
+        /// <summary>Force file system items only.</summary>
         public const uint FOS_FORCEFILESYSTEM = 64U;
+        /// <summary>Do not validate items.</summary>
         public const uint FOS_NOVALIDATE = 256U;
+        /// <summary>Do not test file creation.</summary>
         public const uint FOS_NOTESTFILECREATE = 65536U;
+        /// <summary>Do not add to recent documents.</summary>
         public const uint FOS_DONTADDTORECENT = 33554432U;
+        /// <summary>Success return code.</summary>
         public const uint S_OK = 0U;
+        /// <summary>File system path display name flag.</summary>
         public const uint SIGDN_FILESYSPATH = 0x80058000U;
 
         #endregion
 
         #region COM
 
+        /// <summary>
+        /// COM class wrapper for the native file open dialog.
+        /// </summary>
         [ComImport]
         [ClassInterface(ClassInterfaceType.None)]
         [TypeLibType(TypeLibTypeFlags.FCanCreate)]
@@ -260,6 +278,9 @@ namespace GenericControls
         {
         }
 
+        /// <summary>
+        /// COM interface for the Windows file dialog.
+        /// </summary>
         [ComImport]
         [Guid("42F85136-DB7E-439C-85F1-E4075D135FC8")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -340,6 +361,9 @@ namespace GenericControls
             uint SetFilter([MarshalAs(UnmanagedType.Interface)] IntPtr pFilter);
         }
 
+        /// <summary>
+        /// COM interface for shell items.
+        /// </summary>
         [ComImport]
         [Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -363,6 +387,14 @@ namespace GenericControls
 
         #endregion
 
+        /// <summary>
+        /// Creates a shell item from a parsing name.
+        /// </summary>
+        /// <param name="pszPath">The path to parse.</param>
+        /// <param name="pbc">Bind context.</param>
+        /// <param name="riid">Reference to the interface ID.</param>
+        /// <param name="ppv">The resulting shell item.</param>
+        /// <returns>HRESULT status code.</returns>
         [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern int SHCreateItemFromParsingName([MarshalAs(UnmanagedType.LPWStr)] string pszPath, IntPtr pbc, ref Guid riid, [MarshalAs(UnmanagedType.Interface)] ref IShellItem ppv);
 

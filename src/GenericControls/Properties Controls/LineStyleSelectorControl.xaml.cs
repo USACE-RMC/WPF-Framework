@@ -1,7 +1,7 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -41,6 +41,14 @@ namespace GenericControls
     /// <summary>
     /// A user control that allows the selection of predefined line styles (dash patterns).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class LineStyleSelectorControl:UserControl
     {
         /// <summary>
@@ -184,6 +192,14 @@ namespace GenericControls
     /// Converts between <see cref="DoubleCollection"/> objects for dash array selection.
     /// Used to ensure consistent object references when binding to <see cref="LineStyleSelectorControl.LineStyleOptions"/>
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DoubleCollectionConverter : IValueConverter
     {
         /// <summary>

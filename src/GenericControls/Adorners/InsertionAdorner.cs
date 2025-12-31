@@ -1,7 +1,7 @@
 ﻿/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this library.
+* the results, or appropriateness of outputs, obtained from this software.
 *
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -34,12 +34,27 @@ using System.Windows.Media;
 namespace GenericControls
 {
     /// <summary>
-/// InsertionAdorner class implemented from code developed at Zag studios which was found (with tutorial) on the Zag log (http://www.zagstudio.com/blog/488#.Us185vRDvp4)
-/// </summary>
-/// <remarks>Implemented by Woodrow Lee Fields 01/08/2014</remarks>
+    /// An adorner that displays an insertion marker indicating where a dragged item will be dropped.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    ///     <item> Woodrow Lee Fields (original implementation, 01/08/2014) </item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// Based on code developed at Zag Studios (http://www.zagstudio.com/blog/488).
+    /// </para>
+    /// </remarks>
     public class InsertionAdorner : Adorner
     {
         private readonly bool isSeparatorHorizontal;
+
+        /// <summary>
+        /// Gets or sets whether the insertion point is in the first half of the adorned element.
+        /// </summary>
         public bool IsInFirstHalf
         {
             get

@@ -1,5 +1,32 @@
-// Copyright (c) USACE. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System;
 using System.Diagnostics;
@@ -81,6 +108,7 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Waits for the specified process to exit.
         /// </summary>
+        /// <param name="processId">The process ID to wait for.</param>
         private void WaitForProcessExit(int processId)
         {
             _log($"Waiting for process {processId} to exit...");
@@ -118,6 +146,7 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Creates a backup of the current installation.
         /// </summary>
+        /// <returns>The path to the backup directory.</returns>
         private string CreateBackup()
         {
             _log("Creating backup...");
@@ -218,6 +247,9 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Extracts a single entry with retry logic for locked files.
         /// </summary>
+        /// <param name="entry">The zip archive entry to extract.</param>
+        /// <param name="destPath">The destination file path.</param>
+        /// <param name="maxRetries">Maximum number of retry attempts.</param>
         private void ExtractWithRetry(ZipArchiveEntry entry, string destPath, int maxRetries = 3)
         {
             for (int attempt = 1; attempt <= maxRetries; attempt++)
@@ -241,6 +273,7 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Restores files from backup.
         /// </summary>
+        /// <param name="backupDir">The backup directory path.</param>
         private void RestoreFromBackup(string backupDir)
         {
             var sourceDir = new DirectoryInfo(backupDir);
@@ -261,6 +294,8 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Cleans up temporary files.
         /// </summary>
+        /// <param name="backupDir">The backup directory path.</param>
+        /// <param name="success">Whether the update was successful.</param>
         private void CleanUp(string backupDir, bool success)
         {
             _log("Cleaning up...");
@@ -332,6 +367,8 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Recursively copies a directory.
         /// </summary>
+        /// <param name="sourceDir">The source directory path.</param>
+        /// <param name="destDir">The destination directory path.</param>
         private void CopyDirectory(string sourceDir, string destDir)
         {
             Directory.CreateDirectory(destDir);

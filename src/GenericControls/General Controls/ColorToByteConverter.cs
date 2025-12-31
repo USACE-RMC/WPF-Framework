@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,6 +14,14 @@ namespace GenericControls
     /// <summary>
     /// Represents the individual components of a color (Alpha, Red, Green, Blue).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public enum ColorComponent
     {
         A,
@@ -26,6 +34,14 @@ namespace GenericControls
     /// Converts between a <see cref="SolidColorBrush"/> and a single byte value
     /// corresponding to a specific <see cref="ColorComponent"/> (A, R, G, B).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ColorToByteConverter : IValueConverter
     {
         /// <summary>

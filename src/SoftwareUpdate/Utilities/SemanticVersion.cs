@@ -1,5 +1,32 @@
-// Copyright (c) USACE. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System;
 using System.Text.RegularExpressions;
@@ -17,6 +44,12 @@ namespace SoftwareUpdate
     /// <para>
     /// Pre-release versions have lower precedence than normal versions.
     /// For example: 1.0.0-alpha &lt; 1.0.0-beta &lt; 1.0.0
+    /// </para>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
     /// </para>
     /// </remarks>
     public class SemanticVersion : IComparable<SemanticVersion>, IEquatable<SemanticVersion>
@@ -59,6 +92,11 @@ namespace SoftwareUpdate
         /// <summary>
         /// Initializes a new instance of the <see cref="SemanticVersion"/> class.
         /// </summary>
+        /// <param name="major">The major version number.</param>
+        /// <param name="minor">The minor version number.</param>
+        /// <param name="patch">The patch version number.</param>
+        /// <param name="preRelease">The pre-release identifier.</param>
+        /// <param name="buildMetadata">The build metadata.</param>
         public SemanticVersion(int major, int minor, int patch = 0, string preRelease = null, string buildMetadata = null)
         {
             if (major < 0) throw new ArgumentOutOfRangeException(nameof(major));
@@ -119,6 +157,8 @@ namespace SoftwareUpdate
         /// <summary>
         /// Creates a <see cref="SemanticVersion"/> from a <see cref="System.Version"/>.
         /// </summary>
+        /// <param name="version">The System.Version to convert.</param>
+        /// <returns>A SemanticVersion instance.</returns>
         public static SemanticVersion FromVersion(Version version)
         {
             if (version == null) throw new ArgumentNullException(nameof(version));
@@ -131,6 +171,8 @@ namespace SoftwareUpdate
         /// <summary>
         /// Compares this version to another.
         /// </summary>
+        /// <param name="other">The version to compare to.</param>
+        /// <returns>A value indicating the relative order of the versions.</returns>
         public int CompareTo(SemanticVersion other)
         {
             if (other == null) return 1;

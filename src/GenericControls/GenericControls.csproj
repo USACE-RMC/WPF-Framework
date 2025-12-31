@@ -39,8 +39,7 @@
     </PackageReference>
   </ItemGroup>
 
-  <!-- System.Drawing.Common is only needed for .NET Core/.NET 5+ (included in .NET Framework) -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
 
