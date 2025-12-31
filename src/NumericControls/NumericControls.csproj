@@ -37,9 +37,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
-    <ProjectReference Include="..\Numerics\Numerics.csproj" />
-    <ProjectReference Include="..\OxyPlotControls\OxyPlotControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Numerics">
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

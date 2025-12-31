@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FrameworkInterfaces\FrameworkInterfaces.csproj" />
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
     <ProjectReference Include="..\SoftwareUpdate\SoftwareUpdate.csproj" />
   </ItemGroup>
