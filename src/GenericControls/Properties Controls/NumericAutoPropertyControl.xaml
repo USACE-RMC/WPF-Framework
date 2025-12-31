@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GenericControls.NumericAutoPropertyControl" Name="NumericAutoProperty"
+﻿<UserControl x:Class="GenericControls.NumericAutoPropertyControl" x:Name="NumericAutoProperty"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -39,9 +39,9 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Name="DummyTextBlock" Visibility="Hidden" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
-            <TextBox Grid.Column="0" 
-                     Name="NumericTBox" 
+            <TextBlock x:Name="DummyTextBlock" Visibility="Hidden" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
+            <TextBox Grid.Column="0"
+                     x:Name="NumericTBox" 
                      Height="22"
                      Text="{Binding Number, ElementName=NumericAutoProperty, UpdateSourceTrigger=Explicit, Mode=TwoWay, StringFormat={}{0:G}}" 
                      Width="{Binding ElementName=DummyTextBlock, Path=ActualWidth}"

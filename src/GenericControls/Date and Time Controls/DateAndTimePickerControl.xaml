@@ -11,7 +11,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Viewbox Name="CalendarViewBox" Grid.Column="0" VerticalAlignment="Top">
+        <Viewbox x:Name="CalendarViewBox" Grid.Column="0" VerticalAlignment="Top">
             <Calendar x:Name="CalendarSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-3,0,-3" DisplayDateChanged="CalendarSelector_DisplayDateChanged" SelectedDatesChanged="CalendarSelector_SelectedDatesChanged" GotMouseCapture="CalendarSelector_GotMouseCapture"></Calendar>
         </Viewbox>
         

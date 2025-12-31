@@ -16,8 +16,8 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!--Can update string format of textbox in binding (example: StringFormat='yyyy-MM-dd HH:mm:ss')-->
-        <TextBox 
-            Name="DateTimeTextBox" 
+        <TextBox
+            x:Name="DateTimeTextBox" 
             HorizontalAlignment="Stretch" 
             VerticalAlignment="Stretch" 
             VerticalContentAlignment="Center">
@@ -38,7 +38,7 @@
         <RadioButton 
             Width="{Binding ElementName=DateTimeTextBox, Path=ActualHeight}"
             Height="{Binding ElementName=DateTimeTextBox, Path=ActualHeight}"
-            Name="DateTimeRadioButton" 
+            x:Name="DateTimeRadioButton" 
             Grid.Column="1" 
             Padding="0"
             Style="{StaticResource {x:Static ToolBar.RadioButtonStyleKey}}" 
@@ -54,8 +54,8 @@
                 RenderOptions.BitmapScalingMode="Fant"/>
         </RadioButton>
         
-        <Popup 
-            Name="DateTimePopup" 
+        <Popup
+            x:Name="DateTimePopup" 
             IsOpen="{Binding ElementName=DateTimeRadioButton, Path=IsChecked, Mode=TwoWay}" 
             StaysOpen="False" 
             AllowsTransparency="True" 

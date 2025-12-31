@@ -9,7 +9,7 @@
     <UserControl.Resources>
         <local:BooleanToVisibilityConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed"/>
     </UserControl.Resources>
-    <Grid Name="NameGrid">
+    <Grid x:Name="NameGrid">
         <TextBox x:Name="NameTBox" x:FieldModifier="public" TextChanged="NameTBox_TextChanged" 
                  VerticalContentAlignment="Center" 
                  VerticalAlignment="Stretch" 
@@ -25,7 +25,7 @@
                 </Style>
             </TextBox.Style>
         </TextBox>
-        <Border Name="NameBorder" 
+        <Border x:Name="NameBorder" 
                 Width="{Binding ElementName=NameTBox, Path=ActualWidth}" 
                 Height="{Binding ElementName=NameTBox, Path=ActualHeight}" 
                 Visibility="{Binding ElementName=NameGrid, Path=IsEnabled, Converter={StaticResource BoolToVisConverter}}"
