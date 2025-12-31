@@ -19,7 +19,7 @@
         <ResourceDictionary Source="MainWindowStyle.xaml"/>
         <ResourceDictionary Source="Menu.xaml"/>
         <ResourceDictionary Source="MessageWindow.xaml"/>
-        <ResourceDictionary Source="OxyPlotControls.xaml"/>
+        <!--<ResourceDictionary Source="OxyPlotControls.xaml"/>-->  <!-- OxyplotControls external dependency not included -->
         <!--<ResourceDictionary Source="RadioButton.xaml"/>-->
         <ResourceDictionary Source="ScrollBar.xaml"/>
         <ResourceDictionary Source="Seperator.xaml"/>
