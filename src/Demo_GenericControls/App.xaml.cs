@@ -27,6 +27,9 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * **/
+using System.Windows;
+using Themes;
+
 namespace Demo_GenericControls
 {
     /// <summary>
@@ -38,5 +41,16 @@ namespace Demo_GenericControls
     /// </remarks>
     public partial class Application
     {
+        /// <summary>
+        /// Called when the application starts. Initializes the theme system.
+        /// </summary>
+        /// <param name="e">Startup event arguments.</param>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Initialize the theme system with the Light theme as default
+            ThemeService.Instance.Initialize(Theme.Light);
+        }
     }
 }

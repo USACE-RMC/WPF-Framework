@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GenericControls.ColorPickerPopup" x:Name="ColorPickerPopupControl"
+﻿<UserControl x:Class="GenericControls.ColorPickerPopup" x:Name="ColorPickerPopup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -18,8 +18,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ToggleButton 
-            Name="PopupToggleButton" 
+        <ToggleButton
+            x:Name="PopupToggleButton" 
             VerticalAlignment="Stretch" 
             HorizontalAlignment="Stretch" 
             HorizontalContentAlignment="Stretch" 
@@ -27,7 +27,7 @@
             BorderThickness="1"
             Padding="0"
             Background="White"
-            IsHitTestVisible="{Binding ElementName=Popup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
+            IsHitTestVisible="{Binding ElementName=PickerPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
             <ToggleButton.Resources>
                 <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
                     <Style.Triggers>

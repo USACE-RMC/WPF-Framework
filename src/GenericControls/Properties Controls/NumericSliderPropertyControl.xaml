@@ -89,8 +89,8 @@
             </Slider.Resources>
         </Slider>
 
-            <TextBox Grid.Column="1"   
-                 Name="NumericTBox"
+            <TextBox Grid.Column="1"
+                 x:Name="NumericTBox"
                  Height="22"
                  IsEnabled="{Binding IsTextBoxEnabled, ElementName=NumericWithSlider, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                  Text="{Binding Number, ElementName=NumericWithSlider, UpdateSourceTrigger=LostFocus, Mode=TwoWay, StringFormat='G'}"

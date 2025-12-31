@@ -8,8 +8,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
 
-        <TextBox 
-            Name="NumericTBox" 
+        <TextBox
+            x:Name="NumericTBox" 
             VerticalAlignment="Stretch" 
             HorizontalAlignment="Stretch" 
             VerticalContentAlignment="Center" 

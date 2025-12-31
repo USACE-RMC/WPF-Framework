@@ -1,16 +1,39 @@
-﻿<Window x:Class="Test_NumericControls.MainWindow" x:Name="MyWindow"
+﻿<Window x:Class="Demo_NumericControls.MainWindow" x:Name="MyWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Test_NumericControls"
+        xmlns:local="clr-namespace:Demo_NumericControls"
         xmlns:ds="clr-namespace:NumericControls;assembly=NumericControls"
         xmlns:uni="clr-namespace:NumericControls.Distributions.Univariate;assembly=NumericControls"
         ContentRendered="MainWindow_ContentRendered"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Background="{DynamicResource EnvironmentWindowBackground}"
+        Title="NumericControls Demo" Height="550" Width="850">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/NumericControls;Component/Themes/NumericControlsTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        <TabControl SelectedIndex="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Theme Selection Panel -->
+        <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="0">
+            <TextBlock Text="Theme:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{DynamicResource EnvironmentWindowText}"/>
+            <ComboBox Name="ThemeComboBox" Width="100" SelectionChanged="ThemeComboBox_SelectionChanged">
+                <ComboBoxItem Content="Light" IsSelected="True"/>
+                <ComboBoxItem Content="Blue"/>
+                <ComboBoxItem Content="Dark"/>
+            </ComboBox>
+        </StackPanel>
+
+        <TabControl SelectedIndex="0" Grid.Row="1">
             <TabItem Header="Distribution Selector">
                 <Grid>
                     <!--<Grid.RowDefinitions>

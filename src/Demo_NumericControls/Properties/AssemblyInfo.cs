@@ -7,12 +7,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Test_NumericControls")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Demo_NumericControls")]
+[assembly: AssemblyDescription("Demonstration application for the NumericControls WPF library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Test_NumericControls")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCompany("USACE Risk Management Center")]
+[assembly: AssemblyProduct("Demo_NumericControls")]
+[assembly: AssemblyCopyright("Copyright © USACE 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

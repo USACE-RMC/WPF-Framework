@@ -33,7 +33,7 @@
 
         <!--StringFormat={}{0:#.#####} StringFormat='G'-->
         <TextBox Grid.Column="2"   
-                 Name="NumericTBox"
+                 x:Name="NumericTBox"
                  Height="22"
                  IsEnabled="{Binding IsTextBoxEnabled, ElementName=NumericProperty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                  Text="{Binding Number, ElementName=NumericProperty, UpdateSourceTrigger=LostFocus, Mode=TwoWay, StringFormat='G'}"
