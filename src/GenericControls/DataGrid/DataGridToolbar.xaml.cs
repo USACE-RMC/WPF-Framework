@@ -37,7 +37,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
-using Microsoft.VisualBasic;
 
 namespace GenericControls
 {
@@ -482,7 +481,7 @@ namespace GenericControls
             // Only paste if there is data in the clipboard.
             try
             {
-                string[][] clipboardData = Clipboard.GetText().Split(ControlChars.Lf).Select(row => row.Split(ControlChars.Tab).Select(Clipboardcell => Clipboardcell.Length > 0 && Clipboardcell[Clipboardcell.Length - 1] == ControlChars.Cr ? Clipboardcell.Substring(0, Clipboardcell.Length - 1) : Clipboardcell).ToArray()).Where(a => a.Any(b => b.Length > 0)).ToArray();
+                string[][] clipboardData = Clipboard.GetText().Split('\n').Select(row => row.Split('\t').Select(Clipboardcell => Clipboardcell.Length > 0 && Clipboardcell[Clipboardcell.Length - 1] == '\r' ? Clipboardcell.Substring(0, Clipboardcell.Length - 1) : Clipboardcell).ToArray()).Where(a => a.Any(b => b.Length > 0)).ToArray();
                 if (clipboardData.Length > 0)
                     DataGrid.PasteClipboard();
             }

@@ -30,7 +30,6 @@
 using System;
 using System.Linq;
 using System.Windows;
-using Microsoft.VisualBasic;
 
 namespace GenericControls
 {
@@ -138,7 +137,7 @@ namespace GenericControls
         {
             if (this.NameTBox.IsValid == false)
             {
-                Interaction.MsgBox("Invalid name for the following reasons:" + Environment.NewLine + "\t- " + string.Join("\t- ", this.NameTBox.GetErrorMessages()), MsgBoxStyle.Critical, "Invalid Name");
+                MessageBox.Show("Invalid name for the following reasons:" + Environment.NewLine + "\t- " + string.Join("\t- ", this.NameTBox.GetErrorMessages()), "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             // 

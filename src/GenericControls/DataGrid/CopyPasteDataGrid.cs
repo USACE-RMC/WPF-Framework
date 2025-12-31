@@ -40,8 +40,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.VisualBasic;
-
 namespace GenericControls
 {
 
@@ -411,7 +409,7 @@ namespace GenericControls
                 // If there is nothing on the clipboard, then disable the paste button.
                 try
                 {
-                    string[][] clipboardData = Clipboard.GetText().Split(ControlChars.Lf).Select(row => row.Split(ControlChars.Tab).Select(Clipboardcell => Clipboardcell.Length > 0 && Clipboardcell[Clipboardcell.Length - 1] == ControlChars.Cr ? Clipboardcell.Substring(0, Clipboardcell.Length - 1) : Clipboardcell).ToArray()).Where(a => a.Any(b => b.Length > 0)).ToArray();
+                    string[][] clipboardData = Clipboard.GetText().Split('\n').Select(row => row.Split('\t').Select(Clipboardcell => Clipboardcell.Length > 0 && Clipboardcell[Clipboardcell.Length - 1] == '\r' ? Clipboardcell.Substring(0, Clipboardcell.Length - 1) : Clipboardcell).ToArray()).Where(a => a.Any(b => b.Length > 0)).ToArray();
                     if (clipboardData.Length == 0)
                     {
                         _pasteCMI.IsEnabled = false;
@@ -497,7 +495,7 @@ namespace GenericControls
             {
                 if (SelectedCells.Count <= 0)
                     return;
-                string[][] clipboardData = Clipboard.GetText().Split(ControlChars.Lf).Select(row => row.Split(ControlChars.Tab).Select(cell => cell.Length > 0 && cell[cell.Length - 1] == ControlChars.Cr ? cell.Substring(0, cell.Length - 1) : cell).ToArray()).Where(a => a.Any(b => b.Length > 0)).ToArray();
+                string[][] clipboardData = Clipboard.GetText().Split('\n').Select(row => row.Split('\t').Select(cell => cell.Length > 0 && cell[cell.Length - 1] == '\r' ? cell.Substring(0, cell.Length - 1) : cell).ToArray()).Where(a => a.Any(b => b.Length > 0)).ToArray();
                 bool cancelPaste = false;
                 PreviewPasteData?.Invoke(clipboardData, ref cancelPaste);
                 if (cancelPaste == true)
@@ -601,7 +599,7 @@ namespace GenericControls
                             if (CellCheck.IsSelected == false)
                             {
                                 Mouse.OverrideCursor = null;
-                                Interaction.MsgBox("Invalid selection, selected cells must be continuous.", MsgBoxStyle.Information, "Invalid Selection");
+                                MessageBox.Show("Invalid selection, selected cells must be continuous.", "Invalid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
                                 return;
                             }
                         }
@@ -671,7 +669,7 @@ namespace GenericControls
             catch (Exception)
             {
                 Mouse.OverrideCursor = null;
-                Interaction.MsgBox("Error pasting data from clipboard.", MsgBoxStyle.Information, "Error in paste from clipboard");
+                MessageBox.Show("Error pasting data from clipboard.", "Error in paste from clipboard", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
         }
@@ -754,7 +752,7 @@ namespace GenericControls
             // 
             catch (Exception ex)
             {
-                Interaction.MsgBox("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, MsgBoxStyle.Information, "Insert Error");
+                MessageBox.Show("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, "Insert Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
         }
@@ -814,7 +812,7 @@ namespace GenericControls
             // Items.Refresh()
             catch (Exception ex)
             {
-                Interaction.MsgBox("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, MsgBoxStyle.Information, "Insert Error");
+                MessageBox.Show("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, "Insert Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
         }
@@ -895,7 +893,7 @@ namespace GenericControls
             // Items.Refresh()
             catch (Exception ex)
             {
-                Interaction.MsgBox("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, MsgBoxStyle.Information, "Insert Error");
+                MessageBox.Show("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, "Insert Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
         }
