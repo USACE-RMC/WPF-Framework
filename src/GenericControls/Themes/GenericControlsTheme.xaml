@@ -1,0 +1,401 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:GenericControls">
+
+    <!--
+    GenericControls Theme Resource Dictionary
+
+    This dictionary contains theme-aware styles for GenericControls that use
+    DynamicResource bindings to respond to runtime theme changes.
+
+    All colors are referenced from the Themes library using DynamicResource
+    so they automatically update when the theme is changed.
+    -->
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- COMMON STYLES                                                                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Separator Background (transparent) -->
+    <SolidColorBrush x:Key="SeparatorBackground">#00FFFFFF</SolidColorBrush>
+
+    <!-- Dot Leader Line Style for property controls -->
+    <Style TargetType="{x:Type Line}" x:Key="DotLeaderLineStyle">
+        <Setter Property="Grid.Column" Value="1"/>
+        <Setter Property="X1" Value="0"/>
+        <Setter Property="Y1" Value="0"/>
+        <Setter Property="X2" Value="1"/>
+        <Setter Property="Y2" Value="0"/>
+        <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="StrokeDashArray" Value="2 2"/>
+        <Setter Property="Stretch" Value="Uniform"/>
+        <Setter Property="Margin" Value="0,0,3,0"/>
+    </Style>
+
+    <!-- Title Text Style -->
+    <Style TargetType="{x:Type TextBlock}" x:Key="TitleTextStyle">
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="0,0,3,0"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- DATAGRID TOOLBAR                                                             -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="DataGridToolbarStyle" TargetType="{x:Type local:DataGridToolbar}">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:DataGridToolbar}" BasedOn="{StaticResource DataGridToolbarStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- SEPARATOR WITH HEADER                                                        -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="SeparatorWithHeaderStyle" TargetType="{x:Type local:SeparatorWithHeader}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:SeparatorWithHeader}" BasedOn="{StaticResource SeparatorWithHeaderStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NUMERIC TEXTBOX                                                              -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="NumericTextBoxStyle" TargetType="{x:Type local:NumericTextBox}">
+        <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBox.Static.Foreground}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource TextBox.Caret}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextBox.Selection.Background}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:NumericTextBox}" BasedOn="{StaticResource NumericTextBoxStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NUMERIC TEXTBOX 2                                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="NumericTextBox2Style" TargetType="{x:Type local:NumericTextBox2}">
+        <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBox.Static.Foreground}"/>
+        <Setter Property="CaretBrush" Value="{DynamicResource TextBox.Caret}"/>
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextBox.Selection.Background}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:NumericTextBox2}" BasedOn="{StaticResource NumericTextBox2Style}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NAME TEXTBOX                                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="NameTextBoxStyle" TargetType="{x:Type local:NameTextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:NameTextBox}" BasedOn="{StaticResource NameTextBoxStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NUMERIC UP DOWN                                                              -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="NumericUpDownStyle" TargetType="{x:Type local:NumericUpDown}">
+        <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBox.Static.Foreground}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:NumericUpDown}" BasedOn="{StaticResource NumericUpDownStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NUMERIC SLIDER                                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="NumericSliderStyle" TargetType="{x:Type local:NumericSlider}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:NumericSlider}" BasedOn="{StaticResource NumericSliderStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- THICKNESS CONTROL                                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="ThicknessControlStyle" TargetType="{x:Type local:ThicknessControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:ThicknessControl}" BasedOn="{StaticResource ThicknessControlStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- GRID LENGTH CONTROL                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="GridLengthControlStyle" TargetType="{x:Type local:GridLengthControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:GridLengthControl}" BasedOn="{StaticResource GridLengthControlStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- COLOR PICKER                                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="ColorPickerStyle" TargetType="{x:Type local:ColorPicker}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:ColorPicker}" BasedOn="{StaticResource ColorPickerStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- COLOR PICKER POPUP                                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="ColorPickerPopupStyle" TargetType="{x:Type local:ColorPickerPopup}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:ColorPickerPopup}" BasedOn="{StaticResource ColorPickerPopupStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- CLOCK CONTROL                                                                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="ClockControlStyle" TargetType="{x:Type local:ClockControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:ClockControl}" BasedOn="{StaticResource ClockControlStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- DATE AND TIME CONTROLS                                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="DateAndTimePickerControlStyle" TargetType="{x:Type local:DateAndTimePickerControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:DateAndTimePickerControl}" BasedOn="{StaticResource DateAndTimePickerControlStyle}"/>
+
+    <Style x:Key="DateAndTimeTextBoxControlStyle" TargetType="{x:Type local:DateAndTimeTextBoxControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:DateAndTimeTextBoxControl}" BasedOn="{StaticResource DateAndTimeTextBoxControlStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- RESIZABLE TEXTBOX                                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="ResizableTextBoxControlStyle" TargetType="{x:Type local:ResizableTextBoxControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:ResizableTextBoxControl}" BasedOn="{StaticResource ResizableTextBoxControlStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NAME DIALOG                                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="NameDialogStyle" TargetType="{x:Type local:NameDialog}">
+        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:NameDialog}" BasedOn="{StaticResource NameDialogStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- PROPERTY CONTROLS                                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Base Property Control Style -->
+    <Style x:Key="PropertyControlBaseStyle" TargetType="{x:Type UserControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <!-- Text Property Control -->
+    <Style x:Key="TextPropertyControlStyle" TargetType="{x:Type local:TextPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:TextPropertyControl}" BasedOn="{StaticResource TextPropertyControlStyle}"/>
+
+    <!-- Name Text Property Control -->
+    <Style x:Key="NameTextPropertyControlStyle" TargetType="{x:Type local:NameTextPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:NameTextPropertyControl}" BasedOn="{StaticResource NameTextPropertyControlStyle}"/>
+
+    <!-- Resizeable Text Property Control -->
+    <Style x:Key="ResizeableTextPropertyControlStyle" TargetType="{x:Type local:ResizeableTextPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:ResizeableTextPropertyControl}" BasedOn="{StaticResource ResizeableTextPropertyControlStyle}"/>
+
+    <!-- Boolean Property Control -->
+    <Style x:Key="BooleanPropertyControlStyle" TargetType="{x:Type local:BooleanPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:BooleanPropertyControl}" BasedOn="{StaticResource BooleanPropertyControlStyle}"/>
+
+    <!-- Numeric Property Control -->
+    <Style x:Key="NumericPropertyControlStyle" TargetType="{x:Type local:NumericPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:NumericPropertyControl}" BasedOn="{StaticResource NumericPropertyControlStyle}"/>
+
+    <!-- Numeric Auto Property Control -->
+    <Style x:Key="NumericAutoPropertyControlStyle" TargetType="{x:Type local:NumericAutoPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:NumericAutoPropertyControl}" BasedOn="{StaticResource NumericAutoPropertyControlStyle}"/>
+
+    <!-- Numeric Slider Property Control -->
+    <Style x:Key="NumericSliderPropertyControlStyle" TargetType="{x:Type local:NumericSliderPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:NumericSliderPropertyControl}" BasedOn="{StaticResource NumericSliderPropertyControlStyle}"/>
+
+    <!-- Numeric Property Selector Control -->
+    <Style x:Key="NumericPropertySelectorControlStyle" TargetType="{x:Type local:NumericPropertySelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:NumericPropertySelectorControl}" BasedOn="{StaticResource NumericPropertySelectorControlStyle}"/>
+
+    <!-- Color Property Control -->
+    <Style x:Key="ColorPropertyControlStyle" TargetType="{x:Type local:ColorPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:ColorPropertyControl}" BasedOn="{StaticResource ColorPropertyControlStyle}"/>
+
+    <!-- DateTime Property Control -->
+    <Style x:Key="DateTimePropertyControlStyle" TargetType="{x:Type local:DateTimePropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:DateTimePropertyControl}" BasedOn="{StaticResource DateTimePropertyControlStyle}"/>
+
+    <!-- Font Selector Control -->
+    <Style x:Key="FontSelectorControlStyle" TargetType="{x:Type local:FontSelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:FontSelectorControl}" BasedOn="{StaticResource FontSelectorControlStyle}"/>
+
+    <!-- Font Weight Selector Control -->
+    <Style x:Key="FontWeightSelectorControlStyle" TargetType="{x:Type local:FontWeightSelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:FontWeightSelectorControl}" BasedOn="{StaticResource FontWeightSelectorControlStyle}"/>
+
+    <!-- Line Style Selector Control -->
+    <Style x:Key="LineStyleSelectorControlStyle" TargetType="{x:Type local:LineStyleSelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:LineStyleSelectorControl}" BasedOn="{StaticResource LineStyleSelectorControlStyle}"/>
+
+    <!-- Line Width Selector Control -->
+    <Style x:Key="LineWidthSelectorControlStyle" TargetType="{x:Type local:LineWidthSelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:LineWidthSelectorControl}" BasedOn="{StaticResource LineWidthSelectorControlStyle}"/>
+
+    <!-- Horizontal Alignment Control -->
+    <Style x:Key="HorizontalAlignmentControlStyle" TargetType="{x:Type local:HorizontalAlignmentControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:HorizontalAlignmentControl}" BasedOn="{StaticResource HorizontalAlignmentControlStyle}"/>
+
+    <!-- Vertical Alignment Control -->
+    <Style x:Key="VerticalAlignmentControlStyle" TargetType="{x:Type local:VerticalAlignmentControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:VerticalAlignmentControl}" BasedOn="{StaticResource VerticalAlignmentControlStyle}"/>
+
+    <!-- Content Property Control -->
+    <Style x:Key="ContentPropertyControlStyle" TargetType="{x:Type local:ContentPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:ContentPropertyControl}" BasedOn="{StaticResource ContentPropertyControlStyle}"/>
+
+    <!-- Point Property Control -->
+    <Style x:Key="PointPropertyControlStyle" TargetType="{x:Type local:PointPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:PointPropertyControl}" BasedOn="{StaticResource PointPropertyControlStyle}"/>
+
+    <!-- Point3D Property Control -->
+    <Style x:Key="Point3DPropertyControlStyle" TargetType="{x:Type local:Point3DPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:Point3DPropertyControl}" BasedOn="{StaticResource Point3DPropertyControlStyle}"/>
+
+    <!-- String List Property Control -->
+    <Style x:Key="StringListPropertyControlStyle" TargetType="{x:Type local:StringListPropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:StringListPropertyControl}" BasedOn="{StaticResource StringListPropertyControlStyle}"/>
+
+    <!-- File Selector Control -->
+    <Style x:Key="FileSelectorControlStyle" TargetType="{x:Type local:FileSelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:FileSelectorControl}" BasedOn="{StaticResource FileSelectorControlStyle}"/>
+
+    <!-- Folder Selector Control -->
+    <Style x:Key="FolderSelectorControlStyle" TargetType="{x:Type local:FolderSelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:FolderSelectorControl}" BasedOn="{StaticResource FolderSelectorControlStyle}"/>
+
+    <!-- Directory Selector Control -->
+    <Style x:Key="DirectorySelectorControlStyle" TargetType="{x:Type local:DirectorySelectorControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:DirectorySelectorControl}" BasedOn="{StaticResource DirectorySelectorControlStyle}"/>
+
+    <!-- Calendar Week Rule Property Control -->
+    <Style x:Key="CalendarWeekRulePropertyControlStyle" TargetType="{x:Type local:CalendarWeekRulePropertyControl}">
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+    <Style TargetType="{x:Type local:CalendarWeekRulePropertyControl}" BasedOn="{StaticResource CalendarWeekRulePropertyControlStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- COPY PASTE DATAGRID                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="CopyPasteDataGridStyle" TargetType="{x:Type local:CopyPasteDataGrid}">
+        <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
+        <Setter Property="RowBackground" Value="{DynamicResource DataGrid.Row.Background}"/>
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
+        <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:CopyPasteDataGrid}" BasedOn="{StaticResource CopyPasteDataGridStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- VALIDATION DATAGRID                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="ValidationDataGridStyle" TargetType="{x:Type local:ValidationDataGrid}">
+        <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
+        <Setter Property="RowBackground" Value="{DynamicResource DataGrid.Row.Background}"/>
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
+        <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="AlternationCount" Value="2"/>
+        <Setter Property="RowHeight" Value="22"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:ValidationDataGrid}" BasedOn="{StaticResource ValidationDataGridStyle}"/>
+
+</ResourceDictionary>

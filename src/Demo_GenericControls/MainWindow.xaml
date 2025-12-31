@@ -7,7 +7,8 @@
         xmlns:local="clr-namespace:Demo_GenericControls"
         xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="800">
+        Title="GenericControls Demo - Theme Testing" Height="700" Width="900"
+        Background="{DynamicResource EnvironmentWindowBackground}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,13 +18,31 @@
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-        <!--<Style x:Key="MyDataGridCell" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
-            <EventSetter Event="MouseEnter" Handler="DataGridCell_MouseEnter"/>
-            <EventSetter Event="PreviewMouseUp" Handler="DataGridCell_PreviewMouseUp"/>
-        </Style>-->
     </Window.Resources>
     <Grid>
-        <TabControl SelectedIndex="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Theme Selection Bar -->
+        <Border Grid.Row="0" BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness="0,0,0,1" Padding="10,8">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Theme:" VerticalAlignment="Center" Margin="0,0,10,0"
+                           Foreground="{DynamicResource EnvironmentWindowText}"/>
+                <RadioButton x:Name="LightThemeRadio" Content="Light" GroupName="Theme"
+                             IsChecked="True" Checked="ThemeRadio_Checked" Margin="0,0,15,0"
+                             Foreground="{DynamicResource EnvironmentWindowText}"/>
+                <RadioButton x:Name="BlueThemeRadio" Content="Blue" GroupName="Theme"
+                             Checked="ThemeRadio_Checked" Margin="0,0,15,0"
+                             Foreground="{DynamicResource EnvironmentWindowText}"/>
+                <RadioButton x:Name="DarkThemeRadio" Content="Dark" GroupName="Theme"
+                             Checked="ThemeRadio_Checked"
+                             Foreground="{DynamicResource EnvironmentWindowText}"/>
+            </StackPanel>
+        </Border>
+
+        <TabControl Grid.Row="1" SelectedIndex="0">
             <TabItem Header="TextBoxes">
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
@@ -38,21 +57,26 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Name" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,7" />
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Name" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,7"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
                     <cntrls:NameTextBox Grid.Column="1" Grid.Row="0" Text="" Margin="5" Grid.ColumnSpan="2" CanBeBlank="True"/>
 
-                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Number" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,143"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Number" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
                     <cntrls:NumericTextBox Margin="5" Grid.Row="1" Grid.Column="1" MinValue="-32" MaxValue="215" CanBeBlank="True" CanBeNegative="True" Text="0" Grid.ColumnSpan="2"/>
 
-                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Number" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <cntrls:NumericUpDown Grid.Column="1" Grid.Row="2" Margin="5" HorizontalAlignment="Left" Width="100" Minimum="1000" DecimalPlaces="3" Maximum="100000000" Increment="1" ThousandsSeperator="True" Value="1000000"/>
+                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Number (UpDown)" HorizontalAlignment="Right" VerticalAlignment="Center"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
+                    <cntrls:NumericUpDown Grid.Column="1" Grid.Row="2" Margin="5" HorizontalAlignment="Left" Width="150" Minimum="1000" DecimalPlaces="3" Maximum="100000000" Increment="1" ThousandsSeperator="True" Value="1000000"/>
 
                     <cntrls:SeparatorWithHeader Header="This is a separator with a header" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="separator"/>
 
-                    <TextBlock Grid.Column="0" Grid.Row="4" Text="Resizable" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                    <TextBlock Grid.Column="0" Grid.Row="4" Text="Resizable" HorizontalAlignment="Right" VerticalAlignment="Top"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
                     <cntrls:ResizableTextBoxControl Margin="5" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"/>
 
-                    <TextBlock Grid.Column="0" Grid.Row="5" Text="Grid Length" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="0" Grid.Row="5" Text="Grid Length" HorizontalAlignment="Right" VerticalAlignment="Center"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
                     <cntrls:GridLengthControl Grid.Column="1" Grid.Row="5" Margin="5,0,0,0" GridLength="{Binding ElementName=MainWindow, Path=TestGridLength, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </Grid>
             </TabItem>

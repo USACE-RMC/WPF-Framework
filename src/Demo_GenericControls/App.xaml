@@ -4,6 +4,11 @@
     xmlns:local="clr-namespace:Demo_GenericControls"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
-        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- GenericControls Theme Resources -->
+                <ResourceDictionary Source="pack://application:,,,/GenericControls;component/Themes/GenericControlsTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

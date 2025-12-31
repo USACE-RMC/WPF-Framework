@@ -40,6 +40,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using GenericControls;
+using Themes;
 
 namespace Demo_GenericControls
 {
@@ -636,6 +637,28 @@ namespace Demo_GenericControls
 
             ColorPicker cp = (ColorPicker)p.Child;
             BindingOperations.ClearBinding(cp, ColorPicker.ColorProperty);
+        }
+
+        /// <summary>
+        /// Handles theme radio button selection changes.
+        /// </summary>
+        /// <param name="sender">The radio button that was checked.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is RadioButton radioButton)
+            {
+                Theme theme = Theme.Light;
+
+                if (radioButton == LightThemeRadio)
+                    theme = Theme.Light;
+                else if (radioButton == BlueThemeRadio)
+                    theme = Theme.Blue;
+                else if (radioButton == DarkThemeRadio)
+                    theme = Theme.Dark;
+
+                ThemeService.Instance.SetTheme(theme);
+            }
         }
     }
 }
