@@ -353,10 +353,10 @@
 
         <!--Probability Distribution Label-->
         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Margin="0 2" >
-            <TextBlock Text="Select Distribution for " VerticalAlignment="Center" Foreground="Black"/>
-            <TextBlock VerticalAlignment="Center" Foreground="Black" 
+            <TextBlock Text="Select Distribution for " VerticalAlignment="Center" Foreground="{DynamicResource EnvironmentWindowText}"/>
+            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource EnvironmentWindowText}"
                        Text="{Binding ElementName=DistributionSelector, Path=DistributionTitle, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text=":" VerticalAlignment="Center" Foreground="Black"/>
+            <TextBlock Text=":" VerticalAlignment="Center" Foreground="{DynamicResource EnvironmentWindowText}"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="0 2">
@@ -398,9 +398,9 @@
                                       VerticalContentAlignment="Center" 
                                       HorizontalScrollBarVisibility="Disabled"
                                       Width="{Binding ElementName=SelectorControlGrid, Path=ActualWidth}"
-                                      HorizontalGridLinesBrush="#FF353B7A" 
-                                      VerticalGridLinesBrush="#FF353B7A" 
-                                      Background="Transparent" 
+                                      HorizontalGridLinesBrush="{DynamicResource DataGrid.GridLines}"
+                                      VerticalGridLinesBrush="{DynamicResource DataGrid.GridLines}"
+                                      Background="Transparent"
                                       AutoGenerateColumns="False" 
                                       SelectionMode="Extended" 
                                       SelectionUnit="Cell" 
@@ -473,8 +473,8 @@
             <Grid Name="SummaryStatsGrid">
                 <cntrls:CopyPasteDataGrid x:Name="SummaryTable"
                                           Width="{Binding ElementName=SummaryStatsGrid, Path=ActualWidth}"
-                                          HeadersVisibility="Column" CanUserResizeColumns="False" HorizontalGridLinesBrush="#FF353B7A" 
-                                          VerticalGridLinesBrush="#FF353B7A" AutoGenerateColumns="False" SelectionMode="Extended" 
+                                          HeadersVisibility="Column" CanUserResizeColumns="False" HorizontalGridLinesBrush="{DynamicResource DataGrid.GridLines}"
+                                          VerticalGridLinesBrush="{DynamicResource DataGrid.GridLines}" AutoGenerateColumns="False" SelectionMode="Extended" 
                                           SelectionUnit="Cell" Margin="0,4,0,2" CanUserDeleteRows="False" CanUserAddRows="False" 
                                           CanUserResizeRows="False" CanUserSortColumns="False" CanUserReorderColumns="False" 
                                           Background="Transparent" VerticalContentAlignment="Center" IsReadOnly="True">
