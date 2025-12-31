@@ -2,33 +2,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:FrameworkUI">
 
-    <!--This Dictionary is taken from the Gemini project https://github.com/tgjones/gemini-->
+    <!--
+    FrameworkUI-specific control styles.
+    Common control styles (Button, CheckBox, ComboBox, etc.) are provided by the Themes library.
+    This file only includes styles that are unique to FrameworkUI.
+    -->
 
     <ResourceDictionary.MergedDictionaries>
-      
-        <ResourceDictionary Source="Button.xaml"/>
-        <ResourceDictionary Source="CheckBox.xaml"/>
-        <ResourceDictionary Source="ComboBox.xaml"/>
-        <ResourceDictionary Source="DataGrid.xaml"/>
-        <ResourceDictionary Source="DataGridToolbar.xaml"/>
-        <ResourceDictionary Source="Expander.xaml"/>
-        <ResourceDictionary Source="GroupBox.xaml"/>
-        <ResourceDictionary Source="GridSplitter.xaml"/>
-        <ResourceDictionary Source="Label.xaml"/>
-        <ResourceDictionary Source="ListView.xaml"/>
+
+        <!-- FrameworkUI-specific styles -->
         <ResourceDictionary Source="MainWindowStyle.xaml"/>
-        <ResourceDictionary Source="Menu.xaml"/>
         <ResourceDictionary Source="MessageWindow.xaml"/>
-        <!--<ResourceDictionary Source="OxyPlotControls.xaml"/>-->  <!-- OxyplotControls external dependency not included -->
-        <!--<ResourceDictionary Source="RadioButton.xaml"/>-->
-        <ResourceDictionary Source="ScrollBar.xaml"/>
-        <ResourceDictionary Source="Seperator.xaml"/>
-        <ResourceDictionary Source="StackPanel.xaml"/>
-        <ResourceDictionary Source="TabControl.xaml"/>
-        <!--<ResourceDictionary Source="TextBlock.xaml"/>-->
-        <ResourceDictionary Source="TextBox.xaml"/>
-        <ResourceDictionary Source="Tooltip.xaml"/>
-        <ResourceDictionary Source="TreeView.xaml"/>
+        <ResourceDictionary Source="DataGridToolbar.xaml"/>
 
     </ResourceDictionary.MergedDictionaries>
 

@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -68,6 +69,17 @@ namespace FrameworkUI.ProjectExplorer
     /// </remarks>
     public abstract class Node : TreeViewItem, INotifyPropertyChanged
     {
+        #region Native Methods
+
+        /// <summary>
+        /// Gets the system double-click time in milliseconds.
+        /// </summary>
+        /// <returns>The double-click time in milliseconds.</returns>
+        [DllImport("user32.dll")]
+        private static extern uint GetDoubleClickTime();
+
+        #endregion
+
         #region Fields
 
         /// <summary>
@@ -770,7 +782,7 @@ namespace FrameworkUI.ProjectExplorer
                 // Start slow double click timer
                 _timer = new DispatcherTimer
                 {
-                    Interval = TimeSpan.FromMilliseconds(System.Windows.Forms.SystemInformation.DoubleClickTime)
+                    Interval = TimeSpan.FromMilliseconds(GetDoubleClickTime())
                 };
                 _timer.Tick += Timer_Tick;
                 _timer.IsEnabled = true;
