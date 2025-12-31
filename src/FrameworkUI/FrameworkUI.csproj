@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FrameworkInterfaces\FrameworkInterfaces.csproj" />
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
     <ProjectReference Include="..\SoftwareUpdate\SoftwareUpdate.csproj" />
   </ItemGroup>
