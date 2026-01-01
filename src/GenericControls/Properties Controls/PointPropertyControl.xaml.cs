@@ -47,6 +47,46 @@ namespace GenericControls
     public partial class PointPropertyControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="PointPropertyControl"/> class.
+        /// </summary>
+        public PointPropertyControl()
+        {
+            InitializeComponent();
+            Loaded += PointPropertyControl_Loaded;
+        }
+
+        /// <summary>
+        /// Handles the Loaded event to initialize the text boxes with the current DataPoint value.
+        /// </summary>
+        private void PointPropertyControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateTextBoxes();
+        }
+
+        /// <summary>
+        /// Updates the text boxes with the current DataPoint value.
+        /// </summary>
+        private void UpdateTextBoxes()
+        {
+            if (DataPointX == null || DataPointY == null)
+                return;
+
+            Point currentPoint = DataPoint;
+
+            // Remove handlers to prevent recursive updates
+            DataPointX.TextChanged -= DataPointX_TextChanged;
+            DataPointY.TextChanged -= DataPointY_TextChanged;
+
+            // Update the text boxes
+            DataPointX.Text = NumberFormatHelper.FormatDouble(Math.Round(currentPoint.X, Decimals));
+            DataPointY.Text = NumberFormatHelper.FormatDouble(Math.Round(currentPoint.Y, Decimals));
+
+            // Re-attach handlers
+            DataPointX.TextChanged += DataPointX_TextChanged;
+            DataPointY.TextChanged += DataPointY_TextChanged;
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Decimals"/> dependency property.
         /// </summary>
         public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(PointPropertyControl), new UIPropertyMetadata(5, InitializeControl));
@@ -92,30 +132,10 @@ namespace GenericControls
         /// <param name="e"></param>
         private static void InitializeControl(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d == null)
-                return;
-            if (d.GetType() != typeof(PointPropertyControl))
-                return;
-            PointPropertyControl thisControl = (PointPropertyControl)d;
-
-            // Check if the control's child elements have been created yet
-            // (InitializeComponent may not have been called during early property initialization)
-            if (thisControl.DataPointX == null || thisControl.DataPointY == null)
-                return;
-
-            // Get the current DataPoint value (handles both DataPoint and Decimals property changes)
-            Point newDataPoint = thisControl.DataPoint;
-
-            // Update the textboxes with the new values
-            // remove the handlers so the property doesn't get triggered for update.
-            thisControl.DataPointX.TextChanged -= thisControl.DataPointX_TextChanged;
-            thisControl.DataPointY.TextChanged -= thisControl.DataPointY_TextChanged;
-            // update the values in the textboxes
-            thisControl.DataPointX.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.X, thisControl.Decimals));
-            thisControl.DataPointY.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.Y, thisControl.Decimals));
-            // add the handlers back for updating back to source.
-            thisControl.DataPointX.TextChanged += thisControl.DataPointX_TextChanged;
-            thisControl.DataPointY.TextChanged += thisControl.DataPointY_TextChanged;
+            if (d is PointPropertyControl thisControl)
+            {
+                thisControl.UpdateTextBoxes();
+            }
         }
 
         /// <summary>
