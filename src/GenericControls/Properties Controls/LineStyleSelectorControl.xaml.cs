@@ -52,6 +52,14 @@ namespace GenericControls
     public partial class LineStyleSelectorControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="LineStyleSelectorControl"/> class.
+        /// </summary>
+        public LineStyleSelectorControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Gets a list of predefined dash patterns used as line styles.
         /// </summary>
         public static List<DoubleCollection> LineStyleOptions { get; private set; } = new List<DoubleCollection>(new[] { new DoubleCollection(new[] { 0d }), new DoubleCollection(), new DoubleCollection(new[] { 4d, 1d }), new DoubleCollection(new[] { 1d, 1d }), new DoubleCollection(new[] { 4d, 1d, 1d, 1d }), new DoubleCollection(new[] { 4d, 1d, 4d, 1d, 1d, 1d }), new DoubleCollection(new[] { 4d, 1d, 1d, 1d, 1d, 1d }), new DoubleCollection(new[] { 4d, 1d, 4d, 1d, 1d, 1d, 1d, 1d }), new DoubleCollection(new[] { 10d, 1d }), new DoubleCollection(new[] { 10d, 1d, 1d, 1d }), new DoubleCollection(new[] { 10d, 1d, 1d, 1d, 1d, 1d }) });

@@ -54,6 +54,14 @@ namespace GenericControls
     public partial class NumericPropertySelectorControl : UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="NumericPropertySelectorControl"/> class.
+        /// </summary>
+        public NumericPropertySelectorControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="SelectedNumber"/>
         /// </summary>
         public static DependencyProperty SelectedNumberProperty = DependencyProperty.Register(nameof(SelectedNumber), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(0d));

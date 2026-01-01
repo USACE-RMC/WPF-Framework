@@ -37,6 +37,13 @@ namespace GenericControls
 
     public partial class FileSelectorControl : UserControl, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileSelectorControl"/> class.
+        /// </summary>
+        public FileSelectorControl()
+        {
+            InitializeComponent();
+        }
 
         #region Members
         /// <summary>

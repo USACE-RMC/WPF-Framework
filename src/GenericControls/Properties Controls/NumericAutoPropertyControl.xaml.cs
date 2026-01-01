@@ -39,6 +39,13 @@ namespace GenericControls
 
     public partial class NumericAutoPropertyControl :UserControl, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumericAutoPropertyControl"/> class.
+        /// </summary>
+        public NumericAutoPropertyControl()
+        {
+            InitializeComponent();
+        }
 
         #region Members
 

@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class ColorPropertyControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ColorPropertyControl"/> class.
+        /// </summary>
+        public ColorPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Dependency property for the <see cref="SelectedColor"/> property.
         /// </summary>
         public static DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ColorPropertyControl), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
