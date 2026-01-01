@@ -134,7 +134,7 @@
                                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
                                        Foreground="{DynamicResource EnvironmentWindowText}"/>
                             <cntrls:NumericTextBox Grid.Row="2" Grid.Column="1"
-                                                   MinValue="-1000" MaxValue="1000" DecimalPlaces="3"
+                                                   MinValue="-1000" MaxValue="1000" IsWholeNumber="False"
                                                    CanBeBlank="True" CanBeNegative="True"
                                                    Text="123.456" Margin="0,5"/>
 

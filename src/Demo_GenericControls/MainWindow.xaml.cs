@@ -554,12 +554,12 @@ namespace Demo_GenericControls
             {
                 Owner = this,
                 Title = "Enter Name",
-                NameText = "Default Name"
+                Text = "Default Name"
             };
 
             if (dialog.ShowDialog() == true)
             {
-                DialogResultText = $"Name Dialog Result: \"{dialog.NameText}\"";
+                DialogResultText = $"Name Dialog Result: \"{dialog.Text}\"";
             }
             else
             {
