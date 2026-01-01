@@ -49,52 +49,9 @@ namespace GenericControls
     public partial class Point3DPropertyControl : UserControl, INotifyPropertyChanged
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Point3DPropertyControl"/> class.
-        /// </summary>
-        public Point3DPropertyControl()
-        {
-            InitializeComponent();
-            Loaded += Point3DPropertyControl_Loaded;
-        }
-
-        /// <summary>
-        /// Handles the Loaded event to initialize the text boxes with the current DataPoint value.
-        /// </summary>
-        private void Point3DPropertyControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            UpdateTextBoxes();
-        }
-
-        /// <summary>
-        /// Updates the text boxes with the current DataPoint value.
-        /// </summary>
-        private void UpdateTextBoxes()
-        {
-            if (DataPointX == null || DataPointY == null || DataPointZ == null)
-                return;
-
-            Point3D currentPoint = DataPoint;
-
-            // Remove handlers to prevent recursive updates
-            DataPointX.TextChanged -= DataPointX_TextChanged;
-            DataPointY.TextChanged -= DataPointY_TextChanged;
-            DataPointZ.TextChanged -= DataPointZ_TextChanged;
-
-            // Update the text boxes
-            DataPointX.Text = NumberFormatHelper.FormatDouble(Math.Round(currentPoint.X, Decimals));
-            DataPointY.Text = NumberFormatHelper.FormatDouble(Math.Round(currentPoint.Y, Decimals));
-            DataPointZ.Text = NumberFormatHelper.FormatDouble(Math.Round(currentPoint.Z, Decimals));
-
-            // Re-attach handlers
-            DataPointX.TextChanged += DataPointX_TextChanged;
-            DataPointY.TextChanged += DataPointY_TextChanged;
-            DataPointZ.TextChanged += DataPointZ_TextChanged;
-        }
-
-        /// <summary>
         /// Gets/sets the number of decimal places to display for the X, Y, and Z values.
         /// </summary>
-        public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(Point3DPropertyControl), new UIPropertyMetadata(5, OnPropertyChanged_Callback));
+        public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(Point3DPropertyControl), new UIPropertyMetadata(5, InitializeControl));
         public int Decimals
         {
             get
@@ -108,22 +65,44 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Called when a dependency property changes that affects the text box display.
+        /// Initializes the control when a dependency property changes.
+        /// Updates the UI and prevents recursive updates.
         /// </summary>
         /// <param name="d">The dependency object.</param>
         /// <param name="e">The event arguments.</param>
-        private static void OnPropertyChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void InitializeControl(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Point3DPropertyControl thisControl)
-            {
-                thisControl.UpdateTextBoxes();
-            }
+            if (d == null)
+                return;
+            if (d.GetType() != typeof(Point3DPropertyControl))
+                return;
+            Point3DPropertyControl thisControl = (Point3DPropertyControl)d;
+
+            // Check if child controls exist yet (may be called before InitializeComponent)
+            if (thisControl.DataPointX == null || thisControl.DataPointY == null || thisControl.DataPointZ == null)
+                return;
+
+            Point3D newDataPoint = thisControl.DataPoint;
+
+            // Update the textboxes with the new values
+            // Remove the handlers so the property doesn't get triggered for update.
+            thisControl.DataPointX.TextChanged -= thisControl.DataPointX_TextChanged;
+            thisControl.DataPointY.TextChanged -= thisControl.DataPointY_TextChanged;
+            thisControl.DataPointZ.TextChanged -= thisControl.DataPointZ_TextChanged;
+            // Update the values in the textboxes
+            thisControl.DataPointX.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.X, thisControl.Decimals));
+            thisControl.DataPointY.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.Y, thisControl.Decimals));
+            thisControl.DataPointZ.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.Z, thisControl.Decimals));
+            // Add the handlers back for updating back to source.
+            thisControl.DataPointX.TextChanged += thisControl.DataPointX_TextChanged;
+            thisControl.DataPointY.TextChanged += thisControl.DataPointY_TextChanged;
+            thisControl.DataPointZ.TextChanged += thisControl.DataPointZ_TextChanged;
         }
 
         /// <summary>
         /// The dependency property for the 3D point value.
         /// </summary>
-        public static DependencyProperty DataPointProperty = DependencyProperty.Register(nameof(DataPoint), typeof(Point3D), typeof(Point3DPropertyControl), new UIPropertyMetadata(new Point3D(double.MinValue, double.MinValue, double.MinValue), OnPropertyChanged_Callback));
+        public static DependencyProperty DataPointProperty = DependencyProperty.Register(nameof(DataPoint), typeof(Point3D), typeof(Point3DPropertyControl), new UIPropertyMetadata(new Point3D(double.MinValue, double.MinValue, double.MinValue), InitializeControl));
 
         /// <summary>
         /// Gets/sets the 3D point value (X, Y, Z).
