@@ -42,6 +42,22 @@
     <!-- Disabled menu item foreground brush -->
     <SolidColorBrush x:Key="DisabledMenuItemBrush" Color="#FF9A9A9A"/>
 
+    <!-- Transparent RepeatButton for Slider and ScrollBar Track areas -->
+    <!-- Must be defined here (before MergedDictionaries) to ensure availability -->
+    <Style x:Key="RepeatButtonTransparent" TargetType="{x:Type RepeatButton}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Focusable" Value="false"/>
+        <Setter Property="IsTabStop" Value="false"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Rectangle Fill="{TemplateBinding Background}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- CONTROL TEMPLATES                                                            -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
