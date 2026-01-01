@@ -245,7 +245,7 @@ namespace FrameworkUI
         public delegate void PreviewObjectSavedAsEventHandler(IProject sender, string newFilePath, ref bool cancel);
         public event PreviewObjectSavedAsEventHandler PreviewSaveAs;
 
-        public static DependencyProperty ProjectNodeProperty = DependencyProperty.Register(nameof(ProjectNode), typeof(ProjectUIController), typeof(MainWindow), new FrameworkPropertyMetadata(null, ProjectNode_PropertyChangedCallback));
+        public static DependencyProperty ProjectNodeProperty = DependencyProperty.Register(nameof(ProjectNode), typeof(FrameworkUIController), typeof(MainWindow), new FrameworkPropertyMetadata(null, ProjectNode_PropertyChangedCallback));
 
         private static void ProjectNode_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -256,8 +256,8 @@ namespace FrameworkUI
             thisControl.ProjectMenuItems.Clear();
             // 
             // Get the old value
-            ProjectUIController oldValue = null;
-            oldValue = e.OldValue as ProjectUIController;
+            FrameworkUIController oldValue = null;
+            oldValue = e.OldValue as FrameworkUIController;
             // clean up any links to old project.
             if (oldValue != null)
             {
@@ -287,8 +287,8 @@ namespace FrameworkUI
             AutoBackup.Cancel();
             // 
             // Get the new value
-            ProjectUIController newValue = null;
-            newValue = e.NewValue as ProjectUIController;
+            FrameworkUIController newValue = null;
+            newValue = e.NewValue as FrameworkUIController;
             thisControl._projectExplorerTreeView.ProjectNode = newValue;
             // 
             if (newValue == null) return;
@@ -401,9 +401,9 @@ namespace FrameworkUI
         /// <remarks>
         /// Call the shell MainWindow from the Application class on start up and input the project from the model library.
         /// </remarks>
-        public ProjectUIController ProjectNode
+        public FrameworkUIController ProjectNode
         {
-            get { return (ProjectUIController)GetValue(ProjectNodeProperty); }
+            get { return (FrameworkUIController)GetValue(ProjectNodeProperty); }
             set { SetValue(ProjectNodeProperty, value); }
         }
 

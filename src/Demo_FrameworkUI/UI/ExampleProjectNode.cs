@@ -53,7 +53,7 @@ namespace Demo_ProjectUI
     /// </list>
     /// </para>
     /// </remarks>
-    public class ExampleProjectNode : ProjectUIController
+    public class ExampleProjectNode : FrameworkUIController
     {
         public ExampleProjectNode(IProject project) : base(project)
         {
