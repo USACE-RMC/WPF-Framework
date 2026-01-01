@@ -76,12 +76,11 @@ namespace GenericControls
             if (d.GetType() != typeof(Point3DPropertyControl))
                 return;
             Point3DPropertyControl thisControl = (Point3DPropertyControl)d;
-            // 
-            if (e.NewValue == null)
+
+            // Check if the control's child elements have been created yet
+            if (thisControl.DataPointX == null || thisControl.DataPointY == null || thisControl.DataPointZ == null)
                 return;
-            if (e.NewValue.GetType() != typeof(int))
-                return;
-            int newValue = (int)e.NewValue;
+
             // Update the textboxes with the new values
             // remove the handlers so the property doesn't get triggered for update.
             thisControl.DataPointX.TextChanged -= thisControl.DataPointX_TextChanged;
@@ -129,7 +128,11 @@ namespace GenericControls
             if (d.GetType() != typeof(Point3DPropertyControl))
                 return;
             Point3DPropertyControl thisControl = (Point3DPropertyControl)d;
-            // 
+
+            // Check if the control's child elements have been created yet
+            if (thisControl.DataPointX == null || thisControl.DataPointY == null || thisControl.DataPointZ == null)
+                return;
+
             if (e.NewValue == null)
                 return;
             if (e.NewValue.GetType() != typeof(Point3D))
