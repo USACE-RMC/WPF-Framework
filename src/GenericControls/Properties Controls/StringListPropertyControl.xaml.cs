@@ -101,6 +101,8 @@ namespace GenericControls
                 return;
             StringListPropertyControl thisControl = (StringListPropertyControl)d;
             // 
+            if (thisControl.StringListDataGrid == null)
+                return;
             thisControl.StringListDataGrid.ItemsSource = (IEnumerable)null;
             if (e.NewValue == null)
                 thisControl.StringList = new List<string>(); // Exit Sub
