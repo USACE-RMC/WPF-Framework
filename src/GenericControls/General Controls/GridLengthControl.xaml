@@ -12,7 +12,8 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
             
-        <TextBox Grid.Column="0" Text="{Binding ElementName=GridLengthEditor, Path=GridLengthValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="80"/>
+        <TextBox Grid.Column="0" Width="80" VerticalContentAlignment="Center"
+                 Text="{Binding ElementName=GridLengthEditor, Path=GridLengthValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Right" Margin="5,0,0,0" Width="70" ItemsSource="{Binding ElementName=GridLengthEditor, Path=GridLengthUnitOptions}" SelectedValue="{Binding Path=GridLengthUnit, ElementName=GridLengthEditor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
     </Grid>

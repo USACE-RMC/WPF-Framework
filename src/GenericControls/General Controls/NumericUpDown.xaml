@@ -19,11 +19,17 @@
 
         <!--Up Down Buttons-->
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-            <Button x:Name="cmdUp" Grid.Row="0" Height="10.5" Width="18" Margin="1,1,1,0.5" Click="cmdUp_Click">
-                <Image Source="pack://application:,,,/GenericControls;component/Resources/sort-up.png" Stretch="Uniform"/>
+            <Button x:Name="cmdUp" Height="10.5" Width="18" Margin="1,1,1,0.5" Click="cmdUp_Click"
+                    Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                <Path Data="M 0,4 L 4,0 L 8,4 Z"
+                      Fill="{DynamicResource EnvironmentWindowText}"
+                      Width="8" Height="5" Stretch="Uniform"/>
             </Button>
-            <Button x:Name="cmdDown" Grid.Row="1" Height="10.5" Width="18" Margin="1,0.5,1,1" Click="cmdDown_Click">
-                <Image Source="pack://application:,,,/GenericControls;component/Resources/sort-down.png" Stretch="Uniform"/>
+            <Button x:Name="cmdDown" Height="10.5" Width="18" Margin="1,0.5,1,1" Click="cmdDown_Click"
+                    Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+                <Path Data="M 0,0 L 4,4 L 8,0 Z"
+                      Fill="{DynamicResource EnvironmentWindowText}"
+                      Width="8" Height="5" Stretch="Uniform"/>
             </Button>
         </StackPanel>
 

@@ -23,10 +23,10 @@
                             <Setter.Value>
                                 <ControlTemplate>
                                     <Grid VerticalAlignment="Bottom">
-                                        <Line X1="6" Y1="18" X2="18" Y2="6" Stroke="DarkGray" StrokeThickness="1.5"/>
+                                        <Line X1="6" Y1="18" X2="18" Y2="6" Stroke="{DynamicResource Button.Static.Border}" StrokeThickness="1.5"/>
                                         <!--smallest/right|bottom most -->
-                                        <Line X1="10" Y1="18" X2="18" Y2="10" Stroke="DarkGray" StrokeThickness="1.5"/>
-                                        <Line X1="14" Y1="18" X2="18" Y2="14" Stroke="DarkGray" StrokeThickness="1.5"/>
+                                        <Line X1="10" Y1="18" X2="18" Y2="10" Stroke="{DynamicResource Button.Static.Border}" StrokeThickness="1.5"/>
+                                        <Line X1="14" Y1="18" X2="18" Y2="14" Stroke="{DynamicResource Button.Static.Border}" StrokeThickness="1.5"/>
                                         <!--longer/left|top most-->
                                         <Grid.Style>
                                             <Style TargetType="{x:Type Grid}">
