@@ -7,9 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="80" d:DesignWidth="110">
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBox}">
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="Width" Value="30"/>
             <Setter Property="Margin" Value="2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <EventSetter Event="PreviewTextInput" Handler="TextBox_PreviewTextInput"/>
             <EventSetter Event="PreviewKeyDown" Handler="TextBox_PreviewKeyDown"/>
             <EventSetter Event="TextChanged" Handler="TextBox_TextChanged"/>
@@ -33,10 +35,20 @@
         <TextBox x:Name="RightThicknessTextBox" Grid.Row="1" Grid.Column="2" Text="{Binding ElementName=ControlThickness, Path=SelectedThickness.Right, Mode=TwoWay}"/>
         <TextBox x:Name="BottomThicknessTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding ElementName=ControlThickness, Path=SelectedThickness.Bottom, Mode=TwoWay}"/>
 
-        <Border Grid.Row="1" Grid.Column="1" BorderBrush="Black" Width="{Binding ElementName=LeftThicknessTextBox, Path=ActualHeight}" Height="{Binding ElementName=LeftThicknessTextBox, Path=ActualHeight}" BorderThickness="{Binding ElementName=ControlThickness, Path=SelectedThickness, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
+        <Border Grid.Row="1" Grid.Column="1"
+                BorderBrush="{DynamicResource EnvironmentWindowText}"
+                Width="{Binding ElementName=LeftThicknessTextBox, Path=ActualHeight}"
+                Height="{Binding ElementName=LeftThicknessTextBox, Path=ActualHeight}"
+                BorderThickness="{Binding ElementName=ControlThickness, Path=SelectedThickness, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
             <Grid>
-                <Line Grid.Column="1" X1="0" Y1="0" X2="1" Y2="0" Stroke="DarkGray" StrokeThickness="1" VerticalAlignment="Center" StrokeDashArray="2 2" Stretch="Uniform" Margin="0"></Line>
-                <Line Grid.Column="1" X1="0" Y1="0" X2="0" Y2="1" Stroke="DarkGray" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" StrokeDashArray="2 2" Stretch="Uniform" Margin="0"></Line>
+                <Line X1="0" Y1="0" X2="1" Y2="0"
+                      Stroke="{DynamicResource Button.Static.Border}"
+                      StrokeThickness="1" VerticalAlignment="Center"
+                      StrokeDashArray="2 2" Stretch="Uniform"/>
+                <Line X1="0" Y1="0" X2="0" Y2="1"
+                      Stroke="{DynamicResource Button.Static.Border}"
+                      StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                      StrokeDashArray="2 2" Stretch="Uniform"/>
             </Grid>
         </Border>
     </Grid>
