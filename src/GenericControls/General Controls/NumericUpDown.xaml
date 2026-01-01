@@ -1,5 +1,4 @@
-﻿<UserControl x:Class="GenericControls.NumericUpDown"
-             x:Name="NumericUpDown"
+﻿<UserControl x:Class="GenericControls.NumericUpDown" x:Name="NumericUpDownControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -15,7 +14,7 @@
         </Grid.ColumnDefinitions>
 
         <!--Numeric Text box-->
-        <local:NumericTextBox x:Name="NumericTextBox" Grid.Row="0" Grid.Column="0" Text="{Binding ElementName=NumericUpDown, Path=Value, Mode=TwoWay}"/>
+        <local:NumericTextBox x:Name="NumericTextBox" Grid.Row="0" Grid.Column="0" Text="{Binding ElementName=NumericUpDownControl, Path=Value, Mode=TwoWay}"/>
 
         <!--Up Down Buttons-->
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
