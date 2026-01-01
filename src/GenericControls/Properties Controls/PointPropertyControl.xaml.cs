@@ -97,12 +97,15 @@ namespace GenericControls
             if (d.GetType() != typeof(PointPropertyControl))
                 return;
             PointPropertyControl thisControl = (PointPropertyControl)d;
-            // 
-            if (e.NewValue == null)
+
+            // Check if the control's child elements have been created yet
+            // (InitializeComponent may not have been called during early property initialization)
+            if (thisControl.DataPointX == null || thisControl.DataPointY == null)
                 return;
-            if (e.NewValue.GetType() != typeof(Point))
-                return;
-            Point newDataPoint = (Point)e.NewValue;
+
+            // Get the current DataPoint value (handles both DataPoint and Decimals property changes)
+            Point newDataPoint = thisControl.DataPoint;
+
             // Update the textboxes with the new values
             // remove the handlers so the property doesn't get triggered for update.
             thisControl.DataPointX.TextChanged -= thisControl.DataPointX_TextChanged;
