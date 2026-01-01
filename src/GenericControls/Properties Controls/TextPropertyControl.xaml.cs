@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class TextPropertyControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextPropertyControl"/> class.
+        /// </summary>
+        public TextPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata(""));

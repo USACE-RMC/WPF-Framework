@@ -35,6 +35,13 @@ namespace GenericControls
 {
     public partial class DirectorySelectorControl : UserControl,INotifyPropertyChanged
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DirectorySelectorControl"/> class.
+        /// </summary>
+        public DirectorySelectorControl()
+        {
+            InitializeComponent();
+        }
 
         #region Members
 

@@ -50,6 +50,14 @@ namespace GenericControls
     public partial class StringListPropertyControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="StringListPropertyControl"/> class.
+        /// </summary>
+        public StringListPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Backing dependency property for <see cref="StringList"/>.
         /// </summary>
         public static DependencyProperty StringListProperty = DependencyProperty.Register(nameof(StringList), typeof(IList<string>), typeof(StringListPropertyControl), new PropertyMetadata(new List<string>(), StringListPropertyChanged_Callback));

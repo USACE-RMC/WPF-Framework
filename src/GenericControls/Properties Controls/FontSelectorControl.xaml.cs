@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class FontSelectorControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FontSelectorControl"/> class.
+        /// </summary>
+        public FontSelectorControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FontSelectorControl), new UIPropertyMetadata("Title"));

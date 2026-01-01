@@ -36,6 +36,13 @@ namespace GenericControls
 
     public partial class FolderSelectorControl : UserControl, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FolderSelectorControl"/> class.
+        /// </summary>
+        public FolderSelectorControl()
+        {
+            InitializeComponent();
+        }
 
         #region Members
 

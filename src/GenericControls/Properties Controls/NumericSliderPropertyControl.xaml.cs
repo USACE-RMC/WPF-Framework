@@ -39,6 +39,13 @@ namespace GenericControls
 
     public partial class NumericSliderPropertyControl : UserControl, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumericSliderPropertyControl"/> class.
+        /// </summary>
+        public NumericSliderPropertyControl()
+        {
+            InitializeComponent();
+        }
 
         #region Members
 
