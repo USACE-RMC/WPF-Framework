@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <RootNamespace>Demo_ProjectUI</RootNamespace>
-    <AssemblyName>Demo_ProjectUI</AssemblyName>
+    <RootNamespace>Demo_FrameworkUI</RootNamespace>
+    <AssemblyName>Demo_FrameworkUI</AssemblyName>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -33,7 +33,7 @@ using FrameworkInterfaces.Undo;
 using System;
 using System.Drawing;
 
-namespace Demo_ProjectUI.Project.Undo_Demo
+namespace Demo_FrameworkUI.Project.Undo_Demo
 {
     /// <summary>
     /// A demo element that showcases the undo/redo functionality.

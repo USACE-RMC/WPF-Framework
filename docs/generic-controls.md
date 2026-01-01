@@ -12,11 +12,10 @@ GenericControls offers controls for:
 - **Property editors** for building property panels
 - **File management** utilities
 
-## Target Frameworks
+## Target Framework
 
-The library supports multi-targeting:
-- .NET Framework 4.8.1
-- .NET 8.0 (Windows)
+The library targets:
+- .NET 9.0 (Windows)
 
 ## Installation
 

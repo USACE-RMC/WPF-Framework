@@ -1,7 +1,7 @@
-﻿<Application x:Class="Demo_ProjectUI.App"
+﻿<Application x:Class="Demo_FrameworkUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Demo_ProjectUI"
+             xmlns:local="clr-namespace:Demo_FrameworkUI"
              Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>

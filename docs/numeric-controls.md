@@ -11,10 +11,10 @@ NumericControls offers controls for:
 - **Stratification binning** for sampling configuration
 - **Bivariate distributions** for two-dimensional empirical data
 
-## Target Frameworks
+## Target Framework
 
-The library supports:
-- .NET Framework 4.8.1
+The library targets:
+- .NET 9.0 (Windows)
 
 ## Installation
 

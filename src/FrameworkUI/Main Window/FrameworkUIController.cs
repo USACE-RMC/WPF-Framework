@@ -46,14 +46,14 @@ namespace FrameworkUI
     ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
     /// </para>
     /// </remarks>
-    public abstract class ProjectUIController : ProjectNode
+    public abstract class FrameworkUIController : ProjectNode
     {
 
         /// <summary>
         /// Construct new ProjectUI controller.
         /// </summary>
         /// <param name="project">Project as IProject.</param>
-        public ProjectUIController(IProject project): base(project)
+        public FrameworkUIController(IProject project): base(project)
         {
             // Load child nodes in the project node
             Load();

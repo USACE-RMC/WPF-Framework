@@ -1,26 +1,26 @@
 # Getting Started
 
-This guide walks you through creating your first application using the ProjectControls framework.
+This guide walks you through creating your first application using the WPF-Framework.
 
 ## Prerequisites
 
-- Visual Studio 2019 or later
-- .NET Framework 4.8.1
+- Visual Studio 2022 or later
+- .NET 9.0 SDK
 - Basic knowledge of WPF and C#
 
 ## Step 1: Create a New WPF Project
 
 1. Open Visual Studio
-2. Create a new **WPF App (.NET Framework)** project
-3. Target **.NET Framework 4.8.1**
+2. Create a new **WPF Application** project
+3. Target **.NET 9.0-windows**
 4. Name your project (e.g., `MyProjectApp`)
 
 ## Step 2: Add Project References
 
-Add references to the ProjectControls libraries:
+Add references to the WPF-Framework libraries:
 
 1. Right-click your project > **Add** > **Reference**
-2. Browse to the ProjectControls build output and add:
+2. Browse to the WPF-Framework build output and add:
    - `FrameworkInterfaces.dll`
    - `FrameworkUI.dll`
    - `Themes.dll`
@@ -309,7 +309,7 @@ Press F5 to run. You should see:
 - [Architecture Overview](architecture.md) - Understand the system design
 - [Themes Guide](themes.md) - Customize application appearance
 - [Undo/Redo Guide](undo-redo.md) - Add undo support to your elements
-- See `Demo_ProjectUI` for a complete working example
+- See `Demo_FrameworkUI` for a complete working example
 
 ## Common Issues
 

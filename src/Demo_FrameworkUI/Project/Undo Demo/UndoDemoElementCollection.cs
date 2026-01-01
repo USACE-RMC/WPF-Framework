@@ -30,7 +30,7 @@
 
 using FrameworkInterfaces;
 
-namespace Demo_ProjectUI.Project.Undo_Demo
+namespace Demo_FrameworkUI.Project.Undo_Demo
 {
     /// <summary>
     /// A demo element collection that showcases the undo/redo functionality for collection operations.

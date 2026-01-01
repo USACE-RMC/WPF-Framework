@@ -1,6 +1,6 @@
 # Migration Guide
 
-This guide helps you upgrade existing applications to the latest version of ProjectControls.
+This guide helps you upgrade existing applications to the latest version of WPF-Framework.
 
 ## Breaking Changes Summary
 
@@ -8,7 +8,7 @@ This guide helps you upgrade existing applications to the latest version of Proj
 |--------|--------|-----------------|
 | `IMessageItem.ToText()` | Interface change | Implement method or use `BasicMessageItem` |
 | Themes library dependency | New runtime DLL | Add `Themes.dll` to deployment |
-| `Test_ProjectUI` renamed | Project name change | Update references to `Demo_ProjectUI` |
+| `Test_ProjectUI` renamed | Project name change | Update references to `Demo_FrameworkUI` |
 
 ## Migrating from Previous Versions
 
@@ -85,7 +85,7 @@ public class MyMessageItem : IMessageItem
 The example project has been renamed:
 
 - **Old name:** `Test_ProjectUI`
-- **New name:** `Demo_ProjectUI`
+- **New name:** `Demo_FrameworkUI`
 
 Update any build scripts or references accordingly.
 
@@ -211,7 +211,7 @@ public string ToText()
 
 **Solution:**
 1. Verify solution includes the Themes project
-2. Check build order: FrameworkInterfaces → Themes → FrameworkUI → Demo_ProjectUI
+2. Check build order: FrameworkInterfaces → Themes → FrameworkUI → Demo_FrameworkUI
 3. Clean and rebuild the entire solution
 
 ## Checklist
@@ -222,7 +222,7 @@ Use this checklist when upgrading:
 - [ ] Updated App.xaml (removed manual theme dictionary)
 - [ ] Added `ThemeManager.SetTheme()` to Application_Startup
 - [ ] Implemented `ToText()` in any custom `IMessageItem` classes
-- [ ] Updated references from `Test_ProjectUI` to `Demo_ProjectUI`
+- [ ] Updated references from `Test_ProjectUI` to `Demo_FrameworkUI`
 - [ ] Tested with all three themes (Light, Blue, Dark)
 - [ ] Verified undo/redo works in MainWindow (Ctrl+Z, Ctrl+Y)
 - [ ] Clean build with no warnings
@@ -232,5 +232,5 @@ Use this checklist when upgrading:
 If you encounter issues not covered here:
 
 1. Check the [Architecture](architecture.md) document for system overview
-2. Review `Demo_ProjectUI` for working examples
+2. Review `Demo_FrameworkUI` for working examples
 3. Examine the source code - all public APIs have XML documentation

@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericControls", "src\Nume
 EndProject
 
 # Demo Applications
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_FrameworkUI", "src\Demo_FrameworkUI\Demo_ProjectUI.csproj", "{7929C9E7-202E-4DE5-B389-BE8B30634B8A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_FrameworkUI", "src\Demo_FrameworkUI\Demo_FrameworkUI.csproj", "{7929C9E7-202E-4DE5-B389-BE8B30634B8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo_GenericControls", "src\Demo_GenericControls\Demo_GenericControls.csproj", "{E5F6A7B8-C901-2345-EF01-6789ABCDEF01}"
 EndProject

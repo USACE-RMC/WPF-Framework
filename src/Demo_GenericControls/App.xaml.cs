@@ -47,7 +47,7 @@ namespace Demo_GenericControls
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class Application
+    public partial class App
     {
         /// <summary>
         /// Called when the application starts. Initializes the theme system.

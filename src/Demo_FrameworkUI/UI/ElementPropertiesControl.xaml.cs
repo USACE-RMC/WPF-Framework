@@ -43,7 +43,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Demo_ProjectUI.UI
+namespace Demo_FrameworkUI.UI
 {
     /// <summary>
     /// Interaction logic for ElementPropertiesControl.xaml
