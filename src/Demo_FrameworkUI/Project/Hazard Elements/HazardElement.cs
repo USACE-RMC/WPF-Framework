@@ -32,7 +32,7 @@ using FrameworkInterfaces;
 using System;
 using System.Drawing;
 
-namespace Demo_ProjectUI.Project.Hazard_Elements
+namespace Demo_FrameworkUI.Project.Hazard_Elements
 {
     /// <summary>
     /// This is just an example project element for testing purposes.

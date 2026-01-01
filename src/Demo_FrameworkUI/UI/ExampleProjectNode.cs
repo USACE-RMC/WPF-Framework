@@ -37,10 +37,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Demo_ProjectUI.Project.Hazard_Elements;
-using Demo_ProjectUI.Project.Undo_Demo;
+using Demo_FrameworkUI.Project.Hazard_Elements;
+using Demo_FrameworkUI.Project.Undo_Demo;
 
-namespace Demo_ProjectUI
+namespace Demo_FrameworkUI
 {
     /// <summary>
     /// Example project node controller demonstrating FrameworkUI features.

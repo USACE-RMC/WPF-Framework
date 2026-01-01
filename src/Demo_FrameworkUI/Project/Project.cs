@@ -34,12 +34,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using Demo_ProjectUI.Project.Consequence_Elements;
-using Demo_ProjectUI.Project.Hazard_Elements;
-using Demo_ProjectUI.Project.Response_Elements;
-using Demo_ProjectUI.Project.Undo_Demo;
+using Demo_FrameworkUI.Project.Consequence_Elements;
+using Demo_FrameworkUI.Project.Hazard_Elements;
+using Demo_FrameworkUI.Project.Response_Elements;
+using Demo_FrameworkUI.Project.Undo_Demo;
 
-namespace Demo_ProjectUI.Project
+namespace Demo_FrameworkUI.Project
 {
     /// <summary>
     /// This is a demo project that showcases the ProjectUI framework features.

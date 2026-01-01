@@ -36,7 +36,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FrameworkInterfaces;
 
-namespace Demo_ProjectUI.Project.Consequence_Elements
+namespace Demo_FrameworkUI.Project.Consequence_Elements
 {
     /// <summary>
     /// Represents a consequence element in the demo project.
