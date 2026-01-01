@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class PointPropertyControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="PointPropertyControl"/> class.
+        /// </summary>
+        public PointPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Decimals"/> dependency property.
         /// </summary>
         public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(PointPropertyControl), new UIPropertyMetadata(5, InitializeControl));

@@ -49,6 +49,14 @@ namespace GenericControls
     public partial class Point3DPropertyControl : UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="Point3DPropertyControl"/> class.
+        /// </summary>
+        public Point3DPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Gets/sets the number of decimal places to display for the X, Y, and Z values.
         /// </summary>
         public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(Point3DPropertyControl), new UIPropertyMetadata(5, InitializeControl));
