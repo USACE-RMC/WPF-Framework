@@ -97,7 +97,7 @@
                     <StackPanel>
                         <TextBlock Text="Text and Numeric Input Controls" Style="{StaticResource SectionHeaderStyle}"/>
                         <TextBlock Style="{StaticResource DescriptionStyle}"
-                                   Text="These controls provide validated text and numeric input with various formatting options."/>
+                                   Text="These controls provide validated text and numeric input with international formatting support, including scientific notation (e.g., 1e-6, 1E2)."/>
 
                         <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
@@ -129,14 +129,17 @@
                                                    CanBeBlank="False" CanBeNegative="True"
                                                    Text="0" Margin="0,5"/>
 
-                            <!-- NumericTextBox (Decimal) -->
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="NumericTextBox (Decimal):"
+                            <!-- NumericTextBox (Decimal with Scientific Notation) -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="NumericTextBox (Scientific):"
                                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
-                                       Foreground="{DynamicResource EnvironmentWindowText}"/>
+                                       Foreground="{DynamicResource EnvironmentWindowText}"
+                                       ToolTip="Supports scientific notation: 1e-6, 1E2, etc."/>
                             <cntrls:NumericTextBox Grid.Row="2" Grid.Column="1"
-                                                   MinValue="-1000" MaxValue="1000" IsWholeNumber="False"
+                                                   MinValue="-1E308" MaxValue="1E308" IsWholeNumber="False"
                                                    CanBeBlank="True" CanBeNegative="True"
-                                                   Text="123.456" Margin="0,5"/>
+                                                   AllowScientificNotation="True"
+                                                   Text="1.23e-6" Margin="0,5"
+                                                   ToolTip="Try: 1e-6, 1E2, -2.5e3"/>
 
                             <!-- NumericUpDown -->
                             <TextBlock Grid.Row="3" Grid.Column="0" Text="NumericUpDown:"
@@ -181,10 +184,12 @@
                             <!-- GridLengthControl -->
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="GridLengthControl:"
                                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
-                                       Foreground="{DynamicResource EnvironmentWindowText}"/>
+                                       Foreground="{DynamicResource EnvironmentWindowText}"
+                                       ToolTip="For editing WPF Grid column/row sizes (Auto, Pixel, Star)"/>
                             <cntrls:GridLengthControl Grid.Row="1" Grid.Column="1"
                                                        GridLength="{Binding TestGridLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                       HorizontalAlignment="Left" Margin="0,5"/>
+                                                       HorizontalAlignment="Left" Margin="0,5"
+                                                       ToolTip="Select unit type: Auto, Pixel (*), or Star (*)"/>
 
                             <!-- ThicknessControl -->
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="ThicknessControl:"

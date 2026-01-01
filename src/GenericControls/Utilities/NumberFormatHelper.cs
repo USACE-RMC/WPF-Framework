@@ -319,6 +319,7 @@ namespace GenericControls
 
         /// <summary>
         /// Checks if text represents a valid partial number input (e.g., "-", ".", "-." which are valid during typing).
+        /// Also handles partial scientific notation like "1e", "1e-", "1E+".
         /// </summary>
         /// <param name="text">The text to check.</param>
         /// <returns>True if the text is a valid partial number input.</returns>
@@ -337,7 +338,101 @@ namespace GenericControls
             if (text == PositiveSign)
                 return true;
 
+            // Check for partial scientific notation (e.g., "1e", "1e-", "1E+", "1.5e", "-2e-")
+            if (IsValidPartialScientificNotation(text))
+                return true;
+
             return false;
+        }
+
+        /// <summary>
+        /// Checks if text represents a valid partial scientific notation input during typing.
+        /// Examples: "1e", "1e-", "1E+", "1.5e", "-2e-", "1e-", ".5e"
+        /// </summary>
+        /// <param name="text">The text to check.</param>
+        /// <returns>True if the text is a valid partial scientific notation input.</returns>
+        public static bool IsValidPartialScientificNotation(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return false;
+
+            // Find position of 'e' or 'E'
+            int eIndex = text.IndexOf('e');
+            if (eIndex < 0)
+                eIndex = text.IndexOf('E');
+
+            if (eIndex < 0)
+                return false;
+
+            // There must be something before 'e' (mantissa)
+            if (eIndex == 0)
+                return false;
+
+            string mantissa = text.Substring(0, eIndex);
+            string exponent = text.Substring(eIndex + 1);
+
+            // Validate mantissa - must be a valid number or partial number
+            if (!IsValidMantissa(mantissa))
+                return false;
+
+            // Validate exponent - can be empty, just a sign, or a partial number
+            if (string.IsNullOrEmpty(exponent))
+                return true; // "1e" is valid partial
+
+            if (exponent == NegativeSign || exponent == PositiveSign)
+                return true; // "1e-" or "1e+" is valid partial
+
+            // Check if exponent is digits only (possibly with leading sign)
+            string expDigits = exponent;
+            if (expDigits.StartsWith(NegativeSign) || expDigits.StartsWith(PositiveSign))
+                expDigits = expDigits.Substring(1);
+
+            // Exponent digits can be empty after sign (that's a partial)
+            if (string.IsNullOrEmpty(expDigits))
+                return true;
+
+            // Otherwise exponent must be all digits
+            return IsAllDigits(expDigits);
+        }
+
+        /// <summary>
+        /// Validates the mantissa part of a number (before 'e' in scientific notation).
+        /// </summary>
+        private static bool IsValidMantissa(string mantissa)
+        {
+            if (string.IsNullOrEmpty(mantissa))
+                return false;
+
+            // Handle leading negative sign
+            string work = mantissa;
+            if (work.StartsWith(NegativeSign))
+                work = work.Substring(NegativeSign.Length);
+
+            if (string.IsNullOrEmpty(work))
+                return true; // Just "-" before e is valid partial
+
+            // Check for decimal separator
+            int decIndex = work.IndexOf(DecimalSeparator, StringComparison.Ordinal);
+
+            if (decIndex >= 0)
+            {
+                // Split by decimal
+                string intPart = work.Substring(0, decIndex);
+                string fracPart = decIndex + DecimalSeparator.Length < work.Length
+                    ? work.Substring(decIndex + DecimalSeparator.Length)
+                    : "";
+
+                // Both parts (if present) must be all digits
+                if (!string.IsNullOrEmpty(intPart) && !IsAllDigits(intPart))
+                    return false;
+                if (!string.IsNullOrEmpty(fracPart) && !IsAllDigits(fracPart))
+                    return false;
+
+                return true;
+            }
+
+            // No decimal - must be all digits
+            return IsAllDigits(work);
         }
 
         /// <summary>
