@@ -241,20 +241,20 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="DateAndTimeTextBox (12h):"
-                                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5"
                                                Foreground="{DynamicResource EnvironmentWindowText}"/>
                                     <cntrls:DateAndTimeTextBoxControl Grid.Row="0" Grid.Column="1"
                                                                        Is24Hour="False"
                                                                        SelectedDateTime="{Binding DateTimeProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                       Margin="0,5"/>
+                                                                       Height="22"/>
 
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="DateAndTimeTextBox (24h):"
-                                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5"
                                                Foreground="{DynamicResource EnvironmentWindowText}"/>
                                     <cntrls:DateAndTimeTextBoxControl Grid.Row="1" Grid.Column="1"
                                                                        Is24Hour="True"
                                                                        SelectedDateTime="{Binding DateTimeProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                       Margin="0,5"/>
+                                                                       Height="22"/>
                                 </Grid>
                             </StackPanel>
                         </Grid>
