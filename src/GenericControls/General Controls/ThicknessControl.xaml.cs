@@ -48,6 +48,14 @@ namespace GenericControls
     public partial class ThicknessControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ThicknessControl"/> class.
+        /// </summary>
+        public ThicknessControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Dependency property for the selected <see cref="Thickness"/>
         /// </summary>
         public static DependencyProperty ThicknessProperty = DependencyProperty.Register(nameof(SelectedThickness), typeof(Thickness), typeof(ThicknessControl), new UIPropertyMetadata(new Thickness(1d)));
