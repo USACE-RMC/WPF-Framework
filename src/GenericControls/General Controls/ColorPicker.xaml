@@ -107,16 +107,16 @@
             <Setter Property="Height" Value="22"/>
             <Setter Property="Width" Value="22"/>
             <Setter Property="Margin" Value="1,1,1,1"/>
-            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <EventSetter Event="MouseLeftButtonUp" Handler="Rectangle_MouseLeftButtonUp"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Stroke" Value="LightGray"/>
+                    <Setter Property="Stroke" Value="{DynamicResource Button.MouseOver.Border}"/>
                     <Setter Property="StrokeThickness" Value="2"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="Stroke" Value="Black"/>
+                    <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
                     <Setter Property="StrokeThickness" Value="1"/>
                 </Trigger>
             </Style.Triggers>

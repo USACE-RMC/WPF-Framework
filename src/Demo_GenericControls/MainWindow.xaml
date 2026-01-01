@@ -224,6 +224,7 @@
                                                FontWeight="SemiBold" Foreground="{DynamicResource EnvironmentWindowText}"/>
                                     <cntrls:ClockControl HorizontalAlignment="Center"
                                                          HasSeconds="True" Is24Hour="False"
+                                                         Time="{Binding DateTimeProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                          Width="200" Height="200"/>
                                 </StackPanel>
                             </Border>
