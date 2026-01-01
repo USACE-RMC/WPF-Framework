@@ -57,6 +57,7 @@ namespace GenericControls
         /// </summary>
         public DateAndTimePickerControl()
         {
+            InitializeComponent();
             this.Loaded += DateAndTimePickerControl_Loaded;
         }
 

@@ -51,6 +51,14 @@ namespace GenericControls
     public partial class DateAndTimeTextBoxControl : UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="DateAndTimeTextBoxControl"/> class.
+        /// </summary>
+        public DateAndTimeTextBoxControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="SelectedDateTime"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedDateTimeProperty = DependencyProperty.Register(nameof(SelectedDateTime), typeof(DateTime), typeof(DateAndTimeTextBoxControl), new UIPropertyMetadata(new DateTime(2017, 8, 7, 20, 35, 23), DateChangedCallback));
