@@ -331,7 +331,7 @@ namespace GenericControls
                 Stretch = Stretch.Uniform,
                 SnapsToDevicePixels = true
             };
-            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Fant);
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
             RenderOptions.SetEdgeMode(image, EdgeMode.Aliased);
             return image;
         }
