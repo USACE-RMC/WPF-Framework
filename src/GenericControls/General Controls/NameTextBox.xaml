@@ -10,13 +10,13 @@
         <local:BooleanToVisibilityConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed"/>
     </UserControl.Resources>
     <Grid x:Name="NameGrid">
-        <TextBox x:Name="NameTBox" x:FieldModifier="public" TextChanged="NameTBox_TextChanged" 
-                 VerticalContentAlignment="Center" 
-                 VerticalAlignment="Stretch" 
+        <TextBox x:Name="NameTBox" x:FieldModifier="public" TextChanged="NameTBox_TextChanged"
+                 VerticalContentAlignment="Center"
+                 VerticalAlignment="Stretch"
                  Text="{Binding ElementName=NameTextBoxControl, Path=Text, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                  PreviewKeyUp="TextBox_PreviewKeyUp">
             <TextBox.Style>
-                <Style TargetType="{x:Type TextBox}">
+                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=NameTextBoxControl, Path=IsValid}" Value="True">
                             <Setter Property="ToolTip" Value="{x:Null}"/>

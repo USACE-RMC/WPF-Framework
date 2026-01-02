@@ -120,12 +120,11 @@ namespace GenericControls
         /// </summary>
         public ColorPicker()
         {
-
             // This call is required by the designer.
             this.InitializeComponent();
 
-            // Add any initialization after the InitializeComponent() call.
-            this.DataContext = this;
+            // Note: Do NOT set DataContext = this here, as it would break
+            // external bindings from parent controls (e.g., {Binding ColorProperty})
             this.Loaded += Color_Picker_Loaded;
         }
 

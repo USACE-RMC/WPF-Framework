@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -27,17 +27,20 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using GenericControls;
 using Themes;
@@ -45,252 +48,356 @@ using Themes;
 namespace Demo_GenericControls
 {
     /// <summary>
-    /// Main window for demonstrating GenericControls library functionality.
+    /// Main window for demonstrating the GenericControls library functionality.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This demo showcases various custom controls including color pickers, numeric inputs,
-    /// data grids, line style selectors, and other WPF UI components.
+    /// This demo application showcases all custom controls available in the GenericControls library,
+    /// including text inputs, numeric controls, color pickers, property editors, file/folder selectors,
+    /// and data grids. The application supports runtime theme switching between Light, Blue, and Dark themes.
     /// </para>
     /// <para>
-    /// <b> Authors: </b>
+    /// The window serves as its own ViewModel by implementing <see cref="INotifyPropertyChanged"/>,
+    /// with the <see cref="DataContext"/> set to itself. All controls bind directly to properties
+    /// defined in this class.
+    /// </para>
+    /// <para>
+    /// <b>Authors:</b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    ///     <item>Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil</item>
     /// </list>
     /// </para>
     /// </remarks>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        #region Private Fields
 
-
-        private string _textProperty;
-        private string _fontProperty;
-        private FontWeight _testFontWeightProperty;
-        private bool _booleanProperty;
-        private double _numericSelectorProperty;
-        private double _numericProperty;
+        private string _nameProperty = "Sample Name";
+        private string _textProperty = "Sample Text";
+        private string _descriptionProperty = "This is a sample description that demonstrates the resizable text property control.";
+        private string _fontProperty = "Segoe UI";
+        private FontWeight _fontWeightProperty = FontWeights.Normal;
+        private bool _booleanProperty = true;
+        private double _numericProperty = 25.0;
+        private double _numericAutoProperty = double.NaN;
+        private double _opacityProperty = 0.8;
+        private double _lineWidthProperty = 2.0;
         private DoubleCollection _lineStyleProperty;
-        private double _lineWidthProperty;
         private SolidColorBrush _colorProperty;
-        private HorizontalAlignment _testHorizontalAlignmentProperty;
-        private CalendarWeekRule _calendarWeekProperty;
+        private SolidColorBrush _newColorProperty;
+        private HorizontalAlignment _horizontalAlignmentProperty = HorizontalAlignment.Center;
+        private VerticalAlignment _verticalAlignmentProperty = VerticalAlignment.Center;
+        private Point _pointProperty = new Point(100, 200);
+        private Point3D _point3DProperty = new Point3D(10, 20, 30);
+        private DateTime _dateTimeProperty = DateTime.Now;
+        private CalendarWeekRule _calendarWeekRuleProperty = CalendarWeekRule.FirstDay;
+        private Thickness _thicknessProperty = new Thickness(5);
+        private string _filePathProperty = "";
+        private string _folderPathProperty = "";
+        private string _directoryPathProperty = "";
+        private string _dialogResultText = "Click a button above to see the dialog result.";
         private IList<string> _stringListProperty;
+        private ObservableCollection<ColorItem> _colorItems;
+        private int _colorCounter = 1;
 
-        public static DependencyProperty TestGridLengthProperty = DependencyProperty.Register(nameof(TestGridLength), typeof(GridLength), typeof(MainWindow), new FrameworkPropertyMetadata(new GridLength(100d)));
+        #endregion
+
+        #region Dependency Properties
 
         /// <summary>
-        /// Gets/sets the test grid length, used for layout measurements.
+        /// Identifies the <see cref="TestGridLength"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TestGridLengthProperty =
+            DependencyProperty.Register(
+                nameof(TestGridLength),
+                typeof(GridLength),
+                typeof(MainWindow),
+                new FrameworkPropertyMetadata(new GridLength(100d)));
+
+        /// <summary>
+        /// Gets or sets the test grid length value used for demonstrating the GridLengthControl.
         /// </summary>
         public GridLength TestGridLength
         {
-            get
-            {
-                return (GridLength)this.GetValue(TestGridLengthProperty);
-            }
-            set
-            {
-                this.SetValue(TestGridLengthProperty, value);
-            }
+            get => (GridLength)GetValue(TestGridLengthProperty);
+            set => SetValue(TestGridLengthProperty, value);
+        }
+
+        #endregion
+
+        #region Bindable Properties
+
+        /// <summary>
+        /// Gets or sets the name property value for NameTextBox and NameTextPropertyControl demonstrations.
+        /// </summary>
+        public string NameProperty
+        {
+            get => _nameProperty;
+            set => SetProperty(ref _nameProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the text value.
+        /// Gets or sets the text property value for TextPropertyControl demonstrations.
         /// </summary>
         public string TextProperty
         {
-            get
-            {
-                return _textProperty;
-            }
-            set
-            {
-                _textProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TextProperty)));
-            }
+            get => _textProperty;
+            set => SetProperty(ref _textProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the font family name.
+        /// Gets or sets the description text for ResizeableTextPropertyControl demonstrations.
+        /// </summary>
+        public string DescriptionProperty
+        {
+            get => _descriptionProperty;
+            set => SetProperty(ref _descriptionProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the font family name for FontSelectorControl demonstrations.
         /// </summary>
         public string FontProperty
         {
-            get
-            {
-                return _fontProperty;
-            }
-            set
-            {
-                _fontProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FontProperty)));
-
-            }
+            get => _fontProperty;
+            set => SetProperty(ref _fontProperty, value);
         }
 
         /// <summary>
-        /// Gets/sets the font weight.
+        /// Gets or sets the font weight for FontWeightSelectorControl demonstrations.
         /// </summary>
-        public FontWeight TestFontWeightProperty
+        public FontWeight FontWeightProperty
         {
-            get
-            {
-                return _testFontWeightProperty;
-            }
-            set
-            {
-                _testFontWeightProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TestFontWeightProperty)));
-
-            }
+            get => _fontWeightProperty;
+            set => SetProperty(ref _fontWeightProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the boolean toggle value.
+        /// Gets or sets the boolean value for BooleanPropertyControl demonstrations.
         /// </summary>
         public bool BooleanProperty
         {
-            get
-            {
-                return _booleanProperty;
-            }
-            set
-            {
-                _booleanProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BooleanProperty)));
-            }
+            get => _booleanProperty;
+            set => SetProperty(ref _booleanProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the numeric value for selection control testing.
-        /// </summary>
-        public double NumericSelectorProperty
-        {
-            get
-            {
-                return _numericSelectorProperty;
-            }
-            set
-            {
-                _numericSelectorProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NumericSelectorProperty)));
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a numeric value.
+        /// Gets or sets the numeric value for NumericPropertyControl demonstrations.
         /// </summary>
         public double NumericProperty
         {
-            get
-            {
-                return _numericProperty;
-            }
-            set
-            {
-                _numericProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NumericProperty)));
-            }
+            get => _numericProperty;
+            set => SetProperty(ref _numericProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the line style (dash pattern) as a <see cref="DoubleCollection"/>.
+        /// Gets or sets the numeric value with auto/default support for NumericAutoPropertyControl demonstrations.
         /// </summary>
-        public DoubleCollection LineStyleProperty
+        public double NumericAutoProperty
         {
-            get
-            {
-                return _lineStyleProperty;
-            }
-            set
-            {
-                _lineStyleProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LineStyleProperty)));
-            }
+            get => _numericAutoProperty;
+            set => SetProperty(ref _numericAutoProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the line width.
+        /// Gets or sets the opacity value (0-1) for NumericSliderPropertyControl demonstrations.
+        /// </summary>
+        public double OpacityProperty
+        {
+            get => _opacityProperty;
+            set => SetProperty(ref _opacityProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the line width for LineWidthSelectorControl demonstrations.
         /// </summary>
         public double LineWidthProperty
         {
-            get
-            {
-                return _lineWidthProperty;
-            }
-            set
-            {
-                _lineWidthProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LineWidthProperty)));
-            }
+            get => _lineWidthProperty;
+            set => SetProperty(ref _lineWidthProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the color as a <see cref="SolidColorBrush"/>.
+        /// Gets or sets the line style (dash pattern) as a <see cref="DoubleCollection"/>
+        /// for LineStyleSelectorControl demonstrations.
+        /// </summary>
+        public DoubleCollection LineStyleProperty
+        {
+            get => _lineStyleProperty;
+            set => SetProperty(ref _lineStyleProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the color as a <see cref="SolidColorBrush"/>
+        /// for ColorPicker and ColorPropertyControl demonstrations.
         /// </summary>
         public SolidColorBrush ColorProperty
         {
-            get
-            {
-                return _colorProperty;
-            }
-            set
-            {
-                _colorProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ColorProperty)));
-            }
+            get => _colorProperty;
+            set => SetProperty(ref _colorProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets a horizontal alignment test value.
+        /// Gets or sets the new color to add to the color collection.
         /// </summary>
-        public HorizontalAlignment TestHorizontalAlignmentProperty
+        public SolidColorBrush NewColorProperty
         {
-            get
-            {
-                return _testHorizontalAlignmentProperty;
-            }
-            set
-            {
-                _testHorizontalAlignmentProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TestHorizontalAlignmentProperty)));
-            }
+            get => _newColorProperty;
+            set => SetProperty(ref _newColorProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets the calendar week rule.
+        /// Gets or sets the horizontal alignment for HorizontalAlignmentControl demonstrations.
         /// </summary>
-        public CalendarWeekRule CalendarWeekProperty
+        public HorizontalAlignment HorizontalAlignmentProperty
         {
-            get
-            {
-                return _calendarWeekProperty;
-            }
-            set
-            {
-                _calendarWeekProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalendarWeekProperty)));
-            }
+            get => _horizontalAlignmentProperty;
+            set => SetProperty(ref _horizontalAlignmentProperty, value);
         }
 
         /// <summary>
-        /// Gets or sets a list of string values.
+        /// Gets or sets the vertical alignment for VerticalAlignmentControl demonstrations.
+        /// </summary>
+        public VerticalAlignment VerticalAlignmentProperty
+        {
+            get => _verticalAlignmentProperty;
+            set => SetProperty(ref _verticalAlignmentProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the 2D point for PointPropertyControl demonstrations.
+        /// </summary>
+        public Point PointProperty
+        {
+            get => _pointProperty;
+            set => SetProperty(ref _pointProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the 3D point for Point3DPropertyControl demonstrations.
+        /// </summary>
+        public Point3D Point3DProperty
+        {
+            get => _point3DProperty;
+            set => SetProperty(ref _point3DProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the date/time value for DateTimePropertyControl and DateAndTimeTextBoxControl demonstrations.
+        /// </summary>
+        public DateTime DateTimeProperty
+        {
+            get => _dateTimeProperty;
+            set => SetProperty(ref _dateTimeProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the calendar week rule for CalendarWeekRulePropertyControl demonstrations.
+        /// </summary>
+        public CalendarWeekRule CalendarWeekRuleProperty
+        {
+            get => _calendarWeekRuleProperty;
+            set => SetProperty(ref _calendarWeekRuleProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the thickness value for ThicknessControl demonstrations.
+        /// </summary>
+        public Thickness ThicknessProperty
+        {
+            get => _thicknessProperty;
+            set => SetProperty(ref _thicknessProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the file path for FileSelectorControl demonstrations.
+        /// </summary>
+        public string FilePathProperty
+        {
+            get => _filePathProperty;
+            set => SetProperty(ref _filePathProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the folder path for FolderSelectorControl demonstrations.
+        /// </summary>
+        public string FolderPathProperty
+        {
+            get => _folderPathProperty;
+            set => SetProperty(ref _folderPathProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the directory path for DirectorySelectorControl demonstrations.
+        /// </summary>
+        public string DirectoryPathProperty
+        {
+            get => _directoryPathProperty;
+            set => SetProperty(ref _directoryPathProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the text displaying dialog results from button demonstrations.
+        /// </summary>
+        public string DialogResultText
+        {
+            get => _dialogResultText;
+            set => SetProperty(ref _dialogResultText, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the list of strings for StringListPropertyControl demonstrations.
         /// </summary>
         public IList<string> StringListProperty
         {
-            get
-            {
-                return _stringListProperty;
-            }
-            set
-            {
-                _stringListProperty = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StringListProperty)));
-            }
+            get => _stringListProperty;
+            set => SetProperty(ref _stringListProperty, value);
         }
 
         /// <summary>
-        /// Raised when a property value changes.
+        /// Gets the observable collection of color items for the Color Collection tab.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public ObservableCollection<ColorItem> ColorItems => _colorItems;
+
+        #endregion
+
+        #region INotifyPropertyChanged Implementation
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed. This is automatically provided by the compiler.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Sets the property value and raises <see cref="PropertyChanged"/> if the value changed.
+        /// </summary>
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="field">Reference to the backing field.</param>
+        /// <param name="value">The new value.</param>
+        /// <param name="propertyName">The name of the property. This is automatically provided by the compiler.</param>
+        /// <returns><c>true</c> if the value changed; otherwise, <c>false</c>.</returns>
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -301,351 +408,58 @@ namespace Demo_GenericControls
         /// </remarks>
         public MainWindow()
         {
-            // This call is required by the designer.
             InitializeComponent();
+            DataContext = this;
+            InitializeSampleData();
+        }
 
-            // Add any initialization after the InitializeComponent() call.
-
-
-            this.DataContext = this;
-
-
-            var cats = new ObservableCollection<object>();
-            cats.Add(new Cat() { Color = "Orange", Age = "3", Sex = "Male" });
-            cats.Add(new Cat() { Color = "Gray", Age = "12", Sex = "Female" });
-            cats.Add(new Cat() { Color = "White", Age = "5", Sex = "Male" });
-            CPDataGrid.ItemsSource = cats;
-            CPDataGrid2.ItemsSource = cats;
-            // Properties
-
-            TextProperty = "Sample Text";
-            FontProperty = "Segoe UI";
-            TestFontWeightProperty = FontWeights.Bold;
-            BooleanProperty = true;
-            NumericSelectorProperty = 12d;
-            NumericProperty = double.MaxValue; // 123.456
+        /// <summary>
+        /// Initializes all sample data for the demonstration controls.
+        /// </summary>
+        private void InitializeSampleData()
+        {
+            // Initialize line style
             LineStyleProperty = LineStyleSelectorControl.LineStyleOptions[0];
-            LineWidthProperty = 4d;
-            ColorProperty = new SolidColorBrush(Color.FromArgb(150, 105, 205, 125));
-            TestHorizontalAlignmentProperty = HorizontalAlignment.Center;
 
-            var t = new List<ColorItem>();
-            t.Add(new ColorItem() { ColorTest = Brushes.Red, Name = "Red" });
-            t.Add(new ColorItem() { ColorTest = Brushes.Green, Name = "Green" });
-            t.Add(new ColorItem() { ColorTest = Brushes.Blue, Name = "Blue" });
+            // Initialize colors
+            ColorProperty = new SolidColorBrush(Color.FromArgb(200, 70, 130, 180)); // Steel Blue
+            NewColorProperty = new SolidColorBrush(Colors.Orange);
 
-            ColorItemsControl.ItemsSource = t;
-        }
-
-        /// <summary>
-    /// When the mouse enters the datagrid set the popup to staysopen=true to allow the datagrid to keep capture of the mouse and give the datagrid the focus.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-        private void CPDataGrid2_MouseEnter(object sender, MouseEventArgs e)
-        {
-            this.DataGridPopup.StaysOpen = true;
-            this.CPDataGrid2.Focus();
-        }
-
-        /// <summary>
-    /// When the mouse leaves the datagrid set the popup to staysopen=false and give it focus so that clicking outside the popup will close it.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-        private void CPDataGrid2_MouseLeave(object sender, MouseEventArgs e)
-        {
-            this.DataGridPopup.StaysOpen = false;
-            this.DataGridPopup.Focus();
-        }
-
-        /// <summary>
-    /// When the context menu closes the focus gets all out of whack in the popup and needs to be reset. Maybe because it is a popup on a popup? WPF Inception
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-        private void CPDataGrid2_ContextMenuClosing(object sender, ContextMenuEventArgs e)
-        {
-            this.DataGridPopup.IsOpen = false;
-            this.DataGridPopup.IsOpen = true;
-        }
-
-        /// <summary>
-        /// Adjusts the header column width to match combined width of content columns (with padding).
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ControlGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            this.HeaderColumn.MaxWidth = this.HeaderColumn.ActualWidth + this.PropertyWidthColumn.ActualWidth - 22d;
-        }
-
-        /// <summary>
-        /// Represents a sample cat entity used for demonstrating data grid functionality.
-        /// </summary>
-        public class Cat
-        {
-            /// <summary>
-            /// Gets or sets the color of the cat.
-            /// </summary>
-            public string Color { get; set; }
-
-            /// <summary>
-            /// Gets or sets the age of the cat.
-            /// </summary>
-            public string Age { get; set; }
-
-            /// <summary>
-            /// Gets or sets the sex of the cat.
-            /// </summary>
-            public string Sex { get; set; }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="Cat"/> class.
-            /// </summary>
-            public Cat()
+            // Initialize string list
+            StringListProperty = new List<string>
             {
-            }
-        }
+                "First item",
+                "Second item",
+                "Third item"
+            };
 
-        /// <summary>
-        /// Simple debug method for mouse interaction with a control.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void HorizontalControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Debug.Print("Hooyaa!");
-        }
-
-        /// <summary>
-        /// Handles the AutoGeneratedColumns event to inspect property names bound to each column.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CPDataGrid_AutoGeneratedColumns(object sender, EventArgs e)
-        {
-            foreach (var column in this.CPDataGrid.Columns)
+            // Initialize color collection
+            _colorItems = new ObservableCollection<ColorItem>
             {
-                string propertyName = ((Binding)((DataGridTextColumn)column).Binding).Path.Path.ToString();
+                new ColorItem { Name = "Primary", ColorBrush = new SolidColorBrush(Colors.SteelBlue) },
+                new ColorItem { Name = "Secondary", ColorBrush = new SolidColorBrush(Colors.DarkSlateGray) },
+                new ColorItem { Name = "Accent", ColorBrush = new SolidColorBrush(Colors.OrangeRed) },
+                new ColorItem { Name = "Success", ColorBrush = new SolidColorBrush(Colors.ForestGreen) },
+                new ColorItem { Name = "Warning", ColorBrush = new SolidColorBrush(Colors.Gold) }
+            };
+            ColorItemsControl.ItemsSource = _colorItems;
 
-                Debug.Print(propertyName);
-            }
-        }
-
-        /// <summary>
-        /// (Disabled) Starts Example 1 progress task using a progress reporter.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ProgressExample1Button_Click(object sender, RoutedEventArgs e)
-        {
-            // ProgressExample2ProgressBar.Foreground = New SolidColorBrush(Color.FromArgb(255, 6, 176, 37))
-            // _progressReporter1 = New SafeProgressReporter("Example 1")
-            // AddHandler _progressReporter1.ProgressReported, AddressOf ReportProgress1
-            // AddHandler _progressReporter1.MessageReported, AddressOf ReportMessage1
-            // AddHandler _progressReporter1.TaskEnded, Sub()
-            // If _progressReporter1.CancelRequested Then
-            // Dispatcher.Invoke(New Action(Sub() ProgressExample1Textblock.Text = "Progress Canceled."))
-            // ProgressExample1ProgressBar.Value = 0
-            // Else
-            // ProgressExample1ProgressBar.Foreground = Brushes.LightBlue
-            // End If
-            // '
-            // ProgressExample1CancelButton.IsEnabled = False
-            // End Sub
-            // '
-            // ProgressExample1CancelButton.IsEnabled = True
-            // '
-            // Dim t As New Task(Sub()
-            // _progressReporter1.IndicateTaskStart()
-            // Dim totalSteps As Int32 = 100
-            // For i As Int32 = 1 To totalSteps
-            // If _progressReporter1.CancelRequested Then
-            // _progressReporter1.IndicateTaskEnded()
-            // Exit Sub
-            // End If
-            // '
-            // System.Threading.Thread.Sleep(100)
-            // _progressReporter1.Report(i / totalSteps, (100 * i / totalSteps).ToString("G4", CultureInfo.InvariantCulture) & "% Complete", SafeProgressReporter.MessageType.Status)
-            // Next
-            // _progressReporter1.Report(100, "Complete", SafeProgressReporter.MessageType.Success)
-            // _progressReporter1.IndicateTaskEnded()
-            // End Sub)
-            // '
-            // t.Start()
-        }
-
-        // Private Sub ReportMessage1(msg As SafeProgressReporter.MessageContentStruct)
-        // ProgressExample1Textblock.Text = msg.message
-        // If msg.msgType = SafeProgressReporter.MessageType.FatalError Then
-        // ProgressExample1Textblock.Foreground = New SolidColorBrush(Colors.Red)
-        // Else
-        // ProgressExample1Textblock.Foreground = New SolidColorBrush(Colors.Black)
-        // End If
-        // End Sub
-
-        // Private Sub ReportProgress1(reporter As SafeProgressReporter, prog As Double, progDelta As Double)
-        // ProgressExample1ProgressBar.Value = prog
-        // End Sub
-
-        /// <summary>
-        /// (Disabled) Cancels Example 1 progress task.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ProgressExample1CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            // _progressReporter1.RequestCancel()
-        }
-
-        /// <summary>
-        /// (Disabled) Starts Example 2 progress task using two sub-reporters.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ProgressExample2Button_Click(object sender, RoutedEventArgs e)
-        {
-            // ProgressExample2ProgressBar.Foreground = New SolidColorBrush(Color.FromArgb(255, 6, 176, 37))
-            // _progressReporter2 = New SafeProgressReporter("Example 1")
-            // AddHandler _progressReporter2.ProgressReported, Sub(reporter As SafeProgressReporter, prog As Double, progDelta As Double) ProgressExample2ProgressBar.Value = prog
-            // AddHandler _progressReporter2.MessageReported, AddressOf ReportMessage2
-            // AddHandler _progressReporter2.TaskEnded, Sub()
-            // If _progressReporter2.CancelRequested Then
-            // Dispatcher.Invoke(New Action(Sub() ProgressExample2Textblock.Text = "Progress Canceled."))
-            // ProgressExample2ProgressBar.Value = 0
-            // Else
-            // ProgressExample2ProgressBar.Foreground = Brushes.LightBlue
-            // End If
-            // '
-            // ProgressExample2CancelButton.IsEnabled = False
-            // End Sub
-            // '
-            // ProgressExample2CancelButton.IsEnabled = True
-            // '
-            // Dim t As New Task(Sub()
-            // _progressReporter2.IndicateTaskStart()
-
-            // Dim subReporter1 = _progressReporter2.CreateProgressModifier(0.5, "Set 1")
-            // 'new thread 1
-            // Dim t1 As New Task(Sub()
-            // subReporter1.IndicateTaskStart()
-            // Dim totalSteps As Int32 = 100
-            // For i As Int32 = 1 To totalSteps
-            // If subReporter1.CancelRequested Then
-            // subReporter1.IndicateTaskEnded()
-            // Exit Sub
-            // End If
-            // '
-            // System.Threading.Thread.Sleep(50)
-            // subReporter1.ReportProgress(i / totalSteps)
-            // subReporter1.ReportMessage(CInt(50 * i / totalSteps).ToString("G4", CultureInfo.InvariantCulture) & "% Complete", SafeProgressReporter.MessageType.Status)
-            // Next
-            // subReporter1.IndicateTaskEnded()
-            // End Sub)
-            // '
-            // t1.Start()
-            // t1.Wait()
-
-            // 'two is slightly faster for example purposes when you have to estimate percent of total progress a task will take.
-            // Dim subReporter2 = _progressReporter2.CreateProgressModifier(0.5, "Set 2")
-            // Dim t2 As New Task(Sub()
-            // subReporter2.IndicateTaskStart()
-            // Dim totalSteps As Int32 = 100
-            // For i As Int32 = 1 To totalSteps
-            // If subReporter2.CancelRequested Then
-            // subReporter2.IndicateTaskEnded()
-            // Exit Sub
-            // End If
-            // '
-            // System.Threading.Thread.Sleep(40)
-            // subReporter2.ReportProgress(i / totalSteps)
-            // subReporter2.ReportMessage(CInt(50 + (50 * i / totalSteps)).ToString("G4", CultureInfo.InvariantCulture) & "% Complete", SafeProgressReporter.MessageType.Status)
-            // Next
-            // subReporter2.IndicateTaskEnded()
-            // End Sub)
-            // '
-            // t2.Start()
-            // t2.Wait()
-            // '
-            // _progressReporter2.Report(100, "Complete", SafeProgressReporter.MessageType.Success)
-            // _progressReporter2.IndicateTaskEnded()
-            // End Sub)
-            // '
-            // t.Start()
-        }
-
-        // Private Sub ReportMessage2(msg As SafeProgressReporter.MessageContentStruct)
-        // ProgressExample2Textblock.Text = msg.message
-        // If msg.msgType = SafeProgressReporter.MessageType.FatalError Then
-        // ProgressExample2Textblock.Foreground = New SolidColorBrush(Colors.Red)
-        // Else
-        // ProgressExample2Textblock.Foreground = New SolidColorBrush(Colors.Black)
-        // End If
-        // End Sub
-
-        /// <summary>
-        /// (Disabled) Cancels Example 2 progress task.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ProgressExample2CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            // _progressReporter2.RequestCancel()
-        }
-
-        /// <summary>
-        /// Sets or updates the value of <c>>AutoPropControl.DefaultNumber</c> on button click.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TestAutoButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (double.IsNaN(AutoPropControl.DefaultNumber))
+            // Initialize DataGrid sample data
+            var sampleData = new ObservableCollection<SampleDataItem>
             {
-                this.AutoPropControl.DefaultNumber = 2.4274301210834244d;
-            }
-            else
-            {
-                this.AutoPropControl.DefaultNumber += 1;
-            }
-
+                new SampleDataItem { Name = "Item 1", Value = 100, Category = "Alpha" },
+                new SampleDataItem { Name = "Item 2", Value = 250, Category = "Beta" },
+                new SampleDataItem { Name = "Item 3", Value = 175, Category = "Alpha" },
+                new SampleDataItem { Name = "Item 4", Value = 320, Category = "Gamma" },
+                new SampleDataItem { Name = "Item 5", Value = 95, Category = "Beta" }
+            };
+            CPDataGrid.ItemsSource = sampleData;
+            CPDataGrid2.ItemsSource = sampleData;
         }
 
-        /// <summary>
-        /// Displays a color picker popup bound to the clicked color rectangle's data context.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ColorRectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            Rectangle r = (Rectangle)sender;
-            ColorItem ci = (ColorItem)r.DataContext;
-            var p = new System.Windows.Controls.Primitives.Popup() { IsOpen = false, StaysOpen = false, AllowsTransparency = true, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom, PlacementTarget = r };
-            p.Closed += PopupClosed;
+        #endregion
 
-            var cp = new ColorPicker() { Width = 132, Height = 220, Background = Brushes.White, BorderBrush = Brushes.Black, BorderThickness = new Thickness(1d), Padding = new Thickness(2d) };
-
-            BindingOperations.SetBinding(cp, ColorPicker.ColorProperty, new Binding(nameof(ColorItem.ColorTest)) { Source = ci, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, Mode = BindingMode.TwoWay });
-
-            p.Child = cp;
-            p.IsOpen = true;
-        }
-
-        /// <summary>
-        /// Cleans up the color picker binding when the popup is closed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PopupClosed(object sender, EventArgs e)
-        {
-            System.Windows.Controls.Primitives.Popup p = (System.Windows.Controls.Primitives.Popup)sender;
-            if (p.Child is null || p.Child.GetType() != typeof(ColorPicker))
-                return;
-
-            ColorPicker cp = (ColorPicker)p.Child;
-            BindingOperations.ClearBinding(cp, ColorPicker.ColorProperty);
-        }
+        #region Theme Handling
 
         /// <summary>
         /// Handles theme radio button selection changes.
@@ -668,5 +482,243 @@ namespace Demo_GenericControls
                 ThemeService.Instance.SetTheme(theme);
             }
         }
+
+        #endregion
+
+        #region DataGrid Event Handlers
+
+        /// <summary>
+        /// Handles the AutoGeneratedColumns event to inspect property names bound to each column.
+        /// </summary>
+        /// <param name="sender">The DataGrid that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void CPDataGrid_AutoGeneratedColumns(object sender, EventArgs e)
+        {
+            foreach (var column in CPDataGrid.Columns)
+            {
+                if (column is DataGridTextColumn textColumn && textColumn.Binding is Binding binding)
+                {
+                    Debug.Print($"Column generated for property: {binding.Path.Path}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// When the mouse enters the DataGrid, set the popup to StaysOpen=true
+        /// to allow the DataGrid to keep capture of the mouse and give it focus.
+        /// </summary>
+        /// <param name="sender">The DataGrid that raised the event.</param>
+        /// <param name="e">Mouse event arguments.</param>
+        private void CPDataGrid2_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DataGridPopup.StaysOpen = true;
+            CPDataGrid2.Focus();
+        }
+
+        /// <summary>
+        /// When the mouse leaves the DataGrid, set the popup to StaysOpen=false
+        /// and give it focus so that clicking outside the popup will close it.
+        /// </summary>
+        /// <param name="sender">The DataGrid that raised the event.</param>
+        /// <param name="e">Mouse event arguments.</param>
+        private void CPDataGrid2_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DataGridPopup.StaysOpen = false;
+            DataGridPopup.Focus();
+        }
+
+        /// <summary>
+        /// When the context menu closes, the focus gets out of sync in the popup
+        /// and needs to be reset by toggling the popup open state.
+        /// </summary>
+        /// <param name="sender">The DataGrid that raised the event.</param>
+        /// <param name="e">Context menu event arguments.</param>
+        private void CPDataGrid2_ContextMenuClosing(object sender, ContextMenuEventArgs e)
+        {
+            DataGridPopup.IsOpen = false;
+            DataGridPopup.IsOpen = true;
+        }
+
+        #endregion
+
+        #region Dialog Button Handlers
+
+        /// <summary>
+        /// Shows the NameDialog and displays the result.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ShowNameDialog_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new NameDialog
+            {
+                Owner = this,
+                Title = "Enter Name",
+                Text = "Default Name"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                DialogResultText = $"Name Dialog Result: \"{dialog.Text}\"";
+            }
+            else
+            {
+                DialogResultText = "Name Dialog was cancelled.";
+            }
+        }
+
+        /// <summary>
+        /// Shows the FolderBrowser dialog and displays the result.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ShowFolderBrowser_Click(object sender, RoutedEventArgs e)
+        {
+            string? folder = GeneralMethods.FolderBrowserDialog(this);
+
+            if (!string.IsNullOrEmpty(folder))
+            {
+                DialogResultText = $"Folder Browser Result: \"{folder}\"";
+                FolderPathProperty = folder;
+            }
+            else
+            {
+                DialogResultText = "Folder Browser was cancelled or no folder selected.";
+            }
+        }
+
+        /// <summary>
+        /// Shows the File Open dialog and displays the result.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ShowFileDialog_Click(object sender, RoutedEventArgs e)
+        {
+            string[]? files = GeneralMethods.FileOpenDialog("All Files (*.*)|*.*|Text Files (*.txt)|*.txt", false);
+
+            if (files != null && files.Length > 0 && !string.IsNullOrEmpty(files[0]))
+            {
+                DialogResultText = $"File Dialog Result: \"{files[0]}\"";
+                FilePathProperty = files[0];
+            }
+            else
+            {
+                DialogResultText = "File Dialog was cancelled or no file selected.";
+            }
+        }
+
+        #endregion
+
+        #region Color Collection Handlers
+
+        /// <summary>
+        /// Adds a new color to the color collection using the NewColorProperty value.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void AddColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (NewColorProperty != null)
+            {
+                _colorItems.Add(new ColorItem
+                {
+                    Name = $"Color {++_colorCounter}",
+                    ColorBrush = new SolidColorBrush(NewColorProperty.Color)
+                });
+            }
+        }
+
+        /// <summary>
+        /// Removes a color from the color collection.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void RemoveColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is ColorItem colorItem)
+            {
+                _colorItems.Remove(colorItem);
+            }
+        }
+
+        /// <summary>
+        /// Displays a color picker popup bound to the clicked color rectangle's data context.
+        /// </summary>
+        /// <param name="sender">The rectangle that was clicked.</param>
+        /// <param name="e">Mouse button event arguments.</param>
+        private void ColorRectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Rectangle rectangle && rectangle.DataContext is ColorItem colorItem)
+            {
+                var popup = new System.Windows.Controls.Primitives.Popup
+                {
+                    IsOpen = false,
+                    StaysOpen = false,
+                    AllowsTransparency = true,
+                    Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom,
+                    PlacementTarget = rectangle
+                };
+                popup.Closed += PopupClosed;
+
+                var colorPicker = new ColorPicker
+                {
+                    Width = 140,
+                    Height = 220,
+                    Background = Brushes.White,
+                    BorderBrush = Brushes.Gray,
+                    BorderThickness = new Thickness(1),
+                    Padding = new Thickness(2)
+                };
+
+                BindingOperations.SetBinding(
+                    colorPicker,
+                    ColorPicker.ColorProperty,
+                    new Binding(nameof(ColorItem.ColorBrush))
+                    {
+                        Source = colorItem,
+                        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                        Mode = BindingMode.TwoWay
+                    });
+
+                popup.Child = colorPicker;
+                popup.IsOpen = true;
+            }
+        }
+
+        /// <summary>
+        /// Cleans up the color picker binding when the popup is closed.
+        /// </summary>
+        /// <param name="sender">The popup that was closed.</param>
+        /// <param name="e">Event arguments.</param>
+        private void PopupClosed(object? sender, EventArgs e)
+        {
+            if (sender is System.Windows.Controls.Primitives.Popup popup && popup.Child is ColorPicker colorPicker)
+            {
+                BindingOperations.ClearBinding(colorPicker, ColorPicker.ColorProperty);
+            }
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Represents a sample data item for DataGrid demonstrations.
+    /// </summary>
+    public class SampleDataItem
+    {
+        /// <summary>
+        /// Gets or sets the name of the item.
+        /// </summary>
+        public string Name { get; set; } = "";
+
+        /// <summary>
+        /// Gets or sets the numeric value of the item.
+        /// </summary>
+        public double Value { get; set; }
+
+        /// <summary>
+        /// Gets or sets the category of the item.
+        /// </summary>
+        public string Category { get; set; } = "";
     }
 }

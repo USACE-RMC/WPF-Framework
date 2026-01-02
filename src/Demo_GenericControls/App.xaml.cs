@@ -50,15 +50,27 @@ namespace Demo_GenericControls
     public partial class App
     {
         /// <summary>
-        /// Called when the application starts. Initializes the theme system.
+        /// Handles the application Startup event. Initializes the theme system
+        /// and creates the main window.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Using the Startup event instead of StartupUri ensures that theme resources
+        /// (control templates and colors) are loaded before any XAML windows are parsed.
+        /// This prevents "Cannot find resource" errors for theme-dependent styles.
+        /// </para>
+        /// </remarks>
+        /// <param name="sender">The application instance.</param>
         /// <param name="e">Startup event arguments.</param>
-        protected override void OnStartup(StartupEventArgs e)
+        private void Application_Startup(object sender, StartupEventArgs e)
         {
-            base.OnStartup(e);
-
             // Initialize the theme system with the Light theme as default
+            // This loads control templates and color resources BEFORE MainWindow is created
             ThemeService.Instance.Initialize(Theme.Light);
+
+            // Create and show the main window after theme resources are loaded
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
         }
     }
 }

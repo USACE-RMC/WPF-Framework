@@ -288,8 +288,15 @@ namespace GenericControls
                     };
                     // adding the setters
                     datatrigger.Setters.Add(new Setter(ToolTipProperty, new Binding("RuleMap[" + propertyName + "].ErrorMessage")));
-                    datatrigger.Setters.Add(new Setter(BorderBrushProperty, ErrorCellBorderBrush));
-                    datatrigger.Setters.Add(new Setter(BackgroundProperty, ErrorCellBackgroundBrush));
+                    // Use bindings to the DataGrid properties so error colors update when theme changes
+                    datatrigger.Setters.Add(new Setter(BorderBrushProperty, new Binding(nameof(ErrorCellBorderBrush))
+                    {
+                        RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ValidationDataGrid), 1)
+                    }));
+                    datatrigger.Setters.Add(new Setter(BackgroundProperty, new Binding(nameof(ErrorCellBackgroundBrush))
+                    {
+                        RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ValidationDataGrid), 1)
+                    }));
                     datatrigger.Setters.Add(new Setter(BorderThicknessProperty, new Thickness(1d)));
                     // 
                     dgtc.CellStyle.Triggers.Add(datatrigger);

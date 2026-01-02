@@ -51,8 +51,45 @@
     <!-- DATAGRID TOOLBAR                                                             -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
+    <!-- Toolbar Button Style Base -->
+    <Style x:Key="StackPanelButtonStyleBase" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Padding" Value="2"/>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.5"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Button.MouseOver.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Button.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Button.Pressed.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Button.Pressed.Border}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Vertical Separator Style for Toolbar -->
+    <Style x:Key="VerticalSeparatorStyle" TargetType="{x:Type Separator}">
+        <Setter Property="Margin" Value="2,4,2,4"/>
+        <Setter Property="Background" Value="{DynamicResource SeparatorBorder}"/>
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <RotateTransform Angle="90"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="DataGridToolbarStyle" TargetType="{x:Type local:DataGridToolbar}">
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="StackPanelButtonStyle" Value="{StaticResource StackPanelButtonStyleBase}"/>
+        <Setter Property="StackPanelSeperatorStyle" Value="{StaticResource VerticalSeparatorStyle}"/>
     </Style>
 
     <Style TargetType="{x:Type local:DataGridToolbar}" BasedOn="{StaticResource DataGridToolbarStyle}"/>
@@ -367,6 +404,49 @@
     <!-- COPY PASTE DATAGRID                                                          -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
+    <!-- DataGrid Row Style for CopyPasteDataGrid -->
+    <Style x:Key="CopyPasteDataGridRowStyle" TargetType="{x:Type DataGridRow}">
+        <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Background}"/>
+        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Foreground}"/>
+        <Style.Triggers>
+            <Trigger Property="AlternationIndex" Value="1">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.MouseOver.Background}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True"/>
+                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- DataGrid Cell Style for CopyPasteDataGrid -->
+    <Style x:Key="CopyPasteDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="CopyPasteDataGridStyle" TargetType="{x:Type local:CopyPasteDataGrid}">
         <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
@@ -375,6 +455,15 @@
         <Setter Property="AlternatingRowBackground" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
         <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
         <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="AlternationCount" Value="2"/>
+        <Setter Property="RowHeight" Value="22"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="GridLinesVisibility" Value="All"/>
+        <Setter Property="RowStyle" Value="{StaticResource CopyPasteDataGridRowStyle}"/>
+        <Setter Property="CellStyle" Value="{StaticResource CopyPasteDataGridCellStyle}"/>
+        <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>
+        <Setter Property="RowHeaderStyle" Value="{DynamicResource RowHeaderStyle}"/>
     </Style>
 
     <Style TargetType="{x:Type local:CopyPasteDataGrid}" BasedOn="{StaticResource CopyPasteDataGridStyle}"/>
@@ -382,6 +471,49 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- VALIDATION DATAGRID                                                          -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- DataGrid Row Style for ValidationDataGrid -->
+    <Style x:Key="ValidationDataGridRowStyle" TargetType="{x:Type DataGridRow}">
+        <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Background}"/>
+        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Foreground}"/>
+        <Style.Triggers>
+            <Trigger Property="AlternationIndex" Value="1">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.MouseOver.Background}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True"/>
+                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- DataGrid Cell Style for ValidationDataGrid (includes error handling) -->
+    <Style x:Key="ValidationDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style x:Key="ValidationDataGridStyle" TargetType="{x:Type local:ValidationDataGrid}">
         <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
@@ -395,6 +527,14 @@
         <Setter Property="AlternationCount" Value="2"/>
         <Setter Property="RowHeight" Value="22"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="GridLinesVisibility" Value="All"/>
+        <Setter Property="RowStyle" Value="{StaticResource ValidationDataGridRowStyle}"/>
+        <Setter Property="CellStyle" Value="{StaticResource ValidationDataGridCellStyle}"/>
+        <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>
+        <Setter Property="RowHeaderStyle" Value="{DynamicResource RowHeaderStyle}"/>
+        <!-- Theme-aware error colors -->
+        <Setter Property="ErrorCellBorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
+        <Setter Property="ErrorCellBackgroundBrush" Value="{DynamicResource DataGrid.Cell.Error.Background}"/>
     </Style>
 
     <Style TargetType="{x:Type local:ValidationDataGrid}" BasedOn="{StaticResource ValidationDataGridStyle}"/>

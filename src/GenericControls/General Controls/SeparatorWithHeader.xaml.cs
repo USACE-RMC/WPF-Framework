@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class SeparatorWithHeader:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="SeparatorWithHeader"/> class.
+        /// </summary>
+        public SeparatorWithHeader()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Dependency property for the header text.
         /// </summary>
         public static DependencyProperty HeaderProperty = DependencyProperty.Register(nameof(Header), typeof(string), typeof(SeparatorWithHeader), new UIPropertyMetadata(""));

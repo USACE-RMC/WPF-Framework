@@ -76,7 +76,7 @@ namespace GenericControls
             // Add Copy/Paste Context Menu
             // Add Row(s)
             _addRowsCMI = new MenuItem() { Name = "AddRows", Header = "Add Row(s)" };
-            _addRowsCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.add_row) };
+            _addRowsCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.add_row);
             _addRowsCMI.Click += (sender, e) =>
                 {
                     var uniqueRows = GetRowsWithSelectedCells();
@@ -85,12 +85,12 @@ namespace GenericControls
             _CopyPasteContextMenu.Items.Add(_addRowsCMI);
             // Insert Row(s)
             _insertRowsCMI = new MenuItem() { Name = "InsertRows", Header = "Insert Row(s)" };
-            _insertRowsCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.insert_row) };
+            _insertRowsCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.insert_row);
             _insertRowsCMI.Click += (sender, e) => InsertRows();
             _CopyPasteContextMenu.Items.Add(_insertRowsCMI);
             // Delete Row(s)
             _deleteRowsCMI = new MenuItem() { Name = "DeleteRows", Header = "Delete Row(s)" };
-            _deleteRowsCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.delete_row) };
+            _deleteRowsCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.delete_row);
             _deleteRowsCMI.Click += (sender, e) => DeleteRows();
             _CopyPasteContextMenu.Items.Add(_deleteRowsCMI);
 
@@ -128,22 +128,22 @@ namespace GenericControls
             _CopyPasteContextMenu.Items.Add(_seperatorCM);
             // Select All
             _selectAllCMI = new MenuItem() { Name = "SelectAll", Header = "Select All" };
-            _selectAllCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.select_all) };
+            _selectAllCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.select_all);
             _selectAllCMI.Click += SelectAll_Click;
             _CopyPasteContextMenu.Items.Add(_selectAllCMI);
             // Copy
             _copyCMI = new MenuItem() { Name = "Copy", Header = "Copy" };
-            _copyCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.copy) };
+            _copyCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.copy);
             _copyCMI.Click += Copy_Click;
             _CopyPasteContextMenu.Items.Add(_copyCMI);
             // Copy w / Headers
             _copyWHeadersCMI = new MenuItem() { Name = "CopyWHeaders", Header = "Copy w/ Headers" };
-            _copyWHeadersCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.copy_w_headers) };
+            _copyWHeadersCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.copy_w_headers);
             _copyWHeadersCMI.Click += CopyWithHeaders_Click;
             _CopyPasteContextMenu.Items.Add(_copyWHeadersCMI);
             // Paste
             _pasteCMI = new MenuItem() { Name = "Paste", Header = "Paste" };
-            _pasteCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.paste) };
+            _pasteCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.paste);
             _pasteCMI.Click += Paste_Click;
             _CopyPasteContextMenu.Items.Add(_pasteCMI);
 
@@ -151,17 +151,17 @@ namespace GenericControls
             // Sort ASC
             _sortASCCMI = new MenuItem() { Name = "SortASC", Header = new TextBlock() { Text = "Sort Ascending", TextAlignment = TextAlignment.Left } };
             _sortASCCMI.HorizontalContentAlignment = HorizontalAlignment.Left;
-            _sortASCCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.SortASCFilter) };
+            _sortASCCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.SortASCFilter);
             _sortASCCMI.Click += SortAscending;
             _sortContextMenu.Items.Add(_sortASCCMI);
             // Sort DSC
             _sortDSCCMI = new MenuItem() { Name = "SortDSC", Header = new TextBlock() { Text = "Sort Descending", TextAlignment = TextAlignment.Left } };
-            _sortDSCCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.SortDSCFilter) };
+            _sortDSCCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.SortDSCFilter);
             _sortDSCCMI.Click += SortDescending;
             _sortContextMenu.Items.Add(_sortDSCCMI);
             // Clear Sort
             _clearSortCMI = new MenuItem() { Name = "ClearSort", Header = new TextBlock() { Text = "Clear Sort", TextAlignment = TextAlignment.Left } };
-            _clearSortCMI.Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(GenericControls.Resources.ClearFilter) };
+            _clearSortCMI.Icon = CreateCrispMenuIcon(GenericControls.Resources.ClearFilter);
             _clearSortCMI.Click += (sender, e) => ClearSort();
             _sortContextMenu.Items.Add(_clearSortCMI);
 
@@ -317,7 +317,27 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// Determines what functionality is available When the datagrid is loaded. 
+        /// Creates a crisp menu icon from a bitmap resource with proper rendering options.
+        /// </summary>
+        /// <param name="bitmap">The bitmap resource to use for the icon.</param>
+        /// <returns>An Image element with crisp rendering settings.</returns>
+        private static Image CreateCrispMenuIcon(System.Drawing.Bitmap bitmap)
+        {
+            var image = new Image()
+            {
+                Source = GeneralMethods.Bitmap2BitmapSource(bitmap),
+                Width = 16,
+                Height = 16,
+                Stretch = Stretch.Uniform,
+                SnapsToDevicePixels = true
+            };
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+            RenderOptions.SetEdgeMode(image, EdgeMode.Aliased);
+            return image;
+        }
+
+        /// <summary>
+    /// Determines what functionality is available When the datagrid is loaded.
     /// </summary>
         private void Me_Loaded(object sender, RoutedEventArgs e)
         {

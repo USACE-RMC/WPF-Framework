@@ -49,6 +49,14 @@ namespace GenericControls
     public partial class ResizableTextBoxControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ResizableTextBoxControl"/> class.
+        /// </summary>
+        public ResizableTextBoxControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Dependency property for the text content of the control.
         /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ResizableTextBoxControl), new UIPropertyMetadata(""));

@@ -64,6 +64,11 @@ namespace GenericControls
         public bool IsWholeNumber { get; set; }
 
         /// <summary>
+        /// Gets/sets whether scientific notation (e.g., 1e-6, 1E2) is allowed.
+        /// </summary>
+        public bool AllowScientificNotation { get; set; }
+
+        /// <summary>
         /// gets/sets the maximum allowable value.
         /// </summary>
         public double MaxValue { get; set; } = double.MaxValue;
@@ -248,7 +253,7 @@ namespace GenericControls
                 this.NumericTBox.SelectedText,
                 CanBeNegative,
                 !IsWholeNumber,
-                false);
+                AllowScientificNotation);
         }
 
         /// <summary>

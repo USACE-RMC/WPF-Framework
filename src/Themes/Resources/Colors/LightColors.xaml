@@ -107,6 +107,9 @@
     <SolidColorBrush x:Key="DataGrid.Row.MouseOver.Background" Color="#E8F4FD"/>
     <SolidColorBrush x:Key="DataGrid.GridLines" Color="#E0E3E6"/>
     <SolidColorBrush x:Key="DataGrid.Cell.Focus.Border" Color="#007ACC"/>
+    <!-- Validation Error Colors -->
+    <SolidColorBrush x:Key="DataGrid.Cell.Error.Border" Color="#FF0000"/>
+    <SolidColorBrush x:Key="DataGrid.Cell.Error.Background" Color="#FFF7B6AF"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EXPANDER                                                                     -->

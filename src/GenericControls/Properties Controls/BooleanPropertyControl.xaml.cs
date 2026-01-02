@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class BooleanPropertyControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="BooleanPropertyControl"/> class.
+        /// </summary>
+        public BooleanPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Dependency property for the selected state of the checkbox.
         /// </summary>
         public static DependencyProperty IsSelectedProperty = DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));

@@ -41,6 +41,14 @@ namespace GenericControls
 
         #region Construction
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NameTextPropertyControl"/> class.
+        /// </summary>
+        public NameTextPropertyControl()
+        {
+            InitializeComponent();
+        }
+
         #endregion
 
         #region Members

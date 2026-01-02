@@ -50,6 +50,14 @@ namespace GenericControls
     public partial class CalendarWeekRulePropertyControl:UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CalendarWeekRulePropertyControl"/> class.
+        /// </summary>
+        public CalendarWeekRulePropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// A list available <see cref="CalendarWeekRule"/> options for display or binding.
         /// </summary>
         public static List<CalendarWeekRule> CalendarRuleOptions { get; private set; } = new List<CalendarWeekRule>((CalendarWeekRule[])Enum.GetValues(typeof(CalendarWeekRule)));
