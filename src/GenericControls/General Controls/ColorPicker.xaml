@@ -123,7 +123,7 @@
         </Style>
         
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{Binding Background, ElementName=ColorPickerRoot}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="Auto"/>
@@ -138,12 +138,12 @@
         </Grid.RowDefinitions>
 
         <!--Color Tone Window-->
-        <Border 
+        <Border
             Name="PreviewBorderBackground"
-            Grid.Row="0" 
-            Grid.Column="0" 
-            Background="{StaticResource CheckerBrush}" 
-            BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" 
+            Grid.Row="0"
+            Grid.Column="0"
+            Background="{StaticResource CheckerBrush}"
+            BorderBrush="{DynamicResource Button.Static.Border}"
             BorderThickness="1">
             <Border 
                 Name="PreviewBorder" 
@@ -248,7 +248,8 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="A" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="A" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
             <Border 
                 Grid.Column="1" 
                 BorderThickness="0" 
@@ -293,7 +294,8 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="R" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="R" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
             <Slider 
                 x:Name="RSlider" 
                 Grid.Column="1"
@@ -335,7 +337,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="G" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="G" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
 
             <Slider 
                 x:Name="GSlider" 
@@ -378,7 +381,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="B" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="B" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
 
             <Slider 
                 x:Name="BSlider" 
