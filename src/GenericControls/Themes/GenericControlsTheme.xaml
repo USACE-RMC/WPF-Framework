@@ -46,8 +46,45 @@
     <!-- DATAGRID TOOLBAR                                                             -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
+    <!-- Toolbar Button Style Base -->
+    <Style x:Key="StackPanelButtonStyleBase" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Padding" Value="2"/>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.5"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Button.MouseOver.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Button.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Button.Pressed.Background}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Button.Pressed.Border}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Vertical Separator Style for Toolbar -->
+    <Style x:Key="VerticalSeparatorStyle" TargetType="{x:Type Separator}">
+        <Setter Property="Margin" Value="2,4,2,4"/>
+        <Setter Property="Background" Value="{DynamicResource SeparatorBorder}"/>
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <RotateTransform Angle="90"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="DataGridToolbarStyle" TargetType="{x:Type local:DataGridToolbar}">
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="StackPanelButtonStyle" Value="{StaticResource StackPanelButtonStyleBase}"/>
+        <Setter Property="StackPanelSeperatorStyle" Value="{StaticResource VerticalSeparatorStyle}"/>
     </Style>
 
     <Style TargetType="{x:Type local:DataGridToolbar}" BasedOn="{StaticResource DataGridToolbarStyle}"/>
@@ -421,6 +458,7 @@
         <Setter Property="RowStyle" Value="{StaticResource CopyPasteDataGridRowStyle}"/>
         <Setter Property="CellStyle" Value="{StaticResource CopyPasteDataGridCellStyle}"/>
         <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>
+        <Setter Property="RowHeaderStyle" Value="{DynamicResource RowHeaderStyle}"/>
     </Style>
 
     <Style TargetType="{x:Type local:CopyPasteDataGrid}" BasedOn="{StaticResource CopyPasteDataGridStyle}"/>
@@ -488,6 +526,7 @@
         <Setter Property="RowStyle" Value="{StaticResource ValidationDataGridRowStyle}"/>
         <Setter Property="CellStyle" Value="{StaticResource ValidationDataGridCellStyle}"/>
         <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>
+        <Setter Property="RowHeaderStyle" Value="{DynamicResource RowHeaderStyle}"/>
         <!-- Theme-aware error colors -->
         <Setter Property="ErrorCellBorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
         <Setter Property="ErrorCellBackgroundBrush" Value="{DynamicResource DataGrid.Cell.Error.Background}"/>
