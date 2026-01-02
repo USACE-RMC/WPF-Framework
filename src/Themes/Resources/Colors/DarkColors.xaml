@@ -118,6 +118,9 @@
     <SolidColorBrush x:Key="DataGrid.GridLines" Color="#3F3F46"/>
     <!-- Focus border with accent color -->
     <SolidColorBrush x:Key="DataGrid.Cell.Focus.Border" Color="#007ACC"/>
+    <!-- Validation Error Colors - Optimized for dark theme visibility -->
+    <SolidColorBrush x:Key="DataGrid.Cell.Error.Border" Color="#FF6B6B"/>
+    <SolidColorBrush x:Key="DataGrid.Cell.Error.Background" Color="#4D2020"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EXPANDER                                                                     -->
