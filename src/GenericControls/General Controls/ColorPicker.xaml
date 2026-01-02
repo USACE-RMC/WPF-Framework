@@ -25,12 +25,14 @@
                                             <Rectangle StrokeThickness="1" Width="10" SnapsToDevicePixels="True">
                                                 <Rectangle.Style>
                                                     <Style TargetType="Rectangle">
-                                                        <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
-                                                        <Setter Property="Fill" Value="{DynamicResource TextBox.Static.Background}"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Stroke" Value="{DynamicResource Button.MouseOver.Border}"/>
-                                                                <Setter Property="Fill" Value="{DynamicResource Button.MouseOver.Background}"/>
+                                                                <Setter Property="Stroke" Value="DarkGray"/>
+                                                                <Setter Property="Fill" Value="#CCBBD6D5"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsMouseOver" Value="False">
+                                                                <Setter Property="Stroke" Value="#FF636363"/>
+                                                                <Setter Property="Fill" Value="#CCFFFFFF"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -58,12 +60,14 @@
                                             <Rectangle StrokeThickness="1" Height="10" SnapsToDevicePixels="True">
                                                 <Rectangle.Style>
                                                     <Style TargetType="Rectangle">
-                                                        <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
-                                                        <Setter Property="Fill" Value="{DynamicResource TextBox.Static.Background}"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Stroke" Value="{DynamicResource Button.MouseOver.Border}"/>
-                                                                <Setter Property="Fill" Value="{DynamicResource Button.MouseOver.Background}"/>
+                                                                <Setter Property="Stroke" Value="DarkGray"/>
+                                                                <Setter Property="Fill" Value="#CCBBD6D5"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsMouseOver" Value="False">
+                                                                <Setter Property="Stroke" Value="#FF636363"/>
+                                                                <Setter Property="Fill" Value="#CCFFFFFF"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -119,7 +123,7 @@
         </Style>
         
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{Binding Background, ElementName=ColorPickerRoot}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="Auto"/>
