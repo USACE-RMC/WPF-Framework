@@ -386,7 +386,7 @@
                                                                Title="Font Weight" ShowLeaderLine="True"
                                                                SelectedFontWeight="{Binding FontWeightProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <cntrls:ColorPropertyControl DockPanel.Dock="Top" Margin="0,2" PropertyWidth="500"
+                            <cntrls:ColorPropertyControl DockPanel.Dock="Top" Margin="0,2" Height="23"
                                                          Title="Color" ShowLeaderLine="True"
                                                          SelectedColor="{Binding ColorProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
