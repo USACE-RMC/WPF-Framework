@@ -25,14 +25,12 @@
                                             <Rectangle StrokeThickness="1" Width="10" SnapsToDevicePixels="True">
                                                 <Rectangle.Style>
                                                     <Style TargetType="Rectangle">
+                                                        <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
+                                                        <Setter Property="Fill" Value="{DynamicResource TextBox.Static.Background}"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Stroke" Value="DarkGray"/>
-                                                                <Setter Property="Fill" Value="#CCBBD6D5"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsMouseOver" Value="False">
-                                                                <Setter Property="Stroke" Value="#FF636363"/>
-                                                                <Setter Property="Fill" Value="#CCFFFFFF"/>
+                                                                <Setter Property="Stroke" Value="{DynamicResource Button.MouseOver.Border}"/>
+                                                                <Setter Property="Fill" Value="{DynamicResource Button.MouseOver.Background}"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -60,14 +58,12 @@
                                             <Rectangle StrokeThickness="1" Height="10" SnapsToDevicePixels="True">
                                                 <Rectangle.Style>
                                                     <Style TargetType="Rectangle">
+                                                        <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
+                                                        <Setter Property="Fill" Value="{DynamicResource TextBox.Static.Background}"/>
                                                         <Style.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Stroke" Value="DarkGray"/>
-                                                                <Setter Property="Fill" Value="#CCBBD6D5"/>
-                                                            </Trigger>
-                                                            <Trigger Property="IsMouseOver" Value="False">
-                                                                <Setter Property="Stroke" Value="#FF636363"/>
-                                                                <Setter Property="Fill" Value="#CCFFFFFF"/>
+                                                                <Setter Property="Stroke" Value="{DynamicResource Button.MouseOver.Border}"/>
+                                                                <Setter Property="Fill" Value="{DynamicResource Button.MouseOver.Background}"/>
                                                             </Trigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -138,12 +134,12 @@
         </Grid.RowDefinitions>
 
         <!--Color Tone Window-->
-        <Border 
+        <Border
             Name="PreviewBorderBackground"
-            Grid.Row="0" 
-            Grid.Column="0" 
-            Background="{StaticResource CheckerBrush}" 
-            BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" 
+            Grid.Row="0"
+            Grid.Column="0"
+            Background="{StaticResource CheckerBrush}"
+            BorderBrush="{DynamicResource Button.Static.Border}"
             BorderThickness="1">
             <Border 
                 Name="PreviewBorder" 
@@ -248,7 +244,8 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="A" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="A" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
             <Border 
                 Grid.Column="1" 
                 BorderThickness="0" 
@@ -293,7 +290,8 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="R" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="R" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
             <Slider 
                 x:Name="RSlider" 
                 Grid.Column="1"
@@ -335,7 +333,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="G" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="G" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
 
             <Slider 
                 x:Name="GSlider" 
@@ -378,7 +377,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="B" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Text="B" HorizontalAlignment="Center" TextAlignment="Center" Width="12" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}"/>
 
             <Slider 
                 x:Name="BSlider" 

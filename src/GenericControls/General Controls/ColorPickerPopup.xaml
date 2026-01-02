@@ -59,8 +59,8 @@
                         <Style TargetType="Rectangle">
                             <Style.Triggers>
                                 <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-                                    <Setter Property="Stroke" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                    <Setter Property="Fill" Value="{DynamicResource Button.Disabled.Background}"/>
+                                    <Setter Property="Stroke" Value="{DynamicResource Button.Disabled.Border}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="True">
                                     <Setter Property="Fill" Value="{Binding ElementName=ColorPickerPopupRoot, Path=Color, UpdateSourceTrigger=PropertyChanged, TargetNullValue=Black}"/>
@@ -105,23 +105,24 @@
         <Rectangle x:Name="PART_PopPlacer" Fill="Transparent" Width="0" Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                    Focusable="False" Visibility="Hidden" IsHitTestVisible="False"/>
         
-        <Popup 
-            x:Name="PickerPopup" 
-            PopupAnimation="Slide" 
-            AllowsTransparency="True" 
+        <Popup
+            x:Name="PickerPopup"
+            PopupAnimation="Slide"
+            AllowsTransparency="True"
             StaysOpen="False"
             Placement="Left"
-            Height="250"
-            Width="175"
             IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
             PlacementTarget="{Binding ElementName=PART_PopPlacer}">
+            <Border BorderBrush="{DynamicResource Button.Static.Border}"
+                    BorderThickness="1"
+                    Background="{DynamicResource EnvironmentToolWindowBackground}">
                 <local:ColorPicker
                     x:Name="ColorPicker"
-                    BorderBrush="{DynamicResource Button.Static.Border}"
-                    Padding="2"
-                    BorderThickness="1"
-                    Background="{DynamicResource EnvironmentToolWindowBackground}"
+                    Width="150"
+                    Height="230"
+                    Padding="5"
                     Color="{Binding ElementName=ColorPickerPopupRoot, Path=Color, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            </Popup>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>
