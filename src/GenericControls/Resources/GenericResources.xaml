@@ -2,9 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:GenericControls="clr-namespace:GenericControls">
 
-    <!--#endregion-->
+    <!-- Merge Icon Dictionary for centralized vector icons -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="IconDictionary.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
-    <!--#endregion-->
     <!--#region PropertiesControls-->
 
     <SolidColorBrush x:Key="SeparatorBackground">#00FFFFFF</SolidColorBrush>

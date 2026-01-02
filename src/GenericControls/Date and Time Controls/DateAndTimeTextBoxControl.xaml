@@ -8,7 +8,12 @@
              d:DesignHeight="22"
              d:DesignWidth="250">
     <UserControl.Resources>
-        <local:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/GenericResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -45,13 +50,8 @@
             IsChecked="False" 
             IsHitTestVisible="{Binding ElementName=DateTimePopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
 
-            <Image  
-                Source="pack://application:,,,/GenericControls;component/Resources/CalendarIcon.png" 
-                Width="16"
-                Height="16"
-                Stretch="None" 
-                RenderOptions.EdgeMode="Unspecified" 
-                RenderOptions.BitmapScalingMode="Fant"/>
+            <ContentControl Content="{StaticResource CalendarIcon}"
+                            Width="16" Height="16"/>
         </RadioButton>
         
         <Popup
