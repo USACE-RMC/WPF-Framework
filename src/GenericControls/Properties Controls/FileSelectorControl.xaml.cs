@@ -285,7 +285,7 @@ namespace GenericControls
         private void FilePathButton_Click(object sender, RoutedEventArgs e)
         {
             string[] files = GeneralMethods.FileOpenDialog(FileFilters, false);
-            if (files is null || files.Count() == 0 || !string.IsNullOrEmpty(files[0]))
+            if (files != null && files.Count() > 0 && !string.IsNullOrEmpty(files[0]))
                 Text = files[0];
         }
 
