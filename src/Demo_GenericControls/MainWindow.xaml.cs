@@ -670,6 +670,9 @@ namespace Demo_GenericControls
                     Padding = new Thickness(2)
                 };
 
+                colorPicker.SetResourceReference(ColorPicker.BorderBrushProperty, "Button.Static.Border");
+                colorPicker.SetResourceReference(ColorPicker.BackgroundProperty, "EnvironmentWindowBackground");
+
                 BindingOperations.SetBinding(
                     colorPicker,
                     ColorPicker.ColorProperty,
