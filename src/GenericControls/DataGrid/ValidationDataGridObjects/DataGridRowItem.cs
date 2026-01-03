@@ -252,33 +252,8 @@ namespace GenericControls
                         iRowItem.RuleMap[propertyName].ErrorMessage += j == 0 ? hasErrorMessage[j] : Environment.NewLine + hasErrorMessage[j];
                 }
             }
-            // 
+
             return @bool;
-
-            // Dim hasDups As Boolean = False
-            // Dim val As String = [GetType]().GetProperty(propertyName).GetValue(Me, Nothing).ToString() 'callBack(DirectCast(Me, T))
-            // For Each ex As DataGridRowItem In _parentList
-            // If ex.Equals(Me) Then Continue For
-
-            // If ex.GetType().GetProperty(propertyName).GetValue(ex, Nothing).ToString() = val Then
-            // hasDups = True
-            // With ex.RuleMap(propertyName)
-            // If .ErrorMessage = "" Then
-            // .ErrorMessage = errorMessage
-            // ElseIf .ErrorMessage.Contains(errorMessage) = False Then
-            // 'ElseIf .ErrorMessage.IndexOf(errorMessage) < 0 Then
-            // 'ElseIf .ErrorMessage.Contains(errorMessage) = False Then
-            // .ErrorMessage += Environment.NewLine & errorMessage
-            // End If
-            // .HasError = True
-            // End With
-            // Else
-            // If ex.RuleMap(propertyName).HasError And ex.RuleMap(propertyName).ErrorMessage.Contains(errorMessage) = True Then 'ex.RuleMap(propertyName).ErrorMessage.Contains(errorMessage) Then
-            // ex.ValidateProperty(propertyName) '.RuleMap(propertyName).Update()
-            // End If
-            // End If
-            // Next
-            // Return hasDups
         }
 
         /// <summary>

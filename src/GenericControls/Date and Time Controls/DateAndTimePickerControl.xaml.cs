@@ -80,10 +80,6 @@ namespace GenericControls
                 return;
             if (thisControl.CalendarSelector.DisplayDate != (DateTime)e.NewValue)
                 thisControl.CalendarSelector.DisplayDate = (DateTime)e.NewValue;
-            // For Each child In thisControl.HoursGrid.Children
-            // If child.GetType <> GetType(ClockToggle) Then Continue For
-            // DirectCast(child, ClockToggle).IsSelected = CInt(DirectCast(child, ClockToggle).Text) = DirectCast(e.NewValue, DateTime).Hour
-            // Next
         }
 
         /// <summary>

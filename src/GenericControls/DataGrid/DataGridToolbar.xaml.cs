@@ -151,13 +151,7 @@ namespace GenericControls
                 thisControl.InsertRowsButton.Visibility = Visibility.Collapsed;
                 thisControl.DeleteRowsButton.Visibility = Visibility.Collapsed;
             }
-            // 
             thisControl.PasteButton.IsEnabled = !newGrid.IsReadOnly;
-
-            // 
-            // If there is nothing on the clipboard, then disable the paste button.
-            // Dim clipboardData As String()() = DirectCast(Clipboard.GetText(), String).Split(ControlChars.Lf).[Select](Function(row) row.Split(ControlChars.Tab).[Select](Function(Clipboardcell) If(Clipboardcell.Length > 0 AndAlso Clipboardcell(Clipboardcell.Length - 1) = ControlChars.Cr, Clipboardcell.Substring(0, Clipboardcell.Length - 1), Clipboardcell)).ToArray()).Where(Function(a) a.Any(Function(b) b.Length > 0)).ToArray()
-            // If clipboardData.Length = 0 Then
 
             newGrid.SelectedCellsChanged += (sender, et) => { if (newGrid.SelectedCells.Count <= 0) { thisControl.InsertRowsButton.IsEnabled = false; thisControl.DeleteRowsButton.IsEnabled = false; thisControl.CopyButton.IsEnabled = false; thisControl.CopyWithHeadersButton.IsEnabled = false; thisControl.PasteButton.IsEnabled = false; } else { thisControl.InsertRowsButton.IsEnabled = true; thisControl.DeleteRowsButton.IsEnabled = true; thisControl.CopyButton.IsEnabled = true; thisControl.CopyWithHeadersButton.IsEnabled = true; if (newGrid.IsReadOnly == true) return; try { if (thisControl.IsClipboardEmpty()) { thisControl.PasteButton.IsEnabled = false; } else { thisControl.PasteButton.IsEnabled = true; } } catch (Exception) { thisControl.PasteButton.IsEnabled = false; } } };
 

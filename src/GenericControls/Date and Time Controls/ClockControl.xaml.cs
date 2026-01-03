@@ -642,11 +642,6 @@ namespace GenericControls
         /// <returns></returns>
         private int GetTimeValue(Point p)
         {
-            // Dim radiusFromCenter As Double = LineMagnitude(p.X, p.Y, 50, 50)
-            // Dim p0 As New Point(50, 50)
-            // Dim slope As Double = (p.Y - p0.Y) / (p.X - p0.X)
-            // Dim angle As Double = Math.Atan(slope)
-
             double quadrantSize;
             if (IsHours)
             {

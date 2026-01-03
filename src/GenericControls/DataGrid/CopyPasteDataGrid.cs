@@ -46,8 +46,6 @@ namespace GenericControls
     public class CopyPasteDataGrid : DataGrid, INotifyPropertyChanged
     {
 
-        // TODO: Show row numbers
-
         #region Construction
 
         /// <summary>
@@ -358,14 +356,6 @@ namespace GenericControls
                 _selectAllCMI.IsEnabled = false;
                 _selectAllCMI.Visibility = Visibility.Collapsed;
             }
-
-            // Collapse menu items if user cannot edit the data grid.
-            // If CanUserAddInsertDeleteRows = False Then
-            // _seperatorCM.Visibility = Visibility.Collapsed
-            // _addRowsCMI.Visibility = Visibility.Collapsed
-            // _insertRowsCMI.Visibility = Visibility.Collapsed
-            // _deleteRowsCMI.Visibility = Visibility.Collapsed
-            // End If
 
         }
 
@@ -703,14 +693,8 @@ namespace GenericControls
     /// </summary>
         public void AddRow(Dictionary<string, object> rowData)
         {
-            // Count of rows to be added and insert point, if nRowsToAdd is zero or less then just add one row
-            // Dim rowCount As Int32 = Math.Max(nRowsToAdd, 1)
             int insertAtRow = Items.Count;
-            // raise preview event and cancel add if requested.
-            // Dim cancelAdd As Boolean = False
-            // RaiseEvent PreviewAddRows(insertAtRow, rowCount, cancelAdd)
-            // If cancelAdd = True Then Exit Sub
-            // exit if there are no items to create an instance from.
+            // Exit if there are no items to create an instance from.
             if (RowType == null)
             {
                 if (Items.Count == 0)
@@ -726,7 +710,7 @@ namespace GenericControls
                     if (Items.Count == 0)
                         return;
                     var table = ((DataRowView)Items[0]).DataView.Table;
-                    var newRow = table.NewRow(); // DirectCast(Me.Items(0), DataRowView).DataView.AddNew()
+                    var newRow = table.NewRow();
                     foreach (var v in rowData)
                         newRow[v.Key] = v.Value;
                     newRow.EndEdit();
@@ -808,7 +792,6 @@ namespace GenericControls
                     var table = ((DataRowView)Items[0]).DataView.Table;
                     table.Rows.Add(table.NewRow());
                 }
-                // DirectCast(Me.Items(0), DataRowView).DataView.AddNew()
                 else
                 {
                     // get item source (must implement ilist)
@@ -897,7 +880,6 @@ namespace GenericControls
                     // source is likely a datatable
                     if (Items.Count == 0)
                         return;
-                    // Dim rowView = DirectCast(Me.Items(0), DataRowView)
                     var table = ((DataRowView)Items[0]).DataView.Table;
                     for (int i = 1, loopTo1 = rowCount; i <= loopTo1; i++)
                         table.Rows.InsertAt(table.NewRow(), insertAtRowSorted);
@@ -968,11 +950,6 @@ namespace GenericControls
             for (int i = UniqueSortedRows.Count - 1; i >= 0; i -= 1)
                 itemList.RemoveAt(UniqueSortedRows[i]);
 
-            // Dim editableItems As IEditableCollectionView = Me.Items
-            // For i As Int32 = 0 To UniqueRows.Count - 1
-            // If editableItems.CanRemove Then editableItems.RemoveAt(UniqueRows(i) - i)
-            // Next
-            // 
             RowsDeleted?.Invoke(UniqueSortedRows);
             // Items.Refresh()
         }

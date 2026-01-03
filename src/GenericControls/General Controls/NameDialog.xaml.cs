@@ -46,12 +46,6 @@ namespace GenericControls
     /// </remarks>
     public partial class NameDialog
     {
-        // Private _CharacterLimit As Int32 = -1
-        // Private _canBeBlank As Boolean = True
-        // Private _canBeDuplicate As Boolean = True
-        // Private _existingNames() As String = {}
-        // Private _canHaveInvalidCharacters As Boolean = True
-
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
