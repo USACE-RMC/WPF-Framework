@@ -135,12 +135,14 @@
 
         <!--Color Tone Window-->
         <Border
-            Name="PreviewBorderBackground"
             Grid.Row="0"
             Grid.Column="0"
-            Background="{StaticResource CheckerBrush}"
+            Background="{DynamicResource EnvironmentToolWindowBackground}"
             BorderBrush="{DynamicResource Button.Static.Border}"
             BorderThickness="1">
+            <Border
+                Name="PreviewBorderBackground"
+                Background="{StaticResource CheckerBrush}">
             <Border 
                 Name="PreviewBorder" 
                 HorizontalAlignment="Stretch" 
@@ -209,6 +211,7 @@
                         </Path.Data>
                     </Path>
                 </Grid>
+            </Border>
             </Border>
         </Border>
 
