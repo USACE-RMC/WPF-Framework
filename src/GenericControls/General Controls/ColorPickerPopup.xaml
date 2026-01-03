@@ -105,23 +105,26 @@
         <Rectangle x:Name="PART_PopPlacer" Fill="Transparent" Width="0" Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                    Focusable="False" Visibility="Hidden" IsHitTestVisible="False"/>
         
-        <Popup 
-            x:Name="PickerPopup" 
-            PopupAnimation="Slide" 
-            AllowsTransparency="True" 
+        <Popup
+            x:Name="PickerPopup"
+            PopupAnimation="Slide"
+            AllowsTransparency="True"
             StaysOpen="False"
             Placement="Left"
             Height="250"
             Width="175"
             IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
             PlacementTarget="{Binding ElementName=PART_PopPlacer}">
+            <Border
+                Background="{DynamicResource EnvironmentToolWindowBackground}"
+                BorderBrush="{DynamicResource Button.Static.Border}"
+                BorderThickness="1">
                 <local:ColorPicker
                     x:Name="ColorPicker"
-                    BorderBrush="{DynamicResource Button.Static.Border}"
                     Padding="2"
-                    BorderThickness="1"
                     Background="{DynamicResource EnvironmentToolWindowBackground}"
                     Color="{Binding ElementName=ColorPickerPopupRoot, Path=Color, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            </Popup>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>
