@@ -158,21 +158,11 @@ namespace GenericControls
                 {
                     if (_rules[i].Expression() == true)
                     {
-                        // _rules(i).HasError = True
                         HasError = true;
                         ErrorMessage += i == 0 ? _rules[i].Message : Environment.NewLine + _rules[i].Message;
                     }
                 }
             }
-
-            // For Each r As Rule In _rules
-            // If r.Expression() = True Then
-            // r.HasError = True
-            // ErrorMessage = ErrorMessage & r.Message & vbLf
-            // HasError = True
-            // End If
-            // Next
-            // If HasError Then ErrorMessage = ErrorMessage.TrimEnd(New [Char]() {ControlChars.Lf})
             catch (Exception e)
             {
                 _errorMessage = e.Message;
