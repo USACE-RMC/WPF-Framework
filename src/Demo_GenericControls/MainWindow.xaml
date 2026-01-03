@@ -516,17 +516,17 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <cntrls:FileSelectorControl Grid.Row="0" Margin="0,5"
-                                                        Title="Select File"
+                            <cntrls:FileSelectorControl Grid.Row="0" Margin="0,5" PropertyWidth="500"
+                                                        Title="Select File" ShowLeaderLine="True"
                                                         FileFilters="All Files (*.*)|*.*|Text Files (*.txt)|*.txt|XML Files (*.xml)|*.xml"
                                                         Text="{Binding FilePathProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <cntrls:FolderSelectorControl Grid.Row="1" Margin="0,5"
-                                                           Title="Select Folder"
+                            <cntrls:FolderSelectorControl Grid.Row="1" Margin="0,5" PropertyWidth="500"
+                                                           Title="Select Folder" ShowLeaderLine="True"
                                                            Text="{Binding FolderPathProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <cntrls:DirectorySelectorControl Grid.Row="2" Margin="0,5"
-                                                              Title="Select Directory"
+                            <cntrls:DirectorySelectorControl Grid.Row="2" Margin="0,5" PropertyWidth="500"
+                                                              Title="Select Directory" ShowLeaderLine="True"
                                                               Text="{Binding DirectoryPathProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
 
