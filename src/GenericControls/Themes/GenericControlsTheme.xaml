@@ -186,6 +186,7 @@
 
     <Style x:Key="ColorPickerStyle" TargetType="{x:Type local:ColorPicker}">
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+        <Setter Property="Background" Value="{DynamicResource EnvironmentToolWindowBackground}"/>
     </Style>
 
     <Style TargetType="{x:Type local:ColorPicker}" BasedOn="{StaticResource ColorPickerStyle}"/>
@@ -196,6 +197,7 @@
 
     <Style x:Key="ColorPickerPopupStyle" TargetType="{x:Type local:ColorPickerPopup}">
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+        <Setter Property="Background" Value="{DynamicResource EnvironmentToolWindowBackground}"/>
     </Style>
 
     <Style TargetType="{x:Type local:ColorPickerPopup}" BasedOn="{StaticResource ColorPickerPopupStyle}"/>
