@@ -51,7 +51,7 @@
 
         <!-- Header Bar with Theme Selection -->
         <Border Grid.Row="0"
-                Background="{DynamicResource EnvironmentToolWindowBackground}"
+                Background="{DynamicResource EnvironmentWindowBackground}"
                 BorderBrush="{DynamicResource Button.Static.Border}"
                 BorderThickness="0,0,0,1"
                 Padding="15,10">
@@ -271,7 +271,7 @@
                             <!-- Full ColorPicker -->
                             <Border Grid.Column="0" BorderBrush="{DynamicResource Button.Static.Border}"
                                     BorderThickness="1" Padding="10" Margin="0,0,20,0" CornerRadius="4"
-                                    Background="{DynamicResource EnvironmentToolWindowBackground}">
+                                    Background="{DynamicResource EnvironmentWindowBackground}">
                                 <StackPanel>
                                     <TextBlock Text="ColorPicker (Full)" HorizontalAlignment="Center" Margin="0,0,0,10"
                                                FontWeight="SemiBold" Foreground="{DynamicResource EnvironmentWindowText}"/>
@@ -449,7 +449,7 @@
 
                     <!-- Live Preview Panel -->
                     <Border Grid.Column="1"
-                            Background="{DynamicResource EnvironmentToolWindowBackground}"
+                            Background="{DynamicResource EnvironmentWindowBackground}"
                             BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness="1,0,0,0"
                             Padding="15">
                         <StackPanel>
@@ -616,7 +616,7 @@
                         </Popup>
 
                         <Border DockPanel.Dock="Top"
-                                Background="{DynamicResource EnvironmentToolWindowBackground}"
+                                Background="{DynamicResource EnvironmentWindowBackground}"
                                 BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness="1"
                                 Padding="15" CornerRadius="4">
                             <StackPanel>
@@ -725,7 +725,7 @@
 
         <!-- Status Bar -->
         <Border Grid.Row="2"
-                Background="{DynamicResource EnvironmentToolWindowBackground}"
+                Background="{DynamicResource EnvironmentWindowBackground}"
                 BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness="0,1,0,0"
                 Padding="10,5">
             <TextBlock Text="GenericControls Library Demo - .NET 9.0 | WPF"

@@ -438,9 +438,9 @@ namespace GenericControls
         private void InitializeClock()
         {
             double transformRadius = 42d; // transform radius
-                                          // 
+                                          //
                                           // Get and set the hour tick circles
-            _hourBorders = new ClockToggle[Is24Hour == true ? 23 : 11 + 1];
+            _hourBorders = new ClockToggle[Is24Hour ? 24 : 12];
             for (int i = this.HoursGrid.Children.Count - 1; i >= 0; i -= 1)
             {
                 if (this.HoursGrid.Children[i].GetType() == typeof(ClockToggle))
@@ -455,8 +455,8 @@ namespace GenericControls
                     _hourBorders[i] = GetBorder(i, 180d - i * angle, transformRadius, ClockToggle.State.HourMinor);
                     this.HoursGrid.Children.Add(_hourBorders[i]);
                 }
-                // 
-                _hourBorders[0] = GetBorder(_hourBorders.Count(), 180d, transformRadius, ClockToggle.State.HourMajor);
+                // In 24-hour mode, display 0 at the top (midnight)
+                _hourBorders[0] = GetBorder(0, 180d, transformRadius, ClockToggle.State.HourMajor);
                 this.HoursGrid.Children.Add(_hourBorders[0]);
                 for (int i = 2, loopTo1 = _hourBorders.Count() - 1; i <= loopTo1; i += 2)
                 {

@@ -74,7 +74,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Background="{DynamicResource EnvironmentToolWindowBackground}" Grid.Row="0" Margin="1 0">
+        <Border Background="{DynamicResource EnvironmentWindowBackground}" Grid.Row="0" Margin="1 0">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock MouseUp="HoursMouseUp">
                     <TextBlock.Style>
