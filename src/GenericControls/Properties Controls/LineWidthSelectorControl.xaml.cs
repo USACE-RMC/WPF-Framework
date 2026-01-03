@@ -50,6 +50,14 @@ namespace GenericControls
     public partial class LineWidthSelectorControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="LineWidthSelectorControl"/> class.
+        /// </summary>
+        public LineWidthSelectorControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="SelectedWidth"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedWidthProperty = DependencyProperty.Register(nameof(SelectedWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(0d));

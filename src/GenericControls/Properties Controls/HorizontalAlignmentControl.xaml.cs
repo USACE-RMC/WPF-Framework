@@ -50,6 +50,14 @@ namespace GenericControls
     public partial class HorizontalAlignmentControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="HorizontalAlignmentControl"/> class.
+        /// </summary>
+        public HorizontalAlignmentControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Gets a list of all possible <see cref="HorizontalAlignment"/> values.
         /// </summary>
         public static List<HorizontalAlignment> AlignmentOptions { get; private set; } = new List<HorizontalAlignment>((HorizontalAlignment[])Enum.GetValues(typeof(HorizontalAlignment)));

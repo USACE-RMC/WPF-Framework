@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class PointPropertyControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="PointPropertyControl"/> class.
+        /// </summary>
+        public PointPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Decimals"/> dependency property.
         /// </summary>
         public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(PointPropertyControl), new UIPropertyMetadata(5, InitializeControl));
@@ -97,20 +105,21 @@ namespace GenericControls
             if (d.GetType() != typeof(PointPropertyControl))
                 return;
             PointPropertyControl thisControl = (PointPropertyControl)d;
-            // 
-            if (e.NewValue == null)
+
+            // Check if child controls exist yet (may be called before InitializeComponent)
+            if (thisControl.DataPointX == null || thisControl.DataPointY == null)
                 return;
-            if (e.NewValue.GetType() != typeof(Point))
-                return;
-            Point newDataPoint = (Point)e.NewValue;
+
+            Point newDataPoint = thisControl.DataPoint;
+
             // Update the textboxes with the new values
-            // remove the handlers so the property doesn't get triggered for update.
+            // Remove the handlers so the property doesn't get triggered for update.
             thisControl.DataPointX.TextChanged -= thisControl.DataPointX_TextChanged;
             thisControl.DataPointY.TextChanged -= thisControl.DataPointY_TextChanged;
-            // update the values in the textboxes
+            // Update the values in the textboxes
             thisControl.DataPointX.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.X, thisControl.Decimals));
             thisControl.DataPointY.Text = NumberFormatHelper.FormatDouble(Math.Round(newDataPoint.Y, thisControl.Decimals));
-            // add the handlers back for updating back to source.
+            // Add the handlers back for updating back to source.
             thisControl.DataPointX.TextChanged += thisControl.DataPointX_TextChanged;
             thisControl.DataPointY.TextChanged += thisControl.DataPointY_TextChanged;
         }

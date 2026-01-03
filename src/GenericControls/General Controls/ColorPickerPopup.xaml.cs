@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class ColorPickerPopup:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ColorPickerPopup"/> class.
+        /// </summary>
+        public ColorPickerPopup()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Dependency property for the selected <see cref="Color"/>
         /// </summary>
         public static DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(SolidColorBrush), typeof(ColorPickerPopup), new UIPropertyMetadata(Brushes.Black)); 

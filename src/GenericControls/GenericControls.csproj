@@ -59,6 +59,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\*.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

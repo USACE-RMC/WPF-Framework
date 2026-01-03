@@ -47,6 +47,14 @@ namespace GenericControls
     public partial class FontWeightSelectorControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="FontWeightSelectorControl"/> class.
+        /// </summary>
+        public FontWeightSelectorControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FontWeightSelectorControl), new UIPropertyMetadata("Title"));

@@ -49,6 +49,14 @@ namespace GenericControls
     public partial class VerticalAlignmentControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="VerticalAlignmentControl"/> class.
+        /// </summary>
+        public VerticalAlignmentControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Gets the list of available <see cref="VerticalAlignment"/> options.
         /// </summary>
         public static List<VerticalAlignment> AlignmentOptions { get; private set; } = new List<VerticalAlignment>((VerticalAlignment[])Enum.GetValues(typeof(VerticalAlignment)));

@@ -37,6 +37,14 @@ namespace GenericControls
     public partial class ResizeableTextPropertyControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ResizeableTextPropertyControl"/> class.
+        /// </summary>
+        public ResizeableTextPropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(""));

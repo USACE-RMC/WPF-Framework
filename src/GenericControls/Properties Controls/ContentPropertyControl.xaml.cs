@@ -46,6 +46,13 @@ namespace GenericControls
     /// </remarks>
     public partial class ContentPropertyControl : UserControl, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContentPropertyControl"/> class.
+        /// </summary>
+        public ContentPropertyControl()
+        {
+            InitializeComponent();
+        }
 
         /// <summary>
         /// Dependency property for the <see cref="InnerContent"/> property.

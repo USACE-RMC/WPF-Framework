@@ -186,12 +186,10 @@
                                     ToolTip="Click to select a date and time from selector."
                                     IsHitTestVisible="{Binding ElementName=DateTimePopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
 
-                                    <Image 
+                                    <ContentControl
                                         Margin="-1"
-                                        Stretch="None" 
-                                        RenderOptions.EdgeMode="Unspecified" 
-                                        RenderOptions.BitmapScalingMode="Fant"
-                                        Source="pack://application:,,,/GenericControls;component/Resources/CalendarIcon.png"/>
+                                        Width="16" Height="16"
+                                        Content="{DynamicResource CalendarIcon}"/>
                                 </RadioButton>
 
                                 <Rectangle 

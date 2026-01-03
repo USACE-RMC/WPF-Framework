@@ -8,7 +8,12 @@
              d:DesignHeight="22"
              d:DesignWidth="250">
     <UserControl.Resources>
-        <local:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/GenericResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -17,12 +22,12 @@
         </Grid.ColumnDefinitions>
         <!--Can update string format of textbox in binding (example: StringFormat='yyyy-MM-dd HH:mm:ss')-->
         <TextBox
-            x:Name="DateTimeTextBox" 
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Stretch" 
+            x:Name="DateTimeTextBox"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
             VerticalContentAlignment="Center">
             <TextBox.Style>
-                <Style TargetType="TextBox">
+                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=DateAndTimeTextBoxSelector, Path=Is24Hour}" Value="False">
                             <Setter Property="Text" Value="{Binding SelectedDateTime, ElementName=DateAndTimeTextBoxSelector, Mode=TwoWay, ValidatesOnDataErrors=True, StringFormat='MM/dd/yyyy hh:mm tt'}"/>
@@ -45,13 +50,8 @@
             IsChecked="False" 
             IsHitTestVisible="{Binding ElementName=DateTimePopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
 
-            <Image  
-                Source="pack://application:,,,/GenericControls;component/Resources/CalendarIcon.png" 
-                Width="16"
-                Height="16"
-                Stretch="None" 
-                RenderOptions.EdgeMode="Unspecified" 
-                RenderOptions.BitmapScalingMode="Fant"/>
+            <ContentControl Content="{StaticResource CalendarIcon}"
+                            Width="16" Height="16"/>
         </RadioButton>
         
         <Popup
@@ -62,11 +62,11 @@
             Placement="Bottom" 
             PlacementTarget="{Binding ElementName=DateTimeTextBox}">
             
-            <local:DateAndTimePickerControl 
-                x:Name="DateAndTimePicker" 
-                HasSeconds="False" 
-                SetToHoursOnLoad="True" 
-                Background="White"
+            <local:DateAndTimePickerControl
+                x:Name="DateAndTimePicker"
+                HasSeconds="False"
+                SetToHoursOnLoad="True"
+                Background="{DynamicResource EnvironmentToolWindowBackground}"
                 DateAndTime="{Binding SelectedDateTime, ElementName=DateAndTimeTextBoxSelector, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                 Is24Hour="{Binding ElementName=DateAndTimeTextBoxSelector, Path=Is24Hour, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         </Popup>

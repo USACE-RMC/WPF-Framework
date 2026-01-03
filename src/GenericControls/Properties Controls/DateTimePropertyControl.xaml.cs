@@ -48,6 +48,14 @@ namespace GenericControls
     public partial class DateTimePropertyControl : UserControl, INotifyPropertyChanged
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="DateTimePropertyControl"/> class.
+        /// </summary>
+        public DateTimePropertyControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Identifies the <see cref="SelectedDateTime"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedDateTimeProperty = DependencyProperty.Register(nameof(SelectedDateTime), typeof(DateTime), typeof(DateTimePropertyControl), new UIPropertyMetadata(new DateTime(2000, 1, 1, 0, 0, 0)));

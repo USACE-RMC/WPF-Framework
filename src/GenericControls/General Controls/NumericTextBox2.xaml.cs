@@ -49,10 +49,16 @@ namespace GenericControls
     /// </remarks>
     public partial class NumericTextBox2 : UserControl
     {
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumericTextBox2"/> class.
+        /// </summary>
+        public NumericTextBox2()
+        {
+            InitializeComponent();
+        }
 
         /// <summary>
-    /// Dependency property for the number. 
+    /// Dependency property for the number.
     /// </summary>
         public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericTextBox2), new UIPropertyMetadata(0d, ValueChangedCallback));
 

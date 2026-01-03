@@ -48,6 +48,14 @@ namespace GenericControls
     public partial class GridLengthControl:UserControl
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="GridLengthControl"/> class.
+        /// </summary>
+        public GridLengthControl()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
         /// Provides a list of available <see cref="GridUnitType"/> options for use in UI bindings.
         /// </summary>
         public static List<GridUnitType> GridLengthUnitOptions { get; private set; } = new List<GridUnitType>((GridUnitType[])Enum.GetValues(typeof(GridUnitType)));
