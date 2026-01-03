@@ -664,11 +664,19 @@ namespace Demo_GenericControls
                 {
                     Width = 140,
                     Height = 220,
-                    Background = Brushes.White,
-                    BorderBrush = Brushes.Gray,
-                    BorderThickness = new Thickness(1),
+                    BorderThickness = new Thickness(0),
                     Padding = new Thickness(2)
                 };
+                colorPicker.SetResourceReference(ColorPicker.BackgroundProperty, "EnvironmentToolWindowBackground");
+
+                // Wrap in Border for proper background in popup (AllowsTransparency)
+                var border = new Border
+                {
+                    BorderThickness = new Thickness(1)
+                };
+                border.SetResourceReference(Border.BackgroundProperty, "EnvironmentToolWindowBackground");
+                border.SetResourceReference(Border.BorderBrushProperty, "Button.Static.Border");
+                border.Child = colorPicker;
 
                 BindingOperations.SetBinding(
                     colorPicker,
@@ -680,7 +688,7 @@ namespace Demo_GenericControls
                         Mode = BindingMode.TwoWay
                     });
 
-                popup.Child = colorPicker;
+                popup.Child = border;
                 popup.IsOpen = true;
             }
         }
