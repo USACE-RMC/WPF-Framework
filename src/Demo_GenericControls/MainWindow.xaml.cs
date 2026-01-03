@@ -662,8 +662,8 @@ namespace Demo_GenericControls
 
                 var colorPicker = new ColorPicker
                 {
-                    Width = 140,
-                    Height = 220,
+                    Width = 175,
+                    Height = 250,
                     Background = Brushes.White,
                     BorderBrush = Brushes.Gray,
                     BorderThickness = new Thickness(1),

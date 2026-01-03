@@ -104,7 +104,7 @@
         <!--POPUP PLACEMENT HACK-->
         <Rectangle x:Name="PART_PopPlacer" Fill="Transparent" Width="0" Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                    Focusable="False" Visibility="Hidden" IsHitTestVisible="False"/>
-        
+
         <Popup
             x:Name="PickerPopup"
             PopupAnimation="Slide"
@@ -115,16 +115,14 @@
             Width="175"
             IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
             PlacementTarget="{Binding ElementName=PART_PopPlacer}">
-            <Border
-                Background="{DynamicResource EnvironmentToolWindowBackground}"
-                BorderBrush="{DynamicResource Button.Static.Border}"
-                BorderThickness="1">
                 <local:ColorPicker
                     x:Name="ColorPicker"
                     Padding="2"
-                    Background="{DynamicResource EnvironmentToolWindowBackground}"
+                    BorderBrush ="{DynamicResource Button.Static.Border}" 
+                    BorderThickness="1" 
+                    Background="{DynamicResource EnvironmentWindowBackground}"
                     Color="{Binding ElementName=ColorPickerPopupRoot, Path=Color, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            </Border>
+
         </Popup>
     </Grid>
 </UserControl>

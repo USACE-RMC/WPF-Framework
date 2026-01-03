@@ -295,7 +295,7 @@
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="ColorPickerPopup:"
                                                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
                                                Foreground="{DynamicResource EnvironmentWindowText}"/>
-                                    <cntrls:ColorPickerPopup Grid.Row="0" Grid.Column="1"
+                                    <cntrls:ColorPickerPopup Grid.Row="0" Grid.Column="1" 
                                                               Width="60" Height="28" HorizontalAlignment="Left"
                                                               Color="{Binding ColorProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                               Margin="0,5"/>
@@ -657,7 +657,7 @@
                             <!-- Add Color Button and Main Color Picker -->
                             <Border Grid.Column="0" BorderBrush="{DynamicResource Button.Static.Border}"
                                     BorderThickness="1" Padding="15" Margin="0,0,20,0" CornerRadius="4"
-                                    Background="{DynamicResource EnvironmentToolWindowBackground}">
+                                    Background="{DynamicResource EnvironmentWindowBackground}">
                                 <StackPanel>
                                     <TextBlock Text="New Color" HorizontalAlignment="Center" Margin="0,0,0,10"
                                                FontWeight="SemiBold" Foreground="{DynamicResource EnvironmentWindowText}"/>
