@@ -1,10 +1,7 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-
-# Solution Folders
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core Framework", "Core Framework", "{1A2B3C4D-5E6F-7890-AB12-CD34EF567890}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{2B3C4D5E-6F78-90AB-12CD-34EF56789012}"
@@ -13,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{3C4D5E6F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4D5E6F78-90AB-12CD-34EF-567890123456}"
 EndProject
-
-# Core Framework Projects
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkInterfaces", "src\FrameworkInterfaces\FrameworkInterfaces.csproj", "{12E48302-6991-4257-9649-7EBE5025444F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkUI", "src\FrameworkUI\FrameworkUI.csproj", "{6E6C9D00-1F49-41F2-BE4C-BF23F509E06E}"
@@ -25,25 +20,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareUpdate", "src\Softw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareUpdate.Updater", "src\SoftwareUpdate.Updater\SoftwareUpdate.Updater.csproj", "{C3D4E5F6-A7B8-9012-CDEF-345678901234}"
 EndProject
-
-# Control Libraries
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericControls", "src\GenericControls\GenericControls.csproj", "{D4E5F6A7-B8C9-0123-DEF0-456789ABCDEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericControls", "src\NumericControls\NumericControls.csproj", "{076B29CF-41EC-45D1-A242-DACF6753FCCC}"
 EndProject
-
-# Demo Applications
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_FrameworkUI", "src\Demo_FrameworkUI\Demo_FrameworkUI.csproj", "{7929C9E7-202E-4DE5-B389-BE8B30634B8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo_GenericControls", "src\Demo_GenericControls\Demo_GenericControls.csproj", "{E5F6A7B8-C901-2345-EF01-6789ABCDEF01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_NumericControls", "src\Demo_NumericControls\Demo_NumericControls.csproj", "{3F2D4C7A-665D-4621-BEB7-F10213FE20E7}"
 EndProject
-
-# Test Projects
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_GenericControls", "src\Test_GenericControls\Test_GenericControls.csproj", "{F6A7B8C9-0123-4567-F012-89ABCDEF0123}"
 EndProject
-
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,20 +133,16 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		# Core Framework projects
 		{12E48302-6991-4257-9649-7EBE5025444F} = {1A2B3C4D-5E6F-7890-AB12-CD34EF567890}
 		{6E6C9D00-1F49-41F2-BE4C-BF23F509E06E} = {1A2B3C4D-5E6F-7890-AB12-CD34EF567890}
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {1A2B3C4D-5E6F-7890-AB12-CD34EF567890}
 		{B2C3D4E5-F6A7-8901-BCDE-F23456789012} = {1A2B3C4D-5E6F-7890-AB12-CD34EF567890}
 		{C3D4E5F6-A7B8-9012-CDEF-345678901234} = {1A2B3C4D-5E6F-7890-AB12-CD34EF567890}
-		# Control libraries
 		{D4E5F6A7-B8C9-0123-DEF0-456789ABCDEF} = {2B3C4D5E-6F78-90AB-12CD-34EF56789012}
 		{076B29CF-41EC-45D1-A242-DACF6753FCCC} = {2B3C4D5E-6F78-90AB-12CD-34EF56789012}
-		# Demo applications
 		{7929C9E7-202E-4DE5-B389-BE8B30634B8A} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
 		{E5F6A7B8-C901-2345-EF01-6789ABCDEF01} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
 		{3F2D4C7A-665D-4621-BEB7-F10213FE20E7} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
-		# Test projects
 		{F6A7B8C9-0123-4567-F012-89ABCDEF0123} = {4D5E6F78-90AB-12CD-34EF-567890123456}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
