@@ -16,17 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AvalonDock\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj" />
     <ProjectReference Include="..\FrameworkInterfaces\FrameworkInterfaces.csproj" />
     <ProjectReference Include="..\FrameworkUI\FrameworkUI.csproj" />
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
     <ProjectReference Include="..\SoftwareUpdate\SoftwareUpdate.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Xceed.Wpf.AvalonDock">
-      <HintPath>..\FrameworkUI\Resources\Xceed.Wpf.AvalonDock.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

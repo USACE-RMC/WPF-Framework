@@ -1,0 +1,45 @@
+<!-- Demo_OxyPlotControls - Demo application for OxyPlotControls -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <RootNamespace>Demo_OxyPlotControls</RootNamespace>
+    <AssemblyName>Demo_OxyPlotControls</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
+    <ProjectReference Include="..\OxyPlotControls\OxyPlotControls.csproj" />
+  </ItemGroup>
+
+  <!-- GenericControls reference for net9.0 -->
+
+  <!-- Numerics reference for net9.0 -->
+
+  <!-- Embedded resources -->
+  <ItemGroup>
+    <EmbeddedResource Include="USGS_01134500.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="DatabaseManager">
+      <HintPath>..\..\..\database-management\DatabaseManager\bin\Debug\net9.0\DatabaseManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Numerics">
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf.Shared">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

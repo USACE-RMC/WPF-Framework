@@ -284,9 +284,9 @@ namespace GenericControls
         /// <param name="e">Routed event arguments.</param>
         private void FilePathButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] files = GeneralMethods.FileOpenDialog(FileFilters, false);
-            if (files != null && files.Count() > 0 && !string.IsNullOrEmpty(files[0]))
-                Text = files[0];
+            string fileName = GeneralMethods.FileOpenDialog(FileFilters);
+            if (fileName != null && !string.IsNullOrEmpty(fileName))
+                Text = fileName;
         }
 
         /// <summary>

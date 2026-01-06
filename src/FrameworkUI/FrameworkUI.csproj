@@ -15,6 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2013\Xceed.Wpf.AvalonDock.Themes.VS2013.csproj" />
+    <ProjectReference Include="..\AvalonDock\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj" />
     <ProjectReference Include="..\FrameworkInterfaces\FrameworkInterfaces.csproj" />
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
@@ -24,15 +26,6 @@
   <ItemGroup>
     <Content Include="Resources\Xceed.Wpf.AvalonDock.dll" />
     <Content Include="Resources\Xceed.Wpf.AvalonDock.Themes.VS2013.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Xceed.Wpf.AvalonDock">
-      <HintPath>Resources\Xceed.Wpf.AvalonDock.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2013">
-      <HintPath>Resources\Xceed.Wpf.AvalonDock.Themes.VS2013.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

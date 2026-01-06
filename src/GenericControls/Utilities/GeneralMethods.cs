@@ -128,17 +128,17 @@ namespace GenericControls
     /// </summary>
     /// <param name="filters">Filters for the file open dialog selector. (e.g. "Text File (*.txt) |*.txt|Word File (*.docx) |*.docx|All files (*.*) |*.*"</param>
     /// <returns>String of the file to be opened.</returns>
-        public static string[] FileOpenDialog(string filters, bool multiSelect)
+        public static string FileOpenDialog(string filters)
         {
-            string[] FileOpenDialogRet = default;
-            var OpenfileDialog = new OpenFileDialog() { Filter = filters, Multiselect = multiSelect };
+            string FileOpenDialogRet = default;
+            var OpenfileDialog = new OpenFileDialog() { Filter = filters};
             if (OpenfileDialog.ShowDialog() is { } arg1 && arg1 == true)
             {
-                FileOpenDialogRet = OpenfileDialog.FileNames;
+                FileOpenDialogRet = OpenfileDialog.FileName;
             }
             else
             {
-                FileOpenDialogRet = new string[] { };
+                FileOpenDialogRet = default;
             }
 
             return FileOpenDialogRet;
