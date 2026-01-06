@@ -377,6 +377,14 @@ namespace OxyPlotControls
                         polylineProperties.Add(polylineAnnotation.Points.ToXElement(nameof(polylineAnnotation.Points)));
                         pathProperties.Add(polylineProperties);
                     }
+                    else if (annotationType == typeof(FunctionAnnotation))
+                    {
+                        var functionAnnotation = (FunctionAnnotation)pathAnnotation;
+                        var functionProperties = new XElement("Function");
+                        functionProperties.SetAttributeValue(nameof(functionAnnotation.Type), functionAnnotation.Type.ToString());
+                        // Note: The Equation delegate cannot be serialized - only the Type property is persisted
+                        pathProperties.Add(functionProperties);
+                    }
                 }
             }
 
@@ -646,6 +654,16 @@ namespace OxyPlotControls
                                     foreach (var pt in polyPointsElement.PointsFromXElement())
                                         polylineAnnotation.Points.Add(pt);
                                 }
+                            }
+                        }
+                        else if (currentAnnotationType == typeof(FunctionAnnotation))
+                        {
+                            var functionElement = pathElement.Element("Function");
+                            if (functionElement != null)
+                            {
+                                var functionAnnotation = (FunctionAnnotation)pathAnnotation;
+                                if (GetEnumAttribute(functionElement, nameof(functionAnnotation.Type), out FunctionAnnotationType type)) functionAnnotation.Type = type;
+                                // Note: The Equation delegate cannot be deserialized - it must be set programmatically
                             }
                         }
                     }
