@@ -204,9 +204,17 @@ namespace Demo_OxyPlotControls
                 var document = new XmlDocument();
                 document.Load(fileToOpen);
 
+                // Get the OxyPlot properties element with null check
+                var elements = document.GetElementsByTagName(OxyPlotControls.OxyPlotSettingsSerializer.OxyplotPropertiesTag);
+                if (elements.Count == 0 || elements[0] == null)
+                {
+                    MessageBox.Show($"Invalid settings file: missing '{OxyPlotControls.OxyPlotSettingsSerializer.OxyplotPropertiesTag}' element.");
+                    return;
+                }
+
                 // Create a new PlotModel and apply the settings
                 var newModel = new PlotModel();
-                OxyPlotControls.OxyPlotSettingsSerializer.FromXelement(newModel, XElement.Parse(document.GetElementsByTagName(OxyPlotControls.OxyPlotSettingsSerializer.OxyplotPropertiesTag)[0].OuterXml));
+                OxyPlotControls.OxyPlotSettingsSerializer.FromXelement(newModel, XElement.Parse(elements[0].OuterXml));
 
                 // Repopulate series data from the registry
                 RepopulateAllSeriesData(newModel);
