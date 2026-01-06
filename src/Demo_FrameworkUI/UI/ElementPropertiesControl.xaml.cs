@@ -46,18 +46,26 @@ using System.Windows.Shapes;
 namespace Demo_FrameworkUI.UI
 {
     /// <summary>
-    /// Interaction logic for ElementPropertiesControl.xaml
+    /// User control for displaying and editing element properties.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     public partial class ElementPropertiesControl : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ElementPropertiesControl"/> class.
+        /// </summary>
         public ElementPropertiesControl()
         {
             InitializeComponent();

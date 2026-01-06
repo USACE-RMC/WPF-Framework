@@ -65,14 +65,25 @@ namespace Demo_NumericControls
     /// </list>
     /// </para>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        /// <summary>
+        /// Gets a list of available univariate distribution options for the distribution selector control.
+        /// </summary>
+        /// <value>
+        /// A list containing instances of Deterministic, Normal, LnNormal, TruncatedNormal, Triangular, and Pert distributions.
+        /// </value>
         public List<UnivariateDistributionBase> DistOptions
         {
             get
@@ -88,6 +99,12 @@ namespace Demo_NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets a list of univariate distribution types for use in table-based distribution selection.
+        /// </summary>
+        /// <value>
+        /// A list of distribution type enumerations including Deterministic, Normal, Pert, Triangular, LnNormal, and TruncatedNormal.
+        /// </value>
         public List<UnivariateDistributionType> TableDistOptions
         {
             get
@@ -105,6 +122,12 @@ namespace Demo_NumericControls
 
         private UnivariateDistributionBase _selectedDistribution;
 
+        /// <summary>
+        /// Gets or sets the currently selected univariate distribution.
+        /// </summary>
+        /// <value>
+        /// The selected distribution instance. Initialized to a Normal distribution with mean 100 and standard deviation 15.
+        /// </value>
         public UnivariateDistributionBase SelectedDistribution
         {
             get
@@ -123,6 +146,12 @@ namespace Demo_NumericControls
 
         private UncertainOrderedPairedData _uncertainCurve;
 
+        /// <summary>
+        /// Gets or sets the uncertain curve data for the uncertain curve editor control.
+        /// </summary>
+        /// <value>
+        /// An ordered paired data set with uncertainty quantification for each ordinate.
+        /// </value>
         public UncertainOrderedPairedData SelectedUncertainCurve
         {
             get
@@ -141,6 +170,12 @@ namespace Demo_NumericControls
 
         private OrderedPairedData _curve;
 
+        /// <summary>
+        /// Gets or sets the standard curve data for the curve editor control.
+        /// </summary>
+        /// <value>
+        /// An ordered paired data set containing X-Y coordinate pairs.
+        /// </value>
         public OrderedPairedData SelectedCurve
         {
             get
@@ -159,6 +194,12 @@ namespace Demo_NumericControls
 
         private List<StratificationOptions> _stratificationOptionsCollection = new List<StratificationOptions>();
 
+        /// <summary>
+        /// Gets or sets the collection of stratification options for bin definition control.
+        /// </summary>
+        /// <value>
+        /// A list of stratification options defining bin boundaries and counts for data stratification.
+        /// </value>
         public List<StratificationOptions> StratificationOptionsCollection
         {
             get
@@ -174,6 +215,12 @@ namespace Demo_NumericControls
 
         private BivariateEmpirical _bivariateCDF = new BivariateEmpirical();
 
+        /// <summary>
+        /// Gets or sets the bivariate empirical cumulative distribution function data.
+        /// </summary>
+        /// <value>
+        /// A two-dimensional empirical distribution with X values, Y values, and associated cumulative probabilities.
+        /// </value>
         public BivariateEmpirical BivariateCDF
         {
             get
@@ -187,8 +234,15 @@ namespace Demo_NumericControls
             }
         }
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// Sets up all demonstration data including distributions, curves, time series, and stratification options.
+        /// </summary>
         public MainWindow()
         {
 
@@ -250,6 +304,12 @@ namespace Demo_NumericControls
 
         }
 
+        /// <summary>
+        /// Handles the ContentRendered event of the MainWindow.
+        /// Called after the window content has been rendered.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
 
@@ -266,12 +326,24 @@ namespace Demo_NumericControls
 
         }
 
+        /// <summary>
+        /// Handles the Click event of the TestButton control.
+        /// Demonstrates dynamic modification of uncertain curve data.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             SelectedUncertainCurve[0] = new UncertainOrdinate(SelectedUncertainCurve[0].X + 1d, SelectedUncertainCurve[0].Y.Clone());
             SelectedUncertainCurve.Add(new UncertainOrdinate(0d, SelectedUncertainCurve[0].Y.Clone()));
         }
 
+        /// <summary>
+        /// Handles the Selected event for the USGS time series menu item.
+        /// Loads a previously saved time series from an XML file or downloads USGS data.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void USGSItem_Selected(object sender, RoutedEventArgs e)
         {
             var mapSettingsXMLFile = System.IO.Path.Combine("C:\\Temp", "settings.xml");
@@ -298,6 +370,12 @@ namespace Demo_NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the Selected event for the irregular time series menu item.
+        /// Creates and displays a sample irregular time series with two data points.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void IrregularItem_Selected(object sender, RoutedEventArgs e)
         {
             var s = new TimeSeries(TimeInterval.Irregular);
@@ -306,16 +384,34 @@ namespace Demo_NumericControls
             TimeSeriesTableControl.Series = s;
         }
 
+        /// <summary>
+        /// Handles the Selected event for the daily time series menu item.
+        /// Creates and displays a daily time series spanning one month.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void DailyItem_Selected(object sender, RoutedEventArgs e)
         {
             TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneDay, new DateTime(1980, 7, 30), new DateTime(1980, 8, 30), 10); ;
         }
 
+        /// <summary>
+        /// Handles the Selected event for the hourly time series menu item.
+        /// Creates and displays an hourly time series spanning two days.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void HourlyItem_Selected(object sender, RoutedEventArgs e)
         {
             TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneHour, new DateTime(1980, 7, 30), new DateTime(1980, 8, 1), 15); ;
         }
 
+        /// <summary>
+        /// Handles the Selected event for the minutes time series menu item.
+        /// Creates and displays a per-minute time series spanning one day.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void MinutesItem_Selected(object sender, RoutedEventArgs e)
         {
             TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneMinute, new DateTime(1980, 7, 30), new DateTime(1980, 7, 30, 23, 59, 0), 10); ;

@@ -36,7 +36,7 @@ using Themes;
 namespace Demo_FrameworkUI.UI
 {
     /// <summary>
-    /// Interaction logic for ThemeDemoControl.xaml
+    /// User control that demonstrates the runtime theme switching capability provided by the Themes library.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -56,6 +56,17 @@ namespace Demo_FrameworkUI.UI
     /// When a theme is selected, the control calls <see cref="FrameworkUI.ThemeManager.SetTheme"/>
     /// which in turn updates <see cref="ThemeService"/> and loads the appropriate
     /// color palette. All controls using DynamicResource bindings update automatically.
+    /// </para>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
     /// </para>
     /// </remarks>
     public partial class ThemeDemoControl : UserControl
@@ -121,6 +132,8 @@ namespace Demo_FrameworkUI.UI
         /// <summary>
         /// Handles theme changes from external sources.
         /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The theme changed event arguments.</param>
         private void OnThemeChanged(object sender, ThemeChangedEventArgs e)
         {
             // Update the radio button and text when theme changes externally
@@ -145,6 +158,8 @@ namespace Demo_FrameworkUI.UI
         /// <summary>
         /// Handles the Checked event of theme radio buttons.
         /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
         {
             if (sender is RadioButton radio && radio.IsChecked == true)
@@ -179,8 +194,19 @@ namespace Demo_FrameworkUI.UI
         /// </summary>
         private class SampleDataItem
         {
+            /// <summary>
+            /// Gets or sets the name of the sample data item.
+            /// </summary>
             public string Name { get; set; }
+
+            /// <summary>
+            /// Gets or sets the numeric value of the sample data item.
+            /// </summary>
             public int Value { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether the item is active.
+            /// </summary>
             public bool IsActive { get; set; }
         }
     }

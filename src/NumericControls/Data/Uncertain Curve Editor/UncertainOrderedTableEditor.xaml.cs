@@ -52,8 +52,22 @@ using System.Windows.Shapes;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for UncertainOrderedTableEditor.xaml
+    /// A user control for editing uncertain ordered paired data in a table format with distribution parameters.
+    /// Provides data validation, row manipulation, and supports various probability distributions.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class UncertainOrderedTableEditor : UserControl
     {
         public static DependencyProperty AddRemoveRowsProperty = DependencyProperty.Register(nameof(AddRemoveRows), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(true, AddRemoveRows_PropertyChanged));

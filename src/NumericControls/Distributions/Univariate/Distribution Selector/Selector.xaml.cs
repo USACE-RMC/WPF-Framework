@@ -54,8 +54,22 @@ using static System.Net.Mime.MediaTypeNames;
 namespace NumericControls.Distributions.Univariate
 {
     /// <summary>
-    /// Interaction logic for Selector.xaml
+    /// A comprehensive user control for selecting, configuring, and visualizing univariate probability distributions.
+    /// Provides distribution selection, parameter editing, PDF plotting, and statistical comparison with sample data.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class Selector : UserControl, INotifyPropertyChanged
     {
 

@@ -44,19 +44,27 @@ using Xceed.Wpf.AvalonDock.Layout;
 namespace Demo_FrameworkUI
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    /// Main application class for the Demo_FrameworkUI application. Handles application startup, initialization of the theme system, and configuration of the software update service.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     public partial class App : Application
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class and configures the Windows jump list.
+        /// </summary>
         public App()
         {
             var jList = new JumpList { ShowRecentCategory = false };
@@ -64,6 +72,11 @@ namespace Demo_FrameworkUI
             JumpList.SetJumpList(Application.Current, jList);
         }
 
+        /// <summary>
+        /// Handles the application startup event. Initializes the theme system, creates the project model, configures the main window, and sets up the software update service.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The startup event arguments.</param>
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             // Initialize theme system - this must be done before creating any UI
@@ -186,6 +199,14 @@ namespace Demo_FrameworkUI
             mainWindow.Show();
         }
 
+        /// <summary>
+        /// Creates a simple node for the explorer tree view.
+        /// </summary>
+        /// <param name="name">The name of the node.</param>
+        /// <param name="parent">The parent node.</param>
+        /// <param name="explorer">The explorer tree view.</param>
+        /// <param name="itemStyle">The style to apply to the node.</param>
+        /// <returns>A new <see cref="Node"/> instance.</returns>
         private Node CreateNode(string name, Node parent, ExplorerTreeView explorer, Style itemStyle)
         {
             var n = new SimpleNode(name,parent, explorer) { IsCheckBoxNode = true, Style=itemStyle };
@@ -195,6 +216,9 @@ namespace Demo_FrameworkUI
         /// <summary>
         /// Automatically checks for updates after a delay and prompts the user if available.
         /// </summary>
+        /// <param name="mainWindow">The main application window.</param>
+        /// <param name="updateService">The update service to use for checking updates.</param>
+        /// <param name="delayMs">The delay in milliseconds before checking for updates.</param>
         private async void AutoCheckForUpdatesAsync(FrameworkUI.MainWindow mainWindow, IUpdateService updateService, int delayMs)
         {
             try

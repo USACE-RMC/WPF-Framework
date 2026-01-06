@@ -43,59 +43,114 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     internal class ConsequenceElement : ElementBase
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsequenceElement"/> class.
+        /// </summary>
+        /// <param name="name">The name of the consequence element.</param>
+        /// <param name="parentCollection">The parent collection that contains this element.</param>
         public ConsequenceElement(string name, IElementCollection parentCollection) : base(name, parentCollection)
         {
             Name = name;
             SetIsDirty(false);
         }
 
+        /// <summary>
+        /// Gets or sets the name of the consequence element.
+        /// </summary>
         public override string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the description of the consequence element.
+        /// </summary>
         public override string Description { get => "Consequence Element"; set => throw new NotImplementedException(); }
 
+        /// <summary>
+        /// Gets the creation date of the consequence element.
+        /// </summary>
         public override DateTime CreationDate => DateTime.Now;
 
+        /// <summary>
+        /// Gets the last modified date of the consequence element.
+        /// </summary>
         public override DateTime LastModified => DateTime.Now;
 
+        /// <summary>
+        /// Gets the name used when saving the element to disk.
+        /// </summary>
         public override string NameOnDisk => "Consequence Element";
 
+        /// <summary>
+        /// Gets the image icon representing the element.
+        /// </summary>
         public override Bitmap ElementImage => Properties.Resources.Add;
 
+        /// <summary>
+        /// Gets a value indicating whether this element can be copied from an external project.
+        /// </summary>
         public override bool CanCopyFromExternal => true;
 
+        /// <summary>
+        /// Gets a value indicating whether the element is valid.
+        /// </summary>
         public override bool IsValid { get => true; }
 
+        /// <summary>
+        /// Creates a copy of the consequence element.
+        /// </summary>
+        /// <param name="newName">The name for the copied element. If null, a default name will be used.</param>
+        /// <returns>A copy of the element, or null if copying is not implemented.</returns>
         public override IElement Copy(string newName = null)
         {
             //throw new NotImplementedException();
             return null;
         }
 
+        /// <summary>
+        /// Copies an element from an external project file.
+        /// </summary>
+        /// <param name="itemName">The name of the item to copy.</param>
+        /// <param name="fullFileName">The full path to the external file.</param>
+        /// <returns>A copy of the external element, or null if not implemented.</returns>
         public override IElement CopyFromExternal(string itemName, string fullFileName)
         {
             //throw new NotImplementedException();
             return null;
         }
 
+        /// <summary>
+        /// Deletes the consequence element.
+        /// </summary>
         public override void Delete()
         {
             //throw new NotImplementedException();
         }
 
 
+        /// <summary>
+        /// Opens the consequence element for editing.
+        /// </summary>
         public override void Open()
         {
             //throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Saves the consequence element to disk.
+        /// </summary>
         public override void Save()
         {
             //throw new NotImplementedException();

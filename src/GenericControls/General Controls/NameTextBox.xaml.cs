@@ -37,14 +37,19 @@ using System.Windows.Input;
 namespace GenericControls
 {
     /// <summary>
-    /// A custom TextBox control that validates user input based on a character limit, 
+    /// A custom TextBox control that validates user input based on a character limit,
     /// disallowed characters, disallowed duplicate strings, and blank input rules.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>

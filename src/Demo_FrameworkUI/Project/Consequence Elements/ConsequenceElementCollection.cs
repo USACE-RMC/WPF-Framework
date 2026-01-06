@@ -42,15 +42,24 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     internal class ConsequenceElementCollection : ElementCollectionBase
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsequenceElementCollection"/> class.
+        /// </summary>
+        /// <param name="parentProject">The parent project that contains this collection.</param>
         public ConsequenceElementCollection(IProject parentProject) : base(parentProject)
         {
             Add(new ConsequenceElement("Consequence Function_1", this));
@@ -60,6 +69,9 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
             Add(new ConsequenceElement("Consequence Function_5", this));
         }
 
+        /// <summary>
+        /// Gets the name of the collection.
+        /// </summary>
         public override string Name
         {
             get
@@ -68,6 +80,9 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
             }
         }
 
+        /// <summary>
+        /// Opens the collection and loads elements from disk.
+        /// </summary>
         public override void Open()
         {
             _opening = true;
@@ -75,6 +90,10 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
             _opening = false;
         }
 
+        /// <summary>
+        /// Adds a consequence element to the collection.
+        /// </summary>
+        /// <param name="item">The element to add to the collection.</param>
         public override void Add(IElement item)
         {
             item.Deleted += ElementDeleted;
@@ -90,6 +109,11 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
             RaiseElementAddedEvent(item);
         }
 
+        /// <summary>
+        /// Inserts a consequence element at the specified index in the collection.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the element should be inserted.</param>
+        /// <param name="item">The element to insert.</param>
         public override void Insert(int index, IElement item)
         {
             item.Deleted += ElementDeleted;
@@ -101,11 +125,21 @@ namespace Demo_FrameworkUI.Project.Consequence_Elements
             RaiseElementAddedEvent(item);
         }
 
+        /// <summary>
+        /// Deletes the collection from disk.
+        /// </summary>
         public override void Delete()
         {
             // Delete from disk
         }
 
+        /// <summary>
+        /// Inserts an element from an external project at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the element should be inserted.</param>
+        /// <param name="elementName">The name of the element to insert.</param>
+        /// <param name="elementType">The type of the element.</param>
+        /// <param name="fullFileName">The full path to the external project file.</param>
         public override void InsertFromExternalProject(int index, string elementName, string elementType, string fullFileName)
         {
             throw new System.NotImplementedException();

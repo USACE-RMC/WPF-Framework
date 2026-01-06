@@ -33,19 +33,27 @@ using FrameworkInterfaces;
 namespace Demo_FrameworkUI.Project.Undo_Demo
 {
     /// <summary>
-    /// A demo element collection that showcases the undo/redo functionality for collection operations.
-    /// This collection demonstrates how to use RecordAddElement and RecordRemoveElement for undo support.
+    /// A demo element collection that showcases the undo/redo functionality for collection operations. This collection demonstrates how to use RecordAddElement and RecordRemoveElement for undo support.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     public class UndoDemoElementCollection : ElementCollectionBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UndoDemoElementCollection"/> class and adds initial demo elements.
+        /// </summary>
+        /// <param name="parentProject">The parent project that contains this collection.</param>
         public UndoDemoElementCollection(IProject parentProject) : base(parentProject)
         {
             // Add some initial demo elements
@@ -57,8 +65,14 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
             SetIsDirty(false);
         }
 
+        /// <summary>
+        /// Gets the name of the collection.
+        /// </summary>
         public override string Name => "Undo Demo Elements";
 
+        /// <summary>
+        /// Opens the collection and loads elements from disk. Clears the undo history after loading.
+        /// </summary>
         public override void Open()
         {
             _opening = true;
@@ -145,6 +159,8 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
         /// <summary>
         /// Moves an element within the collection with undo support.
         /// </summary>
+        /// <param name="oldIndex">The current index of the element.</param>
+        /// <param name="newIndex">The new index where the element should be moved.</param>
         public void MoveElement(int oldIndex, int newIndex)
         {
             if (oldIndex < 0 || oldIndex >= ElementList.Count) return;
@@ -161,6 +177,9 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
             SetIsDirty(true);
         }
 
+        /// <summary>
+        /// Deletes the collection and all its elements.
+        /// </summary>
         public override void Delete()
         {
             // Clear all elements
@@ -171,14 +190,23 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
             ElementList.Clear();
         }
 
+        /// <summary>
+        /// Inserts an element from an external project at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the element should be inserted.</param>
+        /// <param name="elementName">The name of the element to insert.</param>
+        /// <param name="elementType">The type of the element.</param>
+        /// <param name="fullFileName">The full path to the external project file.</param>
         public override void InsertFromExternalProject(int index, string elementName, string elementType, string fullFileName)
         {
             Insert(index, new UndoDemoElement(elementName, this));
         }
 
         /// <summary>
-        /// Creates a new demo element with undo support.
+        /// Creates a new demo element with undo support and adds it to the collection.
         /// </summary>
+        /// <param name="name">The name of the new element.</param>
+        /// <returns>The newly created element.</returns>
         public UndoDemoElement CreateNewElement(string name)
         {
             var element = new UndoDemoElement(name, this);

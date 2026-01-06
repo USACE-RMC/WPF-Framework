@@ -37,13 +37,18 @@ using FrameworkInterfaces.Undo;
 namespace Demo_FrameworkUI.UI
 {
     /// <summary>
-    /// A demo control that showcases the undo/redo functionality.
+    /// A demo user control that showcases the undo/redo functionality with interactive UI elements and stack visualization.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
@@ -52,6 +57,9 @@ namespace Demo_FrameworkUI.UI
         private UndoDemoElement _element;
         private bool _isUpdatingUI = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UndoDemoControl"/> class.
+        /// </summary>
         public UndoDemoControl()
         {
             InitializeComponent();
@@ -74,6 +82,11 @@ namespace Demo_FrameworkUI.UI
             }
         }
 
+        /// <summary>
+        /// Handles the PropertyChanged event of the element to refresh the UI.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private void Element_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (!_isUpdatingUI)
@@ -140,6 +153,11 @@ namespace Demo_FrameworkUI.UI
             RedoButton.IsEnabled = _element?.UndoManager?.CanRedo == true;
         }
 
+        /// <summary>
+        /// Handles text property changes for the name and custom value text boxes.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The text changed event arguments.</param>
         private void Property_Changed(object sender, TextChangedEventArgs e)
         {
             if (_isUpdatingUI || _element == null) return;
@@ -158,6 +176,11 @@ namespace Demo_FrameworkUI.UI
             UpdateButtonStates();
         }
 
+        /// <summary>
+        /// Handles numeric property changes for the numeric value text box.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The text changed event arguments.</param>
         private void NumericProperty_Changed(object sender, TextChangedEventArgs e)
         {
             if (_isUpdatingUI || _element == null) return;
@@ -170,6 +193,11 @@ namespace Demo_FrameworkUI.UI
             }
         }
 
+        /// <summary>
+        /// Handles boolean property changes for the checkbox.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void BooleanProperty_Changed(object sender, RoutedEventArgs e)
         {
             if (_isUpdatingUI || _element == null) return;
@@ -179,6 +207,11 @@ namespace Demo_FrameworkUI.UI
             UpdateButtonStates();
         }
 
+        /// <summary>
+        /// Handles date property changes for the date picker.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The selection changed event arguments.</param>
         private void DateProperty_Changed(object sender, SelectionChangedEventArgs e)
         {
             if (_isUpdatingUI || _element == null) return;
@@ -191,6 +224,11 @@ namespace Demo_FrameworkUI.UI
             }
         }
 
+        /// <summary>
+        /// Handles the undo button click to undo the last change.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void UndoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_element?.UndoManager?.CanUndo == true)
@@ -200,6 +238,11 @@ namespace Demo_FrameworkUI.UI
             }
         }
 
+        /// <summary>
+        /// Handles the redo button click to redo the last undone change.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void RedoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_element?.UndoManager?.CanRedo == true)
@@ -209,6 +252,11 @@ namespace Demo_FrameworkUI.UI
             }
         }
 
+        /// <summary>
+        /// Handles the batch update button click to perform multiple changes in a single transaction.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void BatchUpdateButton_Click(object sender, RoutedEventArgs e)
         {
             if (_element == null) return;
@@ -223,6 +271,11 @@ namespace Demo_FrameworkUI.UI
             RefreshUI();
         }
 
+        /// <summary>
+        /// Handles the clear history button click to clear the undo/redo history.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void ClearHistoryButton_Click(object sender, RoutedEventArgs e)
         {
             _element?.UndoManager?.Clear();

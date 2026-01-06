@@ -43,18 +43,27 @@ using Demo_FrameworkUI.Project.Undo_Demo;
 namespace Demo_FrameworkUI
 {
     /// <summary>
-    /// Example project node controller demonstrating FrameworkUI features.
+    /// Example project node controller that demonstrates FrameworkUI features including custom context menus, element creation, and document management.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     public class ExampleProjectNode : FrameworkUIController
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExampleProjectNode"/> class.
+        /// </summary>
+        /// <param name="project">The project to be managed by this controller.</param>
         public ExampleProjectNode(IProject project) : base(project)
         {
 
@@ -83,8 +92,16 @@ namespace Demo_FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether multiple nodes can be selected simultaneously.
+        /// </summary>
         public override bool CanMultiSelect => false;
 
+        /// <summary>
+        /// Creates a new hazard element with a user-specified name.
+        /// </summary>
+        /// <param name="elementNodes">The element node collection to add the new element to.</param>
+        /// <returns>The newly created hazard element.</returns>
         private HazardElement CreateHazardElement(ElementNodeCollection elementNodes)
         {
             string newName = CreateNewNameDialog($"Create New {elementNodes.ElementCollection.Name}...", $"{elementNodes.ElementCollection.Name}_{elementNodes.ElementCollection.Count + 1}", elementNodes.ElementCollection.Select(x => x.Name.ToString()).ToList());
@@ -93,11 +110,23 @@ namespace Demo_FrameworkUI
             return newHazard;
         }
 
+        /// <summary>
+        /// Handles custom menu item click events.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void CustomMenuItem_Clicked(object sender, RoutedEventArgs e)
         {
             Interaction.MsgBox("Yay");
         }
 
+        /// <summary>
+        /// Shows a dialog for creating a new element name, ensuring uniqueness.
+        /// </summary>
+        /// <param name="title">The title of the dialog.</param>
+        /// <param name="initialName">The initial suggested name.</param>
+        /// <param name="existingElementNames">List of existing element names to check for uniqueness.</param>
+        /// <returns>The new element name, or empty string if cancelled.</returns>
         private string CreateNewNameDialog(string title, string initialName, List<string> existingElementNames)
         {
             var nameDialog = new GenericControls.NameDialog(50, "", false, existingElementNames.ToArray(), NameTextBox.GetDefaultInvalidCharacters())
@@ -118,21 +147,35 @@ namespace Demo_FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Defines custom menu items for the Project menu.
+        /// </summary>
         protected override void DefineProjectMenuItems()
         {
             //throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Defines custom menu items for the Tools menu.
+        /// </summary>
         protected override void DefineToolsMenuItems()
         {
             //throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Defines custom menu items for the Help menu.
+        /// </summary>
         protected override void DefineHelpMenuItems()
         {
             //throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the document control for the specified element.
+        /// </summary>
+        /// <param name="element">The element to get the document control for.</param>
+        /// <returns>The appropriate document control for the element type.</returns>
         public override Control GetDocumentControl(IElement element)
         {
             // Return the appropriate control based on element type
@@ -146,11 +189,20 @@ namespace Demo_FrameworkUI
             return new UI.ElementDocumentControl();
         }
 
+        /// <summary>
+        /// Called when a document control is closed.
+        /// </summary>
+        /// <param name="documentControl">The document control that was closed.</param>
         public override void DocumentClosed(UIElement documentControl)
         {
             //throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the properties control for the specified element.
+        /// </summary>
+        /// <param name="element">The element to get the properties control for.</param>
+        /// <returns>The properties control for the element.</returns>
         public override Control GetPropertiesControl(IElement element)
         {
             return new UI.ElementPropertiesControl();
@@ -158,6 +210,11 @@ namespace Demo_FrameworkUI
             //return null;
         }
 
+        /// <summary>
+        /// Gets the properties control for the specified document control.
+        /// </summary>
+        /// <param name="documentControl">The document control to get the properties control for.</param>
+        /// <returns>The properties control for the document.</returns>
         public override Control GetPropertiesControl(UIElement documentControl)
         {
             return new UI.ElementPropertiesControl();
@@ -165,16 +222,28 @@ namespace Demo_FrameworkUI
             //return null;
         }
 
+        /// <summary>
+        /// Defines custom menu items for the Project Explorer.
+        /// </summary>
         protected override void DefineProjectExplorerMenuItems()
         {
             //throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Called when a properties control is closed.
+        /// </summary>
+        /// <param name="documentControl">The document control whose properties were closed.</param>
         public override void PropertiesClosed(UIElement documentControl)
         {
             //throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the element associated with the specified control.
+        /// </summary>
+        /// <param name="control">The control to get the element for.</param>
+        /// <returns>The element associated with the control, or null if not applicable.</returns>
         public override IElement GetControlElement(UIElement control)
         {
             // Return the element associated with the control for undo/redo support

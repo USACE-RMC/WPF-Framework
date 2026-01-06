@@ -42,8 +42,22 @@ using System.Windows.Data;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for UncertainOrderedDataTableEditor.xaml
+    /// A user control for editing uncertain ordered paired data in a table format with distribution selection.
+    /// Combines a distribution selector combobox with a table editor for managing uncertainty in paired data.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class UncertainOrderedDataTableEditor : UserControl
     {
         public static DependencyProperty AddRemoveRowsProperty = DependencyProperty.Register(nameof(AddRemoveRows), typeof(bool), typeof(UncertainOrderedDataTableEditor), new FrameworkPropertyMetadata(true));
@@ -359,6 +373,22 @@ namespace NumericControls
 
     }
 
+    /// <summary>
+    /// Converts UncertainOrderedPairedData objects to their distribution display names for UI binding.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DistributionNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

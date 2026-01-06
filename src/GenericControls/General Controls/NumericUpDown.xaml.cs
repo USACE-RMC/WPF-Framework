@@ -33,26 +33,25 @@ using System.Windows;
 namespace GenericControls
 {
     /// <summary>
-/// A numeric up-down control.
-/// </summary>
-/// <remarks>
-/// <para>
-///     Authors:
-///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil 
-/// </para>
-/// <para>
-/// Versions:
-///     <list type="bullet">
-///         <item><description>
-///         Created in May 2019 by Haden Smith.
-///         </description></item>
-///     </list>
-/// </para>
-/// <para>
-/// This control uses the Numeric TextBox control developed by Woody Fields. This control is meant to mimic 
-/// the behavior of the Winforms NumericupDown control. 
-/// </para>
-/// </remarks>
+    /// A numeric up-down control with increment/decrement buttons.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// This control uses the Numeric TextBox control. This control is meant to mimic
+    /// the behavior of the Winforms NumericUpDown control.
+    /// </para>
+    /// </remarks>
     public partial class NumericUpDown
     {
 

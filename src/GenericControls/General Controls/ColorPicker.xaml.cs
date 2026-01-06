@@ -39,7 +39,22 @@ using System.Windows.Shapes;
 
 namespace GenericControls
 {
-
+    /// <summary>
+    /// A user control for selecting colors using an HSV color picker interface with sliders and swatches.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class ColorPicker:UserControl
     {
 

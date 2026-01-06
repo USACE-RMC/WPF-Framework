@@ -37,8 +37,22 @@ using System.Windows.Controls.Primitives;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for UnivariateXPControl.xaml
+    /// A user control for editing univariate empirical distribution X and probability values.
+    /// Provides a data grid for entering paired X values and probabilities with validation.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class UnivariateXPControl : UserControl
     {
         private ObservableCollection<object> _univariateRowData = new ObservableCollection<object>();

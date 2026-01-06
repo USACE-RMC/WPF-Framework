@@ -52,8 +52,22 @@ using static Numerics.Data.Statistics.Histogram;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for MathEditorControl.xaml
+    /// A user control for applying mathematical operations to time series data.
+    /// Provides a UI for selecting mathematical functions and applying them to selected cells or entire time series.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class MathEditorControl : UserControl
     {
         private CopyPasteDataGrid _source = null;

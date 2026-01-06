@@ -42,7 +42,22 @@ using System.Windows.Input;
 using System.Windows.Media;
 namespace GenericControls
 {
-
+    /// <summary>
+    /// An extended DataGrid with built-in copy/paste functionality, row manipulation, and sorting capabilities.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class CopyPasteDataGrid : DataGrid, INotifyPropertyChanged
     {
 
