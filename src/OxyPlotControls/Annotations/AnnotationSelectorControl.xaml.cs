@@ -42,6 +42,19 @@ namespace OxyPlotControls
     /// A user control that provides a selector and editor for OxyPlot annotations.
     /// Allows users to select an annotation from a dropdown, add new annotations, and edit their properties.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class AnnotationSelectorControl : UserControl
     {
         /// <summary>

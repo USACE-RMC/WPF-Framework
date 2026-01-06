@@ -45,6 +45,19 @@ namespace OxyPlotControls
     /// A user control that provides UI for editing general plot properties such as title, subtitle,
     /// plot area styling, and background settings for an OxyPlot chart.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class GeneralPlotControl : UserControl
     {
         /// <summary>
@@ -347,6 +360,19 @@ namespace OxyPlotControls
     /// translates to black for display purposes.
     /// Supports both OxyColor and WPF Color as input.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class OxyAutomaticColorConverter : IValueConverter
     {
         /// <summary>
@@ -404,6 +430,19 @@ namespace OxyPlotControls
     /// A value converter that converts OxyThickness to/from a single double value.
     /// Uses uniform thickness (all sides equal to the double value).
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class OxyThicknessToDoubleConverter : IValueConverter
     {
         /// <summary>
@@ -431,6 +470,19 @@ namespace OxyPlotControls
     /// A value converter that provides a default font size when the value is NaN or invalid.
     /// Returns 12.0 as the default font size.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class OxyDefaultFontSizeConverter : IValueConverter
     {
         /// <summary>
@@ -471,6 +523,19 @@ namespace OxyPlotControls
     /// <summary>
     /// A simple value converter that casts between Brush and SolidColorBrush types.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class SolidColorBrushConverter : IValueConverter
     {
         /// <summary>

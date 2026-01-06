@@ -79,6 +79,17 @@ namespace NumericControls.Distributions.Univariate
     /// Use <see cref="BackgroundColor"/> to customize the control's background, or let it inherit
     /// from the application's current theme.
     /// </para>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
     /// </remarks>
     /// <example>
     /// <code>

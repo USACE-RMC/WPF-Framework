@@ -42,8 +42,21 @@ namespace GenericControls
     /// A value converter that translates a boolean value to a <see cref="Visibility"/> enumeration.
     /// </summary>
     /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// <para>
     /// This converter is commonly used in WPF data bindings to show or hide UI elements
     /// based on boolean properties in a view model.
+    /// </para>
     /// </remarks>
     public class BooleanToVisibilityConverter : IValueConverter
     {

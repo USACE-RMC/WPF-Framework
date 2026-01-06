@@ -54,6 +54,19 @@ namespace OxyPlotControls
     /// OxyPlot toolbar control providing pan, zoom, annotation, and export functionality.
     /// Supports modern PlotView architecture working directly with PlotModel and core OxyPlot types.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class OxyPlotToolbar : UserControl
     {
         #region Construction

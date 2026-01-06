@@ -34,15 +34,38 @@ using System.Windows;
 namespace Demo_OxyPlotControls
 {
     /// <summary>
-    /// Interaction logic for TestWindow.xaml
+    /// Test window for demonstrating and validating OxyPlot control functionality.
+    /// Provides a dedicated environment for testing plot features and behaviors.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class TestWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestWindow"/> class.
+        /// </summary>
         public TestWindow()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles the ContentRendered event of the TestWindow.
+        /// Reserved for future test functionality.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void TestWindow_ContentRendered(object sender, EventArgs e)
         {
             // Reserved for future test functionality

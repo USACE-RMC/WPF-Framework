@@ -46,8 +46,22 @@ using System.Windows.Input;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for UncertainOrderedDataSelectorControl.xaml
+    /// A user control that combines a data table editor with a plot for visualizing uncertain ordered paired data.
+    /// Allows users to select distribution types and edit distribution parameters for each data point.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class UncertainOrderedDataSelectorControl : UserControl
     {
         public static DependencyProperty XAxisLabelProperty = DependencyProperty.Register(nameof(XAxisLabel), typeof(string), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata("X Axis"));
@@ -559,6 +573,23 @@ namespace NumericControls
         }
     }
 
+    /// <summary>
+    /// Represents a point defining an area on a plot with X and Y coordinate bounds.
+    /// Used to visualize uncertainty bounds between minimum and maximum distribution values.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class AreaPoint
     {
         public double X1 { get; set; }

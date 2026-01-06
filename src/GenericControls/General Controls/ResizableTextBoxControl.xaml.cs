@@ -35,14 +35,19 @@ using System.Windows.Input;
 namespace GenericControls
 {
     /// <summary>
-    /// A user control that wraps resizable text box with support for read-only mode and 
+    /// A user control that wraps resizable text box with support for read-only mode and
     /// dynamic height adjustment using a drag handle.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>

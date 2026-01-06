@@ -35,16 +35,40 @@ using OxyPlot.Wpf;
 namespace Demo_OxyPlotControls
 {
     /// <summary>
-    /// Interaction logic for OxyPlotPropertiesDialog.xaml
+    /// Dialog window for displaying and editing OxyPlot properties.
+    /// Provides a dedicated interface for configuring plot model settings and appearance.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class OxyPlotPropertiesDialog : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OxyPlotPropertiesDialog"/> class.
+        /// </summary>
+        /// <param name="plotView">The PlotView whose properties will be edited.</param>
         public OxyPlotPropertiesDialog(PlotView plotView)
         {
             InitializeComponent();
             PropertiesControl.PlotModel = plotView.Model;
         }
 
+        /// <summary>
+        /// Handles the Closing event of the OxyPlotPropertiesDialog.
+        /// Activates the owner window when this dialog is closed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void OxyPlotPropertiesDialog_Closing(object sender, CancelEventArgs e)
         {
             if (Owner != null)

@@ -44,6 +44,19 @@ namespace OxyPlotControls
     /// <summary>
     /// A control for editing bar series properties including fill color, stroke, and bar width.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class BarSeriesControl : UserControl
     {
         #region Constants
@@ -242,6 +255,19 @@ namespace OxyPlotControls
     /// <summary>
     /// Converts bar series fill color to/from a SolidColorBrush, handling automatic colors.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BarSeriesFillConverter : IMultiValueConverter
     {
         private BarSeries? _series;

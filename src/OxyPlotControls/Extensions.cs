@@ -47,6 +47,19 @@ namespace OxyPlotControls
     /// <summary>
     /// Provides extension methods for OxyPlot types and data conversion utilities.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class Extensions
     {
         /// <summary>
@@ -562,6 +575,19 @@ namespace OxyPlotControls
     /// Provides backwards-compatible property access for EllipseAnnotation.
     /// In the new OxyPlot API, EllipseAnnotation uses X, Y, Width, Height instead of MinimumX/MaximumX/MinimumY/MaximumY.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class EllipseAnnotationExtensions
     {
         /// <summary>Gets the minimum X coordinate (left edge) of the ellipse.</summary>
@@ -633,6 +659,19 @@ namespace OxyPlotControls
     /// <summary>
     /// Converts binding expressions to markup extensions for serialization.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class BindingConvertor : ExpressionConverter
     {
         /// <summary>
@@ -671,6 +710,19 @@ namespace OxyPlotControls
     /// <summary>
     /// Provides helper methods for registering type converters with the type descriptor system.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class EditorHelper
     {
         /// <summary>

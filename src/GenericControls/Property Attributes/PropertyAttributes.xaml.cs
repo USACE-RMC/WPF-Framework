@@ -32,6 +32,22 @@ using System.Windows.Controls;
 
 namespace GenericControls
 {
+    /// <summary>
+    /// A user control for displaying property attributes such as display name and description.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class PropertyAttributes:UserControl
     {
 

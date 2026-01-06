@@ -46,6 +46,19 @@ namespace OxyPlotControls
     /// A generic control for editing series properties that applies to all series types.
     /// Provides UI for common series properties and handles serialization/deserialization.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class GenericSeriesControl : UserControl
     {
         #region Constants

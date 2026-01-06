@@ -43,6 +43,19 @@ namespace OxyPlotControls
     /// This module handles converting plot properties to and from XML elements for persistence.
     /// Supports both V1 (legacy) and V2 (modern) XML formats for backward compatibility.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class OxyPlotSettingsSerializer
     {
         /// <summary>

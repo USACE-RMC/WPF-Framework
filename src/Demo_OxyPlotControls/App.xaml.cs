@@ -33,9 +33,22 @@ using System.Windows;
 namespace Demo_OxyPlotControls
 {
     /// <summary>
-    /// Interaction logic for App.xaml.
-    /// Application-level events such as Startup, Exit, and DispatcherUnhandledException can be handled in this file.
+    /// Application entry point for the Demo_OxyPlotControls WPF application.
+    /// Provides the main application logic and handles application-level events such as Startup, Exit, and DispatcherUnhandledException.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class App : Application
     {
     }

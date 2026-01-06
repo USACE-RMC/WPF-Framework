@@ -43,6 +43,19 @@ namespace OxyPlotControls
     /// <summary>
     /// A control for editing scatter series properties including markers and error bars.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class ScatterSeriesControl : UserControl
     {
         #region Static Properties
@@ -160,6 +173,19 @@ namespace OxyPlotControls
     /// <summary>
     /// Converts scatter series marker fill color to/from a SolidColorBrush, handling automatic colors.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ScatterSeriesMarkerFillConverter : IMultiValueConverter
     {
         private ScatterSeries? _series;
@@ -214,6 +240,19 @@ namespace OxyPlotControls
     /// <summary>
     /// Converts scatter series marker stroke color to/from a SolidColorBrush, handling automatic colors.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ScatterSeriesMarkerStrokeConverter : IMultiValueConverter
     {
         private ScatterSeries? _series;

@@ -41,8 +41,22 @@ using System.Windows.Data;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for UncertainTableEditor.xaml
+    /// A user control for editing uncertain ordered paired data with support for multiple distributions.
+    /// Provides a combobox for distribution selection and integrates with data table editing functionality.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class UncertainTableEditor : UserControl
     {
         public static DependencyProperty AddRemoveRowsProperty = DependencyProperty.Register(nameof(AddRemoveRows), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(true));

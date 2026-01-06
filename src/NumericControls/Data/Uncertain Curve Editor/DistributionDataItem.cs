@@ -36,6 +36,23 @@ using Numerics.Distributions;
 
 namespace NumericControls
 {
+    /// <summary>
+    /// Represents a data item that manages distribution data for uncertain ordered paired data.
+    /// Handles the collection of distribution row items and synchronizes changes between the data model and UI.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class DistributionDataItem
     {
 

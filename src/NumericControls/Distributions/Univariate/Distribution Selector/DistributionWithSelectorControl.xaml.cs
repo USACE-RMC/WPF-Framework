@@ -40,8 +40,22 @@ using System.Windows.Input;
 namespace NumericControls.Distributions.Univariate
 {
     /// <summary>
-    /// Interaction logic for DistributionWithSelectorControl.xaml
+    /// A user control that combines a distribution text display with an expandable selector popup.
+    /// Allows users to view the current distribution and click to change it via a popup editor.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class DistributionWithSelectorControl : UserControl
     {
         public DistributionWithSelectorControl()

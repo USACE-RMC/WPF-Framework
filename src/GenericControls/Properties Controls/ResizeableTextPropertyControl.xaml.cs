@@ -33,7 +33,22 @@ using System.Windows.Controls;
 
 namespace GenericControls
 {
-    
+    /// <summary>
+    /// A property control for editing text with a resizable text area.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class ResizeableTextPropertyControl :UserControl, INotifyPropertyChanged
     {
         /// <summary>

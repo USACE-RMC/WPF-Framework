@@ -42,7 +42,22 @@ using Microsoft.Win32;
 
 namespace GenericControls
 {
-
+    /// <summary>
+    /// Provides general utility methods for WPF applications, including visual tree searching, screen capture, and UI threading helpers.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public static class GeneralMethods
     {
 

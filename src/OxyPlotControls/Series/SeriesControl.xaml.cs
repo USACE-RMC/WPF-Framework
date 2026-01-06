@@ -38,6 +38,19 @@ namespace OxyPlotControls
     /// A control that dynamically displays the appropriate series property control
     /// based on the type of OxyPlot series selected.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class SeriesControl : UserControl
     {
         #region Dependency Properties

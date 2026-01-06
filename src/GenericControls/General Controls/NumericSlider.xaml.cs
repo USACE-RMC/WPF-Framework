@@ -34,22 +34,21 @@ using System.Windows.Controls;
 namespace GenericControls
 {
     /// <summary>
-/// A numeric slider control.
-/// </summary>
-/// <remarks>
-/// <para>
-///     Authors:
-///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil 
-/// </para>
-/// <para>
-/// Versions:
-///     <list type="bullet">
-///         <item><description>
-///         Created in February 2020 by Haden Smith.
-///         </description></item>
-///     </list>
-/// </para>
-/// </remarks>
+    /// A numeric slider control combining a slider with increment/decrement buttons.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class NumericSlider:UserControl
     {
 

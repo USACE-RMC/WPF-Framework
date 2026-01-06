@@ -40,6 +40,19 @@ namespace OxyPlotControls
     /// A comprehensive user control that provides a unified interface for editing all OxyPlot chart properties.
     /// This control uses lazy loading to improve initialization times by only creating child controls when they are first accessed.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class OxyPlotPropertiesControl : UserControl
     {
         /// <summary>

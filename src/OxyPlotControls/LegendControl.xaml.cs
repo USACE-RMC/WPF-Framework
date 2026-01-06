@@ -45,6 +45,19 @@ namespace OxyPlotControls
     /// A user control that provides UI for editing legend properties of an OxyPlot chart,
     /// including title, items, area styling, and position settings.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class LegendControl : UserControl
     {
         /// <summary>

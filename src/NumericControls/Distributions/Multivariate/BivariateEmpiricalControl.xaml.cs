@@ -41,8 +41,22 @@ using OxyPlot.Wpf;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for BivariateEmpiricalControl.xaml
+    /// A user control for editing bivariate empirical cumulative distribution functions.
+    /// Provides a data grid for editing X1, X2, and probability values, with real-time validation and plotting.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class BivariateEmpiricalControl : UserControl
     {
         public BivariateEmpiricalControl()

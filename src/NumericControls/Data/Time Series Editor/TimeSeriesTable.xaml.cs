@@ -55,8 +55,22 @@ using System.Windows.Shapes;
 namespace NumericControls
 {
     /// <summary>
-    /// Interaction logic for TimeSeriesTable.xaml
+    /// A user control for displaying and editing time series data in a tabular format.
+    /// Provides functionality for data validation, mathematical operations, and data manipulation.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public partial class TimeSeriesTable : UserControl
     {
         public static DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(new TimeSeries(), SetData));

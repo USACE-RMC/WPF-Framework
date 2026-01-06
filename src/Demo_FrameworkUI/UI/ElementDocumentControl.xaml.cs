@@ -46,18 +46,26 @@ using System.Windows.Shapes;
 namespace Demo_FrameworkUI.UI
 {
     /// <summary>
-    /// Interaction logic for ElementDocumentControl.xaml
+    /// User control for displaying element documents in the main window.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// <b> Authors: </b>
+    ///     <b> Authors: </b>
     /// <list type="bullet">
-    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
     /// </list>
     /// </para>
     /// </remarks>
     public partial class ElementDocumentControl : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ElementDocumentControl"/> class.
+        /// </summary>
         public ElementDocumentControl()
         {
             InitializeComponent();
