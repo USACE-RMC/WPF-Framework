@@ -351,6 +351,7 @@ namespace OxyPlotControls
         private bool _showPoints = false;
         private Polyline _leaderLine = new Polyline();
         private Canvas _overlayCanvas = new Canvas();
+        private List<UIElement> _markerElements = new List<UIElement>();
         private ScreenPoint _lastScreenPoint = ScreenPoint.Undefined;
         private bool _moveStartPoint = false;
         private bool _moveEndPoint = false;
@@ -1582,14 +1583,22 @@ namespace OxyPlotControls
             bool requiresRedraw = _showPoints;
             _showPoints = false;
             Cursor? updatedCursor = null;
+            var markerPoints = new List<ScreenPoint>();
+            var markerSizes = new List<double>();
 
             foreach (var annotation in Model.Annotations)
             {
+                if (!annotation.Selectable) continue;
                 var ht = annotation.HitTest(new HitTestArguments(e.Position, 10));
                 if (ht == null) continue;
 
                 if (annotation is ArrowAnnotation arrowAnnotation)
                 {
+                    // Add markers at start and end points
+                    markerPoints.Add(arrowAnnotation.Transform(new DataPoint(arrowAnnotation.StartPoint.X, arrowAnnotation.StartPoint.Y)));
+                    markerPoints.Add(arrowAnnotation.Transform(new DataPoint(arrowAnnotation.EndPoint.X, arrowAnnotation.EndPoint.Y)));
+                    markerSizes.AddRange(new[] { 2.2, 2.2 });
+
                     switch (ht.Index)
                     {
                         case 0:
@@ -1610,6 +1619,17 @@ namespace OxyPlotControls
                     var ur = rAnnotation.Transform(Math.Max(rAnnotation.MaximumX, rAnnotation.MinimumX), Math.Max(rAnnotation.MaximumY, rAnnotation.MinimumY));
                     var ll = rAnnotation.Transform(Math.Min(rAnnotation.MinimumX, rAnnotation.MaximumX), Math.Min(rAnnotation.MinimumY, rAnnotation.MaximumY));
 
+                    // Add markers at corners and midpoints
+                    markerPoints.Add(ur);  // Top-right
+                    markerPoints.Add(ll);  // Bottom-left
+                    markerPoints.Add(new ScreenPoint(ll.X, ur.Y));  // Top-left
+                    markerPoints.Add(new ScreenPoint(ur.X, ll.Y));  // Bottom-right
+                    markerPoints.Add(new ScreenPoint(ll.X, ll.Y + (ur.Y - ll.Y) / 2));  // Left midpoint
+                    markerPoints.Add(new ScreenPoint(ur.X, ll.Y + (ur.Y - ll.Y) / 2));  // Right midpoint
+                    markerPoints.Add(new ScreenPoint(ll.X + (ur.X - ll.X) / 2, ll.Y));  // Bottom midpoint
+                    markerPoints.Add(new ScreenPoint(ll.X + (ur.X - ll.X) / 2, ur.Y));  // Top midpoint
+                    markerSizes.AddRange(new[] { 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 });
+
                     var topRight = new ScreenPoint(Math.Abs(ur.X - e.Position.X), Math.Abs(ur.Y - e.Position.Y));
                     var bottomLeft = new ScreenPoint(Math.Abs(ll.X - e.Position.X), Math.Abs(ll.Y - e.Position.Y));
 
@@ -1625,6 +1645,17 @@ namespace OxyPlotControls
                 {
                     var ur = eAnnotation.Transform(Math.Max(eAnnotation.GetMaximumX(), eAnnotation.GetMinimumX()), Math.Max(eAnnotation.GetMaximumY(), eAnnotation.GetMinimumY()));
                     var ll = eAnnotation.Transform(Math.Min(eAnnotation.GetMinimumX(), eAnnotation.GetMaximumX()), Math.Min(eAnnotation.GetMinimumY(), eAnnotation.GetMaximumY()));
+
+                    // Add markers at corners and midpoints
+                    markerPoints.Add(ur);  // Top-right
+                    markerPoints.Add(ll);  // Bottom-left
+                    markerPoints.Add(new ScreenPoint(ll.X, ur.Y));  // Top-left
+                    markerPoints.Add(new ScreenPoint(ur.X, ll.Y));  // Bottom-right
+                    markerPoints.Add(new ScreenPoint(ll.X, ll.Y + (ur.Y - ll.Y) / 2));  // Left midpoint
+                    markerPoints.Add(new ScreenPoint(ur.X, ll.Y + (ur.Y - ll.Y) / 2));  // Right midpoint
+                    markerPoints.Add(new ScreenPoint(ll.X + (ur.X - ll.X) / 2, ll.Y));  // Bottom midpoint
+                    markerPoints.Add(new ScreenPoint(ll.X + (ur.X - ll.X) / 2, ur.Y));  // Top midpoint
+                    markerSizes.AddRange(new[] { 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 });
 
                     var topRight = new ScreenPoint(Math.Abs(ur.X - e.Position.X), Math.Abs(ur.Y - e.Position.Y));
                     var bottomLeft = new ScreenPoint(Math.Abs(ll.X - e.Position.X), Math.Abs(ll.Y - e.Position.Y));
@@ -1643,6 +1674,13 @@ namespace OxyPlotControls
                 }
                 else if (annotation is PolygonAnnotation polyAnnotation)
                 {
+                    // Add markers at each vertex
+                    foreach (var p in polyAnnotation.Points)
+                    {
+                        markerPoints.Add(polyAnnotation.Transform(p));
+                        markerSizes.Add(2.0);
+                    }
+
                     if (ht.Index == 0)
                     {
                         var screenToData = polyAnnotation.InverseTransform(e.Position);
@@ -1695,6 +1733,13 @@ namespace OxyPlotControls
                 }
                 else if (annotation is PolylineAnnotation polylineAnnotation)
                 {
+                    // Add markers at each vertex
+                    foreach (var p in polylineAnnotation.Points)
+                    {
+                        markerPoints.Add(polylineAnnotation.Transform(p));
+                        markerSizes.Add(2.0);
+                    }
+
                     if (ht.Index == 0)
                     {
                         var screenToData = polylineAnnotation.InverseTransform(e.Position);
@@ -1718,7 +1763,16 @@ namespace OxyPlotControls
                 }
             }
 
-            if (requiresRedraw) Model.InvalidatePlot(false);
+            // Draw annotation markers
+            if (markerPoints.Count > 0)
+            {
+                DrawAnnotationMarkers(markerPoints, markerSizes);
+            }
+            else if (requiresRedraw)
+            {
+                ClearAnnotationMarkers();
+                Model.InvalidatePlot(false);
+            }
 
             if (updatedCursor != null)
             {
@@ -1731,6 +1785,67 @@ namespace OxyPlotControls
                 PlotView.PanCursor = _panHandClosedCursor;
                 PlotView.Cursor = _panHandClosedCursor;
             }
+        }
+
+        /// <summary>
+        /// Draws annotation control point markers on the overlay canvas.
+        /// </summary>
+        /// <param name="markerPoints">List of screen points where markers should be drawn.</param>
+        /// <param name="markerSizes">List of marker sizes corresponding to each point.</param>
+        private void DrawAnnotationMarkers(List<ScreenPoint> markerPoints, List<double> markerSizes)
+        {
+            // Clear existing markers
+            foreach (var marker in _markerElements)
+            {
+                _overlayCanvas.Children.Remove(marker);
+            }
+            _markerElements.Clear();
+
+            if (markerPoints.Count == 0)
+            {
+                _showPoints = false;
+                return;
+            }
+
+            _showPoints = true;
+
+            // Get the plot area offset for positioning
+            var plotArea = Model?.PlotArea ?? default;
+
+            for (int i = 0; i < markerPoints.Count; i++)
+            {
+                var point = markerPoints[i];
+                var size = i < markerSizes.Count ? markerSizes[i] * 2 : 4; // Default size 4
+
+                var marker = new System.Windows.Shapes.Rectangle
+                {
+                    Width = size,
+                    Height = size,
+                    Fill = System.Windows.Media.Brushes.White,
+                    Stroke = System.Windows.Media.Brushes.Black,
+                    StrokeThickness = 1,
+                    IsHitTestVisible = false
+                };
+
+                Canvas.SetLeft(marker, point.X - size / 2);
+                Canvas.SetTop(marker, point.Y - size / 2);
+
+                _overlayCanvas.Children.Add(marker);
+                _markerElements.Add(marker);
+            }
+        }
+
+        /// <summary>
+        /// Clears all annotation markers from the overlay canvas.
+        /// </summary>
+        private void ClearAnnotationMarkers()
+        {
+            foreach (var marker in _markerElements)
+            {
+                _overlayCanvas.Children.Remove(marker);
+            }
+            _markerElements.Clear();
+            _showPoints = false;
         }
 
         /// <summary>
