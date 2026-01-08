@@ -382,7 +382,7 @@ namespace NumericControls
 
         public event PlotPropertiesRequestedEventHandler PlotPropertiesRequested;
 
-        public delegate void PlotPropertiesRequestedEventHandler(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject);
+        public delegate void PlotPropertiesRequestedEventHandler(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject);
 
         private bool _pastingData = false;
         private bool _isLoaded = false;
