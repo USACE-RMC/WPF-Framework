@@ -430,13 +430,6 @@ namespace OxyPlotControls
             // Create context menu dynamically to ensure it picks up current theme
             var annotationMenu = new ContextMenu();
 
-            // Apply MetroContextMenu style from application resources
-            var metroStyle = Application.Current.TryFindResource("MetroContextMenu") as Style;
-            if (metroStyle != null)
-            {
-                annotationMenu.Style = metroStyle;
-            }
-
             // Helper to create menu item with icon
             MenuItem CreateAnnotationMenuItem(string header, string iconKey, RoutedEventHandler clickHandler)
             {
