@@ -51,7 +51,7 @@
             </ComboBox.ItemsPanel>
             <ComboBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" VerticalAlignment="Center" FontFamily="{Binding}"/>
+                    <TextBlock Text="{Binding}" VerticalAlignment="Center" FontFamily="{Binding}" Foreground="{DynamicResource ComboBox.DropDown.Foreground}"/>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
