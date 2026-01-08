@@ -15,7 +15,7 @@
             <Calendar x:Name="CalendarSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-3,0,-3" DisplayDateChanged="CalendarSelector_DisplayDateChanged" SelectedDatesChanged="CalendarSelector_SelectedDatesChanged" GotMouseCapture="CalendarSelector_GotMouseCapture"></Calendar>
         </Viewbox>
         
-        <local:ClockControl x:Name="Clock" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" TimeFontSize="20" SelectedTimeFontSize="20" BorderBrush="Black" BorderThickness=".5"
+        <local:ClockControl x:Name="Clock" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" TimeFontSize="20" SelectedTimeFontSize="20" BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness=".5"
                             Width="{Binding ElementName=CalendarViewBox, Path=ActualWidth}" 
                             Height="{Binding ElementName=CalendarViewBox, Path=ActualHeight}"                           
                             HasSeconds="{Binding ElementName=DateTimePicker, Path=HasSeconds, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 

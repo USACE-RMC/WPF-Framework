@@ -16,7 +16,7 @@
                         <Border SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
 
-                                <Rectangle Height="3" HorizontalAlignment="Stretch" Stroke="DarkGray" Fill="Black" Margin="2 0"/>
+                                <Rectangle Height="3" HorizontalAlignment="Stretch" Stroke="{DynamicResource SliderThumb.Track.Border}" Fill="{DynamicResource SliderThumb.Track.Background}" Margin="2 0"/>
 
                                 <Track x:Name="PART_Track">
                                     <Track.Thumb>
@@ -28,12 +28,12 @@
                                                             <Style TargetType="Rectangle">
                                                                 <Style.Triggers>
                                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Stroke" Value="#FF7E7D7D"/>
-                                                                        <Setter Property="Fill" Value="#FFBBD6D5"/>
+                                                                        <Setter Property="Stroke" Value="{DynamicResource SliderThumb.MouseOver.Border}"/>
+                                                                        <Setter Property="Fill" Value="{DynamicResource SliderThumb.MouseOver.Background}"/>
                                                                     </Trigger>
                                                                     <Trigger Property="IsMouseOver" Value="False">
-                                                                        <Setter Property="Stroke" Value="#FF636363"/>
-                                                                        <Setter Property="Fill" Value="{DynamicResource ResourceKey=Clr}"/>
+                                                                        <Setter Property="Stroke" Value="{DynamicResource SliderThumb.Static.Border}"/>
+                                                                        <Setter Property="Fill" Value="{DynamicResource SliderThumb.Static.Background}"/>
                                                                     </Trigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -84,9 +84,6 @@
                 Value="{Binding ElementName=NumericWithSlider, Path=Number, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                 TickFrequency="{Binding ElementName=NumericWithSlider, Path=Increment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                 Template="{StaticResource simpleSlider}" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True">
-            <Slider.Resources>
-                <Brush x:Key="Clr">DarkGreen</Brush>
-            </Slider.Resources>
         </Slider>
 
             <TextBox Grid.Column="1"
@@ -113,7 +110,7 @@
                     <Style TargetType="{x:Type Border}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=NumericWithSlider, Path=ValueIsValid}" Value="False">
-                                <Setter Property="BorderBrush" Value="Red"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding ElementName=NumericWithSlider, Path=ValueIsValid}" Value="True">
                                 <Setter Property="BorderBrush" Value="{x:Null}"/>
