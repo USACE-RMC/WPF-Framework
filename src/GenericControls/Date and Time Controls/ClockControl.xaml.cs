@@ -440,7 +440,7 @@ namespace GenericControls
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClockControl"/> class.
-        /// Sets up resources, intializes hour/minute/second ticks, and registers event handlers.
+        /// Sets up resources, initializes hour/minute/second ticks, and registers event handlers.
         /// </summary>
         public ClockControl()
         {
@@ -540,7 +540,7 @@ namespace GenericControls
 
         /// <summary>
         /// A circular toggle used with the <see cref="ClockControl"/> for selecting specific time units (hours, minutes, seconds).
-        /// Displayes a number and highlights or selects on interaction.
+        /// Displays a number and highlights or selects on interaction.
         /// </summary>
         /// <param name="t">The numeric time value (e.g. 5, 10).</param>
         /// <param name="angleDegree">Angle on the clock face to position the toggle.</param>
