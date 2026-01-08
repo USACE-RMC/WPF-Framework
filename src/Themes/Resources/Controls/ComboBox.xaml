@@ -216,7 +216,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="true">
+                            SnapsToDevicePixels="true"
+                            TextElement.Foreground="{TemplateBinding Foreground}">
                         <ContentPresenter
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -225,14 +226,14 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Background}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Foreground}"/>
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Foreground}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Background}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Foreground}"/>
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Foreground}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{DynamicResource ComboBox.Disabled.Foreground}"/>
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource ComboBox.Disabled.Foreground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
