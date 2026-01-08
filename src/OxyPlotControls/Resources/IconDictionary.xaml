@@ -11,7 +11,7 @@
     - EnvironmentWindowText: Main icon stroke/fill color (adapts to light/dark)
 
     Usage: Reference icons with StaticResource or DynamicResource
-    Example: <ContentControl Content="{StaticResource ArrowAnnotationIcon}"/>
+    Example: <ContentControl Content="{StaticResource PointerIcon}"/>
     -->
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
@@ -25,99 +25,6 @@
                   Fill="{DynamicResource EnvironmentWindowText}"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.5"
                   StrokeLineJoin="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- ANNOTATION ICONS                                                             -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <!-- Arrow Annotation - Arrow pointing diagonal -->
-    <Viewbox x:Key="ArrowAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Arrow line -->
-            <Path Data="M2,14 L14,2"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-            <!-- Arrow head -->
-            <Path Data="M14,2 L9,3 L13,7 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Text Annotation - Letter A representing text -->
-    <Viewbox x:Key="TextAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Letter A -->
-            <Path Data="M8,2 L2,14 M8,2 L14,14 M4,10 L12,10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Vertical Line Annotation -->
-    <Viewbox x:Key="VerticalLineAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Path Data="M8,1 V15"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Horizontal Line Annotation -->
-    <Viewbox x:Key="HorizontalLineAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Path Data="M1,8 H15"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Rectangle Annotation -->
-    <Viewbox x:Key="RectangleAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Rectangle Width="12" Height="10"
-                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                       Fill="Transparent"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Ellipse Annotation -->
-    <Viewbox x:Key="EllipseAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Ellipse Width="12" Height="10"
-                     Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                     Fill="Transparent"
-                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Point Annotation - Filled circle -->
-    <Viewbox x:Key="PointAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Ellipse Width="8" Height="8"
-                     Fill="{DynamicResource EnvironmentWindowText}"
-                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Polygon Annotation - Closed polygon shape -->
-    <Viewbox x:Key="PolygonAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Path Data="M8,1 L14,6 L12,14 L4,14 L2,6 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  Fill="Transparent" StrokeLineJoin="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Polyline Annotation - Connected line segments -->
-    <Viewbox x:Key="PolylineAnnotationIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Path Data="M2,12 L5,4 L10,10 L14,3"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  Fill="Transparent" StrokeLineJoin="Round"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
 

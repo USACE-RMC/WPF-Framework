@@ -38,50 +38,50 @@
         </Button>
         <Button x:Name="AddAnnotationToggleButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Margin="1,1,1,2" Padding="0" ToolTip="Add Annotation" Click="AddAnnotationToggleButton_Click">
             <Button.ContextMenu>
-                <ContextMenu Style="{DynamicResource OxyPlotToolbarContextMenuStyle}">
+                <ContextMenu>
                     <MenuItem Name="AddArrowAnnotationItem" Header="Arrow Annotation" Click="AddArrowAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource ArrowAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/ArrowAnnotation.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddTextAnnotationItem" Header="Text Annotation" Click="AddTextAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource TextAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Textbox.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddVerticalLineAnnotationItem" Header="Vertical Line Annotation" Click="AddVerticalLineAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource VerticalLineAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Vertical_Line.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddHorizontalLineAnnotationItem" Header="Horizontal Line Annotation" Click="AddHorizontalLineAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource HorizontalLineAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Horizontal_Line.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddRectangleAnnotationItem" Header="Rectangle Annotation" Click="AddRectangleAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource RectangleAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Rectangle.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddEllipseAnnotationItem" Header="Ellipse Annotation" Click="AddEllipseAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource EllipseAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Ellipse.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddPointAnnotationItem" Header="Point Annotation" Click="AddPointAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource PointAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Point.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddPolygonAnnotationItem" Header="Polygon Annotation" Click="AddPolygonAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource PolygonAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Polygon.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="AddPolylineAnnotationItem" Header="Polyline Annotation" Click="AddPolylineAnnotationItem_Click">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource PolylineAnnotationIcon}"/>
+                            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/Polyline.png" Width="16" Height="16"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

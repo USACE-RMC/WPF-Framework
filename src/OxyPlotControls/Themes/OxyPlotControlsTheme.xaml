@@ -422,20 +422,6 @@
     <Style TargetType="{x:Type local:OxyPlotPropertiesControl}" BasedOn="{StaticResource OxyPlotControlStyle}"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- OXYPLOT TOOLBAR CONTEXT MENU STYLE                                          -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <Style x:Key="OxyPlotToolbarContextMenuStyle" TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="{DynamicResource MenuPopupDefaultBackground}"/>
-        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource MenuPopupDefaultBorder}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="0,2,0,2"/>
-        <Setter Property="UseLayoutRounding" Value="True"/>
-        <Setter Property="SnapsToDevicePixels" Value="True"/>
-    </Style>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- OXYPLOT TOOLBAR STYLE                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
