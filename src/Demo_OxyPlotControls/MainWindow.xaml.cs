@@ -521,7 +521,7 @@ namespace Demo_OxyPlotControls
 
         private void PropertiesControl_ClosePropertiesCalled(OxyPlotControls.OxyPlotPropertiesControl propertiesControl)
         {
-            MessageBox.Show("I am not going to close. Sorry not sorry.");
+            MessageBox.Show("Close plot properties requested.");
         }
 
         /// <summary>
