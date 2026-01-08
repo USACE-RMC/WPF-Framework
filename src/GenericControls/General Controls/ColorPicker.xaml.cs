@@ -115,9 +115,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Color Property
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets the selected color as a <see cref="SolidColorBrush"/>.
+        /// </summary>
         public SolidColorBrush Color
         {
             get
@@ -192,8 +191,8 @@ namespace GenericControls
         /// <summary>
         /// Updates color based on slider hue change.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Event arguments containing the old and new slider values.</param>
         private void PART_ColorSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             var SliderColor = ConvertHsvToRgb(360d - e.NewValue, 1d, 1d);
@@ -208,8 +207,8 @@ namespace GenericControls
         /// <summary>
         /// Identifies the preview border when cursor is moving.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Mouse button event arguments.</param>
         private void PreviewBorder_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this.PreviewBorder.Cursor = Cursors.Cross;
@@ -218,8 +217,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the preview border marker on mouse click.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Mouse button event arguments.</param>
         private void PreviewBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.PreviewBorder.Cursor = Cursors.ScrollAll;
@@ -236,8 +235,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the preview border marker when dragging.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Mouse event arguments.</param>
         private void PreviewBorder_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -257,8 +256,8 @@ namespace GenericControls
         /// <summary>
         /// Resets cursor and updates color when mouse leaves the preview border.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Mouse event arguments.</param>
         private void PreviewBorder_MouseLeave(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -277,7 +276,7 @@ namespace GenericControls
         /// <summary>
         /// Updates the marker position given a point.
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="p">The point representing the new marker position.</param>
         private void UpdateMarkerPosition(Point p)
         {
             if (p.X > this.PreviewBorder.ActualWidth)
@@ -303,7 +302,7 @@ namespace GenericControls
         /// <summary>
         /// Updates the marker position based on a <see cref="Color"/>
         /// </summary>
-        /// <param name="theColor"></param>
+        /// <param name="theColor">The color to set the marker position for.</param>
         private void UpdateMarkerPosition(Color theColor)
         {
             _colorPosition = default;
@@ -326,7 +325,7 @@ namespace GenericControls
         /// <summary>
         /// Updates the slider position based on a <see cref="Color"/>
         /// </summary>
-        /// <param name="newColor"></param>
+        /// <param name="newColor">The color to set the slider position for.</param>
         private void UpdateSliderPosition(Color newColor)
         {
             this.PART_ColorSlider.ValueChanged -= this.PART_ColorSlider_ValueChanged;
@@ -341,8 +340,8 @@ namespace GenericControls
         /// <summary>
         /// Determines the color from current marker location and slider hue.
         /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
+        /// <param name="p">The point representing the marker position in the preview area.</param>
+        /// <returns>A <see cref="SolidColorBrush"/> representing the selected color.</returns>
         private SolidColorBrush DetermineColorFromPreview(Point p)
         {
             var hsv = new HsvColor(360d - this.PART_ColorSlider.Value, p.X, 1d - p.Y);
@@ -354,8 +353,8 @@ namespace GenericControls
         /// <summary>
         /// Handles color picking from preset color swatches.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Mouse button event arguments.</param>
         private void Rectangle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Rectangle r = (Rectangle)sender;
@@ -367,8 +366,8 @@ namespace GenericControls
         /// <summary>
         /// Repositions the marker if the preview border size changes.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Size changed event arguments.</param>
         private void PreviewBorder_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Color is not null)
@@ -486,10 +485,10 @@ namespace GenericControls
         /// <summary>
         /// Converts an RGB color to an HSV color.
         /// </summary>
-        /// <param name="r"></param>
-        /// <param name="g"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        /// <param name="r">The red component (0-255).</param>
+        /// <param name="g">The green component (0-255).</param>
+        /// <param name="b">The blue component (0-255).</param>
+        /// <returns>An <see cref="HsvColor"/> struct representing the HSV equivalent.</returns>
         public static HsvColor ConvertRgbToHsv(int r, int g, int b)
         {
 

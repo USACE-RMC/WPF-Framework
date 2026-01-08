@@ -138,8 +138,8 @@ namespace GenericControls
         /// <summary>
         /// Handles the OK button click event. Validates the input and closes the dialog if valid.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Routed event arguments.</param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             if (this.NameTBox.IsValid == false)
@@ -155,8 +155,8 @@ namespace GenericControls
         /// <summary>
         /// Handles the Cancel button click event. Closes the dialog without saving.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Routed event arguments.</param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
@@ -166,8 +166,8 @@ namespace GenericControls
         /// <summary>
         /// Event handler for when the content is rendered. Initializes focus and validation.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void NameDialog_ContentRendered(object sender, EventArgs e)
         {
             this.NameTBox.ValidateText();

@@ -37,7 +37,7 @@ using System.Windows.Input;
 namespace GenericControls
 {
     /// <summary>
-    /// A custom control for displaying and editing a list of strings usinng a DataGrid.
+    /// A custom control for displaying and editing a list of strings using a DataGrid.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -83,11 +83,12 @@ namespace GenericControls
         private IList<object> _internalList;
 
         /// <summary>
-        /// Backign dependency property for <see cref="Title"/>
+        /// Backing dependency property for <see cref="Title"/>.
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(StringListPropertyControl), new UIPropertyMetadata("Title"));
+
         /// <summary>
-        /// gets/sets the title displayed alongside the string list.
+        /// Gets or sets the title displayed alongside the string list.
         /// </summary>
         public string Title
         {
@@ -102,10 +103,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Handles updats when the <see cref="StringList"/> property changes.
+        /// Handles updates when the <see cref="StringList"/> property changes.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event arguments containing the old and new values.</param>
         private static void StringListPropertyChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -126,11 +127,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Backing dependency property for <see cref="AddRemoveEnabled"/>
+        /// Backing dependency property for <see cref="AddRemoveEnabled"/>.
         /// </summary>
         public static DependencyProperty AddRemoveEnabledProperty = DependencyProperty.Register(nameof(AddRemoveEnabled), typeof(bool), typeof(StringListPropertyControl), new UIPropertyMetadata(true, AddRemoveEnabledChanged_Callback));
+
         /// <summary>
-        /// gets/sets whether add/remove buttons are enabled on the control.
+        /// Gets or sets whether add/remove buttons are enabled on the control.
         /// </summary>
         public bool AddRemoveEnabled
         {
@@ -147,8 +149,8 @@ namespace GenericControls
         /// <summary>
         /// Callback to enable or disable the add/remove functionality in the DataGrid.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event arguments containing the old and new values.</param>
         private static void AddRemoveEnabledChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -160,10 +162,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Selects all string cells in the DataGrid when the text block is called.
+        /// Selects all string cells in the DataGrid when the text block is clicked.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The text block that was clicked.</param>
+        /// <param name="e">Mouse button event arguments.</param>
         private void TextBlock_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this.StringListDataGrid.SelectedCells.Clear();
@@ -174,7 +176,7 @@ namespace GenericControls
         /// <summary>
         /// Extracts the current string values from the DataGrid into a list.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of strings representing the current DataGrid content.</returns>
         private IList<string> GetStringList()
         {
             var result = new List<string>();
@@ -210,8 +212,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the string list when cell editing ends.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The DataGrid control.</param>
+        /// <param name="e">Cell edit ending event arguments.</param>
         private void StringListDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             StringList = GetStringList();
@@ -220,15 +222,15 @@ namespace GenericControls
         /// <summary>
         /// Updates the string list when rows are added.
         /// </summary>
-        /// <param name="startrow"></param>
-        /// <param name="numrows"></param>
+        /// <param name="startrow">The index of the first added row.</param>
+        /// <param name="numrows">The number of rows added.</param>
         private void StringListDataGrid_RowsAdded(int startrow, int numrows)
         {
             StringList = GetStringList();
         }
 
         /// <summary>
-        /// Updates the string lsit when data are pasted.
+        /// Updates the string list when data are pasted.
         /// </summary>
         private void StringListDataGrid_DataPasted()
         {
@@ -265,7 +267,7 @@ namespace GenericControls
             /// <summary>
             /// Initializes a new instance of <see cref="StringContainer"/> with a specific string.
             /// </summary>
-            /// <param name="newString"></param>
+            /// <param name="newString">The string value to initialize with.</param>
             public StringContainer(string newString)
             {
                 TheString = newString;

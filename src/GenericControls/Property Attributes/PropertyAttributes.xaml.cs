@@ -55,8 +55,8 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Initialize an empty control.
-    /// </summary>
+        /// Initialize an empty control.
+        /// </summary>
         public PropertyAttributes()
         {
             // This call is required by the designer.
@@ -69,10 +69,10 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// Sets the default attribute description to display. 
-    /// </summary>
-    /// <param name="displayName">The property display name.</param>
-    /// <param name="description">The property description.</param>
+        /// Sets the default attribute description to display.
+        /// </summary>
+        /// <param name="displayName">The property display name.</param>
+        /// <param name="description">The property description.</param>
         public void SetDefaultAttributes(string displayName, string description)
         {
             this.NameTextBlock.Text = displayName;
@@ -80,9 +80,9 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets the attributes for the specified class object. 
-    /// </summary>
-    /// <param name="classObject">The class object.</param>
+        /// Gets the attributes for the specified class object.
+        /// </summary>
+        /// <param name="classObject">The class object.</param>
         public void GetClassAttributes(object classObject)
         {
             // Get the attributes for the class object.
@@ -93,10 +93,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets the attributes for the property from a specified class object. 
-    /// </summary>
-    /// <param name="propertyName">The property name.</param>
-    /// <param name="classObject">The class object.</param>
+        /// Gets the attributes for the property from a specified class object.
+        /// </summary>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="classObject">The class object.</param>
         public void GetPropertyAttributes(string propertyName, object classObject)
         {
             // Get property descriptors for the class.

@@ -35,7 +35,7 @@ using System.Windows.Controls;
 namespace GenericControls
 {
     /// <summary>
-    /// A WPF user control that allows editing of a <see cref="DateTime"/> value with configurablet itle, layout, and read-only support.
+    /// A WPF user control that allows editing of a <see cref="DateTime"/> value with configurable title, layout, and read-only support.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -65,7 +65,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty SelectedDateTimeProperty = DependencyProperty.Register(nameof(SelectedDateTime), typeof(DateTime), typeof(DateTimePropertyControl), new UIPropertyMetadata(new DateTime(2000, 1, 1, 0, 0, 0)));
         /// <summary>
-        /// gets/sets the selected <see cref="DateTime"/> value. 
+        /// Gets or sets the selected <see cref="DateTime"/> value.
         /// </summary>
         public DateTime SelectedDateTime
         {
@@ -84,7 +84,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(DateTimePropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the title text shown next to the DateTime input.
+        /// Gets or sets the title text shown next to the DateTime input.
         /// </summary>
         public string Title
         {
@@ -118,11 +118,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(DateTimePropertyControl), new UIPropertyMetadata(false));
         /// <summary>
-        /// gets/sets whether the DateTime input is read-only.
+        /// Gets or sets whether the DateTime input is read-only.
         /// </summary>
         public bool IsReadOnly
         {
@@ -141,7 +141,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(DateTimePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width allowed for the DateTime input area.
+        /// Gets or sets the maximum width allowed for the DateTime input area.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -160,7 +160,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(DateTimePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width allowed for the DateTime input area.
+        /// Gets or sets the minimum width allowed for the DateTime input area.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -179,7 +179,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(DateTimePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets whether the <see cref="ShowLeaderLine"/> dependency property.
+        /// Gets or sets the width of the property column in the layout.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -198,7 +198,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(DateTimePropertyControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets whether to display a visual leader line alongside the property control.
+        /// Gets or sets whether to display a visual leader line alongside the property control.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -237,7 +237,7 @@ namespace GenericControls
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Handles size changes of the control to update the <see cref="ActualPropertyWidth"/>
+        /// Handles size changes of the control to update the <see cref="ActualPropertyWidth"/>.
         /// </summary>
         /// <param name="sender">The control raising the event.</param>
         /// <param name="e">Size change event arguments.</param>

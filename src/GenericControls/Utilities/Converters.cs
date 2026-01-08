@@ -61,11 +61,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean value to its inverse.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The inverted boolean value, or null if the input is not a boolean.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -78,11 +78,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean value back to its inverse.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The inverted boolean value, or null if the input is not a boolean.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -122,7 +122,7 @@ namespace GenericControls
         public Color FalseValue { get; set; }
 
         /// <summary>
-        /// gets/sets the color to return when the value is false.
+        /// Initializes a new instance of the <see cref="BooleanToColorConverter"/> class with default colors.
         /// </summary>
         public BooleanToColorConverter()
         {
@@ -134,11 +134,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean to its corresponding Color.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The corresponding Color based on the boolean value, or null if the input is not a boolean.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -151,11 +151,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a Color back to a boolean based on matching TrueValue or FalseValue
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>True if the Color matches TrueValue, false if it matches FalseValue, or null otherwise.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -201,7 +201,7 @@ namespace GenericControls
         public Brush FalseValue { get; set; }
 
         /// <summary>
-        /// gets/sets the brush to return when the value is false.
+        /// Initializes a new instance of the <see cref="BooleanToBrushConverter"/> class with default brushes.
         /// </summary>
         public BooleanToBrushConverter()
         {
@@ -213,11 +213,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean to its corresponding Brush.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The corresponding Brush based on the boolean value, or null if the input is not a boolean.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -230,11 +230,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a Brush back to a boolean by comparing to TrueValue or FalseValue.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>True if the Brush matches TrueValue, false if it matches FalseValue, or null otherwise.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -280,7 +280,7 @@ namespace GenericControls
         public string FalseValue { get; set; }
 
         /// <summary>
-        /// Constructor for converter to blank strings for true and false value 
+        /// Initializes a new instance of the <see cref="BooleanToTextConverter"/> class with empty strings as defaults.
         /// </summary>
         public BooleanToTextConverter()
         {
@@ -292,11 +292,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean to its associated string representation.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The corresponding string based on the boolean value, or null if the input is not a boolean.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -309,11 +309,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a string back to a boolean by matching against TrueValue or FalseValue
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>True if the string matches TrueValue, false if it matches FalseValue, or null otherwise.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -367,7 +367,7 @@ namespace GenericControls
         public double FalseValue { get; set; }
 
         /// <summary>
-        /// Constructor setting defaults for true/false value 
+        /// Initializes a new instance of the <see cref="BooleanToDoubleConverter"/> class with default values.
         /// </summary>
         public BooleanToDoubleConverter()
         {
@@ -379,11 +379,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean to its corresponding double value.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The corresponding double value based on the boolean value, or null if the input is not a boolean.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -396,11 +396,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a double back to a boolean if it matches either the TrueValue or FalseValue.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>True if the double matches TrueValue, false if it matches FalseValue, or null otherwise.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -461,7 +461,7 @@ namespace GenericControls
         public bool VisibleValue { get; set; }
 
         /// <summary>
-        /// Default constructor
+        /// Initializes a new instance of the <see cref="VisibilityToBooleanConverter"/> class with default values.
         /// </summary>
         public VisibilityToBooleanConverter()
         {
@@ -474,11 +474,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="Visibility"/> value to a boolean based on matching configured states.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The boolean value corresponding to the Visibility state, or null if the input is invalid.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(Visibility))
@@ -508,11 +508,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a boolean back to a <see cref="Visibility"/> value based on configured boolean-state mappings.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The Visibility value corresponding to the boolean, or null if no match is found.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // This simple logic won't work with the three state system. For my cases currently it doesn't matter. In the future this might have to be fixed probably by using some private variables to keep track of the converted state.
@@ -557,7 +557,7 @@ namespace GenericControls
         public double UpperBound { get; set; }
 
         /// <summary>
-        /// Default constructor for min/max values for the range.
+        /// Initializes a new instance of the <see cref="InRangeConverter"/> class with default range values.
         /// </summary>
         public InRangeConverter()
         {
@@ -569,11 +569,11 @@ namespace GenericControls
         /// <summary>
         /// Returns true if the input value falls within the [LowerBound, UpperBound] range.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>True if the value is within range, false otherwise.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -589,12 +589,12 @@ namespace GenericControls
         /// <summary>
         /// ConvertBack is not implemented for this converter.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
@@ -622,11 +622,11 @@ namespace GenericControls
         /// <summary>
         /// Always returns <see cref="Visibility.Visible"/>.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Always returns Visibility.Visible.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Visibility.Visible;
@@ -635,12 +635,12 @@ namespace GenericControls
         /// <summary>
         /// ConvertBack is not implemented.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
@@ -708,11 +708,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="DateTime"/> to a string for the configured <see cref="TimeTarget"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The formatted time component as a string, or an empty string if the input is invalid.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value.GetType() != typeof(DateTime))
@@ -750,12 +750,12 @@ namespace GenericControls
         /// <summary>
         /// ConvertBack is not implemented.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
@@ -783,11 +783,11 @@ namespace GenericControls
         /// <summary>
         /// Subtracts the system scrollbar width from the total width.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The width adjusted for the scrollbar, or 0 if the input is invalid.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -801,12 +801,12 @@ namespace GenericControls
         /// <summary>
         /// ConvertBack is not supported.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotSupportedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotSupportedException">This operation is not supported.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
@@ -853,11 +853,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a double to a <see cref="Thickness"/> using the specified side flags.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A Thickness value, or null if the input is invalid.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -879,11 +879,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="Thickness"/> back to a double, using the first enabled side or the average of all sides.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A double value representing the thickness.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -921,13 +921,13 @@ namespace GenericControls
     public class ThicknessToDoubleConverter : IValueConverter
     {
         /// <summary>
-        /// Retirms the average of Left, Top, Right, and Bottom thickness values.
+        /// Returns the average of Left, Top, Right, and Bottom thickness values.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The average thickness as a double.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -939,11 +939,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a double back to a uniform <see cref="Thickness"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A uniform Thickness, or null if the input is invalid.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -976,11 +976,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="Color"/> to a <see cref="SolidColorBrush"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A SolidColorBrush, or null if the input is null.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -991,11 +991,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="SolidColorBrush"/> back to a <see cref="Color"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The Color from the brush, or null if the input is null.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1025,11 +1025,11 @@ namespace GenericControls
         /// <summary>
         ///  Converts a <see cref="System.Drawing.Color"/> to a <see cref="SolidColorBrush"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A SolidColorBrush, or null if the input is null or invalid.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1043,11 +1043,11 @@ namespace GenericControls
         /// <summary>
         /// Converts <see cref="SolidColorBrush"/> back to <see cref="System.Drawing.Color"/>.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A System.Drawing.Color, or null if the input is null or invalid.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1081,11 +1081,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a string to a <see cref="FontFamily"/> object.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A FontFamily object.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1096,11 +1096,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="FontFamily"/> back to its string name.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The font family name as a string.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1110,7 +1110,7 @@ namespace GenericControls
     }
 
     /// <summary>
-    /// Convertts a <see cref="FontFamily"/> to a string and vice versa.
+    /// Converts a <see cref="FontFamily"/> to a string and vice versa.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -1130,11 +1130,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="FontFamily"/> to its string name.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The font family name as a string.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1145,11 +1145,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a string name to a <see cref="FontFamily"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A FontFamily object.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1179,11 +1179,11 @@ namespace GenericControls
         /// <summary>
         /// Converts an integer to a double.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The double value, or null if the input is null.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1194,11 +1194,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a double to an integer.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The integer value, or null if the input is null.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1229,11 +1229,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a string to a double.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The parsed double value, or null if the input is null.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1246,11 +1246,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a double back to its string representation.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The string representation of the double, or null if the input is null.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1280,11 +1280,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a double to its string representation.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The string representation of the double, or null if the input is null.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1295,11 +1295,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a string to a double.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The parsed double value, or null if the input is null.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1331,11 +1331,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="double"/> to a <see cref="DataGridLength"/>, or vice versa.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source or target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A DataGridLength or double, depending on the target type, or a default value if conversion fails.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (targetType == typeof(DataGridLength))
@@ -1360,11 +1360,11 @@ namespace GenericControls
         /// <summary>
         /// Converts between <see cref="double"/> and <see cref="DataGridLength"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source or target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A DataGridLength or double, depending on the target type, or a default value if conversion fails.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return ConvertBack(value, targetType, parameter, culture);
@@ -1392,11 +1392,11 @@ namespace GenericControls
         /// <summary>
         /// Converts between <see cref="double"/> and <see cref="GridLength"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source or target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A GridLength or double, depending on the target type, or a default value if conversion fails.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (targetType == typeof(GridLength))
@@ -1421,11 +1421,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="double"/> to a <see cref="GridLength"/>, or vice versa.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source or target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A GridLength or double, depending on the target type, or a default value if conversion fails.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return ConvertBack(value, targetType, parameter, culture);
@@ -1454,11 +1454,11 @@ namespace GenericControls
         /// Converts a <see cref="CornerRadius"/> to its bottom-left value, or a <see cref="double"/>
         /// to a <see cref="CornerRadius"/>
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source or target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A CornerRadius or double, depending on the target type, or a default value if conversion fails.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (targetType == typeof(CornerRadius))
@@ -1483,11 +1483,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="double"/> to a <see cref="CornerRadius"/> or vice versa.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source or target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A CornerRadius or double, depending on the target type, or a default value if conversion fails.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return ConvertBack(value, targetType, parameter, culture);
@@ -1515,11 +1515,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="Vector"/> to a <see cref="Point"/> with the same X and Y values.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A Point with the same X and Y values as the Vector, or null if the input is not a Vector.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1534,11 +1534,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="Point"/> to a <see cref="Vector"/> with the same X and Y values.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A Vector with the same X and Y values as the Point, or null if the input is not a Point.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -1546,7 +1546,7 @@ namespace GenericControls
             if (value.GetType() != typeof(Point))
                 return null;
             Point p = (Point)value;
-            // 
+            //
             return new Vector(p.X, p.Y);
         }
     }
@@ -1572,11 +1572,11 @@ namespace GenericControls
         /// <summary>
         /// Calculates the size of each tab by dividing the TabControl's width by its item count.
         /// </summary>
-        /// <param name="values"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="values">Array of values where the first element should be a TabControl.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The width for each tab item, or 0 if the width would be too small.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             TabControl tabControl = (TabControl)values[0];
@@ -1587,14 +1587,14 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// ConvertBack is not implmented.
+        /// ConvertBack is not implemented.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetTypes"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetTypes">The array of types to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
@@ -1622,11 +1622,11 @@ namespace GenericControls
         /// <summary>
         /// Converts special or invalid double values (NaN, Infinity) to correct symbols.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A string representation of the value, or "N/A" for invalid values.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
@@ -1650,11 +1650,11 @@ namespace GenericControls
         /// <summary>
         /// Converts string representations of special values back to <see cref="double"/> values.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A double value, or NaN for invalid inputs.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
@@ -1707,11 +1707,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a string to "N/A" if it represents a NaN or infinite numeric value.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The original string if valid, or "N/A" if it represents an invalid numeric value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
@@ -1734,12 +1734,12 @@ namespace GenericControls
         /// <summary>
         /// ConvertBack is not implemented.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
@@ -1765,14 +1765,14 @@ namespace GenericControls
     public class GridlineColorLightConverter : IValueConverter
     {
         /// <summary>
-        /// Reduces alpha to 20% if the color is already semi-transparent; otherwise 
+        /// Reduces alpha to 20% if the color is already semi-transparent; otherwise
         /// sets alpha to 51 (20%)
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>A lighter semi-transparent version of the input brush.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null || value.GetType() != typeof(SolidColorBrush))
@@ -1795,12 +1795,12 @@ namespace GenericControls
         /// <summary>
         /// ConvertBack is not implemented.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>Not applicable.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

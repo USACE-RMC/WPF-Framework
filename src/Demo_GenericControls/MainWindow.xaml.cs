@@ -91,9 +91,9 @@ namespace Demo_GenericControls
         private double _numericAutoProperty = double.NaN;
         private double _opacityProperty = 0.8;
         private double _lineWidthProperty = 2.0;
-        private DoubleCollection _lineStyleProperty;
-        private SolidColorBrush _colorProperty;
-        private SolidColorBrush _newColorProperty;
+        private DoubleCollection _lineStyleProperty = new DoubleCollection();
+        private SolidColorBrush _colorProperty = new SolidColorBrush(Colors.SteelBlue);
+        private SolidColorBrush _newColorProperty = new SolidColorBrush(Colors.Orange);
         private HorizontalAlignment _horizontalAlignmentProperty = HorizontalAlignment.Center;
         private VerticalAlignment _verticalAlignmentProperty = VerticalAlignment.Center;
         private Point _pointProperty = new Point(100, 200);
@@ -105,8 +105,8 @@ namespace Demo_GenericControls
         private string _folderPathProperty = "";
         private string _directoryPathProperty = "";
         private string _dialogResultText = "Click a button above to see the dialog result.";
-        private IList<string> _stringListProperty;
-        private ObservableCollection<ColorItem> _colorItems;
+        private IList<string> _stringListProperty = new List<string>();
+        private ObservableCollection<ColorItem> _colorItems = new ObservableCollection<ColorItem>();
         private int _colorCounter = 1;
 
         #endregion

@@ -63,13 +63,15 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the number.
-    /// </summary>
+        /// Dependency property for the number.
+        /// </summary>
         public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericTextBox2), new UIPropertyMetadata(0d, ValueChangedCallback));
 
         /// <summary>
-    /// Property Changed Callback for the Number property.
-    /// </summary>
+        /// Property Changed Callback for the Number property.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The dependency property changed event arguments.</param>
         private static void ValueChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -110,9 +112,10 @@ namespace GenericControls
             thisControl.ValueIsValid = true;
             thisControl.ToolTip = null;
         }
+
         /// <summary>
-    /// Gets and sets the number. 
-    /// </summary>
+        /// Gets and sets the number.
+        /// </summary>
         public double Value
         {
             get
@@ -145,13 +148,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the can have negative property. 
-    /// </summary>
+        /// Dependency property for the can have negative property.
+        /// </summary>
         public static DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(true));
 
         /// <summary>
-    /// Determines if the number can be negative. 
-    /// </summary>
+        /// Determines if the number can be negative.
+        /// </summary>
         public bool CanHaveNegative
         {
             get
@@ -167,8 +170,8 @@ namespace GenericControls
         private bool _valueIsValid = true;
 
         /// <summary>
-    /// Determines if the value is valid.
-    /// </summary>
+        /// Determines if the value is valid.
+        /// </summary>
         public bool ValueIsValid
         {
             get
@@ -186,13 +189,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the is whole number property. 
-    /// </summary>
+        /// Dependency property for the is whole number property.
+        /// </summary>
         public static DependencyProperty IsWholeNumberProperty = DependencyProperty.Register(nameof(IsWholeNumber), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(false));
 
         /// <summary>
-    /// Gets and sets whether the number must be a whole number. 
-    /// </summary>
+        /// Gets and sets whether the number must be a whole number.
+        /// </summary>
         public bool IsWholeNumber
         {
             get
@@ -206,13 +209,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the max value property. 
-    /// </summary>
+        /// Dependency property for the max value property.
+        /// </summary>
         public static DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericTextBox2), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
-    /// Gets and sets the maximum value allowed. 
-    /// </summary>
+        /// Gets and sets the maximum value allowed.
+        /// </summary>
         public double MaxValue
         {
             get
@@ -226,8 +229,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the min value property. 
-    /// </summary>
+        /// Dependency property for the min value property.
+        /// </summary>
         public static DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericTextBox2), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
@@ -275,6 +278,8 @@ namespace GenericControls
         /// <summary>
         /// Textbox preview text input.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The text composition event arguments.</param>
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             var tBox = this.NumericTBox;
@@ -289,8 +294,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Textbox preview key down. 
-    /// </summary>
+        /// Textbox preview key down.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The key event arguments.</param>
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -298,8 +305,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Textbox preview key up. 
-    /// </summary>
+        /// Textbox preview key up.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The key event arguments.</param>
         private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
