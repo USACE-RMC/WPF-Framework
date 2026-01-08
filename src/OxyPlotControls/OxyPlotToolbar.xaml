@@ -11,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/GenericControls;Component/Resources/GenericResources.xaml"/>
                 <ResourceDictionary Source="Resources/IconDictionary.xaml"/>
+                <ResourceDictionary Source="Themes/OxyPlotControlsTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -37,7 +38,7 @@
         </Button>
         <Button x:Name="AddAnnotationToggleButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Margin="1,1,1,2" Padding="0" ToolTip="Add Annotation" Click="AddAnnotationToggleButton_Click">
             <Button.ContextMenu>
-                <ContextMenu>
+                <ContextMenu Style="{DynamicResource OxyPlotToolbarContextMenuStyle}">
                     <MenuItem Name="AddArrowAnnotationItem" Header="Arrow Annotation" Click="AddArrowAnnotationItem_Click">
                         <MenuItem.Icon>
                             <ContentControl Content="{StaticResource ArrowAnnotationIcon}"/>
