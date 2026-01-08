@@ -25,7 +25,7 @@
                               MinWidth="{Binding ElementName=PointProperty, Path=MinPropertyWidth, FallbackValue=10}"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Margin="0,0,3,0" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+        <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}"
                    Text="{Binding ElementName=PointProperty, Path=Title}" />
 
         <Line Style="{StaticResource DotLeaderLineStyle}"
@@ -39,9 +39,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="x " VerticalAlignment="Bottom"/>
+            <TextBlock Grid.Column="0" Text="x " VerticalAlignment="Bottom" Foreground="{DynamicResource EnvironmentWindowText}"/>
             <local:NumericTextBox x:Name="DataPointX" Grid.Column="1" Height="22" IsWholeNumber="False" CanBeBlank="True" CanBeNegative="True" TextChanged="DataPointX_TextChanged" IsReadOnly="{Binding ElementName=PointProperty, Path=IsReadOnly}"/>
-            <TextBlock Grid.Column="2" Text=", y " VerticalAlignment="Bottom"/>
+            <TextBlock Grid.Column="2" Text=", y " VerticalAlignment="Bottom" Foreground="{DynamicResource EnvironmentWindowText}"/>
             <local:NumericTextBox x:Name="DataPointY" Grid.Column="3" Height="22" IsWholeNumber="False" CanBeBlank="True" CanBeNegative="True" TextChanged="DataPointY_TextChanged" IsReadOnly="{Binding ElementName=PointProperty, Path=IsReadOnly}"/>
         </Grid>
     </Grid>

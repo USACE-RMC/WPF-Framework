@@ -27,7 +27,7 @@
                               MinWidth="{Binding ElementName=ContentPropertyCtrl, Path=MinPropertyWidth, FallbackValue=10}"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Margin="0,0,3,0" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+        <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}"
                    Text="{Binding ElementName=ContentPropertyCtrl, Path=Title}"/>
 
         <Line Style="{StaticResource DotLeaderLineStyle}"
