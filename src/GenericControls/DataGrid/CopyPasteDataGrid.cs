@@ -89,7 +89,7 @@ namespace GenericControls
             // Add Copy/Paste Context Menu
             // Add Row(s)
             _addRowsCMI = new MenuItem() { Name = "AddRows", Header = "Add Row(s)" };
-            _addRowsCMI.Icon = CreateVectorMenuIcon("AddRowIcon");
+            _addRowsCMI.Icon = CreateVectorMenuIcon("DGAddRowIcon");
             _addRowsCMI.Click += (sender, e) =>
                 {
                     var uniqueRows = GetRowsWithSelectedCells();
@@ -98,12 +98,12 @@ namespace GenericControls
             _CopyPasteContextMenu.Items.Add(_addRowsCMI);
             // Insert Row(s)
             _insertRowsCMI = new MenuItem() { Name = "InsertRows", Header = "Insert Row(s)" };
-            _insertRowsCMI.Icon = CreateVectorMenuIcon("InsertRowIcon");
+            _insertRowsCMI.Icon = CreateVectorMenuIcon("DGInsertRowIcon");
             _insertRowsCMI.Click += (sender, e) => InsertRows();
             _CopyPasteContextMenu.Items.Add(_insertRowsCMI);
             // Delete Row(s)
             _deleteRowsCMI = new MenuItem() { Name = "DeleteRows", Header = "Delete Row(s)" };
-            _deleteRowsCMI.Icon = CreateVectorMenuIcon("DeleteRowIcon");
+            _deleteRowsCMI.Icon = CreateVectorMenuIcon("DGDeleteRowIcon");
             _deleteRowsCMI.Click += (sender, e) => DeleteRows();
             _CopyPasteContextMenu.Items.Add(_deleteRowsCMI);
 
@@ -141,22 +141,22 @@ namespace GenericControls
             _CopyPasteContextMenu.Items.Add(_seperatorCM);
             // Select All
             _selectAllCMI = new MenuItem() { Name = "SelectAll", Header = "Select All" };
-            _selectAllCMI.Icon = CreateVectorMenuIcon("SelectAllIcon");
+            _selectAllCMI.Icon = CreateVectorMenuIcon("DGSelectAllIcon");
             _selectAllCMI.Click += SelectAll_Click;
             _CopyPasteContextMenu.Items.Add(_selectAllCMI);
             // Copy
             _copyCMI = new MenuItem() { Name = "Copy", Header = "Copy" };
-            _copyCMI.Icon = CreateVectorMenuIcon("CopyIcon");
+            _copyCMI.Icon = CreateVectorMenuIcon("DGCopyIcon");
             _copyCMI.Click += Copy_Click;
             _CopyPasteContextMenu.Items.Add(_copyCMI);
             // Copy w / Headers
             _copyWHeadersCMI = new MenuItem() { Name = "CopyWHeaders", Header = "Copy w/ Headers" };
-            _copyWHeadersCMI.Icon = CreateVectorMenuIcon("CopyWithHeadersIcon");
+            _copyWHeadersCMI.Icon = CreateVectorMenuIcon("DGCopyWithHeadersIcon");
             _copyWHeadersCMI.Click += CopyWithHeaders_Click;
             _CopyPasteContextMenu.Items.Add(_copyWHeadersCMI);
             // Paste
             _pasteCMI = new MenuItem() { Name = "Paste", Header = "Paste" };
-            _pasteCMI.Icon = CreateVectorMenuIcon("PasteIcon");
+            _pasteCMI.Icon = CreateVectorMenuIcon("DGPasteIcon");
             _pasteCMI.Click += Paste_Click;
             _CopyPasteContextMenu.Items.Add(_pasteCMI);
 
@@ -164,17 +164,17 @@ namespace GenericControls
             // Sort ASC
             _sortASCCMI = new MenuItem() { Name = "SortASC", Header = new TextBlock() { Text = "Sort Ascending", TextAlignment = TextAlignment.Left } };
             _sortASCCMI.HorizontalContentAlignment = HorizontalAlignment.Left;
-            _sortASCCMI.Icon = CreateVectorMenuIcon("SortAscFilterIcon");
+            _sortASCCMI.Icon = CreateVectorMenuIcon("DGSortAscFilterIcon");
             _sortASCCMI.Click += SortAscending;
             _sortContextMenu.Items.Add(_sortASCCMI);
             // Sort DSC
             _sortDSCCMI = new MenuItem() { Name = "SortDSC", Header = new TextBlock() { Text = "Sort Descending", TextAlignment = TextAlignment.Left } };
-            _sortDSCCMI.Icon = CreateVectorMenuIcon("SortDescFilterIcon");
+            _sortDSCCMI.Icon = CreateVectorMenuIcon("DGSortDescFilterIcon");
             _sortDSCCMI.Click += SortDescending;
             _sortContextMenu.Items.Add(_sortDSCCMI);
             // Clear Sort
             _clearSortCMI = new MenuItem() { Name = "ClearSort", Header = new TextBlock() { Text = "Clear Sort", TextAlignment = TextAlignment.Left } };
-            _clearSortCMI.Icon = CreateVectorMenuIcon("ClearFilterIcon");
+            _clearSortCMI.Icon = CreateVectorMenuIcon("DGClearFilterIcon");
             _clearSortCMI.Click += (sender, e) => ClearSort();
             _sortContextMenu.Items.Add(_clearSortCMI);
 

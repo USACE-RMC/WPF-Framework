@@ -31,7 +31,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Add Row(s) - Grid table with green plus sign -->
-    <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGAddRowIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Table grid background -->
@@ -51,7 +51,7 @@
     </Viewbox>
 
     <!-- Insert Row(s) - Grid table with blue insert arrow -->
-    <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGInsertRowIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Table grid background -->
@@ -74,7 +74,7 @@
     </Viewbox>
 
     <!-- Delete Row(s) - Grid table with red X -->
-    <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGDeleteRowIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Table grid background -->
@@ -165,7 +165,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Select All - Grid with selection highlight -->
-    <Viewbox x:Key="SelectAllIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGSelectAllIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Selection highlight background -->
@@ -185,7 +185,7 @@
     </Viewbox>
 
     <!-- Copy - Two overlapping documents -->
-    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGCopyIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Back document -->
@@ -204,7 +204,7 @@
     </Viewbox>
 
     <!-- Copy with Headers - Two documents with header bar -->
-    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGCopyWithHeadersIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Back document -->
@@ -225,7 +225,7 @@
     </Viewbox>
 
     <!-- Paste - Clipboard with document -->
-    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGPasteIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Clipboard body -->
@@ -273,7 +273,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Sort Ascending Filter - Funnel with up arrow -->
-    <Viewbox x:Key="SortAscFilterIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGSortAscFilterIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
@@ -289,7 +289,7 @@
     </Viewbox>
 
     <!-- Sort Descending Filter - Funnel with down arrow -->
-    <Viewbox x:Key="SortDescFilterIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGSortDescFilterIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
@@ -305,7 +305,7 @@
     </Viewbox>
 
     <!-- Clear Filter - Funnel with red X -->
-    <Viewbox x:Key="ClearFilterIcon" Width="16" Height="16" x:Shared="False"
+    <Viewbox x:Key="DGClearFilterIcon" Width="16" Height="16" x:Shared="False"
              SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
