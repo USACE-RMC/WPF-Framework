@@ -81,7 +81,7 @@
                                         <Condition Property="IsEnabled" Value="True"/>
                                     </MultiTrigger.Conditions>
                                     <MultiTrigger.Setters>
-                                        <Setter Property="Stroke" Value="{DynamicResource TextBox.MouseOver.Border}"/>
+                                        <Setter Property="Stroke" Value="{DynamicResource Button.MouseOver.Border}"/>
                                         <Setter Property="StrokeThickness" Value="2"/>
                                     </MultiTrigger.Setters>
                                 </MultiTrigger>
@@ -91,7 +91,7 @@
                                         <Condition Property="IsEnabled" Value="True"/>
                                     </MultiTrigger.Conditions>
                                     <MultiTrigger.Setters>
-                                        <Setter Property="Stroke" Value="{DynamicResource TextBox.Static.Border}"/>
+                                        <Setter Property="Stroke" Value="{DynamicResource Button.Static.Border}"/>
                                         <Setter Property="StrokeThickness" Value="1"/>
                                     </MultiTrigger.Setters>
                                 </MultiTrigger>
