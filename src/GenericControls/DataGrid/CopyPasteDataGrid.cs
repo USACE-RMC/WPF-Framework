@@ -64,8 +64,8 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Add context menu on new. 
-    /// </summary>
+        /// Initializes a new instance of the <see cref="CopyPasteDataGrid"/> class and sets up context menus.
+        /// </summary>
         public CopyPasteDataGrid()
         {
 
@@ -226,8 +226,8 @@ namespace GenericControls
         private bool _canUserAddInsertDeleteRows = true;
 
         /// <summary>
-    /// Determines whether the user can add, insert, or delete rows. 
-    /// </summary>
+        /// Determines whether the user can add, insert, or delete rows.
+        /// </summary>
         [Category("Rows")]
         [Description("Determines whether the user can add, insert, or delete rows.")]
         [Browsable(true)]
@@ -272,8 +272,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Determines whether rows are automatically added when pasting.
-    /// </summary>
+        /// Determines whether rows are automatically added when pasting.
+        /// </summary>
         [Category("Rows")]
         [Description("Determines whether rows are automatically added when pasting.")]
         [Browsable(true)]
@@ -281,13 +281,13 @@ namespace GenericControls
         public bool PasteAddsRows { get; set; } = true;
 
         /// <summary>
-    /// Gets and sets the row type for the data grid.
-    /// </summary>
+        /// Gets or sets the row type for the data grid.
+        /// </summary>
         public Type RowType { get; set; } = null;
 
         /// <summary>
-    /// Determines whether to show the sort context menu.
-    /// </summary>
+        /// Determines whether to show the sort context menu.
+        /// </summary>
         public bool ShowSortContextMenu { get; set; } = true;
 
         /// <summary>
@@ -412,8 +412,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Determines what functionality is available When the datagrid is loaded.
+        /// Determines what functionality is available when the datagrid is loaded.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_Loaded(object sender, RoutedEventArgs e)
         {
 
@@ -439,8 +441,10 @@ namespace GenericControls
         #region Context Menu
 
         /// <summary>
-        /// Determine the column that has been right-clicked.
+        /// Determines the column that has been right-clicked.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CopyPasteDataGrid_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             DependencyObject DepObject = (DependencyObject)e.OriginalSource;
@@ -466,8 +470,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// When context menu is opening, handle the behavior of the menus.
+        /// Handles context menu opening and configures menu item availability.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ContextMenu_Opening(object sender, ContextMenuEventArgs e)
         {
             if (_CopyPasteContextMenu.Visibility == Visibility.Visible)
@@ -526,8 +532,10 @@ namespace GenericControls
         #region Select All, Copy, Paste
 
         /// <summary>
-        /// Select all the cells in the data grid.
+        /// Selects all the cells in the data grid.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SelectAll_Click(object sender, RoutedEventArgs e)
         {
             if (CanSelectMultipleItems == false)
@@ -536,16 +544,20 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Copy the selected cells.
+        /// Copies the selected cells to the clipboard.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             ApplicationCommands.Copy.Execute(null, this);
         }
 
         /// <summary>
-        /// Copy the selected cells with data grid headers.
+        /// Copies the selected cells to the clipboard with column headers.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CopyWithHeaders_Click(object sender, RoutedEventArgs e)
         {
             ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
@@ -554,8 +566,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// When the user presses control+v, paste clipboard.
+        /// Handles keyboard input and pastes clipboard data when Ctrl+V is pressed.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_KeyDown(object sender, KeyEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl))
@@ -566,15 +580,17 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Paste from the clipboard.
+        /// Pastes data from the clipboard into the data grid.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Paste_Click(object sender, RoutedEventArgs e)
         {
             PasteClipboard();
         }
 
         /// <summary>
-        /// Paste from the clipboard.
+        /// Pastes data from the clipboard into the selected cells of the data grid.
         /// </summary>
         public void PasteClipboard()
         {
@@ -766,8 +782,9 @@ namespace GenericControls
         #region Add, Insert, Delete
 
         /// <summary>
-        /// Add row to the end of the data grid.
+        /// Adds a single row to the end of the data grid with specified data.
         /// </summary>
+        /// <param name="rowData">A dictionary mapping property names to their values for the new row.</param>
         public void AddRow(Dictionary<string, object> rowData)
         {
             int insertAtRow = Items.Count;
@@ -840,8 +857,9 @@ namespace GenericControls
 
 
         /// <summary>
-        /// Add rows to the end of the data grid.
+        /// Adds the specified number of rows to the end of the data grid.
         /// </summary>
+        /// <param name="nRowsToAdd">The number of rows to add.</param>
         public void AddRows(int nRowsToAdd)
         {
             // Count of rows to be added and insert point, if nRowsToAdd is zero or less then just add one row
@@ -898,7 +916,8 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Insert rows into data grid.
+        /// Inserts new rows at the position of the first selected cell.
+        /// The number of rows inserted equals the number of unique selected rows.
         /// </summary>
         public void InsertRows()
         {
@@ -983,7 +1002,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Delete rows from the table.
+        /// Deletes all rows that have selected cells from the data grid.
         /// </summary>
         public void DeleteRows()
         {
@@ -1037,9 +1056,9 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Get unique row indexes that have cells selected.
+        /// Gets the unique row indexes that have cells selected.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A set of unique row indices containing selected cells.</returns>
         public HashSet<int> GetRowsWithSelectedCells()
         {
             var uniqueRows = new HashSet<int>();
@@ -1054,9 +1073,9 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Get unique column indexes that have cells selected.
+        /// Gets the unique column indexes that have cells selected.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A set of unique column indices containing selected cells.</returns>
         public HashSet<int> GetColumnsWithSelectedCells()
         {
             var uniqueColumns = new HashSet<int>();
@@ -1073,9 +1092,10 @@ namespace GenericControls
         #region Support
 
         /// <summary>
-        /// Get the data grid row at a specified index.
+        /// Gets the data grid row at a specified index.
         /// </summary>
         /// <param name="index">The index of the data grid row to be returned.</param>
+        /// <returns>The <see cref="DataGridRow"/> at the specified index, or null if not found.</returns>
         public DataGridRow GetRow(int index)
         {
             DataGridRow row = (DataGridRow)ItemContainerGenerator.ContainerFromIndex(index);
@@ -1090,10 +1110,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Get the data grid cell at specified row and column indices.
+        /// Gets the data grid cell at specified row and column indices.
         /// </summary>
         /// <param name="rowIndex">The row index of the data grid cell to be returned.</param>
         /// <param name="column">The column index of the data grid cell to be returned.</param>
+        /// <returns>The <see cref="DataGridCell"/> at the specified position, or null if not found.</returns>
         public DataGridCell GetCell(int rowIndex, int column)
         {
             var row = GetRow(rowIndex);
@@ -1114,8 +1135,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Get the visual child.
+        /// Gets the first visual child of the specified type from a parent visual element.
         /// </summary>
+        /// <typeparam name="T">The type of visual child to find.</typeparam>
+        /// <param name="parent">The parent visual element to search.</param>
+        /// <returns>The first visual child of type T, or null if not found.</returns>
         public T GetTheVisualChild<T>(Visual parent) where T : Visual
         {
             T child = null;
@@ -1139,6 +1163,8 @@ namespace GenericControls
         /// <summary>
         /// Determines if a type is numeric. Nullable numeric types are considered numeric.
         /// </summary>
+        /// <param name="typeToTest">The type to test for being numeric.</param>
+        /// <returns>True if the type is numeric; otherwise, false.</returns>
         /// <remarks>
         /// Boolean is not considered numeric.
         /// <see href="http://stackoverflow.com/questions/124411/using-net-how-can-i-determine-if-a-type-is-a-numeric-valuetype"/>
@@ -1205,8 +1231,10 @@ namespace GenericControls
         #region Sort
 
         /// <summary>
-        /// Sort the column in ascending order.
+        /// Sorts the right-clicked column in ascending order.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SortAscending(object sender, RoutedEventArgs e)
         {
             // Clear current sort descriptions
@@ -1222,8 +1250,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Sort the column in descending order.
+        /// Sorts the right-clicked column in descending order.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SortDescending(object sender, RoutedEventArgs e)
         {
             // Clear current sort descriptions
@@ -1239,7 +1269,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Clear the sort. 
+        /// Clears all sorting applied to the data grid.
         /// </summary>
         public void ClearSort()
         {
@@ -1253,8 +1283,9 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// When sorting is complete, raise sorted event.
+        /// Raises the <see cref="Sorted"/> event when a column is sorted.
         /// </summary>
+        /// <param name="eventArgs">The event data containing the column being sorted.</param>
         protected override void OnSorting(DataGridSortingEventArgs eventArgs)
         {
             base.OnSorting(eventArgs);
@@ -1263,9 +1294,9 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Helper used to get event args.
+        /// Event arguments class that carries a value of a specified type.
         /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <typeparam name="T">The type of the value carried by the event arguments.</typeparam>
         public class ValueEventArgs<T> : EventArgs
         {
             /// <summary>

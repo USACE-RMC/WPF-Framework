@@ -58,8 +58,8 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Construct new numeric up-down control.
-    /// </summary>
+        /// Construct new numeric up-down control.
+        /// </summary>
         public NumericUpDown()
         {
             // This call is required by the designer.
@@ -85,13 +85,13 @@ namespace GenericControls
         private string FormatString;
 
         /// <summary>
-    /// Dependency property for setting the numeric text box value.
-    /// </summary>
+        /// Dependency property for setting the numeric text box value.
+        /// </summary>
         public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericUpDown), new PropertyMetadata(0.0d, SetText));
 
         /// <summary>
-    /// Gets and sets the current value of the numeric up-down control.
-    /// </summary>
+        /// Gets and sets the current value of the numeric up-down control.
+        /// </summary>
         public double Value
         {
             get
@@ -107,8 +107,8 @@ namespace GenericControls
         /// <summary>
         /// Set the text after the value has changed.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The dependency property changed event arguments.</param>
         private static void SetText(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             NumericUpDown thisControl = (NumericUpDown)d;
@@ -133,9 +133,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets and sets the maximum value for the numeric up-down control.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets and sets the maximum value for the numeric up-down control.
+        /// </summary>
         public double Maximum
         {
             get
@@ -154,9 +153,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Get and set the minimum value for the numeric up-down control.
-    /// </summary>
-    /// <returns></returns>
+        /// Get and set the minimum value for the numeric up-down control.
+        /// </summary>
         public double Minimum
         {
             get
@@ -194,8 +192,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets and sets the number of decimal places to display.
-    /// </summary>
+        /// Gets and sets the number of decimal places to display.
+        /// </summary>
         public int DecimalPlaces
         {
             get
@@ -243,8 +241,10 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// On click, increment up.
-    /// </summary>
+        /// On click, increment up.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void cmdUp_Click(object sender, RoutedEventArgs e)
         {
             if (Value < Maximum)
@@ -254,8 +254,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, increment down.
-    /// </summary>
+        /// On click, increment down.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void cmdDown_Click(object sender, RoutedEventArgs e)
         {
             if (Value > Minimum)

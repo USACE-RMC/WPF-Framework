@@ -93,7 +93,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty DashArrayOptionsProperty = DependencyProperty.Register(nameof(DashArrayOptions), typeof(IList<DoubleCollection>), typeof(LineStyleSelectorControl), new FrameworkPropertyMetadata(LineStyleOptions));
         /// <summary>
-        /// gets/sets the list of available dash array options.
+        /// Gets or sets the list of available dash array options.
         /// </summary>
         public IList<DoubleCollection> DashArrayOptions
         {
@@ -112,7 +112,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(LineStyleSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the display title of the control.
+        /// Gets or sets the display title of the control.
         /// </summary>
         public string Title
         {
@@ -131,7 +131,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(LineStyleSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width of the control's label section.
+        /// Gets or sets the maximum width of the control's label section.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -150,7 +150,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(LineStyleSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width of the control's label section.
+        /// Gets or sets the minimum width of the control's label section.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -169,7 +169,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(LineStyleSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the width of the control's property column.
+        /// Gets or sets the width of the control's property column.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -188,7 +188,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(LineStyleSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets a value indicating whether a leader line is shown next to the label.
+        /// Gets or sets a value indicating whether a leader line is shown next to the label.
         /// </summary>
         public bool ShowLeaderLine
         {

@@ -58,7 +58,7 @@ namespace GenericControls
         // Private _offset As Double
 
         /// <summary>
-        /// initializes a new instance iof the <see cref="DragAdorner"/> class.
+        /// Initializes a new instance of the <see cref="DragAdorner"/> class.
         /// </summary>
         /// <param name="adornedElement">The UIElement to display as a ghost image.</param>
         /// <param name="offset">The offset from the mouse pointer.</param>

@@ -62,8 +62,8 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Construct new data grid toolbar.
-    /// </summary>
+        /// Initializes a new instance of the <see cref="DataGridToolbar"/> class.
+        /// </summary>
         public DataGridToolbar()
         {
 
@@ -124,13 +124,15 @@ namespace GenericControls
         #region Members
 
         /// <summary>
-    /// Dependency property for the data grid. 
-    /// </summary>
+        /// Dependency property for the data grid.
+        /// </summary>
         public static DependencyProperty DataGridProperty = DependencyProperty.Register(nameof(DataGrid), typeof(CopyPasteDataGrid), typeof(DataGridToolbar), new FrameworkPropertyMetadata(null, DataGridChangedCallback));
 
         /// <summary>
-    /// Data Grid property callback. 
-    /// </summary>
+        /// Callback method invoked when the DataGrid property changes.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data containing old and new values.</param>
         private static void DataGridChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -181,19 +183,19 @@ namespace GenericControls
         public static extern long CountClipboardFormats();
 
         /// <summary>
-        /// Rerurns true if the clipboard contains no data in any registered format.
+        /// Returns true if the clipboard contains no data in any registered format.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the clipboard is empty; otherwise, false.</returns>
         public bool IsClipboardEmpty()
         {
             return CountClipboardFormats() == 0L;
         }
 
         /// <summary>
-        /// Handling changed data grid properties.
+        /// Handles changes to data grid properties and updates toolbar visibility accordingly.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data containing the property name that changed.</param>
         private void DataGridPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if ((e.PropertyName ?? "") == nameof(CopyPasteDataGrid.CanUserAddInsertDeleteRows))
@@ -214,8 +216,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Get and set the data grid.
-    /// </summary>
+        /// Gets or sets the data grid associated with this toolbar.
+        /// </summary>
         [Category("Miscellaneous")]
         [Description("Get and set the data grid for the control.")]
         [Browsable(true)]
@@ -232,13 +234,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the data grid. 
-    /// </summary>
+        /// Dependency property for the toolbar orientation.
+        /// </summary>
         public static DependencyProperty ToolOrientationProperty = DependencyProperty.Register(nameof(ToolOrientation), typeof(Orientation), typeof(DataGridToolbar), new FrameworkPropertyMetadata(Orientation.Horizontal));
 
         /// <summary>
-    /// Get and set the data grid.
-    /// </summary>
+        /// Gets or sets the orientation of the toolbar buttons.
+        /// </summary>
         [Category("Miscellaneous")]
         [Description("Get and set the tool buttons orientation.")]
         [Browsable(true)]
@@ -255,13 +257,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the control background color. 
-    /// </summary>
+        /// Dependency property for the control background color.
+        /// </summary>
         public static DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(SolidColorBrush), typeof(DataGridToolbar), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent)));
 
         /// <summary>
-    /// Get and set the control background color. 
-    /// </summary>
+        /// Gets or sets the control background color.
+        /// </summary>
         [Category("Brush")]
         [Description("Gets and sets the background color brush of the control.")]
         [Browsable(true)]
@@ -279,10 +281,15 @@ namespace GenericControls
 
 
         /// <summary>
-    /// Dependency property for the stack panel button style.
-    /// </summary>
+        /// Dependency property for the stack panel button style.
+        /// </summary>
         public static DependencyProperty StackPanelButtonStyleProperty = DependencyProperty.Register(nameof(StackPanelButtonStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelButtonStyle(), StackPanelButtonStylePropertyCallback));
 
+        /// <summary>
+        /// Callback method invoked when the StackPanelButtonStyle property changes.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data containing old and new values.</param>
         private static void StackPanelButtonStylePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -310,7 +317,7 @@ namespace GenericControls
         /// <summary>
         /// Returns the default style for toolbar buttons in a stack panel layout.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The default <see cref="Style"/> for toolbar buttons.</returns>
         private static Style DefaultStackPanelButtonStyle()
         {
             var s = new Style(typeof(Button), (Style)Application.Current.FindResource(ToolBar.ButtonStyleKey)); // CType(Application.Current.FindResource(ToolBar.ButtonStyleKey), Style)
@@ -327,8 +334,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets and sets the stack panel button style. 
-    /// </summary>
+        /// Gets or sets the stack panel button style.
+        /// </summary>
         public Style StackPanelButtonStyle
         {
             get
@@ -342,9 +349,15 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the stack panel separator style.
-    /// </summary>
+        /// Dependency property for the stack panel separator style.
+        /// </summary>
         public static DependencyProperty StackPanelSeperatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeperatorStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelSeparatorStyle(), StackPanelSeperatorStylePropertyCallback));
+
+        /// <summary>
+        /// Callback method invoked when the StackPanelSeperatorStyle property changes.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data containing old and new values.</param>
         private static void StackPanelSeperatorStylePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -375,8 +388,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets and sets the stack panel separator style. 
-    /// </summary>
+        /// Gets or sets the stack panel separator style.
+        /// </summary>
         public Style StackPanelSeperatorStyle
         {
             get
@@ -411,8 +424,10 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// On click, add rows. 
-    /// </summary>
+        /// Handles the AddRowsButton click event and adds rows to the data grid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void AddRowsButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)
@@ -426,8 +441,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, insert rows. 
-    /// </summary>
+        /// Handles the InsertRowsButton click event and inserts rows into the data grid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void InsertRowsButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)
@@ -438,8 +455,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, delete rows.
-    /// </summary>
+        /// Handles the DeleteRowsButton click event and deletes rows from the data grid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void DeleteRowsButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)
@@ -451,8 +470,10 @@ namespace GenericControls
 
 
         /// <summary>
-    /// On click, select all.
-    /// </summary>
+        /// Handles the SelectAllButton click event and selects all cells in the data grid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)
@@ -462,8 +483,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, copy selection.
-    /// </summary>
+        /// Handles the CopyButton click event and copies the selected cells to the clipboard.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)
@@ -473,8 +496,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, copy selection with table headers.
-    /// </summary>
+        /// Handles the CopyWithHeadersButton click event and copies the selected cells with headers to the clipboard.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)
@@ -486,8 +511,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, paste.
-    /// </summary>
+        /// Handles the PasteButton click event and pastes data from the clipboard into the data grid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void PasteButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)

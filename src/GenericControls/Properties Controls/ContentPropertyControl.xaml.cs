@@ -83,7 +83,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ContentPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the title displayed for the property control.
+        /// Gets or sets the title displayed for the property control.
         /// </summary>
         public string Title
         {
@@ -102,7 +102,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width of the property control.
+        /// Gets or sets the maximum width of the property control.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -121,7 +121,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width of the property control.
+        /// Gets or sets the minimum width of the property control.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -140,7 +140,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the current width of the property layout column.
+        /// Gets or sets the current width of the property layout column.
         /// </summary>
         public GridLength PropertyWidth
         {

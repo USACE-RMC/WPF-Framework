@@ -72,8 +72,8 @@ namespace GenericControls
         /// <summary>
         /// Callback when <see cref="GridLength"/> is changed. Updates individual components.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>    
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The dependency property changed event arguments.</param>
         private static void GridLengthPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -115,8 +115,8 @@ namespace GenericControls
         /// <summary>
         /// Callback when <see cref="GridLengthValue"/> is changed. Triggers update to <see cref="GridLength"/>
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The dependency property changed event arguments.</param>
         private static void GridLengthValuePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -149,8 +149,8 @@ namespace GenericControls
         /// <summary>
         /// Callback when <see cref="GridLengthUnit"/> is changed. Triggers update to <see cref="GridLength"/>
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The dependency property changed event arguments.</param>
         private static void GridLengthUnitPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -188,8 +188,8 @@ namespace GenericControls
         /// <summary>
         /// Reserved for future use (currently no-op).
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
 

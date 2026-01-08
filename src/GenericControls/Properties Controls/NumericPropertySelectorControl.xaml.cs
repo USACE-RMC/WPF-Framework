@@ -264,8 +264,8 @@ namespace GenericControls
         /// <summary>
         /// Updates property width if control size is changed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;
@@ -275,8 +275,8 @@ namespace GenericControls
         /// <summary>
         /// ComboBox preview text input.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
@@ -298,8 +298,8 @@ namespace GenericControls
         /// <summary>
         /// Combo box preview when Space is pressed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -313,6 +313,11 @@ namespace GenericControls
         /// </summary>
         private bool _previewUp = false;
 
+        /// <summary>
+        /// Handles preview mouse up event for single-click editing support.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void NumericPropertySelector_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (IsEditable == false)
@@ -320,6 +325,11 @@ namespace GenericControls
             _previewUp = true;
         }
 
+        /// <summary>
+        /// Handles mouse up event to focus the text box for single-click editing.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void NumericPropertySelector_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (IsEditable == false)

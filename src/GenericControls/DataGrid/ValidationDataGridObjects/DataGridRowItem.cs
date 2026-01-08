@@ -57,10 +57,10 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Contructs a new data grid row item.
-    /// </summary>
-    /// <param name="list">The observable collection of all data grid row items.</param>
-    /// <param name="parentDataGrid">Optional. The parent validation data grid. Default = nothing.</param>
+        /// Initializes a new instance of the <see cref="DataGridRowItem"/> class.
+        /// </summary>
+        /// <param name="list">The observable collection of all data grid row items.</param>
+        /// <param name="parentDataGrid">Optional. The parent validation data grid. Default = null.</param>
         public DataGridRowItem(System.Collections.ObjectModel.ObservableCollection<object> list, ValidationDataGrid parentDataGrid = null)
         {
             _parentList = list;
@@ -105,9 +105,9 @@ namespace GenericControls
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-    /// The list that this row item is an item of. This is used for complex validation rules that require knowledege 
-    /// of neighbors or all other items in the list.
-    /// </summary>
+        /// Gets or sets the list that this row item belongs to.
+        /// This is used for complex validation rules that require knowledge of neighbors or all other items in the list.
+        /// </summary>
         public System.Collections.ObjectModel.ObservableCollection<object> ParentList
         {
             set
@@ -117,8 +117,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// The map of all property rules for this row item.
-    /// </summary>
+        /// Gets the map of all property validation rules for this row item.
+        /// </summary>
         public Dictionary<string, PropertyRule> RuleMap
         {
             get
@@ -132,26 +132,30 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// The required magic for defining when a property is in error. Use the "AddRule" call to add a specific rule.
-    /// </summary>
+        /// When overridden in a derived class, defines validation rules for properties.
+        /// Use the <see cref="AddRule"/> method to add specific rules.
+        /// </summary>
         public abstract void AddValidationRules();
 
         /// <summary>
-    /// Allows specification of prettier property names. Default return should be the property name, will appear as column header (unless modified), and as series name if curvedatagridrowitem is used.
-    /// </summary>
-    /// <param name="propertyName">The property that needs to be transformed into a better displayable name.</param>
+        /// When overridden in a derived class, provides a display-friendly name for a property.
+        /// This name appears as the column header and in other UI contexts.
+        /// </summary>
+        /// <param name="propertyName">The property name that needs to be transformed into a display name.</param>
+        /// <returns>The display-friendly name for the property.</returns>
         public abstract string PropertyDisplayName(string propertyName);
 
         /// <summary>
-    /// Allows specification of properties to not be displayed in a datagrid
-    /// </summary>
-    /// <param name="propertyName">Property name.</param>
+        /// When overridden in a derived class, determines whether a property should be displayed in the data grid.
+        /// </summary>
+        /// <param name="propertyName">The property name to check.</param>
+        /// <returns>True if the property should be displayed; otherwise, false.</returns>
         public abstract bool IsGridDisplayable(string propertyName);
 
         /// <summary>
-    /// Raise property changed event.
-    /// </summary>
-    /// <param name="propertyName">Optional. Name of the property that changed.</param>
+        /// Raises the <see cref="PropertyChanged"/> event and validates the property.
+        /// </summary>
+        /// <param name="propertyName">Optional. Name of the property that changed.</param>
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             ValidateProperty(propertyName);
@@ -160,8 +164,9 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Allows each row item to have all properties update their error state. This is helpful when the grid is first displayed and when rows are added.
-    /// </summary>
+        /// Forces validation of all properties in this row item.
+        /// This is useful when the grid is first displayed or when rows are added.
+        /// </summary>
         public void ForceValidation()
         {
             foreach (string propertyName in _ruleMap.Keys)
@@ -169,12 +174,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Add a rule for a specific property. If the error condition is met then the cell of the defined property will turn red and the error message will show as a tooltip.
-    /// </summary>
-    /// <param name="propertyName">Property name that the rule will be applied to.</param>
-    /// <param name="errorCondition">The function that dictates an error has occurred or not. If the errorCondition returns true then the property for the given row will be assumed to have an error.</param>
-    /// <param name="errorMessage">The error message that will be shown in the tooltip when the errorCondition returns true.</param>
-    /// <param name="associatedProperties">Any properties that are associated with the target property. This guarantees proper updating when related properties are changed.</param>
+        /// Adds a validation rule for a specific property.
+        /// When the error condition is met, the cell will be highlighted and the error message will show as a tooltip.
+        /// </summary>
+        /// <param name="propertyName">The property name that the rule will be applied to.</param>
+        /// <param name="errorCondition">A function that returns true when an error condition is detected.</param>
+        /// <param name="errorMessage">The error message to display in the tooltip when the error condition is true.</param>
+        /// <param name="associatedProperties">Optional. Properties associated with the target property that trigger revalidation when changed.</param>
         protected void AddRule(string propertyName, Func<bool> errorCondition, string errorMessage, string[] associatedProperties = null)
         {
             if (_ruleMap.ContainsKey(propertyName))
@@ -199,11 +205,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Allows selective validation by property. This can be called in a setter with an empty argument to validate the property. 
-    /// By default, this happens in the inotifyproperty changed event. You can define the property name, if you wish for another 
-    /// property other than the one just being set to be validated as well.
-    /// </summary>
-    /// <param name="propertyName">The name of the property to validate.</param>
+        /// Validates a specific property and any associated properties.
+        /// This is typically called automatically via property change notification.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to validate.</param>
         public void ValidateProperty(string propertyName)
         {
             if (_parentDataGrid is not null && _parentDataGrid.SuppressValidation == true)
@@ -292,13 +297,13 @@ namespace GenericControls
         /// Validates that the current row's value (from a callback function) follows the correct order
         /// relative to its neighbors in the parent list (ascending or descending).
         /// </summary>
-        /// <typeparam name="T">Comparable value type (unused but reserved for future).</typeparam>
+        /// <typeparam name="T">Comparable value type (unused but reserved for future use).</typeparam>
         /// <typeparam name="DT">Row type derived from DataGridRowItem.</typeparam>
         /// <param name="callBack">A function that retrieves the double value to compare.</param>
-        /// <param name="propertyName">The property namee used to revalidate neighboring rows if needed.</param>
-        /// <param name="ascending">Whether the order should be ascending (true) or descending (false)</param>
-        /// <param name="canBeEqual">Whether equal values are allowed (true) or not (false)</param>
-        /// <returns>True if the ordering rule is violated; otherwise, false</returns>
+        /// <param name="propertyName">The property name used to revalidate neighboring rows if needed.</param>
+        /// <param name="ascending">Whether the order should be ascending (true) or descending (false).</param>
+        /// <param name="canBeEqual">Whether equal values are allowed (true) or not (false).</param>
+        /// <returns>True if the ordering rule is violated; otherwise, false.</returns>
         protected bool OrderRule<T, DT>(Func<DT, double> callBack, string propertyName, bool @ascending = true, bool canBeEqual = true)
                 where T : IComparable
                 where DT : DataGridRowItem

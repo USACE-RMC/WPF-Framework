@@ -258,8 +258,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the <see cref="ActualPropertyWidth"/> when the control size changes.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;
@@ -307,8 +307,8 @@ namespace GenericControls
         /// <summary>
         /// Handles text change in X coordinate field.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void DataPointX_TextChanged(object sender, TextChangedEventArgs e)
         {
             DataPointChanged();
@@ -317,8 +317,8 @@ namespace GenericControls
         /// <summary>
         /// Handles text change in Y coordinate field.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void DataPointY_TextChanged(object sender, TextChangedEventArgs e)
         {
             DataPointChanged();
@@ -327,8 +327,8 @@ namespace GenericControls
         /// <summary>
         /// Handles text change in Z coordinate field.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void DataPointZ_TextChanged(object sender, TextChangedEventArgs e)
         {
             DataPointChanged();

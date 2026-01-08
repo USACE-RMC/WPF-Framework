@@ -85,7 +85,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Gets/sets the selected date and time for this control.
+        /// Gets or sets the selected date and time for this control.
         /// </summary>
         public DateTime SelectedDateTime
         {
@@ -117,7 +117,7 @@ namespace GenericControls
         public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimeTextBoxControl), new FrameworkPropertyMetadata(false));
 
         /// <summary>
-        /// Gets/sets whether the time should be displayed in 24-hour format.
+        /// Gets or sets whether the time should be displayed in 24-hour format.
         /// </summary>
         public bool Is24Hour
         {
@@ -132,7 +132,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Handles key presses in the text box and updates the binding sources on Enter key press. 
+        /// Handles key presses in the text box and updates the binding sources on Enter key press.
         /// </summary>
         /// <param name="sender">The TextBox sending the event.</param>
         /// <param name="e">Key event data.</param>

@@ -123,15 +123,15 @@ namespace GenericControls
         public MenuItem FileMenu { get; set; }
 
         /// <summary>
-    /// Used in: String.Format( MenuItemFormat, index, filepath, displayPath );
-    /// Default = "_{0}:  {2}"
-    /// </summary>
+        /// Used in: String.Format( MenuItemFormat, index, filepath, displayPath );
+        /// Default = "_{0}:  {2}"
+        /// </summary>
         public string MenuItemFormatOneToNine { get; set; }
 
         /// <summary>
-    /// Used in: String.Format( MenuItemFormat, index, filepath, displayPath );
-    /// Default = "{0}:  {2}"
-    /// </summary>
+        /// Used in: String.Format( MenuItemFormat, index, filepath, displayPath );
+        /// Default = "{0}:  {2}"
+        /// </summary>
         public string MenuItemFormatTenPlus { get; set; }
 
         /// <summary>
@@ -173,9 +173,9 @@ namespace GenericControls
         /// <summary>
         /// Event handler called when the file menu is loaded and attached to the parent control.
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="e"></param>
-        /// <exception cref="ApplicationException"></exception>
+        /// <param name="s">The source object.</param>
+        /// <param name="e">Event arguments.</param>
+        /// <exception cref="ApplicationException">Thrown when parent is not a MenuItem.</exception>
         private void HookFileMenu(object s, RoutedEventArgs e)
         {
             MenuItem parentItem = Parent as MenuItem;
@@ -226,8 +226,8 @@ namespace GenericControls
         /// <summary>
         /// Event handler for when the file menu is opened; regenerates menu items.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void _FileMenu_SubmenuOpened(object sender, RoutedEventArgs e)
         {
             SetMenuItems();
@@ -324,20 +324,20 @@ namespace GenericControls
         // This method is taken from Joe Woodbury's article at: http://www.codeproject.com/KB/cs/mrutoolstripmenu.aspx
 
         /// <summary>
-    /// Shortens a pathname for display purposes.
-    /// </summary>
-    /// <param name="pathname">The pathname to shorten.</param>
-    /// <param name="maxLength">The maximum number of characters to be displayed.</param>
-    /// <remarks>Shortens a pathname by either removing consecutive components of a path
-    /// and/or by removing characters from the end of the filename and replacing
-    /// then with three elipses (...)
-    /// <para>In all cases, the root of the passed path will be preserved in it's entirety.</para>
-    /// <para>If a UNC path is used or the pathname and maxLength are particularly short,
-    /// the resulting path may be longer than maxLength.</para>
-    /// <para>This method expects fully resolved pathnames to be passed to it.
-    /// (Use Path.GetFullPath() to obtain this.)</para>
-    /// </remarks>
-    /// <returns></returns>
+        /// Shortens a pathname for display purposes.
+        /// </summary>
+        /// <param name="pathname">The pathname to shorten.</param>
+        /// <param name="maxLength">The maximum number of characters to be displayed.</param>
+        /// <remarks>Shortens a pathname by either removing consecutive components of a path
+        /// and/or by removing characters from the end of the filename and replacing
+        /// then with three elipses (...)
+        /// <para>In all cases, the root of the passed path will be preserved in it's entirety.</para>
+        /// <para>If a UNC path is used or the pathname and maxLength are particularly short,
+        /// the resulting path may be longer than maxLength.</para>
+        /// <para>This method expects fully resolved pathnames to be passed to it.
+        /// (Use Path.GetFullPath() to obtain this.)</para>
+        /// </remarks>
+        /// <returns>The shortened pathname string.</returns>
         public static string ShortenPathname(string pathname, int maxLength)
         {
             if (pathname.Length <= maxLength)
@@ -540,8 +540,8 @@ namespace GenericControls
         /// <summary>
         /// Event handler for when a recent file menu item is clicked.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The menu item that was clicked.</param>
+        /// <param name="e">Event arguments.</param>
         private void MenuItem_Click(object sender, EventArgs e)
         {
             MenuItem menuItem = sender as MenuItem;

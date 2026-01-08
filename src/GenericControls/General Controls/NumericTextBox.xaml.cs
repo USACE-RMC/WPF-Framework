@@ -212,8 +212,8 @@ namespace GenericControls
         /// <summary>
         /// Delegate for the TextChanged event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The text changed event arguments.</param>
         public delegate void TextChangedEventHandler(object sender, TextChangedEventArgs e);
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace GenericControls
         /// Handles the PreviewTextInput event to restrict input to valid numeric characters,
         /// including handling for decimals and negative signs depending on the control settings.
         /// </summary>
-        /// <param name="sender">Source of the evnet.</param>
+        /// <param name="sender">Source of the event.</param>
         /// <param name="e">The text composition event arguments.</param>
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -265,8 +265,8 @@ namespace GenericControls
         /// Handles the TextChanged event to validate the current text value based on configured constraints.
         /// Sets flags for validity, bounds, and format.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The text changed event arguments.</param>
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             double doubleValue;
@@ -318,7 +318,7 @@ namespace GenericControls
         /// <summary>
         /// Checks if the current value can be parsed as a valid double.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the value is a valid double; otherwise, false.</returns>
         public bool IsValidDouble()
         {
             double doubleValue;
@@ -328,7 +328,7 @@ namespace GenericControls
         /// <summary>
         /// Checks if the current value can be parsed as a valid float (single).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the value is a valid float; otherwise, false.</returns>
         public bool IsValidSingle()
         {
             float singleValue;
@@ -338,7 +338,7 @@ namespace GenericControls
         /// <summary>
         /// Checks if the current value can be parsed and is within integer bounds.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the value is a valid integer; otherwise, false.</returns>
         public bool IsValidInteger()
         {
             if (IsValidDouble() == false)
@@ -353,7 +353,7 @@ namespace GenericControls
         /// <summary>
         /// Returns the current value parsed as a double.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The parsed double value, or 0 if parsing fails.</returns>
         public double GetValueAsDouble()
         {
             double doubleValue;
@@ -364,7 +364,7 @@ namespace GenericControls
         /// <summary>
         /// Returns the current value parsed as a float.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The parsed float value, or 0 if parsing fails.</returns>
         public float GetValueAsSingle()
         {
             float singleValue;
@@ -375,7 +375,7 @@ namespace GenericControls
         /// <summary>
         /// Returns the current value parsed and rounded to an integer, clamped to int range.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The parsed and rounded integer value, clamped to int.MinValue and int.MaxValue.</returns>
         public int GetValueAsInteger()
         {
             double dblValue = GetValueAsDouble();

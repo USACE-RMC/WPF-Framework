@@ -61,14 +61,15 @@ namespace GenericControls
         }
 
         #region Members
+
         /// <summary>
-    /// Dependency property for the text property.
-    /// </summary>
+        /// Dependency property for the file filters property.
+        /// </summary>
         public static DependencyProperty FileFiltersProperty = DependencyProperty.Register(nameof(FileFilters), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata("All files (*.*) |*.*"));
 
         /// <summary>
-    /// Gets and sets the text.
-    /// </summary>
+        /// Gets or sets the file filter string for the file dialog.
+        /// </summary>
         public string FileFilters
         {
             get
@@ -81,15 +82,14 @@ namespace GenericControls
             }
         }
 
-
         /// <summary>
-    /// Dependency property for the text property.
-    /// </summary>
+        /// Dependency property for the text property.
+        /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata(""));
 
         /// <summary>
-    /// Gets and sets the text.
-    /// </summary>
+        /// Gets or sets the file path text.
+        /// </summary>
         public string Text
         {
             get
@@ -103,11 +103,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies <see cref="IsReadOnly"/> dependency property.
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(false));
+
         /// <summary>
-        /// gets/sets the value is read-only.
+        /// Gets or sets a value indicating whether the control is read-only.
         /// </summary>
         public bool IsReadOnly
         {
@@ -122,13 +123,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the title property.
-    /// </summary>
+        /// Dependency property for the title property.
+        /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata("Title"));
 
         /// <summary>
-    /// Gets and sets the title.
-    /// </summary>
+        /// Gets or sets the title text displayed for the control.
+        /// </summary>
         public string Title
         {
             get
@@ -141,15 +142,14 @@ namespace GenericControls
             }
         }
 
-
         /// <summary>
-    /// Dependency property for the max width property.
-    /// </summary>
+        /// Dependency property for the property width.
+        /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the max width of the control.
-    /// </summary>
+        /// Gets or sets the width of the property column in the layout.
+        /// </summary>
         public GridLength PropertyWidth
         {
             get
@@ -163,13 +163,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the max width property.
-    /// </summary>
+        /// Dependency property for the maximum property width.
+        /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the max width of the control.
-    /// </summary>
+        /// Gets or sets the maximum width of the property area.
+        /// </summary>
         public double MaxPropertyWidth
         {
             get
@@ -183,13 +183,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the min width property.
-    /// </summary>
+        /// Dependency property for the minimum property width.
+        /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the min width of the control.
-    /// </summary>
+        /// Gets or sets the minimum width of the property area.
+        /// </summary>
         public double MinPropertyWidth
         {
             get
@@ -203,13 +203,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the show leader line property.
-    /// </summary>
+        /// Dependency property for the show leader line property.
+        /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-    /// Determines of the leader line should be visible. 
-    /// </summary>
+        /// Gets or sets a value indicating whether the leader line should be visible.
+        /// </summary>
         public bool ShowLeaderLine
         {
             get
@@ -223,13 +223,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the show leader line property.
-    /// </summary>
+        /// Dependency property for the show title property.
+        /// </summary>
         public static DependencyProperty ShowTitleProperty = DependencyProperty.Register(nameof(ShowTitle), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
-    /// Determines of the leader line should be visible. 
-    /// </summary>
+        /// Gets or sets a value indicating whether the title should be visible.
+        /// </summary>
         public bool ShowTitle
         {
             get
@@ -243,7 +243,9 @@ namespace GenericControls
         }
 
         #endregion
+
         private double _actualWidth = 0d;
+
         /// <summary>
         /// Gets the actual rendered width of the control.
         /// Updates when the control's size changes.
@@ -277,15 +279,15 @@ namespace GenericControls
         /// <summary>
         /// Delegate for the <see cref="TextChanged"/> event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">Event arguments containing change details.</param>
         public delegate void TextChangedEventHandler(object sender, TextChangedEventArgs e);
 
         /// <summary>
         /// Handles the control's <see cref="FrameworkElement.SizeChanged"/> event to update the <see cref="ActualPropertyWidth"/>.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The control that triggered the event.</param>
+        /// <param name="e">Size changed event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;
@@ -293,7 +295,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Opens a file dialog and updates the <c>Text</c> property with the selected path.
+        /// Opens a file dialog and updates the <see cref="Text"/> property with the selected path.
         /// </summary>
         /// <param name="sender">The button triggering the event.</param>
         /// <param name="e">Routed event arguments.</param>

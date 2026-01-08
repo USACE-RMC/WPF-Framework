@@ -67,12 +67,12 @@ namespace GenericControls
         public static List<VerticalAlignment> AlignmentOptions { get; private set; } = new List<VerticalAlignment>((VerticalAlignment[])Enum.GetValues(typeof(VerticalAlignment)));
 
         /// <summary>
-        /// Identifies the <see cref="Alignment"/> dependence property.
+        /// Identifies the <see cref="Alignment"/> dependency property.
         /// </summary>
         public static DependencyProperty AlignmentProperty = DependencyProperty.Register(nameof(Alignment), typeof(VerticalAlignment), typeof(VerticalAlignmentControl), new UIPropertyMetadata(VerticalAlignment.Stretch));
 
         /// <summary>
-        /// gets/sets the selected vertical alignment value.
+        /// Gets or sets the selected vertical alignment value.
         /// </summary>
         public VerticalAlignment Alignment
         {
@@ -91,7 +91,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(VerticalAlignmentControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the label title for the control.
+        /// Gets or sets the label title for the control.
         /// </summary>
         public string Title
         {
@@ -106,11 +106,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the <see cref="MaxPropertyWidth"/> dependence property.
+        /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(VerticalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width allowed for the control layout.
+        /// Gets or sets the maximum width allowed for the control layout.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -125,11 +125,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the <see cref="MinPropertyWidth"/> dependence property.
+        /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(VerticalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width allowed for the control layout.
+        /// Gets or sets the minimum width allowed for the control layout.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -144,11 +144,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the <see cref="PropertyWidth"/> dependence property.
+        /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(VerticalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the width of the control using GridLength (e.g., auto, star, fixed).
+        /// Gets or sets the width of the control using GridLength (e.g., auto, star, fixed).
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -163,11 +163,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the <see cref="ShowLeaderLine"/> dependence property.
+        /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(VerticalAlignmentControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets whether the control displays a visual leader line.
+        /// Gets or sets whether the control displays a visual leader line.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -182,7 +182,7 @@ namespace GenericControls
         }
         private double _actualWidth = 0d;
         /// <summary>
-        /// gets current rendered width of the property control.
+        /// Gets the current rendered width of the property control.
         /// </summary>
         public double ActualPropertyWidth
         {
@@ -201,7 +201,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// <inheritdoc/>
+        /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
