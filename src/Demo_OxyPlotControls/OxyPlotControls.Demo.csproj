@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
     <ProjectReference Include="..\OxyPlotControls\OxyPlotControls.csproj" />
+    <ProjectReference Include="..\Themes\Themes.csproj" />
   </ItemGroup>
 
   <!-- Embedded resources -->
