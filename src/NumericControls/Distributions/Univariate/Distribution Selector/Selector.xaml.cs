@@ -32,7 +32,7 @@ using Numerics.Data.Statistics;
 using Numerics.Distributions;
 using Numerics.Sampling;
 using OxyPlot.Wpf;
-using OxyplotControls;
+using OxyPlotControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

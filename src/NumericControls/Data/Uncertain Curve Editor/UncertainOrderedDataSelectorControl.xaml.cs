@@ -31,8 +31,9 @@
 using Numerics.Data;
 using Numerics.Distributions;
 using OxyPlot;
+using OxyPlot.Legends;
 using OxyPlot.Wpf;
-using OxyplotControls;
+using OxyPlotControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -88,7 +89,7 @@ namespace NumericControls
             set { SetValue(PlotTitleProperty, value); }
         }
 
-        public static DependencyProperty PlotLegendPositionProperty = DependencyProperty.Register(nameof(PlotLegendPosition), typeof(global::OxyPlot.LegendPosition), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(LegendPosition.BottomRight));
+        public static DependencyProperty PlotLegendPositionProperty = DependencyProperty.Register(nameof(PlotLegendPosition), typeof(global::OxyPlot.Legends.LegendPosition), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(LegendPosition.BottomRight));
 
         public LegendPosition PlotLegendPosition
         {
@@ -381,7 +382,7 @@ namespace NumericControls
 
         public event PlotPropertiesRequestedEventHandler PlotPropertiesRequested;
 
-        public delegate void PlotPropertiesRequestedEventHandler(Plot targetPlot, bool openProperties, OxyplotPropertiesControl.PropertyEXP propertyExpander, object selectedObject);
+        public delegate void PlotPropertiesRequestedEventHandler(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject);
 
         private bool _pastingData = false;
         private bool _isLoaded = false;
@@ -483,7 +484,7 @@ namespace NumericControls
                 ValidationGrid.SelectedCells.Add(new DataGridCellInfo(item, columnHeader.Column));
         }
 
-        private void OxyplotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyplotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
+        private void OxyplotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
         {
             PlotPropertiesRequested?.Invoke(targetPlot, openProperties, propertyExpander, selectedObject);
         }

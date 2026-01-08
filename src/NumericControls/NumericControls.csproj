@@ -45,6 +45,15 @@
     <Reference Include="Numerics">
       <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
     </Reference>
+    <Reference Include="OxyPlot">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf.Shared">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
