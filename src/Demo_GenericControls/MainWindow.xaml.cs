@@ -35,6 +35,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -44,6 +45,8 @@ using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using GenericControls;
 using Themes;
+
+#nullable enable
 
 namespace Demo_GenericControls
 {
@@ -73,6 +76,7 @@ namespace Demo_GenericControls
     /// </list>
     /// </para>
     /// </remarks>
+    [SupportedOSPlatform("windows")]
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region Private Fields
@@ -135,7 +139,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the name property value for NameTextBox and NameTextPropertyControl demonstrations.
         /// </summary>
-        public string NameProperty
+        public new string NameProperty
         {
             get => _nameProperty;
             set => SetProperty(ref _nameProperty, value);
@@ -171,7 +175,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the font weight for FontWeightSelectorControl demonstrations.
         /// </summary>
-        public FontWeight FontWeightProperty
+        public new FontWeight FontWeightProperty
         {
             get => _fontWeightProperty;
             set => SetProperty(ref _fontWeightProperty, value);
@@ -207,7 +211,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the opacity value (0-1) for NumericSliderPropertyControl demonstrations.
         /// </summary>
-        public double OpacityProperty
+        public new double OpacityProperty
         {
             get => _opacityProperty;
             set => SetProperty(ref _opacityProperty, value);
@@ -254,7 +258,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the horizontal alignment for HorizontalAlignmentControl demonstrations.
         /// </summary>
-        public HorizontalAlignment HorizontalAlignmentProperty
+        public new HorizontalAlignment HorizontalAlignmentProperty
         {
             get => _horizontalAlignmentProperty;
             set => SetProperty(ref _horizontalAlignmentProperty, value);
@@ -263,7 +267,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the vertical alignment for VerticalAlignmentControl demonstrations.
         /// </summary>
-        public VerticalAlignment VerticalAlignmentProperty
+        public new VerticalAlignment VerticalAlignmentProperty
         {
             get => _verticalAlignmentProperty;
             set => SetProperty(ref _verticalAlignmentProperty, value);

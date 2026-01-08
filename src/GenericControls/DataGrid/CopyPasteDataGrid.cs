@@ -1090,7 +1090,7 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Get the data grid cell at specified row and column indeces.
+    /// Get the data grid cell at specified row and column indices.
     /// </summary>
     /// <param name="rowindex">The row index of the data grid cell to be returned.</param>
     /// <param name="column">The column index of the data grid cell to be returned.</param>

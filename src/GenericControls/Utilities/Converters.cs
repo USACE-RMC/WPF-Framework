@@ -41,7 +41,7 @@ namespace GenericControls
     #region Boolean Converters
 
     /// <summary>
-    /// Reverses a boolean value in both directions (true <-> false).
+    /// Reverses a boolean value in both directions (true to false and vice versa).
     /// </summary>
     /// <remarks>
     /// <para>
