@@ -633,7 +633,7 @@ namespace GenericControls
                             var rowType = Items[rowIndex + i].GetType();
                             if (rowType == typeof(DataRowView))
                             {
-                                // source is likely a datatable
+                                // source is likely a data table
                                 ((DataRowView)Items[rowIndex + i]).Row[columnIndex + j] = clipboardData[i][j];
                             }
                             else
@@ -722,7 +722,7 @@ namespace GenericControls
                             var rowType = Items[rowIndex + i].GetType();
                             if (rowType == typeof(DataRowView))
                             {
-                                // source is likely a datatable
+                                // source is likely a data table
                                 ((DataRowView)Items[rowIndex + i]).Row[columnIndex + j] = clipboardData[i][j];
                             }
                             else
