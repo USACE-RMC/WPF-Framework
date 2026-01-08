@@ -43,7 +43,7 @@
                   SizeChanged="ControlSizeChanged">
                   <!--Width="{Binding Path=ComboBoxWidth, ElementName=NumericPropertySelector, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
             <ComboBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ComboBoxItem}">
+                <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                     <Setter Property="HorizontalContentAlignment" Value="Right"/>
                 </Style>
             </ComboBox.ItemContainerStyle>
