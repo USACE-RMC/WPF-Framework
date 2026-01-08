@@ -142,8 +142,9 @@
     </Viewbox>
 
     <!-- Copy - Two overlapping documents -->
-    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Back document -->
             <Path Data="M5,1 H14 V12 H5 Z"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -155,15 +156,16 @@
                   Fill="{DynamicResource TextBox.Static.Background}"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Lines on front doc -->
-            <Path Data="M4,7 H9 M4,9 H9 M4,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
+            <Path Data="M4,7 H9 M4,10 H9 M4,13 H7"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
     </Viewbox>
 
     <!-- Copy with Headers - Two documents with header bar -->
-    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Back document -->
             <Path Data="M5,1 H14 V12 H5 Z"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -176,18 +178,19 @@
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Header bar -->
             <Rectangle Width="8" Height="2" Fill="#2563EB"
-                       Margin="2.5,5,0,0"
+                       Margin="3,5,0,0"
                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Lines on front doc -->
-            <Path Data="M4,9 H9 M4,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
+            <Path Data="M4,10 H9 M4,13 H7"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
     </Viewbox>
 
     <!-- Paste - Clipboard with document -->
-    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Clipboard body -->
             <Path Data="M3,3 H13 V15 H3 Z"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -203,8 +206,8 @@
                        Margin="7,0,0,0"
                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Document lines -->
-            <Path Data="M5,7 H11 M5,9 H11 M5,11 H9"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
+            <Path Data="M5,7 H11 M5,10 H11 M5,13 H9"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
     </Viewbox>
