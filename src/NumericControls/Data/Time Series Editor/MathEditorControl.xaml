@@ -276,7 +276,7 @@
                     <Image 
                     Height="24"
                     Margin="0,0,4,0"
-                    Source="pack://application:,,,/NumericControls;component/Resources/calculator_16x.png" 
+                    Source="pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png" 
                     Stretch="None" 
                     RenderOptions.EdgeMode="Aliased" 
                     RenderOptions.BitmapScalingMode="HighQuality"/>
