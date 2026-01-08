@@ -32,11 +32,16 @@
               Visibility="{Binding ShowLeaderLine, ElementName=LineWidthSelector, Converter={StaticResource BoolToVisConverter}}"/>
         
         <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
-                  HorizontalContentAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
                   ItemsSource="{Binding ElementName=LineWidthSelector, Path=WidthOptions}"
                   IsTextSearchEnabled="False"
                   SelectedValue="{Binding Path=SelectedWidth, ElementName=LineWidthSelector, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   SizeChanged="ControlSizeChanged">
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
