@@ -49,9 +49,7 @@
                             <ColumnDefinition Width="34"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" VerticalAlignment="Center" BorderBrush="{x:Null}">
-                            <Line X1="0" X2="30" Y1="0" Y2="0" VerticalAlignment="Center" HorizontalAlignment="Left" Stroke="{DynamicResource EnvironmentWindowText}" Stretch="None" StrokeThickness="{Binding}" SnapsToDevicePixels="True"/>
-                        </Border>
+                        <Rectangle Grid.Column="0" Width="30" Height="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Left" Fill="{DynamicResource EnvironmentWindowText}" SnapsToDevicePixels="True"/>
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{DynamicResource ComboBox.DropDown.Foreground}">
                             <Run Text="{Binding Mode=OneWay}"/><Run Text=" px"/>
                         </TextBlock>
