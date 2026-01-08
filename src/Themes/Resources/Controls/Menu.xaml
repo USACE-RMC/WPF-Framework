@@ -48,8 +48,7 @@
     </Style>
 
     <!-- TopLevelHeader -->
-    <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey}"
-                     TargetType="MenuItem">
+    <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey}" TargetType="MenuItem">
         <Border Name="OuterBorder" BorderThickness="1,1,1,0" BorderBrush="Transparent"
                 TextElement.Foreground="{DynamicResource MenuTopLevelHeaderDefaultText}">
             <Border Name="InnerBorder" BorderThickness="0,0,0,1" BorderBrush="Transparent">
