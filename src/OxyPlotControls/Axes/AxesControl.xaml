@@ -22,14 +22,16 @@
                             <TextBlock
                                 Text="{Binding Title}"
                                 VerticalAlignment="Center"
-                                HorizontalAlignment="Left"/>
+                                HorizontalAlignment="Left"
+                                Foreground="{DynamicResource ComboBox.DropDown.Foreground}"/>
                         </Grid>
                     </DataTemplate>
                     <DataTemplate x:Key="SelectedItemTemplate">
                         <TextBlock
                             Text="{Binding Title}"
                             VerticalAlignment="Center"
-                            TextAlignment="Left"/>
+                            TextAlignment="Left"
+                            Foreground="{DynamicResource EnvironmentWindowText}"/>
                     </DataTemplate>
                     <cntrls:ComboBoxItemTemplateSelector
                         x:Key="itemTemplateSelector"
