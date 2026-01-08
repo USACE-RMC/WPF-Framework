@@ -6,6 +6,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="../Expander/ExpanderStyle.xaml"/>
+        <ResourceDictionary Source="IconDictionary.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     
 
