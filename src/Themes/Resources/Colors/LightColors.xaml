@@ -23,6 +23,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <SolidColorBrush x:Key="EnvironmentWindowText" Color="#FF1E1E1E"/>
     <SolidColorBrush x:Key="EnvironmentWindowBackground" Color="#EEEEF2"/>
+    <SolidColorBrush x:Key="PlotWindowBackground" Color="#EEEEF2"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowText" Color="#FF1E1E1E"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowDisabledText" Color="#FFA2A4A5"/>
 
