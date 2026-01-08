@@ -180,7 +180,7 @@
             <Border Grid.Column="0"
                     BorderBrush="{DynamicResource Button.Static.Border}"
                     BorderThickness="1"
-                    Background="{DynamicResource PropertyGrid.Content.Background}">
+                    Background="{DynamicResource EnvironmentWindowBackground}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -191,6 +191,8 @@
 
                     <oxy:Plot Name="TestPlot"
                               Grid.Column="0"
+                              Background="Transparent"
+                              PlotAreaBackground="White"
                               BorderBrush="Transparent"
                               BorderThickness="0"
                               SnapsToDevicePixels="True"
