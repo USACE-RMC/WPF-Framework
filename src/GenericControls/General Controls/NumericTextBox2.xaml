@@ -24,7 +24,7 @@
                 <Style TargetType="{x:Type Border}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=NumericText, Path=ValueIsValid}" Value="False">
-                            <Setter Property="BorderBrush" Value="Red"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ElementName=NumericText, Path=ValueIsValid}" Value="True">
                             <Setter Property="BorderBrush" Value="{x:Null}"/>

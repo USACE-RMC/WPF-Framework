@@ -46,7 +46,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Height="20" BorderBrush="{x:Null}" Padding="0,3,0,0">
-                            <Line X1="0" X2="30" Y1="0" Y2="0" VerticalAlignment="Center" Stroke="Black" Stretch="None" StrokeThickness="{Binding}"/>
+                            <Line X1="0" X2="30" Y1="0" Y2="0" VerticalAlignment="Center" Stroke="{DynamicResource EnvironmentWindowText}" Stretch="None" StrokeThickness="{Binding}"/>
                         </Border>
                         <Border BorderBrush="{x:Null}" Height="20" Grid.Column="1" Margin="2,0,0,0">
                             <TextBlock Text="{Binding}" TextAlignment="Left" VerticalAlignment="Center"/>
