@@ -31,11 +31,11 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Add Row(s) - Row lines with green plus sign -->
-    <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Row lines -->
             <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
             <!-- Plus sign -->
             <Path Data="M12,4 V12 M8,8 H16"
@@ -45,25 +45,25 @@
     </Viewbox>
 
     <!-- Insert Row(s) - Row lines with blue arrow pointing up -->
-    <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Row lines -->
-            <Path Data="M0,6 H10 M0,10 H10 M0,14 H10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
             <!-- Insert arrow -->
             <Path Data="M12,10 V2 M9,5 L12,2 L15,5"
-                  Stroke="#2563EB" StrokeThickness="1.5" StrokeLineJoin="Round"
+                  Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
     </Viewbox>
 
     <!-- Delete Row(s) - Row lines with red X -->
-    <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Row lines -->
             <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
             <!-- X mark -->
             <Path Data="M9,4 L15,10 M15,4 L9,10"
@@ -78,7 +78,8 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Add Column(s) - Column lines with green plus sign -->
-    <Viewbox x:Key="AddColumnIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="AddColumnIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Column lines -->
             <Path Data="M3,0 V10 M7,0 V10 M11,0 V10"
@@ -96,7 +97,8 @@
     </Viewbox>
 
     <!-- Insert Column(s) - Column lines with blue arrow pointing left -->
-    <Viewbox x:Key="InsertColumnIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="InsertColumnIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Column lines -->
             <Path Data="M6,0 V10 M10,0 V10 M14,0 V10"
@@ -110,7 +112,8 @@
     </Viewbox>
 
     <!-- Delete Column(s) - Column lines with red X -->
-    <Viewbox x:Key="DeleteColumnIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="DeleteColumnIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Column lines -->
             <Path Data="M3,0 V10 M7,0 V10 M11,0 V10"
@@ -129,8 +132,8 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Select All - Grid with selection highlight -->
-    <Viewbox x:Key="SelectAllIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="SelectAllIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+        <Grid Width="16" Height="16"  >
             <!-- Grid cells -->
             <Path Data="M1,1 H15 V15 H1 Z M1,5 H15 M1,10 H15 M5,1 V15 M10,1 V15"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -142,9 +145,8 @@
     </Viewbox>
 
     <!-- Copy - Two overlapping documents -->
-    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False"
-             SnapsToDevicePixels="True" UseLayoutRounding="True">
-        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+        <Grid Width="16" Height="16" >
             <!-- Back document -->
             <Path Data="M5,1 H14 V12 H5 Z"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -163,9 +165,8 @@
     </Viewbox>
 
     <!-- Copy with Headers - Two documents with header bar -->
-    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False"
-             SnapsToDevicePixels="True" UseLayoutRounding="True">
-        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+        <Grid Width="16" Height="16" >
             <!-- Back document -->
             <Path Data="M5,1 H14 V12 H5 Z"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -188,9 +189,8 @@
     </Viewbox>
 
     <!-- Paste - Clipboard with document -->
-    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False"
-             SnapsToDevicePixels="True" UseLayoutRounding="True">
-        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+        <Grid Width="16" Height="16" >
             <!-- Clipboard body -->
             <Path Data="M3,3 H13 V15 H3 Z"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
@@ -217,7 +217,8 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Sort Up (Ascending) - Filled triangle pointing up -->
-    <Viewbox x:Key="SortUpIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortUpIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M8,2 L14,14 H2 Z"
                   Fill="{DynamicResource EnvironmentWindowText}"
@@ -226,7 +227,8 @@
     </Viewbox>
 
     <!-- Sort Down (Descending) - Filled triangle pointing down -->
-    <Viewbox x:Key="SortDownIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortDownIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M8,14 L14,2 H2 Z"
                   Fill="{DynamicResource EnvironmentWindowText}"
@@ -239,7 +241,8 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Sort Ascending Filter - Funnel with up arrow -->
-    <Viewbox x:Key="SortAscFilterIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortAscFilterIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
             <Path Data="M1,1 H10 L6.5,6 V10 L4.5,11 V6 Z"
@@ -255,7 +258,8 @@
     </Viewbox>
 
     <!-- Sort Descending Filter - Funnel with down arrow -->
-    <Viewbox x:Key="SortDescFilterIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortDescFilterIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
             <Path Data="M1,1 H10 L6.5,6 V10 L4.5,11 V6 Z"
@@ -271,7 +275,8 @@
     </Viewbox>
 
     <!-- Clear Filter - Funnel with red X -->
-    <Viewbox x:Key="ClearFilterIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="ClearFilterIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="False" UseLayoutRounding="True" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
             <Path Data="M1,1 H10 L6.5,6 V10 L4.5,11 V6 Z"
@@ -291,7 +296,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Calendar Icon - Calendar with clock overlay -->
-    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Calendar body -->
             <Path Data="M1,3 H12 V14 H1 Z"
