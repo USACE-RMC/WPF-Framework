@@ -143,13 +143,8 @@
     <!-- Vertical Line Annotation Icon -->
     <Viewbox x:Key="VerticalLineAnnotationIcon" Width="16" Height="16" x:Shared="False">
         <Grid Width="16" Height="16">
-            <!-- Vertical line -->
             <Path Data="M 8,1 L 8,15"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-            <!-- Small horizontal markers -->
-            <Path Data="M 5,3 L 11,3 M 5,13 L 11,13"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
@@ -157,13 +152,8 @@
     <!-- Horizontal Line Annotation Icon -->
     <Viewbox x:Key="HorizontalLineAnnotationIcon" Width="16" Height="16" x:Shared="False">
         <Grid Width="16" Height="16">
-            <!-- Horizontal line -->
             <Path Data="M 1,8 L 15,8"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-            <!-- Small vertical markers -->
-            <Path Data="M 3,5 L 3,11 M 13,5 L 13,11"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
