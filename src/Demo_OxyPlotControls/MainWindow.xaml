@@ -135,7 +135,7 @@
                     <TextBlock Text="Series Type:" VerticalAlignment="Center" Margin="0,0,8,0"
                                Foreground="{DynamicResource EnvironmentWindowText}"/>
                     <ComboBox x:Name="Combobox1"
-                              Width="200"
+                              Width="200" VerticalContentAlignment="Center"
                               SelectionChanged="ComboBox_SelectionChanged"
                               Style="{DynamicResource OxyComboBoxStyle}">
                         <ComboBoxItem>Line Series</ComboBoxItem>
@@ -234,7 +234,7 @@
                             Background="{DynamicResource EnvironmentWindowBackground}"
                             BorderBrush="{DynamicResource Button.Static.Border}"
                             BorderThickness="0,0,0,1"
-                            Padding="10,8">
+                            Padding="10,5">
                         <TextBlock Text="Plot Properties"
                                    FontSize="13"
                                    FontWeight="SemiBold"
@@ -248,7 +248,7 @@
                         ShowCloseButton="True"
                         Plot="{Binding ElementName=TestPlot, Mode=OneTime}"
                         ClosePropertiesCalled="PropertiesControl_ClosePropertiesCalled"
-                        Margin="0"/>
+                        Margin="5,0"/>
                 </Grid>
             </Border>
         </Grid>
