@@ -117,7 +117,7 @@ namespace GenericControls
     }
 
     /// <summary>
-    /// A validation rule that checks whether a numeric input falls within a specified range defined by a <see cref="RangeWrapper'"/> 
+    /// A validation rule that checks whether a numeric input falls within a specified range defined by a <see cref="RangeWrapper"/>.
     /// </summary>
     /// <remarks>
     /// <para>

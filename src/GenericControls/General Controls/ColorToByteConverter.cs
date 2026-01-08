@@ -59,9 +59,13 @@ namespace GenericControls
     /// </remarks>
     public enum ColorComponent
     {
+        /// <summary>Alpha (transparency) component.</summary>
         A,
+        /// <summary>Red component.</summary>
         R,
+        /// <summary>Green component.</summary>
         G,
+        /// <summary>Blue component.</summary>
         B
     }
 
@@ -136,11 +140,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a numeric value back into a <see cref="SolidColorBrush"/>, updating only the selected <see cref="ColorComponent"/>.
         /// </summary>
-        /// <param name="value"> A numeric value (0-255) for the selected color component.</param>
+        /// <param name="value">A numeric value (0-255) for the selected color component.</param>
         /// <param name="targetType">The expected target type (<see cref="SolidColorBrush"/>).</param>
         /// <param name="parameter">Not used.</param>
-        /// <param name="culture">A new <see cref="SolidColorBrush"/> with the updated color component, or a fallback transparent brush if parsing fails.</param>
-        /// <returns></returns>
+        /// <param name="culture">The culture to use in the converter (not used).</param>
+        /// <returns>A new <see cref="SolidColorBrush"/> with the updated color component, or a fallback transparent brush if parsing fails.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)

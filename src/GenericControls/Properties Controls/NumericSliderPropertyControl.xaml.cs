@@ -340,11 +340,14 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="TextPropertyWidth"/> dependency property.
+        /// </summary>
         public static DependencyProperty TextPropertyWidthProperty = DependencyProperty.Register(nameof(TextPropertyWidth), typeof(GridLength), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the property width. 
-    /// </summary>
+        /// Gets and sets the width of the text portion of the property control.
+        /// </summary>
         public GridLength TextPropertyWidth
         {
             get

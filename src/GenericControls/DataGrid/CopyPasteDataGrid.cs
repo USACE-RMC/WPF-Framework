@@ -290,6 +290,9 @@ namespace GenericControls
     /// </summary>
         public bool ShowSortContextMenu { get; set; } = true;
 
+        /// <summary>
+        /// Gets the collection of custom menu items to be displayed in the context menu.
+        /// </summary>
         public ObservableCollection<MenuItem> CustomMenuItems
         {
             get
@@ -302,25 +305,84 @@ namespace GenericControls
 
         #region Events
 
+        /// <summary>
+        /// Occurs before data is pasted, allowing cancellation.
+        /// </summary>
         public event PreviewPasteDataEventHandler PreviewPasteData;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="PreviewPasteData"/> event.
+        /// </summary>
+        /// <param name="clipboardData">The clipboard data to be pasted.</param>
+        /// <param name="cancelPaste">Set to true to cancel the paste operation.</param>
         public delegate void PreviewPasteDataEventHandler(string[][] clipboardData, ref bool cancelPaste);
+
+        /// <summary>
+        /// Occurs after data has been pasted.
+        /// </summary>
         public event DataPastedEventHandler DataPasted;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="DataPasted"/> event.
+        /// </summary>
         public delegate void DataPastedEventHandler();
+
+        /// <summary>
+        /// Occurs before rows are added, allowing cancellation.
+        /// </summary>
         public event PreviewAddRowsEventHandler PreviewAddRows;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="PreviewAddRows"/> event.
+        /// </summary>
+        /// <param name="startRowIndex">The index at which rows will be added.</param>
+        /// <param name="nRows">The number of rows to add.</param>
+        /// <param name="cancelAddRows">Set to true to cancel the add operation.</param>
         public delegate void PreviewAddRowsEventHandler(int startRowIndex, int nRows, ref bool cancelAddRows);
+
+        /// <summary>
+        /// Occurs after rows have been added.
+        /// </summary>
         public event RowsAddedEventHandler RowsAdded;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="RowsAdded"/> event.
+        /// </summary>
+        /// <param name="startRowIndex">The index at which rows were added.</param>
+        /// <param name="nRows">The number of rows that were added.</param>
         public delegate void RowsAddedEventHandler(int startRowIndex, int nRows);
+
+        /// <summary>
+        /// Occurs before rows are deleted, allowing cancellation.
+        /// </summary>
         public event PreviewDeleteRowsEventHandler PreviewDeleteRows;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="PreviewDeleteRows"/> event.
+        /// </summary>
+        /// <param name="rowindices">The indices of rows to be deleted.</param>
+        /// <param name="cancel">Set to true to cancel the delete operation.</param>
         public delegate void PreviewDeleteRowsEventHandler(List<int> rowindices, ref bool cancel);
+
+        /// <summary>
+        /// Occurs after rows have been deleted.
+        /// </summary>
         public event RowsDeletedEventHandler RowsDeleted;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="RowsDeleted"/> event.
+        /// </summary>
+        /// <param name="rowindices">The indices of the rows that were deleted.</param>
         public delegate void RowsDeletedEventHandler(List<int> rowindices);
+
+        /// <summary>
+        /// Occurs when a column is sorted.
+        /// </summary>
         public event EventHandler<ValueEventArgs<DataGridColumn>> Sorted;
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
@@ -850,6 +912,11 @@ namespace GenericControls
             InsertRows(insertAtRow, rowCount);
         }
 
+        /// <summary>
+        /// Inserts a specified number of new rows at the given index.
+        /// </summary>
+        /// <param name="startRowIndex">The index at which to insert the new rows.</param>
+        /// <param name="rowCount">The number of rows to insert.</param>
         public void InsertRows(int startRowIndex, int rowCount)
         {
             // Get list of sorted rows
@@ -1110,6 +1177,11 @@ namespace GenericControls
             return false;
         }
 
+        /// <summary>
+        /// Determines whether the specified type is a double type.
+        /// </summary>
+        /// <param name="typeToTest">The type to test.</param>
+        /// <returns>True if the type is double; otherwise, false.</returns>
         public static bool IsDoubleType(Type typeToTest)
         {
             if (typeToTest is null)
@@ -1193,13 +1265,21 @@ namespace GenericControls
         /// <summary>
     /// Helper used to get event args.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the value.</typeparam>
         public class ValueEventArgs<T> : EventArgs
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ValueEventArgs{T}"/> class.
+            /// </summary>
+            /// <param name="value">The value to pass with the event.</param>
             public ValueEventArgs(T value)
             {
                 Value = value;
             }
+
+            /// <summary>
+            /// Gets or sets the value associated with the event.
+            /// </summary>
             public T Value { get; set; }
         }
 

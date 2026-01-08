@@ -173,6 +173,10 @@ namespace GenericControls
 
         }
 
+        /// <summary>
+        /// Retrieves the number of different data formats currently on the clipboard.
+        /// </summary>
+        /// <returns>The number of clipboard formats currently registered.</returns>
         [DllImport("user32")]
         public static extern long CountClipboardFormats();
 
@@ -385,11 +389,12 @@ namespace GenericControls
             }
         }
 
+        private ObservableCollection<Button> _customButtons = new ObservableCollection<Button>();
+
         /// <summary>
         /// Gets the collection of custom buttons added by the user.
         /// These are displayed in the toolbar between the Edit and Clipboard groups.
         /// </summary>
-        private ObservableCollection<Button> _customButtons = new ObservableCollection<Button>();
         public ObservableCollection<Button> CustomButtons
         {
             get

@@ -352,11 +352,27 @@ namespace GenericControls
     /// </remarks>
     public class DoubleConverter : IValueConverter
     {
+        /// <summary>
+        /// Returns the input value unchanged.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The unchanged input value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;
         }
 
+        /// <summary>
+        /// Converts a value back to a double, returning <see cref="Binding.DoNothing"/> if parsing fails.
+        /// </summary>
+        /// <param name="value">The value to convert back.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The parsed double value, or <see cref="Binding.DoNothing"/> if parsing fails.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)

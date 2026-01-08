@@ -283,8 +283,17 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Occurs before the number value changes, allowing the change to be cancelled.
+        /// </summary>
         public event PreviewNumberChangedEventHandler PreviewNumberChanged;
 
+        /// <summary>
+        /// Represents the method that handles the <see cref="PreviewNumberChanged"/> event.
+        /// </summary>
+        /// <param name="oldValue">The previous numeric value.</param>
+        /// <param name="newValue">The new numeric value.</param>
+        /// <param name="cancel">A reference to a boolean that can be set to true to cancel the change.</param>
         public delegate void PreviewNumberChangedEventHandler(object oldValue, object newValue, ref bool cancel);
         private bool _cancelChange = false;
 

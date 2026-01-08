@@ -379,6 +379,11 @@ namespace GenericControls
             return source;
         }
 
+        /// <summary>
+        /// Deletes a logical pen, brush, font, bitmap, region, or palette, freeing all system resources associated with the object.
+        /// </summary>
+        /// <param name="hObject">A handle to the GDI object to delete.</param>
+        /// <returns>true if the function succeeds; otherwise, false.</returns>
         [DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hObject);
 

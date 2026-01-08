@@ -102,6 +102,9 @@ namespace GenericControls
         private Dictionary<string, Type> _propertyTypes = new Dictionary<string, Type>();
 
 
+        /// <summary>
+        /// Identifies the <see cref="ErrorCellBorderBrush"/> dependency property.
+        /// </summary>
         public static DependencyProperty ErrorCellBorderBrushProperty = DependencyProperty.Register(nameof(ErrorCellBorderBrush), typeof(Brush), typeof(ValidationDataGrid), new FrameworkPropertyMetadata(Brushes.Red));
 
         /// <summary>
@@ -119,6 +122,9 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ErrorCellBackgroundBrush"/> dependency property.
+        /// </summary>
         public static DependencyProperty ErrorCellBackgroundBrushProperty = DependencyProperty.Register(nameof(ErrorCellBackgroundBrush), typeof(Brush), typeof(ValidationDataGrid), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 247, 182, 175))));
 
         /// <summary>
@@ -143,12 +149,19 @@ namespace GenericControls
         public bool SuppressValidation { get; private set; } = false;
 
 
+        /// <summary>
+        /// Gets a value indicating whether bulk validation is currently being performed.
+        /// </summary>
         public bool PerformingBulkValidation { get; private set; } = false;
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// Determines whether the BeginEdit command can execute.
+        /// </summary>
+        /// <param name="e">The event arguments containing the execution state.</param>
         protected override void OnCanExecuteBeginEdit(CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;

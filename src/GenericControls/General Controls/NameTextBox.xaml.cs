@@ -96,11 +96,14 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CanBeBlank"/> dependency property.
+        /// </summary>
         public static DependencyProperty CanBeBlankProperty = DependencyProperty.Register(nameof(CanBeBlank), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(false, ValidationProperty_Callback));
 
         /// <summary>
-    /// Value indicating if the name string can be blank/empty or not. Default is no.
-    /// </summary>
+        /// Gets or sets a value indicating if the name string can be blank/empty. Default is false.
+        /// </summary>
     /// <returns></returns>
         public bool CanBeBlank
         {
@@ -114,11 +117,14 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="InvalidCharacters"/> dependency property.
+        /// </summary>
         public static DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextBox), new FrameworkPropertyMetadata(GetDefaultInvalidCharacters(), ValidationProperty_Callback));
 
         /// <summary>
-    /// Array of characters that are invalid. Default is invalid filename characters with the addition of apostrophe, left bracket, and right bracket.
-    /// </summary>
+        /// Gets or sets the array of characters that are invalid. Default is invalid filename characters plus apostrophe and brackets.
+        /// </summary>
     /// <returns></returns>
         public char[] InvalidCharacters
         {
@@ -132,10 +138,13 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="InvalidStrings"/> dependency property.
+        /// </summary>
         public static DependencyProperty InvalidStringsProperty = DependencyProperty.Register(nameof(InvalidStrings), typeof(string[]), typeof(NameTextBox), new FrameworkPropertyMetadata(new string[] { }, ValidationProperty_Callback));
         /// <summary>
-    /// Array of strings that are invalid. Default is no invalid strings.
-    /// </summary>
+        /// Gets or sets the array of strings that are invalid. Default is no invalid strings.
+        /// </summary>
     /// <returns></returns>
         public string[] InvalidStrings
         {
@@ -149,10 +158,13 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsValid"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsValidProperty = DependencyProperty.Register(nameof(IsValid), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(true));
         /// <summary>
-    /// Value indicating if the name string can be blank/empty or not. Default is no.
-    /// </summary>
+        /// Gets or sets a value indicating whether the current text is valid.
+        /// </summary>
     /// <returns></returns>
         public bool IsValid
         {

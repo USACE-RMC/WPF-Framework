@@ -171,10 +171,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Handles <see cref="Loaded"/> event to initialize marker and slider if necessary.
+        /// Handles the <see cref="FrameworkElement.Loaded"/> event to initialize marker and slider if necessary.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Object triggering event.</param>
+        /// <param name="e">Event arguments.</param>
         private void Color_Picker_Loaded(object sender, RoutedEventArgs e)
         {
             if (_isLoaded)
@@ -378,8 +378,11 @@ namespace GenericControls
 
         #region HSV Stuff
 
-        // Generates a list of colors with hues ranging from 0 360
-        // and a saturation and value of 1. 
+        /// <summary>
+        /// Generates a list of colors with hues ranging from 0 to 360
+        /// and a saturation and value of 1.
+        /// </summary>
+        /// <returns>A list of colors representing the HSV spectrum.</returns>
         public static List<Color> GenerateHsvSpectrum()
         {
             var colorsList = new List<Color>(8);
@@ -391,7 +394,13 @@ namespace GenericControls
             return colorsList;
         }
 
-        // Converts an HSV color to an RGB color.
+        /// <summary>
+        /// Converts an HSV color to an RGB color.
+        /// </summary>
+        /// <param name="h">The hue component (0-360).</param>
+        /// <param name="s">The saturation component (0-1).</param>
+        /// <param name="v">The value/brightness component (0-1).</param>
+        /// <returns>A <see cref="Color"/> representing the RGB equivalent.</returns>
         public static Color ConvertHsvToRgb(double h, double s, double v)
         {
 
@@ -529,10 +538,19 @@ namespace GenericControls
         /// </summary>
         public struct HsvColor
         {
+            /// <summary>The hue component (0-360).</summary>
             public double H;
+            /// <summary>The saturation component (0-1).</summary>
             public double S;
+            /// <summary>The value/brightness component (0-1).</summary>
             public double V;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="HsvColor"/> struct.
+            /// </summary>
+            /// <param name="h">The hue component (0-360).</param>
+            /// <param name="s">The saturation component (0-1).</param>
+            /// <param name="v">The value/brightness component (0-1).</param>
             public HsvColor(double h, double s, double v)
             {
                 H = h;

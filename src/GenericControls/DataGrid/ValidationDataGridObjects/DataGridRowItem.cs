@@ -81,11 +81,27 @@ namespace GenericControls
 
         #region Members
 
+        /// <summary>
+        /// Dictionary mapping property names to their validation rules.
+        /// </summary>
         protected Dictionary<string, PropertyRule> _ruleMap = new Dictionary<string, PropertyRule>();
+
+        /// <summary>
+        /// The parent collection containing all row items.
+        /// </summary>
         protected System.Collections.ObjectModel.ObservableCollection<object> _parentList;
+
+        /// <summary>
+        /// Dictionary mapping properties to their associated dependent properties for validation.
+        /// </summary>
         protected Dictionary<string, HashSet<string>> _associatedProperties = new Dictionary<string, HashSet<string>>();
+
         private ValidationDataGrid _parentDataGrid;
         private bool _recurse = true;
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>

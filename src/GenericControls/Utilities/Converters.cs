@@ -620,7 +620,7 @@ namespace GenericControls
     public class AlwaysVisibleConverter : IValueConverter
     {
         /// <summary>
-        /// Always returns <see cref="Visibility.Visibile"/>
+        /// Always returns <see cref="Visibility.Visible"/>.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="targetType"></param>
@@ -695,9 +695,13 @@ namespace GenericControls
         /// </summary>
         public enum TimeTarget
         {
+            /// <summary>Hour component.</summary>
             Hour,
+            /// <summary>Minute component.</summary>
             Minute,
+            /// <summary>Second component.</summary>
             Second,
+            /// <summary>AM/PM meridian indicator.</summary>
             Meridian
         }
 
@@ -828,14 +832,22 @@ namespace GenericControls
     public class DoubleToThicknessConverter : IValueConverter
     {
 
+        /// <summary>Gets or sets the left thickness value.</summary>
         public double Left { get; set; } = 0d;
+        /// <summary>Gets or sets the top thickness value.</summary>
         public double Top { get; set; } = 0d;
+        /// <summary>Gets or sets the right thickness value.</summary>
         public double Right { get; set; } = 0d;
+        /// <summary>Gets or sets the bottom thickness value.</summary>
         public double Bottom { get; set; } = 0d;
-        // 
+        //
+        /// <summary>Gets or sets whether the left side is affected.</summary>
         public bool IsLeft { get; set; } = true;
+        /// <summary>Gets or sets whether the right side is affected.</summary>
         public bool IsRight { get; set; } = true;
+        /// <summary>Gets or sets whether the top side is affected.</summary>
         public bool IsTop { get; set; } = true;
+        /// <summary>Gets or sets whether the bottom side is affected.</summary>
         public bool IsBottom { get; set; } = true;
 
         /// <summary>

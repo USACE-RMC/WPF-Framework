@@ -68,7 +68,9 @@ namespace GenericControls
 
         #region Members
 
-        // This has to implement notify property changed to alert the UI to change color state.
+        /// <summary>
+        /// Occurs when a property value changes. Required for UI binding to update error states.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         private readonly List<Rule> _rules = new List<Rule>();
         private bool _hasError = false;
@@ -112,6 +114,9 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Gets the list of validation rules for this property.
+        /// </summary>
         public List<Rule> Rules
         {
             get
@@ -121,13 +126,25 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Class for the property rule. Each rule has a function and an error message.
-    /// </summary>
+        /// Class for the property rule. Each rule has a function and an error message.
+        /// </summary>
         public class Rule
         {
+            /// <summary>
+            /// The expression that evaluates to true when an error condition is met.
+            /// </summary>
             public readonly Func<bool> Expression;
+
+            /// <summary>
+            /// The error message to display when the expression returns true.
+            /// </summary>
             public readonly string Message;
+
+            /// <summary>
+            /// Indicates whether this rule currently has an error.
+            /// </summary>
             public bool HasError;
+
             internal Rule(Func<bool> expression, string message)
             {
                 Expression = expression;

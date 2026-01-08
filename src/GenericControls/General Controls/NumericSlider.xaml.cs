@@ -233,8 +233,15 @@ namespace GenericControls
             set => ThousandsSeparator = value;
         }
 
+        /// <summary>
+        /// Occurs when the slider value changes.
+        /// </summary>
         public event ValueChangedEventHandler ValueChanged;
 
+        /// <summary>
+        /// Represents the method that handles the <see cref="ValueChanged"/> event.
+        /// </summary>
+        /// <param name="value">The new value of the slider.</param>
         public delegate void ValueChangedEventHandler(double value);
 
         #endregion

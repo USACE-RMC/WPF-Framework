@@ -92,6 +92,9 @@ namespace GenericControls
         /// Gets/sets a value indicating whether the clock is in 24-mode.
         /// </summary>
         public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimePickerControl), new FrameworkPropertyMetadata(false));
+        /// <summary>
+        /// Gets or sets a value indicating whether the clock uses 24-hour format.
+        /// </summary>
         public bool Is24Hour
         {
             get

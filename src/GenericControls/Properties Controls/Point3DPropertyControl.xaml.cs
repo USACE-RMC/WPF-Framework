@@ -62,9 +62,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Gets/sets the number of decimal places to display for the X, Y, and Z values.
+        /// Identifies the <see cref="Decimals"/> dependency property.
         /// </summary>
         public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(Point3DPropertyControl), new UIPropertyMetadata(5, InitializeControl));
+        /// <summary>
+        /// Gets or sets the number of decimal places to display for the X, Y, and Z values.
+        /// </summary>
         public int Decimals
         {
             get

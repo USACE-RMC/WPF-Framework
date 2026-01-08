@@ -49,10 +49,22 @@ namespace GenericControls
     /// </remarks>
     public static class PropertyDefaults
     {
+        /// <summary>
+        /// Default maximum width for property controls.
+        /// </summary>
         public static double DefaultMaxPropertyWidth = double.PositiveInfinity;
+        /// <summary>
+        /// Default minimum width for property controls.
+        /// </summary>
         public static double DefaultMinPropertyWidth = 22d;
+        /// <summary>
+        /// Default width for property controls.
+        /// </summary>
         public static GridLength DefaultPropertyWidth = new GridLength(10d, GridUnitType.Star);
 
+        /// <summary>
+        /// Default height for property controls.
+        /// </summary>
         public static double DefaultPropertyHeight = 22d;
     }
 }

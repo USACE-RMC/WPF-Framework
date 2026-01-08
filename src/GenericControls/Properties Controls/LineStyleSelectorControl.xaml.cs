@@ -73,6 +73,9 @@ namespace GenericControls
         /// Identifies the <see cref="SelectedDashArray"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedDashArrayProperty = DependencyProperty.Register(nameof(SelectedDashArray), typeof(DoubleCollection), typeof(LineStyleSelectorControl), new UIPropertyMetadata(new DoubleCollection()));
+        /// <summary>
+        /// Gets or sets the currently selected dash array pattern.
+        /// </summary>
         public DoubleCollection SelectedDashArray
         {
             get
@@ -221,7 +224,7 @@ namespace GenericControls
     public class DoubleCollectionConverter : IValueConverter
     {
         /// <summary>
-        /// Converts a <see cref="DoubleCollection"/> to a known reference in the predefined <see cref="LineStyleSelectorControl.LineStyleOptions'"/> list.
+        /// Converts a <see cref="DoubleCollection"/> to a known reference in the predefined <see cref="LineStyleSelectorControl.LineStyleOptions"/> list.
         /// </summary>
         /// <param name="value">The object to convert.</param>
         /// <param name="targetType">The target type of the conversion.</param>
