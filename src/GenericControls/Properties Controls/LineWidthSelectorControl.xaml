@@ -53,7 +53,7 @@
                             <Line X1="0" X2="30" Y1="0" Y2="0" VerticalAlignment="Center" HorizontalAlignment="Left" Stroke="{DynamicResource EnvironmentWindowText}" Stretch="None" StrokeThickness="{Binding}" SnapsToDevicePixels="True"/>
                         </Border>
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{DynamicResource ComboBox.DropDown.Foreground}">
-                            <Run Text="{Binding, Mode=OneWay}"/><Run Text=" px"/>
+                            <Run Text="{Binding Mode=OneWay}"/><Run Text=" px"/>
                         </TextBlock>
                     </Grid>
                 </DataTemplate>
