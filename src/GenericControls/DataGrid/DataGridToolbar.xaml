@@ -14,15 +14,15 @@
     <StackPanel Name="ToolbarStackPanel" Orientation="{Binding ElementName=DataGridToolsControl, Path=ToolOrientation, TargetNullValue=Horizontal, FallbackValue=Horizontal}" Background="{Binding ElementName=DataGridToolsControl, Path=BackgroundColor}">
         <!--Add Row(s)-->
         <Button x:Name="AddRowsButton" ToolTip="Add row(s) to the bottom of the table" Height="24" Width="24" Cursor="Hand" Click="AddRowsButton_Click">
-            <ContentControl Content="{DynamicResource AddRowIcon}"/>
+            <ContentControl Content="{DynamicResource AddRowIcon}" SnapsToDevicePixels="True"/>
         </Button>
         <!--Insert Row(s)-->
         <Button x:Name="InsertRowsButton" ToolTip="Insert row(s) above selected cell(s) in table" Height="24" Width="24" Cursor="Hand" Click="InsertRowsButton_Click">
-            <ContentControl Content="{DynamicResource InsertRowIcon}"/>
+            <ContentControl Content="{DynamicResource InsertRowIcon}" SnapsToDevicePixels="True"/>
         </Button>
         <!--Delete Row(s)-->
         <Button x:Name="DeleteRowsButton" ToolTip="Delete row(s) from the table" Height="24" Width="24" Cursor="Hand" Click="DeleteRowsButton_Click">
-            <ContentControl Content="{DynamicResource DeleteRowIcon}"/>
+            <ContentControl Content="{DynamicResource DeleteRowIcon}" SnapsToDevicePixels="True"/>
         </Button>
 
         <!--Separator-->
@@ -34,22 +34,22 @@
         <Separator x:Name="EditSelectSeparator" />
         <!--Select All-->
         <Button x:Name="SelectAllButton" ToolTip="Select all cells" Height="24" Width="24" Cursor="Hand" Click="SelectAllButton_Click">
-            <ContentControl Content="{DynamicResource SelectAllIcon}"/>
+            <ContentControl Content="{DynamicResource SelectAllIcon}" SnapsToDevicePixels="True"/>
         </Button>
 
         <!--Copy-->
         <Button x:Name="CopyButton" ToolTip="Copy selected cells" Height="24" Width="24" Cursor="Hand" Click="CopyButton_Click">
-            <ContentControl Content="{DynamicResource CopyIcon}"/>
+            <ContentControl Content="{DynamicResource CopyIcon}" SnapsToDevicePixels="True"/>
         </Button>
 
         <!--Copy with Headers-->
         <Button x:Name="CopyWithHeadersButton" ToolTip="Copy selected cells with table headers" Height="24" Width="24" Cursor="Hand" Click="CopyWithHeadersButton_Click">
-            <ContentControl Content="{DynamicResource CopyWithHeadersIcon}"/>
+            <ContentControl Content="{DynamicResource CopyWithHeadersIcon}" SnapsToDevicePixels="True"/>
         </Button>
 
         <!--Paste-->
         <Button x:Name="PasteButton" ToolTip="Paste from the clipboard into the table" Height="24" Width="24" Cursor="Hand" Click="PasteButton_Click">
-            <ContentControl Content="{DynamicResource PasteIcon}"/>
+            <ContentControl Content="{DynamicResource PasteIcon}" SnapsToDevicePixels="True"/>
         </Button>
 
     </StackPanel>
