@@ -423,10 +423,48 @@ namespace OxyPlotControls
 
         /// <summary>
         /// When Add button is clicked, show context menu.
+        /// Creates the context menu dynamically to ensure it always uses the current theme.
         /// </summary>
         private void AddAnnotationToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            AddAnnotationToggleButton.ContextMenu.IsOpen = true;
+            // Create context menu dynamically to ensure it picks up current theme
+            var annotationMenu = new ContextMenu();
+
+            // Apply MetroContextMenu style from application resources
+            var metroStyle = Application.Current.TryFindResource("MetroContextMenu") as Style;
+            if (metroStyle != null)
+            {
+                annotationMenu.Style = metroStyle;
+            }
+
+            // Helper to create menu item with icon
+            MenuItem CreateAnnotationMenuItem(string header, string iconKey, RoutedEventHandler clickHandler)
+            {
+                var menuItem = new MenuItem { Header = header };
+                var icon = TryFindResource(iconKey);
+                if (icon != null)
+                {
+                    menuItem.Icon = new ContentControl { Content = icon };
+                }
+                menuItem.Click += clickHandler;
+                return menuItem;
+            }
+
+            // Add annotation menu items
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Arrow Annotation", "ArrowAnnotationIcon", AddArrowAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Text Annotation", "TextAnnotationIcon", AddTextAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Vertical Line Annotation", "VerticalLineAnnotationIcon", AddVerticalLineAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Horizontal Line Annotation", "HorizontalLineAnnotationIcon", AddHorizontalLineAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Rectangle Annotation", "RectangleAnnotationIcon", AddRectangleAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Ellipse Annotation", "EllipseAnnotationIcon", AddEllipseAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Point Annotation", "PointAnnotationIcon", AddPointAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Polygon Annotation", "PolygonAnnotationIcon", AddPolygonAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Polyline Annotation", "PolylineAnnotationIcon", AddPolylineAnnotationItem_Click));
+
+            // Position and show the menu
+            annotationMenu.PlacementTarget = AddAnnotationToggleButton;
+            annotationMenu.Placement = PlacementMode.Bottom;
+            annotationMenu.IsOpen = true;
         }
 
         /// <summary>

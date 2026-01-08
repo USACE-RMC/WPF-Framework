@@ -54,7 +54,7 @@
                 Style="{Binding ElementName=OxyplotProperties, Path=BackButtonStyle}"
                 Visibility="{Binding ElementName=OxyplotProperties, Path=ShowCloseButton, Converter={StaticResource VisibilityConverter}}"
                 Click="ClosePropertiesButton_Click">
-            <Viewbox Width="16" Height="16" Margin="4">
+            <Viewbox Width="11" Height="10" Margin="4">
                 <ContentControl Content="{DynamicResource ClosePropertiesIcon}"/>
             </Viewbox>
         </Button>

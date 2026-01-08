@@ -35,55 +35,6 @@
             </Viewbox>
         </Button>
         <Button x:Name="AddAnnotationToggleButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Margin="1,1,1,2" Padding="0" ToolTip="Add Annotation" Click="AddAnnotationToggleButton_Click">
-            <Button.ContextMenu>
-                <ContextMenu Style="{DynamicResource MetroContextMenu}">
-                    <MenuItem Name="AddArrowAnnotationItem" Header="Arrow Annotation" Click="AddArrowAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource ArrowAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddTextAnnotationItem" Header="Text Annotation" Click="AddTextAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource TextAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddVerticalLineAnnotationItem" Header="Vertical Line Annotation" Click="AddVerticalLineAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource VerticalLineAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddHorizontalLineAnnotationItem" Header="Horizontal Line Annotation" Click="AddHorizontalLineAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource HorizontalLineAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddRectangleAnnotationItem" Header="Rectangle Annotation" Click="AddRectangleAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource RectangleAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddEllipseAnnotationItem" Header="Ellipse Annotation" Click="AddEllipseAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource EllipseAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddPointAnnotationItem" Header="Point Annotation" Click="AddPointAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource PointAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddPolygonAnnotationItem" Header="Polygon Annotation" Click="AddPolygonAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource PolygonAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Name="AddPolylineAnnotationItem" Header="Polyline Annotation" Click="AddPolylineAnnotationItem_Click">
-                        <MenuItem.Icon>
-                            <ContentControl Content="{DynamicResource PolylineAnnotationIcon}"/>
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </ContextMenu>
-            </Button.ContextMenu>
             <Viewbox Width="{Binding ElementName=OxyToolBar, Path=IconSize}" Height="{Binding ElementName=OxyToolBar, Path=IconSize}">
                 <ContentControl Padding="0" Content="{StaticResource PlusIcon}" />
             </Viewbox>
