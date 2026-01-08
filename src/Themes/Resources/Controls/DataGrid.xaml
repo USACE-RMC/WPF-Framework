@@ -281,6 +281,52 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Select All Button Style (top-left corner) -->
+    <Style x:Key="{ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <Border x:Name="Border"
+                                BorderBrush="{DynamicResource DataGrid.Header.Border}"
+                                BorderThickness="0,0,1,1"
+                                SnapsToDevicePixels="True">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">
+                                    <LinearGradientBrush.GradientStops>
+                                        <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
+                                        <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
+                                    </LinearGradientBrush.GradientStops>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <Polygon x:Name="Arrow"
+                                 Fill="{DynamicResource DataGrid.Header.Foreground}"
+                                 HorizontalAlignment="Right"
+                                 Margin="8,8,3,3"
+                                 Opacity="0.15"
+                                 Points="0,10 10,10 10,0"
+                                 Stretch="Uniform"
+                                 VerticalAlignment="Bottom"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{DynamicResource DataGrid.Header.MouseOver.Background}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="Background"
+                                    Value="{DynamicResource DataGrid.Header.MouseOver.Background}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Arrow" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Main DataGrid Style -->
     <Style x:Key="DataGridStyle" TargetType="{x:Type DataGrid}">
         <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
