@@ -29,13 +29,11 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
-using GenericControls;
 using OxyPlot;
 using OxyPlot.Legends;
 using Wpf = OxyPlot.Wpf;
@@ -115,74 +113,6 @@ namespace OxyPlotControls
         public LegendControl()
         {
             InitializeComponent();
-            Loaded += LegendControl_Loaded;
-        }
-
-        /// <summary>
-        /// Handles the Loaded event to wire up property change handlers for legend item controls.
-        /// </summary>
-        private void LegendControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Subscribe to property changes on the ITEMS section controls
-            SubscribeToPropertyChanges();
-        }
-
-        /// <summary>
-        /// Subscribes to dependency property changes on legend controls to trigger plot invalidation.
-        /// </summary>
-        private void SubscribeToPropertyChanges()
-        {
-            // TITLE section controls
-            // Title Text
-            var textDescriptor = DependencyPropertyDescriptor.FromProperty(
-                TextPropertyControl.TextProperty, typeof(TextPropertyControl));
-            textDescriptor?.AddValueChanged(LegendTitleTextControl, OnLegendItemPropertyChanged);
-
-            // Title Color
-            var selectedColorDescriptor = DependencyPropertyDescriptor.FromProperty(
-                ColorPropertyControl.SelectedColorProperty, typeof(ColorPropertyControl));
-            selectedColorDescriptor?.AddValueChanged(LegendTitleColorControl, OnLegendItemPropertyChanged);
-
-            // Title Font
-            var fontFamilyDescriptor = DependencyPropertyDescriptor.FromProperty(
-                FontSelectorControl.FontFamilyStringProperty, typeof(FontSelectorControl));
-            fontFamilyDescriptor?.AddValueChanged(LegendTitleFontControl, OnLegendItemPropertyChanged);
-
-            // Title Font Size
-            var selectedNumberDescriptor = DependencyPropertyDescriptor.FromProperty(
-                NumericPropertySelectorControl.SelectedNumberProperty, typeof(NumericPropertySelectorControl));
-            selectedNumberDescriptor?.AddValueChanged(LegendTitleFontSizeControl, OnLegendItemPropertyChanged);
-
-            // Title Font Weight
-            var selectedFontWeightDescriptor = DependencyPropertyDescriptor.FromProperty(
-                FontWeightSelectorControl.SelectedFontWeightProperty, typeof(FontWeightSelectorControl));
-            selectedFontWeightDescriptor?.AddValueChanged(LegendTitleFontWeightControl, OnLegendItemPropertyChanged);
-
-            // ITEMS section controls
-            // Text Color
-            selectedColorDescriptor?.AddValueChanged(LegendTextColorControl, OnLegendItemPropertyChanged);
-
-            // Legend Font
-            fontFamilyDescriptor?.AddValueChanged(LegendFontControl, OnLegendItemPropertyChanged);
-
-            // Legend Font Size
-            selectedNumberDescriptor?.AddValueChanged(LegendFontSizeControl, OnLegendItemPropertyChanged);
-
-            // Legend Font Weight
-            selectedFontWeightDescriptor?.AddValueChanged(LegendFontWeightControl, OnLegendItemPropertyChanged);
-
-            // Item Alignment
-            var alignmentDescriptor = DependencyPropertyDescriptor.FromProperty(
-                HorizontalAlignmentControl.AlignmentProperty, typeof(HorizontalAlignmentControl));
-            alignmentDescriptor?.AddValueChanged(LegendItemAlignmentControl, OnLegendItemPropertyChanged);
-        }
-
-        /// <summary>
-        /// Handles property changes on legend item controls and invalidates the plot.
-        /// </summary>
-        private void OnLegendItemPropertyChanged(object? sender, EventArgs e)
-        {
-            Plot?.InvalidatePlot(true);
         }
 
         /// <summary>
@@ -253,9 +183,6 @@ namespace OxyPlotControls
             // Legend Item Properties
             var itemProperties = new XElement("Items");
             itemProperties.SetAttributeValue(nameof(plot.LegendTextColor), plot.LegendTextColor.ToString());
-            itemProperties.SetAttributeValue(nameof(plot.LegendFont), plot.LegendFont);
-            itemProperties.SetAttributeValue(nameof(plot.LegendFontSize), plot.LegendFontSize.ToString("G17", CultureInfo.InvariantCulture));
-            itemProperties.SetAttributeValue(nameof(plot.LegendFontWeight), fwc.ConvertToInvariantString(plot.LegendFontWeight));
             itemProperties.SetAttributeValue(nameof(plot.LegendSymbolLength), plot.LegendSymbolLength.ToString("G17", CultureInfo.InvariantCulture));
             itemProperties.SetAttributeValue(nameof(plot.LegendSymbolMargin), plot.LegendSymbolMargin.ToString("G17", CultureInfo.InvariantCulture));
             itemProperties.SetAttributeValue(nameof(plot.LegendSymbolPlacement), plot.LegendSymbolPlacement.ToString());
@@ -363,15 +290,6 @@ namespace OxyPlotControls
                 Color legendTextColor;
                 if (OxyPlotSettingsSerializer.GetColorAttribute(itemsElement, nameof(plot.LegendTextColor), out legendTextColor)) plot.LegendTextColor = legendTextColor;
 
-                string? legendFont;
-                if (OxyPlotSettingsSerializer.GetStringAttribute(itemsElement, nameof(plot.LegendFont), out legendFont)) plot.LegendFont = legendFont;
-
-                double legendFontSize;
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(itemsElement, nameof(plot.LegendFontSize), out legendFontSize)) plot.LegendFontSize = legendFontSize;
-
-                FontWeight legendFontWeight;
-                if (OxyPlotSettingsSerializer.GetFontWeightAttribute(itemsElement, nameof(plot.LegendFontWeight), fontWeightConverter, out legendFontWeight)) plot.LegendFontWeight = legendFontWeight;
-
                 double legendSymbolLength;
                 if (OxyPlotSettingsSerializer.GetDoubleAttribute(itemsElement, nameof(plot.LegendSymbolLength), out legendSymbolLength)) plot.LegendSymbolLength = legendSymbolLength;
 
@@ -398,9 +316,6 @@ namespace OxyPlotControls
 
                 // Backward compatibility
                 if (OxyPlotSettingsSerializer.GetColorAttribute(itemsElement, "Color", out legendTextColor)) plot.LegendTextColor = legendTextColor;
-                if (OxyPlotSettingsSerializer.GetStringAttribute(itemsElement, "Font", out legendFont)) plot.LegendFont = legendFont;
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(itemsElement, "FontSize", out legendFontSize)) plot.LegendFontSize = legendFontSize;
-                if (OxyPlotSettingsSerializer.GetFontWeightAttribute(itemsElement, "FontWeight", fontWeightConverter, out legendFontWeight)) plot.LegendFontWeight = legendFontWeight;
                 if (OxyPlotSettingsSerializer.GetDoubleAttribute(itemsElement, "SymbolLength", out legendSymbolLength)) plot.LegendSymbolLength = legendSymbolLength;
                 if (OxyPlotSettingsSerializer.GetDoubleAttribute(itemsElement, "SymbolMargin", out legendSymbolMargin)) plot.LegendSymbolMargin = legendSymbolMargin;
                 if (OxyPlotSettingsSerializer.GetEnumAttribute(itemsElement, "SymbolPlacement", out legendSymbolPlacement)) plot.LegendSymbolPlacement = legendSymbolPlacement;
