@@ -4,123 +4,159 @@
     <!--
     GenericControls Icon Dictionary
 
-    This dictionary contains vector icons that are theme-aware and can be used
-    throughout the GenericControls library and beyond.
+    This dictionary contains vector icons that are theme-aware and render crisply
+    at any size. Icons are designed to match the original PNG icons in style.
 
     Icons use DynamicResource bindings for colors that should change with themes:
     - EnvironmentWindowText: Main icon stroke/fill color (adapts to light/dark)
     - TextBox.Static.Background: Background fill for document icons
-    - DataGrid.Header.Border: Header elements
 
     Semantic colors (remain consistent across themes):
     - #16A34A (Green): Add/Plus operations
     - #DC2626 (Red): Delete/Remove operations
     - #2563EB (Blue): Insert/Selection/Filter operations
 
+    For crisp rendering, icons use:
+    - SnapsToDevicePixels="True"
+    - UseLayoutRounding="True"
+    - RenderOptions.EdgeMode="Aliased" where appropriate
+    - Pixel-aligned coordinates
+
     Usage: Reference icons with StaticResource or DynamicResource
     Example: <ContentControl Content="{StaticResource AddRowIcon}"/>
-
-    For buttons, wrap in a Viewbox for consistent sizing:
-    <Viewbox Width="16" Height="16">
-        <ContentControl Content="{StaticResource AddRowIcon}"/>
-    </Viewbox>
     -->
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- ROW OPERATIONS                                                               -->
+    <!-- ROW OPERATIONS - Grid table design matching PNG icons                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Add Row(s) - Row lines with green plus sign -->
-    <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Row lines -->
-            <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- Plus sign -->
-            <Path Data="M12,4 V12 M8,8 H16"
-                  Stroke="#16A34A" StrokeThickness="2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+    <!-- Add Row(s) - Grid table with green plus sign -->
+    <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Table grid background -->
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="0" Y1="4" X2="11" Y2="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="0" Y1="7" X2="11" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="4" Y1="0" X2="4" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="8" Y1="0" X2="8" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Green plus sign -->
+            <Path Data="M13,8 V14 M10,11 H16" Stroke="#16A34A" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
 
-    <!-- Insert Row(s) - Row lines with blue arrow pointing up -->
-    <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Row lines -->
-            <Path Data="M0,6 H10 M0,10 H10 M0,14 H10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Insert arrow -->
-            <Path Data="M12,10 V2 M9,5 L12,2 L15,5"
-                  Stroke="#2563EB" StrokeThickness="1.5" StrokeLineJoin="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+    <!-- Insert Row(s) - Grid table with blue insert arrow -->
+    <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Table grid background -->
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="0" Y1="4" X2="11" Y2="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="0" Y1="7" X2="11" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="4" Y1="0" X2="4" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="8" Y1="0" X2="8" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Highlight row for insert -->
+            <Rectangle Width="11" Height="3" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Fill="#2563EB" Opacity="0.3" Margin="0,4,0,0"/>
+            <!-- Blue arrow pointing into row -->
+            <Path Data="M13,14 V7 M10,10 L13,7 L16,10" Stroke="#2563EB" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
         </Grid>
     </Viewbox>
 
-    <!-- Delete Row(s) - Row lines with red X -->
-    <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Row lines -->
-            <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- X mark -->
-            <Path Data="M9,4 L15,10 M15,4 L9,10"
-                  Stroke="#DC2626" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+    <!-- Delete Row(s) - Grid table with red X -->
+    <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Table grid background -->
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="0" Y1="4" X2="11" Y2="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="0" Y1="7" X2="11" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="4" Y1="0" X2="4" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="8" Y1="0" X2="8" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Red X mark -->
+            <Path Data="M10,8 L15,13 M15,8 L10,13" Stroke="#DC2626" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- COLUMN OPERATIONS                                                            -->
+    <!-- COLUMN OPERATIONS - Grid table design matching PNG icons                     -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Add Column(s) - Column lines with green plus sign -->
-    <Viewbox x:Key="AddColumnIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Column lines -->
-            <Path Data="M3,0 V10 M7,0 V10 M11,0 V10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="1,0,0,0"/>
-            <!-- Plus sign -->
-            <Path Data="M12,12 V16 M10,14 H14"
-                  Stroke="#16A34A" StrokeThickness="2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Additional plus arms for visibility -->
-            <Path Data="M8,8 H16 M12,4 V12"
-                  Stroke="#16A34A" StrokeThickness="2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+    <!-- Add Column(s) - Grid table with green plus sign -->
+    <Viewbox x:Key="AddColumnIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Table grid background -->
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="0" Y1="4" X2="11" Y2="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="0" Y1="7" X2="11" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="4" Y1="0" X2="4" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="8" Y1="0" X2="8" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Green plus sign -->
+            <Path Data="M13,8 V14 M10,11 H16" Stroke="#16A34A" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
 
-    <!-- Insert Column(s) - Column lines with blue arrow pointing left -->
-    <Viewbox x:Key="InsertColumnIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Column lines -->
-            <Path Data="M6,0 V10 M10,0 V10 M14,0 V10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Insert arrow pointing left -->
-            <Path Data="M10,12 H2 M5,9 L2,12 L5,15"
-                  Stroke="#2563EB" StrokeThickness="1.5" StrokeLineJoin="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+    <!-- Insert Column(s) - Grid table with blue insert arrow -->
+    <Viewbox x:Key="InsertColumnIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Table grid background -->
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="0" Y1="4" X2="11" Y2="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="0" Y1="7" X2="11" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="4" Y1="0" X2="4" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="8" Y1="0" X2="8" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Highlight column for insert -->
+            <Rectangle Width="4" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Fill="#2563EB" Opacity="0.3" Margin="4,0,0,0"/>
+            <!-- Blue arrow pointing into column -->
+            <Path Data="M15,13 H8 M11,10 L8,13 L11,16" Stroke="#2563EB" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
         </Grid>
     </Viewbox>
 
-    <!-- Delete Column(s) - Column lines with red X -->
-    <Viewbox x:Key="DeleteColumnIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Column lines -->
-            <Path Data="M3,0 V10 M7,0 V10 M11,0 V10"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="1,0,0,0"/>
-            <!-- X mark -->
-            <Path Data="M9,10 L15,16 M15,10 L9,16"
-                  Stroke="#DC2626" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+    <!-- Delete Column(s) - Grid table with red X -->
+    <Viewbox x:Key="DeleteColumnIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Table grid background -->
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="0" Y1="4" X2="11" Y2="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="0" Y1="7" X2="11" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="4" Y1="0" X2="4" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="8" Y1="0" X2="8" Y2="11" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Red X mark -->
+            <Path Data="M10,8 L15,13 M15,8 L10,13" Stroke="#DC2626" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
 
@@ -129,83 +165,84 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Select All - Grid with selection highlight -->
-    <Viewbox x:Key="SelectAllIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Grid cells -->
-            <Path Data="M1,1 H15 V15 H1 Z M1,5 H15 M1,10 H15 M5,1 V15 M10,1 V15"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <!-- Selection highlight -->
-            <Rectangle Width="14" Height="14" Fill="#2563EB" Opacity="0.3"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    <Viewbox x:Key="SelectAllIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
+            <!-- Selection highlight background -->
+            <Rectangle Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Fill="#2563EB" Opacity="0.25"/>
+            <!-- Table grid outline -->
+            <Rectangle Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="Transparent"/>
+            <!-- Horizontal grid lines -->
+            <Line X1="1" Y1="5" X2="15" Y2="5" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="1" Y1="10" X2="15" Y2="10" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <!-- Vertical grid lines -->
+            <Line X1="5" Y1="1" X2="5" Y2="15" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="10" Y1="1" X2="10" Y2="15" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
         </Grid>
     </Viewbox>
 
     <!-- Copy - Two overlapping documents -->
-    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="CopyIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Back document -->
-            <Path Data="M5,1 H14 V12 H5 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="10" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="5,0,0,0"/>
             <!-- Front document -->
-            <Path Data="M2,4 H11 V15 H2 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Lines on front doc -->
-            <Path Data="M4,7 H9 M4,9 H9 M4,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="10" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="1,4,0,0"/>
+            <!-- Document lines -->
+            <Line X1="3" Y1="7" X2="9" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="3" Y1="10" X2="9" Y2="10" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="3" Y1="13" X2="7" Y2="13" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
         </Grid>
     </Viewbox>
 
     <!-- Copy with Headers - Two documents with header bar -->
-    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Back document -->
-            <Path Data="M5,1 H14 V12 H5 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="10" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="5,0,0,0"/>
             <!-- Front document -->
-            <Path Data="M2,4 H11 V15 H2 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Header bar -->
-            <Rectangle Width="8" Height="2" Fill="#2563EB"
-                       Margin="2.5,5,0,0"
-                       VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Lines on front doc -->
-            <Path Data="M4,9 H9 M4,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="10" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="1,4,0,0"/>
+            <!-- Blue header bar -->
+            <Rectangle Width="8" Height="2" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Fill="#2563EB" Margin="2,5,0,0"/>
+            <!-- Document lines -->
+            <Line X1="3" Y1="10" X2="9" Y2="10" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="3" Y1="13" X2="7" Y2="13" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
         </Grid>
     </Viewbox>
 
     <!-- Paste - Clipboard with document -->
-    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="PasteIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Clipboard body -->
-            <Path Data="M3,3 H13 V15 H3 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Clipboard clip -->
-            <Path Data="M6,1 H10 V4 H6 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource DataGrid.Header.Border}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Clipboard clip inner -->
-            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
-                       Margin="7,0,0,0"
-                       VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="12" Height="13" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}"/>
+            <!-- Clipboard clip top -->
+            <Rectangle Width="6" Height="3" HorizontalAlignment="Center" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource EnvironmentWindowText}" Margin="0,1,0,0"/>
+            <!-- Clip hole -->
+            <Ellipse Width="2" Height="2" HorizontalAlignment="Center" VerticalAlignment="Top"
+                     Fill="{DynamicResource TextBox.Static.Background}" Margin="0,0,0,0"/>
             <!-- Document lines -->
-            <Path Data="M5,7 H11 M5,9 H11 M5,11 H9"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Line X1="4" Y1="7" X2="12" Y2="7" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="4" Y1="10" X2="12" Y2="10" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
+            <Line X1="4" Y1="13" X2="10" Y2="13" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
         </Grid>
     </Viewbox>
 
@@ -214,20 +251,20 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Sort Up (Ascending) - Filled triangle pointing up -->
-    <Viewbox x:Key="SortUpIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortUpIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
-            <Path Data="M8,2 L14,14 H2 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"
-                  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Path Data="M8,2 L14,13 H2 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}"/>
         </Grid>
     </Viewbox>
 
     <!-- Sort Down (Descending) - Filled triangle pointing down -->
-    <Viewbox x:Key="SortDownIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortDownIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
-            <Path Data="M8,14 L14,2 H2 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"
-                  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Path Data="M8,14 L14,3 H2 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}"/>
         </Grid>
     </Viewbox>
 
@@ -236,50 +273,50 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Sort Ascending Filter - Funnel with up arrow -->
-    <Viewbox x:Key="SortAscFilterIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortAscFilterIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
-            <Path Data="M1,1 H10 L6.5,6 V10 L4.5,11 V6 Z"
-                  Stroke="#2563EB" StrokeThickness="1.2"
+            <Path Data="M1,1 L6,7 V11 L4,12 V7 L-1,1 Z"
+                  Stroke="#2563EB" StrokeThickness="1.5"
                   Fill="Transparent" StrokeLineJoin="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                  HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <!-- Up arrow -->
-            <Path Data="M13,14 V6 M10,9 L13,6 L16,9"
-                  Stroke="#2563EB" StrokeThickness="1.5" StrokeLineJoin="Round"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Path Data="M12,14 V5 M9,8 L12,5 L15,8"
+                  Stroke="#2563EB" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
         </Grid>
     </Viewbox>
 
     <!-- Sort Descending Filter - Funnel with down arrow -->
-    <Viewbox x:Key="SortDescFilterIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SortDescFilterIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
-            <Path Data="M1,1 H10 L6.5,6 V10 L4.5,11 V6 Z"
-                  Stroke="#2563EB" StrokeThickness="1.2"
+            <Path Data="M1,1 L6,7 V11 L4,12 V7 L-1,1 Z"
+                  Stroke="#2563EB" StrokeThickness="1.5"
                   Fill="Transparent" StrokeLineJoin="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                  HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <!-- Down arrow -->
-            <Path Data="M13,4 V12 M10,9 L13,12 L16,9"
-                  Stroke="#2563EB" StrokeThickness="1.5" StrokeLineJoin="Round"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Path Data="M12,3 V12 M9,9 L12,12 L15,9"
+                  Stroke="#2563EB" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
         </Grid>
     </Viewbox>
 
     <!-- Clear Filter - Funnel with red X -->
-    <Viewbox x:Key="ClearFilterIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="ClearFilterIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Grid Width="16" Height="16">
             <!-- Filter funnel -->
-            <Path Data="M1,1 H10 L6.5,6 V10 L4.5,11 V6 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
+            <Path Data="M1,1 L6,7 V11 L4,12 V7 L-1,1 Z"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
                   Fill="Transparent" StrokeLineJoin="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- X mark -->
-            <Path Data="M10,6 L16,12 M16,6 L10,12"
+                  HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <!-- Red X mark -->
+            <Path Data="M9,5 L15,11 M15,5 L9,11"
                   Stroke="#DC2626" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
 
@@ -288,38 +325,39 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Calendar Icon - Calendar with clock overlay -->
-    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
+    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
+        <Grid Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
             <!-- Calendar body -->
-            <Path Data="M1,3 H12 V14 H1 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Calendar top bar -->
-            <Rectangle Width="11" Height="2.5" Fill="{DynamicResource EnvironmentWindowText}"
-                       Margin="1,3,0,0"
-                       VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Calendar binding rings -->
-            <Path Data="M4,1 V4 M9,1 V4"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Calendar grid dots (representing dates) -->
-            <Path Data="M3,8 H4 M6,8 H7 M9,8 H10 M3,11 H4 M6,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="11" Height="11" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}" Margin="0,3,0,0"/>
+            <!-- Calendar header -->
+            <Rectangle Width="11" Height="3" HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Fill="{DynamicResource EnvironmentWindowText}" Margin="0,3,0,0"/>
+            <!-- Binding rings -->
+            <Line X1="3" Y1="1" X2="3" Y2="5" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <Line X1="8" Y1="1" X2="8" Y2="5" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Calendar dots -->
+            <Ellipse Width="1.5" Height="1.5" Fill="{DynamicResource EnvironmentWindowText}" Margin="2,8,0,0"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Ellipse Width="1.5" Height="1.5" Fill="{DynamicResource EnvironmentWindowText}" Margin="5,8,0,0"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Ellipse Width="1.5" Height="1.5" Fill="{DynamicResource EnvironmentWindowText}" Margin="8,8,0,0"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Ellipse Width="1.5" Height="1.5" Fill="{DynamicResource EnvironmentWindowText}" Margin="2,11,0,0"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Ellipse Width="1.5" Height="1.5" Fill="{DynamicResource EnvironmentWindowText}" Margin="5,11,0,0"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <!-- Clock circle -->
-            <Ellipse Width="7" Height="7"
+            <Ellipse Width="7" Height="7" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                     Fill="{DynamicResource TextBox.Static.Background}"
-                     Margin="9,9,0,0"
-                     VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                     Fill="{DynamicResource TextBox.Static.Background}"/>
             <!-- Clock hands -->
-            <Path Data="M12.5,10.5 V12.5 M12.5,12.5 L14,13.5"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Path Data="M12.5,11 V13 L14,14" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
         </Grid>
     </Viewbox>
 
@@ -329,7 +367,8 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Swap Axes Icon -->
-    <Viewbox x:Key="SwapAxesIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="SwapAxesIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path StrokeThickness="1" Stroke="{DynamicResource EnvironmentWindowText}" Data="F1 M 1.5 1 V 15" />
             <Path StrokeThickness="1" Stroke="{DynamicResource EnvironmentWindowText}" Data="F1 M 1 14.5 H 15" />
@@ -341,7 +380,8 @@
     </Viewbox>
 
     <!-- Zoom In Icon -->
-    <Viewbox x:Key="ZoomInIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="ZoomInIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="64" Height="64">
             <Ellipse Canvas.Left="3.5" Canvas.Top="3.5" Width="43" Height="43" StrokeThickness="5" Stroke="{DynamicResource EnvironmentWindowText}"/>
             <Path StrokeThickness="5" Stroke="{DynamicResource EnvironmentWindowText}" Data="F1 M 25 14.5000 V 35.5" />
@@ -352,7 +392,8 @@
     </Viewbox>
 
     <!-- Inspect Icon (Magnifying glass with question mark) -->
-    <Viewbox x:Key="InspectIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="InspectIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Ellipse Canvas.Left="0.7" Canvas.Top="0.7" Width="11.3" Height="11.3" StrokeThickness="1.3" Stroke="{DynamicResource EnvironmentWindowText}"/>
             <Path Fill="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.26">
@@ -375,7 +416,8 @@
     </Viewbox>
 
     <!-- Rotate Icon -->
-    <Viewbox x:Key="RotateIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="RotateIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path StrokeThickness="1" Stroke="{DynamicResource EnvironmentWindowText}"
                   Data="m 12.5956 12.5956 c 1.17726 -1.17726 1.90681 -2.80225 1.90681 -4.59556 c 0 -3.58662 -2.91575 -6.50237 -6.50237 -6.50237 M 3.40444 3.40444 C 2.22717 4.5817 1.49763 6.20669 1.49763 8 c 2e-07 3.58662 2.91575 6.50237 6.50237 6.50237 m 0 -0.765626 c -3.17319 0 -5.73674 -2.56355 -5.73674 -5.73674 c 0 -1.5866 0.640671 -3.021 1.67821 -4.05854 M 8 2.26326 c 3.17319 2e-07 5.73674 2.56355 5.73674 5.73674 c 0 1.5866 -0.640671 3.021 -1.6782 4.05854"/>
@@ -387,7 +429,8 @@
     </Viewbox>
 
     <!-- Zoom All Icon -->
-    <Viewbox x:Key="ZoomAllIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="ZoomAllIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path StrokeThickness="2" Stroke="{DynamicResource EnvironmentWindowText}" Data="F1 m 14.75 11.375 v 3.375 h -3.375 m -6.75 0 H 1.25 v -3.375 m 0 -6.75 V 1.25 h 3.375 m 6.75 0 h 3.375 v 3.375" />
             <Path StrokeThickness="1" Stroke="{DynamicResource EnvironmentWindowText}" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="F1 m 9.5 3.2573844 -1.5 0 0 3.4926156 0 -3.4926156 -1.5 0 1.5 -2.5073844 z" />
@@ -398,7 +441,8 @@
     </Viewbox>
 
     <!-- Plus Icon -->
-    <Viewbox x:Key="PlusIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="PlusIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path StrokeThickness="3" Stroke="{DynamicResource EnvironmentWindowText}" Data="F0 M 2 8 H 14" />
             <Path StrokeThickness="3" Stroke="{DynamicResource EnvironmentWindowText}" Data="F0 M 8 2 V 14" />
@@ -406,7 +450,8 @@
     </Viewbox>
 
     <!-- Camera Icon -->
-    <Viewbox x:Key="CameraIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CameraIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path Fill="{DynamicResource EnvironmentWindowText}"
                   Data="F0 M 5.40625 1.828125 C 5.2435365 1.828125 5.1126068 1.9997109 5.03125 2.140625 C 4.7248392 2.671344 4.09375 3.734375 4.09375 3.734375 L 2.4375 3.734375 C 1.5394159 3.734375 0 5.1192214 0 6.265625 L 0 12.015625 C 0 13.322471 1.2946973 14.734375 2.40625 14.734375 L 7.96875 14.734375 L 13.53125 14.734375 C 14.642803 14.734375 16 13.322471 16 12.015625 L 16 6.265625 C 16 5.1192214 14.398084 3.734375 13.5 3.734375 L 11.84375 3.734375 C 11.84375 3.734375 11.212661 2.671344 10.90625 2.140625 C 10.82489 1.9997109 10.693963 1.828125 10.53125 1.828125 L 7.96875 1.828125 L 5.40625 1.828125 z M 2.4277344 4.7910156 A 0.75 0.75 0 0 1 3.1777344 5.5410156 A 0.75 0.75 0 0 1 2.4277344 6.2910156 A 0.75 0.75 0 0 1 1.6777344 5.5410156 A 0.75 0.75 0 0 1 2.4277344 4.7910156 z M 8 4.8203125 C 10.421762 4.8203125 12.400391 6.7989415 12.400391 9.2207031 C 12.400391 11.642465 10.421762 13.619141 8 13.619141 C 5.5782383 13.619141 3.5996094 11.642465 3.5996094 9.2207031 C 3.5996094 6.7989415 5.5782383 4.8203125 8 4.8203125 z M 8 6.2207031 C 6.3348545 6.2207031 5 7.5555576 5 9.2207031 C 5 10.885849 6.3348545 12.220703 8 12.220703 C 9.6651455 12.220703 11 10.885849 11 9.2207031 C 11 7.5555576 9.6651455 6.2207031 8 6.2207031 z " />
@@ -414,14 +459,16 @@
     </Viewbox>
 
     <!-- Properties/Cog Icon -->
-    <Viewbox x:Key="PropertiesIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="PropertiesIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path Fill="{DynamicResource EnvironmentWindowText}" Data="F1 M 6.28125 0.1875 C 5.3447289 0.3915249 4.4691013 0.74994766 3.6875 1.25 C 4.1568062 1.5670571 4.46875 2.1097533 4.46875 2.71875 C 4.46875 3.6931447 3.6931447 4.46875 2.71875 4.46875 C 2.124744 4.46875 1.6009733 4.1686977 1.28125 3.71875 C 0.78408428 4.4957038 0.43098371 5.3594095 0.21875 6.28125 C 0.31406081 6.2653166 0.40016447 6.25 0.5 6.25 C 1.4743947 6.25 2.28125 7.0256053 2.28125 8 C 2.28125 8.9743947 1.4743947 9.75 0.5 9.75 C 0.38918257 9.75 0.29265428 9.7382933 0.1875 9.71875 C 0.39200833 10.651974 0.78274472 11.501138 1.28125 12.28125 C 1.6009733 11.831302 2.124744 11.53125 2.71875 11.53125 C 3.6931447 11.53125 4.46875 12.306855 4.46875 13.28125 C 4.46875 13.881814 4.1771403 14.431356 3.71875 14.75 C 4.4918148 15.240134 5.3577375 15.611309 6.28125 15.8125 C 6.2617067 15.707346 6.25 15.610817 6.25 15.5 C 6.25 14.525605 7.0256053 13.71875 8 13.71875 C 8.9743947 13.71875 9.75 14.525605 9.75 15.5 C 9.75 15.610817 9.7382933 15.707346 9.71875 15.8125 C 10.655271 15.608475 11.530899 15.250052 12.3125 14.75 C 11.843194 14.432943 11.53125 13.890247 11.53125 13.28125 C 11.53125 12.306855 12.306855 11.53125 13.28125 11.53125 C 13.875256 11.53125 14.399027 11.831302 14.71875 12.28125 C 15.215916 11.504296 15.569016 10.64059 15.78125 9.71875 C 15.685939 9.7346834 15.599836 9.75 15.5 9.75 C 14.525605 9.75 13.71875 8.9743947 13.71875 8 C 13.71875 7.0256053 14.525605 6.25 15.5 6.25 C 15.610817 6.25 15.707346 6.2617067 15.8125 6.28125 C 15.608475 5.3447289 15.250052 4.4691013 14.75 3.6875 C 14.432943 4.1568062 13.890247 4.46875 13.28125 4.46875 C 12.306855 4.46875 11.53125 3.6931447 11.53125 2.71875 C 11.53125 2.124744 11.831302 1.6009733 12.28125 1.28125 C 11.504296 0.78408428 10.64059 0.43098371 9.71875 0.21875 C 9.7346834 0.31406081 9.75 0.40016447 9.75 0.5 C 9.75 1.4743947 8.9743947 2.28125 8 2.28125 C 7.0256053 2.28125 6.25 1.4743947 6.25 0.5 C 6.25 0.38918257 6.2617067 0.29265428 6.28125 0.1875 z M 8 5 C 9.6568543 5 11 6.3431457 11 8 C 11 9.6568542 9.6568543 11 8 11 C 6.3431457 11 5 9.6568542 5 8 C 5 6.3431457 6.3431457 5 8 5 z" />
         </Canvas>
     </Viewbox>
 
     <!-- Pan Hand Icon -->
-    <Viewbox x:Key="PanHandIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="PanHandIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path Fill="{DynamicResource TextBox.Static.Background}" StrokeThickness="1" Stroke="{DynamicResource EnvironmentWindowText}" StrokeLineJoin="Bevel"
                   Data="F0 M 6 15.875 V 13.75 L 3.1875 11.375 3.125 10.25 1.5 8.6875 1.625 7.25 2.6875 6.625 3.875 7.375 4.6875 8.6875 5 8.5625 5.0625 6.9375 4 5.0625 3.25 4.0625 3.375 2.8125 4.125 2.25 5.0625 2.3125 5.625 3.1875 6.4375 4.8125 6.7610485 5.7787039 6.875 5.875 7.125 5.75 V 2.125 L 7.4375 1.5 h 1.25 l 0.5 0.375 0.25 0.625 V 5.678807 L 9.6418981 5.881932 9.8462961 5.678807 9.8459709 3.0669417 10.534122 2.25 H 11.625 l 0.75 0.625 v 3.75 L 12.61016 6.6635631 13.625 4.6875 14.25 4.125 14.6875 4.375 14.8125 5.6875 14.6875 7.25 14.25 8.875 13.5625 10.8125 12.5 13.1875 V 15.75" />
@@ -429,7 +476,8 @@
     </Viewbox>
 
     <!-- Export Table Icon -->
-    <Viewbox x:Key="ExportTableIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="ExportTableIcon" Width="16" Height="16" x:Shared="False"
+             SnapsToDevicePixels="True" UseLayoutRounding="True">
         <Canvas Width="16" Height="16">
             <Path Fill="{DynamicResource EnvironmentWindowText}" Data="F1 M 4.25 4.5454547 6.75 2.0000001 H 2.006 C 0.898 2.0000001 0 3.1454547 0 4.5352729 V 13.464727 C 0 14.864728 0.897 16 2.006 16 h 9.988 C 13.102 16 14 14.854546 14 13.464727 V 8.8727275 l -2 2.0363635 v 2.545455 H 2 V 4.5454547 Z" />
             <Path Fill="{DynamicResource EnvironmentWindowText}" Data="F1 M 11.013712 2.4101745 C 7.4844178 2.4528431 4 6.2186639 4 11 5.6893543 8.9884744 7.6898529 7.1768817 11.013712 7.3231746 V 9.7528544 L 16 4.8764274 11.013712 2.65318e-7 Z" />
