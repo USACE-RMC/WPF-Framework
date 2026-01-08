@@ -2735,29 +2735,25 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Creates a menu icon from the vector icon dictionary.
+        /// Loads an image resource and returns it as a BitmapImage.
         /// </summary>
-        /// <param name="iconKey">The resource key for the icon (e.g., "FormatIcon", "EditTextIcon", "DeleteIcon").</param>
-        /// <returns>A ContentControl containing the vector icon.</returns>
-        private ContentControl CreateMenuIcon(string iconKey)
+        /// <param name="resourceName">The name of the resource file (e.g., "Format.png").</param>
+        /// <returns>A BitmapImage that can be used as an Image source.</returns>
+        private static BitmapImage LoadResourceImage(string resourceName)
         {
-            // Map legacy PNG names to new vector icon keys
-            var mappedKey = iconKey switch
-            {
-                "Format.png" => "FormatIcon",
-                "EditTextbox.png" => "EditTextIcon",
-                "Delete.png" => "DeleteIcon",
-                _ => iconKey
-            };
+            var uri = new Uri($"pack://application:,,,/OxyPlotControls;component/Resources/{resourceName}", UriKind.Absolute);
+            var bitmapImage = new BitmapImage(uri);
+            return bitmapImage;
+        }
 
-            var icon = TryFindResource(mappedKey);
-            if (icon != null)
-            {
-                return new ContentControl { Content = icon, Width = 16, Height = 16 };
-            }
-
-            // Fallback: return empty content control if icon not found
-            return new ContentControl { Width = 16, Height = 16 };
+        /// <summary>
+        /// Creates an Image control with the specified resource image.
+        /// </summary>
+        /// <param name="resourceName">The name of the resource file (e.g., "Format.png").</param>
+        /// <returns>An Image control with the resource as its source.</returns>
+        private static Image CreateMenuIcon(string resourceName)
+        {
+            return new Image { Source = LoadResourceImage(resourceName), Width = 16, Height = 16 };
         }
 
         #endregion

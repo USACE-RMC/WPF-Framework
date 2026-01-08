@@ -16,7 +16,9 @@
     </UserControl.Resources>
     <StackPanel Background="Transparent" Orientation="{Binding ElementName=OxyToolBar, Path=ToolBarOrientation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
         <RadioButton x:Name="PointerButton" Style="{StaticResource {x:Static ToolBar.RadioButtonStyleKey}}" Margin="1,1,1,2" Padding="0" ToolTip="Track Data" Click="PointerButton_Click" IsChecked="True">
-            <Image Source="pack://application:,,,/OxyPlotControls;component/Resources/pointer.ico" Stretch="Uniform" Width="{Binding ElementName=OxyToolBar, Path=IconSize}" Height="{Binding ElementName=OxyToolBar, Path=IconSize}" SnapsToDevicePixels="True"/>
+            <Viewbox Width="{Binding ElementName=OxyToolBar, Path=IconSize}" Height="{Binding ElementName=OxyToolBar, Path=IconSize}">
+                <ContentControl Padding="0" Content="{StaticResource PointerIcon}"/>
+            </Viewbox>
         </RadioButton>
         <RadioButton Name="PanButton" Style="{StaticResource {x:Static ToolBar.RadioButtonStyleKey}}" Margin="1,1,1,2" Padding="0" ToolTip="Pan" Click="PanButton_Click">
             <Viewbox Width="{Binding ElementName=OxyToolBar, Path=IconSize}" Height="{Binding ElementName=OxyToolBar, Path=IconSize}">

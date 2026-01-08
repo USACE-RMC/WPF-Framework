@@ -10,12 +10,23 @@
     Icons use DynamicResource bindings for colors that should change with themes:
     - EnvironmentWindowText: Main icon stroke/fill color (adapts to light/dark)
 
-    Semantic colors (remain consistent across themes):
-    - #DC2626 (Red): Delete operations
-
     Usage: Reference icons with StaticResource or DynamicResource
     Example: <ContentControl Content="{StaticResource ArrowAnnotationIcon}"/>
     -->
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- TOOLBAR ICONS                                                                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Pointer/Cursor Icon - Arrow cursor for selection/tracking -->
+    <Viewbox x:Key="PointerIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <Path Data="M3,1 L3,13 L6,10 L9,15 L11,14 L8,9 L12,9 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.5"
+                  StrokeLineJoin="Round"/>
+        </Grid>
+    </Viewbox>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- ANNOTATION ICONS                                                             -->
@@ -106,52 +117,6 @@
             <Path Data="M2,12 L5,4 L10,10 L14,3"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
                   Fill="Transparent" StrokeLineJoin="Round"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- MENU ICONS                                                                   -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <!-- Format Icon - Paintbrush -->
-    <Viewbox x:Key="FormatIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Brush handle -->
-            <Path Data="M1,15 L5,11 L7,13 L3,17 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-            <!-- Brush head -->
-            <Path Data="M5,11 L11,5 L13,7 L7,13 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-            <!-- Brush bristles -->
-            <Path Data="M11,5 L14,2 L15,3 L12,6"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Edit Text Icon - Pencil -->
-    <Viewbox x:Key="EditTextIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <!-- Pencil body -->
-            <Path Data="M2,14 L1,15 L2,15 L4,13 L12,5 L11,4 L3,12 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-            <!-- Pencil tip -->
-            <Path Data="M11,4 L13,2 L14,3 L12,5 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-            <!-- Pencil eraser -->
-            <Path Data="M13,2 L14,1 L15,2 L14,3 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.5"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-        </Grid>
-    </Viewbox>
-
-    <!-- Delete Icon - Red X -->
-    <Viewbox x:Key="DeleteIcon" Width="16" Height="16" x:Shared="False">
-        <Grid Width="16" Height="16">
-            <Path Data="M3,3 L13,13 M13,3 L3,13"
-                  Stroke="#DC2626" StrokeThickness="2.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
