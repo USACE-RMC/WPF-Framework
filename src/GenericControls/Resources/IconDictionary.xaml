@@ -307,7 +307,7 @@
     <Viewbox x:Key="CameraIcon" Width="16" Height="16" x:Shared="False">
         <Canvas Width="16" Height="16">
             <Path Fill="{DynamicResource EnvironmentWindowText}" Data="M5,2 L6,4 L10,4 L11,2 Z"/>
-            <Rectangle Canvas.Left="1" Canvas.Top="4" Width="14" Height="10" Rx="1" Fill="{DynamicResource EnvironmentWindowText}"/>
+            <Rectangle Canvas.Left="1" Canvas.Top="4" Width="14" Height="10" RadiusX="1" RadiusY="1" Fill="{DynamicResource EnvironmentWindowText}"/>
             <Ellipse Canvas.Left="5" Canvas.Top="6" Width="6" Height="6" Fill="{DynamicResource TextBox.Static.Background}"/>
             <Ellipse Canvas.Left="6" Canvas.Top="7" Width="4" Height="4" Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"/>
         </Canvas>
