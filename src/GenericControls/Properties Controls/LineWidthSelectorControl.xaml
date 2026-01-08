@@ -31,12 +31,12 @@
         <Line Style="{StaticResource DotLeaderLineStyle}"
               Visibility="{Binding ShowLeaderLine, ElementName=LineWidthSelector, Converter={StaticResource BoolToVisConverter}}"/>
         
-        <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
-                  HorizontalContentAlignment="Stretch" IsEditable="True" 
-                  ItemsSource="{Binding ElementName=LineWidthSelector, Path=WidthOptions}" 
-                  IsTextSearchEnabled="False" 
-                  Text="{Binding Path=SelectedWidth, ElementName=LineWidthSelector, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.####}, Mode=TwoWay}" 
-                  PreviewTextInput="ComboBox_PreviewTextInput" PreviewKeyDown="ComboBox_PreviewKeyDown" SizeChanged="ControlSizeChanged">
+        <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                  HorizontalContentAlignment="Stretch"
+                  ItemsSource="{Binding ElementName=LineWidthSelector, Path=WidthOptions}"
+                  IsTextSearchEnabled="False"
+                  SelectedValue="{Binding Path=SelectedWidth, ElementName=LineWidthSelector, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                  SizeChanged="ControlSizeChanged">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
