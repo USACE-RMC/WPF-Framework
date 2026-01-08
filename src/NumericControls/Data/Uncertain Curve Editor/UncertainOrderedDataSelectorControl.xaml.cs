@@ -484,7 +484,7 @@ namespace NumericControls
                 ValidationGrid.SelectedCells.Add(new DataGridCellInfo(item, columnHeader.Column));
         }
 
-        private void OxyplotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
+        private void OxyplotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject)
         {
             PlotPropertiesRequested?.Invoke(targetPlot, openProperties, propertyExpander, selectedObject);
         }
