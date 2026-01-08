@@ -1,38 +1,8 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
-using OxyPlot;
-using OxyPlot.Axes;
+using Wpf = OxyPlot.Wpf;
 
 namespace OxyPlotControls
 {
@@ -40,19 +10,6 @@ namespace OxyPlotControls
     /// A user control that provides a selector and editor for OxyPlot axes.
     /// Allows users to select an axis from a dropdown and edit its properties.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class AxesControl : UserControl
     {
         /// <summary>
@@ -61,34 +18,34 @@ namespace OxyPlotControls
         public static readonly string AxesPropertiesTag = "Axes";
 
         /// <summary>
-        /// Identifies the <see cref="PlotModel"/> dependency property.
+        /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotModelProperty = DependencyProperty.Register(
-            nameof(PlotModel), typeof(PlotModel), typeof(AxesControl),
-            new PropertyMetadata(null, InitializePlotModel));
+        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+            nameof(Plot), typeof(Wpf.Plot), typeof(AxesControl),
+            new PropertyMetadata(null, InitializePlot));
 
         /// <summary>
-        /// Gets or sets the PlotModel that contains the axes.
+        /// Gets or sets the OxyPlot Plot control that contains the axes.
         /// </summary>
-        public PlotModel PlotModel
+        public Wpf.Plot Plot
         {
-            get { return (PlotModel)GetValue(PlotModelProperty); }
-            set { SetValue(PlotModelProperty, value); }
+            get { return (Wpf.Plot)GetValue(PlotProperty); }
+            set { SetValue(PlotProperty, value); }
         }
 
         /// <summary>
         /// Identifies the <see cref="SelectedAxis"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedAxisProperty = DependencyProperty.Register(
-            nameof(SelectedAxis), typeof(Axis), typeof(AxesControl),
+            nameof(SelectedAxis), typeof(Wpf.Axis), typeof(AxesControl),
             new PropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the currently selected axis.
         /// </summary>
-        public Axis SelectedAxis
+        public Wpf.Axis SelectedAxis
         {
-            get { return (Axis)GetValue(SelectedAxisProperty); }
+            get { return (Wpf.Axis)GetValue(SelectedAxisProperty); }
             set { SetValue(SelectedAxisProperty, value); }
         }
 
@@ -175,23 +132,54 @@ namespace OxyPlotControls
             ComboBoxStyle = (Style)FindResource("CleanComboBoxStyle");
         }
 
-        private static void InitializePlotModel(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
             if (d.GetType() != typeof(AxesControl)) return;
             var thisControl = (AxesControl)d;
 
+            // Unsubscribe from old collection's events
+            if (e.OldValue is Wpf.Plot oldPlot)
+            {
+                oldPlot.Axes.CollectionChanged -= thisControl.Axes_CollectionChanged;
+            }
+
             thisControl.AxesPropertyControlComboBox.ItemsSource = null;
             if (e.NewValue == null) return;
-            if (e.NewValue is not PlotModel newPlotModel) return;
+            if (e.NewValue.GetType() != typeof(Wpf.Plot)) return;
+            var newPlot = (Wpf.Plot)e.NewValue;
 
             if (thisControl.ComboBoxStyle == null) thisControl.SetDefaultComboboxStyle();
-            thisControl.AxesPropertyControlComboBox.ItemsSource = newPlotModel.Axes;
+            thisControl.AxesPropertyControlComboBox.ItemsSource = newPlot.Axes;
+
+            // Subscribe to collection changes to handle demo switching
+            newPlot.Axes.CollectionChanged += thisControl.Axes_CollectionChanged;
 
             thisControl.AxesPropertyControlComboBox.ApplyTemplate();
             var t = thisControl.AxesPropertyControlComboBox.FindResource("ComboBoxTemplate");
 
-            if (newPlotModel.Axes.Count > 0) thisControl.AxesPropertyControlComboBox.SelectedIndex = 0;
+            if (newPlot.Axes.Count > 0) thisControl.AxesPropertyControlComboBox.SelectedIndex = 0;
+        }
+
+        private void Axes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            // When axes are reset (cleared and repopulated), select the first axis
+            if (e.Action == NotifyCollectionChangedAction.Reset ||
+                e.Action == NotifyCollectionChangedAction.Add)
+            {
+                if (Plot?.Axes.Count > 0 && AxesPropertyControlComboBox.SelectedItem == null)
+                {
+                    AxesPropertyControlComboBox.SelectedIndex = 0;
+                }
+            }
+            // When an axis is removed and it was selected, select another one
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                if (AxesPropertyControlComboBox.SelectedItem == null && Plot?.Axes.Count > 0)
+                {
+                    AxesPropertyControlComboBox.SelectedIndex = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -207,31 +195,30 @@ namespace OxyPlotControls
             // Early exit if nothing is selected.
             if (AxesPropertyControlComboBox.SelectedItem == null) return;
 
-            var axisToSelect = AxesPropertyControlComboBox.SelectedItem as Axis;
+            var axisToSelect = AxesPropertyControlComboBox.SelectedItem as Wpf.Axis;
             if (axisToSelect == null) return;
             AxisPropertiesControl.Axis = axisToSelect;
-            AxisPropertiesControl.PlotModel = PlotModel;
         }
 
         private void DeleteAxisButton_Click(object sender, RoutedEventArgs e)
         {
             if (AxesPropertyControlComboBox.SelectedItem == null) return;
-            if (PlotModel == null) return;
+            if (Plot == null) return;
             if (sender == null) return;
             if (sender.GetType() != typeof(Button)) return;
             var btn = (Button)sender;
             if (btn.DataContext == null) return;
 
-            var axisToDelete = btn.DataContext as Axis;
+            var axisToDelete = btn.DataContext as Wpf.Axis;
             if (axisToDelete == null) return;
 
-            int index = PlotModel.Axes.IndexOf(axisToDelete);
+            int index = Plot.Axes.IndexOf(axisToDelete);
             if (index == AxesPropertyControlComboBox.SelectedIndex)
             {
                 if (index > 0) index -= 1;
-                if (PlotModel.Axes.Count == 1) index = -1;
+                if (Plot.Axes.Count == 1) index = -1;
             }
-            PlotModel.Axes.Remove(axisToDelete);
+            Plot.Axes.Remove(axisToDelete);
             AxesPropertyControlComboBox.SelectedIndex = index;
 
             AxisPropertiesControl.CloseExpanders();
@@ -240,12 +227,12 @@ namespace OxyPlotControls
         /// <summary>
         /// Serializes all axes properties to an XML element for persistence.
         /// </summary>
-        /// <param name="plotModel">The PlotModel containing the axes to serialize.</param>
+        /// <param name="plot">The OxyPlot Plot control containing the axes to serialize.</param>
         /// <returns>An XElement containing all serialized axes properties.</returns>
-        public static XElement AxesPropertiesToXElement(PlotModel plotModel)
+        public static XElement AxesPropertiesToXElement(Wpf.Plot plot)
         {
             var axesProperties = new XElement(AxesPropertiesTag);
-            foreach (var axis in plotModel.Axes)
+            foreach (var axis in plot.Axes)
             {
                 axesProperties.Add(AxisControl.AxisPropertiesToXElement(axis));
             }
@@ -254,30 +241,29 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Deserializes axes properties from an XML element and applies them to the plot model.
+        /// Deserializes axes properties from an XML element and applies them to the plot.
         /// </summary>
-        /// <param name="plotModel">The PlotModel to apply settings to.</param>
+        /// <param name="plot">The OxyPlot Plot control to apply settings to.</param>
         /// <param name="element">The XElement containing serialized axes properties.</param>
-        /// <param name="version">The serialization format version (1 for legacy, 2 for modern).</param>
-        public static void XElementToAxesProperties(PlotModel plotModel, XElement element, int version = 2)
+        public static void XElementToAxesProperties(Wpf.Plot plot, XElement element)
         {
             // Early Exit
             if (element.Name != AxesPropertiesTag) return;
 
             // Set up the axes
-            plotModel.Axes.Clear();
-            Axis? tempAxis;
+            plot.Axes.Clear();
+            Wpf.Axis? tempAxis;
             foreach (var el in element.Elements(AxisControl.AxisPropertiesTag))
             {
                 tempAxis = AxisControl.XElementToAxisProperties(el);
                 if (tempAxis == null) continue;
-                plotModel.Axes.Add(tempAxis);
+                plot.Axes.Add(tempAxis);
             }
         }
 
-        private void AxisPropertiesControl_AxisTypeChanged(Axis oldAxis, Axis newAxis)
+        private void AxisPropertiesControl_AxisTypeChanged(Wpf.Axis oldAxis, Wpf.Axis newAxis)
         {
-            AxesPropertyControlComboBox.ItemsSource = PlotModel?.Axes;
+            AxesPropertyControlComboBox.ItemsSource = Plot.Axes;
             SelectedAxis = newAxis;
             AxesPropertyControlComboBox.SelectedItem = newAxis;
         }

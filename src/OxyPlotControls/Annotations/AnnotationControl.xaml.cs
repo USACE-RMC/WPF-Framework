@@ -1,33 +1,3 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,6 +7,7 @@ using System.Windows.Data;
 using System.Xml.Linq;
 using OxyPlot;
 using OxyPlot.Annotations;
+using Wpf = OxyPlot.Wpf;
 using static OxyPlotControls.OxyPlotSettingsSerializer;
 
 namespace OxyPlotControls
@@ -45,19 +16,6 @@ namespace OxyPlotControls
     /// Control for editing annotation properties in an OxyPlot chart.
     /// Supports various annotation types including text, arrow, line, shape, and point annotations.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class AnnotationControl : UserControl
     {
         /// <summary>
@@ -123,15 +81,15 @@ namespace OxyPlotControls
         /// Identifies the Annotation dependency property.
         /// </summary>
         public static readonly DependencyProperty AnnotationProperty = DependencyProperty.Register(
-            nameof(Annotation), typeof(TextualAnnotation), typeof(AnnotationControl),
+            nameof(Annotation), typeof(Wpf.TextualAnnotation), typeof(AnnotationControl),
             new PropertyMetadata(null, AnnotationChangedCallback));
 
         /// <summary>
         /// Gets or sets the annotation being edited by this control.
         /// </summary>
-        public TextualAnnotation? Annotation
+        public Wpf.TextualAnnotation Annotation
         {
-            get => (TextualAnnotation?)GetValue(AnnotationProperty);
+            get => (Wpf.TextualAnnotation)GetValue(AnnotationProperty);
             set => SetValue(AnnotationProperty, value);
         }
 
@@ -148,9 +106,9 @@ namespace OxyPlotControls
             thisControl.DisplayOptionsEXP.Visibility = Visibility.Visible;
 
             // Determine whether to show X-Y Controls
-            if (e.NewValue.GetType() == typeof(LineAnnotation))
+            if (e.NewValue.GetType() == typeof(Wpf.LineAnnotation))
             {
-                var newAnnotation = (LineAnnotation)e.NewValue;
+                var newAnnotation = (Wpf.LineAnnotation)e.NewValue;
 
                 if (newAnnotation.Type == LineAnnotationType.Horizontal)
                 {
@@ -174,7 +132,7 @@ namespace OxyPlotControls
                     thisControl.SlopeControl.Visibility = Visibility.Visible;
                 }
             }
-            else if (e.NewValue.GetType() == typeof(PointAnnotation))
+            else if (e.NewValue.GetType() == typeof(Wpf.PointAnnotation))
             {
                 thisControl.XValueControl.Visibility = Visibility.Visible;
                 thisControl.YValueControl.Visibility = Visibility.Visible;
@@ -191,8 +149,8 @@ namespace OxyPlotControls
             }
 
             // Determine whether to show the Text Angle Control
-            if (e.NewValue.GetType() == typeof(LineAnnotation) ||
-                e.NewValue.GetType() == typeof(PolylineAnnotation))
+            if (e.NewValue.GetType() == typeof(Wpf.LineAnnotation) ||
+                e.NewValue.GetType() == typeof(Wpf.PolylineAnnotation))
             {
                 thisControl.TextAngleControl.Visibility = Visibility.Collapsed;
             }
@@ -228,7 +186,7 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="annotation">The annotation to serialize.</param>
         /// <returns>An XElement containing the serialized annotation properties.</returns>
-        public static XElement AnnotationPropertiesToXElement(TextualAnnotation annotation)
+        public static XElement AnnotationPropertiesToXElement(Wpf.TextualAnnotation annotation)
         {
             var annotationProperties = new XElement(AnnotationPropertiesTag);
             var annotationType = annotation.GetType();
@@ -236,19 +194,22 @@ namespace OxyPlotControls
 
             // Annotation Properties
             var generalProperties = new XElement("General");
-            generalProperties.SetAttributeValue(nameof(annotation.Tag), annotation.Tag?.ToString() ?? "");
+            generalProperties.SetAttributeValue(nameof(annotation.Name), annotation.Name.ToString());
+            generalProperties.SetAttributeValue(nameof(annotation.IsEnabled), annotation.IsEnabled.ToString());
             generalProperties.SetAttributeValue(nameof(annotation.Layer), annotation.Layer.ToString());
             generalProperties.SetAttributeValue(nameof(annotation.XAxisKey), annotation.XAxisKey);
             generalProperties.SetAttributeValue(nameof(annotation.YAxisKey), annotation.YAxisKey);
             annotationProperties.Add(generalProperties);
 
             // Textual Properties
+            var weightConverter = new FontWeightConverter();
+            var ffc = new System.Windows.Media.FontFamilyConverter();
             var textualProperties = new XElement("Textual");
             textualProperties.SetAttributeValue(nameof(annotation.Text), annotation.Text);
-            textualProperties.SetAttributeValue(nameof(annotation.TextColor), annotation.TextColor.ToByteString());
-            textualProperties.SetAttributeValue(nameof(annotation.Font), annotation.Font ?? "");
+            textualProperties.SetAttributeValue(nameof(annotation.TextColor), annotation.TextColor.ToString());
+            if (annotation.FontFamily != null) textualProperties.SetAttributeValue(nameof(annotation.FontFamily), ffc.ConvertToInvariantString(annotation.FontFamily));
             textualProperties.SetAttributeValue(nameof(annotation.FontSize), annotation.FontSize.ToString("G17", CultureInfo.InvariantCulture));
-            textualProperties.SetAttributeValue(nameof(annotation.FontWeight), annotation.FontWeight.ToString("G17", CultureInfo.InvariantCulture));
+            textualProperties.SetAttributeValue(nameof(annotation.FontWeight), weightConverter.ConvertToInvariantString(annotation.FontWeight));
             textualProperties.SetAttributeValue(nameof(annotation.TextPosition), annotation.TextPosition.ToPrettyText());
             textualProperties.SetAttributeValue(nameof(annotation.TextRotation), annotation.TextRotation.ToString("G17", CultureInfo.InvariantCulture));
             textualProperties.SetAttributeValue(nameof(annotation.TextHorizontalAlignment), annotation.TextHorizontalAlignment.ToString());
@@ -256,11 +217,11 @@ namespace OxyPlotControls
             annotationProperties.Add(textualProperties);
 
             // Must be either arrow (concrete), text (concrete), shape (abstract), or path (abstract)
-            if (annotationType == typeof(ArrowAnnotation))
+            if (annotationType == typeof(Wpf.ArrowAnnotation))
             {
-                var arrowAnnotation = (ArrowAnnotation)annotation;
+                var arrowAnnotation = (Wpf.ArrowAnnotation)annotation;
                 var arrowProperties = new XElement("Arrow");
-                arrowProperties.SetAttributeValue(nameof(arrowAnnotation.Color), arrowAnnotation.Color.ToByteString());
+                arrowProperties.SetAttributeValue(nameof(arrowAnnotation.Color), arrowAnnotation.Color.ToString());
                 arrowProperties.SetAttributeValue(nameof(arrowAnnotation.ArrowDirection), arrowAnnotation.ArrowDirection.ToPrettyText());
                 arrowProperties.SetAttributeValue(nameof(arrowAnnotation.StartPoint), arrowAnnotation.StartPoint.ToPrettyText());
                 arrowProperties.SetAttributeValue(nameof(arrowAnnotation.EndPoint), arrowAnnotation.EndPoint.ToPrettyText());
@@ -272,42 +233,43 @@ namespace OxyPlotControls
                 arrowProperties.SetAttributeValue(nameof(arrowAnnotation.StrokeThickness), arrowAnnotation.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
                 textualProperties.Add(arrowProperties);
             }
-            else if (annotationType == typeof(TextAnnotation))
+            else if (annotationType == typeof(Wpf.TextAnnotation))
             {
-                var textAnnotation = (TextAnnotation)annotation;
+                var thickConvert = new ThicknessConverter();
+                var textAnnotation = (Wpf.TextAnnotation)annotation;
                 var textProperties = new XElement("Text");
-                textProperties.SetAttributeValue(nameof(textAnnotation.Background), textAnnotation.Background.ToByteString());
+                textProperties.SetAttributeValue(nameof(textAnnotation.Background), textAnnotation.Background.ToString());
                 textProperties.SetAttributeValue(nameof(textAnnotation.Offset), textAnnotation.Offset.ToPrettyText());
-                textProperties.SetAttributeValue(nameof(textAnnotation.Padding), $"{textAnnotation.Padding.Left},{textAnnotation.Padding.Top},{textAnnotation.Padding.Right},{textAnnotation.Padding.Bottom}");
-                textProperties.SetAttributeValue(nameof(textAnnotation.Stroke), textAnnotation.Stroke.ToByteString());
+                textProperties.SetAttributeValue(nameof(textAnnotation.Padding), thickConvert.ConvertToInvariantString(textAnnotation.Padding));
+                textProperties.SetAttributeValue(nameof(textAnnotation.Stroke), textAnnotation.Stroke.ToString());
                 textProperties.SetAttributeValue(nameof(textAnnotation.StrokeThickness), textAnnotation.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
                 textualProperties.Add(textProperties);
             }
 
             // Must be shape or path annotation
-            var shapeAnnotation = annotation as ShapeAnnotation;
+            var shapeAnnotation = annotation as Wpf.ShapeAnnotation;
             if (shapeAnnotation != null)
             {
                 var shapeProperties = new XElement("Shape");
-                shapeProperties.SetAttributeValue(nameof(shapeAnnotation.Fill), shapeAnnotation.Fill.ToByteString());
-                shapeProperties.SetAttributeValue(nameof(shapeAnnotation.Stroke), shapeAnnotation.Stroke.ToByteString());
+                shapeProperties.SetAttributeValue(nameof(shapeAnnotation.Fill), shapeAnnotation.Fill.ToString());
+                shapeProperties.SetAttributeValue(nameof(shapeAnnotation.Stroke), shapeAnnotation.Stroke.ToString());
                 shapeProperties.SetAttributeValue(nameof(shapeAnnotation.StrokeThickness), shapeAnnotation.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
                 textualProperties.Add(shapeProperties);
 
                 // Must be Ellipse, Point, Rectangle, or Polygon Annotations (all concrete)
-                if (annotationType == typeof(EllipseAnnotation))
+                if (annotationType == typeof(Wpf.EllipseAnnotation))
                 {
-                    var ellipseAnnotation = (EllipseAnnotation)shapeAnnotation;
+                    var ellipseAnnotation = (Wpf.EllipseAnnotation)shapeAnnotation;
                     var ellipseProperties = new XElement("Ellipse");
-                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.X), ellipseAnnotation.X.ToString("G17", CultureInfo.InvariantCulture));
-                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.Y), ellipseAnnotation.Y.ToString("G17", CultureInfo.InvariantCulture));
-                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.Width), ellipseAnnotation.Width.ToString("G17", CultureInfo.InvariantCulture));
-                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.Height), ellipseAnnotation.Height.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MinimumX), ellipseAnnotation.MinimumX.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MaximumY), ellipseAnnotation.MaximumY.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MaximumX), ellipseAnnotation.MaximumX.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MinimumY), ellipseAnnotation.MinimumY.ToString("G17", CultureInfo.InvariantCulture));
                     shapeProperties.Add(ellipseProperties);
                 }
-                else if (annotationType == typeof(RectangleAnnotation))
+                else if (annotationType == typeof(Wpf.RectangleAnnotation))
                 {
-                    var rectangleAnnotation = (RectangleAnnotation)shapeAnnotation;
+                    var rectangleAnnotation = (Wpf.RectangleAnnotation)shapeAnnotation;
                     var rectangleProperties = new XElement("Rectangle");
                     rectangleProperties.SetAttributeValue(nameof(rectangleAnnotation.MinimumX), rectangleAnnotation.MinimumX.ToString("G17", CultureInfo.InvariantCulture));
                     rectangleProperties.SetAttributeValue(nameof(rectangleAnnotation.MaximumY), rectangleAnnotation.MaximumY.ToString("G17", CultureInfo.InvariantCulture));
@@ -315,9 +277,9 @@ namespace OxyPlotControls
                     rectangleProperties.SetAttributeValue(nameof(rectangleAnnotation.MinimumY), rectangleAnnotation.MinimumY.ToString("G17", CultureInfo.InvariantCulture));
                     shapeProperties.Add(rectangleProperties);
                 }
-                else if (annotationType == typeof(PointAnnotation))
+                else if (annotationType == typeof(Wpf.PointAnnotation))
                 {
-                    var pointAnnotation = (PointAnnotation)shapeAnnotation;
+                    var pointAnnotation = (Wpf.PointAnnotation)shapeAnnotation;
                     var pointProperties = new XElement("Point");
                     pointProperties.SetAttributeValue(nameof(pointAnnotation.X), pointAnnotation.X.ToString("G17", CultureInfo.InvariantCulture));
                     pointProperties.SetAttributeValue(nameof(pointAnnotation.Y), pointAnnotation.Y.ToString("G17", CultureInfo.InvariantCulture));
@@ -326,9 +288,9 @@ namespace OxyPlotControls
                     pointProperties.SetAttributeValue(nameof(pointAnnotation.Shape), pointAnnotation.Shape.ToString());
                     shapeProperties.Add(pointProperties);
                 }
-                else if (annotationType == typeof(PolygonAnnotation))
+                else if (annotationType == typeof(Wpf.PolygonAnnotation))
                 {
-                    var polygonAnnotation = (PolygonAnnotation)shapeAnnotation;
+                    var polygonAnnotation = (Wpf.PolygonAnnotation)shapeAnnotation;
                     var polygonProperties = new XElement("Polygon");
                     polygonProperties.SetAttributeValue(nameof(polygonAnnotation.LineJoin), polygonAnnotation.LineJoin.ToString());
                     polygonProperties.SetAttributeValue(nameof(polygonAnnotation.LineStyle), polygonAnnotation.LineStyle.ToString());
@@ -338,13 +300,14 @@ namespace OxyPlotControls
             }
             else
             {
-                var pathAnnotation = annotation as PathAnnotation;
+                var pathAnnotation = annotation as Wpf.PathAnnotation;
                 if (pathAnnotation != null)
                 {
                     var pathProperties = new XElement("Path");
-                    pathProperties.SetAttributeValue(nameof(pathAnnotation.Color), pathAnnotation.Color.ToByteString());
+                    pathProperties.SetAttributeValue(nameof(pathAnnotation.Color), pathAnnotation.Color.ToString());
                     pathProperties.SetAttributeValue(nameof(pathAnnotation.ClipByXAxis), pathAnnotation.ClipByXAxis.ToString());
                     pathProperties.SetAttributeValue(nameof(pathAnnotation.ClipByYAxis), pathAnnotation.ClipByYAxis.ToString());
+                    pathProperties.SetAttributeValue(nameof(pathAnnotation.ClipText), pathAnnotation.ClipText.ToString());
                     pathProperties.SetAttributeValue(nameof(pathAnnotation.LineJoin), pathAnnotation.LineJoin.ToString());
                     pathProperties.SetAttributeValue(nameof(pathAnnotation.LineStyle), pathAnnotation.LineStyle.ToString());
                     pathProperties.SetAttributeValue(nameof(pathAnnotation.StrokeThickness), pathAnnotation.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
@@ -354,9 +317,9 @@ namespace OxyPlotControls
                     textualProperties.Add(pathProperties);
 
                     // Must be Line, Polyline, or Function Annotations (all concrete)
-                    if (annotationType == typeof(LineAnnotation))
+                    if (annotationType == typeof(Wpf.LineAnnotation))
                     {
-                        var lineAnnotation = (LineAnnotation)pathAnnotation;
+                        var lineAnnotation = (Wpf.LineAnnotation)pathAnnotation;
                         var lineProperties = new XElement("Line");
                         lineProperties.SetAttributeValue(nameof(lineAnnotation.Type), lineAnnotation.Type.ToString());
                         lineProperties.SetAttributeValue(nameof(lineAnnotation.X), lineAnnotation.X.ToString("G17", CultureInfo.InvariantCulture));
@@ -369,21 +332,13 @@ namespace OxyPlotControls
                         lineProperties.SetAttributeValue(nameof(lineAnnotation.Slope), lineAnnotation.Slope.ToString("G17", CultureInfo.InvariantCulture));
                         pathProperties.Add(lineProperties);
                     }
-                    else if (annotationType == typeof(PolylineAnnotation))
+                    else if (annotationType == typeof(Wpf.PolylineAnnotation))
                     {
-                        var polylineAnnotation = (PolylineAnnotation)pathAnnotation;
+                        var polylineAnnotation = (Wpf.PolylineAnnotation)pathAnnotation;
                         var polylineProperties = new XElement("Polyline");
                         polylineProperties.SetAttributeValue(nameof(polylineAnnotation.MinimumSegmentLength), polylineAnnotation.MinimumSegmentLength.ToString("G17", CultureInfo.InvariantCulture));
                         polylineProperties.Add(polylineAnnotation.Points.ToXElement(nameof(polylineAnnotation.Points)));
                         pathProperties.Add(polylineProperties);
-                    }
-                    else if (annotationType == typeof(FunctionAnnotation))
-                    {
-                        var functionAnnotation = (FunctionAnnotation)pathAnnotation;
-                        var functionProperties = new XElement("Function");
-                        functionProperties.SetAttributeValue(nameof(functionAnnotation.Type), functionAnnotation.Type.ToString());
-                        // Note: The Equation delegate cannot be serialized - only the Type property is persisted
-                        pathProperties.Add(functionProperties);
                     }
                 }
             }
@@ -396,44 +351,45 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="element">The XElement containing the annotation properties.</param>
         /// <returns>A new annotation with the deserialized properties.</returns>
-        public static TextualAnnotation? XElementToAnnotationProperties(XElement element)
+        public static Wpf.TextualAnnotation? XElementToAnnotationProperties(XElement element)
         {
             if (element.Name != AnnotationPropertiesTag) return null;
 
-            TextualAnnotation annotation;
+            var fontWeightConverter = new FontWeightConverter();
+            var thicknessConverter = new System.Windows.ThicknessConverter();
+            Wpf.TextualAnnotation annotation;
             string annotationTypeString = "";
 
-            if (element.Attribute("AnnotationType") != null) annotationTypeString = element.Attribute("AnnotationType")!.Value;
+            var annotationTypeAttr = element.Attribute("AnnotationType");
+            if (annotationTypeAttr != null) annotationTypeString = annotationTypeAttr.Value;
 
-            // Support both old Wpf types and new core types for backward compatibility
-            if (annotationTypeString.Contains("ArrowAnnotation"))
-                annotation = new ArrowAnnotation();
-            else if (annotationTypeString.Contains("TextAnnotation"))
-                annotation = new TextAnnotation();
-            else if (annotationTypeString.Contains("EllipseAnnotation"))
-                annotation = new EllipseAnnotation();
-            else if (annotationTypeString.Contains("RectangleAnnotation"))
-                annotation = new RectangleAnnotation();
-            else if (annotationTypeString.Contains("PointAnnotation"))
-                annotation = new PointAnnotation();
-            else if (annotationTypeString.Contains("PolygonAnnotation"))
-                annotation = new PolygonAnnotation();
-            else if (annotationTypeString.Contains("LineAnnotation"))
-                annotation = new LineAnnotation();
-            else if (annotationTypeString.Contains("PolylineAnnotation"))
-                annotation = new PolylineAnnotation();
-            else if (annotationTypeString.Contains("FunctionAnnotation"))
-                annotation = new FunctionAnnotation();
+            if (annotationTypeString == typeof(Wpf.ArrowAnnotation).ToString())
+                annotation = new Wpf.ArrowAnnotation();
+            else if (annotationTypeString == typeof(Wpf.TextAnnotation).ToString())
+                annotation = new Wpf.TextAnnotation();
+            else if (annotationTypeString == typeof(Wpf.EllipseAnnotation).ToString())
+                annotation = new Wpf.EllipseAnnotation();
+            else if (annotationTypeString == typeof(Wpf.RectangleAnnotation).ToString())
+                annotation = new Wpf.RectangleAnnotation();
+            else if (annotationTypeString == typeof(Wpf.PointAnnotation).ToString())
+                annotation = new Wpf.PointAnnotation();
+            else if (annotationTypeString == typeof(Wpf.PolygonAnnotation).ToString())
+                annotation = new Wpf.PolygonAnnotation();
+            else if (annotationTypeString == typeof(Wpf.LineAnnotation).ToString())
+                annotation = new Wpf.LineAnnotation();
+            else if (annotationTypeString == typeof(Wpf.PolylineAnnotation).ToString())
+                annotation = new Wpf.PolylineAnnotation();
+            else if (annotationTypeString == typeof(Wpf.FunctionAnnotation).ToString())
+                annotation = new Wpf.FunctionAnnotation();
             else
-                annotation = new TextAnnotation();
+                annotation = new Wpf.TextAnnotation();
 
             // General Properties
             var generalElement = element.Element("General");
             if (generalElement != null)
             {
-                if (GetStringAttribute(generalElement, "Tag", out var tag)) annotation.Tag = tag;
-                // Backwards compatibility: Name -> Tag
-                if (GetStringAttribute(generalElement, "Name", out var name)) annotation.Tag = name;
+                if (GetStringAttribute(generalElement, nameof(annotation.Name), out var name)) annotation.Name = name;
+                if (GetBooleanAttribute(generalElement, nameof(annotation.IsEnabled), out var isEnabled)) annotation.IsEnabled = isEnabled;
                 if (GetEnumAttribute(generalElement, nameof(annotation.Layer), out AnnotationLayer layer)) annotation.Layer = layer;
                 if (GetStringAttribute(generalElement, nameof(annotation.XAxisKey), out var xAxisKey)) annotation.XAxisKey = xAxisKey;
                 if (GetStringAttribute(generalElement, nameof(annotation.YAxisKey), out var yAxisKey)) annotation.YAxisKey = yAxisKey;
@@ -443,39 +399,41 @@ namespace OxyPlotControls
             var textualElement = element.Element("Textual");
             if (textualElement != null)
             {
+                var ffc = new System.Windows.Media.FontFamilyConverter();
                 if (GetStringAttribute(textualElement, nameof(annotation.Text), out var text)) annotation.Text = text;
-                if (GetOxyColorAttribute(textualElement, nameof(annotation.TextColor), out var textColor)) annotation.TextColor = textColor;
-                if (GetStringAttribute(textualElement, nameof(annotation.Font), out var font)) annotation.Font = font;
-                // Backwards compatibility: FontFamily -> Font
-                if (GetStringAttribute(textualElement, "FontFamily", out var fontFamily)) annotation.Font = fontFamily;
+                if (GetColorAttribute(textualElement, nameof(annotation.TextColor), out var textColor)) annotation.TextColor = textColor;
+                if (GetFontFamilyAttribute(textualElement, nameof(annotation.FontFamily), ffc, out var fontFamily)) annotation.FontFamily = fontFamily;
                 if (GetDoubleAttribute(textualElement, nameof(annotation.FontSize), out var fontSize)) annotation.FontSize = fontSize;
-                if (GetDoubleAttribute(textualElement, nameof(annotation.FontWeight), out var fontWeight)) annotation.FontWeight = fontWeight;
-                // Backwards compatibility: WPF FontWeight to double
-                if (GetFontWeightAsDoubleAttribute(textualElement, nameof(annotation.FontWeight), out var fontWeightVal)) annotation.FontWeight = fontWeightVal;
+                if (GetFontWeightAttribute(textualElement, nameof(annotation.FontWeight), fontWeightConverter, out var fontWeight)) annotation.FontWeight = fontWeight;
                 if (GetDataPointAttribute(textualElement, nameof(annotation.TextPosition), out var textPosition)) annotation.TextPosition = textPosition;
                 if (GetDoubleAttribute(textualElement, nameof(annotation.TextRotation), out var textRotation)) annotation.TextRotation = textRotation;
-                if (GetEnumAttribute(textualElement, nameof(annotation.TextHorizontalAlignment), out OxyPlot.HorizontalAlignment hAlign))
+                if (GetStringAttribute(textualElement, nameof(annotation.TextHorizontalAlignment), out var hAlignStr) && Enum.TryParse(hAlignStr, out System.Windows.HorizontalAlignment hAlign))
                     annotation.TextHorizontalAlignment = hAlign;
-                if (GetEnumAttribute(textualElement, nameof(annotation.TextVerticalAlignment), out OxyPlot.VerticalAlignment vAlign))
+                if (GetStringAttribute(textualElement, nameof(annotation.TextVerticalAlignment), out var vAlignStr) && Enum.TryParse(vAlignStr, out System.Windows.VerticalAlignment vAlign))
                     annotation.TextVerticalAlignment = vAlign;
 
                 // Backwards Compatibility
-                if (GetOxyColorAttribute(textualElement, "Color", out textColor)) annotation.TextColor = textColor;
-                if (GetOxyColorAttribute(textualElement, "TextColor", out textColor)) annotation.TextColor = textColor;
+                if (GetColorAttribute(textualElement, "Color", out textColor)) annotation.TextColor = textColor;
+                if (GetFontFamilyAttribute(textualElement, "Font", ffc, out fontFamily)) annotation.FontFamily = fontFamily;
                 if (GetDoubleAttribute(textualElement, "Size", out fontSize)) annotation.FontSize = fontSize;
+                if (GetFontWeightAttribute(textualElement, "Weight", fontWeightConverter, out fontWeight)) annotation.FontWeight = fontWeight;
                 if (GetDataPointAttribute(textualElement, "Position", out textPosition)) annotation.TextPosition = textPosition;
                 if (GetDoubleAttribute(textualElement, "Rotation", out textRotation)) annotation.TextRotation = textRotation;
+                if (GetStringAttribute(textualElement, "HorizontalAlignment", out hAlignStr) && Enum.TryParse(hAlignStr, out hAlign))
+                    annotation.TextHorizontalAlignment = hAlign;
+                if (GetStringAttribute(textualElement, "VerticalAlignment", out vAlignStr) && Enum.TryParse(vAlignStr, out vAlign))
+                    annotation.TextVerticalAlignment = vAlign;
             }
 
             var currentAnnotationType = annotation.GetType();
 
-            if (currentAnnotationType == typeof(ArrowAnnotation))
+            if (currentAnnotationType == typeof(Wpf.ArrowAnnotation))
             {
                 var arrowElement = textualElement?.Element("Arrow");
                 if (arrowElement != null)
                 {
-                    var arrowAnnotation = (ArrowAnnotation)annotation;
-                    if (GetOxyColorAttribute(arrowElement, nameof(arrowAnnotation.Color), out var color)) arrowAnnotation.Color = color;
+                    var arrowAnnotation = (Wpf.ArrowAnnotation)annotation;
+                    if (GetColorAttribute(arrowElement, nameof(arrowAnnotation.Color), out var color)) arrowAnnotation.Color = color;
                     if (GetScreenVectorAttribute(arrowElement, nameof(arrowAnnotation.ArrowDirection), out var arrowDirection)) arrowAnnotation.ArrowDirection = arrowDirection;
                     if (GetDataPointAttribute(arrowElement, nameof(arrowAnnotation.StartPoint), out var startPoint)) arrowAnnotation.StartPoint = startPoint;
                     if (GetDataPointAttribute(arrowElement, nameof(arrowAnnotation.EndPoint), out var endPoint)) arrowAnnotation.EndPoint = endPoint;
@@ -491,74 +449,62 @@ namespace OxyPlotControls
                     if (GetDoubleAttribute(arrowElement, "BarbLength", out veeness)) arrowAnnotation.Veeness = veeness;
                 }
             }
-            else if (currentAnnotationType == typeof(TextAnnotation))
+            else if (currentAnnotationType == typeof(Wpf.TextAnnotation))
             {
                 var textElement = textualElement?.Element("Text");
                 if (textElement != null)
                 {
-                    var textAnnotation = (TextAnnotation)annotation;
-                    if (GetOxyColorAttribute(textElement, nameof(textAnnotation.Background), out var background)) textAnnotation.Background = background;
-                    // Note: TextAnnotation.Offset is ScreenVector in modern OxyPlot, convert from Vector
-                    if (GetVectorAttribute(textElement, nameof(textAnnotation.Offset), out var offset)) textAnnotation.Offset = new ScreenVector(offset.X, offset.Y);
-                    if (GetOxyThicknessAttribute(textElement, nameof(textAnnotation.Padding), out var padding)) textAnnotation.Padding = padding;
-                    if (GetOxyColorAttribute(textElement, nameof(textAnnotation.Stroke), out var stroke)) textAnnotation.Stroke = stroke;
+                    var textAnnotation = (Wpf.TextAnnotation)annotation;
+                    if (GetColorAttribute(textElement, nameof(textAnnotation.Background), out var background)) textAnnotation.Background = background;
+                    if (GetVectorAttribute(textElement, nameof(textAnnotation.Offset), out var offset)) textAnnotation.Offset = offset;
+                    if (GetThicknessAttribute(textElement, nameof(textAnnotation.Padding), thicknessConverter, out var padding)) textAnnotation.Padding = padding;
+                    if (GetColorAttribute(textElement, nameof(textAnnotation.Stroke), out var stroke)) textAnnotation.Stroke = stroke;
                     if (GetDoubleAttribute(textElement, nameof(textAnnotation.StrokeThickness), out var strokeThickness)) textAnnotation.StrokeThickness = strokeThickness;
                 }
             }
 
             // Must be shape or path annotation
-            var shapeAnnotation = annotation as ShapeAnnotation;
+            var shapeAnnotation = annotation as Wpf.ShapeAnnotation;
             if (shapeAnnotation != null)
             {
                 var shapeElement = textualElement?.Element("Shape");
                 if (shapeElement != null)
                 {
-                    if (GetOxyColorAttribute(shapeElement, nameof(shapeAnnotation.Fill), out var fill)) shapeAnnotation.Fill = fill;
-                    if (GetOxyColorAttribute(shapeElement, nameof(shapeAnnotation.Stroke), out var stroke)) shapeAnnotation.Stroke = stroke;
+                    if (GetColorAttribute(shapeElement, nameof(shapeAnnotation.Fill), out var fill)) shapeAnnotation.Fill = fill;
+                    if (GetColorAttribute(shapeElement, nameof(shapeAnnotation.Stroke), out var stroke)) shapeAnnotation.Stroke = stroke;
                     if (GetDoubleAttribute(shapeElement, nameof(shapeAnnotation.StrokeThickness), out var strokeThickness)) shapeAnnotation.StrokeThickness = strokeThickness;
 
                     // Must be Ellipse, Point, Rectangle, or Polygon Annotations (all concrete)
-                    if (currentAnnotationType == typeof(EllipseAnnotation))
+                    if (currentAnnotationType == typeof(Wpf.EllipseAnnotation))
                     {
                         var ellipseElement = shapeElement.Element("Ellipse");
                         if (ellipseElement != null)
                         {
-                            var ellipseAnnotation = (EllipseAnnotation)shapeAnnotation;
-                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.X), out var x)) ellipseAnnotation.X = x;
-                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.Y), out var y)) ellipseAnnotation.Y = y;
-                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.Width), out var width)) ellipseAnnotation.Width = width;
-                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.Height), out var height)) ellipseAnnotation.Height = height;
-                            // Backwards compatibility: MinimumX/MaximumX -> X/Width
-                            if (GetDoubleAttribute(ellipseElement, "MinimumX", out var minX) && GetDoubleAttribute(ellipseElement, "MaximumX", out var maxX))
-                            {
-                                ellipseAnnotation.X = (minX + maxX) / 2;
-                                ellipseAnnotation.Width = maxX - minX;
-                            }
-                            if (GetDoubleAttribute(ellipseElement, "MinimumY", out var minY) && GetDoubleAttribute(ellipseElement, "MaximumY", out var maxY))
-                            {
-                                ellipseAnnotation.Y = (minY + maxY) / 2;
-                                ellipseAnnotation.Height = maxY - minY;
-                            }
+                            var ellipseAnnotation = (Wpf.EllipseAnnotation)shapeAnnotation;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MinimumX), out var minimumX)) ellipseAnnotation.MinimumX = minimumX;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MaximumY), out var maximumY)) ellipseAnnotation.MaximumY = maximumY;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MaximumX), out var maximumX)) ellipseAnnotation.MaximumX = maximumX;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MinimumY), out var minimumY)) ellipseAnnotation.MinimumY = minimumY;
                         }
                     }
-                    else if (currentAnnotationType == typeof(RectangleAnnotation))
+                    else if (currentAnnotationType == typeof(Wpf.RectangleAnnotation))
                     {
                         var rectangleElement = shapeElement.Element("Rectangle");
                         if (rectangleElement != null)
                         {
-                            var rectangleAnnotation = (RectangleAnnotation)shapeAnnotation;
+                            var rectangleAnnotation = (Wpf.RectangleAnnotation)shapeAnnotation;
                             if (GetDoubleAttribute(rectangleElement, nameof(rectangleAnnotation.MinimumX), out var minimumX)) rectangleAnnotation.MinimumX = minimumX;
                             if (GetDoubleAttribute(rectangleElement, nameof(rectangleAnnotation.MaximumY), out var maximumY)) rectangleAnnotation.MaximumY = maximumY;
                             if (GetDoubleAttribute(rectangleElement, nameof(rectangleAnnotation.MaximumX), out var maximumX)) rectangleAnnotation.MaximumX = maximumX;
                             if (GetDoubleAttribute(rectangleElement, nameof(rectangleAnnotation.MinimumY), out var minimumY)) rectangleAnnotation.MinimumY = minimumY;
                         }
                     }
-                    else if (currentAnnotationType == typeof(PointAnnotation))
+                    else if (currentAnnotationType == typeof(Wpf.PointAnnotation))
                     {
                         var pointElement = shapeElement.Element("Point");
                         if (pointElement != null)
                         {
-                            var pointAnnotation = (PointAnnotation)shapeAnnotation;
+                            var pointAnnotation = (Wpf.PointAnnotation)shapeAnnotation;
                             if (GetDoubleAttribute(pointElement, nameof(pointAnnotation.X), out var x)) pointAnnotation.X = x;
                             if (GetDoubleAttribute(pointElement, nameof(pointAnnotation.Y), out var y)) pointAnnotation.Y = y;
                             if (GetDoubleAttribute(pointElement, nameof(pointAnnotation.Size), out var size)) pointAnnotation.Size = size;
@@ -566,46 +512,36 @@ namespace OxyPlotControls
                             if (GetEnumAttribute(pointElement, nameof(pointAnnotation.Shape), out MarkerType shape)) pointAnnotation.Shape = shape;
                         }
                     }
-                    else if (currentAnnotationType == typeof(PolygonAnnotation))
+                    else if (currentAnnotationType == typeof(Wpf.PolygonAnnotation))
                     {
                         var polygonElement = shapeElement.Element("Polygon");
                         if (polygonElement != null)
                         {
-                            var polygonAnnotation = (PolygonAnnotation)shapeAnnotation;
+                            var polygonAnnotation = (Wpf.PolygonAnnotation)shapeAnnotation;
                             if (GetEnumAttribute(polygonElement, nameof(polygonAnnotation.LineJoin), out LineJoin lineJoin)) polygonAnnotation.LineJoin = lineJoin;
                             if (GetEnumAttribute(polygonElement, nameof(polygonAnnotation.LineStyle), out LineStyle lineStyle)) polygonAnnotation.LineStyle = lineStyle;
                             var polyPointsElement = polygonElement.Element(nameof(polygonAnnotation.Points));
-                            if (polyPointsElement != null)
-                            {
-                                polygonAnnotation.Points.Clear();
-                                foreach (var pt in polyPointsElement.PointsFromXElement())
-                                    polygonAnnotation.Points.Add(pt);
-                            }
+                            if (polyPointsElement != null) polygonAnnotation.Points = polyPointsElement.PointsFromXElement();
 
                             // Backwards compatibility
                             polyPointsElement = polygonElement.Element("DataPoints");
-                            if (polyPointsElement != null)
-                            {
-                                polygonAnnotation.Points.Clear();
-                                foreach (var pt in polyPointsElement.PointsFromXElement())
-                                    polygonAnnotation.Points.Add(pt);
-                            }
+                            if (polyPointsElement != null) polygonAnnotation.Points = polyPointsElement.PointsFromXElement();
                         }
                     }
                 }
             }
             else
             {
-                var pathAnnotation = annotation as PathAnnotation;
+                var pathAnnotation = annotation as Wpf.PathAnnotation;
                 if (pathAnnotation != null)
                 {
                     var pathElement = textualElement?.Element("Path");
                     if (pathElement != null)
                     {
-                        if (GetOxyColorAttribute(pathElement, nameof(pathAnnotation.Color), out var color)) pathAnnotation.Color = color;
+                        if (GetColorAttribute(pathElement, nameof(pathAnnotation.Color), out var color)) pathAnnotation.Color = color;
                         if (GetBooleanAttribute(pathElement, nameof(pathAnnotation.ClipByXAxis), out var clipByXAxis)) pathAnnotation.ClipByXAxis = clipByXAxis;
                         if (GetBooleanAttribute(pathElement, nameof(pathAnnotation.ClipByYAxis), out var clipByYAxis)) pathAnnotation.ClipByYAxis = clipByYAxis;
-                        // Note: ClipText property was removed from PathAnnotation
+                        if (GetBooleanAttribute(pathElement, nameof(pathAnnotation.ClipText), out var clipText)) pathAnnotation.ClipText = clipText;
                         if (GetEnumAttribute(pathElement, nameof(pathAnnotation.LineJoin), out LineJoin lineJoin)) pathAnnotation.LineJoin = lineJoin;
                         if (GetEnumAttribute(pathElement, nameof(pathAnnotation.LineStyle), out LineStyle lineStyle)) pathAnnotation.LineStyle = lineStyle;
                         if (GetDoubleAttribute(pathElement, nameof(pathAnnotation.StrokeThickness), out var strokeThickness)) pathAnnotation.StrokeThickness = strokeThickness;
@@ -614,12 +550,12 @@ namespace OxyPlotControls
                         if (GetDoubleAttribute(pathElement, nameof(pathAnnotation.TextLinePosition), out var textLinePosition)) pathAnnotation.TextLinePosition = textLinePosition;
 
                         // Must be Line, Polyline, or Function Annotations (all concrete)
-                        if (currentAnnotationType == typeof(LineAnnotation))
+                        if (currentAnnotationType == typeof(Wpf.LineAnnotation))
                         {
                             var lineElement = pathElement.Element("Line");
                             if (lineElement != null)
                             {
-                                var lineAnnotation = (LineAnnotation)pathAnnotation;
+                                var lineAnnotation = (Wpf.LineAnnotation)pathAnnotation;
                                 if (GetEnumAttribute(lineElement, nameof(lineAnnotation.Type), out LineAnnotationType type)) lineAnnotation.Type = type;
                                 if (GetDoubleAttribute(lineElement, nameof(lineAnnotation.X), out var x)) lineAnnotation.X = x;
                                 if (GetDoubleAttribute(lineElement, nameof(lineAnnotation.Y), out var y)) lineAnnotation.Y = y;
@@ -631,39 +567,19 @@ namespace OxyPlotControls
                                 if (GetDoubleAttribute(lineElement, nameof(lineAnnotation.Slope), out var slope)) lineAnnotation.Slope = slope;
                             }
                         }
-                        else if (currentAnnotationType == typeof(PolylineAnnotation))
+                        else if (currentAnnotationType == typeof(Wpf.PolylineAnnotation))
                         {
                             var polylineElement = pathElement.Element("Polyline");
                             if (polylineElement != null)
                             {
-                                var polylineAnnotation = (PolylineAnnotation)pathAnnotation;
+                                var polylineAnnotation = (Wpf.PolylineAnnotation)pathAnnotation;
                                 if (GetDoubleAttribute(polylineElement, nameof(polylineAnnotation.MinimumSegmentLength), out var minimumSegmentLength)) polylineAnnotation.MinimumSegmentLength = minimumSegmentLength;
                                 var polyPointsElement = polylineElement.Element(nameof(polylineAnnotation.Points));
-                                if (polyPointsElement != null)
-                                {
-                                    polylineAnnotation.Points.Clear();
-                                    foreach (var pt in polyPointsElement.PointsFromXElement())
-                                        polylineAnnotation.Points.Add(pt);
-                                }
+                                if (polyPointsElement != null) polylineAnnotation.Points = polyPointsElement.PointsFromXElement();
 
                                 // Backwards compatibility
                                 polyPointsElement = polylineElement.Element("DataPoints");
-                                if (polyPointsElement != null)
-                                {
-                                    polylineAnnotation.Points.Clear();
-                                    foreach (var pt in polyPointsElement.PointsFromXElement())
-                                        polylineAnnotation.Points.Add(pt);
-                                }
-                            }
-                        }
-                        else if (currentAnnotationType == typeof(FunctionAnnotation))
-                        {
-                            var functionElement = pathElement.Element("Function");
-                            if (functionElement != null)
-                            {
-                                var functionAnnotation = (FunctionAnnotation)pathAnnotation;
-                                if (GetEnumAttribute(functionElement, nameof(functionAnnotation.Type), out FunctionAnnotationType type)) functionAnnotation.Type = type;
-                                // Note: The Equation delegate cannot be deserialized - it must be set programmatically
+                                if (polyPointsElement != null) polylineAnnotation.Points = polyPointsElement.PointsFromXElement();
                             }
                         }
                     }
@@ -684,7 +600,7 @@ namespace OxyPlotControls
 
         private void LineTypeControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Annotation == null || Annotation.GetType() != typeof(LineAnnotation)) return;
+            if (Annotation.GetType() != typeof(Wpf.LineAnnotation)) return;
 
             var selectedType = (LineAnnotationType)((ComboBox)LineTypeControl.InnerContent).SelectedItem;
 
@@ -720,7 +636,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts an OxyPlot DataPoint to a WPF Point.
         /// </summary>
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
             if (value.GetType() != typeof(DataPoint)) return null;
@@ -731,7 +647,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts a WPF Point back to an OxyPlot DataPoint.
         /// </summary>
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
             if (value.GetType() != typeof(System.Windows.Point)) return null;
@@ -748,7 +664,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts an OxyPlot ScreenVector to a WPF Point.
         /// </summary>
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
             if (value.GetType() != typeof(ScreenVector)) return null;
@@ -759,7 +675,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts a WPF Point back to an OxyPlot ScreenVector.
         /// </summary>
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
             if (value.GetType() != typeof(System.Windows.Point)) return null;

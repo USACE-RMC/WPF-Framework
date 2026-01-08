@@ -7,30 +7,29 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:controls="clr-namespace:OxyPlotControls;assembly=OxyPlotControls"
         mc:Ignorable="d"
-        Title="OxyPlotControls Demo - Modern MVVM" Height="700" Width="900">
+        Title="MainWindow" Height="650" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="230"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Header with settings buttons -->
-        <StackPanel Margin="5" Orientation="Horizontal" Grid.ColumnSpan="2">
-            <Button Name="SaveSettingsButton" HorizontalAlignment="Left" Click="SaveSettingsButton_Click" Padding="8,4">Save Settings</Button>
-            <Button Name="LoadSettingsButton" Margin="5,0,0,0" HorizontalAlignment="Left" Click="LoadSettingsButton_Click" Padding="8,4">Load Settings</Button>
-            <TextBlock Margin="15,0,5,0" VerticalAlignment="Center" FontWeight="Bold">Series Type:</TextBlock>
-            <ComboBox x:Name="Combobox1" Margin="5,0,0,0" Width="200" SelectionChanged="ComboBox_SelectionChanged">
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <Button Name="SaveSettingsButton" HorizontalAlignment="Left" Click="SaveSettingsButton_Click">Save Settings</Button>
+            <Button Name="LoadSettingsButton" Margin="5,0,0,0" HorizontalAlignment="Left" Click="LoadSettingsButton_Click">Load Settings</Button>
+            <ComboBox x:Name="Combobox1" Margin="5,0,0,0" SelectionChanged="ComboBox_SelectionChanged">
                 <ComboBoxItem>Line Series</ComboBoxItem>
                 <ComboBoxItem>Line Series (Bound)</ComboBoxItem>
                 <ComboBoxItem>Scatter Series</ComboBoxItem>
                 <ComboBoxItem>Scatter Series (Bound)</ComboBoxItem>
                 <ComboBoxItem>Histogram Series</ComboBoxItem>
                 <ComboBoxItem>Histogram Series (Bound)</ComboBoxItem>
+                <ComboBoxItem>Column Series</ComboBoxItem>
+                <ComboBoxItem>Column Series (Bound)</ComboBoxItem>
                 <ComboBoxItem>Bar Series</ComboBoxItem>
                 <ComboBoxItem>Bar Series (Bound)</ComboBoxItem>
                 <ComboBoxItem>Box Plot Series</ComboBoxItem>
@@ -42,38 +41,31 @@
                 <ComboBoxItem>Scatter Error Series</ComboBoxItem>
                 <ComboBoxItem>Scatter Error Series (Bound)</ComboBoxItem>
                 <ComboBoxItem>Date Time Series</ComboBoxItem>
-                <ComboBoxItem>Pie Series</ComboBoxItem>
-                <ComboBoxItem>Stem Series</ComboBoxItem>
                 <ComboBoxItem>Two Color Line Series</ComboBoxItem>
-                <ComboBoxItem>Step Series</ComboBoxItem>
+                <ComboBoxItem>Three Color Line Series</ComboBoxItem>
+                <ComboBoxItem>Pie Series</ComboBoxItem>
+                <ComboBoxItem>Candlestick Series</ComboBoxItem>
+                <ComboBoxItem>Stair Step Series</ComboBoxItem>
+                <ComboBoxItem>Stem Series</ComboBoxItem>
             </ComboBox>
         </StackPanel>
 
-        <!-- Status bar -->
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#F0F0F0" Padding="5,3">
-            <TextBlock Name="StatusText" Text="Ready - Select a series type to display" FontSize="11"/>
-        </Border>
-
-        <!-- Main content area with plot and toolbar -->
-        <Grid Grid.Column="0" Grid.Row="2">
+        <Grid Grid.Column="0" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Modern PlotView with MVVM binding to PlotModel -->
-            <oxy:PlotView
-                Name="PlotView"
-                Model="{Binding PlotModel, RelativeSource={RelativeSource AncestorType=Window}}"
-                BorderBrush="Black"
-                BorderThickness="1"
-                SnapsToDevicePixels="True"
-                Grid.Column="0"/>
+            <Canvas Name="TestCanvas">
 
-            <!-- OxyPlotToolbar now uses PlotView property -->
+            </Canvas>
+            <oxy:Plot Name="TestPlot" BorderBrush="Black" BorderThickness="1" SnapsToDevicePixels="True" Grid.Column="0" Title="Test Title" IsLegendVisible="True" LegendPosition="RightBottom">
+
+            </oxy:Plot>
+
             <controls:OxyPlotToolbar
                 Name="OxyPlotToolBar"
-                PlotView="{Binding ElementName=PlotView, Mode=OneTime}"
+                Plot="{Binding ElementName=TestPlot, Mode=OneTime}"
                 ToolBarOrientation="Vertical"
                 Grid.Column="1"
                 Margin="0,0,4,0"
@@ -82,24 +74,24 @@
 
         <GridSplitter
             Grid.Column="0"
-            Grid.Row="2"
+            Grid.Row="1"
             Width="2"
             HorizontalAlignment="Right"
-            VerticalAlignment="Stretch"/>
+            VerticalAlignment="Stretch"></GridSplitter>
         <GridSplitter
             Grid.Column="1"
-            Grid.Row="2"
+            Grid.Row="1"
             Width="2"
             HorizontalAlignment="Left"
-            VerticalAlignment="Stretch"/>
+            VerticalAlignment="Stretch"></GridSplitter>
 
-        <!-- Properties panel using PlotModel property -->
-        <Grid Grid.Column="1" Margin="6,0,5,0" Grid.Row="2">
+        <Grid Grid.Column="1" Margin="6,0,5,0" Grid.Row="1">
             <controls:OxyPlotPropertiesControl
                 Name="PropertiesControl"
                 ShowCloseButton="True"
-                PlotModel="{Binding PlotModel, RelativeSource={RelativeSource AncestorType=Window}}"
+                Plot="{Binding ElementName=TestPlot, Mode=OneTime}"
                 ClosePropertiesCalled="PropertiesControl_ClosePropertiesCalled"/>
+
         </Grid>
 
     </Grid>

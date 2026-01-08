@@ -56,7 +56,8 @@
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="400"
                     Title="Title"
-                    Text="{Binding Series.Title, ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    Text="{Binding Series.Title, ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Visibility (DEVELOPER)-->
                 <cntrls:BooleanPropertyControl

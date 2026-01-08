@@ -1,20 +1,17 @@
 <!-- OxyPlotControls - Modern C# WPF Controls for OxyPlot -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows7.0</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>12.0</LangVersion>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>OxyPlotControls</RootNamespace>
     <AssemblyName>OxyPlotControls</AssemblyName>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
-
-  <!-- GenericControls reference for net9.0 -->
-
-  <!-- DatabaseManager reference for net9.0 -->
 
   <!-- Resource files -->
   <ItemGroup>
@@ -25,8 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
   </ItemGroup>
-
-  <!-- XAML resource dictionaries are automatically included by the SDK -->
   <ItemGroup>
     <Reference Include="DatabaseManager">
       <HintPath>..\..\..\database-management\DatabaseManager\bin\Debug\net9.0\DatabaseManager.dll</HintPath>

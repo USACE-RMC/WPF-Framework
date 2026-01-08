@@ -1,33 +1,3 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -38,7 +8,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot;
-using OxyPlot.Axes;
+using Wpf = OxyPlot.Wpf;
 using static OxyPlotControls.OxyPlotSettingsSerializer;
 
 namespace OxyPlotControls
@@ -47,19 +17,6 @@ namespace OxyPlotControls
     /// Control for editing axis properties in an OxyPlot chart.
     /// Provides UI elements for configuring axis type, range, labels, gridlines, and tick marks.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class AxisControl : UserControl
     {
         private static readonly double Epsilon = 0.0000000000000001;
@@ -77,61 +34,45 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets the available axis position options.
         /// </summary>
-        public static List<AxisPosition> AxisPositionOptions { get; } =
-            new List<AxisPosition>((AxisPosition[])Enum.GetValues(typeof(AxisPosition)));
+        public static List<OxyPlot.Axes.AxisPosition> AxisPositionOptions { get; } =
+            new List<OxyPlot.Axes.AxisPosition>((OxyPlot.Axes.AxisPosition[])Enum.GetValues(typeof(OxyPlot.Axes.AxisPosition)));
 
         /// <summary>
         /// Gets the available axis tick style options.
         /// </summary>
-        public static List<TickStyle> AxisTickStyleOptions { get; } =
-            new List<TickStyle>((TickStyle[])Enum.GetValues(typeof(TickStyle)));
+        public static List<OxyPlot.Axes.TickStyle> AxisTickStyleOptions { get; } =
+            new List<OxyPlot.Axes.TickStyle>((OxyPlot.Axes.TickStyle[])Enum.GetValues(typeof(OxyPlot.Axes.TickStyle)));
 
         /// <summary>
         /// Gets the available axis layer options.
         /// </summary>
-        public static List<AxisLayer> AxisLayerOptions { get; } =
-            new List<AxisLayer>((AxisLayer[])Enum.GetValues(typeof(AxisLayer)));
+        public static List<OxyPlot.Axes.AxisLayer> AxisLayerOptions { get; } =
+            new List<OxyPlot.Axes.AxisLayer>((OxyPlot.Axes.AxisLayer[])Enum.GetValues(typeof(OxyPlot.Axes.AxisLayer)));
 
         /// <summary>
         /// Identifies the Axis dependency property.
         /// </summary>
         public static readonly DependencyProperty AxisProperty = DependencyProperty.Register(
-            nameof(Axis), typeof(Axis), typeof(AxisControl),
+            nameof(Axis), typeof(Wpf.Axis), typeof(AxisControl),
             new PropertyMetadata(null, InitializePlot));
 
         /// <summary>
         /// Gets or sets the axis being edited by this control.
         /// </summary>
-        public Axis Axis
+        public Wpf.Axis Axis
         {
-            get => (Axis)GetValue(AxisProperty);
+            get => (Wpf.Axis)GetValue(AxisProperty);
             set => SetValue(AxisProperty, value);
         }
 
-        /// <summary>
-        /// Identifies the PlotModel dependency property.
-        /// </summary>
-        public static readonly DependencyProperty PlotModelProperty = DependencyProperty.Register(
-            nameof(PlotModel), typeof(PlotModel), typeof(AxisControl),
-            new PropertyMetadata(null));
-
-        /// <summary>
-        /// Gets or sets the PlotModel containing the axis.
-        /// </summary>
-        public PlotModel PlotModel
-        {
-            get => (PlotModel)GetValue(PlotModelProperty);
-            set => SetValue(PlotModelProperty, value);
-        }
-
-        private LinearAxis? _oldLinearAxis;
-        private LogarithmicAxis? _oldLogAxis;
+        private Wpf.LinearAxis? _oldLinearAxis;
+        private Wpf.LogarithmicAxis? _oldLogAxis;
         private bool _ignoreMaxMinChange = false;
 
         /// <summary>
         /// Occurs when the axis type is changed by the user.
         /// </summary>
-        public event Action<Axis, Axis>? AxisTypeChanged;
+        public event Action<Wpf.Axis, Wpf.Axis>? AxisTypeChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AxisControl"/> class.
@@ -147,13 +88,13 @@ namespace OxyPlotControls
             if (d.GetType() != typeof(AxisControl)) return;
             var thisControl = (AxisControl)d;
 
-            var oldAxis = e.OldValue as Axis;
+            var oldAxis = e.OldValue as Wpf.Axis;
             if (oldAxis != null)
             {
                 // Clean up old axis if needed
             }
 
-            var newAxis = e.NewValue as Axis;
+            var newAxis = e.NewValue as Wpf.Axis;
             if (newAxis == null || thisControl.Content == null) return;
 
             var axisTypeComboBox = thisControl.AxisTypeSelector.InnerContent as ComboBox;
@@ -179,7 +120,7 @@ namespace OxyPlotControls
 
             var axisType = newAxis.GetType();
 
-            if (axisType == typeof(LinearAxis))
+            if (axisType == typeof(Wpf.LinearAxis))
             {
                 axisTypeComboBox.SelectedIndex = 0;
                 thisControl.AxisMinimum.Visibility = Visibility.Visible;
@@ -193,7 +134,7 @@ namespace OxyPlotControls
                 thisControl.LabelTypeSelector.Visibility = Visibility.Visible;
                 thisControl.DecimalPlaces.Visibility = Visibility.Visible;
             }
-            else if (axisType == typeof(LogarithmicAxis))
+            else if (axisType == typeof(Wpf.LogarithmicAxis))
             {
                 axisTypeComboBox.SelectedIndex = 1;
                 thisControl.AxisMinimum.Visibility = Visibility.Visible;
@@ -207,7 +148,7 @@ namespace OxyPlotControls
                 thisControl.LabelTypeSelector.Visibility = Visibility.Visible;
                 thisControl.DecimalPlaces.Visibility = Visibility.Visible;
                 thisControl.PowerPaddingControl.Visibility = Visibility.Visible;
-                var powerPaddingBinding = new Binding(nameof(LogarithmicAxis.PowerPadding))
+                var powerPaddingBinding = new Binding(nameof(Wpf.LogarithmicAxis.PowerPadding))
                 {
                     Source = newAxis,
                     UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
@@ -215,7 +156,7 @@ namespace OxyPlotControls
                 };
                 BindingOperations.SetBinding(thisControl.PowerPaddingControl, GenericControls.BooleanPropertyControl.IsSelectedProperty, powerPaddingBinding);
             }
-            else if (axisType == typeof(NormalProbabilityAxis))
+            else if (axisType == typeof(Wpf.NormalProbabilityAxis))
             {
                 axisTypeComboBox.SelectedIndex = 2;
                 thisControl.AxisMinimum.Visibility = Visibility.Visible;
@@ -229,7 +170,7 @@ namespace OxyPlotControls
                 thisControl.LabelTypeSelector.Visibility = Visibility.Collapsed;
                 thisControl.DecimalPlaces.Visibility = Visibility.Collapsed;
             }
-            else if (axisType == typeof(GumbelProbabilityAxis))
+            else if (axisType == typeof(Wpf.GumbelProbabilityAxis))
             {
                 axisTypeComboBox.SelectedIndex = 3;
                 thisControl.AxisMinimum.Visibility = Visibility.Visible;
@@ -243,19 +184,19 @@ namespace OxyPlotControls
                 thisControl.LabelTypeSelector.Visibility = Visibility.Collapsed;
                 thisControl.DecimalPlaces.Visibility = Visibility.Collapsed;
             }
-            else if (axisType == typeof(CategoryAxis))
+            else if (axisType == typeof(Wpf.CategoryAxis))
             {
                 thisControl.AxisTypeSelector.Visibility = Visibility.Collapsed;
 
                 thisControl.GapWidthSelector.Visibility = Visibility.Visible;
-                var gapWidthBinding = new Binding(nameof(CategoryAxis.GapWidth)) { Source = newAxis };
+                var gapWidthBinding = new Binding(nameof(Wpf.CategoryAxis.GapWidth)) { Source = newAxis };
                 BindingOperations.SetBinding(thisControl.GapWidthSelector, GenericControls.NumericPropertySelectorControl.SelectedNumberProperty, gapWidthBinding);
 
                 thisControl.AxisLabelsControl.Visibility = Visibility.Visible;
-                var categoryAxis = (CategoryAxis)newAxis;
+                var categoryAxis = (Wpf.CategoryAxis)newAxis;
                 if (categoryAxis.ItemsSource != null && (categoryAxis.Labels == null || categoryAxis.Labels.Count == 0))
                 {
-                    var axisLabelsBinding = new Binding(nameof(CategoryAxis.ItemsSource))
+                    var axisLabelsBinding = new Binding(nameof(Wpf.CategoryAxis.ItemsSource))
                     {
                         Source = newAxis,
                         UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
@@ -265,7 +206,7 @@ namespace OxyPlotControls
                 }
                 else
                 {
-                    var axisLabelsBinding = new Binding(nameof(CategoryAxis.Labels))
+                    var axisLabelsBinding = new Binding(nameof(Wpf.CategoryAxis.Labels))
                     {
                         Source = newAxis,
                         UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
@@ -275,13 +216,13 @@ namespace OxyPlotControls
                 }
 
                 thisControl.TickCenteredControl.Visibility = Visibility.Visible;
-                var tickCenteredBinding = new Binding(nameof(CategoryAxis.IsTickCentered)) { Source = newAxis };
+                var tickCenteredBinding = new Binding(nameof(Wpf.CategoryAxis.IsTickCentered)) { Source = newAxis };
                 BindingOperations.SetBinding(thisControl.TickCenteredControl, GenericControls.BooleanPropertyControl.IsSelectedProperty, tickCenteredBinding);
 
                 thisControl.LabelTypeSelector.Visibility = Visibility.Collapsed;
                 thisControl.DecimalPlaces.Visibility = Visibility.Collapsed;
             }
-            else if (axisType == typeof(DateTimeAxis))
+            else if (axisType == typeof(Wpf.DateTimeAxis))
             {
                 thisControl.DateAxisMinimum.Visibility = Visibility.Visible;
                 thisControl.DateAxisMaximum.Visibility = Visibility.Visible;
@@ -316,7 +257,7 @@ namespace OxyPlotControls
             var labelTypeComboBox = thisControl.LabelTypeSelector.InnerContent as ComboBox;
             if (labelTypeComboBox == null) return;
             labelTypeComboBox.SelectionChanged -= thisControl.LabelType_SelectionChanged;
-            if (newAxis.GetType() == typeof(DateTimeAxis) || newAxis.GetType() == typeof(CategoryAxis)) return;
+            if (newAxis.GetType() == typeof(Wpf.DateTimeAxis) || newAxis.GetType() == typeof(Wpf.CategoryAxis)) return;
 
             string stringFormatCategory = "";
             string stringFormatDecimal = "";
@@ -403,14 +344,15 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="axis">The axis to serialize.</param>
         /// <returns>An XElement containing the serialized axis properties.</returns>
-        public static XElement AxisPropertiesToXElement(Axis axis)
+        public static XElement AxisPropertiesToXElement(Wpf.Axis axis)
         {
             var axisProperties = new XElement(AxisPropertiesTag);
             axisProperties.SetAttributeValue("AxisType", axis.GetType().ToString());
 
             // General Properties
             var generalProperties = new XElement("General");
-            generalProperties.SetAttributeValue(nameof(axis.Tag), axis.Tag?.ToString() ?? "");
+            generalProperties.SetAttributeValue(nameof(Wpf.Axis.Name), axis.Name ?? "");
+            generalProperties.SetAttributeValue(nameof(axis.IsEnabled), axis.IsEnabled.ToString());
             generalProperties.SetAttributeValue(nameof(axis.IsAxisVisible), axis.IsAxisVisible.ToString());
             generalProperties.SetAttributeValue(nameof(axis.StartPosition), axis.StartPosition.ToString("G17", CultureInfo.InvariantCulture));
             generalProperties.SetAttributeValue(nameof(axis.EndPosition), axis.EndPosition.ToString("G17", CultureInfo.InvariantCulture));
@@ -430,7 +372,7 @@ namespace OxyPlotControls
 
             // Style Properties
             var styleProperties = new XElement("Style");
-            styleProperties.SetAttributeValue(nameof(axis.AxislineColor), OxyPlotSettingsSerializer.OxyColorToString(axis.AxislineColor));
+            styleProperties.SetAttributeValue(nameof(axis.AxislineColor), axis.AxislineColor.ToString());
             styleProperties.SetAttributeValue(nameof(axis.AxislineStyle), axis.AxislineStyle.ToString());
             styleProperties.SetAttributeValue(nameof(axis.AxislineThickness), axis.AxislineThickness.ToString("G17", CultureInfo.InvariantCulture));
             axisProperties.Add(styleProperties);
@@ -440,36 +382,37 @@ namespace OxyPlotControls
             positionProperties.SetAttributeValue(nameof(axis.AxisDistance), axis.AxisDistance.ToString("G17", CultureInfo.InvariantCulture));
             positionProperties.SetAttributeValue(nameof(axis.PositionAtZeroCrossing), axis.PositionAtZeroCrossing.ToString());
             positionProperties.SetAttributeValue(nameof(axis.Position), axis.Position.ToString());
-            positionProperties.SetAttributeValue(nameof(axis.Key), axis.Key ?? "");
+            positionProperties.SetAttributeValue(nameof(axis.Key), axis.Key);
             positionProperties.SetAttributeValue(nameof(axis.PositionTier), axis.PositionTier);
             axisProperties.Add(positionProperties);
 
             // Title Properties
+            var weightConverter = new FontWeightConverter();
             var titleProperties = new XElement("Title");
-            titleProperties.SetAttributeValue(nameof(axis.Title), axis.Title ?? "");
-            titleProperties.SetAttributeValue(nameof(axis.TitleColor), OxyPlotSettingsSerializer.OxyColorToString(axis.TitleColor));
-            titleProperties.SetAttributeValue(nameof(axis.TitleFont), axis.TitleFont ?? "");
+            titleProperties.SetAttributeValue(nameof(axis.Title), axis.Title);
+            titleProperties.SetAttributeValue(nameof(axis.TitleColor), axis.TitleColor.ToString());
+            titleProperties.SetAttributeValue(nameof(axis.TitleFont), axis.TitleFont);
             titleProperties.SetAttributeValue(nameof(axis.TitleFontSize), axis.TitleFontSize.ToString("G17", CultureInfo.InvariantCulture));
-            titleProperties.SetAttributeValue(nameof(axis.TitleFontWeight), axis.TitleFontWeight.ToString("G17", CultureInfo.InvariantCulture));
+            titleProperties.SetAttributeValue(nameof(axis.TitleFontWeight), weightConverter.ConvertToInvariantString(axis.TitleFontWeight));
             titleProperties.SetAttributeValue(nameof(axis.AxisTitleDistance), axis.AxisTitleDistance.ToString("G17", CultureInfo.InvariantCulture));
-            titleProperties.SetAttributeValue(nameof(axis.Unit), axis.Unit ?? "");
+            titleProperties.SetAttributeValue(nameof(axis.Unit), axis.Unit);
             axisProperties.Add(titleProperties);
 
             // Label Properties
             var labelProperties = new XElement("Labels");
-            labelProperties.SetAttributeValue(nameof(axis.TextColor), OxyPlotSettingsSerializer.OxyColorToString(axis.TextColor));
-            labelProperties.SetAttributeValue(nameof(axis.Font), axis.Font ?? "");
+            labelProperties.SetAttributeValue(nameof(axis.TextColor), axis.TextColor.ToString());
+            labelProperties.SetAttributeValue(nameof(axis.Font), axis.Font);
             labelProperties.SetAttributeValue(nameof(axis.FontSize), axis.FontSize.ToString("G17", CultureInfo.InvariantCulture));
-            labelProperties.SetAttributeValue(nameof(axis.FontWeight), axis.FontWeight.ToString("G17", CultureInfo.InvariantCulture));
+            labelProperties.SetAttributeValue(nameof(axis.FontWeight), weightConverter.ConvertToInvariantString(axis.FontWeight));
             labelProperties.SetAttributeValue(nameof(axis.Angle), axis.Angle.ToString("G17", CultureInfo.InvariantCulture));
             labelProperties.SetAttributeValue(nameof(axis.AxisTickToLabelDistance), axis.AxisTickToLabelDistance.ToString("G17", CultureInfo.InvariantCulture));
-            labelProperties.SetAttributeValue(nameof(axis.StringFormat), axis.StringFormat ?? "");
+            labelProperties.SetAttributeValue(nameof(axis.StringFormat), axis.StringFormat);
             labelProperties.SetAttributeValue(nameof(axis.UseSuperExponentialFormat), axis.UseSuperExponentialFormat.ToString());
             axisProperties.Add(labelProperties);
 
             // Major Gridline Properties
             var majorGridlineProperties = new XElement("MajorGridlines");
-            majorGridlineProperties.SetAttributeValue(nameof(axis.MajorGridlineColor), OxyPlotSettingsSerializer.OxyColorToString(axis.MajorGridlineColor));
+            majorGridlineProperties.SetAttributeValue(nameof(axis.MajorGridlineColor), axis.MajorGridlineColor.ToString());
             majorGridlineProperties.SetAttributeValue(nameof(axis.MajorGridlineStyle), axis.MajorGridlineStyle.ToString());
             majorGridlineProperties.SetAttributeValue(nameof(axis.MajorGridlineThickness), axis.MajorGridlineThickness.ToString("G17", CultureInfo.InvariantCulture));
             majorGridlineProperties.SetAttributeValue(nameof(axis.MajorStep), axis.MajorStep.ToString("G17", CultureInfo.InvariantCulture));
@@ -478,7 +421,7 @@ namespace OxyPlotControls
 
             // Minor Gridline Properties
             var minorGridlineProperties = new XElement("MinorGridlines");
-            minorGridlineProperties.SetAttributeValue(nameof(axis.MinorGridlineColor), OxyPlotSettingsSerializer.OxyColorToString(axis.MinorGridlineColor));
+            minorGridlineProperties.SetAttributeValue(nameof(axis.MinorGridlineColor), axis.MinorGridlineColor.ToString());
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorGridlineStyle), axis.MinorGridlineStyle.ToString());
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorGridlineThickness), axis.MinorGridlineThickness.ToString("G17", CultureInfo.InvariantCulture));
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorStep), axis.MinorStep.ToString("G17", CultureInfo.InvariantCulture));
@@ -488,52 +431,84 @@ namespace OxyPlotControls
             // Tick Style Properties
             var tickStyleProperties = new XElement("Tick");
             tickStyleProperties.SetAttributeValue(nameof(axis.TickStyle), axis.TickStyle.ToString());
-            tickStyleProperties.SetAttributeValue(nameof(axis.TicklineColor), OxyPlotSettingsSerializer.OxyColorToString(axis.TicklineColor));
+            tickStyleProperties.SetAttributeValue(nameof(axis.TicklineColor), axis.TicklineColor.ToString());
             axisProperties.Add(tickStyleProperties);
 
             // Concrete axis implementation properties
             var axisType = axis.GetType();
-            if (axisType == typeof(LinearAxis))
+            if (axisType == typeof(Wpf.LinearAxis))
             {
-                var linearAxis = (LinearAxis)axis;
+                var linearAxis = (Wpf.LinearAxis)axis;
                 var linearAxisProperties = new XElement("LinearAxis");
                 linearAxisProperties.SetAttributeValue(nameof(linearAxis.FormatAsFractions), linearAxis.FormatAsFractions.ToString());
                 axisProperties.Add(linearAxisProperties);
             }
-            else if (axisType == typeof(CategoryAxis))
+            else if (axisType == typeof(Wpf.CategoryAxis))
             {
-                var categoryAxis = (CategoryAxis)axis;
+                var categoryAxis = (Wpf.CategoryAxis)axis;
                 var categoryAxisProperties = new XElement("CategoryAxis");
                 categoryAxisProperties.SetAttributeValue(nameof(categoryAxis.IsTickCentered), categoryAxis.IsTickCentered.ToString());
                 categoryAxisProperties.SetAttributeValue(nameof(categoryAxis.GapWidth), categoryAxis.GapWidth.ToString("G17", CultureInfo.InvariantCulture));
                 axisProperties.Add(categoryAxisProperties);
             }
-            else if (axisType == typeof(LogarithmicAxis))
+            else if (axisType == typeof(Wpf.LogarithmicAxis))
             {
-                var logAxis = (LogarithmicAxis)axis;
+                var logAxis = (Wpf.LogarithmicAxis)axis;
                 var logAxisProperties = new XElement("LogarithmicAxis");
                 logAxisProperties.SetAttributeValue(nameof(logAxis.Base), logAxis.Base.ToString("G17", CultureInfo.InvariantCulture));
                 logAxisProperties.SetAttributeValue(nameof(logAxis.PowerPadding), logAxis.PowerPadding.ToString());
                 axisProperties.Add(logAxisProperties);
             }
-            else if (axisType == typeof(DateTimeAxis))
+            else if (axisType == typeof(Wpf.DateTimeAxis))
             {
-                var dateAxis = (DateTimeAxis)axis;
+                var dateAxis = (Wpf.DateTimeAxis)axis;
                 var dateAxisProperties = new XElement("DateTimeAxis");
                 dateAxisProperties.SetAttributeValue(nameof(dateAxis.CalendarWeekRule), dateAxis.CalendarWeekRule.ToString());
                 axisProperties.Add(dateAxisProperties);
             }
-            else if (axisType == typeof(NormalProbabilityAxis))
+            else if (axisType == typeof(Wpf.TimeSpanAxis))
             {
-                // NormalProbabilityAxis has no unique properties beyond base Axis
-                // Empty element added for type identification during deserialization
-                axisProperties.Add(new XElement("NormalProbabilityAxis"));
+                // TimeSpanAxis has no specific properties beyond base Axis
+                var timeSpanAxisProperties = new XElement("TimeSpanAxis");
+                axisProperties.Add(timeSpanAxisProperties);
             }
-            else if (axisType == typeof(GumbelProbabilityAxis))
+            else if (axisType == typeof(Wpf.AngleAxis))
             {
-                // GumbelProbabilityAxis has no unique properties beyond base Axis
-                // Empty element added for type identification during deserialization
-                axisProperties.Add(new XElement("GumbelProbabilityAxis"));
+                var angleAxis = (Wpf.AngleAxis)axis;
+                var angleAxisProperties = new XElement("AngleAxis");
+                angleAxisProperties.SetAttributeValue(nameof(angleAxis.StartAngle), angleAxis.StartAngle.ToString("G17", CultureInfo.InvariantCulture));
+                angleAxisProperties.SetAttributeValue(nameof(angleAxis.EndAngle), angleAxis.EndAngle.ToString("G17", CultureInfo.InvariantCulture));
+                axisProperties.Add(angleAxisProperties);
+            }
+            else if (axisType == typeof(Wpf.MagnitudeAxis))
+            {
+                // MagnitudeAxis uses LinearAxis properties (inherits FormatAsFractions)
+                var magnitudeAxis = (Wpf.MagnitudeAxis)axis;
+                var magnitudeAxisProperties = new XElement("MagnitudeAxis");
+                magnitudeAxisProperties.SetAttributeValue(nameof(magnitudeAxis.FormatAsFractions), magnitudeAxis.FormatAsFractions.ToString());
+                axisProperties.Add(magnitudeAxisProperties);
+            }
+            else if (axisType == typeof(Wpf.LinearColorAxis))
+            {
+                var linearColorAxis = (Wpf.LinearColorAxis)axis;
+                var linearColorAxisProperties = new XElement("LinearColorAxis");
+                linearColorAxisProperties.SetAttributeValue(nameof(linearColorAxis.HighColor), linearColorAxis.HighColor.ToString());
+                linearColorAxisProperties.SetAttributeValue(nameof(linearColorAxis.LowColor), linearColorAxis.LowColor.ToString());
+                linearColorAxisProperties.SetAttributeValue(nameof(linearColorAxis.PaletteSize), linearColorAxis.PaletteSize.ToString());
+                linearColorAxisProperties.SetAttributeValue(nameof(linearColorAxis.InvalidNumberColor), linearColorAxis.InvalidNumberColor.ToString());
+                axisProperties.Add(linearColorAxisProperties);
+            }
+            else if (axisType == typeof(Wpf.NormalProbabilityAxis))
+            {
+                // NormalProbabilityAxis has no specific properties beyond base Axis
+                var normalProbabilityAxisProperties = new XElement("NormalProbabilityAxis");
+                axisProperties.Add(normalProbabilityAxisProperties);
+            }
+            else if (axisType == typeof(Wpf.GumbelProbabilityAxis))
+            {
+                // GumbelProbabilityAxis has no specific properties beyond base Axis
+                var gumbelProbabilityAxisProperties = new XElement("GumbelProbabilityAxis");
+                axisProperties.Add(gumbelProbabilityAxisProperties);
             }
 
             return axisProperties;
@@ -545,14 +520,15 @@ namespace OxyPlotControls
         /// <param name="element">The XElement containing the axis properties.</param>
         /// <param name="targetAxis">Optional target axis to apply properties to.</param>
         /// <returns>A new or updated axis with the deserialized properties.</returns>
-        public static Axis? XElementToAxisProperties(XElement element, Axis? targetAxis = null)
+        public static Wpf.Axis? XElementToAxisProperties(XElement element, Wpf.Axis? targetAxis = null)
         {
             if (element.Name != AxisPropertiesTag) return null;
 
             var fontWeightConverter = new FontWeightConverter();
-            Axis axis;
+            Wpf.Axis axis;
             string axisType = "";
-            if (element.Attribute("AxisType") != null) axisType = element.Attribute("AxisType")!.Value;
+            var axisTypeAttr = element.Attribute("AxisType");
+            if (axisTypeAttr != null) axisType = axisTypeAttr.Value;
 
             if (targetAxis != null)
             {
@@ -560,37 +536,36 @@ namespace OxyPlotControls
             }
             else
             {
-                if (axisType == typeof(LinearAxis).ToString())
-                    axis = new LinearAxis();
-                else if (axisType == typeof(CategoryAxis).ToString())
-                    axis = new CategoryAxis();
-                else if (axisType == typeof(LogarithmicAxis).ToString())
-                    axis = new LogarithmicAxis();
-                else if (axisType == typeof(DateTimeAxis).ToString())
-                    axis = new DateTimeAxis();
-                else if (axisType == typeof(AngleAxis).ToString())
-                    axis = new AngleAxis();
-                else if (axisType == typeof(LinearColorAxis).ToString())
-                    axis = new LinearColorAxis();
-                else if (axisType == typeof(MagnitudeAxis).ToString())
-                    axis = new MagnitudeAxis();
-                else if (axisType == typeof(TimeSpanAxis).ToString())
-                    axis = new TimeSpanAxis();
-                else if (axisType == typeof(NormalProbabilityAxis).ToString())
-                    axis = new NormalProbabilityAxis();
-                else if (axisType == typeof(GumbelProbabilityAxis).ToString())
-                    axis = new GumbelProbabilityAxis();
+                if (axisType == typeof(Wpf.LinearAxis).ToString())
+                    axis = new Wpf.LinearAxis();
+                else if (axisType == typeof(Wpf.CategoryAxis).ToString())
+                    axis = new Wpf.CategoryAxis();
+                else if (axisType == typeof(Wpf.LogarithmicAxis).ToString())
+                    axis = new Wpf.LogarithmicAxis();
+                else if (axisType == typeof(Wpf.DateTimeAxis).ToString())
+                    axis = new Wpf.DateTimeAxis();
+                else if (axisType == typeof(Wpf.AngleAxis).ToString())
+                    axis = new Wpf.AngleAxis();
+                else if (axisType == typeof(Wpf.LinearColorAxis).ToString())
+                    axis = new Wpf.LinearColorAxis();
+                else if (axisType == typeof(Wpf.MagnitudeAxis).ToString())
+                    axis = new Wpf.MagnitudeAxis();
+                else if (axisType == typeof(Wpf.TimeSpanAxis).ToString())
+                    axis = new Wpf.TimeSpanAxis();
+                else if (axisType == typeof(Wpf.NormalProbabilityAxis).ToString())
+                    axis = new Wpf.NormalProbabilityAxis();
+                else if (axisType == typeof(Wpf.GumbelProbabilityAxis).ToString())
+                    axis = new Wpf.GumbelProbabilityAxis();
                 else
-                    axis = new LinearAxis();
+                    axis = new Wpf.LinearAxis();
             }
 
             // General Properties
             var generalElement = element.Element("General");
             if (generalElement != null)
             {
-                if (GetStringAttribute(generalElement, nameof(axis.Tag), out var tag)) axis.Tag = tag;
-                // Backward compatibility for Name attribute (now Tag)
-                if (GetStringAttribute(generalElement, "Name", out tag)) axis.Tag = tag;
+                if (GetStringAttribute(generalElement, nameof(axis.Name), out var name)) axis.Name = name;
+                if (GetBooleanAttribute(generalElement, nameof(axis.IsEnabled), out var isEnabled)) axis.IsEnabled = isEnabled;
                 if (GetBooleanAttribute(generalElement, nameof(axis.IsAxisVisible), out var isAxisVisible)) axis.IsAxisVisible = isAxisVisible;
                 if (GetDoubleAttribute(generalElement, nameof(axis.StartPosition), out var startPosition)) axis.StartPosition = startPosition;
                 if (GetDoubleAttribute(generalElement, nameof(axis.EndPosition), out var endPosition)) axis.EndPosition = endPosition;
@@ -619,12 +594,12 @@ namespace OxyPlotControls
             var styleElement = element.Element("Style");
             if (styleElement != null)
             {
-                if (GetOxyColorAttribute(styleElement, nameof(axis.AxislineColor), out var axislineColor)) axis.AxislineColor = axislineColor;
+                if (GetColorAttribute(styleElement, nameof(axis.AxislineColor), out var axislineColor)) axis.AxislineColor = axislineColor;
                 if (GetEnumAttribute(styleElement, nameof(axis.AxislineStyle), out LineStyle axislineStyle)) axis.AxislineStyle = axislineStyle;
                 if (GetDoubleAttribute(styleElement, nameof(axis.AxislineThickness), out var axislineThickness)) axis.AxislineThickness = axislineThickness;
 
-                // Backward compatibility (V1 used WPF Color)
-                if (GetColorAttribute(styleElement, "Color", out var wpfColor)) axis.AxislineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                // Backward compatibility
+                if (GetColorAttribute(styleElement, "Color", out axislineColor)) axis.AxislineColor = axislineColor;
                 if (GetEnumAttribute(styleElement, "Style", out axislineStyle)) axis.AxislineStyle = axislineStyle;
                 if (GetDoubleAttribute(styleElement, "Thickness", out axislineThickness)) axis.AxislineThickness = axislineThickness;
             }
@@ -650,20 +625,18 @@ namespace OxyPlotControls
             if (titleElement != null)
             {
                 if (GetStringAttribute(titleElement, nameof(axis.Title), out var title)) axis.Title = title;
-                if (GetOxyColorAttribute(titleElement, nameof(axis.TitleColor), out var titleColor)) axis.TitleColor = titleColor;
+                if (GetColorAttribute(titleElement, nameof(axis.TitleColor), out var titleColor)) axis.TitleColor = titleColor;
                 if (GetStringAttribute(titleElement, nameof(axis.TitleFont), out var titleFont)) axis.TitleFont = titleFont;
                 if (GetDoubleAttribute(titleElement, nameof(axis.TitleFontSize), out var titleFontSize)) axis.TitleFontSize = titleFontSize;
-                if (GetDoubleAttribute(titleElement, nameof(axis.TitleFontWeight), out var titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
+                if (GetFontWeightAttribute(titleElement, nameof(axis.TitleFontWeight), fontWeightConverter, out var titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
                 if (GetDoubleAttribute(titleElement, nameof(axis.AxisTitleDistance), out var axisTitleDistance)) axis.AxisTitleDistance = axisTitleDistance;
                 if (GetStringAttribute(titleElement, nameof(axis.Unit), out var unit)) axis.Unit = unit;
 
-                // Backward compatibility (V1 used WPF Color and FontWeight)
-                if (GetColorAttribute(titleElement, "TitleColor", out var wpfColor)) axis.TitleColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                if (GetColorAttribute(titleElement, "Color", out wpfColor)) axis.TitleColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                // Backward compatibility
+                if (GetColorAttribute(titleElement, "Color", out titleColor)) axis.TitleColor = titleColor;
                 if (GetStringAttribute(titleElement, "Font", out titleFont)) axis.TitleFont = titleFont;
                 if (GetDoubleAttribute(titleElement, "Size", out titleFontSize)) axis.TitleFontSize = titleFontSize;
-                if (GetFontWeightAttribute(titleElement, "TitleFontWeight", fontWeightConverter, out var wpfWeight)) axis.TitleFontWeight = wpfWeight.ToOpenTypeWeight();
-                if (GetFontWeightAttribute(titleElement, "Weight", fontWeightConverter, out wpfWeight)) axis.TitleFontWeight = wpfWeight.ToOpenTypeWeight();
+                if (GetFontWeightAttribute(titleElement, "Weight", fontWeightConverter, out titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
                 if (GetDoubleAttribute(titleElement, "Distance", out axisTitleDistance)) axis.AxisTitleDistance = axisTitleDistance;
             }
 
@@ -671,21 +644,19 @@ namespace OxyPlotControls
             var labelElement = element.Element("Labels");
             if (labelElement != null)
             {
-                if (GetOxyColorAttribute(labelElement, nameof(axis.TextColor), out var textColor)) axis.TextColor = textColor;
+                if (GetColorAttribute(labelElement, nameof(axis.TextColor), out var textColor)) axis.TextColor = textColor;
                 if (GetStringAttribute(labelElement, nameof(axis.Font), out var font)) axis.Font = font;
                 if (GetDoubleAttribute(labelElement, nameof(axis.FontSize), out var fontSize)) axis.FontSize = fontSize;
-                if (GetDoubleAttribute(labelElement, nameof(axis.FontWeight), out var fontWeight)) axis.FontWeight = fontWeight;
+                if (GetFontWeightAttribute(labelElement, nameof(axis.FontWeight), fontWeightConverter, out var fontWeight)) axis.FontWeight = fontWeight;
                 if (GetDoubleAttribute(labelElement, nameof(axis.Angle), out var angle)) axis.Angle = angle;
                 if (GetDoubleAttribute(labelElement, nameof(axis.AxisTickToLabelDistance), out var axisTickToLabelDistance)) axis.AxisTickToLabelDistance = axisTickToLabelDistance;
                 if (GetStringAttribute(labelElement, nameof(axis.StringFormat), out var stringFormat)) axis.StringFormat = stringFormat;
                 if (GetBooleanAttribute(labelElement, nameof(axis.UseSuperExponentialFormat), out var useSuperExponentialFormat)) axis.UseSuperExponentialFormat = useSuperExponentialFormat;
 
-                // Backward compatibility (V1 used WPF Color and FontWeight)
-                if (GetColorAttribute(labelElement, "TextColor", out var wpfColor)) axis.TextColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                if (GetColorAttribute(labelElement, "Color", out wpfColor)) axis.TextColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                // Backward compatibility
+                if (GetColorAttribute(labelElement, "Color", out textColor)) axis.TextColor = textColor;
                 if (GetDoubleAttribute(labelElement, "Size", out fontSize)) axis.FontSize = fontSize;
-                if (GetFontWeightAttribute(labelElement, "FontWeight", fontWeightConverter, out var wpfWeight)) axis.FontWeight = wpfWeight.ToOpenTypeWeight();
-                if (GetFontWeightAttribute(labelElement, "Weight", fontWeightConverter, out wpfWeight)) axis.FontWeight = wpfWeight.ToOpenTypeWeight();
+                if (GetFontWeightAttribute(labelElement, "Weight", fontWeightConverter, out fontWeight)) axis.FontWeight = fontWeight;
                 if (GetDoubleAttribute(labelElement, "TickDistance", out axisTickToLabelDistance)) axis.AxisTickToLabelDistance = axisTickToLabelDistance;
                 if (GetBooleanAttribute(labelElement, "Superscript", out useSuperExponentialFormat)) axis.UseSuperExponentialFormat = useSuperExponentialFormat;
             }
@@ -694,15 +665,14 @@ namespace OxyPlotControls
             var majorGridlineElement = element.Element("MajorGridlines");
             if (majorGridlineElement != null)
             {
-                if (GetOxyColorAttribute(majorGridlineElement, nameof(axis.MajorGridlineColor), out var majorGridlineColor)) axis.MajorGridlineColor = majorGridlineColor;
+                if (GetColorAttribute(majorGridlineElement, nameof(axis.MajorGridlineColor), out var majorGridlineColor)) axis.MajorGridlineColor = majorGridlineColor;
                 if (GetEnumAttribute(majorGridlineElement, nameof(axis.MajorGridlineStyle), out LineStyle majorGridlineStyle)) axis.MajorGridlineStyle = majorGridlineStyle;
                 if (GetDoubleAttribute(majorGridlineElement, nameof(axis.MajorGridlineThickness), out var majorGridlineThickness)) axis.MajorGridlineThickness = majorGridlineThickness;
                 if (GetDoubleAttribute(majorGridlineElement, nameof(axis.MajorStep), out var majorStep)) axis.MajorStep = majorStep;
                 if (GetDoubleAttribute(majorGridlineElement, nameof(axis.MajorTickSize), out var majorTickSize)) axis.MajorTickSize = majorTickSize;
 
-                // Backward compatibility (V1 used WPF Color)
-                if (GetColorAttribute(majorGridlineElement, "MajorGridlineColor", out var wpfColor)) axis.MajorGridlineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                if (GetColorAttribute(majorGridlineElement, "Color", out wpfColor)) axis.MajorGridlineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                // Backward compatibility
+                if (GetColorAttribute(majorGridlineElement, "Color", out majorGridlineColor)) axis.MajorGridlineColor = majorGridlineColor;
                 if (GetEnumAttribute(majorGridlineElement, "Style", out majorGridlineStyle)) axis.MajorGridlineStyle = majorGridlineStyle;
                 if (GetDoubleAttribute(majorGridlineElement, "Thickness", out majorGridlineThickness)) axis.MajorGridlineThickness = majorGridlineThickness;
                 if (GetDoubleAttribute(majorGridlineElement, "Step", out majorStep)) axis.MajorStep = majorStep;
@@ -713,15 +683,14 @@ namespace OxyPlotControls
             var minorGridlineElement = element.Element("MinorGridlines");
             if (minorGridlineElement != null)
             {
-                if (GetOxyColorAttribute(minorGridlineElement, nameof(axis.MinorGridlineColor), out var minorGridlineColor)) axis.MinorGridlineColor = minorGridlineColor;
+                if (GetColorAttribute(minorGridlineElement, nameof(axis.MinorGridlineColor), out var minorGridlineColor)) axis.MinorGridlineColor = minorGridlineColor;
                 if (GetEnumAttribute(minorGridlineElement, nameof(axis.MinorGridlineStyle), out LineStyle minorGridlineStyle)) axis.MinorGridlineStyle = minorGridlineStyle;
                 if (GetDoubleAttribute(minorGridlineElement, nameof(axis.MinorGridlineThickness), out var minorGridlineThickness)) axis.MinorGridlineThickness = minorGridlineThickness;
                 if (GetDoubleAttribute(minorGridlineElement, nameof(axis.MinorStep), out var minorStep)) axis.MinorStep = minorStep;
                 if (GetDoubleAttribute(minorGridlineElement, nameof(axis.MinorTickSize), out var minorTickSize)) axis.MinorTickSize = minorTickSize;
 
-                // Backward compatibility (V1 used WPF Color)
-                if (GetColorAttribute(minorGridlineElement, "MinorGridlineColor", out var wpfColor)) axis.MinorGridlineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                if (GetColorAttribute(minorGridlineElement, "Color", out wpfColor)) axis.MinorGridlineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                // Backward compatibility
+                if (GetColorAttribute(minorGridlineElement, "Color", out minorGridlineColor)) axis.MinorGridlineColor = minorGridlineColor;
                 if (GetEnumAttribute(minorGridlineElement, "Style", out minorGridlineStyle)) axis.MinorGridlineStyle = minorGridlineStyle;
                 if (GetDoubleAttribute(minorGridlineElement, "Thickness", out minorGridlineThickness)) axis.MinorGridlineThickness = minorGridlineThickness;
                 if (GetDoubleAttribute(minorGridlineElement, "Step", out minorStep)) axis.MinorStep = minorStep;
@@ -732,71 +701,117 @@ namespace OxyPlotControls
             var tickStyleElement = element.Element("Tick");
             if (tickStyleElement != null)
             {
-                if (GetOxyColorAttribute(tickStyleElement, nameof(axis.TicklineColor), out var ticklineColor)) axis.TicklineColor = ticklineColor;
-                if (GetEnumAttribute(tickStyleElement, nameof(axis.TickStyle), out TickStyle tickStyle)) axis.TickStyle = tickStyle;
+                if (GetColorAttribute(tickStyleElement, nameof(axis.TicklineColor), out var ticklineColor)) axis.TicklineColor = ticklineColor;
+                if (GetEnumAttribute(tickStyleElement, nameof(axis.TickStyle), out OxyPlot.Axes.TickStyle tickStyle)) axis.TickStyle = tickStyle;
 
-                // Backward compatibility (V1 used WPF Color)
-                if (GetColorAttribute(tickStyleElement, "TicklineColor", out var wpfColor)) axis.TicklineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                if (GetColorAttribute(tickStyleElement, "Color", out wpfColor)) axis.TicklineColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
+                // Backward compatibility
+                if (GetColorAttribute(tickStyleElement, "Color", out ticklineColor)) axis.TicklineColor = ticklineColor;
                 if (GetEnumAttribute(tickStyleElement, "Style", out tickStyle)) axis.TickStyle = tickStyle;
             }
 
             // Concrete axis implementation properties
             var currentAxisType = axis.GetType();
-            if (currentAxisType == typeof(LinearAxis))
+            if (currentAxisType == typeof(Wpf.LinearAxis))
             {
                 var linearAxisElement = element.Element("LinearAxis");
                 if (linearAxisElement != null)
                 {
-                    if (GetBooleanAttribute(linearAxisElement, nameof(LinearAxis.FormatAsFractions), out var formatAsFractions))
-                        ((LinearAxis)axis).FormatAsFractions = formatAsFractions;
+                    if (GetBooleanAttribute(linearAxisElement, nameof(Wpf.LinearAxis.FormatAsFractions), out var formatAsFractions))
+                        ((Wpf.LinearAxis)axis).FormatAsFractions = formatAsFractions;
                     // Backward compatibility
                     if (GetBooleanAttribute(linearAxisElement, "FractionFormat", out formatAsFractions))
-                        ((LinearAxis)axis).FormatAsFractions = formatAsFractions;
+                        ((Wpf.LinearAxis)axis).FormatAsFractions = formatAsFractions;
                 }
             }
-            else if (currentAxisType == typeof(CategoryAxis))
+            else if (currentAxisType == typeof(Wpf.CategoryAxis))
             {
                 var categoryAxisElement = element.Element("CategoryAxis");
                 if (categoryAxisElement != null)
                 {
-                    if (GetBooleanAttribute(categoryAxisElement, nameof(CategoryAxis.IsTickCentered), out var isTickCentered))
-                        ((CategoryAxis)axis).IsTickCentered = isTickCentered;
-                    if (GetDoubleAttribute(categoryAxisElement, nameof(CategoryAxis.GapWidth), out var gapWidth))
-                        ((CategoryAxis)axis).GapWidth = gapWidth;
+                    if (GetBooleanAttribute(categoryAxisElement, nameof(Wpf.CategoryAxis.IsTickCentered), out var isTickCentered))
+                        ((Wpf.CategoryAxis)axis).IsTickCentered = isTickCentered;
+                    if (GetDoubleAttribute(categoryAxisElement, nameof(Wpf.CategoryAxis.GapWidth), out var gapWidth))
+                        ((Wpf.CategoryAxis)axis).GapWidth = gapWidth;
 
                     // Backward compatibility
                     if (GetBooleanAttribute(categoryAxisElement, "Centered", out isTickCentered))
-                        ((CategoryAxis)axis).IsTickCentered = isTickCentered;
+                        ((Wpf.CategoryAxis)axis).IsTickCentered = isTickCentered;
                 }
             }
-            else if (currentAxisType == typeof(LogarithmicAxis))
+            else if (currentAxisType == typeof(Wpf.LogarithmicAxis))
             {
                 var logAxisElement = element.Element("LogarithmicAxis");
                 if (logAxisElement != null)
                 {
-                    if (GetDoubleAttribute(logAxisElement, nameof(LogarithmicAxis.Base), out var logBase))
-                        ((LogarithmicAxis)axis).Base = logBase;
-                    if (GetBooleanAttribute(logAxisElement, nameof(LogarithmicAxis.PowerPadding), out var powerPadding))
-                        ((LogarithmicAxis)axis).PowerPadding = powerPadding;
+                    if (GetDoubleAttribute(logAxisElement, nameof(Wpf.LogarithmicAxis.Base), out var logBase))
+                        ((Wpf.LogarithmicAxis)axis).Base = logBase;
+                    if (GetBooleanAttribute(logAxisElement, nameof(Wpf.LogarithmicAxis.PowerPadding), out var powerPadding))
+                        ((Wpf.LogarithmicAxis)axis).PowerPadding = powerPadding;
 
                     // Backward compatibility
                     if (GetDoubleAttribute(logAxisElement, "LogBase", out logBase))
-                        ((LogarithmicAxis)axis).Base = logBase;
+                        ((Wpf.LogarithmicAxis)axis).Base = logBase;
                 }
             }
-            else if (currentAxisType == typeof(DateTimeAxis))
+            else if (currentAxisType == typeof(Wpf.DateTimeAxis))
             {
                 var dateAxisElement = element.Element("DateTimeAxis");
                 if (dateAxisElement != null)
                 {
-                    if (GetEnumAttribute(dateAxisElement, nameof(DateTimeAxis.CalendarWeekRule), out CalendarWeekRule calendarWeekRule))
-                        ((DateTimeAxis)axis).CalendarWeekRule = calendarWeekRule;
+                    if (GetEnumAttribute(dateAxisElement, nameof(Wpf.DateTimeAxis.CalendarWeekRule), out CalendarWeekRule calendarWeekRule))
+                        ((Wpf.DateTimeAxis)axis).CalendarWeekRule = calendarWeekRule;
 
                     // Backward compatibility
                     if (GetEnumAttribute(dateAxisElement, "CalendarWeek", out calendarWeekRule))
-                        ((DateTimeAxis)axis).CalendarWeekRule = calendarWeekRule;
+                        ((Wpf.DateTimeAxis)axis).CalendarWeekRule = calendarWeekRule;
                 }
+            }
+            else if (currentAxisType == typeof(Wpf.TimeSpanAxis))
+            {
+                // TimeSpanAxis has no specific properties beyond base Axis
+            }
+            else if (currentAxisType == typeof(Wpf.AngleAxis))
+            {
+                var angleAxisElement = element.Element("AngleAxis");
+                if (angleAxisElement != null)
+                {
+                    if (GetDoubleAttribute(angleAxisElement, nameof(Wpf.AngleAxis.StartAngle), out var startAngle))
+                        ((Wpf.AngleAxis)axis).StartAngle = startAngle;
+                    if (GetDoubleAttribute(angleAxisElement, nameof(Wpf.AngleAxis.EndAngle), out var endAngle))
+                        ((Wpf.AngleAxis)axis).EndAngle = endAngle;
+                }
+            }
+            else if (currentAxisType == typeof(Wpf.MagnitudeAxis))
+            {
+                var magnitudeAxisElement = element.Element("MagnitudeAxis");
+                if (magnitudeAxisElement != null)
+                {
+                    if (GetBooleanAttribute(magnitudeAxisElement, nameof(Wpf.MagnitudeAxis.FormatAsFractions), out var formatAsFractions))
+                        ((Wpf.MagnitudeAxis)axis).FormatAsFractions = formatAsFractions;
+                }
+            }
+            else if (currentAxisType == typeof(Wpf.LinearColorAxis))
+            {
+                var linearColorAxisElement = element.Element("LinearColorAxis");
+                if (linearColorAxisElement != null)
+                {
+                    if (GetColorAttribute(linearColorAxisElement, nameof(Wpf.LinearColorAxis.HighColor), out var highColor))
+                        ((Wpf.LinearColorAxis)axis).HighColor = highColor;
+                    if (GetColorAttribute(linearColorAxisElement, nameof(Wpf.LinearColorAxis.LowColor), out var lowColor))
+                        ((Wpf.LinearColorAxis)axis).LowColor = lowColor;
+                    if (GetIntegerAttribute(linearColorAxisElement, nameof(Wpf.LinearColorAxis.PaletteSize), out var paletteSize))
+                        ((Wpf.LinearColorAxis)axis).PaletteSize = paletteSize;
+                    if (GetColorAttribute(linearColorAxisElement, nameof(Wpf.LinearColorAxis.InvalidNumberColor), out var invalidNumberColor))
+                        ((Wpf.LinearColorAxis)axis).InvalidNumberColor = invalidNumberColor;
+                }
+            }
+            else if (currentAxisType == typeof(Wpf.NormalProbabilityAxis))
+            {
+                // NormalProbabilityAxis has no specific properties beyond base Axis
+            }
+            else if (currentAxisType == typeof(Wpf.GumbelProbabilityAxis))
+            {
+                // GumbelProbabilityAxis has no specific properties beyond base Axis
             }
 
             return axis;
@@ -809,10 +824,10 @@ namespace OxyPlotControls
         /// <param name="logBase">The logarithm base to use.</param>
         /// <param name="powerPadding">Whether to use power padding.</param>
         /// <returns>A new logarithmic axis with properties copied from the source.</returns>
-        public static LogarithmicAxis ConvertAxisToLogarithmicAxis(Axis wpfAxis, double logBase = 10, bool powerPadding = true)
+        public static Wpf.LogarithmicAxis ConvertAxisToLogarithmicAxis(Wpf.Axis wpfAxis, double logBase = 10, bool powerPadding = true)
         {
-            var newAxis = new LogarithmicAxis { Base = logBase, PowerPadding = powerPadding };
-            newAxis.CopyFromAxis(wpfAxis);
+            var newAxis = new Wpf.LogarithmicAxis { Base = logBase, PowerPadding = powerPadding };
+            newAxis.FromAxisProperties(wpfAxis);
             if (newAxis.Minimum <= 0) newAxis.Minimum = Epsilon;
             newAxis.Maximum = wpfAxis.Maximum;
             newAxis.StartPosition = wpfAxis.StartPosition;
@@ -828,15 +843,15 @@ namespace OxyPlotControls
         /// <param name="fractionUnits">The fraction unit value.</param>
         /// <param name="fractionSymbol">The symbol to use for fractions.</param>
         /// <returns>A new linear axis with properties copied from the source.</returns>
-        public static LinearAxis ConvertAxisToLinearAxis(Axis wpfAxis, bool formatAsFractions = false, double fractionUnits = 1, string? fractionSymbol = null)
+        public static Wpf.LinearAxis ConvertAxisToLinearAxis(Wpf.Axis wpfAxis, bool formatAsFractions = false, double fractionUnits = 1, string? fractionSymbol = null)
         {
-            var newAxis = new LinearAxis
+            var newAxis = new Wpf.LinearAxis
             {
                 FormatAsFractions = formatAsFractions,
                 FractionUnit = fractionUnits,
                 FractionUnitSymbol = fractionSymbol
             };
-            newAxis.CopyFromAxis(wpfAxis);
+            newAxis.FromAxisProperties(wpfAxis);
             newAxis.Minimum = wpfAxis.Minimum;
             newAxis.Maximum = wpfAxis.Maximum;
             newAxis.StartPosition = wpfAxis.StartPosition;
@@ -849,10 +864,10 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="wpfAxis">The source axis to convert.</param>
         /// <returns>A new normal probability axis with properties copied from the source.</returns>
-        public static NormalProbabilityAxis ConvertAxisToNormalAxis(Axis wpfAxis)
+        public static Wpf.NormalProbabilityAxis ConvertAxisToNormalAxis(Wpf.Axis wpfAxis)
         {
-            var newAxis = new NormalProbabilityAxis();
-            newAxis.CopyFromAxis(wpfAxis);
+            var newAxis = new Wpf.NormalProbabilityAxis();
+            newAxis.FromAxisProperties(wpfAxis);
             if (newAxis.Minimum < 0.0000000000000001) newAxis.Minimum = 0.0000001;
             if (newAxis.Maximum > 0.999 || double.IsNaN(newAxis.Maximum)) newAxis.Maximum = 0.999;
             newAxis.StartPosition = wpfAxis.StartPosition;
@@ -865,10 +880,10 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="wpfAxis">The source axis to convert.</param>
         /// <returns>A new Gumbel probability axis with properties copied from the source.</returns>
-        public static GumbelProbabilityAxis ConvertAxisToGumbelAxis(Axis wpfAxis)
+        public static Wpf.GumbelProbabilityAxis ConvertAxisToGumbelAxis(Wpf.Axis wpfAxis)
         {
-            var newAxis = new GumbelProbabilityAxis();
-            newAxis.CopyFromAxis(wpfAxis);
+            var newAxis = new Wpf.GumbelProbabilityAxis();
+            newAxis.FromAxisProperties(wpfAxis);
             if (newAxis.Minimum < 0.0000000000000001) newAxis.Minimum = 0.0000001;
             if (newAxis.Maximum > 0.99 || double.IsNaN(newAxis.Maximum)) newAxis.Maximum = 0.99;
             newAxis.StartPosition = wpfAxis.StartPosition;
@@ -881,10 +896,10 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="wpfAxis">The source axis to convert.</param>
         /// <returns>A new date time axis with properties copied from the source.</returns>
-        public static DateTimeAxis ConvertAxisToDateTimeAxis(Axis wpfAxis)
+        public static Wpf.DateTimeAxis ConvertAxisToDateTimeAxis(Wpf.Axis wpfAxis)
         {
-            var newAxis = new DateTimeAxis();
-            newAxis.CopyFromAxis(wpfAxis);
+            var newAxis = new Wpf.DateTimeAxis();
+            newAxis.FromAxisProperties(wpfAxis);
             newAxis.Minimum = wpfAxis.Minimum;
             newAxis.Maximum = wpfAxis.Maximum;
             newAxis.StartPosition = wpfAxis.StartPosition;
@@ -900,16 +915,17 @@ namespace OxyPlotControls
             if (axisTypeComboBox == null) return;
             if (axisTypeComboBox.SelectedIndex == -1) return;
             if (Axis == null) return;
-            if (PlotModel == null) return;
+            if (Axis.Parent == null) return;
+            if (Axis.Parent.GetType() != typeof(Wpf.Plot)) return;
 
             var axisType = Axis.GetType();
-            if (axisType == typeof(LinearAxis))
-                _oldLinearAxis = (LinearAxis)Axis;
-            else if (axisType == typeof(LogarithmicAxis))
-                _oldLogAxis = (LogarithmicAxis)Axis;
+            if (axisType == typeof(Wpf.LinearAxis))
+                _oldLinearAxis = (Wpf.LinearAxis)Axis;
+            else if (axisType == typeof(Wpf.LogarithmicAxis))
+                _oldLogAxis = (Wpf.LogarithmicAxis)Axis;
 
-            var thePlot = PlotModel;
-            Axis newAxis;
+            var thePlot = (Wpf.Plot)Axis.Parent;
+            Wpf.Axis newAxis;
 
             switch (axisTypeComboBox.SelectedIndex)
             {
@@ -921,7 +937,7 @@ namespace OxyPlotControls
                     AxisMaximum.MinValue = double.MinValue;
                     AxisMaximum.MaxValue = double.MaxValue;
 
-                    if (Axis.GetType() == typeof(LinearAxis)) return;
+                    if (Axis.GetType() == typeof(Wpf.LinearAxis)) return;
                     newAxis = ConvertAxisToLinearAxis(Axis);
 
                     LabelTypeSelector.Visibility = Visibility.Visible;
@@ -936,7 +952,7 @@ namespace OxyPlotControls
                     AxisMaximum.MinValue = Epsilon;
                     AxisMaximum.MaxValue = double.MaxValue;
 
-                    if (Axis.GetType() == typeof(LogarithmicAxis)) return;
+                    if (Axis.GetType() == typeof(Wpf.LogarithmicAxis)) return;
                     newAxis = ConvertAxisToLogarithmicAxis(Axis);
 
                     LabelTypeSelector.Visibility = Visibility.Visible;
@@ -944,7 +960,7 @@ namespace OxyPlotControls
                     break;
 
                 case 2: // Normal Probability
-                    if (Axis.DataMinimum < 0 || Axis.DataMaximum > 1)
+                    if (Axis.InternalAxis.DataMinimum < 0 || Axis.InternalAxis.DataMaximum > 1)
                     {
                         MessageBox.Show("Axis cannot be converted to a Normal probability axis because the data is not between 0 and 1.",
                             "Normal Probability Axis", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -960,7 +976,7 @@ namespace OxyPlotControls
                     AxisMaximum.MinValue = Epsilon;
                     AxisMaximum.MaxValue = 1 - Epsilon;
 
-                    if (Axis.GetType() == typeof(NormalProbabilityAxis)) return;
+                    if (Axis.GetType() == typeof(Wpf.NormalProbabilityAxis)) return;
                     newAxis = ConvertAxisToNormalAxis(Axis);
 
                     LabelTypeSelector.Visibility = Visibility.Collapsed;
@@ -968,7 +984,7 @@ namespace OxyPlotControls
                     break;
 
                 case 3: // Gumbel Probability
-                    if (Axis.DataMinimum < 0 || Axis.DataMaximum > 1)
+                    if (Axis.InternalAxis.DataMinimum < 0 || Axis.InternalAxis.DataMaximum > 1)
                     {
                         MessageBox.Show("Axis cannot be converted to a Gumbel probability axis because the data is not between 0 and 1.",
                             "Gumbel Probability Axis", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -984,7 +1000,7 @@ namespace OxyPlotControls
                     AxisMaximum.MinValue = Epsilon;
                     AxisMaximum.MaxValue = 1 - Epsilon;
 
-                    if (Axis.GetType() == typeof(GumbelProbabilityAxis)) return;
+                    if (Axis.GetType() == typeof(Wpf.GumbelProbabilityAxis)) return;
                     newAxis = ConvertAxisToGumbelAxis(Axis);
 
                     LabelTypeSelector.Visibility = Visibility.Collapsed;
@@ -992,7 +1008,7 @@ namespace OxyPlotControls
                     break;
 
                 case 4: // Date Time
-                    if (Axis.GetType() == typeof(DateTimeAxis)) return;
+                    if (Axis.GetType() == typeof(Wpf.DateTimeAxis)) return;
                     newAxis = ConvertAxisToDateTimeAxis(Axis);
                     break;
 
@@ -1006,7 +1022,7 @@ namespace OxyPlotControls
 
             AxisTypeChanged?.Invoke(Axis, newAxis);
 
-            thePlot.InvalidatePlot(false);
+            thePlot.InvalidatePlot();
         }
 
         /// <summary>
@@ -1073,7 +1089,8 @@ namespace OxyPlotControls
             var comboBox = sender as ComboBox;
             if (comboBox == null) return;
             if (comboBox.SelectedIndex == -1) return;
-            if (PlotModel == null) return;
+            if (Axis.Parent == null) return;
+            if (Axis.Parent.GetType() != typeof(Wpf.Plot)) return;
 
             switch (comboBox.SelectedIndex)
             {
@@ -1126,24 +1143,24 @@ namespace OxyPlotControls
     /// </summary>
     public class ReverseAxisConverter : IMultiValueConverter
     {
-        private Axis? _axis;
+        private Wpf.Axis? _axis;
 
         /// <summary>
         /// Converts start position, end position, and axis to a boolean indicating if the axis is reversed.
         /// </summary>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
         {
             double startPosition;
-            double.TryParse(values[0].ToString(), out startPosition);
+            double.TryParse(values[0]?.ToString(), out startPosition);
             double endPosition;
-            double.TryParse(values[1].ToString(), out endPosition);
+            double.TryParse(values[1]?.ToString(), out endPosition);
 
             if (values[2] == null)
             {
                 _axis = null;
                 return false;
             }
-            _axis = values[2] as Axis;
+            _axis = values[2] as Wpf.Axis;
 
             return endPosition < startPosition;
         }
@@ -1151,12 +1168,12 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts a reversed boolean back to start and end positions.
         /// </summary>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object?[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture)
         {
-            if (_axis == null) return new object[] { 0.0, 1.0, DependencyProperty.UnsetValue };
+            if (_axis == null) return new object?[] { 0.0, 1.0, null };
 
             bool result;
-            bool.TryParse(value.ToString(), out result);
+            bool.TryParse(value?.ToString(), out result);
 
             bool switchPositions = false;
             if (result == false)
@@ -1164,9 +1181,9 @@ namespace OxyPlotControls
             else
                 switchPositions = _axis.StartPosition < _axis.EndPosition;
 
-            if (switchPositions) return new object[] { _axis.EndPosition, _axis.StartPosition, _axis };
+            if (switchPositions) return new object?[] { _axis.EndPosition, _axis.StartPosition, _axis };
 
-            return new object[] { _axis.StartPosition, _axis.EndPosition, _axis };
+            return new object?[] { _axis.StartPosition, _axis.EndPosition, _axis };
         }
     }
 
@@ -1180,21 +1197,27 @@ namespace OxyPlotControls
         /// Converts an OxyPlot LineStyle to a WPF DoubleCollection dash array.
         /// Returns the matching instance from LineStyleOptions to ensure proper ComboBox selection.
         /// </summary>
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value == null) return value;
+            if (value == null) return AxisControl.LineStyleOptions?.FirstOrDefault() ?? new DoubleCollection();
             if (value.GetType() != typeof(OxyPlot.LineStyle)) return AxisControl.LineStyleOptions?.FirstOrDefault() ?? new DoubleCollection();
 
             var lineStyle = (OxyPlot.LineStyle)value;
-            double[] dashArray;
+            double[]? dashArray;
 
-            if (lineStyle == LineStyle.Solid)
+            // Solid, Automatic, and None all render as solid lines (empty dash array)
+            if (lineStyle == LineStyle.Solid || lineStyle == LineStyle.Automatic || lineStyle == LineStyle.None)
             {
                 dashArray = Array.Empty<double>();
             }
             else
             {
-                dashArray = lineStyle.GetDashArray() ?? new double[] { 0 };
+                dashArray = lineStyle.GetDashArray();
+                if (dashArray == null)
+                {
+                    // Fallback for any unrecognized style - treat as solid
+                    dashArray = Array.Empty<double>();
+                }
             }
 
             // Find matching instance from LineStyleOptions for proper ComboBox selection
@@ -1208,6 +1231,12 @@ namespace OxyPlotControls
                         return option;
                     }
                 }
+
+                // If no exact match, return first option (Solid) as fallback
+                if (options.Count > 0)
+                {
+                    return options[0];
+                }
             }
 
             // Fallback: return new collection (won't select in ComboBox, but won't crash)
@@ -1217,7 +1246,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts a WPF DoubleCollection dash array back to an OxyPlot LineStyle.
         /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return OxyPlot.LineStyle.None;
             if (value.GetType() != typeof(DoubleCollection)) return OxyPlot.LineStyle.None;
@@ -1243,7 +1272,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts a value to its string representation.
         /// </summary>
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
             return value.ToString();
@@ -1252,7 +1281,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts empty strings to null, otherwise returns the value.
         /// </summary>
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return null;
             if (value.ToString() == "") return null;
@@ -1293,16 +1322,18 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts an OxyPlot double date value to a DateTime.
         /// </summary>
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(double)) return value;
+#pragma warning disable CS0618 // Type or member is obsolete
             return OxyPlot.Axes.DateTimeAxis.ToDateTime((double)value);
+#pragma warning restore CS0618
         }
 
         /// <summary>
         /// Converts a DateTime to an OxyPlot double date value.
         /// </summary>
-        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(DateTime)) return value;
 

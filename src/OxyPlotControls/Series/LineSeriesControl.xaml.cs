@@ -1,33 +1,3 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -36,26 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using OxyPlot;
-using OxyPlot.Series;
 
 namespace OxyPlotControls
 {
     /// <summary>
     /// A control for editing line series properties including line style, color, and markers.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class LineSeriesControl : UserControl
     {
         #region Static Properties
@@ -76,8 +32,8 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets the list of available line legend positions.
         /// </summary>
-        public static List<LineLegendPosition> LineLegendPositionOptions { get; } =
-            new List<LineLegendPosition>((LineLegendPosition[])Enum.GetValues(typeof(LineLegendPosition)));
+        public static List<OxyPlot.Series.LineLegendPosition> LineLegendPositionOptions { get; } =
+            new List<OxyPlot.Series.LineLegendPosition>((OxyPlot.Series.LineLegendPosition[])Enum.GetValues(typeof(OxyPlot.Series.LineLegendPosition)));
 
         /// <summary>
         /// Gets the list of available line join options.
@@ -99,16 +55,16 @@ namespace OxyPlotControls
         /// </summary>
         public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(
             nameof(Series),
-            typeof(LineSeries),
+            typeof(OxyPlot.Wpf.LineSeries),
             typeof(LineSeriesControl),
             new PropertyMetadata(null, OnSeriesChanged));
 
         /// <summary>
         /// Gets or sets the line series whose properties are being edited.
         /// </summary>
-        public LineSeries? Series
+        public OxyPlot.Wpf.LineSeries Series
         {
-            get => (LineSeries?)GetValue(SeriesProperty);
+            get => (OxyPlot.Wpf.LineSeries)GetValue(SeriesProperty);
             set => SetValue(SeriesProperty, value);
         }
 
@@ -123,10 +79,118 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets or sets the style to apply to expanders in this control.
         /// </summary>
-        public Style? ExpanderStyle
+        public Style ExpanderStyle
         {
-            get => (Style?)GetValue(ExpanderStyleProperty);
+            get => (Style)GetValue(ExpanderStyleProperty);
             set => SetValue(ExpanderStyleProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowStandardColor"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowStandardColorProperty = DependencyProperty.Register(
+            nameof(ShowStandardColor),
+            typeof(Visibility),
+            typeof(LineSeriesControl),
+            new PropertyMetadata(Visibility.Visible));
+
+        /// <summary>
+        /// Gets or sets the visibility for the standard color control.
+        /// </summary>
+        public Visibility ShowStandardColor
+        {
+            get => (Visibility)GetValue(ShowStandardColorProperty);
+            set => SetValue(ShowStandardColorProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowTwoColorControls"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowTwoColorControlsProperty = DependencyProperty.Register(
+            nameof(ShowTwoColorControls),
+            typeof(Visibility),
+            typeof(LineSeriesControl),
+            new PropertyMetadata(Visibility.Collapsed));
+
+        /// <summary>
+        /// Gets or sets the visibility for TwoColorLineSeries controls.
+        /// </summary>
+        public Visibility ShowTwoColorControls
+        {
+            get => (Visibility)GetValue(ShowTwoColorControlsProperty);
+            set => SetValue(ShowTwoColorControlsProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowThreeColorControls"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowThreeColorControlsProperty = DependencyProperty.Register(
+            nameof(ShowThreeColorControls),
+            typeof(Visibility),
+            typeof(LineSeriesControl),
+            new PropertyMetadata(Visibility.Collapsed));
+
+        /// <summary>
+        /// Gets or sets the visibility for ThreeColorLineSeries controls.
+        /// </summary>
+        public Visibility ShowThreeColorControls
+        {
+            get => (Visibility)GetValue(ShowThreeColorControlsProperty);
+            set => SetValue(ShowThreeColorControlsProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowStairStepControls"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowStairStepControlsProperty = DependencyProperty.Register(
+            nameof(ShowStairStepControls),
+            typeof(Visibility),
+            typeof(LineSeriesControl),
+            new PropertyMetadata(Visibility.Collapsed));
+
+        /// <summary>
+        /// Gets or sets the visibility for StairStepSeries controls.
+        /// </summary>
+        public Visibility ShowStairStepControls
+        {
+            get => (Visibility)GetValue(ShowStairStepControlsProperty);
+            set => SetValue(ShowStairStepControlsProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowStandardLineStyle"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowStandardLineStyleProperty = DependencyProperty.Register(
+            nameof(ShowStandardLineStyle),
+            typeof(Visibility),
+            typeof(LineSeriesControl),
+            new PropertyMetadata(Visibility.Visible));
+
+        /// <summary>
+        /// Gets or sets the visibility for standard line style controls.
+        /// </summary>
+        public Visibility ShowStandardLineStyle
+        {
+            get => (Visibility)GetValue(ShowStandardLineStyleProperty);
+            set => SetValue(ShowStandardLineStyleProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowSpecializedSettings"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowSpecializedSettingsProperty = DependencyProperty.Register(
+            nameof(ShowSpecializedSettings),
+            typeof(Visibility),
+            typeof(LineSeriesControl),
+            new PropertyMetadata(Visibility.Collapsed));
+
+        /// <summary>
+        /// Gets or sets the visibility for the specialized settings expander.
+        /// </summary>
+        public Visibility ShowSpecializedSettings
+        {
+            get => (Visibility)GetValue(ShowSpecializedSettingsProperty);
+            set => SetValue(ShowSpecializedSettingsProperty, value);
         }
 
         #endregion
@@ -141,17 +205,51 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Called when the Series property changes.
-        /// Forces a layout update to ensure bindings are properly synchronized.
+        /// Updates visibility properties based on series type and forces layout update.
         /// </summary>
         private static void OnSeriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is LineSeriesControl control && e.NewValue != null)
+            if (d is LineSeriesControl control)
             {
-                // Force layout update to sync bindings
-                control.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
+                // Reset visibility to defaults
+                control.ShowStandardColor = Visibility.Visible;
+                control.ShowTwoColorControls = Visibility.Collapsed;
+                control.ShowThreeColorControls = Visibility.Collapsed;
+                control.ShowStairStepControls = Visibility.Collapsed;
+                control.ShowStandardLineStyle = Visibility.Visible;
+                control.ShowSpecializedSettings = Visibility.Collapsed;
+
+                if (e.NewValue != null)
                 {
-                    control.UpdateLayout();
-                }));
+                    var seriesType = e.NewValue.GetType();
+
+                    // TwoColorLineSeries
+                    if (seriesType == typeof(OxyPlot.Wpf.TwoColorLineSeries))
+                    {
+                        control.ShowStandardColor = Visibility.Collapsed;
+                        control.ShowTwoColorControls = Visibility.Visible;
+                        control.ShowSpecializedSettings = Visibility.Visible;
+                    }
+                    // ThreeColorLineSeries
+                    else if (seriesType == typeof(OxyPlot.Wpf.ThreeColorLineSeries))
+                    {
+                        control.ShowStandardColor = Visibility.Collapsed;
+                        control.ShowThreeColorControls = Visibility.Visible;
+                        control.ShowSpecializedSettings = Visibility.Visible;
+                    }
+                    // StairStepSeries
+                    else if (seriesType == typeof(OxyPlot.Wpf.StairStepSeries))
+                    {
+                        control.ShowStairStepControls = Visibility.Visible;
+                        control.ShowStandardLineStyle = Visibility.Collapsed;
+                    }
+
+                    // Force layout update to sync bindings
+                    control.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
+                    {
+                        control.UpdateLayout();
+                    }));
+                }
             }
         }
 
@@ -162,6 +260,7 @@ namespace OxyPlotControls
         {
             DisplayEXP.IsExpanded = false;
             MarkersEXP.IsExpanded = false;
+            SpecializedSettingsEXP.IsExpanded = false;
         }
 
         /// <summary>
@@ -181,6 +280,9 @@ namespace OxyPlotControls
                 case OxyPlotPropertiesControl.PropertyEXP.Series_Markers:
                     MarkersEXP.IsExpanded = true;
                     break;
+                case OxyPlotPropertiesControl.PropertyEXP.Series_SpecializedSettings:
+                    SpecializedSettingsEXP.IsExpanded = true;
+                    break;
             }
         }
     }
@@ -190,7 +292,7 @@ namespace OxyPlotControls
     /// </summary>
     public class LineSeriesColorConverter : IMultiValueConverter
     {
-        private LineSeries? _series;
+        private OxyPlot.Series.LineSeries? _series;
 
         /// <summary>
         /// Converts a color and series to a SolidColorBrush.
@@ -203,9 +305,9 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly (core type, not wrapper)
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as LineSeries;
+            _series = ((OxyPlot.Wpf.LineSeries)values[1]).InternalSeries as OxyPlot.Series.LineSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert
@@ -244,7 +346,7 @@ namespace OxyPlotControls
     /// </summary>
     public class AreaSeriesColor2Converter : IMultiValueConverter
     {
-        private AreaSeries? _series;
+        private OxyPlot.Series.AreaSeries? _series;
 
         /// <summary>
         /// Converts a color and series to a SolidColorBrush.
@@ -257,9 +359,9 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as AreaSeries;
+            _series = ((OxyPlot.Wpf.AreaSeries)values[1]).InternalSeries as OxyPlot.Series.AreaSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert
@@ -298,7 +400,7 @@ namespace OxyPlotControls
     /// </summary>
     public class AreaSeriesFillConverter : IMultiValueConverter
     {
-        private AreaSeries? _series;
+        private OxyPlot.Series.AreaSeries? _series;
 
         /// <summary>
         /// Converts a fill color and series to a SolidColorBrush.
@@ -311,9 +413,9 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as AreaSeries;
+            _series = ((OxyPlot.Wpf.AreaSeries)values[1]).InternalSeries as OxyPlot.Series.AreaSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert
@@ -352,7 +454,7 @@ namespace OxyPlotControls
     /// </summary>
     public class LineSeriesMarkerFillConverter : IMultiValueConverter
     {
-        private LineSeries? _series;
+        private OxyPlot.Series.LineSeries? _series;
 
         /// <summary>
         /// Converts a marker fill color and series to a SolidColorBrush.
@@ -365,9 +467,9 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as LineSeries;
+            _series = ((OxyPlot.Wpf.LineSeries)values[1]).InternalSeries as OxyPlot.Series.LineSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert
@@ -391,7 +493,7 @@ namespace OxyPlotControls
             var c = ((SolidColorBrush)value).Color;
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            if (OxyColor.ColorDifference(oxyCol, _series.ActualMarkerFill) == 0)
+            if (OxyColor.ColorDifference(oxyCol, ((OxyPlot.Series.LineSeries)_series).ActualMarkerFill) == 0)
             {
                 var actualColor = _series.ActualMarkerFill;
                 return new object[] { Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B), _series };
@@ -406,7 +508,7 @@ namespace OxyPlotControls
     /// </summary>
     public class LineSeriesMarkerStrokeConverter : IMultiValueConverter
     {
-        private LineSeries? _series;
+        private OxyPlot.Series.LineSeries? _series;
 
         /// <summary>
         /// Converts a marker stroke color and series to a SolidColorBrush.
@@ -419,9 +521,9 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as LineSeries;
+            _series = ((OxyPlot.Wpf.LineSeries)values[1]).InternalSeries as OxyPlot.Series.LineSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert

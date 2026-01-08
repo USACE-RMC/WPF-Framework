@@ -1,40 +1,10 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
 using OxyPlot;
-using OxyPlot.Annotations;
+using OxyPlot.Wpf;
 
 namespace OxyPlotControls
 {
@@ -42,19 +12,6 @@ namespace OxyPlotControls
     /// A user control that provides a selector and editor for OxyPlot annotations.
     /// Allows users to select an annotation from a dropdown, add new annotations, and edit their properties.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class AnnotationSelectorControl : UserControl
     {
         /// <summary>
@@ -72,19 +29,19 @@ namespace OxyPlotControls
         public static readonly string AnnotationsPropertiesTag = "Annotations";
 
         /// <summary>
-        /// Identifies the <see cref="PlotModel"/> dependency property.
+        /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotModelProperty = DependencyProperty.Register(
-            nameof(PlotModel), typeof(PlotModel), typeof(AnnotationSelectorControl),
-            new PropertyMetadata(null, InitializePlotModel));
+        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+            nameof(Plot), typeof(Plot), typeof(AnnotationSelectorControl),
+            new PropertyMetadata(null, InitializePlot));
 
         /// <summary>
-        /// Gets or sets the PlotModel that contains the annotations.
+        /// Gets or sets the OxyPlot Plot control that contains the annotations.
         /// </summary>
-        public PlotModel PlotModel
+        public Plot Plot
         {
-            get { return (PlotModel)GetValue(PlotModelProperty); }
-            set { SetValue(PlotModelProperty, value); }
+            get { return (Plot)GetValue(PlotProperty); }
+            set { SetValue(PlotProperty, value); }
         }
 
         /// <summary>
@@ -139,7 +96,7 @@ namespace OxyPlotControls
             ComboBoxStyle = (Style)FindResource("CleanComboBoxStyle");
         }
 
-        private static void InitializePlotModel(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
             if (d.GetType() != typeof(AnnotationSelectorControl)) return;
@@ -147,10 +104,11 @@ namespace OxyPlotControls
 
             thisControl.AnnotationPropertyControlComboBox.ItemsSource = null;
             if (e.NewValue == null) return;
-            if (e.NewValue is not PlotModel newPlotModel) return;
+            if (e.NewValue.GetType() != typeof(Plot)) return;
+            var newPlot = (Plot)e.NewValue;
 
             thisControl.AddHandlers();
-            thisControl.AnnotationPropertyControlComboBox.ItemsSource = newPlotModel.Annotations;
+            thisControl.AnnotationPropertyControlComboBox.ItemsSource = newPlot.Annotations;
 
             thisControl.AnnotationPropertyControlComboBox.ApplyTemplate();
             var cntrl = FindElementByName<ItemsControl>(thisControl.AnnotationPropertyControlComboBox, "SpecialOptions");
@@ -164,21 +122,20 @@ namespace OxyPlotControls
                 addArrow.PreviewMouseLeftButtonUp += (s, args) =>
                 {
                     var newArrow = new ArrowAnnotation { Text = "Arrow Annotation" };
-                    thisControl.PlotModel.Annotations.Add(newArrow);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    thisControl.Plot.Annotations.Add(newArrow);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
                     DataPoint plotCenter;
-                    OxyRect plotArea = thisControl.PlotModel.PlotArea;
-                    plotCenter = newArrow.InverseTransform(plotArea.Center);
+                    OxyRect plotArea = thisControl.Plot.ActualModel.PlotArea;
+                    plotCenter = newArrow.InternalAnnotation.InverseTransform(plotArea.Center);
                     double xShift = plotArea.Center.X + Math.Abs(plotArea.Right - plotArea.Left) * 0.1;
-                    var centerXShifted = newArrow.InverseTransform(new ScreenPoint(xShift, plotArea.Center.Y));
+                    var centerXShifted = newArrow.InternalAnnotation.InverseTransform(new ScreenPoint(xShift, plotArea.Center.Y));
 
                     newArrow.StartPoint = centerXShifted;
                     newArrow.EndPoint = plotCenter;
-                    thisControl.PlotModel.InvalidatePlot(false);
                 };
                 cntrl.Items.Add(addArrow);
 
@@ -187,13 +144,12 @@ namespace OxyPlotControls
                 addText.PreviewMouseLeftButtonUp += (s, args) =>
                 {
                     var newText = new TextAnnotation { Text = "Text Annotation", StrokeThickness = 0 };
-                    thisControl.PlotModel.Annotations.Add(newText);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    thisControl.Plot.Annotations.Add(newText);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
-                    newText.TextPosition = newText.InverseTransform(thisControl.PlotModel.PlotArea.Center);
-                    thisControl.PlotModel.InvalidatePlot(false);
+                    newText.TextPosition = newText.InternalAnnotation.InverseTransform(thisControl.Plot.ActualModel.PlotArea.Center);
                 };
                 cntrl.Items.Add(addText);
 
@@ -202,24 +158,23 @@ namespace OxyPlotControls
                 addLine.PreviewMouseLeftButtonUp += (s, args) =>
                 {
                     var newLine = new LineAnnotation { Text = "Line Annotation" };
-                    thisControl.PlotModel.Annotations.Add(newLine);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    thisControl.Plot.Annotations.Add(newLine);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
                     DataPoint plotLL, plotUR, plotCenter;
-                    OxyRect plotArea = thisControl.PlotModel.PlotArea;
-                    plotLL = newLine.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                    plotUR = newLine.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                    plotCenter = newLine.InverseTransform(plotArea.Center);
+                    OxyRect plotArea = thisControl.Plot.ActualModel.PlotArea;
+                    plotLL = newLine.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
+                    plotUR = newLine.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
+                    plotCenter = newLine.InternalAnnotation.InverseTransform(plotArea.Center);
 
                     newLine.X = plotCenter.X;
                     newLine.Y = plotCenter.Y;
-                    newLine.Type = LineAnnotationType.LinearEquation;
+                    newLine.Type = OxyPlot.Annotations.LineAnnotationType.LinearEquation;
                     newLine.Intercept = plotCenter.Y;
                     newLine.Slope = (plotUR.Y - plotLL.Y) / (plotUR.X - plotLL.X);
-                    thisControl.PlotModel.InvalidatePlot(false);
                 };
                 cntrl.Items.Add(addLine);
 
@@ -228,17 +183,17 @@ namespace OxyPlotControls
                 addRect.PreviewMouseLeftButtonUp += (s, args) =>
                 {
                     var newRect = new RectangleAnnotation { Text = "Rectangle Annotation" };
-                    thisControl.PlotModel.Annotations.Add(newRect);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    thisControl.Plot.Annotations.Add(newRect);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
                     DataPoint plotLL, plotUR, plotCenter;
-                    OxyRect plotArea = thisControl.PlotModel.PlotArea;
-                    plotLL = newRect.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                    plotUR = newRect.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                    plotCenter = newRect.InverseTransform(thisControl.PlotModel.PlotArea.Center);
+                    OxyRect plotArea = thisControl.Plot.ActualModel.PlotArea;
+                    plotLL = newRect.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
+                    plotUR = newRect.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
+                    plotCenter = newRect.InternalAnnotation.InverseTransform(thisControl.Plot.ActualModel.PlotArea.Center);
                     double centerXShift = Math.Abs((plotUR.X - plotLL.X) * 0.1);
                     double centerYShift = Math.Abs((plotUR.Y - plotLL.Y) * 0.1);
 
@@ -246,7 +201,6 @@ namespace OxyPlotControls
                     newRect.MaximumX = plotCenter.X + centerXShift;
                     newRect.MinimumY = plotCenter.Y - centerYShift;
                     newRect.MaximumY = plotCenter.Y + centerYShift;
-                    thisControl.PlotModel.InvalidatePlot(false);
                 };
                 cntrl.Items.Add(addRect);
 
@@ -255,25 +209,24 @@ namespace OxyPlotControls
                 addEllipse.PreviewMouseLeftButtonUp += (s, args) =>
                 {
                     var newEllipse = new EllipseAnnotation { Text = "Ellipse Annotation" };
-                    thisControl.PlotModel.Annotations.Add(newEllipse);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    thisControl.Plot.Annotations.Add(newEllipse);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
                     DataPoint plotLL, plotUR, plotCenter;
-                    OxyRect plotArea = thisControl.PlotModel.PlotArea;
-                    plotLL = newEllipse.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                    plotUR = newEllipse.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                    plotCenter = newEllipse.InverseTransform(thisControl.PlotModel.PlotArea.Center);
+                    OxyRect plotArea = thisControl.Plot.ActualModel.PlotArea;
+                    plotLL = newEllipse.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
+                    plotUR = newEllipse.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
+                    plotCenter = newEllipse.InternalAnnotation.InverseTransform(thisControl.Plot.ActualModel.PlotArea.Center);
                     double centerXShift = Math.Abs((plotUR.X - plotLL.X) * 0.1);
                     double centerYShift = Math.Abs((plotUR.Y - plotLL.Y) * 0.1);
 
-                    newEllipse.X = plotCenter.X;
-                    newEllipse.Y = plotCenter.Y;
-                    newEllipse.Width = centerXShift * 2;
-                    newEllipse.Height = centerYShift * 2;
-                    thisControl.PlotModel.InvalidatePlot(false);
+                    newEllipse.MinimumX = plotCenter.X - centerXShift;
+                    newEllipse.MaximumX = plotCenter.X + centerXShift;
+                    newEllipse.MinimumY = plotCenter.Y - centerYShift;
+                    newEllipse.MaximumY = plotCenter.Y + centerYShift;
                 };
                 cntrl.Items.Add(addEllipse);
 
@@ -282,16 +235,15 @@ namespace OxyPlotControls
                 addPoint.PreviewMouseLeftButtonUp += (s, args) =>
                 {
                     var newPoint = new PointAnnotation { Text = "Point Annotation", Size = 5 };
-                    thisControl.PlotModel.Annotations.Add(newPoint);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    thisControl.Plot.Annotations.Add(newPoint);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
-                    var plotCenter = newPoint.InverseTransform(thisControl.PlotModel.PlotArea.Center);
+                    var plotCenter = newPoint.InternalAnnotation.InverseTransform(thisControl.Plot.ActualModel.PlotArea.Center);
                     newPoint.X = plotCenter.X;
                     newPoint.Y = plotCenter.Y;
-                    thisControl.PlotModel.InvalidatePlot(false);
                 };
                 cntrl.Items.Add(addPoint);
 
@@ -299,24 +251,24 @@ namespace OxyPlotControls
                 var addPolygon = new ComboBoxItem { Content = "Add Polygon Annotation", FontStyle = FontStyles.Italic };
                 addPolygon.PreviewMouseLeftButtonUp += (s, args) =>
                 {
-                    var newPolygon = new PolygonAnnotation { Text = "Polygon Annotation" };
-                    thisControl.PlotModel.Annotations.Add(newPolygon);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    var newPolygon = new PolygonAnnotation { Text = "Polygon Annotation", Points = new System.Collections.Generic.List<DataPoint>() };
+                    thisControl.Plot.Annotations.Add(newPolygon);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
                     DataPoint plotLL, plotUR;
-                    OxyRect plotArea = thisControl.PlotModel.PlotArea;
+                    OxyRect plotArea = thisControl.Plot.ActualModel.PlotArea;
                     plotArea = plotArea.Inflate(plotArea.Width * -0.25, plotArea.Height * -0.25);
-                    plotLL = newPolygon.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                    plotUR = newPolygon.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
+                    plotLL = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
+                    plotUR = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
 
                     newPolygon.Points.Add(plotLL);
                     newPolygon.Points.Add(new DataPoint(plotLL.X, plotUR.Y));
                     newPolygon.Points.Add(plotUR);
                     newPolygon.Points.Add(new DataPoint(plotUR.X, plotLL.Y));
-                    thisControl.PlotModel.InvalidatePlot(false);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
                 };
                 cntrl.Items.Add(addPolygon);
 
@@ -324,23 +276,23 @@ namespace OxyPlotControls
                 var addPolyline = new ComboBoxItem { Content = "Add Polyline Annotation", FontStyle = FontStyles.Italic };
                 addPolyline.PreviewMouseLeftButtonUp += (s, args) =>
                 {
-                    var newPolyline = new PolylineAnnotation { Text = "Polyline Annotation" };
-                    thisControl.PlotModel.Annotations.Add(newPolyline);
-                    thisControl.PlotModel.InvalidatePlot(false);
-                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.PlotModel.Annotations[thisControl.PlotModel.Annotations.Count - 1];
+                    var newPolyline = new PolylineAnnotation { Text = "Polyline Annotation", Points = new System.Collections.Generic.List<DataPoint>() };
+                    thisControl.Plot.Annotations.Add(newPolyline);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
+                    thisControl.AnnotationPropertyControlComboBox.SelectedItem = thisControl.Plot.Annotations[thisControl.Plot.Annotations.Count - 1];
                     thisControl.AnnotationPropertyControlComboBox.IsDropDownOpen = false;
                     thisControl.AnnotationPropertiesControl.Focus();
 
                     DataPoint plotLL, plotUR, plotCenter;
-                    OxyRect plotArea = thisControl.PlotModel.PlotArea;
+                    OxyRect plotArea = thisControl.Plot.ActualModel.PlotArea;
                     plotArea = plotArea.Inflate(plotArea.Width * -0.25, plotArea.Height * -0.25);
-                    plotLL = newPolyline.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                    plotUR = newPolyline.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                    plotCenter = newPolyline.InverseTransform(thisControl.PlotModel.PlotArea.Center);
+                    plotLL = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
+                    plotUR = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
+                    plotCenter = newPolyline.InternalAnnotation.InverseTransform(thisControl.Plot.ActualModel.PlotArea.Center);
 
                     newPolyline.Points.Add(new DataPoint(plotCenter.X - plotLL.X, plotLL.Y));
                     newPolyline.Points.Add(new DataPoint(plotCenter.X + plotUR.X, plotUR.Y));
-                    thisControl.PlotModel.InvalidatePlot(false);
+                    thisControl.Plot.ActualModel.InvalidatePlot(false);
                 };
                 cntrl.Items.Add(addPolyline);
             }
@@ -351,29 +303,33 @@ namespace OxyPlotControls
         /// </summary>
         private void AddHandlers()
         {
-            PlotModel.Annotations.CollectionChanged += Annotation_CollectionChanged;
+            Plot.Annotations.CollectionChanged += Annotation_CollectionChanged;
         }
 
         /// <summary>
         /// When a new annotation is added or removed externally, update the control.
         /// </summary>
-        private void Annotation_CollectionChanged(object? sender, ElementCollectionChangedEventArgs<Annotation> e)
+        private void Annotation_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             // New item was added.
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            if (e.NewItems != null)
             {
-                foreach (var newItem in e.AddedItems)
+                foreach (var newItem in e.NewItems)
                 {
                     AnnotationPropertyControlComboBox.SelectedItem = newItem;
-                    AnnotationPropertiesControl.Annotation = newItem as TextualAnnotation;
+                    var textualAnnotation = newItem as TextualAnnotation;
+                    if (textualAnnotation != null)
+                    {
+                        AnnotationPropertiesControl.Annotation = textualAnnotation;
+                    }
                     break;
                 }
             }
 
             // Item was removed.
-            if (e.RemovedItems != null && e.RemovedItems.Count > 0)
+            if (e.OldItems != null)
             {
-                if (PlotModel != null && PlotModel.Annotations.Count == 0)
+                if (Plot != null && Plot.Annotations.Count == 0)
                 {
                     AnnotationPropertiesControl.HideExpanders();
                 }
@@ -403,7 +359,7 @@ namespace OxyPlotControls
         private void DeleteAnnotationButton_Click(object sender, RoutedEventArgs e)
         {
             if (AnnotationPropertyControlComboBox.SelectedItem == null) return;
-            if (PlotModel == null) return;
+            if (Plot == null) return;
             if (sender == null) return;
             if (sender.GetType() != typeof(Button)) return;
             var btn = (Button)sender;
@@ -413,21 +369,21 @@ namespace OxyPlotControls
             if (annotationToDelete == null) return;
 
             // Delete Annotation
-            PlotModel.Annotations.Remove(annotationToDelete);
-            PlotModel.InvalidatePlot(false);
+            Plot.Annotations.Remove(annotationToDelete);
+            Plot.InvalidatePlot(false);
 
-            if (PlotModel.Annotations.Count == 0) AnnotationPropertyControlComboBox.IsDropDownOpen = false;
+            if (Plot.Annotations.Count == 0) AnnotationPropertyControlComboBox.IsDropDownOpen = false;
         }
 
         /// <summary>
         /// Serializes all annotations properties to an XML element for persistence.
         /// </summary>
-        /// <param name="plotModel">The PlotModel containing the annotations to serialize.</param>
+        /// <param name="plot">The OxyPlot Plot control containing the annotations to serialize.</param>
         /// <returns>An XElement containing all serialized annotations properties.</returns>
-        public static XElement AnnotationsPropertiesToXElement(PlotModel plotModel)
+        public static XElement AnnotationsPropertiesToXElement(Plot plot)
         {
             var annotationProperties = new XElement(AnnotationsPropertiesTag);
-            foreach (var annotation in plotModel.Annotations)
+            foreach (var annotation in plot.Annotations)
             {
                 var textualAnnotation = annotation as TextualAnnotation;
                 if (textualAnnotation == null) continue;
@@ -438,26 +394,23 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Deserializes annotations properties from an XML element and applies them to the plot model.
+        /// Deserializes annotations properties from an XML element and applies them to the plot.
         /// </summary>
-        /// <param name="plotModel">The PlotModel to apply settings to.</param>
+        /// <param name="plot">The OxyPlot Plot control to apply settings to.</param>
         /// <param name="element">The XElement containing serialized annotations properties.</param>
-        /// <param name="version">The serialization format version (1 for legacy, 2 for modern format).</param>
-        public static void XElementToAnnotationsProperties(PlotModel plotModel, XElement element, int version = 2)
+        public static void XElementToAnnotationsProperties(Plot plot, XElement element)
         {
             // Early Exit
             if (element.Name != AnnotationsPropertiesTag) return;
 
             // Set up the annotations
-            // Note: AnnotationControl.XElementToAnnotationProperties handles backward compatibility internally
-            // by using Contains() for type matching and supporting both old and new property names
-            plotModel.Annotations.Clear();
+            plot.Annotations.Clear();
             Annotation? tempAnnotation;
             foreach (var el in element.Elements(AnnotationControl.AnnotationPropertiesTag))
             {
                 tempAnnotation = AnnotationControl.XElementToAnnotationProperties(el);
                 if (tempAnnotation == null) continue;
-                plotModel.Annotations.Add(tempAnnotation);
+                plot.Annotations.Add(tempAnnotation);
             }
         }
 
@@ -468,7 +421,7 @@ namespace OxyPlotControls
         /// <param name="parent">The parent element to search from.</param>
         /// <param name="name">The name of the element to find.</param>
         /// <returns>The found element, or null if not found.</returns>
-        private static T? FindElementByName<T>(DependencyObject parent, string name) where T : FrameworkElement
+        private static T? FindElementByName<T>(DependencyObject? parent, string name) where T : FrameworkElement
         {
             if (parent == null) return null;
 

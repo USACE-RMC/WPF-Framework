@@ -316,7 +316,8 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="400"
                                 Title="Text"
-                                Text="{Binding Axis.Title, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                Text="{Binding Axis.Title, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Title Color-->
                             <cntrls:ColorPropertyControl
@@ -346,13 +347,12 @@
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Title Font Weight-->
-                            <cntrls:NumericPropertySelectorControl
+                            <cntrls:FontWeightSelectorControl
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Font Weight"
-                                NumericOptions="{StaticResource FontWeightOptions}"
-                                SelectedNumber="{Binding Path=Axis.TitleFontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedFontWeight="{Binding Path=Axis.TitleFontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Title Distance (DEVELOPER)-->
@@ -419,13 +419,12 @@
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Label Font Weight-->
-                            <cntrls:NumericPropertySelectorControl
+                            <cntrls:FontWeightSelectorControl
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Font Weight"
-                                NumericOptions="{StaticResource FontWeightOptions}"
-                                SelectedNumber="{Binding Path=Axis.FontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedFontWeight="{Binding Path=Axis.FontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Text Angle-->

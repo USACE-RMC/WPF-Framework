@@ -1,36 +1,6 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System.Windows;
 using System.Windows.Controls;
-using OxyPlot.Series;
+using OxyPlot.Wpf;
 
 namespace OxyPlotControls
 {
@@ -38,19 +8,6 @@ namespace OxyPlotControls
     /// A control that dynamically displays the appropriate series property control
     /// based on the type of OxyPlot series selected.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class SeriesControl : UserControl
     {
         #region Dependency Properties
@@ -60,16 +17,16 @@ namespace OxyPlotControls
         /// </summary>
         public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(
             nameof(Series),
-            typeof(OxyPlot.Series.Series),
+            typeof(OxyPlot.Wpf.Series),
             typeof(SeriesControl),
             new PropertyMetadata(null, InitializeControl));
 
         /// <summary>
         /// Gets or sets the series whose properties should be displayed.
         /// </summary>
-        public OxyPlot.Series.Series? Series
+        public OxyPlot.Wpf.Series Series
         {
-            get => (OxyPlot.Series.Series?)GetValue(SeriesProperty);
+            get => (OxyPlot.Wpf.Series)GetValue(SeriesProperty);
             set => SetValue(SeriesProperty, value);
         }
 
@@ -85,9 +42,9 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets or sets the style to apply to expanders in the series property controls.
         /// </summary>
-        public Style? ExpanderStyle
+        public Style ExpanderStyle
         {
-            get => (Style?)GetValue(ExpanderStyleProperty);
+            get => (Style)GetValue(ExpanderStyleProperty);
             set => SetValue(ExpanderStyleProperty, value);
         }
 
@@ -126,90 +83,73 @@ namespace OxyPlotControls
             if (thisControl._genericControl != null)
             {
                 thisControl._genericControl.Series = null!;
-                if (thisControl.ExpanderStyle != null)
-                    thisControl._genericControl.ExpanderStyle = thisControl.ExpanderStyle;
+                thisControl._genericControl.ExpanderStyle = thisControl.ExpanderStyle;
             }
             if (thisControl._scatterControl != null)
             {
                 thisControl._scatterControl.Series = null!;
-                if (thisControl.ExpanderStyle != null)
-                    thisControl._scatterControl.ExpanderStyle = thisControl.ExpanderStyle;
+                thisControl._scatterControl.ExpanderStyle = thisControl.ExpanderStyle;
             }
             if (thisControl._lineControl != null)
             {
                 thisControl._lineControl.Series = null!;
-                if (thisControl.ExpanderStyle != null)
-                    thisControl._lineControl.ExpanderStyle = thisControl.ExpanderStyle;
+                thisControl._lineControl.ExpanderStyle = thisControl.ExpanderStyle;
             }
             if (thisControl._boxPlotControl != null)
             {
                 thisControl._boxPlotControl.Series = null!;
-                if (thisControl.ExpanderStyle != null)
-                    thisControl._boxPlotControl.ExpanderStyle = thisControl.ExpanderStyle;
+                thisControl._boxPlotControl.ExpanderStyle = thisControl.ExpanderStyle;
             }
             if (thisControl._barControl != null)
             {
                 thisControl._barControl.Series = null!;
-                if (thisControl.ExpanderStyle != null)
-                    thisControl._barControl.ExpanderStyle = thisControl.ExpanderStyle;
+                thisControl._barControl.ExpanderStyle = thisControl.ExpanderStyle;
             }
 
             // Get the new series
             if (e.NewValue == null) return;
-            var series = e.NewValue as OxyPlot.Series.Series;
-            if (series == null) return;
+            var wpfSeries = e.NewValue as OxyPlot.Wpf.Series;
+            if (wpfSeries == null) return;
 
             // Bar/Column
-            if (series is BarSeries barSeries)
+            var barSeries = wpfSeries as BarSeriesBase;
+            if (barSeries != null)
             {
                 if (thisControl._barControl == null)
-                {
-                    thisControl._barControl = new BarSeriesControl();
-                    if (thisControl.ExpanderStyle != null)
-                        thisControl._barControl.ExpanderStyle = thisControl.ExpanderStyle;
-                }
+                    thisControl._barControl = new BarSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
                 thisControl._barControl.Series = barSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._barControl);
                 return;
             }
 
             // Line/Area/StairStep/ThreeColorLine/TwoColorLine
-            if (series is LineSeries lineSeries)
+            var lineSeries = wpfSeries as LineSeries;
+            if (lineSeries != null)
             {
                 if (thisControl._lineControl == null)
-                {
-                    thisControl._lineControl = new LineSeriesControl();
-                    if (thisControl.ExpanderStyle != null)
-                        thisControl._lineControl.ExpanderStyle = thisControl.ExpanderStyle;
-                }
+                    thisControl._lineControl = new LineSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
                 thisControl._lineControl.Series = lineSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._lineControl);
                 return;
             }
 
             // Scatter/ScatterError
-            if (series is ScatterSeries scatterSeries)
+            var scatterSeries = wpfSeries as ScatterSeries<OxyPlot.Series.ScatterPoint>;
+            if (scatterSeries != null)
             {
                 if (thisControl._scatterControl == null)
-                {
-                    thisControl._scatterControl = new ScatterSeriesControl();
-                    if (thisControl.ExpanderStyle != null)
-                        thisControl._scatterControl.ExpanderStyle = thisControl.ExpanderStyle;
-                }
+                    thisControl._scatterControl = new ScatterSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
                 thisControl._scatterControl.Series = scatterSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._scatterControl);
                 return;
             }
 
             // BoxPlot
-            if (series is BoxPlotSeries boxPlotSeries)
+            var boxPlotSeries = wpfSeries as BoxPlotSeries;
+            if (boxPlotSeries != null)
             {
                 if (thisControl._boxPlotControl == null)
-                {
-                    thisControl._boxPlotControl = new BoxPlotSeriesControl();
-                    if (thisControl.ExpanderStyle != null)
-                        thisControl._boxPlotControl.ExpanderStyle = thisControl.ExpanderStyle;
-                }
+                    thisControl._boxPlotControl = new BoxPlotSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
                 thisControl._boxPlotControl.Series = boxPlotSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._boxPlotControl);
                 return;
@@ -217,12 +157,8 @@ namespace OxyPlotControls
 
             // Generic fallback
             if (thisControl._genericControl == null)
-            {
-                thisControl._genericControl = new GenericSeriesControl();
-                if (thisControl.ExpanderStyle != null)
-                    thisControl._genericControl.ExpanderStyle = thisControl.ExpanderStyle;
-            }
-            thisControl._genericControl.Series = series;
+                thisControl._genericControl = new GenericSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
+            thisControl._genericControl.Series = wpfSeries;
             thisControl.SeriesGrid.Children.Add(thisControl._genericControl);
         }
 
@@ -235,19 +171,16 @@ namespace OxyPlotControls
             if (d.GetType() != typeof(SeriesControl)) return;
             var thisControl = (SeriesControl)d;
 
-            if (thisControl.ExpanderStyle != null)
-            {
-                if (thisControl._genericControl != null)
-                    thisControl._genericControl.ExpanderStyle = thisControl.ExpanderStyle;
-                if (thisControl._scatterControl != null)
-                    thisControl._scatterControl.ExpanderStyle = thisControl.ExpanderStyle;
-                if (thisControl._lineControl != null)
-                    thisControl._lineControl.ExpanderStyle = thisControl.ExpanderStyle;
-                if (thisControl._boxPlotControl != null)
-                    thisControl._boxPlotControl.ExpanderStyle = thisControl.ExpanderStyle;
-                if (thisControl._barControl != null)
-                    thisControl._barControl.ExpanderStyle = thisControl.ExpanderStyle;
-            }
+            if (thisControl._genericControl != null)
+                thisControl._genericControl.ExpanderStyle = thisControl.ExpanderStyle;
+            if (thisControl._scatterControl != null)
+                thisControl._scatterControl.ExpanderStyle = thisControl.ExpanderStyle;
+            if (thisControl._lineControl != null)
+                thisControl._lineControl.ExpanderStyle = thisControl.ExpanderStyle;
+            if (thisControl._boxPlotControl != null)
+                thisControl._boxPlotControl.ExpanderStyle = thisControl.ExpanderStyle;
+            if (thisControl._barControl != null)
+                thisControl._barControl.ExpanderStyle = thisControl.ExpanderStyle;
         }
 
         /// <summary>

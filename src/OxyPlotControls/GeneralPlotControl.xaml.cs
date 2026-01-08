@@ -1,33 +1,3 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Globalization;
 using System.Windows;
@@ -38,6 +8,7 @@ using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
 using OxyPlot;
+using Wpf = OxyPlot.Wpf;
 
 namespace OxyPlotControls
 {
@@ -45,19 +16,6 @@ namespace OxyPlotControls
     /// A user control that provides UI for editing general plot properties such as title, subtitle,
     /// plot area styling, and background settings for an OxyPlot chart.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class GeneralPlotControl : UserControl
     {
         /// <summary>
@@ -66,19 +24,19 @@ namespace OxyPlotControls
         public static readonly string GeneralPropertiesTag = "General";
 
         /// <summary>
-        /// Identifies the <see cref="PlotModel"/> dependency property.
+        /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotModelProperty = DependencyProperty.Register(
-            nameof(PlotModel), typeof(PlotModel), typeof(GeneralPlotControl),
-            new PropertyMetadata(null, OnPlotModelChanged));
+        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+            nameof(Plot), typeof(Wpf.Plot), typeof(GeneralPlotControl),
+            new PropertyMetadata(null, OnPlotChanged));
 
         /// <summary>
-        /// Gets or sets the PlotModel that this control edits.
+        /// Gets or sets the OxyPlot Plot control that this control edits.
         /// </summary>
-        public PlotModel PlotModel
+        public Wpf.Plot Plot
         {
-            get { return (PlotModel)GetValue(PlotModelProperty); }
-            set { SetValue(PlotModelProperty, value); }
+            get { return (Wpf.Plot)GetValue(PlotProperty); }
+            set { SetValue(PlotProperty, value); }
         }
 
         /// <summary>
@@ -105,10 +63,10 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Called when the PlotModel property changes.
+        /// Called when the Plot property changes.
         /// Forces a layout update to ensure bindings are properly synchronized.
         /// </summary>
-        private static void OnPlotModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnPlotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is GeneralPlotControl control && e.NewValue != null)
             {
@@ -123,187 +81,165 @@ namespace OxyPlotControls
         /// <summary>
         /// Serializes general plot properties to an XML element for persistence.
         /// </summary>
-        /// <param name="plotModel">The PlotModel whose properties will be serialized.</param>
+        /// <param name="plot">The OxyPlot Plot control whose properties will be serialized.</param>
         /// <returns>An XElement containing all serialized general plot properties.</returns>
-        public static XElement GeneralPropertiesToXElement(PlotModel plotModel)
+        public static XElement GeneralPropertiesToXElement(Wpf.Plot plot)
         {
             var generalProperties = new XElement(GeneralPropertiesTag);
-            generalProperties.SetAttributeValue(nameof(plotModel.IsLegendVisible), plotModel.IsLegendVisible.ToString());
+            generalProperties.SetAttributeValue(nameof(plot.IsEnabled), plot.IsEnabled.ToString());
+
+            var weightConverter = new FontWeightConverter();
 
             // Title Properties
             var titleProperties = new XElement("Title");
-            titleProperties.SetAttributeValue(nameof(plotModel.Title), plotModel.Title ?? "");
-            titleProperties.SetAttributeValue(nameof(plotModel.TitleColor), OxyPlotSettingsSerializer.OxyColorToString(plotModel.TitleColor));
-            titleProperties.SetAttributeValue(nameof(plotModel.TitleFont), plotModel.TitleFont ?? "");
-            titleProperties.SetAttributeValue(nameof(plotModel.TitleFontSize), plotModel.TitleFontSize.ToString("G17", CultureInfo.InvariantCulture));
-            titleProperties.SetAttributeValue(nameof(plotModel.TitleFontWeight), plotModel.TitleFontWeight.ToString("G17", CultureInfo.InvariantCulture));
-            titleProperties.SetAttributeValue(nameof(plotModel.TitlePadding), plotModel.TitlePadding.ToString("G17", CultureInfo.InvariantCulture));
+            titleProperties.SetAttributeValue(nameof(plot.Title), plot.Title);
+            titleProperties.SetAttributeValue(nameof(plot.TitleColor), plot.TitleColor.ToString());
+            titleProperties.SetAttributeValue(nameof(plot.TitleFont), plot.TitleFont);
+            titleProperties.SetAttributeValue(nameof(plot.TitleFontSize), plot.TitleFontSize.ToString("G17", CultureInfo.InvariantCulture));
+            titleProperties.SetAttributeValue(nameof(plot.TitleFontWeight), weightConverter.ConvertToInvariantString(plot.TitleFontWeight));
+            titleProperties.SetAttributeValue(nameof(plot.TitlePadding), plot.TitlePadding.ToString("G17", CultureInfo.InvariantCulture));
             generalProperties.Add(titleProperties);
 
-            // Subtitle Properties
+            // SubTitle Properties
             var subTitleProperties = new XElement("Subtitle");
-            subTitleProperties.SetAttributeValue(nameof(plotModel.Subtitle), plotModel.Subtitle ?? "");
-            subTitleProperties.SetAttributeValue(nameof(plotModel.SubtitleColor), OxyPlotSettingsSerializer.OxyColorToString(plotModel.SubtitleColor));
-            subTitleProperties.SetAttributeValue(nameof(plotModel.SubtitleFont), plotModel.SubtitleFont ?? "");
-            subTitleProperties.SetAttributeValue(nameof(plotModel.SubtitleFontSize), plotModel.SubtitleFontSize.ToString("G17", CultureInfo.InvariantCulture));
-            subTitleProperties.SetAttributeValue(nameof(plotModel.SubtitleFontWeight), plotModel.SubtitleFontWeight.ToString("G17", CultureInfo.InvariantCulture));
+            subTitleProperties.SetAttributeValue(nameof(plot.Subtitle), plot.Subtitle);
+            subTitleProperties.SetAttributeValue(nameof(plot.SubtitleColor), plot.SubtitleColor.ToString());
+            subTitleProperties.SetAttributeValue(nameof(plot.SubtitleFont), plot.SubtitleFont);
+            subTitleProperties.SetAttributeValue(nameof(plot.SubtitleFontSize), plot.SubtitleFontSize.ToString("G17", CultureInfo.InvariantCulture));
+            subTitleProperties.SetAttributeValue(nameof(plot.SubtitleFontWeight), weightConverter.ConvertToInvariantString(plot.SubtitleFontWeight));
             generalProperties.Add(subTitleProperties);
 
-            // Chart Area Properties (Background)
+            // Chart Area Properties
             var chartProperties = new XElement("Chart");
-            chartProperties.SetAttributeValue(nameof(plotModel.Background), OxyPlotSettingsSerializer.OxyColorToString(plotModel.Background));
+            var bc = new BrushConverter();
+            var tc = new ThicknessConverter();
+            chartProperties.SetAttributeValue(nameof(plot.Background), bc.ConvertToInvariantString(plot.Background));
+            chartProperties.SetAttributeValue(nameof(plot.BorderBrush), bc.ConvertToInvariantString(plot.BorderBrush));
+            chartProperties.SetAttributeValue(nameof(plot.BorderThickness), tc.ConvertToInvariantString(plot.BorderThickness));
             generalProperties.Add(chartProperties);
 
             // Plot Area Properties
             var plotAreaProperties = new XElement("Plot");
-            plotAreaProperties.SetAttributeValue(nameof(plotModel.PlotAreaBackground), OxyPlotSettingsSerializer.OxyColorToString(plotModel.PlotAreaBackground));
-            plotAreaProperties.SetAttributeValue(nameof(plotModel.PlotAreaBorderColor), OxyPlotSettingsSerializer.OxyColorToString(plotModel.PlotAreaBorderColor));
-            plotAreaProperties.SetAttributeValue(nameof(plotModel.PlotAreaBorderThickness), OxyThicknessToString(plotModel.PlotAreaBorderThickness));
+            plotAreaProperties.SetAttributeValue(nameof(plot.PlotAreaBackground), bc.ConvertToInvariantString(plot.PlotAreaBackground));
+            plotAreaProperties.SetAttributeValue(nameof(plot.PlotAreaBorderColor), plot.PlotAreaBorderColor.ToString());
+            plotAreaProperties.SetAttributeValue(nameof(plot.PlotAreaBorderThickness), tc.ConvertToInvariantString(plot.PlotAreaBorderThickness));
             generalProperties.Add(plotAreaProperties);
 
             return generalProperties;
         }
 
         /// <summary>
-        /// Converts an OxyThickness to a string for XML serialization.
+        /// Deserializes general plot properties from an XML element and applies them to the plot.
         /// </summary>
-        private static string OxyThicknessToString(OxyThickness thickness)
-        {
-            return $"{thickness.Left.ToString("G17", CultureInfo.InvariantCulture)}," +
-                   $"{thickness.Top.ToString("G17", CultureInfo.InvariantCulture)}," +
-                   $"{thickness.Right.ToString("G17", CultureInfo.InvariantCulture)}," +
-                   $"{thickness.Bottom.ToString("G17", CultureInfo.InvariantCulture)}";
-        }
-
-        /// <summary>
-        /// Parses an OxyThickness from a string.
-        /// </summary>
-        private static bool TryParseOxyThickness(string value, out OxyThickness thickness)
-        {
-            thickness = new OxyThickness(0);
-            if (string.IsNullOrEmpty(value)) return false;
-
-            var parts = value.Split(',');
-            if (parts.Length == 1 && double.TryParse(parts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double uniform))
-            {
-                thickness = new OxyThickness(uniform);
-                return true;
-            }
-            if (parts.Length == 4 &&
-                double.TryParse(parts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out double left) &&
-                double.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out double top) &&
-                double.TryParse(parts[2], NumberStyles.Any, CultureInfo.InvariantCulture, out double right) &&
-                double.TryParse(parts[3], NumberStyles.Any, CultureInfo.InvariantCulture, out double bottom))
-            {
-                thickness = new OxyThickness(left, top, right, bottom);
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Deserializes general plot properties from an XML element and applies them to the plot model.
-        /// </summary>
-        /// <param name="plotModel">The PlotModel to apply settings to.</param>
+        /// <param name="plot">The OxyPlot Plot control to apply settings to.</param>
         /// <param name="element">The XElement containing serialized general plot properties.</param>
-        /// <param name="version">The serialization format version (1 for legacy, 2 for modern).</param>
-        public static void XElementToGeneralProperties(PlotModel plotModel, XElement element, int version = 2)
+        public static void XElementToGeneralProperties(Wpf.Plot plot, XElement element)
         {
             // Early Exit
-            if (plotModel == null) return;
+            if (plot == null) return;
             if (element.Name != GeneralPropertiesTag) return;
 
-            // Get visibility (V2 uses IsLegendVisible, V1 used IsEnabled on the plot)
-            if (OxyPlotSettingsSerializer.GetBooleanAttribute(element, nameof(plotModel.IsLegendVisible), out bool isLegendVisible))
-                plotModel.IsLegendVisible = isLegendVisible;
+            // Get enabled or not
+            bool isEnabled;
+            OxyPlotSettingsSerializer.GetBooleanAttribute(element, nameof(plot.IsEnabled), out isEnabled);
+            plot.IsEnabled = isEnabled;
 
-            // For backward compatibility with V1
+            // Set up converters
             var weightConverter = new FontWeightConverter();
+            var thicknessConverter = new ThicknessConverter();
+            var brushConverter = new BrushConverter();
 
             // Title Properties
             var titleElement = element.Element("Title");
             if (titleElement != null)
             {
-                if (OxyPlotSettingsSerializer.GetStringAttribute(titleElement, nameof(plotModel.Title), out string titleStr))
-                    plotModel.Title = titleStr;
+                string? titleStr;
+                if (OxyPlotSettingsSerializer.GetStringAttribute(titleElement, nameof(plot.Title), out titleStr)) plot.Title = titleStr!;
 
-                if (OxyPlotSettingsSerializer.GetOxyColorAttribute(titleElement, nameof(plotModel.TitleColor), out OxyColor titleColor))
-                    plotModel.TitleColor = titleColor;
+                Color titleColor;
+                if (OxyPlotSettingsSerializer.GetColorAttribute(titleElement, nameof(plot.TitleColor), out titleColor)) plot.TitleColor = titleColor;
 
-                if (OxyPlotSettingsSerializer.GetStringAttribute(titleElement, nameof(plotModel.TitleFont), out string titleFont))
-                    plotModel.TitleFont = titleFont;
+                string? titleFont;
+                if (OxyPlotSettingsSerializer.GetStringAttribute(titleElement, nameof(plot.TitleFont), out titleFont)) plot.TitleFont = titleFont!;
 
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, nameof(plotModel.TitleFontSize), out double titleFontSize))
-                    plotModel.TitleFontSize = titleFontSize;
+                double titleFontSize;
+                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, nameof(plot.TitleFontSize), out titleFontSize)) plot.TitleFontSize = titleFontSize;
 
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, nameof(plotModel.TitleFontWeight), out double titleFontWeight))
-                    plotModel.TitleFontWeight = titleFontWeight;
+                FontWeight titleFontWeight;
+                if (OxyPlotSettingsSerializer.GetFontWeightAttribute(titleElement, nameof(plot.TitleFontWeight), weightConverter, out titleFontWeight)) plot.TitleFontWeight = titleFontWeight;
 
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, nameof(plotModel.TitlePadding), out double titlePadding))
-                    plotModel.TitlePadding = titlePadding;
+                double titlePadding;
+                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, nameof(plot.TitlePadding), out titlePadding)) plot.TitlePadding = titlePadding;
 
-                // V1 Backward compatibility - font weight was stored as WPF FontWeight string
-                if (version == 1)
-                {
-                    if (OxyPlotSettingsSerializer.GetFontWeightAttribute(titleElement, "TitleFontWeight", weightConverter, out FontWeight wpfWeight))
-                        plotModel.TitleFontWeight = wpfWeight.ToOpenTypeWeight();
-                    if (OxyPlotSettingsSerializer.GetColorAttribute(titleElement, "TitleColor", out Color wpfColor))
-                        plotModel.TitleColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                    if (OxyPlotSettingsSerializer.GetColorAttribute(titleElement, "Color", out wpfColor))
-                        plotModel.TitleColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                    if (OxyPlotSettingsSerializer.GetFontWeightAttribute(titleElement, "Weight", weightConverter, out wpfWeight))
-                        plotModel.TitleFontWeight = wpfWeight.ToOpenTypeWeight();
-                }
+                // Backward compatibility
+                if (OxyPlotSettingsSerializer.GetColorAttribute(titleElement, "Color", out titleColor)) plot.TitleColor = titleColor;
+                if (OxyPlotSettingsSerializer.GetStringAttribute(titleElement, "Font", out titleFont)) plot.TitleFont = titleFont!;
+                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, "Size", out titleFontSize)) plot.TitleFontSize = titleFontSize;
+                if (OxyPlotSettingsSerializer.GetFontWeightAttribute(titleElement, "Weight", weightConverter, out titleFontWeight)) plot.TitleFontWeight = titleFontWeight;
+                if (OxyPlotSettingsSerializer.GetDoubleAttribute(titleElement, "Padding", out titlePadding)) plot.TitlePadding = titlePadding;
             }
 
-            // Subtitle Properties
+            // SubTitle Properties
             var subTitleElement = element.Element("Subtitle");
             if (subTitleElement != null)
             {
-                if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, nameof(plotModel.Subtitle), out string subtitle))
-                    plotModel.Subtitle = subtitle;
+                string? subtitle;
+                if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, nameof(plot.Subtitle), out subtitle)) plot.Subtitle = subtitle!;
 
-                if (OxyPlotSettingsSerializer.GetOxyColorAttribute(subTitleElement, nameof(plotModel.SubtitleColor), out OxyColor subtitleColor))
-                    plotModel.SubtitleColor = subtitleColor;
+                Color subtitleColor;
+                if (OxyPlotSettingsSerializer.GetColorAttribute(subTitleElement, nameof(plot.SubtitleColor), out subtitleColor)) plot.SubtitleColor = subtitleColor;
 
-                if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, nameof(plotModel.SubtitleFont), out string subtitleFont))
-                    plotModel.SubtitleFont = subtitleFont;
+                string? subtitleFont;
+                if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, nameof(plot.SubtitleFont), out subtitleFont)) plot.SubtitleFont = subtitleFont!;
 
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(subTitleElement, nameof(plotModel.SubtitleFontSize), out double subtitleFontSize))
-                    plotModel.SubtitleFontSize = subtitleFontSize;
+                double subtitleFontSize;
+                if (OxyPlotSettingsSerializer.GetDoubleAttribute(subTitleElement, nameof(plot.SubtitleFontSize), out subtitleFontSize)) plot.SubtitleFontSize = subtitleFontSize;
 
-                if (OxyPlotSettingsSerializer.GetDoubleAttribute(subTitleElement, nameof(plotModel.SubtitleFontWeight), out double subtitleFontWeight))
-                    plotModel.SubtitleFontWeight = subtitleFontWeight;
+                FontWeight subtitleFontWeight;
+                if (OxyPlotSettingsSerializer.GetFontWeightAttribute(subTitleElement, nameof(plot.SubtitleFontWeight), weightConverter, out subtitleFontWeight)) plot.SubtitleFontWeight = subtitleFontWeight;
 
-                // V1 Backward compatibility
-                if (version == 1)
-                {
-                    if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, "Title", out subtitle))
-                        plotModel.Subtitle = subtitle;
-                    if (OxyPlotSettingsSerializer.GetColorAttribute(subTitleElement, "SubtitleColor", out Color wpfColor))
-                        plotModel.SubtitleColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                    if (OxyPlotSettingsSerializer.GetColorAttribute(subTitleElement, "Color", out wpfColor))
-                        plotModel.SubtitleColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                    if (OxyPlotSettingsSerializer.GetFontWeightAttribute(subTitleElement, "SubtitleFontWeight", weightConverter, out FontWeight wpfWeight))
-                        plotModel.SubtitleFontWeight = wpfWeight.ToOpenTypeWeight();
-                    if (OxyPlotSettingsSerializer.GetFontWeightAttribute(subTitleElement, "Weight", weightConverter, out wpfWeight))
-                        plotModel.SubtitleFontWeight = wpfWeight.ToOpenTypeWeight();
-                }
+                // Backward compatibility
+                if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, "Title", out subtitle)) plot.Subtitle = subtitle!;
+                if (OxyPlotSettingsSerializer.GetColorAttribute(subTitleElement, "Color", out subtitleColor)) plot.SubtitleColor = subtitleColor;
+                if (OxyPlotSettingsSerializer.GetStringAttribute(subTitleElement, "Font", out subtitleFont)) plot.SubtitleFont = subtitleFont!;
+                if (OxyPlotSettingsSerializer.GetDoubleAttribute(subTitleElement, "Size", out subtitleFontSize)) plot.SubtitleFontSize = subtitleFontSize;
+                if (OxyPlotSettingsSerializer.GetFontWeightAttribute(subTitleElement, "Weight", weightConverter, out subtitleFontWeight)) plot.SubtitleFontWeight = subtitleFontWeight;
             }
 
-            // Chart Area Properties (Background)
+            // Chart Area Properties
             var chartElement = element.Element("Chart");
             if (chartElement != null)
             {
-                if (OxyPlotSettingsSerializer.GetOxyColorAttribute(chartElement, nameof(plotModel.Background), out OxyColor background))
-                    plotModel.Background = background;
+                Brush? background;
+                if (OxyPlotSettingsSerializer.GetBrushAttribute(chartElement, nameof(plot.Background), brushConverter, out background)) plot.Background = background!;
 
-                // V1 Backward compatibility - Background was stored as WPF Brush
-                if (version == 1)
+                Brush? borderBrush;
+                if (OxyPlotSettingsSerializer.GetBrushAttribute(chartElement, nameof(plot.BorderBrush), brushConverter, out borderBrush)) plot.BorderBrush = borderBrush!;
+
+                Thickness borderThickness;
+                if (OxyPlotSettingsSerializer.GetThicknessAttribute(chartElement, nameof(plot.BorderThickness), thicknessConverter, out borderThickness)) plot.BorderThickness = borderThickness;
+
+                // Backward compatibility
+                var backgroundElement = chartElement.Element("BackgroundBrush");
+                if (backgroundElement != null)
                 {
-                    var brushConverter = new BrushConverter();
-                    if (OxyPlotSettingsSerializer.GetBrushAttribute(chartElement, "Background", brushConverter, out Brush bgBrush) && bgBrush is SolidColorBrush scb)
-                        plotModel.Background = OxyColor.FromArgb(scb.Color.A, scb.Color.R, scb.Color.G, scb.Color.B);
+                    var firstElement = backgroundElement.Elements().GetEnumerator();
+                    if (firstElement.MoveNext())
+                    {
+                        var bg = DeserializeFromXElement(firstElement.Current) as Brush;
+                        if (bg != null) plot.Background = bg;
+                    }
+                }
+
+                var borderElement = chartElement.Element("BorderBrush");
+                if (borderElement != null)
+                {
+                    var firstElement = borderElement.Elements().GetEnumerator();
+                    if (firstElement.MoveNext())
+                    {
+                        var bg = DeserializeFromXElement(firstElement.Current) as Brush;
+                        if (bg != null) plot.BorderBrush = bg;
+                    }
                 }
             }
 
@@ -311,33 +247,29 @@ namespace OxyPlotControls
             var plotAreaElement = element.Element("Plot");
             if (plotAreaElement != null)
             {
-                if (OxyPlotSettingsSerializer.GetOxyColorAttribute(plotAreaElement, nameof(plotModel.PlotAreaBackground), out OxyColor plotAreaBackground))
-                    plotModel.PlotAreaBackground = plotAreaBackground;
+                Brush? plotAreaBackground;
+                if (OxyPlotSettingsSerializer.GetBrushAttribute(plotAreaElement, nameof(plot.PlotAreaBackground), brushConverter, out plotAreaBackground)) plot.PlotAreaBackground = plotAreaBackground!;
 
-                if (OxyPlotSettingsSerializer.GetOxyColorAttribute(plotAreaElement, nameof(plotModel.PlotAreaBorderColor), out OxyColor plotAreaBorderColor))
-                    plotModel.PlotAreaBorderColor = plotAreaBorderColor;
+                Color plotAreaBorderColor;
+                if (OxyPlotSettingsSerializer.GetColorAttribute(plotAreaElement, nameof(plot.PlotAreaBorderColor), out plotAreaBorderColor)) plot.PlotAreaBorderColor = plotAreaBorderColor;
 
-                if (OxyPlotSettingsSerializer.GetStringAttribute(plotAreaElement, nameof(plotModel.PlotAreaBorderThickness), out string thicknessStr) &&
-                    TryParseOxyThickness(thicknessStr, out OxyThickness plotAreaBorderThickness))
-                    plotModel.PlotAreaBorderThickness = plotAreaBorderThickness;
+                Thickness plotAreaBorderThickness;
+                if (OxyPlotSettingsSerializer.GetThicknessAttribute(plotAreaElement, nameof(plot.PlotAreaBorderThickness), thicknessConverter, out plotAreaBorderThickness)) plot.PlotAreaBorderThickness = plotAreaBorderThickness;
 
-                // V1 Backward compatibility
-                if (version == 1)
+                // Backward compatibility
+                var backgroundElement = plotAreaElement.Element("BackgroundBrush");
+                if (backgroundElement != null)
                 {
-                    var brushConverter = new BrushConverter();
-                    var thicknessConverter = new ThicknessConverter();
-
-                    if (OxyPlotSettingsSerializer.GetBrushAttribute(plotAreaElement, "PlotAreaBackground", brushConverter, out Brush paBrush) && paBrush is SolidColorBrush scb)
-                        plotModel.PlotAreaBackground = OxyColor.FromArgb(scb.Color.A, scb.Color.R, scb.Color.G, scb.Color.B);
-                    if (OxyPlotSettingsSerializer.GetColorAttribute(plotAreaElement, "PlotAreaBorderColor", out Color wpfColor))
-                        plotModel.PlotAreaBorderColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                    if (OxyPlotSettingsSerializer.GetColorAttribute(plotAreaElement, "BorderColor", out wpfColor))
-                        plotModel.PlotAreaBorderColor = OxyColor.FromArgb(wpfColor.A, wpfColor.R, wpfColor.G, wpfColor.B);
-                    if (OxyPlotSettingsSerializer.GetThicknessAttribute(plotAreaElement, "PlotAreaBorderThickness", thicknessConverter, out Thickness wpfThickness))
-                        plotModel.PlotAreaBorderThickness = new OxyThickness(wpfThickness.Left, wpfThickness.Top, wpfThickness.Right, wpfThickness.Bottom);
-                    if (OxyPlotSettingsSerializer.GetThicknessAttribute(plotAreaElement, "BorderThickness", thicknessConverter, out wpfThickness))
-                        plotModel.PlotAreaBorderThickness = new OxyThickness(wpfThickness.Left, wpfThickness.Top, wpfThickness.Right, wpfThickness.Bottom);
+                    var firstElement = backgroundElement.Elements().GetEnumerator();
+                    if (firstElement.MoveNext())
+                    {
+                        var bg = DeserializeFromXElement(firstElement.Current) as Brush;
+                        if (bg != null) plot.PlotAreaBackground = bg;
+                    }
                 }
+
+                if (OxyPlotSettingsSerializer.GetColorAttribute(plotAreaElement, "BorderColor", out plotAreaBorderColor)) plot.PlotAreaBorderColor = plotAreaBorderColor;
+                if (OxyPlotSettingsSerializer.GetThicknessAttribute(plotAreaElement, "BorderThickness", thicknessConverter, out plotAreaBorderThickness)) plot.PlotAreaBorderThickness = plotAreaBorderThickness;
             }
         }
 
@@ -358,111 +290,38 @@ namespace OxyPlotControls
     /// A value converter that handles OxyPlot's automatic color representation.
     /// OxyPlot uses ARGB(0,0,0,1) to represent an automatic color, which this converter
     /// translates to black for display purposes.
-    /// Supports both OxyColor and WPF Color as input.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public class OxyAutomaticColorConverter : IValueConverter
     {
         /// <summary>
-        /// Converts an OxyColor or WPF Color to a WPF SolidColorBrush, handling the automatic color case.
+        /// Converts an OxyPlot color to a WPF SolidColorBrush, handling the automatic color case.
         /// </summary>
-        /// <param name="value">The color value to convert (OxyColor or WPF Color).</param>
+        /// <param name="value">The color value to convert.</param>
         /// <param name="targetType">The target type (not used).</param>
         /// <param name="parameter">Additional parameter (not used).</param>
         /// <param name="culture">The culture to use for conversion.</param>
         /// <returns>A SolidColorBrush representing the color, with automatic colors converted to black.</returns>
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return value;
-
-            // Handle OxyColor directly
-            if (value is OxyColor oxyCol)
-            {
-                if (oxyCol.IsAutomatic() || oxyCol.IsUndefined())
-                    return new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
-                return new SolidColorBrush(Color.FromArgb(oxyCol.A, oxyCol.R, oxyCol.G, oxyCol.B));
-            }
-
-            // Handle WPF Color (for backward compatibility)
-            if (value is Color c)
-            {
-                var oxyColor = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
-                if (oxyColor.IsAutomatic())
-                    return new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
-                return new SolidColorBrush(c);
-            }
-
-            return null;
+            if (value.GetType() != typeof(Color)) return null;
+            Color c = (Color)value;
+            var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
+            if (oxyCol.IsAutomatic()) return new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
+            return new SolidColorBrush(c);
         }
 
         /// <summary>
-        /// Converts a SolidColorBrush back to an OxyColor.
+        /// Converts a SolidColorBrush back to a Color.
         /// </summary>
         /// <param name="value">The brush to convert.</param>
-        /// <param name="targetType">The target type (OxyColor or Color).</param>
+        /// <param name="targetType">The target type (not used).</param>
         /// <param name="parameter">Additional parameter (not used).</param>
         /// <param name="culture">The culture to use for conversion.</param>
-        /// <returns>An OxyColor or Color from the SolidColorBrush, depending on target type.</returns>
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (value is not SolidColorBrush scb) return null;
-
-            if (targetType == typeof(OxyColor))
-                return OxyColor.FromArgb(scb.Color.A, scb.Color.R, scb.Color.G, scb.Color.B);
-
-            return scb.Color;
-        }
-    }
-
-    /// <summary>
-    /// A value converter that converts OxyThickness to/from a single double value.
-    /// Uses uniform thickness (all sides equal to the double value).
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
-    public class OxyThicknessToDoubleConverter : IValueConverter
-    {
-        /// <summary>
-        /// Converts an OxyThickness to a double, using the Left value.
-        /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is OxyThickness thickness)
-                return thickness.Left;
-            return 0.0;
-        }
-
-        /// <summary>
-        /// Converts a double to an OxyThickness with uniform values.
-        /// </summary>
+        /// <returns>The Color from the SolidColorBrush.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is double d)
-                return new OxyThickness(d);
-            return new OxyThickness(0);
+            return ((SolidColorBrush)value).Color;
         }
     }
 
@@ -470,19 +329,6 @@ namespace OxyPlotControls
     /// A value converter that provides a default font size when the value is NaN or invalid.
     /// Returns 12.0 as the default font size.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public class OxyDefaultFontSizeConverter : IValueConverter
     {
         /// <summary>
@@ -523,19 +369,6 @@ namespace OxyPlotControls
     /// <summary>
     /// A simple value converter that casts between Brush and SolidColorBrush types.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public class SolidColorBrushConverter : IValueConverter
     {
         /// <summary>

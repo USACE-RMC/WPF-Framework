@@ -1,33 +1,3 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Globalization;
 using System.Windows;
@@ -36,7 +6,6 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot;
-using OxyPlot.Series;
 using static OxyPlotControls.OxyPlotSettingsSerializer;
 
 namespace OxyPlotControls
@@ -44,19 +13,6 @@ namespace OxyPlotControls
     /// <summary>
     /// A control for editing bar series properties including fill color, stroke, and bar width.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class BarSeriesControl : UserControl
     {
         #region Constants
@@ -75,16 +31,16 @@ namespace OxyPlotControls
         /// </summary>
         public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(
             nameof(Series),
-            typeof(BarSeries),
+            typeof(OxyPlot.Wpf.BarSeriesBase),
             typeof(BarSeriesControl),
             new PropertyMetadata(null, OnSeriesChanged));
 
         /// <summary>
         /// Gets or sets the bar series whose properties are being edited.
         /// </summary>
-        public BarSeries? Series
+        public OxyPlot.Wpf.BarSeriesBase Series
         {
-            get => (BarSeries?)GetValue(SeriesProperty);
+            get => (OxyPlot.Wpf.BarSeriesBase)GetValue(SeriesProperty);
             set => SetValue(SeriesProperty, value);
         }
 
@@ -99,9 +55,9 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets or sets the style to apply to expanders in this control.
         /// </summary>
-        public Style? ExpanderStyle
+        public Style ExpanderStyle
         {
-            get => (Style?)GetValue(ExpanderStyleProperty);
+            get => (Style)GetValue(ExpanderStyleProperty);
             set => SetValue(ExpanderStyleProperty, value);
         }
 
@@ -136,6 +92,7 @@ namespace OxyPlotControls
         /// </summary>
         public void CloseExpanders()
         {
+            // LabelingEXP.IsExpanded = false;
             DisplayEXP.IsExpanded = false;
         }
 
@@ -148,6 +105,7 @@ namespace OxyPlotControls
             switch (expansionZone)
             {
                 case OxyPlotPropertiesControl.PropertyEXP.Series_General:
+                    // LabelingEXP.IsExpanded = true;
                     DisplayEXP.IsExpanded = true;
                     break;
                 case OxyPlotPropertiesControl.PropertyEXP.Series_Display:
@@ -163,11 +121,20 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="barSeries">The bar series to populate with properties.</param>
         /// <param name="element">The XElement containing bar series properties.</param>
-        public static void XElementToBarSeriesProperties(BarSeries barSeries, XElement element)
+        public static void XElementToBarSeriesProperties(OxyPlot.Wpf.BarSeries barSeries, XElement element)
         {
             // Early Exit
             if (barSeries == null) return;
             if (element.Name != BarSeriesPropertiesTag) return;
+
+            // get enabled or not
+            if (GetBooleanAttribute(element, "IsEnabled", out bool isEnabled)) barSeries.IsEnabled = isEnabled;
+
+            // Set up converters
+            var fontWeightConverter = new FontWeightConverter();
+            var thicknessConverter = new ThicknessConverter();
+            var oxycolorConverter = new OxyPlot.Wpf.OxyColorConverter();
+            var brushConverter = new BrushConverter();
 
             // Labeling Properties
             var labelingElement = element.Element("Labeling");
@@ -177,16 +144,22 @@ namespace OxyPlotControls
                     barSeries.Title = labelingElement.Attribute("Title")!.Value;
                 if (labelingElement.Attribute("LabelPlacement") != null)
                 {
-                    if (GetEnumAttribute(labelingElement, "LabelPlacement", out LabelPlacement placement))
+                    if (OxyPlotSettingsSerializer.GetEnumAttribute(labelingElement, "LabelPlacement", out OxyPlot.Series.LabelPlacement placement))
                         barSeries.LabelPlacement = placement;
                 }
+                if (labelingElement.Attribute("TextColor") != null)
+                    barSeries.Foreground = (Brush)brushConverter.ConvertFromString(labelingElement.Attribute("TextColor")!.Value)!;
                 if (labelingElement.Attribute("Font") != null)
-                    barSeries.Font = labelingElement.Attribute("Font")!.Value;
+                    barSeries.InternalSeries.Font = labelingElement.Attribute("Font")!.Value;
                 if (labelingElement.Attribute("FontSize") != null)
                 {
                     if (double.TryParse(labelingElement.Attribute("FontSize")!.Value, out double fontSize))
                         barSeries.FontSize = fontSize;
                 }
+                if (labelingElement.Attribute("FontWeight") != null)
+                    barSeries.FontWeight = (FontWeight)fontWeightConverter.ConvertFromString(labelingElement.Attribute("FontWeight")!.Value)!;
+                if (labelingElement.Attribute("Padding") != null)
+                    barSeries.Padding = (Thickness)thicknessConverter.ConvertFromString(labelingElement.Attribute("Padding")!.Value)!;
                 if (labelingElement.Attribute("RenderInLegend") != null)
                     barSeries.RenderInLegend = Convert.ToBoolean(labelingElement.Attribute("RenderInLegend")!.Value);
                 if (labelingElement.Attribute("XAxisKey") != null)
@@ -205,10 +178,12 @@ namespace OxyPlotControls
             var displayElement = element.Element("Display");
             if (displayElement != null)
             {
-                if (GetColorAttribute(displayElement, "Fill", out var fill))
-                    barSeries.FillColor = OxyColor.FromArgb(fill.A, fill.R, fill.G, fill.B);
-                if (GetColorAttribute(displayElement, "Stroke", out var stroke))
-                    barSeries.StrokeColor = OxyColor.FromArgb(stroke.A, stroke.R, stroke.G, stroke.B);
+                if (displayElement.Attribute("Background") != null)
+                    barSeries.Background = (Brush)brushConverter.ConvertFromString(displayElement.Attribute("Background")!.Value)!;
+                if (displayElement.Attribute("Color") != null)
+                    barSeries.Color = (Color)ColorConverter.ConvertFromString(displayElement.Attribute("Color")!.Value)!;
+                if (displayElement.Attribute("Fill") != null)
+                    barSeries.FillColor = (Color)ColorConverter.ConvertFromString(displayElement.Attribute("Fill")!.Value)!;
                 if (displayElement.Attribute("LineThickness") != null)
                 {
                     if (double.TryParse(displayElement.Attribute("LineThickness")!.Value, out double strokeThickness))
@@ -222,16 +197,20 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="barSeries">The bar series to serialize.</param>
         /// <returns>An XElement containing the bar series properties.</returns>
-        public static XElement BarSeriesPropertiesToXElement(BarSeries barSeries)
+        public static XElement BarSeriesPropertiesToXElement(OxyPlot.Wpf.BarSeries barSeries)
         {
             var properties = new XElement(BarSeriesPropertiesTag);
+            properties.SetAttributeValue("IsEnabled", barSeries.IsEnabled.ToString());
 
             // Labeling properties
             var labelProps = new XElement("Labeling");
             labelProps.SetAttributeValue("Title", barSeries.Title);
             labelProps.SetAttributeValue("LabelPlacement", barSeries.LabelPlacement.ToString());
-            labelProps.SetAttributeValue("Font", barSeries.Font);
+            labelProps.SetAttributeValue("TextColor", barSeries.Foreground.ToString());
+            labelProps.SetAttributeValue("Font", barSeries.FontFamily);
             labelProps.SetAttributeValue("FontSize", barSeries.FontSize);
+            labelProps.SetAttributeValue("FontWeight", barSeries.FontWeight.ToString());
+            labelProps.SetAttributeValue("Padding", barSeries.Padding.ToString());
             labelProps.SetAttributeValue("RenderInLegend", barSeries.RenderInLegend);
             labelProps.SetAttributeValue("XAxisKey", barSeries.XAxisKey);
             labelProps.SetAttributeValue("YAxisKey", barSeries.YAxisKey);
@@ -241,8 +220,9 @@ namespace OxyPlotControls
             properties.Add(labelProps);
 
             var displayProps = new XElement("Display");
-            displayProps.SetAttributeValue("Fill", barSeries.FillColor.ToString());
-            displayProps.SetAttributeValue("Stroke", barSeries.StrokeColor.ToString());
+            displayProps.SetAttributeValue("Background", barSeries.Background);
+            displayProps.SetAttributeValue("Color", barSeries.Foreground);
+            displayProps.SetAttributeValue("Fill", barSeries.FillColor);
             displayProps.SetAttributeValue("LineThickness", barSeries.StrokeThickness);
             properties.Add(displayProps);
 
@@ -255,22 +235,9 @@ namespace OxyPlotControls
     /// <summary>
     /// Converts bar series fill color to/from a SolidColorBrush, handling automatic colors.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public class BarSeriesFillConverter : IMultiValueConverter
     {
-        private BarSeries? _series;
+        private dynamic? _series;
 
         /// <summary>
         /// Converts a fill color and series to a SolidColorBrush.
@@ -283,15 +250,15 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly (core type)
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as BarSeries;
+            _series = ((OxyPlot.Wpf.BarSeriesBase)values[1]).InternalSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert
             if (oxyCol.IsAutomatic())
             {
-                var actualColor = _series.ActualFillColor;
+                OxyColor actualColor = _series.ActualFillColor;
                 return new SolidColorBrush(Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B));
             }
 
@@ -301,21 +268,21 @@ namespace OxyPlotControls
         /// <summary>
         /// Converts a SolidColorBrush back to fill color and series.
         /// </summary>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object?[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            if (_series == null) return new object[] { Color.FromArgb(255, 0, 0, 0), null! };
+            if (_series == null) return new object?[] { Color.FromArgb(255, 0, 0, 0), null };
             // Get color value
-            if (value.GetType() != typeof(SolidColorBrush)) return new object[] { Color.FromArgb(255, 0, 0, 0), null! };
+            if (value.GetType() != typeof(SolidColorBrush)) return new object?[] { Color.FromArgb(255, 0, 0, 0), null };
             var c = ((SolidColorBrush)value).Color;
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            if (OxyColor.ColorDifference(oxyCol, _series.ActualFillColor) == 0)
+            OxyColor seriesActualFillColor = _series.ActualFillColor;
+            if (OxyColor.ColorDifference(oxyCol, seriesActualFillColor) == 0)
             {
-                var actualColor = _series.ActualFillColor;
-                return new object[] { Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B), _series };
+                return new object?[] { Color.FromArgb(seriesActualFillColor.A, seriesActualFillColor.R, seriesActualFillColor.G, seriesActualFillColor.B), _series };
             }
 
-            return new object[] { c, _series };
+            return new object?[] { c, _series };
         }
     }
 }

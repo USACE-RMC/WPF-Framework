@@ -599,12 +599,12 @@ namespace Demo_GenericControls
         /// <param name="e">Event arguments.</param>
         private void ShowFileDialog_Click(object sender, RoutedEventArgs e)
         {
-            string[]? files = GeneralMethods.FileOpenDialog("All Files (*.*)|*.*|Text Files (*.txt)|*.txt", false);
+            string file = GeneralMethods.FileOpenDialog("All Files (*.*)|*.*|Text Files (*.txt)|*.txt");
 
-            if (files != null && files.Length > 0 && !string.IsNullOrEmpty(files[0]))
+            if (file != null && !string.IsNullOrEmpty(file))
             {
-                DialogResultText = $"File Dialog Result: \"{files[0]}\"";
-                FilePathProperty = files[0];
+                DialogResultText = $"File Dialog Result: \"{file}\"";
+                FilePathProperty = file;
             }
             else
             {

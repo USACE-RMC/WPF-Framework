@@ -1,38 +1,8 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using OxyPlot;
+using OxyPlot.Wpf;
 
 namespace OxyPlotControls
 {
@@ -40,46 +10,32 @@ namespace OxyPlotControls
     /// A comprehensive user control that provides a unified interface for editing all OxyPlot chart properties.
     /// This control uses lazy loading to improve initialization times by only creating child controls when they are first accessed.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class OxyPlotPropertiesControl : UserControl
     {
         /// <summary>
-        /// Identifies the <see cref="PlotModel"/> dependency property.
+        /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotModelProperty = DependencyProperty.Register(
-            nameof(PlotModel), typeof(OxyPlot.PlotModel), typeof(OxyPlotPropertiesControl),
-            new PropertyMetadata(null, InitializePlotModel));
+        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+            nameof(Plot), typeof(Plot), typeof(OxyPlotPropertiesControl),
+            new PropertyMetadata(null, InitializePlot));
 
-        private static void InitializePlotModel(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
             if (d.GetType() != typeof(OxyPlotPropertiesControl)) return;
             var thisControl = (OxyPlotPropertiesControl)d;
 
             if (e.NewValue == null) return;
-            // Use fully qualified type name to avoid ambiguity with the PlotModel property
-            if (e.NewValue is not OxyPlot.PlotModel) return;
+            if (e.NewValue.GetType() != typeof(Plot)) return;
         }
 
         /// <summary>
-        /// Gets or sets the PlotModel that this control edits.
+        /// Gets or sets the OxyPlot Plot control that this control edits.
         /// </summary>
-        public PlotModel PlotModel
+        public Plot Plot
         {
-            get { return (PlotModel)GetValue(PlotModelProperty); }
-            set { SetValue(PlotModelProperty, value); }
+            get { return (Plot)GetValue(PlotProperty); }
+            set { SetValue(PlotProperty, value); }
         }
 
         /// <summary>
@@ -176,17 +132,17 @@ namespace OxyPlotControls
         }
 
         // Lazy loading to improve initialization times.
-        private GeneralPlotControl _generalControls = null!;
-        private LegendControl _legendControls = null!;
-        private AxesControl _axesControls = null!;
-        private SeriesSelectorControl _seriesControls = null!;
-        private AnnotationSelectorControl _annotationsControls = null!;
+        private GeneralPlotControl? _generalControls;
+        private LegendControl? _legendControls;
+        private AxesControl? _axesControls;
+        private SeriesSelectorControl? _seriesControls;
+        private AnnotationSelectorControl? _annotationsControls;
 
-        private Binding _viewPortWidthBinding = null!;
-        private Binding _plotBinding = null!;
-        private Binding _expanderBinding = null!;
-        private Binding _tabItemStyleBinding = null!;
-        private Binding _comboboxStyleBinding = null!;
+        private Binding? _viewPortWidthBinding;
+        private Binding? _plotBinding;
+        private Binding? _expanderBinding;
+        private Binding? _tabItemStyleBinding;
+        private Binding? _comboboxStyleBinding;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OxyPlotPropertiesControl"/> class.
@@ -199,7 +155,7 @@ namespace OxyPlotControls
 
             // Initialize bindings after InitializeComponent
             _viewPortWidthBinding = new Binding(nameof(ScrollViewer.ViewportWidth)) { Source = ControlScrollViewer };
-            _plotBinding = new Binding(nameof(PlotModel)) { Source = this };
+            _plotBinding = new Binding(nameof(Plot)) { Source = this };
             _expanderBinding = new Binding(nameof(ExpanderStyle)) { Source = this };
             _tabItemStyleBinding = new Binding(nameof(TabItemStyle)) { Source = this };
             _comboboxStyleBinding = new Binding(nameof(PropertyControlComboBoxStyle)) { Source = this };
@@ -219,16 +175,16 @@ namespace OxyPlotControls
             if (PropertyControlComboBox != null) PropertyControlComboBox.SelectedIndex = 0;
         }
 
-        private string ToEnumName<T>(int value) where T : struct
+        private string? ToEnumName<T>(int value) where T : struct
         {
-            return ((T)(object)value).ToString() ?? string.Empty;
+            return ((T)(object)value).ToString();
         }
 
         /// <summary>
         /// Deletes an annotation from the plot.
         /// </summary>
         /// <param name="anno">The annotation to delete.</param>
-        public void DeleteAnnotation(OxyPlot.Annotations.Annotation anno)
+        public void DeleteAnnotation(OxyPlot.Wpf.Annotation anno)
         {
             // Implementation placeholder
         }
@@ -240,7 +196,7 @@ namespace OxyPlotControls
         /// <param name="selectedObject">Optional object to select within the property section.</param>
         public void ExpandProperty(PropertyEXP prop, object? selectedObject = null)
         {
-            string str = ToEnumName<PropertyEXP>((int)prop);
+            string str = ToEnumName<PropertyEXP>((int)prop)!;
 
             if (str.Contains("General_"))
             {
@@ -248,16 +204,16 @@ namespace OxyPlotControls
                 switch (prop)
                 {
                     case PropertyEXP.General_PlotTitle:
-                        _generalControls.PlotTitleEXP.IsExpanded = true;
+                        _generalControls!.PlotTitleEXP.IsExpanded = true;
                         break;
                     case PropertyEXP.General_PlotSubtitle:
-                        _generalControls.PlotSubtitleEXP.IsExpanded = true;
+                        _generalControls!.PlotSubtitleEXP.IsExpanded = true;
                         break;
                     case PropertyEXP.General_PlotArea:
-                        _generalControls.PlotAreaEXP.IsExpanded = true;
+                        _generalControls!.PlotAreaEXP.IsExpanded = true;
                         break;
                     case PropertyEXP.General_PlotBackground:
-                        _generalControls.PlotBackgroundEXP.IsExpanded = true;
+                        _generalControls!.PlotBackgroundEXP.IsExpanded = true;
                         break;
                 }
             }
@@ -267,16 +223,16 @@ namespace OxyPlotControls
                 switch (prop)
                 {
                     case PropertyEXP.Legend_Title:
-                        _legendControls.LegendTitleEXP.IsExpanded = true;
+                        _legendControls!.LegendTitleEXP.IsExpanded = true;
                         break;
                     case PropertyEXP.Legend_Items:
-                        _legendControls.LegendItemsEXP.IsExpanded = true;
+                        _legendControls!.LegendItemsEXP.IsExpanded = true;
                         break;
                     case PropertyEXP.Legend_Area:
-                        _legendControls.LegendAreaEXP.IsExpanded = true;
+                        _legendControls!.LegendAreaEXP.IsExpanded = true;
                         break;
                     case PropertyEXP.Legend_Position:
-                        _legendControls.LegendPositionEXP.IsExpanded = true;
+                        _legendControls!.LegendPositionEXP.IsExpanded = true;
                         break;
                 }
             }
@@ -284,7 +240,7 @@ namespace OxyPlotControls
             {
                 if (selectedObject == null) return;
                 PropertyControlComboBox.SelectedIndex = 2;
-                _axesControls.AxesPropertyControlComboBox.SelectedItem = selectedObject;
+                _axesControls!.AxesPropertyControlComboBox.SelectedItem = selectedObject;
 
                 switch (prop)
                 {
@@ -321,13 +277,13 @@ namespace OxyPlotControls
             else if (str.Contains("Series_"))
             {
                 PropertyControlComboBox.SelectedIndex = 3;
-                _seriesControls.SeriesPropertyControlComboBox.SelectedItem = selectedObject;
+                _seriesControls!.SeriesPropertyControlComboBox.SelectedItem = selectedObject;
                 _seriesControls.SeriesPropertiesControl.Expand(prop);
             }
             else if (str.Contains("Annotations_"))
             {
                 PropertyControlComboBox.SelectedIndex = 4;
-                _annotationsControls.AnnotationPropertyControlComboBox.SelectedItem = selectedObject;
+                _annotationsControls!.AnnotationPropertyControlComboBox.SelectedItem = selectedObject;
 
                 switch (prop)
                 {
@@ -391,6 +347,8 @@ namespace OxyPlotControls
             Series_BoxAndWhiskers,
             /// <summary>Error bar settings section.</summary>
             Series_ErrorBarSettings,
+            /// <summary>Specialized series settings section.</summary>
+            Series_SpecializedSettings,
             /// <summary>Annotations text section.</summary>
             Annotations_Text,
             /// <summary>Annotations display section.</summary>
@@ -416,7 +374,7 @@ namespace OxyPlotControls
                     {
                         _generalControls = new GeneralPlotControl { MinWidth = 200, MinHeight = 200 };
                         BindingOperations.SetBinding(_generalControls, WidthProperty, _viewPortWidthBinding);
-                        BindingOperations.SetBinding(_generalControls, GeneralPlotControl.PlotModelProperty, _plotBinding);
+                        BindingOperations.SetBinding(_generalControls, GeneralPlotControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_generalControls, GeneralPlotControl.ExpanderStyleProperty, _expanderBinding);
                         PropertyControlsGrid.Children.Add(_generalControls);
                     }
@@ -428,7 +386,7 @@ namespace OxyPlotControls
                     {
                         _legendControls = new LegendControl { MinWidth = 200, MinHeight = 200 };
                         BindingOperations.SetBinding(_legendControls, WidthProperty, _viewPortWidthBinding);
-                        BindingOperations.SetBinding(_legendControls, LegendControl.PlotModelProperty, _plotBinding);
+                        BindingOperations.SetBinding(_legendControls, LegendControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_legendControls, LegendControl.ExpanderStyleProperty, _expanderBinding);
                         PropertyControlsGrid.Children.Add(_legendControls);
                     }
@@ -440,7 +398,7 @@ namespace OxyPlotControls
                     {
                         _axesControls = new AxesControl { MinWidth = 200, MinHeight = 200 };
                         BindingOperations.SetBinding(_axesControls, WidthProperty, _viewPortWidthBinding);
-                        BindingOperations.SetBinding(_axesControls, AxesControl.PlotModelProperty, _plotBinding);
+                        BindingOperations.SetBinding(_axesControls, AxesControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_axesControls, AxesControl.ExpanderStyleProperty, _expanderBinding);
                         BindingOperations.SetBinding(_axesControls, AxesControl.TabItemStyleProperty, _tabItemStyleBinding);
                         BindingOperations.SetBinding(_axesControls, AxesControl.ComboBoxStyleProperty, _comboboxStyleBinding);
@@ -454,7 +412,7 @@ namespace OxyPlotControls
                     {
                         _seriesControls = new SeriesSelectorControl { MinWidth = 200, MinHeight = 200 };
                         BindingOperations.SetBinding(_seriesControls, WidthProperty, _viewPortWidthBinding);
-                        BindingOperations.SetBinding(_seriesControls, SeriesSelectorControl.PlotModelProperty, _plotBinding);
+                        BindingOperations.SetBinding(_seriesControls, SeriesSelectorControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_seriesControls, SeriesSelectorControl.ExpanderStyleProperty, _expanderBinding);
                         BindingOperations.SetBinding(_seriesControls, SeriesSelectorControl.ComboBoxStyleProperty, _comboboxStyleBinding);
                         PropertyControlsGrid.Children.Add(_seriesControls);
@@ -467,7 +425,7 @@ namespace OxyPlotControls
                     {
                         _annotationsControls = new AnnotationSelectorControl { MinWidth = 200, MinHeight = 200 };
                         BindingOperations.SetBinding(_annotationsControls, WidthProperty, _viewPortWidthBinding);
-                        BindingOperations.SetBinding(_annotationsControls, AnnotationSelectorControl.PlotModelProperty, _plotBinding);
+                        BindingOperations.SetBinding(_annotationsControls, AnnotationSelectorControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_annotationsControls, AnnotationSelectorControl.ExpanderStyleProperty, _expanderBinding);
                         BindingOperations.SetBinding(_annotationsControls, AnnotationSelectorControl.ComboBoxStyleProperty, _comboboxStyleBinding);
                         PropertyControlsGrid.Children.Add(_annotationsControls);

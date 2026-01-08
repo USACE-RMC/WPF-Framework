@@ -1,33 +1,3 @@
-/*
-* NOTICE:
-* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
-* the results, or appropriateness of outputs, obtained from this software.
-*
-* LIST OF CONDITIONS:
-* Redistribution and use in source and binary forms, with or without modification, are permitted
-* provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
-* following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
-* Resources, or the Risk Management Center may not be used to endorse or promote products derived
-* from this software without specific prior written permission. Nor may the names of its contributors
-* be used to endorse or promote products derived from this software without specific prior
-* written permission.
-*
-* DISCLAIMER:
-* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
-* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -36,26 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using OxyPlot;
-using OxyPlot.Series;
 
 namespace OxyPlotControls
 {
     /// <summary>
     /// A control for editing box plot series properties including box style, whiskers, and outliers.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public partial class BoxPlotSeriesControl : UserControl
     {
         #region Constants
@@ -96,16 +52,16 @@ namespace OxyPlotControls
         /// </summary>
         public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(
             nameof(Series),
-            typeof(BoxPlotSeries),
+            typeof(OxyPlot.Wpf.BoxPlotSeries),
             typeof(BoxPlotSeriesControl),
             new PropertyMetadata(null, OnSeriesChanged));
 
         /// <summary>
         /// Gets or sets the box plot series whose properties are being edited.
         /// </summary>
-        public BoxPlotSeries? Series
+        public OxyPlot.Wpf.BoxPlotSeries Series
         {
-            get => (BoxPlotSeries?)GetValue(SeriesProperty);
+            get => (OxyPlot.Wpf.BoxPlotSeries)GetValue(SeriesProperty);
             set => SetValue(SeriesProperty, value);
         }
 
@@ -120,9 +76,9 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets or sets the style to apply to expanders in this control.
         /// </summary>
-        public Style? ExpanderStyle
+        public Style ExpanderStyle
         {
-            get => (Style?)GetValue(ExpanderStyleProperty);
+            get => (Style)GetValue(ExpanderStyleProperty);
             set => SetValue(ExpanderStyleProperty, value);
         }
 
@@ -157,6 +113,7 @@ namespace OxyPlotControls
         /// </summary>
         public void CloseExpanders()
         {
+            // LabelingEXP.IsExpanded = false;
             DisplayEXP.IsExpanded = false;
         }
 
@@ -169,6 +126,7 @@ namespace OxyPlotControls
             switch (expansionZone)
             {
                 case OxyPlotPropertiesControl.PropertyEXP.Series_General:
+                    // LabelingEXP.IsExpanded = true;
                     DisplayEXP.IsExpanded = true;
                     break;
                 case OxyPlotPropertiesControl.PropertyEXP.Series_Display:
@@ -181,22 +139,9 @@ namespace OxyPlotControls
     /// <summary>
     /// Converts box plot series fill color to/from a SolidColorBrush, handling automatic colors.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    ///     <b> Authors: </b>
-    /// <list type="bullet">
-    /// <item><description>
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
-    /// </description></item>
-    /// <item><description>
-    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
-    /// </description></item>
-    /// </list>
-    /// </para>
-    /// </remarks>
     public class BoxPlotSeriesFillConverter : IMultiValueConverter
     {
-        private BoxPlotSeries? _series;
+        private OxyPlot.Series.BoxPlotSeries? _series;
 
         /// <summary>
         /// Converts a fill color and series to a SolidColorBrush.
@@ -209,14 +154,17 @@ namespace OxyPlotControls
             var c = (Color)values[0];
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
-            // Get Series directly (core type)
+            // Get Series (this should only be set on convert with one-way binding)
             if (values[1] == null) return new SolidColorBrush(c);
-            _series = values[1] as BoxPlotSeries;
+            _series = ((OxyPlot.Wpf.BoxPlotSeries)values[1]).InternalSeries as OxyPlot.Series.BoxPlotSeries;
             if (_series == null) return new SolidColorBrush(c);
 
             // Convert
             if (oxyCol.IsAutomatic())
             {
+                // BoxPlotSeries uses GetSelectableFillColor(_series.Fill) to get the selectable color.
+                // However, it passes selected index of -1 which essentially returns the original color.
+                // Such a backwards way of filling the boxplot rectangle vs other methods.
                 var fillColor = _series.Fill;
                 return new SolidColorBrush(Color.FromArgb(fillColor.A, fillColor.R, fillColor.G, fillColor.B));
             }
