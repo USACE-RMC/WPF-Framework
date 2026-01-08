@@ -149,7 +149,7 @@
                                                   Minimum="0" Maximum="1000000"
                                                   Value="50000" Increment="1000"
                                                   DecimalPlaces="0" ThousandsSeparator="True"
-                                                  HorizontalAlignment="Left" Width="180" Height="23"/>
+                                                  HorizontalAlignment="Left" Width="180" Height="22"/>
 
                             <!-- NumericSlider -->
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="NumericSlider:" 
