@@ -27,7 +27,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <SolidColorBrush x:Key="EnvironmentWindowText" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="EnvironmentWindowBackground" Color="#FF2D2D30"/>
-    <SolidColorBrush x:Key="PlotWindowBackground" Color="#FF686868"/>
+    <SolidColorBrush x:Key="PlotWindowBackground" Color="#FF5A5A5E"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowText" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowDisabledText" Color="#FF656565"/>
 
