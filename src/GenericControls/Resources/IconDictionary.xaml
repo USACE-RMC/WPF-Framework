@@ -234,12 +234,12 @@
     <!-- Sort Ascending Filter - Solid funnel with up arrow -->
     <Viewbox x:Key="SortAscFilterIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Solid filter funnel -->
-            <Path Data="M0,1 H11 L6.5,6 V10 L4.5,12 V6 Z"
+            <!-- Solid filter funnel - symmetric with flat bottom stem -->
+            <Path Data="M1,2 H10 L7,6 V10 H4 V6 Z"
                   Fill="#2563EB"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Up arrow -->
-            <Path Data="M13,14 V6 M10,9 L13,6 L16,9"
+            <!-- Up arrow - centered at X=12 -->
+            <Path Data="M12,12 V4 M9,7 L12,4 L15,7"
                   Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
@@ -249,12 +249,12 @@
     <!-- Sort Descending Filter - Solid funnel with down arrow -->
     <Viewbox x:Key="SortDescFilterIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Solid filter funnel -->
-            <Path Data="M0,1 H11 L6.5,6 V10 L4.5,12 V6 Z"
+            <!-- Solid filter funnel - symmetric with flat bottom stem -->
+            <Path Data="M1,2 H10 L7,6 V10 H4 V6 Z"
                   Fill="#2563EB"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Down arrow -->
-            <Path Data="M13,4 V12 M10,9 L13,12 L16,9"
+            <!-- Down arrow - centered at X=12 -->
+            <Path Data="M12,4 V12 M9,9 L12,12 L15,9"
                   Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
@@ -264,12 +264,12 @@
     <!-- Clear Filter - Solid funnel with red X -->
     <Viewbox x:Key="ClearFilterIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Solid filter funnel -->
-            <Path Data="M0,1 H11 L6.5,6 V10 L4.5,12 V6 Z"
+            <!-- Solid filter funnel - symmetric with flat bottom stem -->
+            <Path Data="M1,2 H10 L7,6 V10 H4 V6 Z"
                   Fill="{DynamicResource EnvironmentWindowText}"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- X mark -->
-            <Path Data="M10,6 L16,12 M16,6 L10,12"
+            <!-- X mark - centered at X=12 -->
+            <Path Data="M9,4 L15,10 M15,4 L9,10"
                   Stroke="#DC2626" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
