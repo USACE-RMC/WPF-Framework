@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:NumericControls"
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              xmlns:oxy="http://oxyplot.org/wpf"
-             xmlns:oxyCntrls="clr-namespace:OxyplotControls;assembly=OxyplotControls"
+             xmlns:oxyCntrls="clr-namespace:OxyPlotControls;assembly=OxyPlotControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="BivariateEmpericalCDFControl_Loaded">
     <UserControl.Resources>
@@ -166,7 +166,7 @@
                                             StringFormat="N2"/>
                         </oxy:Plot.Axes>
                     </oxy:Plot>
-                    <oxyCntrls:OxyplotToolbar x:Name="OxyplotToolbar" Grid.Column="1" ToolBarOrientation="Vertical" Background="{Binding ElementName=Plot, Path=Background}" VerticalAlignment="Stretch" Plot="{Binding ElementName=Plot, Mode=OneTime}"/>
+                    <oxyCntrls:OxyPlotToolbar x:Name="OxyplotToolbar" Grid.Column="1" ToolBarOrientation="Vertical" Background="{Binding ElementName=Plot, Path=Background}" VerticalAlignment="Stretch" Plot="{Binding ElementName=Plot, Mode=OneTime}"/>
                 </Grid>
 
             </TabItem>

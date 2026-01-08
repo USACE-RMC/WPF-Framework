@@ -35,6 +35,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Numerics.Data;
 using OxyPlot;
+using OxyPlot.Legends;
 
 namespace NumericControls
 {
@@ -462,7 +463,7 @@ namespace NumericControls
                 ValidationGrid.SelectedCells.Add(new DataGridCellInfo(item, columnHeader.Column));
         }
 
-        private void OxyplotToolbar_PropertiesCalled(OxyPlot.Wpf.Plot targetPlot, bool openProperties, OxyplotControls.OxyplotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
+        private void OxyplotToolbar_PropertiesCalled(OxyPlot.Wpf.Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
         {
             PlotPropertiesRequested?.Invoke(targetPlot);
         }
