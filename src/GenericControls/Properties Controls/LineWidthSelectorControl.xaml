@@ -44,14 +44,16 @@
             </ComboBox.ItemContainerStyle>
             <ComboBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid VerticalAlignment="Center">
+                    <Grid VerticalAlignment="Center" Height="20" SnapsToDevicePixels="True" UseLayoutRounding="True">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="34"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Line Grid.Column="0" X1="0" X2="30" Y1="0" Y2="0" VerticalAlignment="Center" Stroke="{DynamicResource EnvironmentWindowText}" Stretch="None" StrokeThickness="{Binding}"/>
-                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{DynamicResource ComboBox.DropDown.Foreground}">
-                            <Run Text="{Binding Mode=OneWay}"/><Run Text=" px"/>
+                        <Border Grid.Column="0" VerticalAlignment="Center" BorderBrush="{x:Null}">
+                            <Line X1="0" X2="30" Y1="0" Y2="0" VerticalAlignment="Center" HorizontalAlignment="Left" Stroke="{DynamicResource EnvironmentWindowText}" Stretch="None" StrokeThickness="{Binding}" SnapsToDevicePixels="True"/>
+                        </Border>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{DynamicResource ComboBox.DropDown.Foreground}">
+                            <Run Text="{Binding, Mode=OneWay}"/><Run Text=" px"/>
                         </TextBlock>
                     </Grid>
                 </DataTemplate>
