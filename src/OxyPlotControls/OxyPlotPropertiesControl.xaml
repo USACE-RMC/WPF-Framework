@@ -54,15 +54,9 @@
                 Style="{Binding ElementName=OxyplotProperties, Path=BackButtonStyle}"
                 Visibility="{Binding ElementName=OxyplotProperties, Path=ShowCloseButton, Converter={StaticResource VisibilityConverter}}"
                 Click="ClosePropertiesButton_Click">
-            <StackPanel Orientation="Horizontal">
-                <Path Data="M 1,5 5,9 M 1,5 5,1 M 0,5 11,5"
-                      Stroke="Black"
-                      StrokeThickness="2"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center"
-                      Margin="4"/>
-                <TextBlock Text="" VerticalAlignment="Center"/>
-            </StackPanel>
+            <Viewbox Width="16" Height="16" Margin="4">
+                <ContentControl Content="{DynamicResource ClosePropertiesIcon}"/>
+            </Viewbox>
         </Button>
 
         <!--Scrollviewer needs to be initialized before the combobox-->
