@@ -418,20 +418,24 @@ namespace Demo_NumericControls
         }
 
         /// <summary>
-        /// Handles the theme selection change event.
-        /// Switches the application theme based on user selection.
+        /// Handles theme radio button selection changes.
         /// </summary>
-        /// <param name="sender">The ComboBox that triggered the event.</param>
-        /// <param name="e">Event arguments containing selection change information.</param>
-        private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /// <param name="sender">The radio button that was checked.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
         {
-            if (ThemeComboBox?.SelectedItem is ComboBoxItem selectedItem)
+            if (sender is RadioButton radioButton)
             {
-                string themeName = selectedItem.Content?.ToString() ?? "Light";
-                if (ThemeResourceHelper.TryParseTheme(themeName, out Theme theme))
-                {
-                    ThemeService.Instance.SetTheme(theme);
-                }
+                Theme theme = Theme.Light;
+
+                if (radioButton == LightThemeRadio)
+                    theme = Theme.Light;
+                else if (radioButton == BlueThemeRadio)
+                    theme = Theme.Blue;
+                else if (radioButton == DarkThemeRadio)
+                    theme = Theme.Dark;
+
+                ThemeService.Instance.SetTheme(theme);
             }
         }
     }
