@@ -180,7 +180,7 @@
             <Border Grid.Column="0"
                     BorderBrush="{DynamicResource Button.Static.Border}"
                     BorderThickness="1"
-                    Background="{DynamicResource EnvironmentWindowBackground}">
+                    Background="{DynamicResource PlotWindowBackground}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
