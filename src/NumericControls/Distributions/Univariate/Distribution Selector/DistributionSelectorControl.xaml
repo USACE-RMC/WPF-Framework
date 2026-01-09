@@ -76,19 +76,19 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Expander control brushes for various states -->
-        <SolidColorBrush x:Key="Expander.MouseOver.Circle.Stroke" Color="#FF5593FF"/>
-        <SolidColorBrush x:Key="Expander.MouseOver.Circle.Fill" Color="#FFF3F9FF"/>
-        <SolidColorBrush x:Key="Expander.MouseOver.Arrow.Stroke" Color="#FF000000"/>
-        <SolidColorBrush x:Key="Expander.Pressed.Circle.Stroke" Color="#FF3C77DD"/>
-        <SolidColorBrush x:Key="Expander.Pressed.Circle.Fill" Color="#FFD9ECFF"/>
-        <SolidColorBrush x:Key="Expander.Pressed.Arrow.Stroke" Color="#FF000000"/>
-        <SolidColorBrush x:Key="Expander.Disabled.Circle.Stroke" Color="#FFBCBCBC"/>
-        <SolidColorBrush x:Key="Expander.Disabled.Circle.Fill" Color="#FFE6E6E6"/>
-        <SolidColorBrush x:Key="Expander.Disabled.Arrow.Stroke" Color="#FF707070"/>
-        <SolidColorBrush x:Key="Expander.Static.Circle.Fill" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="Expander.Static.Circle.Stroke" Color="#FF333333"/>
-        <SolidColorBrush x:Key="Expander.Static.Arrow.Stroke" Color="#FF333333"/>
+        <!-- Expander control brushes for various states (theme-aware) -->
+        <SolidColorBrush x:Key="Expander.MouseOver.Circle.Stroke" Color="{DynamicResource Expander.MouseOver.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.MouseOver.Circle.Fill" Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
+        <SolidColorBrush x:Key="Expander.MouseOver.Arrow.Stroke" Color="{DynamicResource Expander.MouseOver.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.Pressed.Circle.Stroke" Color="{DynamicResource Expander.Pressed.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.Pressed.Circle.Fill" Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
+        <SolidColorBrush x:Key="Expander.Pressed.Arrow.Stroke" Color="{DynamicResource Expander.Pressed.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.Disabled.Circle.Stroke" Color="{DynamicResource Expander.Disabled.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.Disabled.Circle.Fill" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
+        <SolidColorBrush x:Key="Expander.Disabled.Arrow.Stroke" Color="{DynamicResource Expander.Disabled.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.Static.Circle.Fill" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}"/>
+        <SolidColorBrush x:Key="Expander.Static.Circle.Stroke" Color="{DynamicResource Expander.Static.Stroke}"/>
+        <SolidColorBrush x:Key="Expander.Static.Arrow.Stroke" Color="{DynamicResource Expander.Static.Stroke}"/>
         <Style x:Key="ExpanderRightHeaderStyle" TargetType="{x:Type ToggleButton}">
             <Setter Property="Template">
                 <Setter.Value>
