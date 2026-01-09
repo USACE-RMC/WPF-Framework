@@ -45,6 +45,12 @@ namespace SoftwareUpdate.Updater
         private readonly UpdaterArguments _args;
         private readonly Action<string> _log;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InstallationManager"/> class.
+        /// </summary>
+        /// <param name="args">The updater arguments containing installation configuration.</param>
+        /// <param name="log">The logging action to report progress. If null, defaults to Console.WriteLine.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="args"/> is null.</exception>
         public InstallationManager(UpdaterArguments args, Action<string> log)
         {
             _args = args ?? throw new ArgumentNullException(nameof(args));

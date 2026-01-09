@@ -200,6 +200,13 @@ namespace SoftwareUpdate
             return 0;
         }
 
+        /// <summary>
+        /// Compares two pre-release version strings according to semantic versioning rules.
+        /// </summary>
+        /// <param name="a">The first pre-release string to compare.</param>
+        /// <param name="b">The second pre-release string to compare.</param>
+        /// <returns>A negative value if <paramref name="a"/> is less than <paramref name="b"/>,
+        /// zero if they are equal, or a positive value if <paramref name="a"/> is greater than <paramref name="b"/>.</returns>
         private static int ComparePreRelease(string a, string b)
         {
             var partsA = a.Split('.');
