@@ -291,7 +291,8 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         private Size MeasureString(string candidate)
         {
-            var formattedText = new FormattedText(candidate, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(HeaderTextBlock.FontFamily, HeaderTextBlock.FontStyle, HeaderTextBlock.FontWeight, HeaderTextBlock.FontStretch), HeaderTextBlock.FontSize, Brushes.Black, new NumberSubstitution(), TextFormattingMode.Display);
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            var formattedText = new FormattedText(candidate, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(HeaderTextBlock.FontFamily, HeaderTextBlock.FontStyle, HeaderTextBlock.FontWeight, HeaderTextBlock.FontStretch), HeaderTextBlock.FontSize, Brushes.Black, pixelsPerDip);
             return new Size(formattedText.Width, formattedText.Height);
         }
 

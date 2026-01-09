@@ -89,9 +89,9 @@ namespace FrameworkUI
                     _Version = Assembly.GetName().Version;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 

@@ -187,7 +187,16 @@ namespace FrameworkUI
         private static int _defaultValueDigits = 2;
         private static string _valueStringFormat;
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>
+        /// This event is declared for API compatibility but property change notifications
+        /// are raised through the static <see cref="GlobalPropertyChanged"/> event instead.
+        /// </remarks>
+#pragma warning disable CS0067 // Event is never used - declared for API compatibility
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
         private static event PropertyChangedEventHandler GlobalPropertyChanged;
 
         private static void OnGlobalPropertyChanged(string propertyName)

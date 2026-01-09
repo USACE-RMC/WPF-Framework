@@ -283,29 +283,64 @@ namespace SoftwareUpdate
         /// </summary>
         public string ToTagString() => $"v{this}";
 
-        // Operators
+        /// <summary>
+        /// Determines whether two <see cref="SemanticVersion"/> instances are equal.
+        /// </summary>
+        /// <param name="left">The first version to compare.</param>
+        /// <param name="right">The second version to compare.</param>
+        /// <returns><c>true</c> if the versions are equal; otherwise, <c>false</c>.</returns>
         public static bool operator ==(SemanticVersion left, SemanticVersion right)
         {
             if (ReferenceEquals(left, null)) return ReferenceEquals(right, null);
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Determines whether two <see cref="SemanticVersion"/> instances are not equal.
+        /// </summary>
+        /// <param name="left">The first version to compare.</param>
+        /// <param name="right">The second version to compare.</param>
+        /// <returns><c>true</c> if the versions are not equal; otherwise, <c>false</c>.</returns>
         public static bool operator !=(SemanticVersion left, SemanticVersion right) => !(left == right);
 
+        /// <summary>
+        /// Determines whether the left <see cref="SemanticVersion"/> is less than the right.
+        /// </summary>
+        /// <param name="left">The first version to compare.</param>
+        /// <param name="right">The second version to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         public static bool operator <(SemanticVersion left, SemanticVersion right)
         {
             if (left == null) return right != null;
             return left.CompareTo(right) < 0;
         }
 
+        /// <summary>
+        /// Determines whether the left <see cref="SemanticVersion"/> is greater than the right.
+        /// </summary>
+        /// <param name="left">The first version to compare.</param>
+        /// <param name="right">The second version to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         public static bool operator >(SemanticVersion left, SemanticVersion right)
         {
             if (left == null) return false;
             return left.CompareTo(right) > 0;
         }
 
+        /// <summary>
+        /// Determines whether the left <see cref="SemanticVersion"/> is less than or equal to the right.
+        /// </summary>
+        /// <param name="left">The first version to compare.</param>
+        /// <param name="right">The second version to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> is less than or equal to <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         public static bool operator <=(SemanticVersion left, SemanticVersion right) => !(left > right);
 
+        /// <summary>
+        /// Determines whether the left <see cref="SemanticVersion"/> is greater than or equal to the right.
+        /// </summary>
+        /// <param name="left">The first version to compare.</param>
+        /// <param name="right">The second version to compare.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         public static bool operator >=(SemanticVersion left, SemanticVersion right) => !(left < right);
     }
 }

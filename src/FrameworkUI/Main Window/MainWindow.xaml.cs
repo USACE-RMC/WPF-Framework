@@ -638,7 +638,7 @@ namespace FrameworkUI
                             layoutSerializer.Deserialize(reader);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Load the Default Resource Avalon Dock layout
                         _loadFullLayout = false;
@@ -659,7 +659,7 @@ namespace FrameworkUI
                             layoutSerializer.Deserialize(stream);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Load the Default Resource Avalon Dock layout
                         _loadFullLayout = false;
