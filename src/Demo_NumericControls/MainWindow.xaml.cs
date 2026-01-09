@@ -340,34 +340,14 @@ namespace Demo_NumericControls
 
         /// <summary>
         /// Handles the Selected event for the USGS time series menu item.
-        /// Loads a previously saved time series from an XML file or downloads USGS data.
+        /// Downloads USGS daily discharge time series data. 
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
         private async void USGSItem_Selected(object sender, RoutedEventArgs e)
         {
-            var mapSettingsXMLFile = System.IO.Path.Combine("C:\\Temp", "settings.xml");
-            if (System.IO.File.Exists(mapSettingsXMLFile))
-            {
-                try
-                {
-                    //var document = new XmlDocument();
-                    //document.Load(mapSettingsXMLFile);
-                    var t = new TimeSeries(XElement.Parse(System.IO.File.ReadAllText(mapSettingsXMLFile)));
-                    var b = new Binding() { Source = t };
-                    BindingOperations.SetBinding(TimeSeriesTableControl, TimeSeriesTable.SeriesProperty, b);
-                    //TimeSeriesTableControl.Series = // document.GetElementsByTagName("Map_Layers")[0].OuterXml));
-
-                }
-                catch (Exception)
-                {
-                    //TimeSeriesTableControl.Series = await TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.TimeSeriesType.DailyDischarge);
-                }
-            }
-            else
-            {
-                //TimeSeriesTableControl.Series = TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.USGSTimeSeriesType.DailyDischarge);
-            }
+            var result = await TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.TimeSeriesType.DailyDischarge);
+            TimeSeriesTableControl.Series = result.TimeSeries;
         }
 
         /// <summary>
