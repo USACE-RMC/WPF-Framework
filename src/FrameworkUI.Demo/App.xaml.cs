@@ -34,11 +34,13 @@ using SoftwareUpdate;
 using SoftwareUpdate.GitHub;
 using SoftwareUpdate.Utilities;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace FrameworkUI.Demo
@@ -67,9 +69,46 @@ namespace FrameworkUI.Demo
         /// </summary>
         public App()
         {
+            // Set up global exception handlers for debugging
+            AppDomain.CurrentDomain.UnhandledException += (s, args) =>
+            {
+                var ex = args.ExceptionObject as Exception;
+                LogException("AppDomain.UnhandledException", ex);
+            };
+
+            DispatcherUnhandledException += (s, args) =>
+            {
+                LogException("Dispatcher.UnhandledException", args.Exception);
+                args.Handled = true; // Prevent immediate crash to see the error
+            };
+
+            TaskScheduler.UnobservedTaskException += (s, args) =>
+            {
+                LogException("TaskScheduler.UnobservedTaskException", args.Exception);
+            };
+
             var jList = new JumpList { ShowRecentCategory = false };
             jList.Apply();
             JumpList.SetJumpList(Application.Current, jList);
+        }
+
+        /// <summary>
+        /// Logs an exception to both debug output and a file for diagnosis.
+        /// </summary>
+        private static void LogException(string source, Exception? ex)
+        {
+            var separator = new string('=', 50);
+            var message = $"\n{separator}\n{source}\n{separator}\n{ex}\n";
+            System.Diagnostics.Debug.WriteLine(message);
+
+            // Also write to a file so we can see it
+            try
+            {
+                var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "FrameworkUI_Demo_Error.txt");
+                File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n{message}\n\n");
+                MessageBox.Show($"Exception logged to: {logPath}\n\n{ex?.Message}", source, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch { }
         }
 
         /// <summary>
