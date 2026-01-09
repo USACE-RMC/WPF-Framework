@@ -18,8 +18,8 @@
         <cntrls:BooleanToColorConverter x:Key="BoolToColorConverter" TrueValue="Black" FalseValue="Transparent"/>
         <SolidColorBrush x:Key="ReadOnlyBackGround" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
         <Style x:Key="ReadOnlyTextBackgroundCellStyle" TargetType="DataGridCell">
-            <Setter Property="Background" Value="{StaticResource ReadOnlyBackGround}"></Setter>
-            <Setter Property="TextBlock.TextAlignment"  Value="Left"></Setter>
+            <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Foreground" Value="Black"/>
@@ -36,19 +36,16 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="ParameterValueCellStyle" TargetType="DataGridCell">
-            <Setter Property="TextBlock.TextAlignment"  Value="Right"></Setter>
+            <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
+            <Setter Property="TextBlock.TextAlignment" Value="Right"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Foreground" Value="Black"/>
                 </Trigger>
                 <DataTrigger Binding="{Binding Path=IsValid, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                    <Setter Property="Background" Value="#FFF7B6AF"/>
-                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Cell.Error.Background}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
                     <Setter Property="ToolTip" Value="{Binding Path=ErrorMessage}"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Path=IsValid, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                    <Setter Property="Background" Value="White"/>
-                    <Setter Property="ToolTip" Value="{x:Null}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
