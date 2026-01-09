@@ -135,11 +135,6 @@ namespace NumericControls
         private static void BivariateCDFPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BivariateEmpiricalControl thisControl = (BivariateEmpiricalControl)d;
-            // 
-            if (e.OldValue != null)
-            {
-            }
-            // 
             thisControl._dt.Clear();
             thisControl._dt.Columns.Clear();
             if (e.NewValue != null)

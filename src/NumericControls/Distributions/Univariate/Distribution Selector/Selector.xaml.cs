@@ -457,9 +457,7 @@ namespace NumericControls.Distributions.Univariate
             }
             //
             UnivariateDistributionBase currentDistribution = (UnivariateDistributionBase)DistributionCombobox.SelectedItem;
-            if (currentDistribution.Type == UnivariateDistributionType.Empirical) { }
-            else if (currentDistribution.Type == UnivariateDistributionType.KernelDensity) { }
-            else
+            if (currentDistribution.Type != UnivariateDistributionType.Empirical && currentDistribution.Type != UnivariateDistributionType.KernelDensity)
             {
                 string[,] paramString = currentDistribution.ParametersToString;
                 string[] paramNames = currentDistribution.GetParameterPropertyNames;
