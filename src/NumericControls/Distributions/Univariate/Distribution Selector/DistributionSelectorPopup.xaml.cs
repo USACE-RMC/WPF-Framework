@@ -29,8 +29,6 @@
 */
 
 using Numerics.Distributions;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,6 +55,9 @@ namespace NumericControls.Distributions.Univariate
     /// </remarks>
     public partial class DistributionSelectorPopup : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DistributionSelectorPopup"/> class.
+        /// </summary>
         public DistributionSelectorPopup()
         {
             InitializeComponent();
@@ -75,13 +76,14 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Dependency property for showing the distribution pdf plot.
+        /// Identifies the <see cref="ShowPlot"/> dependency property.
         /// </summary>
         public static DependencyProperty ShowPlotProperty = DependencyProperty.Register(nameof(ShowPlot), typeof(bool), typeof(DistributionSelectorPopup), new FrameworkPropertyMetadata(true));
 
         /// <summary>
-        /// Gets and sets the distribution options.
+        /// Gets or sets a value indicating whether the PDF plot is visible.
         /// </summary>
+        /// <value><c>true</c> to show the PDF plot; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool ShowPlot
         {
             get { return (bool)GetValue(ShowPlotProperty); }
@@ -89,13 +91,14 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Dependency property for showing the distribution summary statistics.
+        /// Identifies the <see cref="ShowStatistics"/> dependency property.
         /// </summary>
         public static DependencyProperty ShowStatisticsProperty = DependencyProperty.Register(nameof(ShowStatistics), typeof(bool), typeof(DistributionSelectorPopup), new FrameworkPropertyMetadata(false));
 
         /// <summary>
-        /// Gets and sets the distribution options.
+        /// Gets or sets a value indicating whether the summary statistics are visible.
         /// </summary>
+        /// <value><c>true</c> to show summary statistics; otherwise, <c>false</c>. Default is <c>false</c>.</value>
         public bool ShowStatistics
         {
             get { return (bool)GetValue(ShowStatisticsProperty); }
@@ -103,12 +106,12 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Dependency property for the control distribution options.
+        /// Identifies the <see cref="Distributions"/> dependency property.
         /// </summary>
         public static DependencyProperty DistributionsProperty = DependencyProperty.Register(nameof(Distributions), typeof(List<UnivariateDistributionBase>), typeof(DistributionSelectorPopup), new PropertyMetadata(DistributionSelectorControl.DefaultDistributions));
 
         /// <summary>
-        /// Gets and sets the distribution options.
+        /// Gets or sets the list of available distribution types for selection.
         /// </summary>
         public List<UnivariateDistributionBase> Distributions
         {
@@ -116,10 +119,19 @@ namespace NumericControls.Distributions.Univariate
             set { SetValue(DistributionsProperty, value); }
         }
 
+        /// <summary>
+        /// Occurs when the selected distribution changes.
+        /// </summary>
         public event DistributionChangedEventHandler DistributionChanged;
 
+        /// <summary>
+        /// Represents the method that will handle the <see cref="DistributionChanged"/> event.
+        /// </summary>
         public delegate void DistributionChangedEventHandler();
 
+        /// <summary>
+        /// Raises the <see cref="DistributionChanged"/> event to notify subscribers of distribution changes.
+        /// </summary>
         private void DistributionChangedRaiser()
         {
             DistributionChanged?.Invoke();

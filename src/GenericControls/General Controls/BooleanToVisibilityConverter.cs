@@ -27,12 +27,8 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows;
 
@@ -84,10 +80,10 @@ namespace GenericControls
         /// Converts a boolean value to a <see cref="Visibility"/> value.
         /// </summary>
         /// <param name="value">The boolean value to convert.</param>
-        /// <param name="targetType">The target binding type (should be <see cref="Visibility"/></param>
+        /// <param name="targetType">The target binding type (should be <see cref="Visibility"/>).</param>
         /// <param name="parameter">An optional parameter (not used).</param>
         /// <param name="culture">The culture to use in the converter (not used).</param>
-        /// <returns></returns>
+        /// <returns>The <see cref="Visibility"/> value corresponding to <see cref="TrueValue"/> or <see cref="FalseValue"/>.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -100,11 +96,11 @@ namespace GenericControls
         /// <summary>
         /// Converts a <see cref="Visibility"/> value back to a boolean.
         /// </summary>
-        /// <param name="value"> The <see cref="Visibility"/> value to convert back.</param>
+        /// <param name="value">The <see cref="Visibility"/> value to convert back.</param>
         /// <param name="targetType">The target type (should be <see cref="bool"/>).</param>
         /// <param name="parameter">An optional parameter (not used).</param>
         /// <param name="culture">The culture to use in the converter (not used).</param>
-        /// <returns></returns>
+        /// <returns>A boolean value: <c>true</c> if <paramref name="value"/> equals <see cref="TrueValue"/>, otherwise <c>false</c>.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)

@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +65,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FontSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the display title of the font selector.
+        /// Gets or sets the display title of the font selector.
         /// </summary>
         public string Title
         {
@@ -97,11 +98,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the <see cref="MaxPropertyWidth"/> depenndency property.
+        /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FontSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width for the property layout.
+        /// Gets or sets the maximum width for the property layout.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -120,7 +121,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FontSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width for the property layout.
+        /// Gets or sets the minimum width for the property layout.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -157,7 +158,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FontSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets whether to show the leader line next to the property.
+        /// Gets or sets whether to show the leader line next to the property.
         /// </summary>
         public bool ShowLeaderLine
         {

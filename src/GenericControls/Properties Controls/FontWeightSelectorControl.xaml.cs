@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +65,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FontWeightSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// Gets/sets the title displayed for this control.
+        /// Gets or sets the title displayed for this control.
         /// </summary>
         public string Title
         {
@@ -84,7 +85,7 @@ namespace GenericControls
         public static DependencyProperty SelectedFontWeightProperty = DependencyProperty.Register(nameof(SelectedFontWeight), typeof(FontWeight), typeof(FontWeightSelectorControl), new UIPropertyMetadata(FontWeights.Normal));
 
         /// <summary>
-        /// Gets/sets the selected <see cref="FontWeight"/>.
+        /// Gets or sets the selected <see cref="FontWeight"/>.
         /// </summary>
         public FontWeight SelectedFontWeight
         {
@@ -103,7 +104,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// Gets/sets the maximum width allowed for the property display.
+        /// Gets or sets the maximum width allowed for the property display.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -122,7 +123,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width allowed for the property display.
+        /// Gets or sets the minimum width allowed for the property display.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -141,7 +142,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the desired layout width for the property column.
+        /// Gets or sets the desired layout width for the property column.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -160,7 +161,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FontWeightSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// Gets/sets whether to show a visual leader line next to the property.
+        /// Gets or sets whether to show a visual leader line next to the property.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -199,7 +200,7 @@ namespace GenericControls
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Handles control resizing and updates <see cref="ActualPropertyWidth"/>
+        /// Handles control resizing and updates <see cref="ActualPropertyWidth"/>.
         /// </summary>
         /// <param name="sender">The control being resized.</param>
         /// <param name="e">Event data for the size change.</param>

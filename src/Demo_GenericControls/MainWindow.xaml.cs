@@ -28,13 +28,12 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -44,6 +43,8 @@ using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using GenericControls;
 using Themes;
+
+#nullable enable
 
 namespace Demo_GenericControls
 {
@@ -73,6 +74,7 @@ namespace Demo_GenericControls
     /// </list>
     /// </para>
     /// </remarks>
+    [SupportedOSPlatform("windows")]
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region Private Fields
@@ -87,9 +89,9 @@ namespace Demo_GenericControls
         private double _numericAutoProperty = double.NaN;
         private double _opacityProperty = 0.8;
         private double _lineWidthProperty = 2.0;
-        private DoubleCollection _lineStyleProperty;
-        private SolidColorBrush _colorProperty;
-        private SolidColorBrush _newColorProperty;
+        private DoubleCollection _lineStyleProperty = new DoubleCollection();
+        private SolidColorBrush _colorProperty = new SolidColorBrush(Colors.SteelBlue);
+        private SolidColorBrush _newColorProperty = new SolidColorBrush(Colors.Orange);
         private HorizontalAlignment _horizontalAlignmentProperty = HorizontalAlignment.Center;
         private VerticalAlignment _verticalAlignmentProperty = VerticalAlignment.Center;
         private Point _pointProperty = new Point(100, 200);
@@ -101,8 +103,8 @@ namespace Demo_GenericControls
         private string _folderPathProperty = "";
         private string _directoryPathProperty = "";
         private string _dialogResultText = "Click a button above to see the dialog result.";
-        private IList<string> _stringListProperty;
-        private ObservableCollection<ColorItem> _colorItems;
+        private IList<string> _stringListProperty = new List<string>();
+        private ObservableCollection<ColorItem> _colorItems = new ObservableCollection<ColorItem>();
         private int _colorCounter = 1;
 
         #endregion
@@ -135,7 +137,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the name property value for NameTextBox and NameTextPropertyControl demonstrations.
         /// </summary>
-        public string NameProperty
+        public new string NameProperty
         {
             get => _nameProperty;
             set => SetProperty(ref _nameProperty, value);
@@ -171,7 +173,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the font weight for FontWeightSelectorControl demonstrations.
         /// </summary>
-        public FontWeight FontWeightProperty
+        public new FontWeight FontWeightProperty
         {
             get => _fontWeightProperty;
             set => SetProperty(ref _fontWeightProperty, value);
@@ -207,7 +209,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the opacity value (0-1) for NumericSliderPropertyControl demonstrations.
         /// </summary>
-        public double OpacityProperty
+        public new double OpacityProperty
         {
             get => _opacityProperty;
             set => SetProperty(ref _opacityProperty, value);
@@ -254,7 +256,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the horizontal alignment for HorizontalAlignmentControl demonstrations.
         /// </summary>
-        public HorizontalAlignment HorizontalAlignmentProperty
+        public new HorizontalAlignment HorizontalAlignmentProperty
         {
             get => _horizontalAlignmentProperty;
             set => SetProperty(ref _horizontalAlignmentProperty, value);
@@ -263,7 +265,7 @@ namespace Demo_GenericControls
         /// <summary>
         /// Gets or sets the vertical alignment for VerticalAlignmentControl demonstrations.
         /// </summary>
-        public VerticalAlignment VerticalAlignmentProperty
+        public new VerticalAlignment VerticalAlignmentProperty
         {
             get => _verticalAlignmentProperty;
             set => SetProperty(ref _verticalAlignmentProperty, value);

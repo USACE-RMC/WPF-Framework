@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <!-- Column header style with wrapped text -->
         <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -32,6 +33,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Distribution selector panel with layout constraints -->
         <Grid x:Name="CurveUncertaintyPanel" VerticalAlignment="Stretch" Margin="0,0,0,5" Visibility="{Binding Path=IsReadOnly, Converter={StaticResource VisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -39,7 +41,7 @@
                 <ColumnDefinition Width="10000*" MaxWidth="{Binding DistributionSelectorMaxWidth}"/>
             </Grid.ColumnDefinitions>
             <TextBlock 
-                Text="Distribution" 
+                Text="Distribution" Foreground="{DynamicResource EnvironmentWindowText}"
                 TextAlignment="Right" 
                 Margin="0,0,5,0"
                 VerticalAlignment="Center"/>
@@ -59,6 +61,7 @@
             </ComboBox>
         </Grid>
 
+        <!-- Uncertain ordered data table editor -->
         <local:UncertainOrderedTableEditor 
             x:Name="UncertainTableEditor"
             Grid.Row="1" 
@@ -75,7 +78,7 @@
             MaximumY="{Binding MaximumY}"
             IsReadOnly="{Binding IsReadOnly}"
             ShowToolBar="{Binding ShowToolBar}"
-            ColumnHeaderStyle="{Binding ColumnHeaderStyle}"
+            ColumnHeaderStyle="{StaticResource WrappedColumnHeaderStyle}"
             CellStyle="{Binding CellStyle}"
             UncertainOrderedData="{Binding ElementName=CurveUncertaintyComboBox, Path=SelectedValue}"/>
 

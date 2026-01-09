@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -58,7 +58,7 @@ namespace GenericControls
         // Private _offset As Double
 
         /// <summary>
-        /// initializes a new instance iof the <see cref="DragAdorner"/> class.
+        /// Initializes a new instance of the <see cref="DragAdorner"/> class.
         /// </summary>
         /// <param name="adornedElement">The UIElement to display as a ghost image.</param>
         /// <param name="offset">The offset from the mouse pointer.</param>

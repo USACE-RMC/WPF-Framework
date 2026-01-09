@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +65,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata(""));
         /// <summary>
-        /// gets/sets the text value displayed in the control.
+        /// Gets or sets the text value displayed in the control.
         /// </summary>
         public string Text
         {
@@ -83,7 +84,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the title text to display on property.
+        /// Gets or sets the title text to display on property.
         /// </summary>
         public string Title
         {
@@ -102,7 +103,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TextWrappingProperty = DependencyProperty.Register(nameof(TextWrapping), typeof(TextWrapping), typeof(TextPropertyControl), new UIPropertyMetadata(TextWrapping.WrapWithOverflow));
         /// <summary>
-        /// gets/sets the text wrapping behavior (e.g., NoWrap, Wrap, or WrapWithOverflow).
+        /// Gets or sets the text wrapping behavior (e.g., NoWrap, Wrap, or WrapWithOverflow).
         /// </summary>
         public TextWrapping TextWrapping
         {
@@ -121,7 +122,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinTitleWidthProperty = DependencyProperty.Register(nameof(MinTitleWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(100d));
         /// <summary>
-        /// gets/sets the minimum width for the title label.
+        /// Gets or sets the minimum width for the title label.
         /// </summary>
         public double MinTitleWidth
         {
@@ -140,7 +141,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(TextPropertyControl), new UIPropertyMetadata(false));
         /// <summary>
-        /// gets/sets whether the text is read-only
+        /// Gets or sets whether the text is read-only.
         /// </summary>
         public bool IsReadOnly
         {
@@ -159,7 +160,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width for the title label.
+        /// Gets or sets the maximum width for the title label.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -178,7 +179,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width fo the title label.
+        /// Gets or sets the minimum width for the title label.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -197,7 +198,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the layout width of the property section using GridLength.
+        /// Gets or sets the layout width of the property section using GridLength.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -216,7 +217,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(TextPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets whether to display a leader line next to the control.
+        /// Gets or sets whether to display a leader line next to the control.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -231,7 +232,7 @@ namespace GenericControls
         }
         private double _actualWidth = 0d;
         /// <summary>
-        /// gets the current rendered width of the property control.
+        /// Gets the current rendered width of the property control.
         /// </summary>
         public double ActualPropertyWidth
         {
@@ -257,8 +258,8 @@ namespace GenericControls
         /// <summary>
         /// Updates <see cref="ActualPropertyWidth"/> when the control size changes.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The control raising the event.</param>
+        /// <param name="e">The size change event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;

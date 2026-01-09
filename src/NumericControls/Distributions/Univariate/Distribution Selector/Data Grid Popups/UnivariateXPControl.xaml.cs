@@ -62,6 +62,12 @@ namespace NumericControls
         /// </summary>
         public static DependencyProperty DistributionProperty = DependencyProperty.Register(nameof(Distribution), typeof(EmpiricalDistribution), typeof(UnivariateXPControl), new PropertyMetadata(new EmpiricalDistribution(), SetDistribution));
 
+        /// <summary>
+        /// Callback invoked when the Distribution property changes.
+        /// Updates the data grid with X values and probability values from the new distribution.
+        /// </summary>
+        /// <param name="d">The dependency object whose property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void SetDistribution(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -90,6 +96,10 @@ namespace NumericControls
             set { SetValue(DistributionProperty, value); }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnivariateXPControl"/> class.
+        /// Sets up the data grid with the univariate row data binding.
+        /// </summary>
         public UnivariateXPControl()
         {
 
@@ -100,11 +110,23 @@ namespace NumericControls
             UnivariateGrid.ItemsSource = _univariateRowData;
         }
 
+        /// <summary>
+        /// Handles the event when a column is being auto-generated for the univariate data grid.
+        /// Applies custom header styling to the column.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">Column auto-generation event arguments containing the column being generated.</param>
         private void UnivariateGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             e.Column.HeaderStyle = (Style)Resources["WrappedColumnHeaderStyle"];
         }
 
+        /// <summary>
+        /// Handles the click event on a data grid column header.
+        /// Selects all cells in the clicked column.
+        /// </summary>
+        /// <param name="sender">The column header that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void ColumnHeaderClick(object sender, RoutedEventArgs e)
         {
             DataGridColumnHeader columnHeader = sender as DataGridColumnHeader;

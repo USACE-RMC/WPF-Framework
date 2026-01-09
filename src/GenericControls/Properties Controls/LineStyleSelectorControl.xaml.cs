@@ -27,10 +27,8 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.Globalization;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -73,6 +71,9 @@ namespace GenericControls
         /// Identifies the <see cref="SelectedDashArray"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedDashArrayProperty = DependencyProperty.Register(nameof(SelectedDashArray), typeof(DoubleCollection), typeof(LineStyleSelectorControl), new UIPropertyMetadata(new DoubleCollection()));
+        /// <summary>
+        /// Gets or sets the currently selected dash array pattern.
+        /// </summary>
         public DoubleCollection SelectedDashArray
         {
             get
@@ -90,7 +91,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty DashArrayOptionsProperty = DependencyProperty.Register(nameof(DashArrayOptions), typeof(IList<DoubleCollection>), typeof(LineStyleSelectorControl), new FrameworkPropertyMetadata(LineStyleOptions));
         /// <summary>
-        /// gets/sets the list of available dash array options.
+        /// Gets or sets the list of available dash array options.
         /// </summary>
         public IList<DoubleCollection> DashArrayOptions
         {
@@ -109,7 +110,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(LineStyleSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the display title of the control.
+        /// Gets or sets the display title of the control.
         /// </summary>
         public string Title
         {
@@ -128,7 +129,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(LineStyleSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width of the control's label section.
+        /// Gets or sets the maximum width of the control's label section.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -147,7 +148,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(LineStyleSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width of the control's label section.
+        /// Gets or sets the minimum width of the control's label section.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -166,7 +167,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(LineStyleSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the width of the control's property column.
+        /// Gets or sets the width of the control's property column.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -185,7 +186,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(LineStyleSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets a value indicating whether a leader line is shown next to the label.
+        /// Gets or sets a value indicating whether a leader line is shown next to the label.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -221,7 +222,7 @@ namespace GenericControls
     public class DoubleCollectionConverter : IValueConverter
     {
         /// <summary>
-        /// Converts a <see cref="DoubleCollection"/> to a known reference in the predefined <see cref="LineStyleSelectorControl.LineStyleOptions'"/> list.
+        /// Converts a <see cref="DoubleCollection"/> to a known reference in the predefined <see cref="LineStyleSelectorControl.LineStyleOptions"/> list.
         /// </summary>
         /// <param name="value">The object to convert.</param>
         /// <param name="targetType">The target type of the conversion.</param>

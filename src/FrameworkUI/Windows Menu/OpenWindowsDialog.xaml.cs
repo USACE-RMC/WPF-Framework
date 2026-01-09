@@ -31,9 +31,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace FrameworkUI
 {
@@ -61,6 +58,11 @@ namespace FrameworkUI
 
         }
 
+        /// <summary>
+        /// Handles the window close command.
+        /// </summary>
+        /// <param name="target">The command target.</param>
+        /// <param name="e">The executed routed event arguments.</param>
         private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);

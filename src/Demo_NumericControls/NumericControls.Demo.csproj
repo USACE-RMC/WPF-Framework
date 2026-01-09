@@ -1,3 +1,4 @@
+<!-- NumericControls.Demo - Demo application for NumericControls -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -15,6 +16,12 @@
     <ProjectReference Include="..\NumericControls\NumericControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Numerics">
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

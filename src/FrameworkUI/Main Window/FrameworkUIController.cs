@@ -30,7 +30,6 @@
 
 using FrameworkUI.ProjectExplorer;
 using FrameworkInterfaces;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -70,12 +69,20 @@ namespace FrameworkUI
         /// Event is raised when the properties control is set.
         /// </summary>
         public event SetPropertiesControlEventHandler SetPropertiesControl;
+        /// <summary>
+        /// Delegate for handling the set properties control event.
+        /// </summary>
+        /// <param name="propertyControl">The property control to be set.</param>
         public delegate void SetPropertiesControlEventHandler(Control propertyControl);
 
         /// <summary>
-        /// Event is raised when the properties control is closed. 
+        /// Event is raised when the properties control is closed.
         /// </summary>
         public event ClosePropertiesControlEventHandler ClosePropertiesControl;
+        /// <summary>
+        /// Delegate for handling the close properties control event.
+        /// </summary>
+        /// <param name="propertyControl">The property control to be closed.</param>
         public delegate void ClosePropertiesControlEventHandler(Control propertyControl);
 
         /// <summary>
@@ -84,14 +91,25 @@ namespace FrameworkUI
         public ProjectNode ProjectNode { get; private set; }
 
         /// <summary>
-        /// Defines the default Avalon Dock layout. 
+        /// Defines the default Avalon Dock layout.
         /// </summary>
         public string DefaultAvalonDockLayout { get; private set; }
 
-
+        /// <summary>
+        /// List of custom project menu items.
+        /// </summary>
         protected readonly List<MenuItem> _projectMenuItems = new List<MenuItem>();
+        /// <summary>
+        /// List of custom tools menu items.
+        /// </summary>
         protected readonly List<MenuItem> _toolsMenuItems = new List<MenuItem>();
+        /// <summary>
+        /// List of custom help menu items.
+        /// </summary>
         protected readonly List<MenuItem> _helpMenuItems = new List<MenuItem>();
+        /// <summary>
+        /// List of custom menu items that appear between Tools and Window menus.
+        /// </summary>
         protected readonly List<MenuItem> _customMenuItems = new List<MenuItem>();
 
         /// <summary>

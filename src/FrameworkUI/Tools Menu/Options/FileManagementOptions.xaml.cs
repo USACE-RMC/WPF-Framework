@@ -48,7 +48,7 @@ namespace FrameworkUI
     {
 
         /// <summary>
-        /// Construct new File Management Options
+        /// Initializes a new instance of the <see cref="FileManagementOptions"/> class.
         /// </summary>
         public FileManagementOptions()
         {

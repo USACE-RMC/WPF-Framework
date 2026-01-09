@@ -10,53 +10,50 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="BivariateEmpericalCDFControl_Loaded">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="HazardColor" Color="#FF1A1A38"/>
-        <SolidColorBrush x:Key="ReadOnlyBackGround" Color="#FFDFE7EC"></SolidColorBrush>
+        <!-- Cell style for bold row/column headers -->
         <Style x:Key="BoldCellStyle" TargetType="{x:Type DataGridCell}">
-            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0,0,2,0"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="False">
-                    <Setter Property="Foreground" Value="{StaticResource HazardColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Cell style for upper-left corner cell -->
         <Style x:Key="UpperLeftCellStyle" TargetType="{x:Type DataGridCell}">
-            <!--<Setter Property="Focusable" Value="False"></Setter>-->
             <Setter Property="BorderThickness" Value="0,0,2,0"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
+            <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="False">
-                    <Setter Property="Background" Value="{StaticResource ReadOnlyBackGround}"/>
-                    <Setter Property="Foreground" Value="{StaticResource ReadOnlyBackGround}"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="headerTemplate" TargetType="{x:Type DataGridColumnHeader}">
+        <Style x:Key="headerTemplate" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
-                        <StackPanel>
-                            <Border BorderBrush="Blue" BorderThickness="1">
-                                <TextBox Text="{TemplateBinding Content}"/>
-                            </Border>
-                        </StackPanel>
+                        <Border BorderBrush="{DynamicResource DataGrid.Header.Border}" BorderThickness="1" Background="{DynamicResource EnvironmentWindowBackground}">
+                            <TextBox Text="{TemplateBinding Content}" Background="{DynamicResource EnvironmentWindowBackground}" Foreground="{DynamicResource EnvironmentWindowText}" BorderThickness="0"/>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        
     </UserControl.Resources>
+
     <Grid>
+        <!-- Tab control for input table and plot views -->
         <TabControl Margin="4" TabStripPlacement="Top" Background="Transparent">
+            <!-- Input table tab -->
             <TabItem Header="Input Table" Style="{DynamicResource HorizontalTabItemStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -78,23 +75,23 @@
 
                     <!--Add column tool bar edit buttons.-->
                     <Border
-                        Name="X1HeaderBorder" 
-                        Grid.Row="2" 
+                        Name="X1HeaderBorder"
+                        Grid.Row="2"
                         Grid.Column="0">
-                        <TextBlock 
-                            Name="X1HeaderTextBlock"  
-                            Text="{Binding ElementName=BivariateEmpericalCDFControl, Path=X1Header}">
-                        </TextBlock>
+                        <TextBlock
+                            Name="X1HeaderTextBlock"
+                            Text="{Binding ElementName=BivariateEmpericalCDFControl, Path=X1Header}"
+                            Foreground="{DynamicResource EnvironmentWindowText}"/>
                     </Border>
 
                     <Border
-                        Name="X2HeaderBorder" 
-                        Grid.Row="1" 
+                        Name="X2HeaderBorder"
+                        Grid.Row="1"
                         Grid.Column="1">
-                        <TextBlock 
-                            Name="X2HeaderTextBlock"               
-                            Text="{Binding ElementName=BivariateEmpericalCDFControl, Path=X2Header}">
-                        </TextBlock>
+                        <TextBlock
+                            Name="X2HeaderTextBlock"
+                            Text="{Binding ElementName=BivariateEmpericalCDFControl, Path=X2Header}"
+                            Foreground="{DynamicResource EnvironmentWindowText}"/>
                     </Border>
 
                     <cntrls:CopyPasteDataGrid 
@@ -116,15 +113,13 @@
                         SizeChanged="BivariateCDFDataGrid_SizeChanged"
                         LayoutUpdated="BivariateCDFDataGrid_LayoutUpdated">
                         <cntrls:CopyPasteDataGrid.RowHeaderStyle>
-                            <Style TargetType="{x:Type DataGridRowHeader}">
+                            <Style TargetType="{x:Type DataGridRowHeader}" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type DataGridRowHeader}">
-                                            <StackPanel>
-                                                <Border BorderBrush="Blue" BorderThickness="1">
-                                                    <TextBox Text="{TemplateBinding Content}"/>
-                                                </Border>
-                                            </StackPanel>
+                                            <Border BorderBrush="{DynamicResource DataGrid.Header.Border}" BorderThickness="1" Background="{DynamicResource EnvironmentWindowBackground}">
+                                                <TextBox Text="{TemplateBinding Content}" Background="{DynamicResource EnvironmentWindowBackground}" Foreground="{DynamicResource EnvironmentWindowText}" BorderThickness="0"/>
+                                            </Border>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -133,8 +128,9 @@
                     </cntrls:CopyPasteDataGrid>
 
                 </Grid>
-
             </TabItem>
+
+            <!-- Plot tab -->
             <TabItem Header="Plot" Style="{DynamicResource HorizontalTabItemStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>

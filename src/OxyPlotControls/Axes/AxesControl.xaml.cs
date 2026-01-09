@@ -1,3 +1,32 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -127,11 +156,19 @@ namespace OxyPlotControls
             set { SetValue(ComboBoxStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Sets the default combobox style from resources.
+        /// </summary>
         private void SetDefaultComboboxStyle()
         {
             ComboBoxStyle = (Style)FindResource("CleanComboBoxStyle");
         }
 
+        /// <summary>
+        /// Handles changes to the Plot property and initializes the axes selector.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event args containing the old and new values.</param>
         private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -161,6 +198,11 @@ namespace OxyPlotControls
             if (newPlot.Axes.Count > 0) thisControl.AxesPropertyControlComboBox.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// Handles changes to the axes collection and updates the selected axis.
+        /// </summary>
+        /// <param name="sender">The collection that changed.</param>
+        /// <param name="e">Event args describing the change.</param>
         private void Axes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             // When axes are reset (cleared and repopulated), select the first axis
@@ -190,6 +232,11 @@ namespace OxyPlotControls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles selection changes in the axes combobox.
+        /// </summary>
+        /// <param name="sender">The combobox control.</param>
+        /// <param name="e">Event args containing selection details.</param>
         private void AxesPropertyControlComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Early exit if nothing is selected.
@@ -200,6 +247,11 @@ namespace OxyPlotControls
             AxisPropertiesControl.Axis = axisToSelect;
         }
 
+        /// <summary>
+        /// Handles the click event for deleting an axis.
+        /// </summary>
+        /// <param name="sender">The delete button.</param>
+        /// <param name="e">Event args.</param>
         private void DeleteAxisButton_Click(object sender, RoutedEventArgs e)
         {
             if (AxesPropertyControlComboBox.SelectedItem == null) return;
@@ -261,6 +313,11 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Handles when the axis type is changed, updating the selector to reflect the new axis.
+        /// </summary>
+        /// <param name="oldAxis">The previous axis before the type change.</param>
+        /// <param name="newAxis">The new axis after the type change.</param>
         private void AxisPropertiesControl_AxisTypeChanged(Wpf.Axis oldAxis, Wpf.Axis newAxis)
         {
             AxesPropertyControlComboBox.ItemsSource = Plot.Axes;

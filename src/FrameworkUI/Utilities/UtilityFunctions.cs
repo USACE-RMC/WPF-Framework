@@ -28,10 +28,8 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -245,7 +243,7 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// This contains a counter to help make names unique
+        /// Counter used to generate unique menu item names when cloning.
         /// </summary>
         private static int menuNameCounter = 0;
 

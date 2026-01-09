@@ -16,13 +16,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <TextBlock 
-            TextWrapping="Wrap" 
-            TextAlignment="Center" 
-            VerticalAlignment="Bottom" 
-            FontWeight="Bold" 
-            HorizontalAlignment="Stretch" 
-            Text="{Binding ElementName=StringListEditor, Path=Title}" 
+        <TextBlock
+            TextWrapping="Wrap"
+            TextAlignment="Center"
+            VerticalAlignment="Bottom"
+            FontWeight="Bold"
+            HorizontalAlignment="Stretch"
+            Foreground="{DynamicResource EnvironmentWindowText}"
+            Text="{Binding ElementName=StringListEditor, Path=Title}"
             MouseUp="TextBlock_MouseUp"/>
 
         <local:CopyPasteDataGrid

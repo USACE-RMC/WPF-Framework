@@ -45,11 +45,17 @@ namespace FrameworkUI
     public class RecentFileItem
     {
 
+        /// <summary>
+        /// Gets the file name without extension.
+        /// </summary>
         public string Name
         {
             get { return System.IO.Path.GetFileNameWithoutExtension(FilePath); }
         }
 
+        /// <summary>
+        /// Gets the shortened display location of the file.
+        /// </summary>
         public string DisplayLocation
         {
             get { return UtilityFunctions.ShortenPathname(System.IO.Path.GetDirectoryName(FilePath), 50); }
@@ -74,7 +80,7 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Construct a new recent file item.
+        /// Initializes a new instance of the <see cref="RecentFileItem"/> class.
         /// </summary>
         /// <param name="filePath">The full file path.</param>
         public RecentFileItem(string filePath)

@@ -28,7 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -343,6 +342,12 @@ namespace NumericControls
         /// </summary>
         public static DependencyProperty SelectedOrderedDataProperty = DependencyProperty.Register(nameof(SelectedOrderedData), typeof(OrderedPairedData), typeof(OrderedDataSelectorControl), new PropertyMetadata(new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending), SetData));
 
+        /// <summary>
+        /// Callback invoked when the SelectedOrderedData property changes.
+        /// Populates the curve rows collection from the new ordered paired data.
+        /// </summary>
+        /// <param name="d">The dependency object whose property changed.</param>
+        /// <param name="e">Event arguments containing the old and new values.</param>
         private static void SetData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -453,6 +458,11 @@ namespace NumericControls
             Plot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Handles the column header click event to select all cells in that column.
+        /// </summary>
+        /// <param name="sender">The column header that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void DataGridColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Primitives.DataGridColumnHeader columnHeader = sender as System.Windows.Controls.Primitives.DataGridColumnHeader;
@@ -463,11 +473,25 @@ namespace NumericControls
                 ValidationGrid.SelectedCells.Add(new DataGridCellInfo(item, columnHeader.Column));
         }
 
-        private void OxyplotToolbar_PropertiesCalled(OxyPlot.Wpf.Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
+        /// <summary>
+        /// Handles the properties called event from the OxyPlot toolbar.
+        /// Raises the PlotPropertiesRequested event to notify subscribers.
+        /// </summary>
+        /// <param name="targetPlot">The plot requesting properties.</param>
+        /// <param name="openProperties">Whether to open the properties dialog.</param>
+        /// <param name="propertyExpander">The property expander to use.</param>
+        /// <param name="selectedObject">The currently selected object.</param>
+        private void OxyplotToolbar_PropertiesCalled(OxyPlot.Wpf.Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject)
         {
             PlotPropertiesRequested?.Invoke(targetPlot);
         }
 
+        /// <summary>
+        /// Handles the rows added event from the validation grid.
+        /// Inserts the new ordinates into the selected ordered data and updates the display.
+        /// </summary>
+        /// <param name="startrow">The starting index of the added rows.</param>
+        /// <param name="numrows">The number of rows that were added.</param>
         private void ValidationGrid_RowsAdded(int startrow, int numrows)
         {
             for (int i = startrow; i < startrow + numrows; i++)
@@ -476,6 +500,11 @@ namespace NumericControls
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Handles the rows deleted event from the validation grid.
+        /// Removes the deleted ordinates from the selected ordered data and updates the display.
+        /// </summary>
+        /// <param name="rowindices">The list of row indices that were deleted.</param>
         private void ValidationGrid_RowsDeleted(List<int> rowindices)
         {
             //
@@ -488,12 +517,23 @@ namespace NumericControls
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Handles the data pasted event from the validation grid.
+        /// Updates the grid validation and plot display after data is pasted.
+        /// </summary>
         private void ValidationGrid_DataPasted()
         {
             UpdateGrid();
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Handles the preview add rows event from the validation grid.
+        /// Creates new ordinate row items and triggers the rows added handler.
+        /// </summary>
+        /// <param name="startRowIndex">The starting index for the new rows.</param>
+        /// <param name="nRows">The number of rows to add.</param>
+        /// <param name="cancelAddRows">Reference parameter set to true to handle row addition manually.</param>
         private void ValidationGrid_PreviewAddRows(int startRowIndex, int nRows, ref bool cancelAddRows)
         {
             cancelAddRows = true;
@@ -503,14 +543,5 @@ namespace NumericControls
             //
             ValidationGrid_RowsAdded(startRowIndex, nRows);
         }
-
-
-        // Private Sub UpdateSource()
-        // Dim updatedOrdinates(CurveRows.Count - 1) As Ordinate
-        // For i As Int32 = 0 To CurveRows.Count - 1
-        // updatedOrdinates(i) = DirectCast(CurveRows(i), OrdinateRowItem).GetOrdinate
-        // Next
-        // SelectedOrderedData = New OrderedPairedData(updatedOrdinates, IsStrictX, OrderX, IsStrictY, OrderY)
-        // End Sub
     }
 }

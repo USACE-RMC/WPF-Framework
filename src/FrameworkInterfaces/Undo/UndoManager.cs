@@ -318,7 +318,7 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// Commits the current transaction, adding it to the undo stack.
         /// </summary>
-        internal void CommitTransaction()
+        public void CommitTransaction()
         {
             CompositeAction composite;
 
@@ -338,7 +338,7 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// Rolls back the current transaction, undoing all its actions.
         /// </summary>
-        internal void RollbackTransaction()
+        public void RollbackTransaction()
         {
             CompositeAction composite;
 

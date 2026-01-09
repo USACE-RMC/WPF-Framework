@@ -28,9 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using FrameworkInterfaces.Undo;
@@ -223,10 +221,10 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Raise property changed event.
         /// </summary>
-        /// <param name="propertyname">Name of property that changed.</param>
-        public void RaisePropertyChange(string propertyname)
+        /// <param name="propertyName">Name of property that changed.</param>
+        public void RaisePropertyChange(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             SetIsDirty(true);
         }
 
@@ -323,7 +321,7 @@ namespace FrameworkInterfaces
         /// Removes the first occurrence of the specified data object.
         /// </summary>
         /// <param name="item">The object to remove from the collection.</param>
-        public bool Remove(IElement item)
+        public virtual bool Remove(IElement item)
         {
             if (ElementList.Remove(item) == true)
             {
@@ -341,7 +339,7 @@ namespace FrameworkInterfaces
         /// Remove element at the specified index of the collection.
         /// </summary>
         /// <param name="index">The zero-based index of the element to remove.</param>
-        public void RemoveAt(int index)
+        public virtual void RemoveAt(int index)
         {
             Remove(ElementList[index]);
         }

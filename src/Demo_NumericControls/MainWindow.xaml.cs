@@ -28,18 +28,9 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Xml;
-using System.Xml.Linq;
-using NumericControls;
 using Numerics.Data;
 using Numerics.Distributions;
 using Numerics.Sampling;
@@ -340,34 +331,14 @@ namespace Demo_NumericControls
 
         /// <summary>
         /// Handles the Selected event for the USGS time series menu item.
-        /// Loads a previously saved time series from an XML file or downloads USGS data.
+        /// Downloads USGS daily discharge time series data. 
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
         private async void USGSItem_Selected(object sender, RoutedEventArgs e)
         {
-            var mapSettingsXMLFile = System.IO.Path.Combine("C:\\Temp", "settings.xml");
-            if (System.IO.File.Exists(mapSettingsXMLFile))
-            {
-                try
-                {
-                    //var document = new XmlDocument();
-                    //document.Load(mapSettingsXMLFile);
-                    var t = new TimeSeries(XElement.Parse(System.IO.File.ReadAllText(mapSettingsXMLFile)));
-                    var b = new Binding() { Source = t };
-                    BindingOperations.SetBinding(TimeSeriesTableControl, TimeSeriesTable.SeriesProperty, b);
-                    //TimeSeriesTableControl.Series = // document.GetElementsByTagName("Map_Layers")[0].OuterXml));
-
-                }
-                catch (Exception)
-                {
-                    //TimeSeriesTableControl.Series = await TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.TimeSeriesType.DailyDischarge);
-                }
-            }
-            else
-            {
-                //TimeSeriesTableControl.Series = TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.USGSTimeSeriesType.DailyDischarge);
-            }
+            var result = await TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.TimeSeriesType.DailyDischarge);
+            TimeSeriesTableControl.Series = result.TimeSeries;
         }
 
         /// <summary>
@@ -418,20 +389,24 @@ namespace Demo_NumericControls
         }
 
         /// <summary>
-        /// Handles the theme selection change event.
-        /// Switches the application theme based on user selection.
+        /// Handles theme radio button selection changes.
         /// </summary>
-        /// <param name="sender">The ComboBox that triggered the event.</param>
-        /// <param name="e">Event arguments containing selection change information.</param>
-        private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /// <param name="sender">The radio button that was checked.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
         {
-            if (ThemeComboBox?.SelectedItem is ComboBoxItem selectedItem)
+            if (sender is RadioButton radioButton)
             {
-                string themeName = selectedItem.Content?.ToString() ?? "Light";
-                if (ThemeResourceHelper.TryParseTheme(themeName, out Theme theme))
-                {
-                    ThemeService.Instance.SetTheme(theme);
-                }
+                Theme theme = Theme.Light;
+
+                if (radioButton == LightThemeRadio)
+                    theme = Theme.Light;
+                else if (radioButton == BlueThemeRadio)
+                    theme = Theme.Blue;
+                else if (radioButton == DarkThemeRadio)
+                    theme = Theme.Dark;
+
+                ThemeService.Instance.SetTheme(theme);
             }
         }
     }

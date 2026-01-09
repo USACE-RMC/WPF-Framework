@@ -30,24 +30,12 @@
 
 using GenericControls;
 using Numerics.Data;
-using OxyPlot;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static Numerics.Data.Statistics.Histogram;
 
 namespace NumericControls
 {
@@ -76,6 +64,9 @@ namespace NumericControls
         private List<int> _selectedValueRowIndices = new List<int>();
         private bool _selectionConsecutive = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MathEditorControl"/> class.
+        /// </summary>
         public MathEditorControl()
         {
             InitializeComponent();
@@ -96,9 +87,16 @@ namespace NumericControls
             NoOperandItemsControl.ItemsSource = nonOperands;
         }
 
+        /// <summary>
+        /// Gets or sets the time series data that mathematical operations will be applied to.
+        /// </summary>
+        /// <value>The time series to operate on.</value>
         public TimeSeries Series { get => _series; set => _series = value; }
 
-
+        /// <summary>
+        /// Gets or sets the source data grid containing the selected cells.
+        /// </summary>
+        /// <value>The data grid that provides cell selection context for operations.</value>
         public CopyPasteDataGrid Source
         {
             get => _source;
@@ -141,11 +139,7 @@ namespace NumericControls
                         {
                             rowsString = string.Join(", ", _selectedValueRowIndices.Select(item => item + 1));
                         }
-                        NotificationText.Text = $"Applies to rows {rowsString}.";// +
-                                                                                 //$"{Environment.NewLine}" +
-                                                                                 //$"Selection is {(_selectionConsecutive == true ? "continuous" : "discontinuous")}." +
-                                                                                 //$"{Environment.NewLine}" +
-                                                                                 //$"(Rows {rowsString})";
+                        NotificationText.Text = $"Applies to rows {rowsString}.";
                     }
                 }
                 else
@@ -155,104 +149,11 @@ namespace NumericControls
             }
         }
 
-        //private void Source_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        //{
-
-        //}
-
-        //private void MathButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (_source == null || _series == null) { return; }
-        //    Mouse.OverrideCursor = Cursors.Wait;
-
-        //    try
-        //    {
-        //        //ComboBox cmbo = (ComboBox)MathFunction.InnerContent;
-        //        //KeyValuePair<MathFunctionType, string> selectedFunction = (KeyValuePair<MathFunctionType, string>)cmbo.SelectedItem;
-        //        MathFunctionType functionType = MathFunctionType.Add; //(MathFunctionType)PresetItemsControl.SelectedItem; //selectedFunction.Key;
-
-        //        if (ValueTextBox.ValueIsValid == false)
-        //        {
-        //            //update text notification
-        //            NotificationText.Text = "*Operand is not valid for this operation.";
-        //        }
-
-        //        double value = ValueTextBox.Value;
-
-        //        if (_selectedValueRowIndices.Count == 0 || _selectedValueRowIndices.Count == _series.Count)
-        //        {
-        //            if (functionType == MathFunctionType.Add)
-        //            {
-        //                _series.Add(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Subtract)
-        //            {
-        //                _series.Subtract(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Multiply)
-        //            {
-        //                _series.Multiply(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Divide)
-        //            {
-        //                _series.Divide(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Exponentiate)
-        //            {
-        //                _series.Exponentiate(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Logarithm)
-        //            {
-        //                _series.LogTransform(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Inverse)
-        //            {
-        //                _series.Inverse();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (functionType == MathFunctionType.Add)
-        //            {
-        //                _series.Add(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Subtract)
-        //            {
-        //                _series.Subtract(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Multiply)
-        //            {
-        //                _series.Multiply(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Divide)
-        //            {
-        //                _series.Divide(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Exponentiate)
-        //            {
-        //                _series.Exponentiate(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Logarithm)
-        //            {
-        //                _series.LogTransform(_selectedValueRowIndices, value);
-        //            }
-        //            else if (functionType == MathFunctionType.Inverse)
-        //            {
-        //                _series.Inverse();
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-        //        return;
-        //    }
-        //    finally
-        //    {
-        //        Mouse.OverrideCursor = null;
-        //    }
-        //}
-
+        /// <summary>
+        /// Handles the click event for a math function button and applies the selected mathematical operation.
+        /// </summary>
+        /// <param name="sender">The button that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -295,9 +196,15 @@ namespace NumericControls
 
         }
 
+        /// <summary>
+        /// Applies a mathematical function to a time series.
+        /// </summary>
+        /// <param name="series">The time series to modify.</param>
+        /// <param name="functionType">The type of mathematical function to apply.</param>
+        /// <param name="value">The operand value for functions that require one (e.g., add, multiply).</param>
+        /// <param name="indices">The indices of specific rows to apply the function to, or null/empty to apply to all rows.</param>
         public static void ApplyFunctionToSeries(TimeSeries series, MathFunctionType functionType, double value, List<int> indices)
         {
-            //
             if (series == null) { return; }
 
             try
@@ -392,52 +299,28 @@ namespace NumericControls
             }
 
         }
-        //private void MathFunctionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //ComboBox cmbo = (ComboBox)sender;
-        //KeyValuePair<MathFunctionType, string> selectedFunction = (KeyValuePair<MathFunctionType, string>)(cmbo.SelectedItem);
-        //MathFunctionType functionType = selectedFunction.Key;
-        //if (functionType == MathFunctionType.Add ||
-        //    functionType == MathFunctionType.Subtract ||
-        //    functionType == MathFunctionType.Multiply ||
-        //    functionType == MathFunctionType.Divide)
-        //{
-        //    OperandTextBlock.Text = "Value";
-        //    MathValue.Number = 0;
-        //    MathValue.Visibility = Visibility.Visible;
-        //}
-        //else if (functionType == MathFunctionType.Exponentiate)
-        //{
-        //    OperandTextBlock.Text = "Power";
-        //    MathValue.Number = 2;
-        //    MathValue.Visibility = Visibility.Visible;
-        //}
-        //else if (functionType == MathFunctionType.Logarithm)
-        //{
-        //    OperandTextBlock.Text = "Base";
-        //    MathValue.Number = 10;
-        //    MathValue.Visibility = Visibility.Visible;
-        //}
-        //else if (functionType == MathFunctionType.Inverse)
-        //{
-        //    OperandTextBlock.Text = "Value";
-        //    MathValue.Number = 0;
-        //    MathValue.Visibility = Visibility.Collapsed;
-        //}
-        //}
     }
 
+    /// <summary>
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its display name for use in UI bindings.
+    /// </summary>
     public class MathFunctionTypeToNameConverter : IValueConverter
     {
-        public static string GetName(MathFunctionType fnc)
+        /// <summary>
+        /// Gets the display name for a mathematical function type.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>A human-readable display name for the function.</returns>
+        public static string GetName(MathFunctionType function)
         {
-            switch (fnc)
+            switch (function)
             {
                 case MathFunctionType.Logarithm: return "Logarithmic Transform";
-                default: return fnc.ToString();
+                default: return function.ToString();
             }
         }
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
@@ -445,17 +328,26 @@ namespace NumericControls
             return GetName((MathFunctionType)value);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
 
+    /// <summary>
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its tooltip description for use in UI bindings.
+    /// </summary>
     public class MathFunctionTypeToTooltipConverter : IValueConverter
     {
-        public static string GetTooltip(MathFunctionType fnc)
+        /// <summary>
+        /// Gets the tooltip description for a mathematical function type.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>A descriptive tooltip explaining what the function does.</returns>
+        public static string GetTooltip(MathFunctionType function)
         {
-            switch (fnc)
+            switch (function)
             {
                 case MathFunctionType.Add: return "Add a constant to values. Missing values are kept as missing.";
                 case MathFunctionType.Subtract: return "Subtract a constant from values. Missing values are kept as missing.";
@@ -466,10 +358,11 @@ namespace NumericControls
                 case MathFunctionType.Inverse: return "Replace values by its inverse (1/x). Missing values are kept as missing. Zero values are set to missing.";
                 case MathFunctionType.Replace: return "Replace missing data (Double.NaN) with a constant.";
                 case MathFunctionType.Interpolate: return "Interpolate missing data.";
-                default: return fnc.ToString();
+                default: return function.ToString();
             }
         }
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
@@ -477,17 +370,26 @@ namespace NumericControls
             return GetTooltip((MathFunctionType)value);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
 
+    /// <summary>
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its icon image for use in UI bindings.
+    /// </summary>
     public class MathFunctionTypeToIconConverter : IValueConverter
     {
-        public static BitmapImage GetIcon(MathFunctionType fnc)
+        /// <summary>
+        /// Gets the icon image for a mathematical function type.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>A <see cref="BitmapImage"/> representing the function's icon.</returns>
+        public static BitmapImage GetIcon(MathFunctionType function)
         {
-            switch (fnc)
+            switch (function)
             {
                 case MathFunctionType.Add: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorPlus_16x.png"));
                 case MathFunctionType.Subtract: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMinus_16x.png"));
@@ -502,6 +404,7 @@ namespace NumericControls
             }
         }
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
@@ -509,6 +412,7 @@ namespace NumericControls
             return GetIcon((MathFunctionType)value);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

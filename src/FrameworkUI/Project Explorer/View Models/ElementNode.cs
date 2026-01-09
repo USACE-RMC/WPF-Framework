@@ -28,9 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -149,6 +146,9 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         public IElement Element { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this node can be multi-selected with other nodes.
+        /// </summary>
         public override bool CanMultiSelect => true;
 
         /// <summary>
@@ -176,8 +176,9 @@ namespace FrameworkUI.ProjectExplorer
         }
 
         /// <summary>
-        /// Get the element node group that contains this node. 
+        /// Get the element node group that contains this node.
         /// </summary>
+        /// <returns>The parent ElementNodeGroup, or null if not found.</returns>
         private ElementNodeGroup GetElementNodeGroup()
         {
             ElementNodeGroup elementNodeGroup = null;
@@ -210,6 +211,10 @@ namespace FrameworkUI.ProjectExplorer
             Activate?.Invoke(Element);
         }
 
+        /// <summary>
+        /// Gets the drag text representation of this element node for drag-drop operations.
+        /// </summary>
+        /// <returns>A formatted string containing element information for drag-drop operations.</returns>
         public new string GetDragText()
         {
             return nameof(ElementNode) + ">" + Element.Name + ">" + Element.GetType().ToString() + ">" + Element.ParentCollection.Name + ">" + Element.ParentCollection.ParentProject.FullFileName + ">" + Element.CanCopyFromExternal;
@@ -218,6 +223,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On preview mouse right click, select node and show context menu.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (ParentTreeView.SelectedNodes.Count > 1)
@@ -240,6 +247,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On mouse double click, raise edit event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && IsInEditMode == false)
@@ -252,6 +261,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Handles the node key down event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_KeyDown(object sender, KeyEventArgs e)
         {
             // Ctrl + E = Edit
@@ -315,6 +326,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, raise edit event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             var elements = ParentTreeView.SelectedNodes
@@ -329,6 +342,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, raise copy event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             var nodeCollection = GetElementNodeCollection();
@@ -342,6 +357,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, raise rename event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Rename_Click(object sender, RoutedEventArgs e)
         {
             IsInEditMode = true;
@@ -351,6 +368,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, raise delete event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             var elements = ParentTreeView.SelectedNodes
@@ -364,10 +383,11 @@ namespace FrameworkUI.ProjectExplorer
 
         #endregion
         /// <summary>
-        /// Find the element node for a given element within a node. 
+        /// Find the element node for a given element within a node.
         /// </summary>
         /// <param name="element">IElement to find the node for.</param>
         /// <param name="node">Node to search in.</param>
+        /// <returns>The ElementNode if found, or null if not found.</returns>
         public static ElementNode FindElementNode(IElement element, Node node)
         {
             foreach (Node child in node.ChildNodes)

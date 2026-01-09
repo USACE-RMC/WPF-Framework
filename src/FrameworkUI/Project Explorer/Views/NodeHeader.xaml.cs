@@ -28,8 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -277,6 +275,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Rename text box changed.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void RenameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             // This is a hack to make sure the rename text box and header resize with the text. 
@@ -289,9 +289,12 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Support method used to size text box.
         /// </summary>
+        /// <param name="candidate">The string to measure.</param>
+        /// <returns>The size of the string when rendered.</returns>
         private Size MeasureString(string candidate)
         {
-            var formattedText = new FormattedText(candidate, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(HeaderTextBlock.FontFamily, HeaderTextBlock.FontStyle, HeaderTextBlock.FontWeight, HeaderTextBlock.FontStretch), HeaderTextBlock.FontSize, Brushes.Black, new NumberSubstitution(), TextFormattingMode.Display);
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            var formattedText = new FormattedText(candidate, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(HeaderTextBlock.FontFamily, HeaderTextBlock.FontStyle, HeaderTextBlock.FontWeight, HeaderTextBlock.FontStretch), HeaderTextBlock.FontSize, Brushes.Black, pixelsPerDip);
             return new Size(formattedText.Width, formattedText.Height);
         }
 

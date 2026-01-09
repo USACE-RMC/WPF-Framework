@@ -28,15 +28,9 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using FrameworkInterfaces.Messaging;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-//using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FrameworkInterfaces.Project
 {
@@ -114,27 +108,6 @@ namespace FrameworkInterfaces.Project
             _lastModified = DateTime.Now;
             _isValid = true;
             _isDirty = false;
-            //_messages.AddRange({
-            //        _descriptionMsg,
-            //                   _noHazardTypeMsg,
-            //                   _noHazardUnitMsg,
-            //                   _badHazardTransformMsg,
-            //                   _noConsequenceTypeMsg,
-            //                   _noConsequenceUnitMsg,
-            //                   _badConsequenceTransformMsg,
-            //                   _noOrdinatesMsg,
-            //                   _badOrdinatesMsg,
-            //                   _negConsequencesMsg, _noZeroRowMsg})
-
-            //_nameValid = ValidateName(Project.InvalidNameCharacters, 50, "TCF") 'Since the name is set on construction the property changed won't trigger so validation must occur.
-            //If openFromFile = True Then
-            //    Open()
-            //Else
-            //    _messenger.Add(_descriptionMsg)
-            //    _messenger.Add(_noOrdinatesMsg)
-            //End If
-
-            //SetElementValidation();
         }
 
         /// <summary>
@@ -210,11 +183,6 @@ namespace FrameworkInterfaces.Project
         /// </summary>
         public bool IsValid { get => _isValid; protected set => Methods.SetBoolean(value, ref _isValid, PropertyChanged, this); }
 
-        ///// <summary>
-        ///// Represents the name as it appears on disk.
-        ///// </summary>
-        //public abstract string NameOnDisk { get; }
-
         /// <summary>
         /// Gets the display name of the element.
         /// </summary>
@@ -224,10 +192,6 @@ namespace FrameworkInterfaces.Project
         /// Gets the parent element collection.
         /// </summary>
         public IElementCollection ParentCollection { get => _parentCollection; }
-
-
-
-
 
         /// <summary>
         /// Gets the element image as a Bitmap.
@@ -267,11 +231,11 @@ namespace FrameworkInterfaces.Project
         /// <summary>
         /// Raise property changed event.
         /// </summary>
-        /// <param name="propertyname">Name of property that changed.</param>
+        /// <param name="propertyName">Name of property that changed.</param>
         /// <param name="isDirty">True to mark element as dirty.</param>
-        protected void RaisePropertyChange(string propertyname, bool isDirty = true)
+        protected void RaisePropertyChange(string propertyName, bool isDirty = true)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             IsDirty = isDirty;//SetIsDirty(isDirty);
         }
 

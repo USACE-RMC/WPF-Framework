@@ -133,7 +133,7 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
             ElementList.Remove((UndoDemoElement)item);
             SetIsDirty(true);
 
-            RaiseElementRemovedEvent(item);
+            RaiseElementRemoved(item);
             return true;
         }
 
@@ -153,7 +153,7 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
             ElementList.RemoveAt(index);
             SetIsDirty(true);
 
-            RaiseElementRemovedEvent(item);
+            RaiseElementRemoved(item);
         }
 
         /// <summary>

@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -67,9 +67,9 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Callback when the <see cref="DateAndTime"/>property changes.
+        /// Callback when the <see cref="DateAndTime"/> property changes.
         /// </summary>
-        /// <param name="d">Dependency object intiating event.</param>
+        /// <param name="d">Dependency object initiating event.</param>
         /// <param name="e">Event arguments.</param>
         private static void TimePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -88,10 +88,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Dependency property for whether the clock uses 24-hour format
-        /// Gets/sets a value indicating whether the clock is in 24-mode.
+        /// Identifies the <see cref="Is24Hour"/> dependency property.
         /// </summary>
         public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimePickerControl), new FrameworkPropertyMetadata(false));
+        /// <summary>
+        /// Gets or sets a value indicating whether the clock uses 24-hour format.
+        /// </summary>
         public bool Is24Hour
         {
             get
@@ -105,7 +107,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Gets/sets the current date and time selected in the control. 
+        /// Gets or sets the current date and time selected in the control.
         /// </summary>
         public DateTime DateAndTime
         {
@@ -124,7 +126,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty HasSecondsProperty = DependencyProperty.Register(nameof(HasSeconds), typeof(bool), typeof(DateAndTimePickerControl), new UIPropertyMetadata(false));
         /// <summary>
-        /// Gets/sets a value indicating whether seconds are enabled in the time selection.
+        /// Gets or sets a value indicating whether seconds are enabled in the time selection.
         /// </summary>
         public bool HasSeconds
         {
@@ -143,7 +145,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty SetToHoursOnLoadProperty = DependencyProperty.Register(nameof(SetToHoursOnLoad), typeof(bool), typeof(DateAndTimePickerControl), new UIPropertyMetadata(false));
         /// <summary>
-        /// Gets/sets whether the clock should initially display hour selection on load.
+        /// Gets or sets whether the clock should initially display hour selection on load.
         /// </summary>
         public bool SetToHoursOnLoad
         {
@@ -160,7 +162,7 @@ namespace GenericControls
         /// <summary>
         /// Handles calendar display date change to sync the selected date.
         /// </summary>
-        /// <param name="sender"> Object triggering event.</param>
+        /// <param name="sender">Object triggering event.</param>
         /// <param name="e">Event arguments.</param>
         private void CalendarSelector_DisplayDateChanged(object sender, CalendarDateChangedEventArgs e)
         {
@@ -183,11 +185,11 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// The following solution is to release the mouse capture from the calendar to allow other controls to get focus. 
-    /// Solution was found here: https://stackoverflow.com/questions/25352961/have-to-click-away-twice-from-calendar-in-wpf/50536606#50536606
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+        /// Releases the mouse capture from the calendar to allow other controls to get focus.
+        /// Solution was found here: https://stackoverflow.com/questions/25352961/have-to-click-away-twice-from-calendar-in-wpf/50536606#50536606
+        /// </summary>
+        /// <param name="sender">Object triggering event.</param>
+        /// <param name="e">Event arguments.</param>
         private void CalendarSelector_GotMouseCapture(object sender, MouseEventArgs e)
         {
             UIElement originalElement = (UIElement)e.OriginalSource;

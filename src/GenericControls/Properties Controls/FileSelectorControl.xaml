@@ -27,8 +27,8 @@
                               MinWidth="{Binding ElementName=FileSelector, Path=MinPropertyWidth, FallbackValue=10}"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Margin="0,0,3,0" VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                   Text="{Binding ElementName=FileSelector, Path=Title}" 
+        <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}"
+                   Text="{Binding ElementName=FileSelector, Path=Title}"
                    Visibility="{Binding ElementName=FileSelector, Path=ShowTitle, Converter={StaticResource BoolToVisConverter}}"/>
 
         <Line Style="{StaticResource DotLeaderLineStyle}"

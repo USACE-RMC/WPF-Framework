@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System.Windows;
 using System.Windows.Controls;
 
@@ -64,7 +65,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty IsSelectedProperty = DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets whether the checkbox is selected.
+        /// Gets or sets whether the checkbox is selected.
         /// </summary>
         public bool IsSelected
         {
@@ -83,7 +84,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(BooleanPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the title text shown next to the checkbox.
+        /// Gets or sets the title text shown next to the checkbox.
         /// </summary>
         public string Title
         {
@@ -96,33 +97,13 @@ namespace GenericControls
                 this.SetValue(TitleProperty, value);
             }
         }
-        // '
-        // Public Shared MaxPropertyWidthProperty As DependencyProperty = DependencyProperty.Register(NameOf(MaxPropertyWidth), GetType(Double), GetType(BooleanPropertyControl), New UIPropertyMetadata(DefaultMaxPropertyWidth))
-        // Public Property MaxPropertyWidth As Double
-        // Get
-        // Return DirectCast(GetValue(MaxPropertyWidthProperty), Double)
-        // End Get
-        // Set(value As Double)
-        // SetValue(MaxPropertyWidthProperty, value)
-        // End Set
-        // End Property
-        // '
-        // Public Shared MinPropertyWidthProperty As DependencyProperty = DependencyProperty.Register(NameOf(MinPropertyWidth), GetType(Double), GetType(TextPropertyControl), New UIPropertyMetadata(DefaultMaxPropertyWidth))
-        // Public Property MinPropertyWidth As Double
-        // Get
-        // Return DirectCast(GetValue(MinPropertyWidthProperty), Double)
-        // End Get
-        // Set(value As Double)
-        // SetValue(MinPropertyWidthProperty, value)
-        // End Set
-        // End Property
-        //
+
         /// <summary>
         /// Dependency property to control the visibility of the leader line.
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets whether the leader line should be visible.
+        /// Gets or sets whether the leader line should be visible.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -144,8 +125,8 @@ namespace GenericControls
         /// <summary>
         /// Delegate for the <see cref="Checked"/> event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         public delegate void CheckedEventHandler(object sender, RoutedEventArgs e);
 
         /// <summary>
@@ -156,8 +137,8 @@ namespace GenericControls
         /// <summary>
         /// Delegate for the <see cref="Unchecked"/> event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         public delegate void UncheckedEventHandler(object sender, RoutedEventArgs e);
 
         /// <summary>
@@ -173,8 +154,8 @@ namespace GenericControls
         /// <summary>
         /// Handles the <see cref="Unchecked"/> event and invokes the event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The checkbox triggering the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             Unchecked?.Invoke(this, e);

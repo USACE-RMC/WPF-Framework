@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -63,7 +62,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// A list available <see cref="CalendarWeekRule"/> options for display or binding.
+        /// A list of available <see cref="CalendarWeekRule"/> options for display or binding.
         /// </summary>
         public static List<CalendarWeekRule> CalendarRuleOptions { get; private set; } = new List<CalendarWeekRule>((CalendarWeekRule[])Enum.GetValues(typeof(CalendarWeekRule)));
 
@@ -111,7 +110,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width of the property area.
+        /// Gets or sets the maximum width of the property area.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -208,7 +207,7 @@ namespace GenericControls
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Handles the size change event to update <see cref="ActualPropertyWidth"/>
+        /// Handles the size change event to update <see cref="ActualPropertyWidth"/>.
         /// </summary>
         /// <param name="sender">The framework element whose size changed.</param>
         /// <param name="e">Size changed event arguments.</param>

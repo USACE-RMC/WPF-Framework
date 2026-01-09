@@ -27,10 +27,8 @@
                               MinWidth="{Binding ElementName=DateTimePropertyEditor, Path=MinPropertyWidth, FallbackValue=10}"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock 
-            Margin="0,0,3,0" 
-            VerticalAlignment="Bottom" 
-            HorizontalAlignment="Left"
+        <TextBlock
+            Style="{StaticResource TitleTextStyle}"
             Text="{Binding ElementName=DateTimePropertyEditor, Path=Title}" />
 
         <Line 

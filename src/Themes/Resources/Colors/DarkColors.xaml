@@ -27,6 +27,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <SolidColorBrush x:Key="EnvironmentWindowText" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="EnvironmentWindowBackground" Color="#FF2D2D30"/>
+    <SolidColorBrush x:Key="PlotWindowBackground" Color="#FF5A5A5E"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowText" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowDisabledText" Color="#FF656565"/>
 
@@ -88,6 +89,11 @@
     <SolidColorBrush x:Key="ComboBox.Disabled.Button.Border" Color="#434346"/>
     <SolidColorBrush x:Key="ComboBox.DropDown.Border" Color="#333337"/>
     <SolidColorBrush x:Key="ComboBox.DropDown.Background" Color="#1B1B1C"/>
+    <SolidColorBrush x:Key="ComboBox.DropDown.Foreground" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Background" Color="#3E3E40"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Foreground" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Background" Color="#0E639C"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Foreground" Color="#FFFFFF"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- DATAGRID - Enhanced for Dark Theme                                           -->

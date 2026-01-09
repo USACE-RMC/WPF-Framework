@@ -28,28 +28,16 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using GenericControls;
 using Numerics.Data.Statistics;
 using Numerics.Distributions;
 using Numerics.Sampling;
 using OxyPlot.Wpf;
-using OxyPlotControls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NumericControls.Distributions.Univariate
 {
@@ -124,6 +112,9 @@ namespace NumericControls.Distributions.Univariate
             Plot.ActualController.UnbindAll();
         }
 
+        /// <summary>
+        /// Gets or sets the currently selected univariate distribution.
+        /// </summary>
         public UnivariateDistributionBase SelectedDistribution
         {
             get => _selectedDistribution;
@@ -223,6 +214,9 @@ namespace NumericControls.Distributions.Univariate
 
         private bool _showTickLines = true;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether tick lines are shown on the plot axes.
+        /// </summary>
         public bool ShowTickLines
         {
             get => _showTickLines;
@@ -270,7 +264,14 @@ namespace NumericControls.Distributions.Univariate
             set => SetValue(ExpandPlotProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ExpanderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(nameof(ExpanderStyle), typeof(Style), typeof(Selector), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the style applied to the expander control.
+        /// </summary>
         public Style ExpanderStyle
         {
             get { return (Style)GetValue(ExpanderStyleProperty); }
@@ -309,6 +310,13 @@ namespace NumericControls.Distributions.Univariate
         /// Dependency property for showing the distribution title.
         /// </summary>
         public static DependencyProperty SampleDataProperty = DependencyProperty.Register(nameof(SampleData), typeof(double[]), typeof(Selector), new FrameworkPropertyMetadata(null, SampleDataProperty_Callback));
+
+        /// <summary>
+        /// Property changed callback for the SampleData dependency property.
+        /// Updates the histogram and statistics when sample data changes.
+        /// </summary>
+        /// <param name="d">The dependency object on which the property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void SampleDataProperty_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) { return; }
@@ -351,6 +359,10 @@ namespace NumericControls.Distributions.Univariate
             }
         }
 
+        /// <summary>
+        /// Updates the histogram display with sample data.
+        /// Creates bins, normalizes frequencies, and updates statistics columns.
+        /// </summary>
         private void UpdateHistogram()
         {
             //Update Histogram and show fit options (filtered by those that implement IEstimate()
@@ -388,7 +400,6 @@ namespace NumericControls.Distributions.Univariate
                 DataStatsColumn.Visibility = Visibility.Visible;
                 var summaryPercentiles = Numerics.Data.Statistics.Statistics.SevenNumberSummary(SampleData);
                 var stats = Numerics.Data.Statistics.Statistics.ProductMoments(SampleData);
-                //var mode = Numerics.Mathematics.RootFinding.Brent.Solve((x) => { return stats[0] - (summaryPercentiles[0] + summaryPercentiles[6] + x) / 3; }, summaryPercentiles[0], summaryPercentiles[6]);
                 var mode = histogram.Mode;
 
                 SummaryStatisticsList[0].DataStat = summaryPercentiles[0].ToString("N4");
@@ -403,10 +414,6 @@ namespace NumericControls.Distributions.Univariate
                 SummaryStatisticsList[9].DataStat = summaryPercentiles[3].ToString("N4");
                 SummaryStatisticsList[10].DataStat = summaryPercentiles[4].ToString("N4");
                 SummaryStatisticsList[11].DataStat = summaryPercentiles[5].ToString("N4");
-
-                SummaryStatisticsList.Add(new SummaryStatistic("RMSE", "", " - "));
-                SummaryStatisticsList.Add(new SummaryStatistic("Chi-Squared", "", " - "));
-                SummaryStatisticsList.Add(new SummaryStatistic("K-S", "", " - "));
 
                 SummaryTable.Items.Refresh();
 
@@ -435,29 +442,16 @@ namespace NumericControls.Distributions.Univariate
                 UpdateDistributionStats();
                 return;
             }
-            // 
+            //
             UnivariateDistributionBase currentDistribution = (UnivariateDistributionBase)DistributionCombobox.SelectedItem;
-            if (currentDistribution.Type == UnivariateDistributionType.Empirical)
-            {
-                // Dim uniEmp = DirectCast(currentDistribution, UnivariateEmpiricalCDF)
-                // Dim minParam As New Parameter("Min", "Minimum", uniEmp.Min)
-                // AddHandler minParam.PropertyChanged, Sub(s As Object, pce As PropertyChangedEventArgs) If pce.PropertyName = "Value" Then SetDistributionParameters()
-                // ParameterList.Add(minParam)
-                // Dim maxParam As New Parameter("Max", "Maximum", uniEmp.Max)
-                // AddHandler maxParam.PropertyChanged, Sub(s As Object, pce As PropertyChangedEventArgs) If pce.PropertyName = "Value" Then SetDistributionParameters()
-                // ParameterList.Add(maxParam)
-                // UnivariateGrid.Visibility = Visibility.Visible
-                // UnivariateDataControl.Distribution = uniEmp
-            }
-            else if (currentDistribution.Type == UnivariateDistributionType.KernelDensity) { }
-            else
+            if (currentDistribution.Type != UnivariateDistributionType.Empirical && currentDistribution.Type != UnivariateDistributionType.KernelDensity)
             {
                 string[,] paramString = currentDistribution.ParametersToString;
                 string[] paramNames = currentDistribution.GetParameterPropertyNames;
                 // Update parameter grid
                 for (int i = 0; i < paramString.GetLength(0); i++)
                 {
-                    if (double.TryParse(paramString[i, 1], out double paramValue) == false) { paramValue = double.NaN; }
+                    if (NumberFormatHelper.TryParseDouble(paramString[i, 1], out double paramValue) == false) { paramValue = double.NaN; }
                     Parameter param = new Parameter(paramNames[i], paramString[i, 0], paramValue);
                     param.PropertyChanged += ParameterPropertyChanged;
                     ParameterList.Add(param);
@@ -478,6 +472,10 @@ namespace NumericControls.Distributions.Univariate
             }
         }
 
+        /// <summary>
+        /// Determines whether the currently selected distribution supports parameter estimation.
+        /// </summary>
+        /// <returns><c>true</c> if the distribution implements parameter estimation; otherwise, <c>false</c>.</returns>
         private bool DistributionCanEstimate()
         {
             if (SelectedDistribution != null)
@@ -492,6 +490,12 @@ namespace NumericControls.Distributions.Univariate
             return false;
         }
 
+        /// <summary>
+        /// Handles property changes on parameter objects.
+        /// Triggers distribution parameter updates when a parameter value changes.
+        /// </summary>
+        /// <param name="sender">The parameter that raised the event.</param>
+        /// <param name="e">Event arguments containing the property name.</param>
         private void ParameterPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Parameter.Value)) { SetDistributionParameters(true); }
@@ -514,8 +518,6 @@ namespace NumericControls.Distributions.Univariate
                 if (currentDistribution.Type == UnivariateDistributionType.Empirical || currentDistribution.Type == UnivariateDistributionType.KernelDensity)
                 {
                     throw new NotImplementedException();
-                    // Dim univDist = DirectCast(currentDistribution, UnivariateEmpiricalCDF)
-                    // univDist.SetParameters(univDist.GetXValues, univDist.GetPValues, ParameterList(0).Value, ParameterList(1).Value)
                 }
                 else
                 {
@@ -547,8 +549,12 @@ namespace NumericControls.Distributions.Univariate
         }
         private bool _distributionChanging = false;
 
+        /// <inheritdoc/>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Clears validation errors from all parameters in the parameter list.
+        /// </summary>
         private void ClearValidation()
         {
             foreach (Parameter p in ParameterList)
@@ -558,6 +564,11 @@ namespace NumericControls.Distributions.Univariate
             }
         }
 
+        /// <summary>
+        /// Marks a specific parameter as invalid and sets its error message.
+        /// </summary>
+        /// <param name="parameterName">The name of the parameter to mark as invalid.</param>
+        /// <param name="errorMessage">The validation error message to display.</param>
         private void SetInvalidParameter(string parameterName, string errorMessage)
         {
             Parameter param = ParameterList.FirstOrDefault(o => string.Equals(o.Name, parameterName, StringComparison.OrdinalIgnoreCase));
@@ -566,12 +577,16 @@ namespace NumericControls.Distributions.Univariate
             param.ErrorMessage = errorMessage;
         }
 
-        public void SetDistributionOptions(IEnumerable<UnivariateDistributionType> univariates)
+        /// <summary>
+        /// Sets the available distribution options for the selector.
+        /// </summary>
+        /// <param name="univariateTypes">The collection of distribution types to display in the selector.</param>
+        public void SetDistributionOptions(IEnumerable<UnivariateDistributionType> univariateTypes)
         {
             _settingDistributionOptions = true;
             DistributionCombobox.ItemsSource = null;
             _distributions.Clear();
-            foreach (var d in univariates)
+            foreach (var d in univariateTypes)
             {
                 if (_selectedDistribution != null && d == _selectedDistribution.Type)
                 {
@@ -607,11 +622,6 @@ namespace NumericControls.Distributions.Univariate
                 Plot.Visibility = Visibility.Visible;
                 double[,] PDFgraph;
 
-                // If SelectedDistribution.Type = ContinuousDistributionBase.DistributionType.Deterministic Then
-                // You need to handle the deterministic plot for PDF. I don't think the range will work for it. 
-                // You will want to do a column chart series for it. 
-                // The CDF graph work fine though.
-                // I created an override function for the deterministic CreatePDFGraph function.
                 if (SelectedDistribution.Type == UnivariateDistributionType.Empirical)
                 {
                     List<StratificationBin> range = Stratify.XValues(new StratificationOptions(SelectedDistribution.InverseCDF(0.001d), SelectedDistribution.InverseCDF(0.999d), 500));
@@ -718,6 +728,12 @@ namespace NumericControls.Distributions.Univariate
             }
         }
 
+        /// <summary>
+        /// Handles the estimate parameters button click event.
+        /// Estimates distribution parameters from sample data using appropriate estimation methods.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void EstimateParametersButton_Click(object sender, RoutedEventArgs e)
         {
             if (DistributionCanEstimate() == true)

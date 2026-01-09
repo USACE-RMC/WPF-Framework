@@ -28,16 +28,8 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using Numerics.Data;
-using Numerics.Distributions;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace NumericControls.Distributions.Multivariate
 {
@@ -128,7 +120,7 @@ namespace NumericControls.Distributions.Multivariate
         /// <summary>
         /// Raises the property changed event for the specified property.
         /// </summary>
-        /// <param name="propertyname">The name of the property that changed.</param>
+        /// <param name="propertyName">The name of the property that changed.</param>
         /// <remarks>
         /// <para>
         /// <b> Authors: </b>
@@ -137,9 +129,9 @@ namespace NumericControls.Distributions.Multivariate
         /// </list>
         /// </para>
         /// </remarks>
-        public void RaisePropertyChange(string propertyname)
+        public void RaisePropertyChange(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

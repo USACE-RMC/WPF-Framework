@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,13 +65,13 @@ namespace GenericControls
         #region Members
 
         /// <summary>
-    /// Dependency property for the number. 
-    /// </summary>
+        /// Dependency property for the number.
+        /// </summary>
         public static DependencyProperty NumberProperty = DependencyProperty.Register(nameof(Number), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(0d, NumberChangedCallback));
 
         /// <summary>
-    /// Gets and sets the number. 
-    /// </summary>
+        /// Gets and sets the number.
+        /// </summary>
         public double Number
         {
             get
@@ -85,8 +85,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Property Changed Callback for the Number property.
-    /// </summary>
+        /// Property Changed Callback for the Number property.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event arguments.</param>
         private static void NumberChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -155,8 +157,8 @@ namespace GenericControls
         public static readonly DependencyProperty NumberIsDefaultProperty = NumberIsDefaultPropertyKey.DependencyProperty;
 
         /// <summary>
-    /// Determines if the number is the default. 
-    /// </summary>
+        /// Determines if the number is the default.
+        /// </summary>
         public bool NumberIsDefault
         {
             get
@@ -170,10 +172,15 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the default number. 
-    /// </summary>
+        /// Dependency property for the default number.
+        /// </summary>
         public static DependencyProperty DefaultNumberProperty = DependencyProperty.Register(nameof(DefaultNumber), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(0d, DefaultNumberChangedCallback));
 
+        /// <summary>
+        /// Property Changed Callback for the DefaultNumber property.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event arguments.</param>
         private static void DefaultNumberChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -203,8 +210,8 @@ namespace GenericControls
 
 
         /// <summary>
-    /// Gets and sets the default number.
-    /// </summary>
+        /// Gets and sets the default number.
+        /// </summary>
         public double DefaultNumber
         {
             get
@@ -218,18 +225,18 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the can have negative property. 
-    /// </summary>
+        /// Dependency property for the can have negative property.
+        /// </summary>
         public static DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericAutoPropertyControl), new PropertyMetadata(true));
 
         /// <summary>
-    /// Dependency property for the max value property. 
-    /// </summary>
+        /// Dependency property for the max value property.
+        /// </summary>
         public static DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericAutoPropertyControl), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
-    /// Gets and sets the maximum value allowed. 
-    /// </summary>
+        /// Gets and sets the maximum value allowed.
+        /// </summary>
         public double MaxValue
         {
             get
@@ -243,13 +250,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the min value property. 
-    /// </summary>
+        /// Dependency property for the min value property.
+        /// </summary>
         public static DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericAutoPropertyControl), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
-    /// Gets and sets the minimum value allowed. 
-    /// </summary>
+        /// Gets and sets the minimum value allowed.
+        /// </summary>
         public double MinValue
         {
             get
@@ -265,8 +272,8 @@ namespace GenericControls
         private bool _valueIsValid = true;
 
         /// <summary>
-    /// Determines if the value is valid.
-    /// </summary>
+        /// Determines if the value is valid.
+        /// </summary>
         public bool ValueIsValid
         {
             get
@@ -283,14 +290,23 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Occurs before the number value changes, allowing the change to be cancelled.
+        /// </summary>
         public event PreviewNumberChangedEventHandler PreviewNumberChanged;
 
+        /// <summary>
+        /// Represents the method that handles the <see cref="PreviewNumberChanged"/> event.
+        /// </summary>
+        /// <param name="oldValue">The previous numeric value.</param>
+        /// <param name="newValue">The new numeric value.</param>
+        /// <param name="cancel">A reference to a boolean that can be set to true to cancel the change.</param>
         public delegate void PreviewNumberChangedEventHandler(object oldValue, object newValue, ref bool cancel);
         private bool _cancelChange = false;
 
         /// <summary>
-    /// Determines if the number can be negative. 
-    /// </summary>
+        /// Determines if the number can be negative.
+        /// </summary>
         public bool CanHaveNegative
         {
             get
@@ -304,13 +320,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the allow text entry property.
-    /// </summary>
+        /// Dependency property for the allow text entry property.
+        /// </summary>
         public static DependencyProperty AllowTextEntryProperty = DependencyProperty.Register(nameof(AllowTextEntry), typeof(bool), typeof(NumericAutoPropertyControl), new PropertyMetadata(true));
 
         /// <summary>
-    /// Determines if text editing is allowed. 
-    /// </summary>
+        /// Determines if text editing is allowed.
+        /// </summary>
         public bool AllowTextEntry
         {
             get
@@ -324,13 +340,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the title property. 
-    /// </summary>
+        /// Dependency property for the title property.
+        /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericAutoPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
-    /// Gets and sets the title of the property. 
-    /// </summary>
+        /// Gets and sets the title of the property.
+        /// </summary>
         public string Title
         {
             get
@@ -346,13 +362,13 @@ namespace GenericControls
         #region Control Width
 
         /// <summary>
-    /// Dependency property for the max property width. 
-    /// </summary>
+        /// Dependency property for the max property width.
+        /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the maximum property width. 
-    /// </summary>
+        /// Gets and sets the maximum property width.
+        /// </summary>
         public double MaxPropertyWidth
         {
             get
@@ -366,13 +382,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the min property width. 
-    /// </summary>
+        /// Dependency property for the min property width.
+        /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the minimum property width. 
-    /// </summary>
+        /// Gets and sets the minimum property width.
+        /// </summary>
         public double MinPropertyWidth
         {
             get
@@ -386,13 +402,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the property width. 
-    /// </summary>
+        /// Dependency property for the property width.
+        /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the property width. 
-    /// </summary>
+        /// Gets and sets the property width.
+        /// </summary>
         public GridLength PropertyWidth
         {
             get
@@ -406,13 +422,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the show leader line property. 
-    /// </summary>
+        /// Dependency property for the show leader line property.
+        /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(true));
 
         /// <summary>
-    /// Gets and sets whether to show the leader line. 
-    /// </summary>
+        /// Gets and sets whether to show the leader line.
+        /// </summary>
         public bool ShowLeaderLine
         {
             get
@@ -428,8 +444,8 @@ namespace GenericControls
         private double _actualWidth = 0d;
 
         /// <summary>
-    /// Gets and sets the actual property width. 
-    /// </summary>
+        /// Gets and sets the actual property width.
+        /// </summary>
         public double ActualPropertyWidth
         {
             get
@@ -449,8 +465,8 @@ namespace GenericControls
         #endregion
 
         /// <summary>
-    /// The property changed event. 
-    /// </summary>
+        /// The property changed event.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
@@ -458,17 +474,19 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// Raise the property changed event. 
-    /// </summary>
-    /// <param name="propertyName">The name of the property to change. </param>
+        /// Raise the property changed event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to change.</param>
         private void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
-    /// Update the actual property width with the control size changes. 
-    /// </summary>
+        /// Update the actual property width with the control size changes.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;
@@ -478,6 +496,8 @@ namespace GenericControls
         /// <summary>
         /// Text box preview text input.
         /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (AllowTextEntry == false)
@@ -495,8 +515,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Text box preview key down. 
-    /// </summary>
+        /// Text box preview key down.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -504,8 +526,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Text box preview key up. 
-    /// </summary>
+        /// Text box preview key up.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -522,6 +546,8 @@ namespace GenericControls
         /// <summary>
         /// When the text box loses focus, update the bound property.
         /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             TextBox txtBox = (TextBox)sender;
@@ -538,8 +564,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// When the reset button is clicked, set the number to the default number. 
-    /// </summary>
+        /// When the reset button is clicked, set the number to the default number.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Number = DefaultNumber;

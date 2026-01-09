@@ -149,7 +149,7 @@
                                                   Minimum="0" Maximum="1000000"
                                                   Value="50000" Increment="1000"
                                                   DecimalPlaces="0" ThousandsSeparator="True"
-                                                  HorizontalAlignment="Left" Width="180" Height="23"/>
+                                                  HorizontalAlignment="Left" Width="180" Height="22"/>
 
                             <!-- NumericSlider -->
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="NumericSlider:" 
@@ -295,7 +295,7 @@
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="ColorPickerPopup:"
                                                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"
                                                Foreground="{DynamicResource EnvironmentWindowText}"/>
-                                    <cntrls:ColorPickerPopup Grid.Row="0" Grid.Column="1" 
+                                    <cntrls:ColorPickerPopup Grid.Row="0" Grid.Column="1"
                                                               Width="60" Height="28" HorizontalAlignment="Left"
                                                               Color="{Binding ColorProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                               Margin="0,5"/>
@@ -386,7 +386,7 @@
                                                                Title="Font Weight" ShowLeaderLine="True"
                                                                SelectedFontWeight="{Binding FontWeightProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <cntrls:ColorPropertyControl DockPanel.Dock="Top" Margin="0,2" Height="23"
+                            <cntrls:ColorPropertyControl DockPanel.Dock="Top" Margin="0,2"
                                                          Title="Color" ShowLeaderLine="True"
                                                          SelectedColor="{Binding ColorProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 

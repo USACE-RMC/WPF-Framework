@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -127,8 +128,8 @@ namespace GenericControls
         /// <summary>
         /// Handles the drag movement of the resize thumb and adjusts the control's height accordingly.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The drag delta event arguments containing the vertical change.</param>
         private void ResizeThumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             double newHeight = this.ActualHeight + e.VerticalChange;
@@ -142,8 +143,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the data binding source when Enter is pressed in the text box.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event (the text box).</param>
+        /// <param name="e">The key event arguments.</param>
         private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)

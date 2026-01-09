@@ -1,3 +1,32 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -394,10 +423,41 @@ namespace OxyPlotControls
 
         /// <summary>
         /// When Add button is clicked, show context menu.
+        /// Creates the context menu dynamically to ensure it always uses the current theme.
         /// </summary>
         private void AddAnnotationToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            AddAnnotationToggleButton.ContextMenu.IsOpen = true;
+            // Create context menu dynamically to ensure it picks up current theme
+            var annotationMenu = new ContextMenu();
+
+            // Helper to create menu item with icon
+            MenuItem CreateAnnotationMenuItem(string header, string iconKey, RoutedEventHandler clickHandler)
+            {
+                var menuItem = new MenuItem { Header = header };
+                var icon = TryFindResource(iconKey);
+                if (icon != null)
+                {
+                    menuItem.Icon = new ContentControl { Content = icon };
+                }
+                menuItem.Click += clickHandler;
+                return menuItem;
+            }
+
+            // Add annotation menu items
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Arrow Annotation", "ArrowAnnotationIcon", AddArrowAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Text Annotation", "TextAnnotationIcon", AddTextAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Vertical Line Annotation", "VerticalLineAnnotationIcon", AddVerticalLineAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Horizontal Line Annotation", "HorizontalLineAnnotationIcon", AddHorizontalLineAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Rectangle Annotation", "RectangleAnnotationIcon", AddRectangleAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Ellipse Annotation", "EllipseAnnotationIcon", AddEllipseAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Point Annotation", "PointAnnotationIcon", AddPointAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Polygon Annotation", "PolygonAnnotationIcon", AddPolygonAnnotationItem_Click));
+            annotationMenu.Items.Add(CreateAnnotationMenuItem("Polyline Annotation", "PolylineAnnotationIcon", AddPolylineAnnotationItem_Click));
+
+            // Position and show the menu
+            annotationMenu.PlacementTarget = AddAnnotationToggleButton;
+            annotationMenu.Placement = PlacementMode.Bottom;
+            annotationMenu.IsOpen = true;
         }
 
         /// <summary>
@@ -2654,27 +2714,57 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Converts a screen point to a data point using the plot's default axes.
+        /// </summary>
+        /// <param name="pt">The screen point to convert.</param>
+        /// <returns>The corresponding data point.</returns>
         private DataPoint ConvertScreenPointToDataPoint(ScreenPoint pt)
         {
             return Plot.ActualModel.DefaultXAxis.InverseTransform(pt.X, pt.Y, Plot.ActualModel.DefaultYAxis);
         }
 
+        /// <summary>
+        /// Converts a data point to a screen point using the plot's default axes.
+        /// </summary>
+        /// <param name="pt">The data point to convert.</param>
+        /// <returns>The corresponding screen point.</returns>
         private ScreenPoint ConvertDataPointToScreenPoint(DataPoint pt)
         {
             return Plot.ActualModel.DefaultXAxis.Transform(pt.X, pt.Y, Plot.ActualModel.DefaultYAxis);
         }
 
+        /// <summary>
+        /// Converts a data point to a WPF Point using the plot's default axes.
+        /// </summary>
+        /// <param name="pt">The data point to convert.</param>
+        /// <returns>The corresponding WPF Point.</returns>
         private Point ConvertDataPointToPoint(DataPoint pt)
         {
             var sp = Plot.ActualModel.DefaultXAxis.Transform(pt.X, pt.Y, Plot.ActualModel.DefaultYAxis);
             return new Point(sp.X, sp.Y);
         }
 
+        /// <summary>
+        /// Converts a point from the leader line polyline to a data point.
+        /// </summary>
+        /// <param name="pointIndex">The index of the point in the leader line points collection.</param>
+        /// <returns>The corresponding data point.</returns>
         private DataPoint ConvertLeaderLinePoint(int pointIndex)
         {
             return Plot.ActualModel.DefaultXAxis.InverseTransform(_leaderLine.Points[pointIndex].X, _leaderLine.Points[pointIndex].Y, Plot.ActualModel.DefaultYAxis);
         }
 
+        /// <summary>
+        /// Measures the size of a text string with the specified font properties.
+        /// </summary>
+        /// <param name="candidate">The text string to measure.</param>
+        /// <param name="family">The font family to use.</param>
+        /// <param name="style">The font style to use.</param>
+        /// <param name="weight">The font weight to use.</param>
+        /// <param name="stretch">The font stretch to use.</param>
+        /// <param name="size">The font size to use.</param>
+        /// <returns>The size of the rendered text.</returns>
         private Size MeasureString(string candidate, FontFamily family, FontStyle style, FontWeight weight, FontStretch stretch, double size)
         {
             if (candidate == null)
@@ -3631,6 +3721,10 @@ namespace OxyPlotControls
             Plot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Swaps the X and Y coordinates for a DataPointSeries, including data field bindings if applicable.
+        /// </summary>
+        /// <param name="dps">The DataPointSeries to swap.</param>
         private void SwapDataPointSeries(Wpf.DataPointSeries dps)
         {
             if (dps == null) return;
@@ -3662,6 +3756,10 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Swaps the X and Y coordinates for all data points in an OxyPlot DataPointSeries.
+        /// </summary>
+        /// <param name="dps">The OxyPlot DataPointSeries to swap.</param>
         private void SwapDataPoints(OxyPlot.Series.DataPointSeries dps)
         {
             if (dps?.Points == null || dps.Points.Count == 0) return;
@@ -3673,6 +3771,10 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Swaps the X and Y coordinates for a ScatterSeries, including data field bindings if applicable.
+        /// </summary>
+        /// <param name="sps">The ScatterSeries to swap.</param>
         private void SwapScatterSeries(Wpf.ScatterSeries<OxyPlot.Series.ScatterPoint> sps)
         {
             if (sps == null) return;
@@ -3688,6 +3790,10 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Swaps the X and Y coordinates for all scatter points in an OxyPlot ScatterSeries.
+        /// </summary>
+        /// <param name="dps">The OxyPlot ScatterSeries to swap.</param>
         private void SwapScatterPoints(OxyPlot.Series.ScatterSeries dps)
         {
             if (dps?.Points == null || dps.Points.Count == 0) return;
@@ -3699,6 +3805,10 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Swaps the X and Y coordinates for a ScatterErrorSeries, including data field bindings and error values.
+        /// </summary>
+        /// <param name="sps">The ScatterErrorSeries to swap.</param>
         private void SwapScatterErrorSeries(Wpf.ScatterErrorSeries sps)
         {
             if (sps == null) return;
@@ -3722,6 +3832,10 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Swaps the X and Y coordinates for all scatter error points in an OxyPlot ScatterErrorSeries, including error values.
+        /// </summary>
+        /// <param name="dps">The OxyPlot ScatterErrorSeries to swap.</param>
         private void SwapScatterErrorPoints(OxyPlot.Series.ScatterErrorSeries dps)
         {
             if (dps?.Points == null || dps.Points.Count == 0) return;

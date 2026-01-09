@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -117,7 +117,7 @@ namespace GenericControls
     }
 
     /// <summary>
-    /// A validation rule that checks whether a numeric input falls within a specified range defined by a <see cref="RangeWrapper'"/> 
+    /// A validation rule that checks whether a numeric input falls within a specified range defined by a <see cref="RangeWrapper"/>.
     /// </summary>
     /// <remarks>
     /// <para>

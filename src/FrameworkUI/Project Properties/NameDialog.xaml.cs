@@ -28,7 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -39,6 +38,9 @@ namespace FrameworkUI
     /// </summary>
     public partial class NameDialog : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the NameDialog class.
+        /// </summary>
         public NameDialog()
         {
             InitializeComponent();
@@ -46,6 +48,10 @@ namespace FrameworkUI
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
         }
 
+        /// <summary>
+        /// Initializes a new instance of the NameDialog class with a character limit.
+        /// </summary>
+        /// <param name="charLimit">The maximum number of characters allowed.</param>
         public NameDialog(int charLimit)
         {
             InitializeComponent();
@@ -54,6 +60,14 @@ namespace FrameworkUI
             NameTBox.CharacterLimit = charLimit;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the NameDialog class with validation parameters.
+        /// </summary>
+        /// <param name="charLimit">The maximum number of characters allowed.</param>
+        /// <param name="initialText">The initial text to display.</param>
+        /// <param name="canBeBlank">Whether the text can be blank.</param>
+        /// <param name="existingNames">Array of existing names that are not allowed.</param>
+        /// <param name="invalidCharacters">Optional array of characters that are not allowed.</param>
         public NameDialog(int charLimit, string initialText, bool canBeBlank, string[] existingNames, char[] invalidCharacters = null)
         {
             InitializeComponent();
@@ -66,7 +80,14 @@ namespace FrameworkUI
             Text = initialText;
         }
 
+        /// <summary>
+        /// Dependency property for the Text property.
+        /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameDialog), new FrameworkPropertyMetadata(""));
+
+        /// <summary>
+        /// Gets or sets the text value.
+        /// </summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
@@ -74,7 +95,14 @@ namespace FrameworkUI
             set{ SetValue(TextProperty, value);}
         }
 
+        /// <summary>
+        /// Dependency property for the InnerContent property.
+        /// </summary>
         public static DependencyProperty InnerContentProperty = DependencyProperty.Register(nameof(InnerContent), typeof(object), typeof(NameDialog), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the inner content of the dialog.
+        /// </summary>
         public object InnerContent
         {
             get { return GetValue(InnerContentProperty); }
@@ -82,11 +110,21 @@ namespace FrameworkUI
             set { SetValue(InnerContentProperty, value);}
         }
 
+        /// <summary>
+        /// Handles the window close command.
+        /// </summary>
+        /// <param name="target">The command target.</param>
+        /// <param name="e">The executed routed event arguments.</param>
         private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);
         }
 
+        /// <summary>
+        /// Handles the OK button click event.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             if (NameTBox.IsValid == false)
@@ -94,17 +132,27 @@ namespace FrameworkUI
                 MessageBox.Show("Invalid name for the following reasons:" + Environment.NewLine + "\t" + "- " + string.Join("\t" + "- ", this.NameTBox.GetErrorMessages()), "Invalid Name", MessageBoxButton.OKCancel, MessageBoxImage.Error);
                 return;
             }
-            // 
+            //
             DialogResult = true;
             Close();
         }
 
+        /// <summary>
+        /// Handles the Cancel button click event.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
         }
 
+        /// <summary>
+        /// Handles the content rendered event to validate and focus the name text box.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void NameDialog_ContentRendered(object sender, EventArgs e)
         {
             NameTBox.ValidateText();

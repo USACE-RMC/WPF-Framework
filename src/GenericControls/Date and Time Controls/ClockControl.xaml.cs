@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Linq;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -57,15 +56,15 @@ namespace GenericControls
     public partial class ClockControl:UserControl
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClockControl"/> class and configures default layout and clock ticks.
+        /// Identifies the <see cref="Time"/> dependency property.
         /// </summary>
         public static DependencyProperty TimeProperty = DependencyProperty.Register(nameof(Time), typeof(DateTime), typeof(ClockControl), new UIPropertyMetadata(new DateTime(1980, 7, 30, 12, 0, 0), TimePropertyCallback));
 
         /// <summary>
         /// Event handler for time property dependencies.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event data describing the property change.</param>
         private static void TimePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -83,7 +82,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the time displayed and edited by the control.
+        /// Gets or sets the time displayed and edited by the control.
         /// </summary>
         public DateTime Time
         {
@@ -98,9 +97,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets or sets a value indicating whether the clock uses 24-hour format.
+        /// Identifies the <see cref="Is24Hour"/> dependency property.
         /// </summary>
         public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(ClockControl), new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the clock uses 24-hour format.
+        /// </summary>
         public bool Is24Hour
         {
             get
@@ -114,9 +117,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets whether the control is currently in hour-selection mode.
+        /// Identifies the <see cref="IsHours"/> dependency property.
         /// </summary>
         public static DependencyProperty IsHoursProperty = DependencyProperty.Register(nameof(IsHours), typeof(bool), typeof(ClockControl), new UIPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets whether the control is currently in hour-selection mode.
+        /// </summary>
         public bool IsHours
         {
             get
@@ -132,9 +139,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets whether the control is currently in minute-selection mode.
+        /// Identifies the <see cref="IsMinutes"/> dependency property.
         /// </summary>
         public static DependencyProperty IsMinutesProperty = DependencyProperty.Register(nameof(IsMinutes), typeof(bool), typeof(ClockControl), new UIPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets whether the control is currently in minute-selection mode.
+        /// </summary>
         public bool IsMinutes
         {
             get
@@ -150,9 +161,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets whether the control is currently in second-selection mode.
+        /// Identifies the <see cref="IsSeconds"/> dependency property.
         /// </summary>
         public static DependencyProperty IsSecondsProperty = DependencyProperty.Register(nameof(IsSeconds), typeof(bool), typeof(ClockControl), new UIPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets whether the control is currently in second-selection mode.
+        /// </summary>
         public bool IsSeconds
         {
             get
@@ -168,9 +183,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the minutes property.
+        /// Identifies the <see cref="HasMinutes"/> dependency property.
         /// </summary>
         public static DependencyProperty HasMinutesProperty = DependencyProperty.Register(nameof(HasMinutes), typeof(bool), typeof(ClockControl), new UIPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether minutes selection is available.
+        /// </summary>
         public bool HasMinutes
         {
             get
@@ -184,9 +203,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the seconds property.
+        /// Identifies the <see cref="HasSeconds"/> dependency property.
         /// </summary>
         public static DependencyProperty HasSecondsProperty = DependencyProperty.Register(nameof(HasSeconds), typeof(bool), typeof(ClockControl), new UIPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether seconds selection is available.
+        /// </summary>
         public bool HasSeconds
         {
             get
@@ -200,9 +223,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the brush used to render the selected time color
+        /// Identifies the <see cref="SelectedTimeColor"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedTimeColorProperty = DependencyProperty.Register(nameof(SelectedTimeColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.Black));
+        /// <summary>
+        /// Gets or sets the brush used to render the selected time color.
+        /// </summary>
         public SolidColorBrush SelectedTimeColor
         {
             get
@@ -216,9 +242,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the brush used for the time color
+        /// Identifies the <see cref="TimeColor"/> dependency property.
         /// </summary>
         public static DependencyProperty TimeColorProperty = DependencyProperty.Register(nameof(TimeColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.DarkGray));
+        /// <summary>
+        /// Gets or sets the brush used for the time color.
+        /// </summary>
         public SolidColorBrush TimeColor
         {
             get
@@ -232,9 +261,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the brush used to render the selected font size for the time.
+        /// Identifies the <see cref="SelectedTimeFontSize"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedTimeFontSizeProperty = DependencyProperty.Register(nameof(SelectedTimeFontSize), typeof(double), typeof(ClockControl), new UIPropertyMetadata(24d));
+        /// <summary>
+        /// Gets or sets the font size for the selected time display.
+        /// </summary>
         public double SelectedTimeFontSize
         {
             get
@@ -248,9 +280,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the brush used for the time font size.
+        /// Identifies the <see cref="TimeFontSize"/> dependency property.
         /// </summary>
         public static DependencyProperty TimeFontSizeProperty = DependencyProperty.Register(nameof(TimeFontSize), typeof(double), typeof(ClockControl), new UIPropertyMetadata(24d));
+        /// <summary>
+        /// Gets or sets the font size for the time display.
+        /// </summary>
         public double TimeFontSize
         {
             get
@@ -264,9 +299,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Gets/sets the brush used to render selected tick marks.
+        /// Identifies the <see cref="SelectedColor"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 24, 24, 25))));
+        /// <summary>
+        /// Gets or sets the brush used to render selected tick marks.
+        /// </summary>
         public SolidColorBrush SelectedColor
         {
             get
@@ -280,9 +318,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, gets/sets the brush used for highlighting hover states.
+        /// Identifies the <see cref="HighlightColor"/> dependency property.
         /// </summary>
         public static DependencyProperty HighlightColorProperty = DependencyProperty.Register(nameof(HighlightColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.LightGray));
+        /// <summary>
+        /// Gets or sets the brush used for highlighting hover states.
+        /// </summary>
         public SolidColorBrush HighlightColor
         {
             get
@@ -296,9 +337,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, get/set the brush used for coloring the face of the clock.
+        /// Identifies the <see cref="FaceColor"/> dependency property.
         /// </summary>
         public static DependencyProperty FaceColorProperty = DependencyProperty.Register(nameof(FaceColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 240, 240, 245))));
+        /// <summary>
+        /// Gets or sets the brush used for coloring the face of the clock.
+        /// </summary>
         public SolidColorBrush FaceColor
         {
             get
@@ -312,9 +356,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, Get/set the brush used for coloring the hands of the clock.
+        /// Identifies the <see cref="HandColor"/> dependency property.
         /// </summary>
         public static DependencyProperty HandColorProperty = DependencyProperty.Register(nameof(HandColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.DarkGray));
+        /// <summary>
+        /// Gets or sets the brush used for coloring the hands of the clock.
+        /// </summary>
         public SolidColorBrush HandColor
         {
             get
@@ -328,9 +375,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, get/set the brush used for the previewed hand color.
+        /// Identifies the <see cref="PreviewHandColor"/> dependency property.
         /// </summary>
         public static DependencyProperty PreviewHandColorProperty = DependencyProperty.Register(nameof(PreviewHandColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.LightGray));
+        /// <summary>
+        /// Gets or sets the brush used for the preview hand color.
+        /// </summary>
         public SolidColorBrush PreviewHandColor
         {
             get
@@ -344,9 +394,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, get/set the brush used for the font color.
+        /// Identifies the <see cref="FontColor"/> dependency property.
         /// </summary>
         public static DependencyProperty FontColorProperty = DependencyProperty.Register(nameof(FontColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.Black));
+        /// <summary>
+        /// Gets or sets the brush used for the font color.
+        /// </summary>
         public SolidColorBrush FontColor
         {
             get
@@ -360,9 +413,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, get/set the brush used to render selected font color.
+        /// Identifies the <see cref="SelectedFontColor"/> dependency property.
         /// </summary>
         public static DependencyProperty SelectedFontColorProperty = DependencyProperty.Register(nameof(SelectedFontColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(Brushes.White));
+        /// <summary>
+        /// Gets or sets the brush used to render the selected font color.
+        /// </summary>
         public SolidColorBrush SelectedFontColor
         {
             get
@@ -383,7 +439,7 @@ namespace GenericControls
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClockControl"/> class.
-        /// Sets up resources, intializes hour/minute/second ticks, and registers event handlers.
+        /// Sets up resources, initializes hour/minute/second ticks, and registers event handlers.
         /// </summary>
         public ClockControl()
         {
@@ -483,7 +539,7 @@ namespace GenericControls
 
         /// <summary>
         /// A circular toggle used with the <see cref="ClockControl"/> for selecting specific time units (hours, minutes, seconds).
-        /// Displayes a number and highlights or selects on interaction.
+        /// Displays a number and highlights or selects on interaction.
         /// </summary>
         /// <param name="t">The numeric time value (e.g. 5, 10).</param>
         /// <param name="angleDegree">Angle on the clock face to position the toggle.</param>
@@ -507,8 +563,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Handles clicks on the hour section.
-        /// Sets mode to hour selection
+        /// Handles clicks on the hour section and sets mode to hour selection.
         /// </summary>
         /// <param name="sender">Object raising event.</param>
         /// <param name="e">Event arguments.</param>
@@ -520,8 +575,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Handles clicks on the minutes section;
-        /// Sets mode to minute selection.
+        /// Handles clicks on the minutes section and sets mode to minute selection.
         /// </summary>
         /// <param name="sender">Object raising event.</param>
         /// <param name="e">Event arguments.</param>
@@ -535,8 +589,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Handles clicks on the seconds section;
-        /// sets mode to second selection
+        /// Handles clicks on the seconds section and sets mode to second selection.
         /// </summary>
         /// <param name="sender">Object raising event.</param>
         /// <param name="e">Event arguments.</param>
@@ -621,10 +674,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Updates selection or highllight as the mouse moves over the clock face.
+        /// Updates selection or highlight as the mouse moves over the clock face.
         /// </summary>
         /// <param name="sender">Object raising event.</param>
-        /// <param name="e">Event arguments</param>
+        /// <param name="e">Event arguments.</param>
         private void ClockFace_MouseMove(object sender, MouseEventArgs e)
         {
             int timeValue = GetTimeValue(e.GetPosition(this.ClockFace));
@@ -641,10 +694,10 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Converts a mouse position into a corresponding clock value (hour/minute/second)
+        /// Converts a mouse position into a corresponding clock value (hour/minute/second).
         /// </summary>
-        /// <param name="p">Index of a coordinate</param>
-        /// <returns></returns>
+        /// <param name="p">The mouse position relative to the clock face.</param>
+        /// <returns>The time value (hour, minute, or second) corresponding to the mouse position.</returns>
         private int GetTimeValue(Point p)
         {
             double quadrantSize;
@@ -673,7 +726,7 @@ namespace GenericControls
         /// <summary>
         /// Updates the internal Time value based on the selected hour/minute/second.
         /// </summary>
-        /// <param name="timeValue"></param>
+        /// <param name="timeValue">The selected time value (hour, minute, or second).</param>
         private void SetTimeValue(int timeValue)
         {
             if (IsHours)
@@ -727,7 +780,7 @@ namespace GenericControls
         /// <summary>
         /// Visually highlights the tick mark for the current hover value.
         /// </summary>
-        /// <param name="timeValue"></param>
+        /// <param name="timeValue">The time value to highlight.</param>
         private void SetHighlighted(int timeValue)
         {
             if (IsHours)
@@ -779,18 +832,18 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// set the time and update UI selection accordingly.
+        /// Sets the time and updates UI selection accordingly.
         /// </summary>
-        /// <param name="timeValue"></param>
+        /// <param name="timeValue">The DateTime value to select.</param>
         public void SelectTime(DateTime timeValue)
         {
             SelectCurrentTime(timeValue);
         }
 
         /// <summary>
-        /// Updates the UI to reflect the selected DateTime (hour,minute,second).
+        /// Updates the UI to reflect the selected DateTime (hour, minute, second).
         /// </summary>
-        /// <param name="timeValue"></param>
+        /// <param name="timeValue">The DateTime value to display as selected.</param>
         private void SelectCurrentTime(DateTime timeValue)
         {
             ClearHighlighted();
@@ -845,7 +898,7 @@ namespace GenericControls
         /// <param name="y1">y coordinate of the first point.</param>
         /// <param name="x2">x coordinate of the second point.</param>
         /// <param name="y2">y coordinate of the second point.</param>
-        /// <returns></returns>
+        /// <returns>The Euclidean distance between the two points.</returns>
         public static double LineMagnitude(double x1, double y1, double x2, double y2)
         {
             // There exists methods to approximate the square root that are much faster than math.sqrt(). 
@@ -945,20 +998,32 @@ namespace GenericControls
     public class ClockToggle : Border
     {
 
+        /// <summary>
+        /// Represents the type of time element rendered on the clock face.
+        /// </summary>
         public enum State
         {
+            /// <summary>Major hour tick mark (e.g., 12, 3, 6, 9).</summary>
             HourMajor,
+            /// <summary>Major minute tick mark (e.g., 5, 10, 15).</summary>
             MinuteMajor,
+            /// <summary>Major second tick mark (e.g., 5, 10, 15).</summary>
             SecondMajor,
+            /// <summary>Minor hour tick mark.</summary>
             HourMinor,
+            /// <summary>Minor minute tick mark.</summary>
             MinuteMinor,
+            /// <summary>Minor second tick mark.</summary>
             SecondMinor
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsSelected"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsSelectedProperty = DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(ClockToggle), new UIPropertyMetadata(false));
 
         /// <summary>
-        /// Gets/sets whether the clock toggle is selected.
+        /// Gets or sets whether the clock toggle is selected.
         /// </summary>
         public bool IsSelected
         {
@@ -973,9 +1038,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates, gets/sets whether the clock toggle is highlighted
+        /// Identifies the <see cref="IsHighlighted"/> dependency property.
         /// </summary>
         public static DependencyProperty IsHighlightedProperty = DependencyProperty.Register(nameof(IsHighlighted), typeof(bool), typeof(ClockToggle), new FrameworkPropertyMetadata(false));
+        /// <summary>
+        /// Gets or sets whether the clock toggle is highlighted.
+        /// </summary>
         public bool IsHighlighted
         {
             get
@@ -989,9 +1057,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates brush, gets/sets the font color of the toggle.
+        /// Identifies the <see cref="FontColor"/> dependency property.
         /// </summary>
         public static DependencyProperty FontColorProperty = DependencyProperty.Register(nameof(FontColor), typeof(SolidColorBrush), typeof(ClockToggle), new UIPropertyMetadata(Brushes.Black));
+        /// <summary>
+        /// Gets or sets the font color of the toggle.
+        /// </summary>
         public SolidColorBrush FontColor
         {
             get
@@ -1005,9 +1076,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// indicates numeric time value, gets/sets numeric value of th etime unit this toggle represents.
+        /// Identifies the <see cref="TimeValue"/> dependency property.
         /// </summary>
         public static DependencyProperty TimeValueProperty = DependencyProperty.Register(nameof(TimeValue), typeof(int), typeof(ClockToggle), new UIPropertyMetadata(1));
+        /// <summary>
+        /// Gets or sets the numeric value of the time unit this toggle represents.
+        /// </summary>
         public int TimeValue
         {
             get
@@ -1021,7 +1095,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Identifies the style/state of the clock toggle (e.g.,3,15,45).
+        /// Identifies the <see cref="TimeState"/> dependency property.
         /// </summary>
         public static DependencyProperty TimeStateProp = DependencyProperty.Register(nameof(TimeState), typeof(State), typeof(ClockToggle), new UIPropertyMetadata(State.HourMajor, StateChangedCallback));
 
@@ -1052,7 +1126,7 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Gets/sets the visual state of the toggle (e.g. HourMajor, MinuteMinor)
+        /// Gets or sets the visual state of the toggle (e.g., HourMajor, MinuteMinor).
         /// </summary>
         public State TimeState
         {

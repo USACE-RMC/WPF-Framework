@@ -6,32 +6,83 @@
              xmlns:local="clr-namespace:GenericControls"
              mc:Ignorable="d"
              d:DesignHeight="24" d:DesignWidth="50">
-    <Grid>
-        
+    <UserControl.Resources>
+        <!-- Spinner Button Style - theme-aware with no white border -->
+        <Style x:Key="SpinnerButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Button.Static.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Button.MouseOver.Background}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Button.Pressed.Background}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Button.Disabled.Background}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Button.Disabled.Border}"/>
+                                <Setter TargetName="contentPresenter" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid Background="{DynamicResource EnvironmentWindowBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="18"/>
         </Grid.ColumnDefinitions>
 
         <!--Numeric Text box-->
-        <local:NumericTextBox x:Name="NumericTextBox" Grid.Row="0" Grid.Column="0" Text="{Binding ElementName=NumericUpDownControl, Path=Value, Mode=TwoWay}"/>
+        <local:NumericTextBox x:Name="NumericTextBox" Grid.Column="0"
+                              Text="{Binding ElementName=NumericUpDownControl, Path=Value, Mode=TwoWay}"
+                              VerticalAlignment="Stretch"/>
 
-        <!--Up Down Buttons-->
-        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-            <Button x:Name="cmdUp" Height="10.5" Width="18" Margin="1,1,1,0.5" Click="cmdUp_Click"
-                    Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                <Path Data="M 0,4 L 4,0 L 8,4 Z"
+        <!--Up Down Buttons - stretch to fill available height-->
+        <Grid Grid.Column="1" Margin="1,0,0,0" Background="{DynamicResource EnvironmentWindowBackground}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button x:Name="cmdUp" Grid.Row="0"
+                    Style="{StaticResource SpinnerButtonStyle}"
+                    Margin="0,0,0,0.5" Click="cmdUp_Click">
+                <Path Data="M 0,3 L 3,0 L 6,3 Z"
                       Fill="{DynamicResource EnvironmentWindowText}"
-                      Width="8" Height="5" Stretch="Uniform"/>
+                      Width="6" Height="4" Stretch="Uniform"
+                      VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Button>
-            <Button x:Name="cmdDown" Height="10.5" Width="18" Margin="1,0.5,1,1" Click="cmdDown_Click"
-                    Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
-                <Path Data="M 0,0 L 4,4 L 8,0 Z"
+            <Button x:Name="cmdDown" Grid.Row="1"
+                    Style="{StaticResource SpinnerButtonStyle}"
+                    Margin="0,0.5,0,0" Click="cmdDown_Click">
+                <Path Data="M 0,0 L 3,3 L 6,0 Z"
                       Fill="{DynamicResource EnvironmentWindowText}"
-                      Width="8" Height="5" Stretch="Uniform"/>
+                      Width="6" Height="4" Stretch="Uniform"
+                      VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Button>
-        </StackPanel>
-
+        </Grid>
     </Grid>
-    
 </UserControl>

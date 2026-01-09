@@ -71,6 +71,12 @@ namespace Themes
         public const string EnvironmentWindowBackground = "EnvironmentWindowBackground";
 
         /// <summary>
+        /// Plot window background color. Same as EnvironmentWindowBackground for light and blue themes,
+        /// but slightly lighter for dark theme to improve visibility of plot labels.
+        /// </summary>
+        public const string PlotWindowBackground = "PlotWindowBackground";
+
+        /// <summary>
         /// Main window text color.
         /// </summary>
         public const string EnvironmentWindowText = "EnvironmentWindowText";

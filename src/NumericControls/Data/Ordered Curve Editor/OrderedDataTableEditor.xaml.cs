@@ -28,8 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -69,6 +67,11 @@ namespace NumericControls
         /// </summary>
         public static DependencyProperty OrderedDataProperty = DependencyProperty.Register(nameof(OrderedData), typeof(OrderedPairedData), typeof(OrderedDataTableEditor), new PropertyMetadata(new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending), SetData));
 
+        /// <summary>
+        /// Handles changes to the OrderedData property and updates the data grid.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private static void SetData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -79,26 +82,27 @@ namespace NumericControls
                 thisControl.CurveRows.Clear();
                 return;
             }
-            //
             OrderedPairedData newCurve = e.NewValue as OrderedPairedData;
             if (newCurve == null)
             {
                 thisControl.CurveRows.Clear();
                 return;
             }
-            // Define the data
             thisControl.CurveRows.Clear();
-            //
             OrdinateRowItem rowItem;
             foreach (Ordinate o in newCurve)
             {
                 rowItem = new OrdinateRowItem(o.X, o.Y, thisControl.XColumnHeader, thisControl.YColumnHeader, thisControl.CurveRows, thisControl.MinimumX, thisControl.MaximumX, thisControl.MinimumY, thisControl.MaximumY, newCurve.StrictX, newCurve.StrictY, newCurve.OrderX, newCurve.OrderY);
                 rowItem.PropertyChanged += thisControl.RowItemPropertyChanged;
                 thisControl.CurveRows.Add(rowItem);
-                // .ValidationGrid.ItemsSource = .CurveRows
             }
         }
 
+        /// <summary>
+        /// Handles property changed events for row items and updates the data source.
+        /// </summary>
+        /// <param name="sender">The row item that changed.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private void RowItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OrdinateRowItem rItem = (OrdinateRowItem)sender;
@@ -227,16 +231,25 @@ namespace NumericControls
                 ((OrdinateRowItem)r).ForceValidation();
         }
 
+        /// <summary>
+        /// Handles column header clicks to select all cells in the clicked column.
+        /// </summary>
+        /// <param name="sender">The column header that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void DataGridColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Primitives.DataGridColumnHeader columnHeader = sender as System.Windows.Controls.Primitives.DataGridColumnHeader;
             if (columnHeader == null) return;
-            //
             ValidationGrid.SelectedCells.Clear();
             foreach (var item in ValidationGrid.Items)
                 ValidationGrid.SelectedCells.Add(new DataGridCellInfo(item, columnHeader.Column));
         }
 
+        /// <summary>
+        /// Handles rows added to the validation grid and updates the data source.
+        /// </summary>
+        /// <param name="startrow">The starting row index.</param>
+        /// <param name="numrows">The number of rows added.</param>
         private void ValidationGrid_RowsAdded(int startrow, int numrows)
         {
             for (int i = startrow; i < startrow + numrows; i++)
@@ -244,20 +257,32 @@ namespace NumericControls
             UpdateGrid();
         }
 
+        /// <summary>
+        /// Handles rows deleted from the validation grid and updates the data source.
+        /// </summary>
+        /// <param name="rowindices">The list of deleted row indices.</param>
         private void ValidationGrid_RowsDeleted(List<int> rowindices)
         {
-            // Refresh the source
             rowindices.Sort();
             for (int i = rowindices.Count - 1; i >= 0; i -= 1)
                 OrderedData.RemoveAt(rowindices[i]);
             UpdateGrid();
         }
 
+        /// <summary>
+        /// Handles data pasted into the validation grid and updates the UI.
+        /// </summary>
         private void ValidationGrid_DataPasted()
         {
             UpdateGrid();
         }
 
+        /// <summary>
+        /// Handles preview add rows event to create new row items before they are added to the grid.
+        /// </summary>
+        /// <param name="startRowIndex">The starting row index for the new rows.</param>
+        /// <param name="nRows">The number of rows to add.</param>
+        /// <param name="cancelAddRows">Whether to cancel the add rows operation.</param>
         private void ValidationGrid_PreviewAddRows(int startRowIndex, int nRows, ref bool cancelAddRows)
         {
             cancelAddRows = true;

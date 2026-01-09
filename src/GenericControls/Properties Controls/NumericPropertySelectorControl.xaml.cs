@@ -27,8 +27,6 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
 
 using System.ComponentModel;
 using System.Globalization;
@@ -264,8 +262,8 @@ namespace GenericControls
         /// <summary>
         /// Updates property width if control size is changed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;
@@ -275,8 +273,8 @@ namespace GenericControls
         /// <summary>
         /// ComboBox preview text input.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
@@ -298,8 +296,8 @@ namespace GenericControls
         /// <summary>
         /// Combo box preview when Space is pressed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ComboBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -313,6 +311,11 @@ namespace GenericControls
         /// </summary>
         private bool _previewUp = false;
 
+        /// <summary>
+        /// Handles preview mouse up event for single-click editing support.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void NumericPropertySelector_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (IsEditable == false)
@@ -320,6 +323,11 @@ namespace GenericControls
             _previewUp = true;
         }
 
+        /// <summary>
+        /// Handles mouse up event to focus the text box for single-click editing.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void NumericPropertySelector_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (IsEditable == false)
@@ -352,11 +360,27 @@ namespace GenericControls
     /// </remarks>
     public class DoubleConverter : IValueConverter
     {
+        /// <summary>
+        /// Returns the input value unchanged.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The unchanged input value.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;
         }
 
+        /// <summary>
+        /// Converts a value back to a double, returning <see cref="Binding.DoNothing"/> if parsing fails.
+        /// </summary>
+        /// <param name="value">The value to convert back.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The parsed double value, or <see cref="Binding.DoNothing"/> if parsing fails.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)

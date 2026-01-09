@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -69,13 +70,13 @@ namespace GenericControls
         #region Members
 
         /// <summary>
-    /// Dependency property for the character limit property.
-    /// </summary>
+        /// Dependency property for the character limit property.
+        /// </summary>
         public static DependencyProperty CharacterLimitProperty = DependencyProperty.Register(nameof(CharacterLimit), typeof(int), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(64));
 
         /// <summary>
-    /// Maximum number of characters that the name string can contain. Default is 64 characters.
-    /// </summary>
+        /// Maximum number of characters that the name string can contain. Default is 64 characters.
+        /// </summary>
         public int CharacterLimit
         {
             get
@@ -89,13 +90,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the existing names property.
-    /// </summary>
+        /// Dependency property for the existing names property.
+        /// </summary>
         public static DependencyProperty ExistingNamesProperty = DependencyProperty.Register(nameof(ExistingNames), typeof(string[]), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(new string[] { }));
 
         /// <summary>
-    /// Array of strings that are invalid. Default is no invalid strings.
-    /// </summary>
+        /// Array of strings that are invalid. Default is no invalid strings.
+        /// </summary>
         public string[] ExistingNames
         {
             get
@@ -109,13 +110,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the invalid characters property. 
-    /// </summary>
+        /// Dependency property for the invalid characters property.
+        /// </summary>
         public static DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(NameTextBox.GetDefaultInvalidCharacters()));
 
         /// <summary>
-    /// Array of characters that are invalid. Default is invalid filename characters with the addition of apostrophe, left bracket, and right bracket.
-    /// </summary>
+        /// Array of characters that are invalid. Default is invalid filename characters with the addition of apostrophe, left bracket, and right bracket.
+        /// </summary>
         public char[] InvalidCharacters
         {
             get
@@ -129,13 +130,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the text property.
-    /// </summary>
+        /// Dependency property for the text property.
+        /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameTextPropertyControl), new UIPropertyMetadata(""));
 
         /// <summary>
-    /// Gets and sets the text.
-    /// </summary>
+        /// Gets or sets the text.
+        /// </summary>
         public string Text
         {
             get
@@ -149,13 +150,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the title property.
-    /// </summary>
+        /// Dependency property for the title property.
+        /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NameTextPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
-    /// Gets and sets the title.
-    /// </summary>
+        /// Gets or sets the title.
+        /// </summary>
         public string Title
         {
             get
@@ -170,13 +171,13 @@ namespace GenericControls
 
 
         /// <summary>
-    /// Dependency property for the max width property.
-    /// </summary>
+        /// Dependency property for the property width property.
+        /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the max width of the control.
-    /// </summary>
+        /// Gets or sets the width of the property layout column.
+        /// </summary>
         public GridLength PropertyWidth
         {
             get
@@ -190,13 +191,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the max width property.
-    /// </summary>
+        /// Dependency property for the max width property.
+        /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the max width of the control.
-    /// </summary>
+        /// Gets or sets the maximum width of the control.
+        /// </summary>
         public double MaxPropertyWidth
         {
             get
@@ -210,13 +211,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the min width property.
-    /// </summary>
+        /// Dependency property for the min width property.
+        /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
-    /// Gets and sets the min width of the control.
-    /// </summary>
+        /// Gets or sets the minimum width of the control.
+        /// </summary>
         public double MinPropertyWidth
         {
             get
@@ -230,13 +231,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for the show leader line property.
-    /// </summary>
+        /// Dependency property for the show leader line property.
+        /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NameTextPropertyControl), new UIPropertyMetadata(true));
 
         /// <summary>
-    /// Determines of the leader line should be visible. 
-    /// </summary>
+        /// Gets or sets whether the leader line should be visible.
+        /// </summary>
         public bool ShowLeaderLine
         {
             get
@@ -252,7 +253,7 @@ namespace GenericControls
         #endregion
         private double _actualWidth = 0d;
         /// <summary>
-        /// Get current rendered width of the control.
+        /// Gets the current rendered width of the control.
         /// </summary>
         public double ActualPropertyWidth
         {
@@ -278,8 +279,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the <see cref="ActualPropertyWidth"/> when the control is resized.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The control raising the event.</param>
+        /// <param name="e">The size change event arguments.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             FrameworkElement el = sender as FrameworkElement;
@@ -287,9 +288,9 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Place focus on the text box and set the caret position.
-    /// </summary>
-    /// <param name="caretIndex"></param>
+        /// Places focus on the text box and sets the caret position.
+        /// </summary>
+        /// <param name="caretIndex">The desired position of the caret in the text box.</param>
         public void TextBoxFocus(int caretIndex)
         {
             Keyboard.Focus(this.NameTextBox.NameTBox);
@@ -298,17 +299,14 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Allows to traverse in the NameTextBox when Enter is pressed.
+        /// Allows traversal to the next control when Enter is pressed in the NameTextBox.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The key event arguments.</param>
         private void NameTextBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                // Dim tBox As NameTextBox = DirectCast(sender, NameTextBox)
-                // Dim binding As BindingExpression = BindingOperations.GetBindingExpression(tBox, NameTextBox.TextProperty)
-                // If binding IsNot Nothing Then binding.UpdateSource()
                 ((UIElement)e.OriginalSource).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             }
         }

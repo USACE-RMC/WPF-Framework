@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel;
 
 namespace GenericControls
@@ -55,10 +54,10 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Construct new property rule.
-    /// </summary>
-    /// <param name="rule">Rule as a function that returns a boolean.</param>
-    /// <param name="message">The error message to display if function returns True.</param>
+        /// Initializes a new instance of the <see cref="PropertyRule"/> class.
+        /// </summary>
+        /// <param name="rule">A function that returns true when an error condition is met.</param>
+        /// <param name="message">The error message to display if the function returns true.</param>
         public PropertyRule(Func<bool> rule, string message)
         {
             _rules.Add(new Rule(rule, message));
@@ -68,15 +67,17 @@ namespace GenericControls
 
         #region Members
 
-        // This has to implement notify property changed to alert the UI to change color state.
+        /// <summary>
+        /// Occurs when a property value changes. Required for UI binding to update error states.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         private readonly List<Rule> _rules = new List<Rule>();
         private bool _hasError = false;
         private string _errorMessage = string.Empty;
 
         /// <summary>
-    /// Determines whether the property has an erro. 
-    /// </summary>
+        /// Gets or sets a value indicating whether the property has a validation error.
+        /// </summary>
         public bool HasError
         {
             get
@@ -94,8 +95,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Returns the error message as string.
-    /// </summary>
+        /// Gets or sets the error message describing the validation failure.
+        /// </summary>
         public string ErrorMessage
         {
             get
@@ -112,6 +113,9 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Gets the list of validation rules for this property.
+        /// </summary>
         public List<Rule> Rules
         {
             get
@@ -121,13 +125,25 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Class for the property rule. Each rule has a function and an error message.
-    /// </summary>
+        /// Class for the property rule. Each rule has a function and an error message.
+        /// </summary>
         public class Rule
         {
+            /// <summary>
+            /// The expression that evaluates to true when an error condition is met.
+            /// </summary>
             public readonly Func<bool> Expression;
+
+            /// <summary>
+            /// The error message to display when the expression returns true.
+            /// </summary>
             public readonly string Message;
+
+            /// <summary>
+            /// Indicates whether this rule currently has an error.
+            /// </summary>
             public bool HasError;
+
             internal Rule(Func<bool> expression, string message)
             {
                 Expression = expression;
@@ -140,19 +156,19 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// Raise property changed event.
-    /// </summary>
-    /// <param name="propertyName">Name of the property than changed.</param>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
         protected void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
-    /// Add rule to the proprty.
-    /// </summary>
-    /// <param name="rule">Rule as a function that returns a boolean.</param>
-    /// <param name="message">The error message to display if function returns True.</param>
+        /// Adds a validation rule to the property.
+        /// </summary>
+        /// <param name="rule">A function that returns true when an error condition is met.</param>
+        /// <param name="message">The error message to display if the function returns true.</param>
         internal void AddRule(Func<bool> rule, string message)
         {
             _rules.Add(new Rule(rule, message));
@@ -161,8 +177,8 @@ namespace GenericControls
 
 
         /// <summary>
-    /// Execute the property rules.
-    /// </summary>
+        /// Executes all validation rules for this property and updates the error state.
+        /// </summary>
         internal void ExecuteRules()
         {
             ErrorMessage = "";

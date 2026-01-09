@@ -1,3 +1,32 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -82,6 +111,12 @@ namespace OxyPlotControls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Initializes the plot when the Axis property changes.
+        /// Configures UI elements and bindings based on the axis type.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event args containing the old and new axis values.</param>
         private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -907,6 +942,12 @@ namespace OxyPlotControls
             return newAxis;
         }
 
+        /// <summary>
+        /// Handles the axis type selection change event.
+        /// Converts the axis to the selected type and updates the plot.
+        /// </summary>
+        /// <param name="sender">The ComboBox that triggered the event.</param>
+        /// <param name="e">The selection changed event args.</param>
         private void AxisTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null) return;
@@ -1038,6 +1079,13 @@ namespace OxyPlotControls
             TickOptionsEXP.IsExpanded = false;
         }
 
+        /// <summary>
+        /// Handles validation when the axis minimum value is about to change.
+        /// Prevents setting a minimum value greater than or equal to the maximum.
+        /// </summary>
+        /// <param name="oldValue">The previous minimum value.</param>
+        /// <param name="newValue">The new minimum value to validate.</param>
+        /// <param name="cancel">Set to true to cancel the change.</param>
         private void AxisMinimum_PreviewNumberChanged(object oldValue, object newValue, ref bool cancel)
         {
             if (_ignoreMaxMinChange) return;
@@ -1059,6 +1107,13 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Handles validation when the axis maximum value is about to change.
+        /// Prevents setting a maximum value less than or equal to the minimum.
+        /// </summary>
+        /// <param name="oldValue">The previous maximum value.</param>
+        /// <param name="newValue">The new maximum value to validate.</param>
+        /// <param name="cancel">Set to true to cancel the change.</param>
         private void AxisMaximum_PreviewNumberChanged(object oldValue, object newValue, ref bool cancel)
         {
             if (_ignoreMaxMinChange) return;
@@ -1083,6 +1138,12 @@ namespace OxyPlotControls
         private string _stringFormatCategory = "";
         private string _stringFormatDecimals = "";
 
+        /// <summary>
+        /// Handles the label type selection change event.
+        /// Updates the axis string format based on the selected label type.
+        /// </summary>
+        /// <param name="sender">The ComboBox that triggered the event.</param>
+        /// <param name="e">The selection changed event args.</param>
         private void LabelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null) return;
@@ -1113,6 +1174,12 @@ namespace OxyPlotControls
             Axis.StringFormat = _stringFormatCategory + _stringFormatDecimals;
         }
 
+        /// <summary>
+        /// Handles the decimal places property change event.
+        /// Updates the axis string format when the number of decimal places changes.
+        /// </summary>
+        /// <param name="sender">The control that triggered the event.</param>
+        /// <param name="e">The property changed event args.</param>
         private void DecimalPlaces_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(GenericControls.NumericAutoPropertyControl.Number))
@@ -1126,6 +1193,13 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Handles validation when the decimal places value is about to change.
+        /// Ensures the value is floored to a whole number.
+        /// </summary>
+        /// <param name="oldValue">The previous decimal places value.</param>
+        /// <param name="newValue">The new decimal places value to validate.</param>
+        /// <param name="cancel">Set to true to cancel the change.</param>
         private void DecimalPlaces_PreviewNumberChanged(object oldValue, object newValue, ref bool cancel)
         {
             double newNumber;

@@ -11,29 +11,51 @@
     <UserControl.Resources>
         <cntrls:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
     </UserControl.Resources>
+
     <Grid>
-        <ToggleButton Name="PopupToggleButton" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+        <!-- Toggle button displaying selected distribution -->
+        <ToggleButton Name="PopupToggleButton"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
                       IsHitTestVisible="{Binding ElementName=DistributionPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
-            <TextBlock Name="DistributionTextBlock" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,0,0,0"/>
+            <TextBlock Name="DistributionTextBlock"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Margin="3,0,0,0"/>
         </ToggleButton>
 
-        <!--MouseEnter="Border_MouseEnter" MouseLeave="Border_MouseLeave" ContextMenuClosing="Border_ContextMenuClosing"-->
-        <!--POPUP PLACEMENT HACK-->
-        <Rectangle x:Name="PART_PopPlacer" Fill="Red" Width="0" Height="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-                   Focusable="False" Visibility="Hidden" IsHitTestVisible="False"/>
+        <!-- Hidden rectangle used for popup placement alignment -->
+        <Rectangle x:Name="PART_PopPlacer"
+                   Fill="Red"
+                   Width="0"
+                   Height="0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Focusable="False"
+                   Visibility="Hidden"
+                   IsHitTestVisible="False"/>
 
-        <Popup Name="DistributionPopup" IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
-               Placement="Right" PlacementTarget="{Binding ElementName=PART_PopPlacer}"
-               PopupAnimation="Slide" AllowsTransparency="True" StaysOpen="False">
-            <Border Background="#F6F6F6" BorderBrush="Gray" BorderThickness="1" >
-                <local:DistributionSelectorControl x:Name="SelectorControl" Margin="5"
+        <!-- Distribution selector popup with full plot features -->
+        <Popup Name="DistributionPopup"
+               IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
+               Placement="Right"
+               PlacementTarget="{Binding ElementName=PART_PopPlacer}"
+               PopupAnimation="Slide"
+               AllowsTransparency="True"
+               StaysOpen="False">
+            <Border Background="#F6F6F6"
+                    BorderBrush="Gray"
+                    BorderThickness="1">
+                <local:DistributionSelectorControl x:Name="SelectorControl"
+                                                   Margin="5"
                                                    Width="300"
                                                    BackgroundColor="#F6F6F6"
                                                    ShowAxisTitle="True"
                                                    ShowTickLines="True"
                                                    ShowAxisLabel="True"
                                                    ExpandPlot="False"
-                                                   SelectedDistribution="{Binding ElementName=DistributionPopupSelector, Path=SelectedDistribution,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                   SelectedDistribution="{Binding ElementName=DistributionPopupSelector, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                    Distributions="{Binding ElementName=DistributionPopupSelector, Path=Distributions, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                    ShowPlot="{Binding ElementName=DistributionPopupSelector, Path=ShowPlot}"
                                                    ShowStatistics="{Binding ElementName=DistributionPopupSelector, Path=ShowStatistics}">

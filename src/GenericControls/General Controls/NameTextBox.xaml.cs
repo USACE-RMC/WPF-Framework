@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -56,13 +55,13 @@ namespace GenericControls
     public partial class NameTextBox
     {
         /// <summary>
-        /// Gets/sets the user-entered text.
+        /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
         public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameTextBox), new FrameworkPropertyMetadata(""));
+
         /// <summary>
-    /// The name string.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets the user-entered text.
+        /// </summary>
         public string Text
         {
             get
@@ -76,14 +75,13 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// gets/sets the maximum number of characters allowed in the text.
-        /// Default is 64.
+        /// Identifies the <see cref="CharacterLimit"/> dependency property.
         /// </summary>
         public static DependencyProperty CharacterLimitProperty = DependencyProperty.Register(nameof(CharacterLimit), typeof(int), typeof(NameTextBox), new FrameworkPropertyMetadata(64, ValidationProperty_Callback));
+
         /// <summary>
-    /// Maximum number of characters that the name string can contain. Default is 64 characters.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets the maximum number of characters allowed in the text. Default is 64.
+        /// </summary>
         public int CharacterLimit
         {
             get
@@ -96,12 +94,14 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CanBeBlank"/> dependency property.
+        /// </summary>
         public static DependencyProperty CanBeBlankProperty = DependencyProperty.Register(nameof(CanBeBlank), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(false, ValidationProperty_Callback));
 
         /// <summary>
-    /// Value indicating if the name string can be blank/empty or not. Default is no.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets a value indicating if the name string can be blank/empty. Default is false.
+        /// </summary>
         public bool CanBeBlank
         {
             get
@@ -114,12 +114,14 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="InvalidCharacters"/> dependency property.
+        /// </summary>
         public static DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextBox), new FrameworkPropertyMetadata(GetDefaultInvalidCharacters(), ValidationProperty_Callback));
 
         /// <summary>
-    /// Array of characters that are invalid. Default is invalid filename characters with the addition of apostrophe, left bracket, and right bracket.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets the array of characters that are invalid. Default is invalid filename characters plus apostrophe and brackets.
+        /// </summary>
         public char[] InvalidCharacters
         {
             get
@@ -132,11 +134,13 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="InvalidStrings"/> dependency property.
+        /// </summary>
         public static DependencyProperty InvalidStringsProperty = DependencyProperty.Register(nameof(InvalidStrings), typeof(string[]), typeof(NameTextBox), new FrameworkPropertyMetadata(new string[] { }, ValidationProperty_Callback));
         /// <summary>
-    /// Array of strings that are invalid. Default is no invalid strings.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets the array of strings that are invalid. Default is no invalid strings.
+        /// </summary>
         public string[] InvalidStrings
         {
             get
@@ -149,11 +153,13 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsValid"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsValidProperty = DependencyProperty.Register(nameof(IsValid), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(true));
         /// <summary>
-    /// Value indicating if the name string can be blank/empty or not. Default is no.
-    /// </summary>
-    /// <returns></returns>
+        /// Gets or sets a value indicating whether the current text is valid.
+        /// </summary>
         public bool IsValid
         {
             get
@@ -168,10 +174,10 @@ namespace GenericControls
 
         /// <summary>
         /// Invoked when validation-related properties are changed.
-        /// Re-validates the text. 
+        /// Re-validates the text.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object that triggered the callback.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void ValidationProperty_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -183,9 +189,9 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Shared function to get the default invalid characters for the name textbox. invalid characters includes invalid file name characters, apostraphe, left bracket, and right bracket.
-    /// </summary>
-    /// <returns>array of default invalid name characters</returns>
+        /// Shared function to get the default invalid characters for the name textbox. Invalid characters include invalid file name characters, apostrophe, left bracket, and right bracket.
+        /// </summary>
+        /// <returns>An array of default invalid name characters.</returns>
         public static char[] GetDefaultInvalidCharacters()
         {
             var invalidCharsList = new List<char>(System.IO.Path.GetInvalidFileNameChars());
@@ -223,8 +229,8 @@ namespace GenericControls
         /// <summary>
         /// Handles the internal TextBox's text change event. Triggers validation.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Text changed event arguments.</param>
         private void NameTBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
@@ -275,9 +281,9 @@ namespace GenericControls
             IsValid = true;
         }
         /// <summary>
-    /// Get all error messages associated with the text in the name textbox.
-    /// </summary>
-    /// <returns>A list of error messages.</returns>
+        /// Get all error messages associated with the text in the name textbox.
+        /// </summary>
+        /// <returns>A list of error messages.</returns>
         public List<string> GetErrorMessages()
         {
             var errorList = new List<string>();
@@ -321,8 +327,8 @@ namespace GenericControls
         /// <summary>
         /// Updates the source binding when Enter is pressed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Key event arguments.</param>
         private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)

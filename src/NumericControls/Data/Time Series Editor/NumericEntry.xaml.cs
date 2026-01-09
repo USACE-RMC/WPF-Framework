@@ -28,19 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace NumericControls
 {
@@ -63,17 +51,32 @@ namespace NumericControls
     /// </remarks>
     public partial class NumericEntry : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumericEntry"/> class.
+        /// </summary>
         public NumericEntry()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles the click event for the OK button.
+        /// Sets the dialog result to true and closes the window.
+        /// </summary>
+        /// <param name="sender">The OK button that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
             this.Close();
         }
 
+        /// <summary>
+        /// Handles the window content rendered event.
+        /// Selects all text in the value text box for user convenience.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             ValueTextBox.SelectAll();

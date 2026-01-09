@@ -170,9 +170,7 @@ namespace NumericControls
             return new StratificationOptions(_start, _end, _numberOfBins, _isProbability);
         }
 
-        /// <summary>
-        /// Add validation rules for the row item.
-        /// </summary>
+        /// <inheritdoc/>
         public override void AddValidationRules()
         {
             // Order rules
@@ -202,20 +200,14 @@ namespace NumericControls
             AddRule(nameof(NumberOfBins), () => NumberOfBins < 2, "Number of bins must be greater than 1.");
         }
 
-        /// <summary>
-        /// Change column headers if necessary.
-        /// </summary>
-        /// <param name="propertyName">Row item property name.</param>
+        /// <inheritdoc/>
         public override string PropertyDisplayName(string propertyName)
         {
             if (propertyName == nameof(NumberOfBins)) return "# Bins";
             return propertyName;
         }
 
-        /// <summary>
-        /// Determines which properties are displayed in the data grid.
-        /// </summary>
-        /// <param name="propertyName">Row item property name.</param>
+        /// <inheritdoc/>
         public override bool IsGridDisplayable(string propertyName)
         {
             switch (propertyName)

@@ -26,7 +26,7 @@
                               MinWidth="{Binding ElementName=LineStyleSelector, Path=MinPropertyWidth, FallbackValue=10}"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Margin="0,0,3,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+        <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}"
                    Text="{Binding ElementName=LineStyleSelector, Path=Title}" />
 
         <Line Style="{StaticResource DotLeaderLineStyle}"
@@ -41,7 +41,7 @@
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <Border Height="20" VerticalAlignment="Center" BorderBrush="{x:Null}">
-                        <Line X1="0" X2="1" Y1="0" Y2="0" VerticalAlignment="Center" Stroke="Black" Stretch="Uniform" StrokeThickness="2" StrokeDashArray="{Binding}"/>
+                        <Line X1="0" X2="1" Y1="0" Y2="0" VerticalAlignment="Center" Stroke="{DynamicResource EnvironmentWindowText}" Stretch="Uniform" StrokeThickness="2" StrokeDashArray="{Binding}"/>
                     </Border>
                 </DataTemplate>
             </ComboBox.ItemTemplate>

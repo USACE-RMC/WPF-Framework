@@ -29,16 +29,10 @@
 */
 
 using GenericControls;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
-using System.Configuration;
 
 namespace FrameworkUI.ProjectExplorer
 {
@@ -111,11 +105,16 @@ namespace FrameworkUI.ProjectExplorer
             KeyDown += Me_KeyDown;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this node can be multi-selected with other nodes.
+        /// </summary>
         public override bool CanMultiSelect => true;
 
         /// <summary>
         /// Handles the node key down event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_KeyDown(object sender, KeyEventArgs e)
         {
             // F2 = Rename
@@ -139,8 +138,9 @@ namespace FrameworkUI.ProjectExplorer
         }
 
         /// <summary>
-        /// Returns a list of invalid node names. 
+        /// Returns a list of invalid node names.
         /// </summary>
+        /// <returns>A list of names that are already in use by sibling node groups.</returns>
         protected override List<string> GetInvalidNodeNames()
         {
             // group names need to be unique within each parent node. 
@@ -186,6 +186,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Ungroup the items and move them to the parent node.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Ungroup_Click(object sender, RoutedEventArgs e)
         {
             // Remove items from the group, and add items to the parent
@@ -205,6 +207,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, raise rename event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Rename_Click(object sender, RoutedEventArgs e)
         {
             IsInEditMode = true;
@@ -214,6 +218,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, sort nodes in ascending or descending order.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Sort_Click(object sender, RoutedEventArgs e)
         {
             if (((MenuItem)sender).Name == "sortASC")

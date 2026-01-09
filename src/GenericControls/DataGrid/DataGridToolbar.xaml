@@ -12,45 +12,17 @@
         <ResourceDictionary Source="../Resources/GenericResources.xaml"/>
     </UserControl.Resources>
     <StackPanel Name="ToolbarStackPanel" Orientation="{Binding ElementName=DataGridToolsControl, Path=ToolOrientation, TargetNullValue=Horizontal, FallbackValue=Horizontal}" Background="{Binding ElementName=DataGridToolsControl, Path=BackgroundColor}">
-        <!--Add Row(s) - Plus sign with row lines-->
+        <!--Add Row(s)-->
         <Button x:Name="AddRowsButton" ToolTip="Add row(s) to the bottom of the table" Height="24" Width="24" Cursor="Hand" Click="AddRowsButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Row lines -->
-                <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                      VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-                <!-- Plus sign -->
-                <Path Data="M12,4 V12 M8,8 H16"
-                      Stroke="#16A34A" StrokeThickness="2"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource AddRowIcon}"/>
         </Button>
-        <!--Insert Row(s) - Arrow pointing up with row-->
+        <!--Insert Row(s)-->
         <Button x:Name="InsertRowsButton" ToolTip="Insert row(s) above selected cell(s) in table" Height="24" Width="24" Cursor="Hand" Click="InsertRowsButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Row lines -->
-                <Path Data="M0,6 H10 M0,10 H10 M0,14 H10"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Insert arrow -->
-                <Path Data="M12,10 V2 M9,5 L12,2 L15,5"
-                      Stroke="#2563EB" StrokeThickness="1.5" StrokeLineJoin="Round"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource InsertRowIcon}"/>
         </Button>
-        <!--Delete Row(s) - X with row lines-->
+        <!--Delete Row(s)-->
         <Button x:Name="DeleteRowsButton" ToolTip="Delete row(s) from the table" Height="24" Width="24" Cursor="Hand" Click="DeleteRowsButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Row lines -->
-                <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                      VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-                <!-- X mark -->
-                <Path Data="M9,4 L15,10 M15,4 L9,10"
-                      Stroke="#DC2626" StrokeThickness="2"
-                      StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource DeleteRowIcon}"/>
         </Button>
 
         <!--Separator-->
@@ -60,85 +32,24 @@
 
         <!--Separator-->
         <Separator x:Name="EditSelectSeparator" />
-        <!--Select All - Grid with selection-->
+        <!--Select All-->
         <Button x:Name="SelectAllButton" ToolTip="Select all cells" Height="24" Width="24" Cursor="Hand" Click="SelectAllButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Grid cells -->
-                <Path Data="M1,1 H15 V15 H1 Z M1,5 H15 M1,10 H15 M5,1 V15 M10,1 V15"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <!-- Selection highlight -->
-                <Rectangle Width="14" Height="14" Fill="#407ACC" Opacity="0.3"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource SelectAllIcon}"/>
         </Button>
 
-        <!--Copy - Two overlapping documents-->
+        <!--Copy-->
         <Button x:Name="CopyButton" ToolTip="Copy selected cells" Height="24" Width="24" Cursor="Hand" Click="CopyButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Back document -->
-                <Path Data="M5,1 H14 V12 H5 Z"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      Fill="{DynamicResource TextBox.Static.Background}"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Front document -->
-                <Path Data="M2,4 H11 V15 H2 Z"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      Fill="{DynamicResource TextBox.Static.Background}"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Lines on front doc -->
-                <Path Data="M4,7 H9 M4,9 H9 M4,11 H7"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource CopyIcon}"/>
         </Button>
 
-        <!--Copy with Headers - Two documents with header bar-->
+        <!--Copy with Headers-->
         <Button x:Name="CopyWithHeadersButton" ToolTip="Copy selected cells with table headers" Height="24" Width="24" Cursor="Hand" Click="CopyWithHeadersButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Back document -->
-                <Path Data="M5,1 H14 V12 H5 Z"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      Fill="{DynamicResource TextBox.Static.Background}"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Front document -->
-                <Path Data="M2,4 H11 V15 H2 Z"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      Fill="{DynamicResource TextBox.Static.Background}"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Header bar -->
-                <Rectangle Width="8" Height="2" Fill="#2563EB"
-                           Margin="2.5,5,0,0"
-                           VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Lines on front doc -->
-                <Path Data="M4,9 H9 M4,11 H7"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource CopyWithHeadersIcon}"/>
         </Button>
 
-        <!--Paste - Clipboard with document-->
+        <!--Paste-->
         <Button x:Name="PasteButton" ToolTip="Paste from the clipboard into the table" Height="24" Width="24" Cursor="Hand" Click="PasteButton_Click">
-            <Grid Width="16" Height="16">
-                <!-- Clipboard body -->
-                <Path Data="M3,3 H13 V15 H3 Z"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      Fill="{DynamicResource TextBox.Static.Background}"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Clipboard clip -->
-                <Path Data="M6,1 H10 V4 H6 Z"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                      Fill="{DynamicResource DataGrid.Header.Border}"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Clipboard clip inner -->
-                <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
-                           Margin="7,0,0,0"
-                           VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <!-- Document lines -->
-                <Path Data="M5,7 H11 M5,9 H11 M5,11 H9"
-                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="0.8"
-                      VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </Grid>
+            <ContentControl Content="{DynamicResource PasteIcon}"/>
         </Button>
 
     </StackPanel>

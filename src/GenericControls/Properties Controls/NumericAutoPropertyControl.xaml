@@ -27,7 +27,7 @@
                               MinWidth="{Binding ElementName=NumericAutoProperty, Path=MinPropertyWidth, FallbackValue=10}"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Margin="0,0,3,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+        <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}"
                    Text="{Binding ElementName=NumericAutoProperty, Path=Title}"/>
 
         <Line Style="{StaticResource DotLeaderLineStyle}"
@@ -62,7 +62,7 @@
                     <Style TargetType="{x:Type Border}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=NumericAutoProperty, Path=ValueIsValid}" Value="False">
-                                <Setter Property="BorderBrush" Value="Red"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding ElementName=NumericAutoProperty, Path=ValueIsValid}" Value="True">
                                 <Setter Property="BorderBrush" Value="{x:Null}"/>
@@ -72,7 +72,7 @@
                 </Border.Style>
             </Border>
 
-            <TextBlock Grid.Column="1" Margin="3,0,0,0" Text="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Margin="3,0,0,0" Text="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource EnvironmentWindowText}"/>
 
             <Button Grid.Column="1" Margin="3,0,0,0" Click="Button_Click" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="2 0" BorderThickness="1" Visibility="{Binding NumberIsDefault, ElementName=NumericAutoProperty, Converter={StaticResource BoolToHiddenConverter}}">Reset</Button>
         </Grid>

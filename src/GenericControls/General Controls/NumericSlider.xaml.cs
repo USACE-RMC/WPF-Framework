@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Windows;
 using System.Windows.Controls;
 
@@ -55,8 +55,8 @@ namespace GenericControls
         #region Construction
 
         /// <summary>
-    /// Construct new numeric up-down control.
-    /// </summary>
+        /// Construct new numeric up-down control.
+        /// </summary>
         public NumericSlider()
         {
             // This call is required by the designer.
@@ -79,13 +79,13 @@ namespace GenericControls
         private string FormatString;
 
         /// <summary>
-    /// Dependency property for setting the numeric text box value.
-    /// </summary>
+        /// Dependency property for setting the numeric text box value.
+        /// </summary>
         public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericSlider), new PropertyMetadata(0.0d, SetText));
 
         /// <summary>
-    /// Gets and sets the current value of the numeric slider control.
-    /// </summary>
+        /// Gets and sets the current value of the numeric slider control.
+        /// </summary>
         public double Value
         {
             get
@@ -101,6 +101,8 @@ namespace GenericControls
         /// <summary>
         /// Set the text after the value has changed.
         /// </summary>
+        /// <param name="d">The dependency object that triggered the callback.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void SetText(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             NumericSlider thisControl = (NumericSlider)d;
@@ -125,14 +127,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for setting the Maximum value.
-    /// </summary>
+        /// Dependency property for setting the Maximum value.
+        /// </summary>
         public static DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumericSlider), new PropertyMetadata(100d));
 
-
         /// <summary>
-    /// Gets and sets the maximum value for the numeric slider control.
-    /// </summary>
+        /// Gets and sets the maximum value for the numeric slider control.
+        /// </summary>
         public double Maximum
         {
             get
@@ -147,14 +148,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for setting the Minimum value.
-    /// </summary>
+        /// Dependency property for setting the Minimum value.
+        /// </summary>
         public static DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumericSlider), new PropertyMetadata(0d));
 
-
         /// <summary>
-    /// Get and set the minimum value for the numeric slider control.
-    /// </summary>
+        /// Get and set the minimum value for the numeric slider control.
+        /// </summary>
         public double Minimum
         {
             get
@@ -169,13 +169,13 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Dependency property for setting the Increment value.
-    /// </summary>
+        /// Dependency property for setting the Increment value.
+        /// </summary>
         public static DependencyProperty IncrementProperty = DependencyProperty.Register(nameof(Increment), typeof(double), typeof(NumericSlider), new PropertyMetadata(1d));
 
         /// <summary>
-    /// Gets and sets the amount to increment and decrement on each button click.
-    /// </summary>
+        /// Gets and sets the amount to increment and decrement on each button click.
+        /// </summary>
         public double Increment
         {
             get
@@ -189,8 +189,8 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// Gets and sets the number of decimal places to display.
-    /// </summary>
+        /// Gets and sets the number of decimal places to display.
+        /// </summary>
         public int DecimalPlaces
         {
             get
@@ -223,18 +223,14 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Gets and sets whether the thousands separator will be displayed.
+        /// Occurs when the slider value changes.
         /// </summary>
-        /// <remarks>This property is obsolete. Use <see cref="ThousandsSeparator"/> instead.</remarks>
-        [System.Obsolete("Use ThousandsSeparator instead (correct spelling).")]
-        public bool ThousandsSeperator
-        {
-            get => ThousandsSeparator;
-            set => ThousandsSeparator = value;
-        }
-
         public event ValueChangedEventHandler ValueChanged;
 
+        /// <summary>
+        /// Represents the method that handles the <see cref="ValueChanged"/> event.
+        /// </summary>
+        /// <param name="value">The new value of the slider.</param>
         public delegate void ValueChangedEventHandler(double value);
 
         #endregion
@@ -242,8 +238,10 @@ namespace GenericControls
         #region Methods
 
         /// <summary>
-    /// On click, increment up.
-    /// </summary>
+        /// On click, increment up.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Routed event arguments.</param>
         private void cmdUp_Click(object sender, RoutedEventArgs e)
         {
             if (Value < Maximum)
@@ -253,8 +251,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// On click, increment down.
-    /// </summary>
+        /// On click, increment down.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Routed event arguments.</param>
         private void cmdDown_Click(object sender, RoutedEventArgs e)
         {
             if (Value > Minimum)
@@ -266,8 +266,8 @@ namespace GenericControls
         /// <summary>
         /// Event handler for slider changing value.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Event arguments containing the old and new slider values.</param>
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             ValueChanged?.Invoke(Value);

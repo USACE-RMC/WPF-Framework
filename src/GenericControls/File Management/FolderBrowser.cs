@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -66,23 +66,23 @@ namespace GenericControls
         #region Members
 
         /// <summary>
-    /// Gets/sets title of dialog. 
-    /// </summary>
+        /// Gets/sets title of dialog.
+        /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-    /// Gets/sets folder in which dialog will be open.
-    /// </summary>
+        /// Gets/sets folder in which dialog will be open.
+        /// </summary>
         public string InitialDirectory { get; set; }
 
         /// <summary>
-    /// Gets/sets directory in which dialog will be open if there is no recent directory available.
-    /// </summary>
+        /// Gets/sets directory in which dialog will be open if there is no recent directory available.
+        /// </summary>
         public string DefaultDirectory { get; set; }
 
         /// <summary>
-    /// Gets selected folder.
-    /// </summary>
+        /// Gets selected folder.
+        /// </summary>
         public string SelectedFolder { get; set; }
 
 
@@ -129,9 +129,10 @@ namespace GenericControls
         #endregion
 
         /// <summary>
-    /// Show folder browser dialog.
-    /// </summary>
-    /// <param name="owner">The owner of the dialog box.</param>
+        /// Show folder browser dialog.
+        /// </summary>
+        /// <param name="owner">The owner of the dialog box.</param>
+        /// <returns>True if a folder was selected; otherwise, false.</returns>
         public bool ShowDialog(Window owner = null)
         {
             var w32owner = new Wpf32Window(owner);
@@ -146,9 +147,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// If OS is newer than Vista, then show dialog. 
-    /// </summary>
-    /// <param name="owner">The owner that opened the dialog as a IWin32Window.</param>
+        /// If OS is newer than Vista, then show dialog.
+        /// </summary>
+        /// <param name="owner">The owner that opened the dialog as a IWin32Window.</param>
+        /// <returns>True if a folder was selected; otherwise, false.</returns>
         private bool ShowVistaDialog(IWin32Window owner)
         {
             NativeMethods.IFileDialog frm = (NativeMethods.IFileDialog)new NativeMethods.FileOpenDialogRCW();
@@ -208,9 +210,10 @@ namespace GenericControls
         }
 
         /// <summary>
-    /// If the user is calling this method from a version of Windows older than Vista, then show legacy dialog. 
-    /// </summary>
-    /// <param name="owner">The owner that opened the dialog as a IWin32Window.</param>
+        /// If the user is calling this method from a version of Windows older than Vista, then show legacy dialog.
+        /// </summary>
+        /// <param name="owner">The owner that opened the dialog as a IWin32Window.</param>
+        /// <returns>True if a folder was selected; otherwise, false.</returns>
         private bool ShowLegacyDialog(IWin32Window owner)
         {
             var frm = new SaveFileDialog();

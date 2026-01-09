@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +36,7 @@ using System.Windows.Input;
 namespace GenericControls
 {
     /// <summary>
-    /// A WPF user control that allows the user to selecta line width from a predefined set or via direct input.
+    /// A WPF user control that allows the user to select a line width from a predefined set or via direct input.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -67,7 +66,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty SelectedWidthProperty = DependencyProperty.Register(nameof(SelectedWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(0d));
         /// <summary>
-        /// gets/sets the selected line width
+        /// Gets or sets the selected line width.
         /// </summary>
         public double SelectedWidth
         {
@@ -86,7 +85,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty WidthOptionsProperty = DependencyProperty.Register(nameof(WidthOptions), typeof(IList<double>), typeof(LineWidthSelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
         /// <summary>
-        /// gets/sets the list of selectable line width options.
+        /// Gets or sets the list of selectable line width options.
         /// </summary>
         public IList<double> WidthOptions
         {
@@ -105,7 +104,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(LineWidthSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the label text shown next to the width selector.
+        /// Gets or sets the label text shown next to the width selector.
         /// </summary>
         public string Title
         {
@@ -124,7 +123,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width of the label area.
+        /// Gets or sets the maximum width of the label area.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -143,7 +142,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the column width allocated to the property selector.
+        /// Gets or sets the minimum width of the label area.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -162,7 +161,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the column width allocated to the property selector.
+        /// Gets or sets the column width allocated to the property selector.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -181,7 +180,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(LineWidthSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets a value indicating whether a line should visually connect the title to control.
+        /// Gets or sets a value indicating whether a line should visually connect the title to control.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -221,9 +220,9 @@ namespace GenericControls
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Updates the <see cref="ActualPropertyWidth"/> when th control is resized.
+        /// Updates the <see cref="ActualPropertyWidth"/> when the control is resized.
         /// </summary>
-        /// <param name="sender">The sender (framework element)</param>
+        /// <param name="sender">The sender (framework element).</param>
         /// <param name="e">Size changed event data.</param>
         private void ControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -234,8 +233,8 @@ namespace GenericControls
         /// <summary>
         /// Restricts ComboBox text input to digits, decimal points, and prevents invalid characters like space.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The ComboBox receiving text input.</param>
+        /// <param name="e">Text composition event data.</param>
         private void ComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;

@@ -29,21 +29,29 @@
 */
 
 using GenericControls;
-using FrameworkInterfaces.Utilities;
-using FrameworkUI.ProjectExplorer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace FrameworkUI.ProjectExplorer
 {
+    /// <summary>
+    /// Simple node class representing a basic tree view node.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     Authors:
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </para>
+    /// </remarks>
     public class SimpleNode : Node
     {
         private string _nodeName = "Node Name";
+
+        /// <summary>
+        /// Construct a new simple node.
+        /// </summary>
+        /// <param name="name">The name of the node.</param>
+        /// <param name="parentNode">The parent node.</param>
+        /// <param name="parentTreeView">The parent tree view.</param>
         public SimpleNode(string name, Node parentNode, ExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
         {
             AllowDrop = true;
@@ -61,8 +69,14 @@ namespace FrameworkUI.ProjectExplorer
             NodeHeader.SetBinding(NodeHeader.HeaderTextProperty, new Binding(nameof(NodeName)) { Source = this, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, Mode = BindingMode.TwoWay });
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this node can be multi-selected with other nodes.
+        /// </summary>
         public override bool CanMultiSelect => true;
 
+        /// <summary>
+        /// Gets or sets the node name.
+        /// </summary>
         public string NodeName
         {
             get { return _nodeName; }

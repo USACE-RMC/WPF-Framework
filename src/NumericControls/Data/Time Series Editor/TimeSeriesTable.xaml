@@ -10,7 +10,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
-        <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+        <!-- Column header style with wrapped text and sorting support -->
+        <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
                     <DataTemplate>
@@ -22,25 +23,38 @@
             <Setter Property="VerticalContentAlignment" Value="Bottom" />
             <EventSetter Event="Click" Handler="DataGridColumnHeader_Click"/>
         </Style>
+
+        <!-- Cell style for read-only/disabled cells -->
         <Style x:Key="Right_CellStyleDisabled" TargetType="{x:Type DataGridCell}">
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Style.Triggers>
                 <Trigger Property="DataGridCell.IsSelected" Value="False">
-                    <Setter Property="Background" Value="#7FEDEDED"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Cell style for editable cells -->
         <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+                </Trigger>
                 <MultiTrigger>
                     <MultiTrigger.Conditions>
-                        <Condition Property="IsSelected" Value="true"/>
-                        <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
                     </MultiTrigger.Conditions>
-                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
                 </MultiTrigger>
             </Style.Triggers>
         </Style>
@@ -61,16 +75,20 @@
 
         </Style>
 
+        <!-- Converters for date/time and numeric value formatting -->
         <local:DateToStringConverter x:Key="DateConverter"/>
         <local:DoubleToFontFamilyConverter x:Key="DoubleToItalicsConverter"/>
         <cntrls:DoubleToNAConverter x:Key="NAConverter"/>
         <cntrls:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
     </Control.Resources>
+
     <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <!-- Toolbar with math calculator popup -->
         <StackPanel Orientation="Horizontal">
             <cntrls:DataGridToolbar 
                 Name="TimeSeriesDataGridToolBar" 
@@ -98,17 +116,17 @@
 
                     <Image 
                         Height="24"
-                        Source="pack://application:,,,/NumericControls;component/Resources/calculator_16x.png" 
+                        Source="pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png" 
                         Stretch="None" 
                         RenderOptions.EdgeMode="Aliased" 
                         RenderOptions.BitmapScalingMode="HighQuality"/>
 
-                    <Path 
-                        Grid.Column="1" 
-                        VerticalAlignment="Center" 
-                        HorizontalAlignment="Center" 
-                        Margin="4 0" 
-                        Fill="Black" 
+                    <Path
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Margin="4 0"
+                        Fill="{DynamicResource EnvironmentWindowText}"
                         Data="M 0,0 L 3,5 L 6,0 Z"/>
                 </Grid>
             </ToggleButton>
@@ -134,24 +152,18 @@
                 Placement="Left"
                 Opened="MathPopup_Opened">
                 <Border
-                    BorderBrush="Black" 
-                    Background="White" 
+                    BorderBrush="{DynamicResource EnvironmentWindowText}"
+                    Background="{DynamicResource EnvironmentWindowBackground}"
                     BorderThickness="1">
                     <local:MathEditorControl Margin="5"/>
                 </Border>
             </Popup>
         </StackPanel>
 
-        <cntrls:CopyPasteDataGrid 
+        <!-- Time series data grid with date/time and value columns -->
+        <cntrls:CopyPasteDataGrid
             x:Name="TimeSeriesDataGrid"
-            Background="Transparent"
-            BorderBrush="#FF688CAF" 
             Grid.Row="1"
-            BorderThickness="1"
-            HorizontalGridLinesBrush="#FF353B7A" 
-            VerticalGridLinesBrush="#FF353B7A"
-            AlternatingRowBackground="#FFF3F9F7" 
-            AlternationCount="2"
             RowHeight="25"
             AutoGenerateColumns="False"
             ItemsSource="{Binding Series}"
@@ -211,10 +223,10 @@
                                     AllowsTransparency="True" 
                                     Placement="Bottom" 
                                     PlacementTarget="{Binding ElementName=DummyRect}">
-                                    <cntrls:DateAndTimePickerControl 
-                                        HasSeconds="True" 
-                                        SetToHoursOnLoad="True" 
-                                        Background="White"
+                                    <cntrls:DateAndTimePickerControl
+                                        HasSeconds="True"
+                                        SetToHoursOnLoad="True"
+                                        Background="{DynamicResource EnvironmentWindowBackground}"
                                         DateAndTime="{Binding Index, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                         Is24Hour="True"/>
                                 </Popup>

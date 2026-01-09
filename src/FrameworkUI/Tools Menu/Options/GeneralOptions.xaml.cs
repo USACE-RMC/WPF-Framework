@@ -28,7 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -49,7 +48,7 @@ namespace FrameworkUI
     {
 
         /// <summary>
-        /// Constructs a new general options control.
+        /// Initializes a new instance of the <see cref="GeneralOptions"/> class.
         /// </summary>
         public GeneralOptions()
         {
@@ -61,7 +60,7 @@ namespace FrameworkUI
         /// <summary>
         /// Theme list for combobox.
         /// </summary>
-        public List<string> ThemeList { get; set; } = new List<string>(new[] { "Blue", "Light" }); 
+        public List<string> ThemeList { get; set; } = new List<string>(new[] { "Light", "Blue", "Dark" }); 
 
         /// <summary>
         /// Dependency property for the color theme.

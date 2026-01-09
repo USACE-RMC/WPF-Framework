@@ -24,6 +24,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\add_column.png" />
+    <None Remove="Resources\CalculatorDivide_16x.png" />
+    <None Remove="Resources\CalculatorExp_16x.png" />
+    <None Remove="Resources\CalculatorInterpolate_16x.png" />
+    <None Remove="Resources\CalculatorInvert_16x.png" />
+    <None Remove="Resources\CalculatorLog_16x.png" />
+    <None Remove="Resources\CalculatorMinus_16x.png" />
+    <None Remove="Resources\CalculatorMultiply_16x.png" />
+    <None Remove="Resources\CalculatorPlus_16x.png" />
+    <None Remove="Resources\CalculatorReplace_16x.png" />
+    <None Remove="Resources\Calculator_16x.png" />
+    <None Remove="Resources\delete_column.png" />
+    <None Remove="Resources\EditButtonIcon.png" />
+    <None Remove="Resources\insert_column.png" />
+    <None Remove="Resources\Run.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\add_column.png" />
+    <Resource Include="Resources\CalculatorDivide_16x.png" />
+    <Resource Include="Resources\CalculatorExp_16x.png" />
+    <Resource Include="Resources\CalculatorInterpolate_16x.png" />
+    <Resource Include="Resources\CalculatorInvert_16x.png" />
+    <Resource Include="Resources\CalculatorLog_16x.png" />
+    <Resource Include="Resources\CalculatorMinus_16x.png" />
+    <Resource Include="Resources\CalculatorMultiply_16x.png" />
+    <Resource Include="Resources\CalculatorPlus_16x.png" />
+    <Resource Include="Resources\CalculatorReplace_16x.png" />
+    <Resource Include="Resources\Calculator_16x.png" />
+    <Resource Include="Resources\delete_column.png" />
+    <Resource Include="Resources\EditButtonIcon.png" />
+    <Resource Include="Resources\insert_column.png" />
+    <Resource Include="Resources\Run.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
       <PrivateAssets>all</PrivateAssets>

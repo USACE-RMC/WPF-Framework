@@ -1,3 +1,32 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 using System;
 using System.Globalization;
 using System.Windows;
@@ -92,7 +121,6 @@ namespace OxyPlotControls
         /// </summary>
         public void CloseExpanders()
         {
-            // LabelingEXP.IsExpanded = false;
             DisplayEXP.IsExpanded = false;
         }
 
@@ -105,7 +133,6 @@ namespace OxyPlotControls
             switch (expansionZone)
             {
                 case OxyPlotPropertiesControl.PropertyEXP.Series_General:
-                    // LabelingEXP.IsExpanded = true;
                     DisplayEXP.IsExpanded = true;
                     break;
                 case OxyPlotPropertiesControl.PropertyEXP.Series_Display:
@@ -151,11 +178,8 @@ namespace OxyPlotControls
                     barSeries.Foreground = (Brush)brushConverter.ConvertFromString(labelingElement.Attribute("TextColor")!.Value)!;
                 if (labelingElement.Attribute("Font") != null)
                     barSeries.InternalSeries.Font = labelingElement.Attribute("Font")!.Value;
-                if (labelingElement.Attribute("FontSize") != null)
-                {
-                    if (double.TryParse(labelingElement.Attribute("FontSize")!.Value, out double fontSize))
-                        barSeries.FontSize = fontSize;
-                }
+                if (GetDoubleAttribute(labelingElement, "FontSize", out double fontSize))
+                    barSeries.FontSize = fontSize;
                 if (labelingElement.Attribute("FontWeight") != null)
                     barSeries.FontWeight = (FontWeight)fontWeightConverter.ConvertFromString(labelingElement.Attribute("FontWeight")!.Value)!;
                 if (labelingElement.Attribute("Padding") != null)
@@ -184,11 +208,8 @@ namespace OxyPlotControls
                     barSeries.Color = (Color)ColorConverter.ConvertFromString(displayElement.Attribute("Color")!.Value)!;
                 if (displayElement.Attribute("Fill") != null)
                     barSeries.FillColor = (Color)ColorConverter.ConvertFromString(displayElement.Attribute("Fill")!.Value)!;
-                if (displayElement.Attribute("LineThickness") != null)
-                {
-                    if (double.TryParse(displayElement.Attribute("LineThickness")!.Value, out double strokeThickness))
-                        barSeries.StrokeThickness = strokeThickness;
-                }
+                if (GetDoubleAttribute(displayElement, "LineThickness", out double strokeThickness))
+                    barSeries.StrokeThickness = strokeThickness;
             }
         }
 
@@ -208,7 +229,7 @@ namespace OxyPlotControls
             labelProps.SetAttributeValue("LabelPlacement", barSeries.LabelPlacement.ToString());
             labelProps.SetAttributeValue("TextColor", barSeries.Foreground.ToString());
             labelProps.SetAttributeValue("Font", barSeries.FontFamily);
-            labelProps.SetAttributeValue("FontSize", barSeries.FontSize);
+            labelProps.SetAttributeValue("FontSize", barSeries.FontSize.ToString("G17", CultureInfo.InvariantCulture));
             labelProps.SetAttributeValue("FontWeight", barSeries.FontWeight.ToString());
             labelProps.SetAttributeValue("Padding", barSeries.Padding.ToString());
             labelProps.SetAttributeValue("RenderInLegend", barSeries.RenderInLegend);
@@ -223,7 +244,7 @@ namespace OxyPlotControls
             displayProps.SetAttributeValue("Background", barSeries.Background);
             displayProps.SetAttributeValue("Color", barSeries.Foreground);
             displayProps.SetAttributeValue("Fill", barSeries.FillColor);
-            displayProps.SetAttributeValue("LineThickness", barSeries.StrokeThickness);
+            displayProps.SetAttributeValue("LineThickness", barSeries.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
             properties.Add(displayProps);
 
             return properties;

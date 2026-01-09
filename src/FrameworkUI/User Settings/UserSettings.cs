@@ -28,7 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.ComponentModel;
 using System.IO;
 using System.Xml;
@@ -159,6 +158,10 @@ namespace FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Sets the value string format based on the number of decimal digits.
+        /// </summary>
+        /// <param name="digits">The number of decimal digits to display.</param>
         private static void SetValueStringFormat(int digits)
         {
             string hashString = "";
@@ -187,9 +190,22 @@ namespace FrameworkUI
         private static int _defaultValueDigits = 2;
         private static string _valueStringFormat;
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>
+        /// This event is declared for API compatibility but property change notifications
+        /// are raised through the static <see cref="GlobalPropertyChanged"/> event instead.
+        /// </remarks>
+#pragma warning disable CS0067 // Event is never used - declared for API compatibility
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
         private static event PropertyChangedEventHandler GlobalPropertyChanged;
 
+        /// <summary>
+        /// Raises the global property changed event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
         private static void OnGlobalPropertyChanged(string propertyName)
         {
             GlobalPropertyChanged?.Invoke(typeof(UserSettings), new PropertyChangedEventArgs(propertyName));

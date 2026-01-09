@@ -30,10 +30,6 @@
 
 using GenericControls;
 using FrameworkInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -80,9 +76,13 @@ namespace FrameworkUI.ProjectExplorer
         #region Members
 
         /// <summary>
-        /// Event raised when the node is clicked. 
+        /// Event raised when the node is clicked.
         /// </summary>
         public event OnClickEventHandler OnClick;
+
+        /// <summary>
+        /// Delegate for the OnClick event.
+        /// </summary>
         public delegate void OnClickEventHandler();
 
         /// <summary>
@@ -99,6 +99,12 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         protected abstract void DefineProjectExplorerMenuItems();
 
+        /// <summary>
+        /// Gets the element node for a given element within a specific element collection.
+        /// </summary>
+        /// <param name="elementCollectionName">Name of the element collection to search.</param>
+        /// <param name="element">The element to find.</param>
+        /// <returns>The ElementNode if found, or null if not found.</returns>
         public ElementNode GetElementNode(string elementCollectionName, IElement element)
         {
             foreach (var nodeCollection in ChildNodes)
@@ -278,6 +284,7 @@ namespace FrameworkUI.ProjectExplorer
         /// Write the node to an XElement.
         /// </summary>
         /// <param name="node">The node.</param>
+        /// <returns>An XElement representation of the node.</returns>
         private XElement NodeToXElement(Node node)
         {
             // Create parent node
@@ -326,6 +333,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="xElement">The XElement to read.</param>
         /// <param name="parentNode">The parent node to add to.</param>
+        /// <returns>A Node created from the XElement, or null if the element cannot be parsed.</returns>
         protected Node NodeFromXElement(XElement xElement, Node parentNode)
         {
             if (xElement.Attribute("NodeType") != null && xElement.Attribute("Name") != null)
@@ -458,6 +466,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// When the Project Node header is left clicked, raise OnClick event.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void NodeHeader_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left) OnClick?.Invoke();

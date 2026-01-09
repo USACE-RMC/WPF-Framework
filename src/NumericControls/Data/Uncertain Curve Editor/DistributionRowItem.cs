@@ -28,9 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using GenericControls;
 using Numerics.Data;
 using Numerics.Distributions;
@@ -68,16 +66,23 @@ namespace NumericControls
         private SortOrder _yOrder;
         private string[] _propertyNames;
         private string[] _propertyDisplayNames;
+
+        /// <summary>
+        /// The relative tolerance used for comparing double values when determining if a property has changed.
+        /// </summary>
         public static double RelativeDoubleTolerance = double.Epsilon;
 
         /// <summary>
-        /// The probability distribution.
+        /// Gets the probability distribution associated with this row.
         /// </summary>
         public UnivariateDistributionBase Distribution
         {
             get { return _distribution; }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum allowed X value for validation.
+        /// </summary>
         public double MaxXValue
         {
             get { return _maxXValue; }
@@ -91,6 +96,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the minimum allowed X value for validation.
+        /// </summary>
         public double MinXValue
         {
             get { return _minXValue; }
@@ -104,6 +112,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum allowed Y value for validation.
+        /// </summary>
         public double MaxYValue
         {
             get { return _maxYValue; }
@@ -117,6 +128,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the minimum allowed Y value for validation.
+        /// </summary>
         public double MinYValue
         {
             get { return _minYValue; }
@@ -130,6 +144,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether X values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictX
         {
             get { return _isStrictX; }
@@ -143,6 +160,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether Y values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictY
         {
             get { return _isStrictY; }
@@ -156,6 +176,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the sort order for X values.
+        /// </summary>
         public SortOrder XOrder
         {
             get { return _xOrder; }
@@ -169,6 +192,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the sort order for Y values.
+        /// </summary>
         public SortOrder YOrder
         {
             get { return _yOrder; }
@@ -188,6 +214,9 @@ namespace NumericControls
         private double _p3;
         private double _p4;
 
+        /// <summary>
+        /// Gets or sets the X value (independent variable) for this row.
+        /// </summary>
         public double X
         {
             get { return _x; }
@@ -202,9 +231,9 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Parameter 1
+        /// Gets or sets the first distribution parameter value.
         /// </summary>
-        /// <returns>First Parameter in the Distribution.</returns>
+        /// <value>The first parameter value of the distribution.</value>
         public double P1
         {
             get { return _p1; }
@@ -219,9 +248,9 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Parameter 2
+        /// Gets or sets the second distribution parameter value.
         /// </summary>
-        /// <returns>Second Parameter in the Distribution.</returns>
+        /// <value>The second parameter value, or unused if the distribution has fewer than 2 parameters.</value>
         public double P2
         {
             get { return _p2; }
@@ -236,9 +265,9 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Parameter 3
+        /// Gets or sets the third distribution parameter value.
         /// </summary>
-        /// <returns>Third Parameter in the Distribution.</returns>
+        /// <value>The third parameter value, or unused if the distribution has fewer than 3 parameters.</value>
         public double P3
         {
             get { return _p3; }
@@ -253,9 +282,9 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Parameter 4
+        /// Gets or sets the fourth distribution parameter value.
         /// </summary>
-        /// <returns>Fourth Parameter in the Distribution.</returns>
+        /// <value>The fourth parameter value, or unused if the distribution has fewer than 4 parameters.</value>
         public double P4
         {
             get { return _p4; }
@@ -269,16 +298,42 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets the effective minimum value of the distribution at the minimum probability threshold.
+        /// </summary>
+        /// <value>The inverse CDF at the minimum probability, or <see cref="double.NaN"/> if parameters are invalid.</value>
         public double Minimum => _distribution.ParametersValid ? _distribution.InverseCDF(_minProbability) : double.NaN;
 
+        /// <summary>
+        /// Gets the effective maximum value of the distribution at the maximum probability threshold.
+        /// </summary>
+        /// <value>The inverse CDF at the maximum probability, or <see cref="double.NaN"/> if parameters are invalid.</value>
         public double Maximum => _distribution.ParametersValid ? _distribution.InverseCDF(_maxProbability) : double.NaN;
 
-        public double Mean => _distribution.ParametersValid ? _distribution.Mean : double.NaN; 
+        /// <summary>
+        /// Gets the mean of the distribution.
+        /// </summary>
+        /// <value>The distribution mean, or <see cref="double.NaN"/> if parameters are invalid.</value>
+        public double Mean => _distribution.ParametersValid ? _distribution.Mean : double.NaN;
 
+        private readonly double _minProbability = 1E-5d;
+        private readonly double _maxProbability = 1d - 1E-5d;
 
-        private readonly double _minProbability = 1E-5d; // 1E-5 the max number of Monte Carlo samples will be 10,000 1E-4.
-        private readonly double _maxProbability = 1d - 1E-5d; // 1 - 1E-5
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DistributionRowItem"/> class.
+        /// </summary>
+        /// <param name="xVal">The initial X value.</param>
+        /// <param name="dist">The probability distribution for this row.</param>
+        /// <param name="list">The observable collection this item belongs to.</param>
+        /// <param name="minX">The minimum allowed X value.</param>
+        /// <param name="maxX">The maximum allowed X value.</param>
+        /// <param name="minY">The minimum allowed Y value.</param>
+        /// <param name="maxY">The maximum allowed Y value.</param>
+        /// <param name="strictX">Whether X values must be strictly ordered.</param>
+        /// <param name="strictY">Whether Y values must be strictly ordered.</param>
+        /// <param name="orderX">The sort order for X values.</param>
+        /// <param name="orderY">The sort order for Y values.</param>
+        /// <exception cref="Exception">Thrown when the distribution has more than 4 parameters.</exception>
         public DistributionRowItem(double xVal, UnivariateDistributionBase dist, ObservableCollection<object> list, double minX, double maxX, double minY, double maxY, bool strictX, bool strictY, Numerics.Data.SortOrder orderX, Numerics.Data.SortOrder orderY) : base(list)
         {
             MinXValue = minX;
@@ -300,7 +355,6 @@ namespace NumericControls
             {
                 throw new Exception("Uncertain Ordered Paired Data editor can only work with distributions with 4 parameters or less.");
             }
-            // 
             _p1 = parameters[0];
             if (parameters.Count() >= 2) { _p2 = parameters[1]; }
             if (parameters.Count() >= 3) { _p3 = parameters[2]; }
@@ -308,7 +362,6 @@ namespace NumericControls
             _propertyNames = _distribution.GetParameterPropertyNames;
             _propertyDisplayNames = new string[(_propertyNames.Count())];
             string[,] paramString = _distribution.ParametersToString;
-            // 
             for (int i = 0; i < paramString.GetLength(0); i++)
             {
                 _propertyDisplayNames[i] = paramString[i, 0];
@@ -320,11 +373,18 @@ namespace NumericControls
             AddDataRules();
         }
 
+        /// <summary>
+        /// Raises the PropertyChanged event for all properties, forcing a UI refresh.
+        /// </summary>
         public void RaisePropertyChanged()
         {
             NotifyPropertyChanged();
         }
 
+        /// <summary>
+        /// Updates the distribution with the current parameter values and validates them.
+        /// </summary>
+        /// <returns><c>true</c> if the parameters are invalid; otherwise, <c>false</c>.</returns>
         private bool SetDistribution()
         {
             var newParams = new double[_distribution.NumberOfParameters];
@@ -332,13 +392,11 @@ namespace NumericControls
             if (_propertyNames.Count() >= 2) { newParams[1] = P2; }
             if (_propertyNames.Count() >= 3) { newParams[2] = P3; }
             if (_propertyNames.Count() >= 4) { newParams[3] = P4; }
-            // 
             _distribution.SetParameters(newParams);
 
             if (_distribution.ParametersValid == false)
             {
                 var argError = _distribution.ValidateParameters(newParams, false);
-                // 
                 for (int i = 0; i < _propertyNames.Count(); i++)
                     RuleMap["P" + (i + 1)].ErrorMessage = argError.Message;
                 return true;
@@ -347,10 +405,14 @@ namespace NumericControls
             return false;
         }
 
+        /// <inheritdoc/>
         public override void AddValidationRules()
         {
         }
 
+        /// <summary>
+        /// Adds the validation rules for this row item, including X/Y range checks and ordering constraints.
+        /// </summary>
         private void AddDataRules()
         {
             if (XOrder != SortOrder.None)
@@ -434,25 +496,26 @@ namespace NumericControls
             }
         }
 
+        /// <inheritdoc/>
         public override string PropertyDisplayName(string propertyName)
         {
             if (propertyName == nameof(P1)) { return _propertyDisplayNames[0]; }
-            if (propertyName == nameof(P2) && _propertyDisplayNames.Count() > 1) { return _propertyDisplayNames[1]; }
-            if (propertyName == nameof(P3) && _propertyDisplayNames.Count() > 2) { return _propertyDisplayNames[2]; }
-            if (propertyName == nameof(P4) && _propertyDisplayNames.Count() > 3) { return _propertyDisplayNames[3]; }
-            // 
+            if (propertyName == nameof(P2) && _propertyDisplayNames.Length > 1) { return _propertyDisplayNames[1]; }
+            if (propertyName == nameof(P3) && _propertyDisplayNames.Length > 2) { return _propertyDisplayNames[2]; }
+            if (propertyName == nameof(P4) && _propertyDisplayNames.Length > 3) { return _propertyDisplayNames[3]; }
             return propertyName;
         }
 
+        /// <inheritdoc/>
         public override bool IsGridDisplayable(string propertyName)
         {
             switch (propertyName)
             {
                 case nameof(X): return true;
                 case nameof(P1): return true;
-                case nameof(P2): return _propertyDisplayNames.Count() > 1;
-                case nameof(P3): return _propertyDisplayNames.Count() > 2;
-                case nameof(P4): return _propertyDisplayNames.Count() > 3;
+                case nameof(P2): return _propertyDisplayNames.Length > 1;
+                case nameof(P3): return _propertyDisplayNames.Length > 2;
+                case nameof(P4): return _propertyDisplayNames.Length > 3;
                 default: return false;
             }
         }

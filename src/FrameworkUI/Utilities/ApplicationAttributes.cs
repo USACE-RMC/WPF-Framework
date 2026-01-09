@@ -28,7 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Reflection;
 
 namespace FrameworkUI
@@ -89,16 +88,31 @@ namespace FrameworkUI
                     _Version = Assembly.GetName().Version;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
+        /// <summary>
+        /// The assembly title attribute.
+        /// </summary>
         private static readonly AssemblyTitleAttribute _Title = null;
+        /// <summary>
+        /// The assembly company attribute.
+        /// </summary>
         private static readonly AssemblyCompanyAttribute _Company = null;
+        /// <summary>
+        /// The assembly copyright attribute.
+        /// </summary>
         private static readonly AssemblyCopyrightAttribute _Copyright = null;
+        /// <summary>
+        /// The assembly product attribute.
+        /// </summary>
         private static readonly AssemblyProductAttribute _Product = null;
+        /// <summary>
+        /// The assembly version.
+        /// </summary>
         private static readonly Version _Version = null;
 
         /// <summary>

@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Windows;
 using System.Windows.Controls;
 
@@ -99,10 +99,10 @@ namespace GenericControls
 
         /// <summary>
         /// Intitializes the control when a dependency property changes.
-        /// Updates the UI and prevents recursive updates. 
+        /// Updates the UI and prevents recursive updates.
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="e"></param>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event arguments.</param>
         private static void InitializeControl(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null)
@@ -247,8 +247,8 @@ namespace GenericControls
         /// <summary>
         /// Handles changes to the X value textbox and updates the <see cref="DataPoint"/>
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void DataPointX_TextChanged(object sender, TextChangedEventArgs e)
         {
             DataPointChanged();
@@ -257,8 +257,8 @@ namespace GenericControls
         /// <summary>
         /// Handles changes to the Y value textbox and updates the <see cref="DataPoint"/>
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void DataPointY_TextChanged(object sender, TextChangedEventArgs e)
         {
             DataPointChanged();

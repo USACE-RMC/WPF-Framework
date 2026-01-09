@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,7 +72,7 @@ namespace GenericControls
         public static DependencyProperty AlignmentProperty = DependencyProperty.Register(nameof(Alignment), typeof(HorizontalAlignment), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(HorizontalAlignment.Stretch));
 
         /// <summary>
-        /// Gets/sets the currently selected <see cref="HorizontalAlignment"/>
+        /// Gets or sets the currently selected <see cref="HorizontalAlignment"/>.
         /// </summary>
         public HorizontalAlignment Alignment
         {
@@ -92,7 +91,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(HorizontalAlignmentControl), new UIPropertyMetadata("Title"));
         /// <summary>
-        /// gets/sets the display title of the control.
+        /// Gets or sets the display title of the control.
         /// </summary>
         public string Title
         {
@@ -111,7 +110,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
-        /// gets/sets the maximum width of the property label section.
+        /// Gets or sets the maximum width of the property label section.
         /// </summary>
         public double MaxPropertyWidth
         {
@@ -130,7 +129,7 @@ namespace GenericControls
         /// </summary> 
         public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
-        /// gets/sets the minimum width of the property label section.
+        /// Gets or sets the minimum width of the property label section.
         /// </summary>
         public double MinPropertyWidth
         {
@@ -149,7 +148,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
-        /// gets/sets the width of the property label section.
+        /// Gets or sets the width of the property label section.
         /// </summary>
         public GridLength PropertyWidth
         {
@@ -168,7 +167,7 @@ namespace GenericControls
         /// </summary>
         public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(true));
         /// <summary>
-        /// gets/sets a value indicating whether a leader line should be displayed next to the property label
+        /// Gets or sets a value indicating whether a leader line should be displayed next to the property label.
         /// </summary>
         public bool ShowLeaderLine
         {
@@ -182,19 +181,9 @@ namespace GenericControls
             }
         }
 
-        // Public Shared ActualPropertyWidthProperty As DependencyProperty = DependencyProperty.RegisterReadOnly(NameOf(ActualPropertyWidth), GetType(Double), GetType(HorizontalAlignmentControl), New PropertyMetadata())
-        // Public Property ActualPropertyWidth As Double
-        // Get
-        // Return DirectCast(GetValue(ActualPropertyWidthProperty), Double)
-        // End Get
-        // Set(value As Double)
-        // SetValue(ActualPropertyWidthProperty, value)
-        // End Set
-        // End Property
-
         private double _actualWidth = 0d;
         /// <summary>
-        /// Get the actual rendered width of the control.
+        /// Gets the actual rendered width of the control.
         /// </summary>
         public double ActualPropertyWidth
         {
@@ -213,12 +202,12 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Occurs when a property valule changes.
+        /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Handles changes in the control's size and updates <see cref="ActualPropertyWidth"/>
+        /// Handles changes in the control's size and updates <see cref="ActualPropertyWidth"/>.
         /// </summary>
         /// <param name="sender">The element whose size changed.</param>
         /// <param name="e">The size change event arguments.</param>

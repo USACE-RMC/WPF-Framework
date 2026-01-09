@@ -28,14 +28,10 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -192,31 +188,61 @@ namespace FrameworkUI
 
         #region Required Window Functionality
 
+        /// <summary>
+        /// Determines whether the window can be resized based on the current ResizeMode.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void OnCanResizeWindow(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = ResizeMode == ResizeMode.CanResize || ResizeMode == ResizeMode.CanResizeWithGrip;
         }
 
+        /// <summary>
+        /// Determines whether the window can be minimized based on the current ResizeMode.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = ResizeMode != ResizeMode.NoResize;
         }
 
+        /// <summary>
+        /// Handles the close window command.
+        /// </summary>
+        /// <param name="target">The target of the command.</param>
+        /// <param name="e">The event data.</param>
         private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);
         }
 
+        /// <summary>
+        /// Handles the maximize window command.
+        /// </summary>
+        /// <param name="target">The target of the command.</param>
+        /// <param name="e">The event data.</param>
         private void OnMaximizeWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.MaximizeWindow(this);
         }
 
+        /// <summary>
+        /// Handles the minimize window command.
+        /// </summary>
+        /// <param name="target">The target of the command.</param>
+        /// <param name="e">The event data.</param>
         private void OnMinimizeWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.MinimizeWindow(this);
         }
 
+        /// <summary>
+        /// Handles the restore window command.
+        /// </summary>
+        /// <param name="target">The target of the command.</param>
+        /// <param name="e">The event data.</param>
         private void OnRestoreWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.RestoreWindow(this);
@@ -226,27 +252,84 @@ namespace FrameworkUI
 
         #region Members
 
+        /// <summary>
+        /// Resource dictionary for the AvalonDock theme.
+        /// </summary>
         private ResourceDictionary _avalonDockThemeDictionary = new ResourceDictionary();
+        /// <summary>
+        /// Layout anchorable for the project explorer dock.
+        /// </summary>
         private LayoutAnchorable _projectExplorerDock;
         //private LayoutAnchorable _mapExplorerDock;
+        /// <summary>
+        /// Layout anchorable for the message window dock.
+        /// </summary>
         private LayoutAnchorable _messageWindowDock;
+        /// <summary>
+        /// Layout anchorable for the properties window dock.
+        /// </summary>
         private LayoutAnchorable _propertiesWindowDock;
+        /// <summary>
+        /// The project explorer tree view control.
+        /// </summary>
         private ProjectExplorerTreeView _projectExplorerTreeView;
         //private ExplorerTreeView _mapExplorerTreeView;
+        /// <summary>
+        /// The message window control.
+        /// </summary>
         private MessageWindowControl _messageWindowControl;
+        /// <summary>
+        /// Reference to the previously active document.
+        /// </summary>
         private LayoutDocument _previousActiveDocument = null;
+        /// <summary>
+        /// Indicates whether to load the full layout including documents.
+        /// </summary>
         private bool _loadFullLayout = false;
+        /// <summary>
+        /// Indicates whether a project is currently being opened.
+        /// </summary>
         private bool _openingProject = false;
+        /// <summary>
+        /// Indicates whether a project is currently being closed.
+        /// </summary>
         private bool _closingProject = false;
+        /// <summary>
+        /// Indicates whether the properties pane was clicked.
+        /// </summary>
         private bool _propertiesPaneClicked = false;
+        /// <summary>
+        /// Indicates whether the project explorer pane was clicked.
+        /// </summary>
         private bool _projectExplorerPaneClicked = false;
 
+        /// <summary>
+        /// Event raised when the options apply button is clicked.
+        /// </summary>
         public event RoutedEventHandler Options_Apply_Click;
+        /// <summary>
+        /// Delegate for handling the preview save as event.
+        /// </summary>
+        /// <param name="sender">The project being saved.</param>
+        /// <param name="newFilePath">The new file path.</param>
+        /// <param name="cancel">Reference parameter to cancel the save operation.</param>
         public delegate void PreviewObjectSavedAsEventHandler(IProject sender, string newFilePath, ref bool cancel);
+        /// <summary>
+        /// Event raised before a project is saved with a new file name.
+        /// </summary>
         public event PreviewObjectSavedAsEventHandler PreviewSaveAs;
 
+        /// <summary>
+        /// Dependency property for the ProjectNode property.
+        /// </summary>
         public static DependencyProperty ProjectNodeProperty = DependencyProperty.Register(nameof(ProjectNode), typeof(FrameworkUIController), typeof(MainWindow), new FrameworkPropertyMetadata(null, ProjectNode_PropertyChangedCallback));
 
+        /// <summary>
+        /// Callback method invoked when the ProjectNode dependency property changes.
+        /// Handles cleanup of old project and initialization of new project.
+        /// </summary>
+        /// <param name="d">The dependency object whose property changed.</param>
+        /// <param name="e">The event data containing old and new values.</param>
         private static void ProjectNode_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -344,6 +427,9 @@ namespace FrameworkUI
             thisControl.ProjectPropertyChanged(thisControl, new PropertyChangedEventArgs(nameof(Name)));
         }
 
+        /// <summary>
+        /// Reloads the project node by removing and re-adding event handlers and reloading child nodes.
+        /// </summary>
         private void LoadProjectNode()
         {
             // Remove handlers
@@ -407,6 +493,9 @@ namespace FrameworkUI
             set { SetValue(ProjectNodeProperty, value); }
         }
 
+        /// <summary>
+        /// The update service for checking and downloading software updates.
+        /// </summary>
         private IUpdateService _updateService;
 
         /// <summary>
@@ -487,6 +576,8 @@ namespace FrameworkUI
         /// <summary>
         /// When the project properties change, update window title.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (ProjectNode == null)
@@ -638,7 +729,7 @@ namespace FrameworkUI
                             layoutSerializer.Deserialize(reader);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Load the Default Resource Avalon Dock layout
                         _loadFullLayout = false;
@@ -659,7 +750,7 @@ namespace FrameworkUI
                             layoutSerializer.Deserialize(stream);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Load the Default Resource Avalon Dock layout
                         _loadFullLayout = false;
@@ -795,6 +886,7 @@ namespace FrameworkUI
 
         /// <summary>
         /// When an element node is added to the project explorer tree, add edit and left click handler.
+        /// Opens the document for the new node unless the project is currently opening.
         /// </summary>
         /// <param name="node">Project explorer element node.</param>
         private void NodeAdded(Node node)
@@ -821,9 +913,9 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// When an element node is removed from the project explorer tree, remove handlers.
+        /// When an element node is removed from the project explorer tree, remove handlers and update layout.
         /// </summary>
-        /// <param name="elementNode">Project explorer element node.</param>
+        /// <param name="node">Project explorer element node.</param>
         private void NodeRemoved(Node node)
         {
             if (node == null || node.GetType() != typeof(ElementNode)) { return; }
@@ -864,7 +956,7 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Check if the element is open for editing.
+        /// Check if the element is open for editing and activate its window if it is.
         /// </summary>
         /// <param name="element">Project element.</param>
         private void ActivateElement(IElement element)
@@ -919,9 +1011,9 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Copy project element.
+        /// Copy project element with a new name and add it to the parent collection.
         /// </summary>
-        /// <param name="element">Project element.</param>
+        /// <param name="element">Project element to copy.</param>
         /// <param name="newName">New element name.</param>
         private void CopyElement(IElement element, string newName)
         {
@@ -935,9 +1027,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On click, delete project element.
+        /// On click, delete project element after confirming with user.
+        /// Closes any open documents for the deleted elements.
         /// </summary>
-        /// <param name="elements">List of project elements.</param>
+        /// <param name="elements">List of project elements to delete.</param>
         private void DeleteElement(IList<IElement> elements)
         {
             // Check if the user really wants to delete the element
@@ -1006,6 +1099,11 @@ namespace FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Handles the IsActiveChanged event for the properties window to update project explorer selection.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void PropertiesWindow_IsActiveChanged(object sender, EventArgs e)
         {
             // Check if a simulation is in progress
@@ -1067,9 +1165,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Open a document.
+        /// Open a document in the main document pane and makes it active.
         /// </summary>
         /// <param name="document">Document to open.</param>
+        /// <param name="element">The element associated with the document.</param>
         public void OpenDocument(LayoutDocument document, IElement element)
         {
             if (ShellPublicVariables.SimulationInProgress == true) return;
@@ -1089,6 +1188,11 @@ namespace FrameworkUI
             document.IsSelected = true;
         }
 
+        /// <summary>
+        /// Handles the IsSelectedChanged event for a document to enable/disable based on simulation status.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Document_IsSelectedChanged(object sender, EventArgs e)
         {
             LayoutDocument document = (LayoutDocument)sender;
@@ -1105,8 +1209,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// If the document is changed to active, show content element properties.
+        /// If the document is changed to active, show content element properties and update project explorer selection.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Document_IsActiveChanged(object sender, EventArgs e)
         {
             LayoutDocument document = (LayoutDocument)sender;
@@ -1202,8 +1308,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On closing, see if the project properties should be selected.
+        /// On closing, see if the project properties should be selected. Cancels close if simulation is in progress.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The cancel event data.</param>
         private void Document_Closing(object sender, CancelEventArgs e)
         {
             if (ShellPublicVariables.SimulationInProgress == true)
@@ -1215,6 +1323,11 @@ namespace FrameworkUI
             if (layoutDocumentPane != null && layoutDocumentPane.Children.Count <= 1) Project_Click();
         }
 
+        /// <summary>
+        /// Handles the Closed event for a document to clean up resources and event handlers.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Document_Closed(object sender, EventArgs e)
         {
             LayoutDocument document = (LayoutDocument)sender;
@@ -1249,8 +1362,10 @@ namespace FrameworkUI
 
 
         /// <summary>
-        /// Helper method to search for AvalonDock LayoutAnchorablePaneControl.
+        /// Helper method to search for AvalonDock LayoutAnchorablePaneControl in the visual tree.
         /// </summary>
+        /// <param name="dependencyObject">The starting point in the visual tree.</param>
+        /// <returns>The LayoutAnchorablePaneControl if found, otherwise null.</returns>
         private Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl FindPane(DependencyObject dependencyObject)
         {
             if (!(dependencyObject is Visual || dependencyObject is Visual3D)) return null;
@@ -1264,8 +1379,10 @@ namespace FrameworkUI
         #region Drag-Drop
 
         /// <summary>
-        /// On drag enter, check if file type is acceptable.
+        /// On drag enter, check if file type is acceptable for opening.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The drag event data.</param>
         private void MainWindow_DragEnter(object sender, DragEventArgs e)
         {
             ShellPublicVariables.IsDroppableFile = false;
@@ -1295,8 +1412,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On drag over, show icons.
+        /// On drag over, show appropriate drag-drop cursor icons.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The drag event data.</param>
         private void MainWindow_DragOver(object sender, DragEventArgs e)
         {
             if (ShellPublicVariables.IsDroppableFile == true)
@@ -1310,8 +1429,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On drop, if its acceptable, open project file.
+        /// On drop, if the file is acceptable, open the project file.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The drag event data.</param>
         private void MainWindow_Drop(object sender, DragEventArgs e)
         {
             if (ShellPublicVariables.IsDroppableFile == true)
@@ -1330,8 +1451,10 @@ namespace FrameworkUI
         #region File Menu
 
         /// <summary>
-        /// On click, create new project.
+        /// On click, create new project via save file dialog.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void NewCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var SaveFileDialog = new SaveFileDialog() { Title = "Create New Project", Filter = ShellPublicVariables.FileDialogFilter };
@@ -1346,8 +1469,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On click, open existing project.
+        /// On click, open existing project via open file dialog.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var OpenFileDialog = new OpenFileDialog() { Title = "Open Project", Filter = ShellPublicVariables.FileDialogFilter };
@@ -1362,12 +1487,12 @@ namespace FrameworkUI
         /// <summary>
         /// Open recent project.
         /// </summary>
-        /// <param name="fullfileName">The full name of the project to open.</param>
+        /// <param name="fullFileName">The full name of the project to open.</param>
         /// <param name="killProcessIfAlreadyOpen">Determines whether to send a message that the project is already open, or to kill the current process.</param>
-        public void OpenRecentProject(string fullfileName, bool killProcessIfAlreadyOpen = false)
+        public void OpenRecentProject(string fullFileName, bool killProcessIfAlreadyOpen = false)
         {
             // If the project is already open in this application, then exit
-            if (ProjectNode.Project.FullFileName == fullfileName) return;
+            if (ProjectNode.Project.FullFileName == fullFileName) return;
             // Next, see if this project file is already open by another instance of this application
             var current = Process.GetCurrentProcess();
             var processes = Process.GetProcessesByName(current.ProcessName);
@@ -1375,7 +1500,7 @@ namespace FrameworkUI
             {
                 if (process.Id != current.Id)
                 {
-                    if (process.MainWindowTitle == ShellPublicVariables.SoftwareName + " " + ProjectNode.Project.SoftwareVersion + "  -  " + fullfileName + "")
+                    if (process.MainWindowTitle == ShellPublicVariables.SoftwareName + " " + ProjectNode.Project.SoftwareVersion + "  -  " + fullFileName + "")
                     {
                         // There is already an instance with this project opened, so send a message or kill the current process.
                         if (killProcessIfAlreadyOpen == true)
@@ -1384,21 +1509,21 @@ namespace FrameworkUI
                         }
                         else
                         {
-                            MessageBox.Show(Path.GetFileNameWithoutExtension(fullfileName) + " is already open in another instance of " + ShellPublicVariables.SoftwareName);
+                            MessageBox.Show(Path.GetFileNameWithoutExtension(fullFileName) + " is already open in another instance of " + ShellPublicVariables.SoftwareName);
                             return;
                         }
                     }
                 }
             }
             CloseProject();
-            OpenProject(fullfileName);
+            OpenProject(fullFileName);
         }
 
         /// <summary>
         /// Open project file.
         /// </summary>
-        /// <param name="fullfileName">The full name of the project to open.</param>
-        public void OpenProject(string fullfileName)
+        /// <param name="fullFileName">The full name of the project to open.</param>
+        public void OpenProject(string fullFileName)
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -1407,14 +1532,14 @@ namespace FrameworkUI
             AutoBackup.DeleteBackupProjectFile();
 
             // Add recent file to list
-            RecentFiles.AddItem(fullfileName);
+            RecentFiles.AddItem(fullFileName);
 
             // Clear message window
             FrameworkInterfaces.Messaging.Messenger.GetInstance().Clear();
 
             // Close and Open project
             ProjectNode.Project.Close();
-            ProjectNode.Project.FullFileName = fullfileName;
+            ProjectNode.Project.FullFileName = fullFileName;
             ProjectNode.Project.Open();
             LoadProjectNode();
             
@@ -1444,7 +1569,7 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Close the current project.
+        /// Close the current project, saving layout and closing all open windows.
         /// </summary>
         private void CloseProject()
         {
@@ -1488,8 +1613,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On click, save project.
+        /// On click, save project to current file location.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SaveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             SaveProject();
@@ -1534,8 +1661,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On click, save project as...
+        /// On click, save project as a new file via save file dialog.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SaveAsCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             SaveProjectAs();
@@ -1587,16 +1716,20 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Exit program.
+        /// Exit program by closing the main window.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ExitCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Close();
         }
 
         /// <summary>
-        /// On close, save settings.
+        /// On close, check for unsaved changes, compact project if needed, and save settings.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The cancel event data.</param>
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             if (ShellPublicVariables.SimulationInProgress == true)
@@ -1719,8 +1852,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// On close, shutdown application.
+        /// On close, shutdown application completely.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
@@ -1753,8 +1888,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Determines if the Undo command can execute.
+        /// Determines if the Undo command can execute based on the active undo manager.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void UndoCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             var undoManager = GetActiveUndoManager();
@@ -1762,8 +1899,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Executes the Undo command.
+        /// Executes the Undo command on the active undo manager.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void UndoCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var undoManager = GetActiveUndoManager();
@@ -1774,8 +1913,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Determines if the Redo command can execute.
+        /// Determines if the Redo command can execute based on the active undo manager.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void RedoCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             var undoManager = GetActiveUndoManager();
@@ -1783,8 +1924,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Executes the Redo command.
+        /// Executes the Redo command on the active undo manager.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void RedoCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var undoManager = GetActiveUndoManager();
@@ -1807,8 +1950,10 @@ namespace FrameworkUI
         #region View Menu
 
         /// <summary>
-        /// Show project explorer docking panel.
+        /// Show project explorer docking panel and make it active.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ProjectExplorer_Click(object sender, RoutedEventArgs e)
         {
             _projectExplorerDock.Show();
@@ -1825,8 +1970,10 @@ namespace FrameworkUI
         //}
 
         /// <summary>
-        /// Show message window docking panel.
+        /// Show message window docking panel and make it active.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void MessageWindow_Click(object sender, RoutedEventArgs e)
         {
             _messageWindowDock.Show();
@@ -1834,8 +1981,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Show properties docking panel.
+        /// Show properties docking panel and make it active.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void PropertiesWindow_Click(object sender, RoutedEventArgs e)
         {
             _propertiesWindowDock.Show();
@@ -1843,8 +1992,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Show all docking panels.
+        /// Show all docking panels (project explorer, message window, and properties).
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void AllWindows_Click(object sender, RoutedEventArgs e)
         {
             _projectExplorerDock.Show();
@@ -1857,6 +2008,8 @@ namespace FrameworkUI
         /// <summary>
         /// Reset the default layout for the project explorer, message window, and properties window.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void DefaultLayout_Click(object sender, RoutedEventArgs e)
         {
             OpenWindows.CloseAllWindows();
@@ -1875,8 +2028,10 @@ namespace FrameworkUI
         #region Project Menu
 
         /// <summary>
-        /// When the project menu is opened, reset the parent node for adding new elements. 
+        /// When the project menu is opened, reset the parent node for adding new elements.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ProjectMenuOpened(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < ProjectNode.ChildNodes.Count; i++)
@@ -1887,8 +2042,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Show the project properties control.
+        /// Show the project properties control in the properties window.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ProjectProperties_Click(object sender, RoutedEventArgs e)
         {
             Project_Click();
@@ -1899,8 +2056,10 @@ namespace FrameworkUI
         #region Tools Menu
 
         /// <summary>
-        /// Compact (aka vacuum) project .sqlite file.
+        /// Compact (aka vacuum) project .sqlite file to reduce file size.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CompactProjectFile_Click(object sender, RoutedEventArgs e)
         {
             // Check if the user really wants to compact the file
@@ -1920,6 +2079,7 @@ namespace FrameworkUI
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.ToString());
                     MessageBox.Show("There was an unexpected error when trying to compact and optimize the project file.", "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
@@ -1936,8 +2096,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Add project to a zip file.
+        /// Add project to a zip file for backup or distribution.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ZipProjectFile_Click(object sender, RoutedEventArgs e)
         {
             var SaveFileDialog = new SaveFileDialog() { Title = "Zip Project", Filter = "(*.zip)|*.zip" };
@@ -1953,6 +2115,7 @@ namespace FrameworkUI
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.ToString());
                     MessageBox.Show("There was an unexpected error when trying to zip the project file.", "Zip Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
@@ -1969,8 +2132,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Restore project from backup.
+        /// Restore project from backup file (.bak extension).
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void RestoreFromBackup_Click(object sender, RoutedEventArgs e)
         {
             var OpenFileDialog = new OpenFileDialog() { Title = "Restore Project", Filter = ShellPublicVariables.BackupFileDialogFilter };
@@ -1996,8 +2161,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Open options dialog.
+        /// Open options dialog for configuring application settings.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Options_Click(object sender, RoutedEventArgs e)
         {
             var options = new OptionsDialog(this);
@@ -2007,8 +2174,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Handles the Check for Updates menu item click.
+        /// Handles the Check for Updates menu item click to check for available software updates.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
         {
             if (UpdateService == null) return;
@@ -2073,8 +2242,9 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Downloads and installs an update.
+        /// Downloads and installs an update with progress reporting.
         /// </summary>
+        /// <param name="update">The update information containing download details.</param>
         private async System.Threading.Tasks.Task DownloadAndInstallUpdateAsync(UpdateInfo update)
         {
             if (UpdateService == null) return;
@@ -2164,8 +2334,10 @@ namespace FrameworkUI
         #region Window Menu
 
         /// <summary>
-        /// Close all open documents.
+        /// Close all open documents and show project properties.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CloseAllDocuments_Click(object sender, RoutedEventArgs e)
         {
             _propertiesPaneClicked = false;
@@ -2178,8 +2350,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// Open the windows dialog.
+        /// Open the windows dialog to manage open documents.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Windows_Click(object sender, RoutedEventArgs e)
         {
             _propertiesPaneClicked = false;
@@ -2193,53 +2367,83 @@ namespace FrameworkUI
 
         #region Disable-Enable Menu strip and Windows
 
+        /// <summary>
+        /// Disables the main menu and toolbar.
+        /// </summary>
         public void DisableMenuStrip()
         {
             MainMenu.IsEnabled = false;
             MainStackPanel.IsEnabled = false;
         }
 
+        /// <summary>
+        /// Enables the main menu and toolbar.
+        /// </summary>
         public void EnableMenuStrip()
         {
             MainMenu.IsEnabled = true;
             MainStackPanel.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Disables the project explorer window.
+        /// </summary>
         public void DisableProjectExplorer()
         {
             _projectExplorerDock.IsEnabled = false;
         }
 
+        /// <summary>
+        /// Enables the project explorer window.
+        /// </summary>
         public void EnableProjectExplorer()
         {
             _projectExplorerDock.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Disables the message window.
+        /// </summary>
         public void DisableMessageWindow()
         {
             _messageWindowDock.IsEnabled = false;
         }
 
+        /// <summary>
+        /// Enables the message window.
+        /// </summary>
         public void EnableMessageWindow()
         {
             _messageWindowDock.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Disables the properties window.
+        /// </summary>
         public void DisablePropertiesWindow()
         {
             _propertiesWindowDock.IsEnabled = false;
         }
 
+        /// <summary>
+        /// Enables the properties window.
+        /// </summary>
         public void EnablePropertiesWindow()
         {
             _propertiesWindowDock.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Disables all open document windows.
+        /// </summary>
         public void DisableOpenWindows()
         {
             OpenWindows.DisableAllWindows();
         }
 
+        /// <summary>
+        /// Enables all open document windows.
+        /// </summary>
         public void EnableOpenWindows()
         {
             OpenWindows.EnableAllWindows();
