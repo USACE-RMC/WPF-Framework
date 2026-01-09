@@ -30,7 +30,7 @@
 using System.Windows;
 using Themes;
 
-namespace Demo_GenericControls
+namespace GenericControls.Demo
 {
     /// <summary>
     /// Represents the WPF application entry point for the GenericControls demo.

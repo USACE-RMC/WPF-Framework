@@ -38,7 +38,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Demo_FrameworkUI.Properties {
+namespace FrameworkUI.Demo.Properties {
     using System;
     
     
@@ -69,7 +69,7 @@ namespace Demo_FrameworkUI.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Demo_FrameworkUI.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FrameworkUI.Demo.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

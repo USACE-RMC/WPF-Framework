@@ -36,7 +36,7 @@ using Numerics.Distributions;
 using Numerics.Sampling;
 using Themes;
 
-namespace Demo_NumericControls
+namespace NumericControls.Demo
 {
     /// <summary>
     /// Main window for the NumericControls demonstration application.

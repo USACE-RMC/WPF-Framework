@@ -43,7 +43,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Demo_FrameworkUI.UI
+namespace FrameworkUI.Demo.UI
 {
     /// <summary>
     /// User control for displaying and editing element properties.

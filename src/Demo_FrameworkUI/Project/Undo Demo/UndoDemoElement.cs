@@ -33,7 +33,7 @@ using FrameworkInterfaces.Undo;
 using System;
 using System.Drawing;
 
-namespace Demo_FrameworkUI.Project.Undo_Demo
+namespace FrameworkUI.Demo.Project.Undo_Demo
 {
     /// <summary>
     /// A demo element that showcases the undo/redo functionality. This element demonstrates how to use RecordPropertyChange for undo support.

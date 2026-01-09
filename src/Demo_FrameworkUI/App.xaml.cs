@@ -41,10 +41,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using Xceed.Wpf.AvalonDock.Layout;
 
-namespace Demo_FrameworkUI
+namespace FrameworkUI.Demo
 {
     /// <summary>
-    /// Main application class for the Demo_FrameworkUI application. Handles application startup, initialization of the theme system, and configuration of the software update service.
+    /// Main application class for the FrameworkUI.Demo application. Handles application startup, initialization of the theme system, and configuration of the software update service.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -114,7 +114,7 @@ namespace Demo_FrameworkUI
             layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
             layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
             explorer.Items.Add(layerCollection);
-            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,/Demo_FrameworkUI;component/Resources/Hazard_Icon.png")) };
+            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) };
             treeGrid.Children.Add(explorer);
             document.Content = treeGrid;
             document.ContentId = "MapLayers"; //element.ParentCollection.Name
@@ -166,7 +166,7 @@ namespace Demo_FrameworkUI
                 CreateBackup = true,
 
                 // Name of main executable to restart after update
-                MainExecutableName = "Demo_FrameworkUI.exe"
+                MainExecutableName = "FrameworkUI.Demo.exe"
             };
 
             // Create the update service

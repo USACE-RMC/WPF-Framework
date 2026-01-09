@@ -38,7 +38,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Test_FrameworkUI.Properties {
+namespace FrameworkUI.Demo.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

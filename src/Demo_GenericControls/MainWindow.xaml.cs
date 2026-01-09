@@ -46,7 +46,7 @@ using Themes;
 
 #nullable enable
 
-namespace Demo_GenericControls
+namespace GenericControls.Demo
 {
     /// <summary>
     /// Main window for demonstrating the GenericControls library functionality.

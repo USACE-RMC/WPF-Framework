@@ -33,7 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Themes;
 
-namespace Demo_FrameworkUI.UI
+namespace FrameworkUI.Demo.UI
 {
     /// <summary>
     /// User control that demonstrates the runtime theme switching capability provided by the Themes library.

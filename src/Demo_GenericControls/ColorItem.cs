@@ -34,7 +34,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
-namespace Demo_GenericControls
+namespace GenericControls.Demo
 {
     /// <summary>
     /// Represents a named color item for use in color collection demonstrations.

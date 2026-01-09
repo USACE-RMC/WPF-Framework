@@ -34,12 +34,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using Demo_FrameworkUI.Project.Consequence_Elements;
-using Demo_FrameworkUI.Project.Hazard_Elements;
-using Demo_FrameworkUI.Project.Response_Elements;
-using Demo_FrameworkUI.Project.Undo_Demo;
+using FrameworkUI.Demo.Project.Consequence_Elements;
+using FrameworkUI.Demo.Project.Hazard_Elements;
+using FrameworkUI.Demo.Project.Response_Elements;
+using FrameworkUI.Demo.Project.Undo_Demo;
 
-namespace Demo_FrameworkUI.Project
+namespace FrameworkUI.Demo.Project
 {
     /// <summary>
     /// Represents a demo project that showcases the ProjectUI framework features. Includes collections for hazard, response, and consequence functions, as well as an Undo Demo collection that demonstrates undo/redo functionality.

@@ -31,7 +31,7 @@
 using System.Windows;
 using Themes;
 
-namespace Demo_NumericControls
+namespace NumericControls.Demo
 {
     /// <summary>
     /// Interaction logic for App.xaml.

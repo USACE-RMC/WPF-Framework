@@ -30,7 +30,7 @@
 
 using FrameworkInterfaces;
 
-namespace Demo_FrameworkUI.Project.Hazard_Elements
+namespace FrameworkUI.Demo.Project.Hazard_Elements
 {
     /// <summary>
     /// Collection of hazard function elements for the demo project.

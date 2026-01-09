@@ -35,7 +35,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FrameworkInterfaces;
 
-namespace Demo_FrameworkUI.Project.Response_Elements
+namespace FrameworkUI.Demo.Project.Response_Elements
 {
     /// <summary>
     /// Collection of response function elements for the demo project.
