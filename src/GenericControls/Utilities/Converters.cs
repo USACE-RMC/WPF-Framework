@@ -1747,6 +1747,82 @@ namespace GenericControls
     }
 
     /// <summary>
+    /// Converts a <see cref="HorizontalAlignment"/> to a <see cref="TextAlignment"/> for use in DataGrid column headers.
+    /// This allows automatic text alignment based on the HorizontalContentAlignment property.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    public class HorizontalAlignmentToTextAlignmentConverter : IValueConverter
+    {
+        /// <summary>
+        /// Singleton instance for use in XAML with x:Static.
+        /// </summary>
+        public static readonly HorizontalAlignmentToTextAlignmentConverter Instance = new HorizontalAlignmentToTextAlignmentConverter();
+
+        /// <summary>
+        /// Converts a <see cref="HorizontalAlignment"/> to a <see cref="TextAlignment"/>.
+        /// </summary>
+        /// <param name="value">The value produced by the binding source.</param>
+        /// <param name="targetType">The type of the binding target property.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The corresponding TextAlignment value.</returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is HorizontalAlignment alignment)
+            {
+                switch (alignment)
+                {
+                    case HorizontalAlignment.Left:
+                        return TextAlignment.Left;
+                    case HorizontalAlignment.Right:
+                        return TextAlignment.Right;
+                    case HorizontalAlignment.Center:
+                    case HorizontalAlignment.Stretch:
+                    default:
+                        return TextAlignment.Center;
+                }
+            }
+            return TextAlignment.Center;
+        }
+
+        /// <summary>
+        /// Converts a <see cref="TextAlignment"/> back to a <see cref="HorizontalAlignment"/>.
+        /// </summary>
+        /// <param name="value">The value that is produced by the binding target.</param>
+        /// <param name="targetType">The type to convert to.</param>
+        /// <param name="parameter">The converter parameter to use.</param>
+        /// <param name="culture">The culture to use in the converter.</param>
+        /// <returns>The corresponding HorizontalAlignment value.</returns>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is TextAlignment textAlignment)
+            {
+                switch (textAlignment)
+                {
+                    case TextAlignment.Left:
+                        return HorizontalAlignment.Left;
+                    case TextAlignment.Right:
+                        return HorizontalAlignment.Right;
+                    case TextAlignment.Center:
+                    case TextAlignment.Justify:
+                    default:
+                        return HorizontalAlignment.Center;
+                }
+            }
+            return HorizontalAlignment.Center;
+        }
+    }
+
+    /// <summary>
     /// Converts a <see cref="SolidColorBrush"/> to a lighter semi-transparent variant used for gridlines.
     /// </summary>
     /// <remarks>
