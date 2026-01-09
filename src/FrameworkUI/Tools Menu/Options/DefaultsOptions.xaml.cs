@@ -50,7 +50,7 @@ namespace FrameworkUI
     {
 
         /// <summary>
-        /// Construct new default options.
+        /// Initializes a new instance of the <see cref="DefaultsOptions"/> class.
         /// </summary>
         public DefaultsOptions()
         {

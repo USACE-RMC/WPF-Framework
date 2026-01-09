@@ -54,9 +54,9 @@ namespace FrameworkUI
         public event RoutedEventHandler Apply_Click;
 
         /// <summary>
-        /// Create new instance of the options dialog.
+        /// Initializes a new instance of the <see cref="OptionsDialog"/> class.
         /// </summary>
-        /// <param name="mainWindow"></param>
+        /// <param name="mainWindow">The parent main window.</param>
         public OptionsDialog(MainWindow mainWindow)
         {
             // This call is required by the designer.
@@ -77,6 +77,9 @@ namespace FrameworkUI
             SystemCommands.CloseWindow(this);
         }
 
+        /// <summary>
+        /// Reference to the main window.
+        /// </summary>
         private MainWindow _mainWindow;
 
         /// <summary>

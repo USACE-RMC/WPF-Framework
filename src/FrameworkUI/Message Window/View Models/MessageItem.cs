@@ -81,6 +81,9 @@ namespace FrameworkUI.MessageWindow
             }
         }
 
+        /// <summary>
+        /// The underlying message item interface.
+        /// </summary>
         private IMessageItem _message;
 
         /// <summary>

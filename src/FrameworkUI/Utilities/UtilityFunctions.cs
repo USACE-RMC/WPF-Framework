@@ -243,7 +243,7 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// This contains a counter to help make names unique
+        /// Counter used to generate unique menu item names when cloning.
         /// </summary>
         private static int menuNameCounter = 0;
 

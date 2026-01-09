@@ -46,14 +46,32 @@ namespace FrameworkUI
     public static class ShellPublicVariables
     {
         /// <summary>
-        /// Names of standard dock Windows for AvalonDock
+        /// Content ID for the project explorer AvalonDock window.
         /// </summary>
         public const string ProjectExplorerContentID = "ProjectExplorer";
+        /// <summary>
+        /// Content ID for the message window AvalonDock window.
+        /// </summary>
         public const string MessageWindowContentID = "MessageWindow";
+        /// <summary>
+        /// Content ID for the properties window AvalonDock window.
+        /// </summary>
         public const string PropertiesWindowContentID = "PropertiesWindow";
+        /// <summary>
+        /// Display title for the project explorer window.
+        /// </summary>
         public const string ProjectExplorerTitle = "  Project Explorer";
+        /// <summary>
+        /// Display title for the map explorer window.
+        /// </summary>
         public const string MapExplorerTitle = "  Map Explorer";
+        /// <summary>
+        /// Display title for the message window.
+        /// </summary>
         public const string MessageWindowTitle = "  Message Window";
+        /// <summary>
+        /// Display title for the properties window.
+        /// </summary>
         public const string PropertiesWindowTitle = "  Properties";
 
         /// <summary>
@@ -97,12 +115,24 @@ namespace FrameworkUI
         public static string MessageLogFilePath = MessageLogFolderPath + "MessageLog.txt";
 
         /// <summary>
-        /// Software version and name variables
+        /// Gets or sets the software version from application attributes.
         /// </summary>
         public static string SoftwareVersion = ApplicationAttributes.Version;
+        /// <summary>
+        /// Gets or sets the software version release date.
+        /// </summary>
         public static string SoftwareVersionDate = "March 2020";
+        /// <summary>
+        /// Gets or sets the software name from application attributes.
+        /// </summary>
         public static string SoftwareName = ApplicationAttributes.Title;
+        /// <summary>
+        /// Gets or sets the file extension for project files.
+        /// </summary>
         public static string SoftwareExtension = ".tra";
+        /// <summary>
+        /// Gets or sets the file extension for backup files.
+        /// </summary>
         public static string BackupExtension = ".bak";
 
         /// <summary>
@@ -132,18 +162,18 @@ namespace FrameworkUI
         public static bool SimulationIsCanceled = false;
 
         /// <summary>
-        /// Determines if a a Bayesian estimation file is being copied.
+        /// Gets or sets a value indicating whether a Bayesian estimation file is being copied.
         /// These files are large and can take a long time to copy.
         /// </summary>
         public static bool CopyingSimulationFile = false;
 
         /// <summary>
-        /// Determines if a project file is being compressed.
+        /// Gets or sets a value indicating whether a project file is being compressed.
         /// </summary>
         public static bool CompactionInProgress;
 
         /// <summary>
-        /// Determines if file can be dropped in and opened.
+        /// Gets or sets a value indicating whether the dragged file can be dropped and opened.
         /// </summary>
         public static bool IsDroppableFile = false;
 

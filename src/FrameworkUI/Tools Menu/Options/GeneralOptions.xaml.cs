@@ -48,7 +48,7 @@ namespace FrameworkUI
     {
 
         /// <summary>
-        /// Constructs a new general options control.
+        /// Initializes a new instance of the <see cref="GeneralOptions"/> class.
         /// </summary>
         public GeneralOptions()
         {

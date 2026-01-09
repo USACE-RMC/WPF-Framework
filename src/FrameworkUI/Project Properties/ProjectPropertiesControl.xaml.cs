@@ -57,6 +57,9 @@ namespace FrameworkUI
             // Add any initialization after the InitializeComponent() call.
         }
 
+        /// <summary>
+        /// Stores the previous name value before editing begins.
+        /// </summary>
         private string _previousName;
 
         /// <summary>
@@ -76,6 +79,8 @@ namespace FrameworkUI
         /// <summary>
         /// Set up the class attributes when the project class is set.
         /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The dependency property changed event arguments.</param>
         private static void ProjectCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;

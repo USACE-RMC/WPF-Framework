@@ -49,7 +49,7 @@ namespace FrameworkUI
     {
 
         /// <summary>
-        /// Construct new Message Window Options.
+        /// Initializes a new instance of the <see cref="MessageWindowOptions"/> class.
         /// </summary>
         public MessageWindowOptions()
         {
