@@ -474,20 +474,37 @@
             <Grid Name="SummaryStatsGrid">
                 <cntrls:CopyPasteDataGrid x:Name="SummaryTable"
                                           Width="{Binding ElementName=SummaryStatsGrid, Path=ActualWidth}"
-                                          HeadersVisibility="Column" CanUserResizeColumns="False" HorizontalGridLinesBrush="{DynamicResource DataGrid.GridLines}"
-                                          VerticalGridLinesBrush="{DynamicResource DataGrid.GridLines}" AutoGenerateColumns="False" SelectionMode="Extended" 
-                                          SelectionUnit="Cell" Margin="0,4,0,2" CanUserDeleteRows="False" CanUserAddRows="False" 
-                                          CanUserResizeRows="False" CanUserSortColumns="False" CanUserReorderColumns="False" 
-                                          Background="Transparent" VerticalContentAlignment="Center" IsReadOnly="True">
-
+                                          HeadersVisibility="Column"
+                                          AutoGenerateColumns="False"
+                                          SelectionMode="Extended"
+                                          SelectionUnit="Cell"
+                                          Margin="0,4,0,2"
+                                          CanUserDeleteRows="False"
+                                          CanUserAddRows="False"
+                                          CanUserResizeRows="False"
+                                          CanUserResizeColumns="False"
+                                          CanUserSortColumns="False"
+                                          CanUserReorderColumns="False"
+                                          IsReadOnly="True">
                     <cntrls:CopyPasteDataGrid.Columns>
-                        <DataGridTextColumn x:Name="StatNameColumn" Header="Statistic" IsReadOnly="True" Width="140" HeaderStyle="{StaticResource Left_ColumnHeaderStyle}"
-                                            Binding="{Binding Path=StatName}" CellStyle="{StaticResource ReadOnlyTextBackgroundCellStyle}"/>
-                        <DataGridTextColumn x:Name="DistStatsColumn" Header="Distribution" IsReadOnly="True" Width="*" HeaderStyle="{StaticResource Right_ColumnHeaderStyle}"
-                                            Binding="{Binding Path=DistStat}" CellStyle="{StaticResource ReadOnlyValueBackgroundCellStyle}"/>
-                        <DataGridTextColumn x:Name="DataStatsColumn" Header="Data" IsReadOnly="True" Width="*" Visibility="Collapsed" HeaderStyle="{StaticResource Right_ColumnHeaderStyle}"
-                                            Binding="{Binding Path=DataStat}" CellStyle="{StaticResource ReadOnlyValueBackgroundCellStyle}"/>
-
+                        <DataGridTextColumn x:Name="StatNameColumn" Header="Statistic" IsReadOnly="True" Width="140"
+                                            Binding="{Binding Path=StatName}"/>
+                        <DataGridTextColumn x:Name="DistStatsColumn" Header="Distribution" IsReadOnly="True" Width="*"
+                                            Binding="{Binding Path=DistStat}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="DataStatsColumn" Header="Data" IsReadOnly="True" Width="*" Visibility="Collapsed"
+                                            Binding="{Binding Path=DataStat}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </cntrls:CopyPasteDataGrid.Columns>
                 </cntrls:CopyPasteDataGrid>
             </Grid>
