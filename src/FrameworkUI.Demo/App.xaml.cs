@@ -114,7 +114,7 @@ namespace FrameworkUI.Demo
             layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
             layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
             explorer.Items.Add(layerCollection);
-            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) };
+            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) };
             treeGrid.Children.Add(explorer);
             document.Content = treeGrid;
             document.ContentId = "MapLayers"; //element.ParentCollection.Name
