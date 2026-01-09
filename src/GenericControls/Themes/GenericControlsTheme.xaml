@@ -516,6 +516,16 @@
     <!-- Default style for DataGridColumnHeader -->
     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}"/>
 
+    <!-- Left-aligned Column Header Style -->
+    <Style x:Key="LeftAlignedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+
+    <!-- Right-aligned Column Header Style -->
+    <Style x:Key="RightAlignedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+    </Style>
+
     <!-- Theme-aware Row Header Style (flat, no gradient to match row items) -->
     <Style x:Key="RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}">
         <Setter Property="ContentTemplate">

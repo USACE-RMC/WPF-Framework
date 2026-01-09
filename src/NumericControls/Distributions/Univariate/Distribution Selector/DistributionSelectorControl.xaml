@@ -488,9 +488,11 @@
                                           IsReadOnly="True">
                     <cntrls:CopyPasteDataGrid.Columns>
                         <DataGridTextColumn x:Name="StatNameColumn" Header="Statistic" IsReadOnly="True" Width="140"
-                                            Binding="{Binding Path=StatName}"/>
+                                            Binding="{Binding Path=StatName}"
+                                            HeaderStyle="{DynamicResource LeftAlignedColumnHeaderStyle}"/>
                         <DataGridTextColumn x:Name="DistStatsColumn" Header="Distribution" IsReadOnly="True" Width="*"
-                                            Binding="{Binding Path=DistStat}">
+                                            Binding="{Binding Path=DistStat}"
+                                            HeaderStyle="{DynamicResource RightAlignedColumnHeaderStyle}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -498,7 +500,8 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn x:Name="DataStatsColumn" Header="Data" IsReadOnly="True" Width="*" Visibility="Collapsed"
-                                            Binding="{Binding Path=DataStat}">
+                                            Binding="{Binding Path=DataStat}"
+                                            HeaderStyle="{DynamicResource RightAlignedColumnHeaderStyle}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
