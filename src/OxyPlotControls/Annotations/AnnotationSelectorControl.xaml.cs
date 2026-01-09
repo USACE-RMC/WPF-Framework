@@ -121,11 +121,19 @@ namespace OxyPlotControls
             set { SetValue(ComboBoxStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Sets the default combobox style from resources.
+        /// </summary>
         private void SetDefaultComboboxStyle()
         {
             ComboBoxStyle = (Style)FindResource("CleanComboBoxStyle");
         }
 
+        /// <summary>
+        /// Handles changes to the Plot property and initializes the annotation selector with custom annotation options.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event args containing the old and new values.</param>
         private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;

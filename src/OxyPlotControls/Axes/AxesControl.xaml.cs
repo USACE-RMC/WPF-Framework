@@ -156,11 +156,19 @@ namespace OxyPlotControls
             set { SetValue(ComboBoxStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Sets the default combobox style from resources.
+        /// </summary>
         private void SetDefaultComboboxStyle()
         {
             ComboBoxStyle = (Style)FindResource("CleanComboBoxStyle");
         }
 
+        /// <summary>
+        /// Handles changes to the Plot property and initializes the axes selector.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event args containing the old and new values.</param>
         private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -190,6 +198,11 @@ namespace OxyPlotControls
             if (newPlot.Axes.Count > 0) thisControl.AxesPropertyControlComboBox.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// Handles changes to the axes collection and updates the selected axis.
+        /// </summary>
+        /// <param name="sender">The collection that changed.</param>
+        /// <param name="e">Event args describing the change.</param>
         private void Axes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             // When axes are reset (cleared and repopulated), select the first axis
@@ -219,6 +232,11 @@ namespace OxyPlotControls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles selection changes in the axes combobox.
+        /// </summary>
+        /// <param name="sender">The combobox control.</param>
+        /// <param name="e">Event args containing selection details.</param>
         private void AxesPropertyControlComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Early exit if nothing is selected.
@@ -229,6 +247,11 @@ namespace OxyPlotControls
             AxisPropertiesControl.Axis = axisToSelect;
         }
 
+        /// <summary>
+        /// Handles the click event for deleting an axis.
+        /// </summary>
+        /// <param name="sender">The delete button.</param>
+        /// <param name="e">Event args.</param>
         private void DeleteAxisButton_Click(object sender, RoutedEventArgs e)
         {
             if (AxesPropertyControlComboBox.SelectedItem == null) return;
@@ -290,6 +313,11 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Handles when the axis type is changed, updating the selector to reflect the new axis.
+        /// </summary>
+        /// <param name="oldAxis">The previous axis before the type change.</param>
+        /// <param name="newAxis">The new axis after the type change.</param>
         private void AxisPropertiesControl_AxisTypeChanged(Wpf.Axis oldAxis, Wpf.Axis newAxis)
         {
             AxesPropertyControlComboBox.ItemsSource = Plot.Axes;

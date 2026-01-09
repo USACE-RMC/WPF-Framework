@@ -48,6 +48,11 @@ namespace OxyPlotControls
             nameof(Plot), typeof(Plot), typeof(OxyPlotPropertiesControl),
             new PropertyMetadata(null, InitializePlot));
 
+        /// <summary>
+        /// Handles changes to the Plot property.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event args containing the old and new values.</param>
         private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -88,6 +93,9 @@ namespace OxyPlotControls
         /// </summary>
         public event Action<OxyPlotPropertiesControl>? ClosePropertiesCalled;
 
+        /// <summary>
+        /// Sets default styles for all controls from resources if not already set.
+        /// </summary>
         private void SetDefaultStyles()
         {
             if (BackButtonStyle == null) BackButtonStyle = (Style)FindResource("CleanButtonStyle");
@@ -204,6 +212,12 @@ namespace OxyPlotControls
             if (PropertyControlComboBox != null) PropertyControlComboBox.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// Converts an integer value to its corresponding enum name string.
+        /// </summary>
+        /// <typeparam name="T">The enum type.</typeparam>
+        /// <param name="value">The integer value to convert.</param>
+        /// <returns>The string name of the enum value.</returns>
         private string? ToEnumName<T>(int value) where T : struct
         {
             return ((T)(object)value).ToString();
@@ -326,6 +340,11 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Handles the click event for the close properties button.
+        /// </summary>
+        /// <param name="sender">The close button.</param>
+        /// <param name="e">Event args.</param>
         private void ClosePropertiesButton_Click(object sender, RoutedEventArgs e)
         {
             ClosePropertiesCalled?.Invoke(this);
@@ -384,6 +403,11 @@ namespace OxyPlotControls
             Annotations_Display
         }
 
+        /// <summary>
+        /// Handles selection changes in the property control combobox, showing the appropriate property editor.
+        /// </summary>
+        /// <param name="sender">The combobox control.</param>
+        /// <param name="e">Event args containing selection details.</param>
         private void PropertyControlComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (PropertyControlsGrid == null) return;

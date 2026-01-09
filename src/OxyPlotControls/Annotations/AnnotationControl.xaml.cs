@@ -123,6 +123,11 @@ namespace OxyPlotControls
             set => SetValue(AnnotationProperty, value);
         }
 
+        /// <summary>
+        /// Handles changes to the Annotation property and updates the control's UI accordingly.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">Event args containing the old and new values.</param>
         private static void AnnotationChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -628,6 +633,11 @@ namespace OxyPlotControls
             DisplayOptionsEXP.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// Handles changes to the line annotation type, showing or hiding relevant controls.
+        /// </summary>
+        /// <param name="sender">The line type control.</param>
+        /// <param name="e">Event args containing selection details.</param>
         private void LineTypeControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Annotation.GetType() != typeof(Wpf.LineAnnotation)) return;
