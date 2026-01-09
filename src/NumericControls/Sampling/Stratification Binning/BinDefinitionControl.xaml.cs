@@ -29,22 +29,11 @@
 */
 
 using Numerics.Sampling;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NumericControls
 {
@@ -111,46 +100,82 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnHeaderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.Register(nameof(ColumnHeaderStyle), typeof(Style), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the style for column headers in the data grid.
+        /// </summary>
         public Style ColumnHeaderStyle
         {
             get { return (Style)GetValue(ColumnHeaderStyleProperty); }
             set { SetValue(ColumnHeaderStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CellStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty CellStyleProperty = DependencyProperty.Register(nameof(CellStyle), typeof(Style), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the style for cells in the data grid.
+        /// </summary>
         public Style CellStyle
         {
             get { return (Style)GetValue(CellStyleProperty); }
             set { SetValue(CellStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaxBins"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaxBinsProperty = DependencyProperty.Register(nameof(MaxBins), typeof(int), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(1000));
 
+        /// <summary>
+        /// Gets or sets the maximum number of bins allowed.
+        /// </summary>
+        /// <value>The maximum number of bins. Default is 1000.</value>
         public int MaxBins
         {
             get { return (int)GetValue(MaxBinsProperty); }
             set { SetValue(MaxBinsProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the control is read-only.
+        /// </summary>
+        /// <value><c>true</c> if read-only; otherwise, <c>false</c>. Default is <c>false</c>.</value>
         public bool IsReadOnly
         {
             get { return (bool)GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="StringFormat"/> dependency property.
+        /// </summary>
         public static DependencyProperty StringFormatProperty = DependencyProperty.Register(nameof(StringFormat), typeof(string), typeof(BinDefinitionControl), new FrameworkPropertyMetadata("{0:#,##0.####}"));
 
+        /// <summary>
+        /// Gets or sets the string format for displaying numeric values.
+        /// </summary>
+        /// <value>The format string. Default is "{0:#,##0.####}".</value>
         public string StringFormat
         {
             get { return (string)GetValue(StringFormatProperty); }
             set { SetValue(StringFormatProperty, value); }
         }
 
+        /// <summary>
+        /// Gets the collection of stratification option row items displayed in the data grid.
+        /// </summary>
         public ObservableCollection<object> StratificationOptionsRows { get; private set; } = new ObservableCollection<object>();
 
         private bool _pastingData = false;
