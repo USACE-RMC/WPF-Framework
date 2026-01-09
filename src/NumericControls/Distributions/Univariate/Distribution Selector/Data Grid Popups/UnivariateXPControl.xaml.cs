@@ -96,6 +96,10 @@ namespace NumericControls
             set { SetValue(DistributionProperty, value); }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnivariateXPControl"/> class.
+        /// Sets up the data grid with the univariate row data binding.
+        /// </summary>
         public UnivariateXPControl()
         {
 

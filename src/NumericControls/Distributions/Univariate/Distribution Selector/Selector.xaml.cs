@@ -125,6 +125,9 @@ namespace NumericControls.Distributions.Univariate
             Plot.ActualController.UnbindAll();
         }
 
+        /// <summary>
+        /// Gets or sets the currently selected univariate distribution.
+        /// </summary>
         public UnivariateDistributionBase SelectedDistribution
         {
             get => _selectedDistribution;
@@ -224,6 +227,9 @@ namespace NumericControls.Distributions.Univariate
 
         private bool _showTickLines = true;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether tick lines are shown on the plot axes.
+        /// </summary>
         public bool ShowTickLines
         {
             get => _showTickLines;
@@ -271,7 +277,14 @@ namespace NumericControls.Distributions.Univariate
             set => SetValue(ExpandPlotProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ExpanderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(nameof(ExpanderStyle), typeof(Style), typeof(Selector), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the style applied to the expander control.
+        /// </summary>
         public Style ExpanderStyle
         {
             get { return (Style)GetValue(ExpanderStyleProperty); }
@@ -551,6 +564,7 @@ namespace NumericControls.Distributions.Univariate
         }
         private bool _distributionChanging = false;
 
+        /// <inheritdoc/>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
