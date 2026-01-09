@@ -63,6 +63,9 @@ namespace NumericControls
     /// </remarks>
     public partial class TimeSeriesTable : UserControl
     {
+        /// <summary>
+        /// Identifies the <see cref="Series"/> dependency property.
+        /// </summary>
         public static DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(new TimeSeries(), SetData));
 
         /// <summary>
@@ -244,6 +247,11 @@ namespace NumericControls
             TimeSeriesDataGrid.CustomMenuItems.Add(x);
         }
 
+        /// <summary>
+        /// Determines whether a mathematical function type requires an operand value.
+        /// </summary>
+        /// <param name="fnc">The mathematical function type to check.</param>
+        /// <returns><c>true</c> if the function requires an operand; otherwise, <c>false</c>.</returns>
         public static bool HasOperand(MathFunctionType fnc)
         {
             if (fnc == MathFunctionType.Add || fnc == MathFunctionType.Subtract ||
@@ -490,30 +498,40 @@ namespace NumericControls
 
     }
 
+    /// <summary>
+    /// Converts a double value to a font style, displaying NaN and Infinity values in italic.
+    /// </summary>
     public class DoubleToFontFamilyConverter : IValueConverter
     {
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (double.IsNaN((double)value) || double.IsInfinity((double)value)) { return FontStyles.Italic; }
             return FontStyles.Normal;
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
 
+    /// <summary>
+    /// Converts between <see cref="DateTime"/> values and their string representations using the current culture's date/time format.
+    /// </summary>
     public class DateToStringConverter : IValueConverter
     {
-        string _pattern = $"{Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern} {Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern}";
-        readonly CultureInfo _fp = Thread.CurrentThread.CurrentCulture;
+        private readonly string _pattern = $"{Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern} {Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern}";
+        private readonly CultureInfo _fp = Thread.CurrentThread.CurrentCulture;
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return ((DateTime)value).ToString(_pattern, _fp);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             DateTime newDate;

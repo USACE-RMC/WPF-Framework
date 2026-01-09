@@ -76,6 +76,9 @@ namespace NumericControls
         private List<int> _selectedValueRowIndices = new List<int>();
         private bool _selectionConsecutive = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MathEditorControl"/> class.
+        /// </summary>
         public MathEditorControl()
         {
             InitializeComponent();
@@ -96,9 +99,16 @@ namespace NumericControls
             NoOperandItemsControl.ItemsSource = nonOperands;
         }
 
+        /// <summary>
+        /// Gets or sets the time series data that mathematical operations will be applied to.
+        /// </summary>
+        /// <value>The time series to operate on.</value>
         public TimeSeries Series { get => _series; set => _series = value; }
 
-
+        /// <summary>
+        /// Gets or sets the source data grid containing the selected cells.
+        /// </summary>
+        /// <value>The data grid that provides cell selection context for operations.</value>
         public CopyPasteDataGrid Source
         {
             get => _source;
@@ -202,9 +212,15 @@ namespace NumericControls
 
         }
 
+        /// <summary>
+        /// Applies a mathematical function to a time series.
+        /// </summary>
+        /// <param name="series">The time series to modify.</param>
+        /// <param name="functionType">The type of mathematical function to apply.</param>
+        /// <param name="value">The operand value for functions that require one (e.g., add, multiply).</param>
+        /// <param name="indices">The indices of specific rows to apply the function to, or null/empty to apply to all rows.</param>
         public static void ApplyFunctionToSeries(TimeSeries series, MathFunctionType functionType, double value, List<int> indices)
         {
-            //
             if (series == null) { return; }
 
             try
@@ -301,8 +317,16 @@ namespace NumericControls
         }
     }
 
+    /// <summary>
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its display name for use in UI bindings.
+    /// </summary>
     public class MathFunctionTypeToNameConverter : IValueConverter
     {
+        /// <summary>
+        /// Gets the display name for a mathematical function type.
+        /// </summary>
+        /// <param name="fnc">The mathematical function type.</param>
+        /// <returns>A human-readable display name for the function.</returns>
         public static string GetName(MathFunctionType fnc)
         {
             switch (fnc)
@@ -312,6 +336,7 @@ namespace NumericControls
             }
         }
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
@@ -319,14 +344,23 @@ namespace NumericControls
             return GetName((MathFunctionType)value);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
 
+    /// <summary>
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its tooltip description for use in UI bindings.
+    /// </summary>
     public class MathFunctionTypeToTooltipConverter : IValueConverter
     {
+        /// <summary>
+        /// Gets the tooltip description for a mathematical function type.
+        /// </summary>
+        /// <param name="fnc">The mathematical function type.</param>
+        /// <returns>A descriptive tooltip explaining what the function does.</returns>
         public static string GetTooltip(MathFunctionType fnc)
         {
             switch (fnc)
@@ -344,6 +378,7 @@ namespace NumericControls
             }
         }
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
@@ -351,14 +386,23 @@ namespace NumericControls
             return GetTooltip((MathFunctionType)value);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
 
+    /// <summary>
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its icon image for use in UI bindings.
+    /// </summary>
     public class MathFunctionTypeToIconConverter : IValueConverter
     {
+        /// <summary>
+        /// Gets the icon image for a mathematical function type.
+        /// </summary>
+        /// <param name="fnc">The mathematical function type.</param>
+        /// <returns>A <see cref="BitmapImage"/> representing the function's icon.</returns>
         public static BitmapImage GetIcon(MathFunctionType fnc)
         {
             switch (fnc)
@@ -376,6 +420,7 @@ namespace NumericControls
             }
         }
 
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
@@ -383,6 +428,7 @@ namespace NumericControls
             return GetIcon((MathFunctionType)value);
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

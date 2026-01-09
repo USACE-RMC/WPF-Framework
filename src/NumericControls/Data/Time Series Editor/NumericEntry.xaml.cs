@@ -63,6 +63,9 @@ namespace NumericControls
     /// </remarks>
     public partial class NumericEntry : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumericEntry"/> class.
+        /// </summary>
         public NumericEntry()
         {
             InitializeComponent();
