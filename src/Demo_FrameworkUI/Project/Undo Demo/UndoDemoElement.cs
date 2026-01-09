@@ -291,18 +291,12 @@ namespace Demo_FrameworkUI.Project.Undo_Demo
         /// <param name="newBooleanValue">The new boolean value.</param>
         public void PerformBatchUpdate(string newCustomValue, int newNumericValue, bool newBooleanValue)
         {
-            UndoManager.BeginTransaction("Batch Update");
-            try
+            // Using statement ensures transaction is committed when disposed
+            using (UndoManager.BeginTransaction("Batch Update"))
             {
                 CustomValue = newCustomValue;
                 NumericValue = newNumericValue;
                 BooleanValue = newBooleanValue;
-                UndoManager.CommitTransaction();
-            }
-            catch
-            {
-                UndoManager.RollbackTransaction();
-                throw;
             }
         }
     }

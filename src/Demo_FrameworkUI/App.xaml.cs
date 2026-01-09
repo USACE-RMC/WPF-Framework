@@ -142,6 +142,10 @@ namespace Demo_FrameworkUI
             //   AssetNamePattern = "RMC-BestFit.Version.*.zip"
             // =================================================================
 
+            // Auto-check settings (not part of UpdateOptions, handled locally)
+            bool autoCheckOnStartup = true;
+            int autoCheckDelayMs = 5000;  // 5 second delay after startup
+
             // Configure update options for your GitHub repository
             var updateOptions = new UpdateOptions
             {
@@ -161,10 +165,6 @@ namespace Demo_FrameworkUI
                 // Create backup before updating
                 CreateBackup = true,
 
-                // Auto-check for updates on startup (delay in milliseconds)
-                AutoCheckOnStartup = true,
-                AutoCheckDelayMs = 5000,  // 5 second delay after startup
-
                 // Name of main executable to restart after update
                 MainExecutableName = "Demo_FrameworkUI.exe"
             };
@@ -181,7 +181,7 @@ namespace Demo_FrameworkUI
                 if (result.IsUpdateAvailable)
                 {
                     System.Diagnostics.Debug.WriteLine(
-                        $"Update available: {result.AvailableUpdate.Version}");
+                        $"Update available: {result.Update.Version}");
                 }
             };
 
@@ -191,9 +191,9 @@ namespace Demo_FrameworkUI
             };
 
             // Optional: Trigger auto-check after startup delay
-            if (updateOptions.AutoCheckOnStartup)
+            if (autoCheckOnStartup)
             {
-                AutoCheckForUpdatesAsync(mainWindow, updateService, updateOptions.AutoCheckDelayMs);
+                AutoCheckForUpdatesAsync(mainWindow, updateService, autoCheckDelayMs);
             }
 
             mainWindow.Show();
@@ -229,16 +229,16 @@ namespace Demo_FrameworkUI
                 // Check for updates
                 var result = await updateService.CheckForUpdateAsync();
 
-                if (result.IsUpdateAvailable && result.AvailableUpdate != null)
+                if (result.IsUpdateAvailable && result.Update != null)
                 {
                     // Don't prompt if the user has chosen to skip this version
-                    if (updateService.IsVersionSkipped(result.AvailableUpdate.Version))
+                    if (updateService.IsVersionSkipped(result.Update.Version))
                         return;
 
                     // Show update notification on the UI thread
                     await mainWindow.Dispatcher.InvokeAsync(() =>
                     {
-                        var message = $"A new version ({result.AvailableUpdate.Version}) is available.\n\n" +
+                        var message = $"A new version ({result.Update.Version}) is available.\n\n" +
                                      $"You are currently running version {updateService.Options.CurrentVersion}.\n\n" +
                                      "Would you like to download and install the update now?";
 
@@ -254,9 +254,12 @@ namespace Demo_FrameworkUI
                             // Trigger the same update flow as the menu item
                             // The MainWindow's CheckForUpdates_Click handler will show the full dialog
                             // For auto-update, we just notify - user can use menu to proceed
-                            mainWindow.ShowMessage(
-                                $"Use Tools → Check for Updates to download version {result.AvailableUpdate.Version}.",
-                                "Update Available");
+                            MessageBox.Show(
+                                mainWindow,
+                                $"Use Tools → Check for Updates to download version {result.Update.Version}.",
+                                "Update Available",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
                         }
                     });
                 }
