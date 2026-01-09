@@ -60,6 +60,11 @@ namespace OxyPlotControls
             Closing += SavePlotImageDialog_Closing;
         }
 
+        /// <summary>
+        /// Handles the ContentRendered event to initialize the dialog with default width and height values.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void SavePlotImageDialog_ContentRendered(object? sender, EventArgs e)
         {
             WidthTextBox.ToolTip = "Current Plot Width is " + ((int)_plot.ActualWidth).ToString() + " px";
@@ -74,6 +79,11 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Displays a save file dialog with the specified file filters.
+        /// </summary>
+        /// <param name="filters">The file type filters to display in the dialog.</param>
+        /// <returns>The selected file path, or an empty string if cancelled.</returns>
         private string FileSaveDialog(string filters)
         {
             var saveFileBrowser = new SaveFileDialog { Filter = filters };
@@ -84,6 +94,11 @@ namespace OxyPlotControls
             return "";
         }
 
+        /// <summary>
+        /// Handles the PreviewTextInput event to allow only numeric input in text boxes.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments containing the input text.</param>
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (string.IsNullOrEmpty(e.Text)) return;
@@ -92,11 +107,21 @@ namespace OxyPlotControls
             if (e.Text == " ") e.Handled = true; // don't allow spaces
         }
 
+        /// <summary>
+        /// Handles the PreviewKeyDown event to prevent space key input in text boxes.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments containing the key pressed.</param>
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space) e.Handled = true;
         }
 
+        /// <summary>
+        /// Handles the OK button click event to save the plot as an image file.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             if (_plot == null) return;
@@ -194,16 +219,31 @@ namespace OxyPlotControls
             Close();
         }
 
+        /// <summary>
+        /// Handles the Cancel button click event to close the dialog without saving.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Handles the Closing event to activate the owner window when the dialog closes.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void SavePlotImageDialog_Closing(object? sender, CancelEventArgs e)
         {
             if (Owner != null) Owner.Activate();
         }
 
+        /// <summary>
+        /// Handles the SelectionChanged event of the ImageSizeComboBox to update width and height text boxes.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void ImageSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (WidthTextBox == null || HeightTextBox == null) return;
