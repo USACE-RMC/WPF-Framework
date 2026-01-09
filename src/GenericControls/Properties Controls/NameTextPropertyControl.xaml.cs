@@ -306,9 +306,6 @@ namespace GenericControls
         {
             if (e.Key == Key.Enter)
             {
-                // Dim tBox As NameTextBox = DirectCast(sender, NameTextBox)
-                // Dim binding As BindingExpression = BindingOperations.GetBindingExpression(tBox, NameTextBox.TextProperty)
-                // If binding IsNot Nothing Then binding.UpdateSource()
                 ((UIElement)e.OriginalSource).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             }
         }

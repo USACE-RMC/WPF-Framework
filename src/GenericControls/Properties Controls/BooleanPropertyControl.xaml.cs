@@ -96,27 +96,7 @@ namespace GenericControls
                 this.SetValue(TitleProperty, value);
             }
         }
-        // '
-        // Public Shared MaxPropertyWidthProperty As DependencyProperty = DependencyProperty.Register(NameOf(MaxPropertyWidth), GetType(Double), GetType(BooleanPropertyControl), New UIPropertyMetadata(DefaultMaxPropertyWidth))
-        // Public Property MaxPropertyWidth As Double
-        // Get
-        // Return DirectCast(GetValue(MaxPropertyWidthProperty), Double)
-        // End Get
-        // Set(value As Double)
-        // SetValue(MaxPropertyWidthProperty, value)
-        // End Set
-        // End Property
-        // '
-        // Public Shared MinPropertyWidthProperty As DependencyProperty = DependencyProperty.Register(NameOf(MinPropertyWidth), GetType(Double), GetType(TextPropertyControl), New UIPropertyMetadata(DefaultMaxPropertyWidth))
-        // Public Property MinPropertyWidth As Double
-        // Get
-        // Return DirectCast(GetValue(MinPropertyWidthProperty), Double)
-        // End Get
-        // Set(value As Double)
-        // SetValue(MinPropertyWidthProperty, value)
-        // End Set
-        // End Property
-        //
+
         /// <summary>
         /// Dependency property to control the visibility of the leader line.
         /// </summary>

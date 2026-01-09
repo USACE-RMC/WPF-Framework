@@ -182,16 +182,6 @@ namespace GenericControls
             }
         }
 
-        // Public Shared ActualPropertyWidthProperty As DependencyProperty = DependencyProperty.RegisterReadOnly(NameOf(ActualPropertyWidth), GetType(Double), GetType(HorizontalAlignmentControl), New PropertyMetadata())
-        // Public Property ActualPropertyWidth As Double
-        // Get
-        // Return DirectCast(GetValue(ActualPropertyWidthProperty), Double)
-        // End Get
-        // Set(value As Double)
-        // SetValue(ActualPropertyWidthProperty, value)
-        // End Set
-        // End Property
-
         private double _actualWidth = 0d;
         /// <summary>
         /// Gets the actual rendered width of the control.

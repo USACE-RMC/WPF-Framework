@@ -216,16 +216,6 @@
         </Border>
 
         <!--Vertical Slider-->
-        <!--<Grid Margin="2,0,0,0" Grid.Column="1">
-            <Border Name="PART_TrackBackground" Grid.Column="1" Width="20" Margin="0">
-                <Rectangle Style="{x:Null}" Name="PART_SpectrumDisplay" Stretch="Fill" VerticalAlignment="Stretch" />
-                <Border.BitmapEffect>
-                    <BevelBitmapEffect BevelWidth="3" EdgeProfile="BulgedUp" Relief="0.3" />
-                </Border.BitmapEffect>
-            </Border>
-
-        </Grid>-->
-        
         <Slider 
             x:Name="PART_ColorSlider" 
                 Margin="2,0,0,0"
@@ -435,7 +425,6 @@
 
                 <Rectangle Fill="LightGreen" ToolTip="Light Green"/>
                 <Rectangle Fill="Green" ToolTip="Green"/>
-                <!--<Rectangle Fill="DarkGreen" ToolTip="Dark Green"/>-->
                 <Rectangle Fill="Turquoise" ToolTip="Turquoise"/>
 
                 <Rectangle Fill="LightBlue" ToolTip="Light Blue"/>

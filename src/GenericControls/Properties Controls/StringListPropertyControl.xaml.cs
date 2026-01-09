@@ -202,12 +202,6 @@ namespace GenericControls
             }
             return result;
         }
-        // Private Sub StringListDataGrid_SizeChanged(sender As Object, e As SizeChangedEventArgs)
-        // StringColumn.Width = New DataGridLength(StringListDataGrid.ActualWidth - 4, DataGridLengthUnitType.Star, StringListDataGrid.ActualWidth, StringListDataGrid.ActualWidth - 2)
-        // StringListDataGrid.UpdateLayout()
-        // StringColumn.Width = New DataGridLength(StringListDataGrid.ActualWidth - 3)
-
-        // End Sub
 
         /// <summary>
         /// Updates the string list when cell editing ends.
@@ -236,15 +230,6 @@ namespace GenericControls
         {
             StringList = GetStringList();
         }
-
-
-        // Private Sub Border_SizeChanged(sender As Object, e As SizeChangedEventArgs)
-        // StringColumn.Width = New DataGridLength(StringListDataGrid.ActualWidth - 3)
-        // StringListDataGrid.Width = 0
-        // UpdateLayout()
-        // StringListDataGrid.Width = border.ActualWidth - 5
-        // Debug.Print(border.ActualWidth.ToString)
-        // End Sub
 
         /// <summary>
         /// Internal container class used to wrap strings in the DataGrid.
