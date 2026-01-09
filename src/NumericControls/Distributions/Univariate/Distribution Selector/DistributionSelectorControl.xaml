@@ -83,7 +83,8 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Background="{Binding ElementName=DistributionSelector, Path=BackgroundColor, TargetNullValue=Transparent, FallbackValue=Transparent}">
+    <Grid Background="{Binding ElementName=DistributionSelector, Path=BackgroundColor, TargetNullValue=Transparent, FallbackValue=Transparent}"
+          PreviewMouseDown="Grid_PreviewMouseDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!--0 Probability Distribution Label-->

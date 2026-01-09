@@ -37,6 +37,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace NumericControls.Distributions.Univariate
@@ -505,6 +506,31 @@ namespace NumericControls.Distributions.Univariate
 
             Plot.InvalidatePlot(true);
             UpdatePDFPlot();
+        }
+
+        /// <summary>
+        /// Handles mouse down events on the main grid to clear DataGrid focus when clicking outside.
+        /// </summary>
+        private void Grid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Check if the click is outside the ParametersTable
+            if (!IsMouseOverElement(ParametersTable, e))
+            {
+                // Clear selection and move focus away from the DataGrid
+                ParametersTable.UnselectAllCells();
+                Keyboard.ClearFocus();
+            }
+        }
+
+        /// <summary>
+        /// Checks if the mouse is over a specific element.
+        /// </summary>
+        private bool IsMouseOverElement(UIElement element, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (element == null) return false;
+            var position = e.GetPosition(element);
+            var bounds = new Rect(0, 0, element.RenderSize.Width, element.RenderSize.Height);
+            return bounds.Contains(position);
         }
 
         /// <summary>
