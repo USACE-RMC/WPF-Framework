@@ -44,13 +44,13 @@
                PopupAnimation="Slide"
                AllowsTransparency="True"
                StaysOpen="False">
-            <Border Background="#F6F6F6"
-                    BorderBrush="Gray"
+            <Border Background="{DynamicResource EnvironmentWindowBackground}"
+                    BorderBrush="{DynamicResource Button.Static.Border}"
                     BorderThickness="1">
                 <local:DistributionSelectorControl x:Name="SelectorControl"
                                                    Margin="5"
                                                    Width="300"
-                                                   BackgroundColor="#F6F6F6"
+                                                   BackgroundColor="{DynamicResource EnvironmentWindowBackground}"
                                                    ShowAxisTitle="True"
                                                    ShowTickLines="True"
                                                    ShowAxisLabel="True"
