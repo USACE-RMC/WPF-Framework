@@ -117,6 +117,7 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" Margin="10,0,0,0">
                         <uni:DistributionSelectorControl x:Name="myOtherControl" Width="400"
                             BorderBrush="{DynamicResource Button.Static.Border}"
+                            BackgroundColor ="{DynamicResource EnvironmentWindowBackground}"
                             BorderThickness="1"
                             SelectedDistribution="{Binding ElementName=MyWindow, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             ShowAxisTitle="True"

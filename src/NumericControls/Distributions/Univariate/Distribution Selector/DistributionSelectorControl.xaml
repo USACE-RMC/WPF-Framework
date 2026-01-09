@@ -17,29 +17,6 @@
         <cntrls:BooleanToDoubleConverter x:Key="BoolToTitleDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="8"/>
         <cntrls:BooleanToColorConverter x:Key="BoolToColorConverter" TrueValue="Black" FalseValue="Transparent"/>
         <SolidColorBrush x:Key="ReadOnlyBackGround" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
-        <Style x:Key="Left_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Grid>
-                            <TextBlock TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
-                        </Grid>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="Right_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Grid HorizontalAlignment="Right">
-                            <TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
-                        </Grid>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="HorizontalContentAlignment" Value="Right" />
-        </Style>
         <Style x:Key="ReadOnlyTextBackgroundCellStyle" TargetType="DataGridCell">
             <Setter Property="Background" Value="{StaticResource ReadOnlyBackGround}"></Setter>
             <Setter Property="TextBlock.TextAlignment"  Value="Left"></Setter>
@@ -169,8 +146,8 @@
         <Expander x:Name="PlotExpander" Header="Probability Density Plot" Grid.Row="3" IsExpanded="True" VerticalAlignment="Top" Padding="0"
                   Visibility="{Binding ElementName=DistributionSelector, Path=ShowPlot, Converter={StaticResource BoolToVisConverter}}" 
                   Style="{DynamicResource PropertyExpanderStyle}">
-            <Grid>
-                <oxy:Plot x:Name="Plot" Margin="2,2,0,0" Height="250" PlotAreaBackground="White" IsHitTestVisible="False" Padding="0" Background="{Binding ElementName=DistributionSelector, Path=BackgroundColor}">
+            <Grid Background="{DynamicResource PlotWindowBackground}">
+                <oxy:Plot x:Name="Plot" Margin="2,2,0,0" Height="250" PlotAreaBackground="White" IsHitTestVisible="False" Padding="0" Background="Transparent" >
                     <oxy:Plot.Axes>
                         <oxy:LinearAxis x:Name="Yaxis" 
                                     MaximumPadding="0.1" 
