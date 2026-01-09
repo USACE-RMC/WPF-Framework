@@ -56,6 +56,11 @@ namespace FrameworkUI
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
         }
 
+        /// <summary>
+        /// Handles the window close command.
+        /// </summary>
+        /// <param name="target">The command target.</param>
+        /// <param name="e">The executed routed event arguments.</param>
         private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(this);

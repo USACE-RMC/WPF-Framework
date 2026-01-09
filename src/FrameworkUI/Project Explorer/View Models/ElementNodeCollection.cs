@@ -50,6 +50,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Construct new element node collection.
         /// </summary>
+        /// <param name="parentNode">The parent node.</param>
+        /// <param name="parentTreeView">The parent tree view.</param>
         public ElementNodeCollection(Node parentNode, ProjectExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
         {
 
@@ -63,6 +65,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Element collection property callback.
         /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data.</param>
         private static void ElementCollection_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;

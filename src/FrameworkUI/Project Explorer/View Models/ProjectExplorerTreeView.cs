@@ -109,6 +109,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// When the project node is changed, update the tree view items.
         /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data.</param>
         private static void ProjectNode_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;

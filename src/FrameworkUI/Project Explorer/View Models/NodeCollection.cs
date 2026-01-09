@@ -53,6 +53,11 @@ namespace FrameworkUI.ProjectExplorer
         private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.SortAscending) } };
         private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.SortDescending) } };
 
+        /// <summary>
+        /// Construct a new node collection.
+        /// </summary>
+        /// <param name="parentNode">The parent node.</param>
+        /// <param name="parentTreeView">The parent tree view.</param>
         public NodeCollection(Node parentNode, ExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
         {
             // Set Properties
@@ -168,8 +173,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, add a node group to the collection.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void AddGroup_Click(object sender, RoutedEventArgs e)
         {
             var newGroup = new NodeGroup(this, ParentTreeView);
@@ -180,6 +185,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// On click, sort nodes in ascending or descending order.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Sort_Click(object sender, RoutedEventArgs e)
         {
             if (((MenuItem)sender).Name == "sortASC")

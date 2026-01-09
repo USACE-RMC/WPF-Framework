@@ -38,6 +38,15 @@ using System.Windows;
 
 namespace FrameworkUI.ProjectExplorer
 {
+    /// <summary>
+    /// Explorer tree view class that provides enhanced tree view functionality with drag-drop and multi-selection support.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     Authors:
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </para>
+    /// </remarks>
     public class ExplorerTreeView : TreeView
     {
 
@@ -104,6 +113,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Recursive routine used to deselect all items.
         /// </summary>
+        /// <param name="itemCollection">The collection of items to clear.</param>
+        /// <param name="itemContainerGenerator">The item container generator.</param>
         private void ClearTreeViewItemsControlSelection(ItemCollection itemCollection, ItemContainerGenerator itemContainerGenerator)
         {
             if (itemCollection != null && itemContainerGenerator != null)
@@ -120,6 +131,11 @@ namespace FrameworkUI.ProjectExplorer
             }
         }
 
+        /// <summary>
+        /// Handles the preview mouse right button down event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Me_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
@@ -238,6 +254,9 @@ namespace FrameworkUI.ProjectExplorer
             UpdateLayout();
         }
 
+        /// <summary>
+        /// Handles when the user clicks on white space (non-node area).
+        /// </summary>
         private void UserClickedNonElementNode()
         {
             foreach (var treeItem in Items)
@@ -249,6 +268,10 @@ namespace FrameworkUI.ProjectExplorer
             }
         }
 
+        /// <summary>
+        /// Recursively handles when the user clicks on white space for a given node.
+        /// </summary>
+        /// <param name="n">The node to process.</param>
         private void UserClickedNonElementNode(Node n)
         {
             n.UserClickedWhiteSpace();
@@ -603,6 +626,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Determines if the mouse is in the first half of the tree view item.
         /// </summary>
+        /// <param name="dropTarget">The drop target node.</param>
+        /// <param name="mousePosition">The current mouse position.</param>
+        /// <returns>True if the mouse is in the top half of the node, otherwise false.</returns>
         private bool IsInTopHalf(Node dropTarget, Point mousePosition)
         {
             return mousePosition.Y < dropTarget.NodeHeader.ActualHeight / 2d;
@@ -611,6 +637,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Helper method to search for ancestors up the visual tree.
         /// </summary>
+        /// <typeparam name="T">The type of ancestor to find.</typeparam>
+        /// <param name="current">The starting dependency object.</param>
+        /// <returns>The ancestor of type T if found, otherwise null.</returns>
         public T FindAncestor<T>(DependencyObject current) where T : DependencyObject
         {
             do
@@ -636,6 +665,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Helper method to search for parent tree view item.
         /// </summary>
+        /// <param name="tree">The tree view to search in.</param>
+        /// <param name="dependencyObject">The dependency object to start searching from.</param>
+        /// <returns>The parent TreeViewItem if found, otherwise null.</returns>
         public static TreeViewItem FindTreeViewItem(TreeView tree, DependencyObject dependencyObject)
         {
             if (!(dependencyObject is Visual || dependencyObject is Visual3D)) return null;
@@ -644,6 +676,11 @@ namespace FrameworkUI.ProjectExplorer
             return FindTreeViewItem(tree,VisualTreeHelper.GetParent(dependencyObject));
         }
 
+        /// <summary>
+        /// Searches upward in the visual tree for a TreeViewItem.
+        /// </summary>
+        /// <param name="source">The source dependency object.</param>
+        /// <returns>The parent TreeViewItem if found, otherwise null.</returns>
         static TreeViewItem VisualUpwardSearch(DependencyObject source)
         {
             while (source != null && !(source is TreeViewItem))

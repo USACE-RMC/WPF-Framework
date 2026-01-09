@@ -55,7 +55,7 @@ namespace FrameworkUI
     public class RecentFiles : Separator
     {
         /// <summary>
-        /// Construct the RecentFiles class
+        /// Initializes a new instance of the <see cref="RecentFiles"/> class.
         /// </summary>
         public RecentFiles()
         {
@@ -78,9 +78,12 @@ namespace FrameworkUI
         /// <summary>
         /// Event raised when a recent file menu item is clicked.
         /// </summary>
-        /// <param name="filePath">The full file path of the recent file item.</param>
         public event MenuClickEventHandler MenuClick;
 
+        /// <summary>
+        /// Delegate for the <see cref="MenuClick"/> event.
+        /// </summary>
+        /// <param name="filePath">The full file path of the recent file item.</param>
         public delegate void MenuClickEventHandler(string filePath);
 
         /// <summary>
@@ -114,17 +117,18 @@ namespace FrameworkUI
         /// <summary>
         /// Separator used at bottom of recent file list.
         /// </summary>
-        private Separator MenuSeparator = null;
+        private Separator MenuSeparator;
 
         /// <summary>
         /// A menu item to display more recent files.
         /// </summary>
-        private MenuItem MoreFilesMenuItem = null;
+        private MenuItem MoreFilesMenuItem;
 
         /// <summary>
         /// Gets the index of the recent file item containing the specified file path.
         /// </summary>
         /// <param name="filePath">Path to the file.</param>
+        /// <returns>The zero-based index of the file path, or -1 if not found.</returns>
         public int IndexOf(string filePath)
         {
             for (int i = 0; i < Collection.Count; i++)
@@ -312,6 +316,8 @@ namespace FrameworkUI
         /// <summary>
         /// Connect to the parent file menu item.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void ConnectToMenu(object sender, RoutedEventArgs e)
         {
             MenuItem parentItem = Parent as MenuItem;
@@ -325,6 +331,8 @@ namespace FrameworkUI
         /// <summary>
         /// When the parent file menu item is opened, build the list of recent files.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void FileMenu_SubMenuOpened(object sender, RoutedEventArgs e)
         {
             RemoveMenuItems();
@@ -389,6 +397,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="index">The 1-based index of the recent file item.</param>
         /// <param name="displaypath">Display path to the file.</param>
+        /// <returns>The formatted menu item text.</returns>
         private string GetMenuItemText(int index, string displaypath)
         {
             string format = index < 10 ? MenuItemFormatOneToNine : MenuItemFormatTenPlus;
@@ -399,6 +408,8 @@ namespace FrameworkUI
         /// <summary>
         /// On click, open recent file.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             int iMenuItem = FileMenu.Items.IndexOf(this);
@@ -410,6 +421,8 @@ namespace FrameworkUI
         /// <summary>
         /// When clicked, open the recent files dialog.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void MoreFilesMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ImageSource image = null;

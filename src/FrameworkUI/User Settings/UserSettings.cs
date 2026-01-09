@@ -158,6 +158,10 @@ namespace FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Sets the value string format based on the number of decimal digits.
+        /// </summary>
+        /// <param name="digits">The number of decimal digits to display.</param>
         private static void SetValueStringFormat(int digits)
         {
             string hashString = "";
@@ -198,6 +202,10 @@ namespace FrameworkUI
 #pragma warning restore CS0067
         private static event PropertyChangedEventHandler GlobalPropertyChanged;
 
+        /// <summary>
+        /// Raises the global property changed event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
         private static void OnGlobalPropertyChanged(string propertyName)
         {
             GlobalPropertyChanged?.Invoke(typeof(UserSettings), new PropertyChangedEventArgs(propertyName));

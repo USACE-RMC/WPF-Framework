@@ -105,7 +105,7 @@ namespace FrameworkUI
         /// <summary>
         /// Compact and optimize the project file.
         /// </summary>
-        /// <param name="project">Project as IProject.</param>
+        /// <param name="project">The project to compact and optimize.</param>
         public static void CompactAndOptimizeFile(IProject project)
         {
             // Set the project file

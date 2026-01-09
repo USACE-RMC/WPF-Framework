@@ -184,8 +184,10 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty ParentTreeViewProperty = DependencyProperty.Register(nameof(ParentTreeView), typeof(ExplorerTreeView), typeof(Node), new FrameworkPropertyMetadata(null, ParentTreeView_PropertyChangedCallback));
 
         /// <summary>
-        /// The parent tree view callback. 
+        /// The parent tree view callback.
         /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data.</param>
         private static void ParentTreeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -204,6 +206,10 @@ namespace FrameworkUI.ProjectExplorer
             thisControl.SetParentTreeView(newTreeView);
         }
 
+        /// <summary>
+        /// Recursively sets the parent tree view for this node and all child nodes.
+        /// </summary>
+        /// <param name="newTreeView">The tree view to set as parent.</param>
         private void SetParentTreeView(ExplorerTreeView newTreeView)
         {
             // Set parent tree view for each child node
@@ -242,6 +248,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// IsCheckBoxNode Callback.
         /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event data.</param>
         public static void IsCheckBoxNode_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -320,6 +328,9 @@ namespace FrameworkUI.ProjectExplorer
             }
         }
 
+        /// <summary>
+        /// Gets or sets the array of invalid characters for node names.
+        /// </summary>
         public char[] InvalidNameChars
         {
             get { return _invalidNameChars; }
@@ -330,6 +341,9 @@ namespace FrameworkUI.ProjectExplorer
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this node type supports multi-selection.
+        /// </summary>
         public abstract bool CanMultiSelect { get; }
 
         /// <summary>
@@ -490,6 +504,10 @@ namespace FrameworkUI.ProjectExplorer
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Gets the drag text representation for drag-drop operations.
+        /// </summary>
+        /// <returns>The drag text string.</returns>
         public string GetDragText()
         {
             return "";
@@ -538,6 +556,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Get the node collection that contains this node.
         /// </summary>
+        /// <returns>The parent NodeCollection, or null if not found.</returns>
         public NodeCollection GetNodeCollection()
         {
             NodeCollection nodeCollection = null;
@@ -912,6 +931,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Recursive routine used to de-select all items.
         /// </summary>
+        /// <param name="treeViewItems">The collection of tree view items to process.</param>
+        /// <param name="originalNode">The original node to preserve.</param>
         private void ClearRenameTextBoxes(IEnumerable treeViewItems, ref Node originalNode)
         {
             if (treeViewItems != null)
@@ -996,6 +1017,9 @@ namespace FrameworkUI.ProjectExplorer
         #endregion
 
 
+        /// <summary>
+        /// Expands all parent nodes up to the root of the tree.
+        /// </summary>
         public void ExpandParentNodes()
         {
             if (ParentNode != null)
@@ -1008,8 +1032,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Recursively searches for the node in children.
         /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
+        /// <param name="node">The node to search for.</param>
+        /// <returns>True if the node is found in the children, otherwise false.</returns>
         public bool ContainsNode(Node node)
         {
             foreach (var n in ChildNodes)
@@ -1021,10 +1045,9 @@ namespace FrameworkUI.ProjectExplorer
         }
 
         /// <summary>
-        /// Recursively searches for the node in children.
+        /// Recursively searches for all node groups in the children.
         /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
+        /// <returns>A list of all node groups found in the tree.</returns>
         public List<NodeGroup> GetNodeGroups()
         {
             List<NodeGroup> result = new List<NodeGroup>();
