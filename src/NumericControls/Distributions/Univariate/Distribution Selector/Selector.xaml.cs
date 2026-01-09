@@ -33,24 +33,11 @@ using Numerics.Data.Statistics;
 using Numerics.Distributions;
 using Numerics.Sampling;
 using OxyPlot.Wpf;
-using OxyPlotControls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace NumericControls.Distributions.Univariate
 {
@@ -593,13 +580,13 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Sets the available distribution options for the selector.
         /// </summary>
-        /// <param name="univariates">The collection of distribution types to display in the selector.</param>
-        public void SetDistributionOptions(IEnumerable<UnivariateDistributionType> univariates)
+        /// <param name="univariateTypes">The collection of distribution types to display in the selector.</param>
+        public void SetDistributionOptions(IEnumerable<UnivariateDistributionType> univariateTypes)
         {
             _settingDistributionOptions = true;
             DistributionCombobox.ItemsSource = null;
             _distributions.Clear();
-            foreach (var d in univariates)
+            foreach (var d in univariateTypes)
             {
                 if (_selectedDistribution != null && d == _selectedDistribution.Type)
                 {

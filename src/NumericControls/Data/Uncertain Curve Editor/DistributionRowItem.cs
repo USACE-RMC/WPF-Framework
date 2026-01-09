@@ -28,9 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using GenericControls;
 using Numerics.Data;
 using Numerics.Distributions;

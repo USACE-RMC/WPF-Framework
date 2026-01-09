@@ -30,11 +30,7 @@
 
 using GenericControls;
 using Numerics.Data;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -250,14 +246,14 @@ namespace NumericControls
         /// <summary>
         /// Determines whether a mathematical function type requires an operand value.
         /// </summary>
-        /// <param name="fnc">The mathematical function type to check.</param>
+        /// <param name="function">The mathematical function type to check.</param>
         /// <returns><c>true</c> if the function requires an operand; otherwise, <c>false</c>.</returns>
-        public static bool HasOperand(MathFunctionType fnc)
+        public static bool HasOperand(MathFunctionType function)
         {
-            if (fnc == MathFunctionType.Add || fnc == MathFunctionType.Subtract ||
-                fnc == MathFunctionType.Multiply || fnc == MathFunctionType.Divide ||
-                fnc == MathFunctionType.Logarithm || fnc == MathFunctionType.Exponentiate ||
-                fnc == MathFunctionType.Replace)
+            if (function == MathFunctionType.Add || function == MathFunctionType.Subtract ||
+                function == MathFunctionType.Multiply || function == MathFunctionType.Divide ||
+                function == MathFunctionType.Logarithm || function == MathFunctionType.Exponentiate ||
+                function == MathFunctionType.Replace)
             { return true; }
             else
             { return false; }

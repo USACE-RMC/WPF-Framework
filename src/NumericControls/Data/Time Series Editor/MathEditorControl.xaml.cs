@@ -30,24 +30,12 @@
 
 using GenericControls;
 using Numerics.Data;
-using OxyPlot;
-using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static Numerics.Data.Statistics.Histogram;
 
 namespace NumericControls
 {
@@ -151,11 +139,7 @@ namespace NumericControls
                         {
                             rowsString = string.Join(", ", _selectedValueRowIndices.Select(item => item + 1));
                         }
-                        NotificationText.Text = $"Applies to rows {rowsString}.";// +
-                                                                                 //$"{Environment.NewLine}" +
-                                                                                 //$"Selection is {(_selectionConsecutive == true ? "continuous" : "discontinuous")}." +
-                                                                                 //$"{Environment.NewLine}" +
-                                                                                 //$"(Rows {rowsString})";
+                        NotificationText.Text = $"Applies to rows {rowsString}.";
                     }
                 }
                 else
@@ -325,14 +309,14 @@ namespace NumericControls
         /// <summary>
         /// Gets the display name for a mathematical function type.
         /// </summary>
-        /// <param name="fnc">The mathematical function type.</param>
+        /// <param name="function">The mathematical function type.</param>
         /// <returns>A human-readable display name for the function.</returns>
-        public static string GetName(MathFunctionType fnc)
+        public static string GetName(MathFunctionType function)
         {
-            switch (fnc)
+            switch (function)
             {
                 case MathFunctionType.Logarithm: return "Logarithmic Transform";
-                default: return fnc.ToString();
+                default: return function.ToString();
             }
         }
 
@@ -359,11 +343,11 @@ namespace NumericControls
         /// <summary>
         /// Gets the tooltip description for a mathematical function type.
         /// </summary>
-        /// <param name="fnc">The mathematical function type.</param>
+        /// <param name="function">The mathematical function type.</param>
         /// <returns>A descriptive tooltip explaining what the function does.</returns>
-        public static string GetTooltip(MathFunctionType fnc)
+        public static string GetTooltip(MathFunctionType function)
         {
-            switch (fnc)
+            switch (function)
             {
                 case MathFunctionType.Add: return "Add a constant to values. Missing values are kept as missing.";
                 case MathFunctionType.Subtract: return "Subtract a constant from values. Missing values are kept as missing.";
@@ -374,7 +358,7 @@ namespace NumericControls
                 case MathFunctionType.Inverse: return "Replace values by its inverse (1/x). Missing values are kept as missing. Zero values are set to missing.";
                 case MathFunctionType.Replace: return "Replace missing data (Double.NaN) with a constant.";
                 case MathFunctionType.Interpolate: return "Interpolate missing data.";
-                default: return fnc.ToString();
+                default: return function.ToString();
             }
         }
 
@@ -401,11 +385,11 @@ namespace NumericControls
         /// <summary>
         /// Gets the icon image for a mathematical function type.
         /// </summary>
-        /// <param name="fnc">The mathematical function type.</param>
+        /// <param name="function">The mathematical function type.</param>
         /// <returns>A <see cref="BitmapImage"/> representing the function's icon.</returns>
-        public static BitmapImage GetIcon(MathFunctionType fnc)
+        public static BitmapImage GetIcon(MathFunctionType function)
         {
-            switch (fnc)
+            switch (function)
             {
                 case MathFunctionType.Add: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorPlus_16x.png"));
                 case MathFunctionType.Subtract: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMinus_16x.png"));
