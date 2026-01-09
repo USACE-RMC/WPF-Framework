@@ -71,9 +71,6 @@
                                     Stroke="{DynamicResource ComboBox.DropDown.Foreground}"
                                     StrokeThickness="2"/>
                             </Button>
-                            <!--<Button Margin="5,0,0,0" Grid.Column="4" Height="12" Width="12" Padding="0" SnapsToDevicePixels="True" ToolTip="Delete Series" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Click="DeleteSeriesButton_Click">
-                                <Path Data="M 1,1 7,7 M 1,7 7,1" Stroke="Black" StrokeThickness="2"/>
-                            </Button>-->
                         </Grid>
                     </DataTemplate>
                     <DataTemplate
@@ -113,11 +110,9 @@
             SelectionChanged="SeriesPropertyControlComboBox_SelectionChanged">
         </ComboBox>
 
-        <!--<Grid>-->
         <local:SeriesControl
             x:Name="SeriesPropertiesControl"
             Margin="0,5,0,0"
             Grid.Row="1" ExpanderStyle="{Binding ElementName=SeriesSelectorRoot, Path=ExpanderStyle}"/>
-        <!--</Grid>-->
     </Grid>
 </UserControl>
