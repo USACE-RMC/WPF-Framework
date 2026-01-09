@@ -57,6 +57,9 @@ namespace NumericControls.Distributions.Univariate
     /// </remarks>
     public partial class DistributionWithSelectorControl : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DistributionWithSelectorControl"/> class.
+        /// </summary>
         public DistributionWithSelectorControl()
         {
             InitializeComponent();

@@ -66,8 +66,15 @@ namespace NumericControls
         private bool _isStrictY;
         private SortOrder _xOrder;
         private SortOrder _yOrder;
+
+        /// <summary>
+        /// The relative tolerance used for double value comparisons.
+        /// </summary>
         public static double RelativeDoubleTolerance = double.Epsilon;
 
+        /// <summary>
+        /// Gets or sets the maximum allowed X value for validation.
+        /// </summary>
         public double MaxXValue
         {
             get { return _maxXValue; }
@@ -81,6 +88,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the minimum allowed X value for validation.
+        /// </summary>
         public double MinXValue
         {
             get { return _minXValue; }
@@ -94,6 +104,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum allowed Y value for validation.
+        /// </summary>
         public double MaxYValue
         {
             get { return _maxYValue; }
@@ -107,6 +120,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the minimum allowed Y value for validation.
+        /// </summary>
         public double MinYValue
         {
             get { return _minYValue; }
@@ -120,6 +136,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether X values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictX
         {
             get { return _isStrictX; }
@@ -133,6 +152,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether Y values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictY
         {
             get { return _isStrictY; }
@@ -146,6 +168,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the sort order for X values.
+        /// </summary>
         public SortOrder XOrder
         {
             get { return _xOrder; }
@@ -159,6 +184,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the sort order for Y values.
+        /// </summary>
         public SortOrder YOrder
         {
             get { return _yOrder; }
@@ -172,6 +200,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets or sets the underlying uncertain ordered paired data.
+        /// </summary>
         public UncertainOrderedPairedData Data
         {
             get { return _data; }
@@ -197,16 +228,50 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets the distribution type for this data item.
+        /// </summary>
         public UnivariateDistributionType Distribution { get; private set; }
+
+        /// <summary>
+        /// Gets the display name of the distribution type.
+        /// </summary>
         public string DistributionName { get; private set; }
+
+        /// <summary>
+        /// Gets the collection of distribution row items for display in the data grid.
+        /// </summary>
         public ObservableCollection<object> DistributionRows { get; private set; } = new ObservableCollection<object>();
 
+        /// <summary>
+        /// Occurs when data in a row changes.
+        /// </summary>
         public event DataChangedEventHandler DataChanged;
 
+        /// <summary>
+        /// Represents a method that handles data changed events.
+        /// </summary>
+        /// <param name="dataChangedIndex">The index of the data item that changed.</param>
         public delegate void DataChangedEventHandler(int dataChangedIndex);
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DistributionDataItem"/> class.
+        /// </summary>
+        /// <param name="d">The uncertain ordered paired data.</param>
+        /// <param name="dType">The distribution type.</param>
+        /// <param name="minX">The minimum allowed X value.</param>
+        /// <param name="maxX">The maximum allowed X value.</param>
+        /// <param name="minY">The minimum allowed Y value.</param>
+        /// <param name="maxY">The maximum allowed Y value.</param>
+        /// <param name="strictX">Whether X values must be strictly ordered.</param>
+        /// <param name="strictY">Whether Y values must be strictly ordered.</param>
+        /// <param name="orderX">The sort order for X values.</param>
+        /// <param name="orderY">The sort order for Y values.</param>
         public DistributionDataItem(UncertainOrderedPairedData d, UnivariateDistributionType dType, double minX, double maxX, double minY, double maxY, bool strictX, bool strictY, SortOrder orderX, SortOrder orderY)
         {
             _data = d;
@@ -267,6 +332,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Refreshes all distribution rows from the underlying data.
+        /// </summary>
         public void Refresh()
         {
             foreach (DistributionRowItem row in DistributionRows)
@@ -282,6 +350,10 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Refreshes a specific distribution row from the underlying data.
+        /// </summary>
+        /// <param name="rowIndex">The index of the row to refresh.</param>
         public void Refresh(int rowIndex)
         {
             if (_data == null) return;

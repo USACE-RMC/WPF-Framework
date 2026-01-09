@@ -57,6 +57,9 @@ namespace NumericControls.Distributions.Univariate
     /// </remarks>
     public partial class DistributionSelectorPopup : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DistributionSelectorPopup"/> class.
+        /// </summary>
         public DistributionSelectorPopup()
         {
             InitializeComponent();

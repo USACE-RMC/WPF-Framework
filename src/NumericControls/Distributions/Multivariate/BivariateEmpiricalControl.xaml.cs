@@ -59,6 +59,10 @@ namespace NumericControls
     /// </remarks>
     public partial class BivariateEmpiricalControl : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BivariateEmpiricalControl"/> class.
+        /// Sets up toolbar buttons, context menu items, and event handlers for data editing.
+        /// </summary>
         public BivariateEmpiricalControl()
         {
 
@@ -251,6 +255,9 @@ namespace NumericControls
             return s;
         }
 
+        /// <summary>
+        /// Identifies the <see cref="X2HeaderBorderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty X2HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X2HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderBorderStyle(), X2HeaderBorderStylePropertyCallback));
 
         /// <summary>
@@ -264,12 +271,18 @@ namespace NumericControls
             bvc.X2HeaderBorder.Style = e.NewValue as Style;
         }
 
+        /// <summary>
+        /// Gets or sets the style for the X2 header border.
+        /// </summary>
         public Style X2HeaderBorderStyle
         {
             get { return (Style)GetValue(X2HeaderBorderStyleProperty); }
             set { SetValue(X2HeaderBorderStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="X2HeaderTextBlockStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty X2HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X2HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderTextBlockStyle(), X2HeaderTextBlockStylePropertyCallback));
 
         /// <summary>
@@ -283,12 +296,18 @@ namespace NumericControls
             bvc.X2HeaderTextBlock.Style = e.NewValue as Style;
         }
 
+        /// <summary>
+        /// Gets or sets the style for the X2 header text block.
+        /// </summary>
         public Style X2HeaderTextBlockStyle
         {
             get { return (Style)GetValue(X2HeaderTextBlockStyleProperty); }
             set { SetValue(X2HeaderTextBlockStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="X1HeaderBorderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty X1HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X1HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderBorderStyle(), X1HeaderBorderStylePropertyCallback));
 
         /// <summary>
@@ -302,12 +321,18 @@ namespace NumericControls
             bvc.X1HeaderBorder.Style = e.NewValue as Style;
         }
 
+        /// <summary>
+        /// Gets or sets the style for the X1 header border.
+        /// </summary>
         public Style X1HeaderBorderStyle
         {
             get { return (Style)GetValue(X1HeaderBorderStyleProperty); }
             set { SetValue(X1HeaderBorderStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="X1HeaderTextBlockStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty X1HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X1HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderTextBlockStyle(), X1HeaderTextBlockStylePropertyCallback));
 
         /// <summary>
@@ -321,22 +346,37 @@ namespace NumericControls
             bvc.X1HeaderTextBlock.Style = e.NewValue as Style;
         }
 
+        /// <summary>
+        /// Gets or sets the style for the X1 header text block.
+        /// </summary>
         public Style X1HeaderTextBlockStyle
         {
             get { return (Style)GetValue(X1HeaderTextBlockStyleProperty); }
             set { SetValue(X1HeaderTextBlockStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="X2Header"/> dependency property.
+        /// </summary>
         public static DependencyProperty X2HeaderProperty = DependencyProperty.Register(nameof(X2Header), typeof(string), typeof(BivariateEmpiricalControl), new FrameworkPropertyMetadata("X2 Data"));
 
+        /// <summary>
+        /// Gets or sets the header text for the X2 data column.
+        /// </summary>
         public string X2Header
         {
             get { return (string)GetValue(X2HeaderProperty); }
             set { SetValue(X2HeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="X1Header"/> dependency property.
+        /// </summary>
         public static DependencyProperty X1HeaderProperty = DependencyProperty.Register(nameof(X1Header), typeof(string), typeof(BivariateEmpiricalControl), new FrameworkPropertyMetadata("X1 Data"));
 
+        /// <summary>
+        /// Gets or sets the header text for the X1 data row.
+        /// </summary>
         public string X1Header
         {
             get { return (string)GetValue(X1HeaderProperty); }
