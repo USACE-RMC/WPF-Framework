@@ -70,6 +70,9 @@ namespace NumericControls
     /// </remarks>
     public partial class UncertainOrderedTableEditor : UserControl
     {
+        /// <summary>
+        /// Identifies the <see cref="AddRemoveRows"/> dependency property.
+        /// </summary>
         public static DependencyProperty AddRemoveRowsProperty = DependencyProperty.Register(nameof(AddRemoveRows), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(true, AddRemoveRows_PropertyChanged));
         private static void AddRemoveRows_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -79,86 +82,149 @@ namespace NumericControls
             thisControl.ValidationGridToolbar.DataGrid = thisControl.ValidationGrid;
         }
 
+        /// <summary>
+        /// Gets or sets whether users can add or remove rows in the data grid.
+        /// </summary>
         public bool AddRemoveRows
         {
             get { return (bool)GetValue(AddRemoveRowsProperty); }
             set { SetValue(AddRemoveRowsProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata("X Data"));
 
+        /// <summary>
+        /// Gets or sets the header text for the X data column.
+        /// </summary>
         public string XColumnHeader
         {
             get { return (string)GetValue(XColumnHeaderProperty); }
             set { SetValue(XColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata("Y Data"));
 
+        /// <summary>
+        /// Gets or sets the header text for the Y data column.
+        /// </summary>
         public string YColumnHeader
         {
             get { return (string)GetValue(YColumnHeaderProperty); }
             set { SetValue(YColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsStrictX"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsStrictXProperty = DependencyProperty.Register(nameof(IsStrictX), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(false, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets whether X values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictX
         {
             get { return (bool)GetValue(IsStrictXProperty); }
             set { SetValue(IsStrictXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsStrictY"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsStrictYProperty = DependencyProperty.Register(nameof(IsStrictY), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(false, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets whether Y values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictY
         {
             get { return (bool)GetValue(IsStrictYProperty); }
             set { SetValue(IsStrictYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OrderX"/> dependency property.
+        /// </summary>
         public static DependencyProperty OrderXProperty = DependencyProperty.Register(nameof(OrderX), typeof(SortOrder), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(SortOrder.Ascending, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets the sort order for X values.
+        /// </summary>
         public SortOrder OrderX
         {
             get { return (SortOrder)GetValue(OrderXProperty); }
             set { SetValue(OrderXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OrderY"/> dependency property.
+        /// </summary>
         public static DependencyProperty OrderYProperty = DependencyProperty.Register(nameof(OrderY), typeof(SortOrder), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(SortOrder.Ascending, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets the sort order for Y values.
+        /// </summary>
         public SortOrder OrderY
         {
             get { return (SortOrder)GetValue(OrderYProperty); }
             set { SetValue(OrderYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(double), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(double.MaxValue, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets the maximum allowed X value for validation.
+        /// </summary>
         public double MaximumX
         {
             get { return (double)GetValue(MaximumXProperty); }
             set { SetValue(MaximumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(double), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(double.MinValue, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets the minimum allowed X value for validation.
+        /// </summary>
         public double MinimumX
         {
             get { return (double)GetValue(MinimumXProperty); }
             set { SetValue(MinimumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(double.MaxValue, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets the maximum allowed Y value for validation.
+        /// </summary>
         public double MaximumY
         {
             get { return (double)GetValue(MaximumYProperty); }
             set { SetValue(MaximumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(double.MinValue, DP_PropertyChanged));
 
+        /// <summary>
+        /// Gets or sets the minimum allowed Y value for validation.
+        /// </summary>
         public double MinimumY
         {
             get { return (double)GetValue(MinimumYProperty); }
@@ -171,30 +237,51 @@ namespace NumericControls
             thisControl.Refresh();
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsMergedHeaderVisible"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsMergedHeaderVisibleProperty = DependencyProperty.Register(nameof(IsMergedHeaderVisible), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(true));
 
+        /// <summary>
+        /// Gets or sets whether the merged column header row is visible.
+        /// </summary>
         public bool IsMergedHeaderVisible
         {
             get { return (bool)GetValue(IsMergedHeaderVisibleProperty); }
             set { SetValue(IsMergedHeaderVisibleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets whether the control is read-only.
+        /// </summary>
         public bool IsReadOnly
         {
             get { return (bool)GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ShowToolBar"/> dependency property.
+        /// </summary>
         public static DependencyProperty ShowToolBarProperty = DependencyProperty.Register(nameof(ShowToolBar), typeof(bool), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets whether the toolbar is visible.
+        /// </summary>
         public bool ShowToolBar
         {
             get { return (bool)GetValue(ShowToolBarProperty); }
             set { SetValue(ShowToolBarProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="UncertainOrderedData"/> dependency property.
+        /// </summary>
         public static DependencyProperty UncertainOrderedDataProperty = DependencyProperty.Register(nameof(UncertainOrderedData), typeof(UncertainOrderedPairedData), typeof(UncertainOrderedTableEditor), new PropertyMetadata(null, UncertainOrderedData_PropertyChanged));
 
         private static void UncertainOrderedData_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -231,30 +318,56 @@ namespace NumericControls
             set { SetValue(UncertainOrderedDataProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnHeaderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.Register(nameof(ColumnHeaderStyle), typeof(Style), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the style for column headers in the data grid.
+        /// </summary>
         public Style ColumnHeaderStyle
         {
             get { return (Style)GetValue(ColumnHeaderStyleProperty); }
             set { SetValue(ColumnHeaderStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CellStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty CellStyleProperty = DependencyProperty.Register(nameof(CellStyle), typeof(Style), typeof(UncertainOrderedTableEditor), new FrameworkPropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the style for cells in the data grid.
+        /// </summary>
         public Style CellStyle
         {
             get { return (Style)GetValue(CellStyleProperty); }
             set { SetValue(CellStyleProperty, value); }
         }
 
+        /// <summary>
+        /// Gets the collection of distribution row items displayed in the data grid.
+        /// </summary>
         public ObservableCollection<object> DistributionRows { get; private set; } = new ObservableCollection<object>();
 
         private bool _updatingData = false;
 
+        /// <summary>
+        /// Occurs when the data grid columns have been auto-generated.
+        /// </summary>
         public event ColumnsAutoGeneratedEventHandler ColumnsAutoGenerated;
 
+        /// <summary>
+        /// Represents a method that handles the columns auto-generated event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The collection of auto-generated columns.</param>
         public delegate void ColumnsAutoGeneratedEventHandler(object sender, ObservableCollection<DataGridColumn> e);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UncertainOrderedTableEditor"/> class.
+        /// </summary>
         public UncertainOrderedTableEditor()
         {
             // This call is required by the designer.
@@ -327,11 +440,14 @@ namespace NumericControls
             // 
         }
 
+        /// <summary>
+        /// Refreshes all rows in the data grid with current data.
+        /// </summary>
         public void Refresh()
         {
             foreach (DistributionRowItem row in DistributionRows) { row.PropertyChanged -= RowItem_PropertyChanged; }
             DistributionRows.Clear();
-            // 
+            //
             if (UncertainOrderedData == null) return;
             DistributionRowItem rowItem;
             ValidationGrid.ItemsSource = null;
@@ -339,25 +455,32 @@ namespace NumericControls
             {
                 rowItem = new DistributionRowItem(o.X, o.Y, DistributionRows, MinimumX, MaximumX, MinimumY, MaximumY, IsStrictX, IsStrictY, OrderX, OrderY);
                 rowItem.PropertyChanged += RowItem_PropertyChanged;
-                // 
+                //
                 DistributionRows.Add(rowItem);
             }
 
             ValidationGrid.ItemsSource = DistributionRows;
         }
 
-        public void Refresh(int rowIndex) // minX As Double, maxX As Double, minY As Double, maxY As Double, strictX As Boolean, strictY As Boolean, orderX As SortOrder, orderY As SortOrder)
+        /// <summary>
+        /// Refreshes a specific row in the data grid.
+        /// </summary>
+        /// <param name="rowIndex">The index of the row to refresh.</param>
+        public void Refresh(int rowIndex)
         {
             if (UncertainOrderedData == null) return;
             if ((rowIndex >= UncertainOrderedData.Count) || (rowIndex < 0)) return;
             ((DistributionRowItem)DistributionRows[rowIndex]).PropertyChanged -= RowItem_PropertyChanged;
-            // 
+            //
             var rowItem = new DistributionRowItem(UncertainOrderedData[rowIndex].X, UncertainOrderedData[rowIndex].Y, DistributionRows, MinimumX, MaximumX, MinimumY, MaximumY, IsStrictX, IsStrictY, OrderX, OrderY);
             rowItem.PropertyChanged += RowItem_PropertyChanged;
             DistributionRows[rowIndex] = rowItem;
             rowItem.ForceValidation();
         }
 
+        /// <summary>
+        /// Forces validation on all rows in the data grid.
+        /// </summary>
         public void ForceGridValidation()
         {
             foreach (var r in DistributionRows) { ((DistributionRowItem)r).ForceValidation(); }

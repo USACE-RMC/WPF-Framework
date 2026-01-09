@@ -65,67 +65,126 @@ namespace NumericControls
     /// </remarks>
     public partial class UncertainOrderedDataSelectorControl : UserControl
     {
+        /// <summary>
+        /// Identifies the <see cref="XAxisLabel"/> dependency property.
+        /// </summary>
         public static DependencyProperty XAxisLabelProperty = DependencyProperty.Register(nameof(XAxisLabel), typeof(string), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata("X Axis"));
 
+        /// <summary>
+        /// Gets or sets the label text for the X axis on the plot.
+        /// </summary>
         public string XAxisLabel
         {
             get { return (string)GetValue(XAxisLabelProperty); }
             set { SetValue(XAxisLabelProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YAxisLabel"/> dependency property.
+        /// </summary>
         public static DependencyProperty YAxisLabelProperty = DependencyProperty.Register(nameof(YAxisLabel), typeof(string), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata("Y Axis"));
 
+        /// <summary>
+        /// Gets or sets the label text for the Y axis on the plot.
+        /// </summary>
         public string YAxisLabel
         {
             get { return (string)GetValue(YAxisLabelProperty); }
             set { SetValue(YAxisLabelProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="PlotTitle"/> dependency property.
+        /// </summary>
         public static DependencyProperty PlotTitleProperty = DependencyProperty.Register(nameof(PlotTitle), typeof(string), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the title displayed on the plot.
+        /// </summary>
         public string PlotTitle
         {
             get { return (string)GetValue(PlotTitleProperty); }
             set { SetValue(PlotTitleProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="PlotLegendPosition"/> dependency property.
+        /// </summary>
         public static DependencyProperty PlotLegendPositionProperty = DependencyProperty.Register(nameof(PlotLegendPosition), typeof(global::OxyPlot.Legends.LegendPosition), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(LegendPosition.BottomRight));
 
+        /// <summary>
+        /// Gets or sets the position of the legend on the plot.
+        /// </summary>
         public LegendPosition PlotLegendPosition
         {
             get { return (LegendPosition)GetValue(PlotLegendPositionProperty); }
             set {  SetValue(PlotLegendPositionProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YAxisMinimum"/> dependency property.
+        /// </summary>
         public static DependencyProperty YAxisMinimumProperty = DependencyProperty.Register(nameof(YAxisMinimum), typeof(double), typeof(UncertainOrderedDataSelectorControl), new UIPropertyMetadata(double.MinValue));
+
+        /// <summary>
+        /// Gets or sets the minimum value for the Y axis on the plot.
+        /// </summary>
         public double YAxisMinimum
         {
             get { return (double)GetValue(YAxisMinimumProperty); }
             set { SetValue(YAxisMinimumProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YAxisMaximum"/> dependency property.
+        /// </summary>
         public static DependencyProperty YAxisMaximumProperty = DependencyProperty.Register(nameof(YAxisMaximum), typeof(double), typeof(UncertainOrderedDataSelectorControl), new UIPropertyMetadata(double.MaxValue));
+
+        /// <summary>
+        /// Gets or sets the maximum value for the Y axis on the plot.
+        /// </summary>
         public double YAxisMaximum
         {
             get { return (double)GetValue(YAxisMaximumProperty); }
             set { SetValue(YAxisMaximumProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XAxisMinimum"/> dependency property.
+        /// </summary>
         public static DependencyProperty XAxisMinimumProperty = DependencyProperty.Register(nameof(XAxisMinimum), typeof(double), typeof(UncertainOrderedDataSelectorControl), new UIPropertyMetadata(double.MinValue));
+
+        /// <summary>
+        /// Gets or sets the minimum value for the X axis on the plot.
+        /// </summary>
         public double XAxisMinimum
         {
             get { return (double)GetValue(XAxisMinimumProperty); }
             set { SetValue(XAxisMinimumProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XAxisMaximum"/> dependency property.
+        /// </summary>
         public static DependencyProperty XAxisMaximumProperty = DependencyProperty.Register(nameof(XAxisMaximum), typeof(double), typeof(UncertainOrderedDataSelectorControl), new UIPropertyMetadata(double.MaxValue));
+
+        /// <summary>
+        /// Gets or sets the maximum value for the X axis on the plot.
+        /// </summary>
         public double XAxisMaximum
         {
             get { return (double)GetValue(XAxisMaximumProperty); }
             set { SetValue(XAxisMaximumProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata("X Data"));
+
+        /// <summary>
+        /// Gets or sets the header text for the X data column in the grid.
+        /// </summary>
         public string XColumnHeader
         {
             get
@@ -133,83 +192,163 @@ namespace NumericControls
             set { SetValue(XColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata("Y Data"));
+
+        /// <summary>
+        /// Gets or sets the header text for the Y data column in the grid.
+        /// </summary>
         public string YColumnHeader
         {
             get { return (string)GetValue(YColumnHeaderProperty); }
             set { SetValue(YColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsStrictX"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsStrictXProperty = DependencyProperty.Register(nameof(IsStrictX), typeof(bool), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets whether X values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictX
         {
             get { return (bool)GetValue(IsStrictXProperty); }
             set { SetValue(IsStrictXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsStrictY"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsStrictYProperty = DependencyProperty.Register(nameof(IsStrictY), typeof(bool), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets whether Y values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictY
         {
             get { return (bool)GetValue(IsStrictYProperty); }
             set { SetValue(IsStrictYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OrderX"/> dependency property.
+        /// </summary>
         public static DependencyProperty OrderXProperty = DependencyProperty.Register(nameof(OrderX), typeof(SortOrder), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(SortOrder.Ascending));
+
+        /// <summary>
+        /// Gets or sets the sort order for X values.
+        /// </summary>
         public SortOrder OrderX
         {
             get { return (SortOrder)GetValue(OrderXProperty); }
             set { SetValue(OrderXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OrderY"/> dependency property.
+        /// </summary>
         public static DependencyProperty OrderYProperty = DependencyProperty.Register(nameof(OrderY), typeof(SortOrder), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(SortOrder.Ascending));
+
+        /// <summary>
+        /// Gets or sets the sort order for Y values.
+        /// </summary>
         public SortOrder OrderY
         {
             get { return (SortOrder)GetValue(OrderYProperty); }
             set { SetValue(OrderYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(double), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(double.MaxValue));
+
+        /// <summary>
+        /// Gets or sets the maximum allowed X value for validation.
+        /// </summary>
         public double MaximumX
         {
             get { return (double)GetValue(MaximumXProperty); }
             set { SetValue(MaximumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(double), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(double.MinValue));
+
+        /// <summary>
+        /// Gets or sets the minimum allowed X value for validation.
+        /// </summary>
         public double MinimumX
         {
             get { return (double)GetValue(MinimumXProperty); }
             set { SetValue(MinimumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(double.MaxValue));
+
+        /// <summary>
+        /// Gets or sets the maximum allowed Y value for validation.
+        /// </summary>
         public double MaximumY
         {
             get { return (double)GetValue(MaximumYProperty); }
             set { SetValue(MaximumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(double.MinValue));
+
+        /// <summary>
+        /// Gets or sets the minimum allowed Y value for validation.
+        /// </summary>
         public double MinimumY
         {
             get { return (double)GetValue(MinimumYProperty); }
             set { SetValue(MinimumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets whether the control is read-only.
+        /// </summary>
         public bool IsReadOnly
         {
             get { return (bool)GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="TableWidth"/> dependency property.
+        /// </summary>
         public static DependencyProperty TableWidthProperty = DependencyProperty.Register(nameof(TableWidth), typeof(GridLength), typeof(UncertainOrderedDataSelectorControl), new FrameworkPropertyMetadata(new GridLength(1d, GridUnitType.Star)));
+
+        /// <summary>
+        /// Gets or sets the width of the data table portion of the control.
+        /// </summary>
         public GridLength TableWidth
         {
             get { return (GridLength)GetValue(TableWidthProperty); }
             set { SetValue(TableWidthProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="SelectedUncertainOrderedData"/> dependency property.
+        /// </summary>
         public static DependencyProperty SelectedUncertainOrderedDataProperty = DependencyProperty.Register(nameof(SelectedUncertainOrderedData), typeof(UncertainOrderedPairedData), typeof(UncertainOrderedDataSelectorControl), new PropertyMetadata(new UncertainOrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending, UnivariateDistributionType.Deterministic), SetData));
 
         private static void SetData(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -373,20 +512,56 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Gets the collection of data points for the minimum value line on the plot.
+        /// </summary>
         public ObservableCollection<DataPoint> MinimumLinePoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        /// <summary>
+        /// Gets the collection of data points for the maximum value line on the plot.
+        /// </summary>
         public ObservableCollection<DataPoint> MaximumLinePoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        /// <summary>
+        /// Gets the collection of data points for the mean value line on the plot.
+        /// </summary>
         public ObservableCollection<DataPoint> MeanLinePoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        /// <summary>
+        /// Gets the collection of data points for the median value line on the plot.
+        /// </summary>
         public ObservableCollection<DataPoint> MedianLinePoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        /// <summary>
+        /// Gets the collection of data points for the mode value line on the plot.
+        /// </summary>
         public ObservableCollection<DataPoint> ModeLinePoints { get; private set; } = new ObservableCollection<DataPoint>();
+
+        /// <summary>
+        /// Gets the collection of area points defining the uncertainty bounds on the plot.
+        /// </summary>
         public ObservableCollection<AreaPoint> AreaPoints { get; private set; } = new ObservableCollection<AreaPoint>();
 
+        /// <summary>
+        /// Occurs when the user requests to view or modify plot properties.
+        /// </summary>
         public event PlotPropertiesRequestedEventHandler PlotPropertiesRequested;
 
+        /// <summary>
+        /// Represents a method that handles plot properties requests.
+        /// </summary>
+        /// <param name="targetPlot">The plot whose properties are being requested.</param>
+        /// <param name="openProperties">Whether to open the properties dialog.</param>
+        /// <param name="propertyExpander">The property expander to display.</param>
+        /// <param name="selectedObject">The selected object in the plot.</param>
         public delegate void PlotPropertiesRequestedEventHandler(Plot targetPlot, bool openProperties, OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject);
 
         private bool _pastingData = false;
         private bool _isLoaded = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UncertainOrderedDataSelectorControl"/> class.
+        /// </summary>
         public UncertainOrderedDataSelectorControl()
         {
 
@@ -417,6 +592,9 @@ namespace NumericControls
             UpdateGrid();
         }
 
+        /// <summary>
+        /// Forces validation on all rows in the data grid.
+        /// </summary>
         public void UpdateGrid()
         {
             if (CurveUncertaintyComboBox.SelectedIndex == -1) return;
@@ -424,6 +602,10 @@ namespace NumericControls
                 ((DistributionRowItem)r).ForceValidation();
         }
 
+        /// <summary>
+        /// Updates the plot with current data from the distribution rows.
+        /// </summary>
+        /// <param name="dataIndex">The index of a specific data point to update, or -1 to update all points.</param>
         public void UpdatePlot(int dataIndex = -1)
         {
             if ((CurveUncertaintyComboBox.SelectedIndex == -1) || (CurveUncertaintyComboBox.SelectedItem.GetType() != typeof(DistributionDataItem)))
@@ -593,11 +775,31 @@ namespace NumericControls
     /// </remarks>
     public class AreaPoint
     {
+        /// <summary>
+        /// Gets or sets the X coordinate of the first point.
+        /// </summary>
         public double X1 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the X coordinate of the second point.
+        /// </summary>
         public double X2 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Y coordinate of the first point (typically the minimum).
+        /// </summary>
         public double Y1 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Y coordinate of the second point (typically the maximum).
+        /// </summary>
         public double Y2 { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AreaPoint"/> class from two data points.
+        /// </summary>
+        /// <param name="p1">The first data point defining the area bounds.</param>
+        /// <param name="p2">The second data point defining the area bounds.</param>
         public AreaPoint(DataPoint p1, DataPoint p2)
         {
             X1 = p1.X;
