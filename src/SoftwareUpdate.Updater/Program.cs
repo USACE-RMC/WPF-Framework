@@ -51,6 +51,11 @@ namespace SoftwareUpdate.Updater
     {
         private static string _logFilePath;
 
+        /// <summary>
+        /// Entry point for the updater application.
+        /// </summary>
+        /// <param name="args">Command-line arguments specifying the update configuration.</param>
+        /// <returns>0 on success, 1 on failure.</returns>
         static int Main(string[] args)
         {
             try
