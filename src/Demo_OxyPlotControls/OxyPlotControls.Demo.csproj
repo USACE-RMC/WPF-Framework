@@ -9,8 +9,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <RootNamespace>Demo_OxyPlotControls</RootNamespace>
-    <AssemblyName>Demo_OxyPlotControls</AssemblyName>
+    <RootNamespace>OxyPlotControls.Demo</RootNamespace>
+    <AssemblyName>OxyPlotControls.Demo</AssemblyName>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
 

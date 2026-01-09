@@ -30,7 +30,7 @@
 using System.Windows;
 using Themes;
 
-namespace Demo_OxyPlotControls
+namespace OxyPlotControls.Demo
 {
     /// <summary>
     /// Represents the WPF application entry point for the OxyPlotControls demo.

@@ -45,7 +45,7 @@ using OxyPlot.Wpf;
 using Numerics.Data;
 using Themes;
 
-namespace Demo_OxyPlotControls
+namespace OxyPlotControls.Demo
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml.

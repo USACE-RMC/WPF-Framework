@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Windows;
 using OxyPlot.Wpf;
 
-namespace Demo_OxyPlotControls
+namespace OxyPlotControls.Demo
 {
     /// <summary>
     /// Interaction logic for OxyPlotPropertiesDialog.xaml
