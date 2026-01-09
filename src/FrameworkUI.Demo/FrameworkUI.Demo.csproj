@@ -39,4 +39,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Resources\*.png" />
+  </ItemGroup>
+
 </Project>
