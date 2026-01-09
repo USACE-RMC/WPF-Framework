@@ -28,6 +28,8 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#nullable enable
+
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
