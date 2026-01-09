@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using GenericControls;
 using Numerics.Data.Statistics;
 using Numerics.Distributions;
 using Numerics.Sampling;
@@ -457,7 +458,7 @@ namespace NumericControls.Distributions.Univariate
                 // Update parameter grid
                 for (int i = 0; i < paramString.GetLength(0); i++)
                 {
-                    if (double.TryParse(paramString[i, 1], out double paramValue) == false) { paramValue = double.NaN; }
+                    if (NumberFormatHelper.TryParseDouble(paramString[i, 1], out double paramValue) == false) { paramValue = double.NaN; }
                     Parameter param = new Parameter(paramNames[i], paramString[i, 0], paramValue);
                     param.PropertyChanged += ParameterPropertyChanged;
                     ParameterList.Add(param);
