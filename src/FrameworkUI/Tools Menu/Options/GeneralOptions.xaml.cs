@@ -60,7 +60,7 @@ namespace FrameworkUI
         /// <summary>
         /// Theme list for combobox.
         /// </summary>
-        public List<string> ThemeList { get; set; } = new List<string>(new[] { "Blue", "Light" }); 
+        public List<string> ThemeList { get; set; } = new List<string>(new[] { "Light", "Blue", "Dark" }); 
 
         /// <summary>
         /// Dependency property for the color theme.
