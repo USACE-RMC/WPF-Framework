@@ -4,8 +4,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <RootNamespace>Demo_NumericControls</RootNamespace>
-    <AssemblyName>Demo_NumericControls</AssemblyName>
+    <RootNamespace>NumericControls.Demo</RootNamespace>
+    <AssemblyName>NumericControls.Demo</AssemblyName>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
