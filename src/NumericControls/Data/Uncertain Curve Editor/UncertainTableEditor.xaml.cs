@@ -59,120 +59,210 @@ namespace NumericControls
     /// </remarks>
     public partial class UncertainTableEditor : UserControl
     {
+        /// <summary>
+        /// Identifies the <see cref="AddRemoveRows"/> dependency property.
+        /// </summary>
         public static DependencyProperty AddRemoveRowsProperty = DependencyProperty.Register(nameof(AddRemoveRows), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(true));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether users can add or remove rows.
+        /// </summary>
         public bool AddRemoveRows
         {
             get { return (bool)GetValue(AddRemoveRowsProperty); }
             set { SetValue(AddRemoveRowsProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(UncertainTableEditor), new FrameworkPropertyMetadata("X Data"));
 
+        /// <summary>
+        /// Gets or sets the column header text for the X (independent variable) column.
+        /// </summary>
         public string XColumnHeader
         {
             get { return (string)GetValue(XColumnHeaderProperty); }
             set { SetValue(XColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(UncertainTableEditor), new FrameworkPropertyMetadata("Y Data"));
 
+        /// <summary>
+        /// Gets or sets the column header text for the Y (distribution parameters) columns.
+        /// </summary>
         public string YColumnHeader
         {
             get { return (string)GetValue(YColumnHeaderProperty); }
             set { SetValue(YColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsStrictX"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsStrictXProperty = DependencyProperty.Register(nameof(IsStrictX), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether X values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictX
         {
             get { return (bool)GetValue(IsStrictXProperty); }
             set { SetValue(IsStrictXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsStrictY"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsStrictYProperty = DependencyProperty.Register(nameof(IsStrictY), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether Y values must be strictly ordered (no duplicates allowed).
+        /// </summary>
         public bool IsStrictY
         {
             get { return (bool)GetValue(IsStrictYProperty); }
             set { SetValue(IsStrictYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OrderX"/> dependency property.
+        /// </summary>
         public static DependencyProperty OrderXProperty = DependencyProperty.Register(nameof(OrderX), typeof(SortOrder), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(SortOrder.Ascending));
 
+        /// <summary>
+        /// Gets or sets the required sort order for X values.
+        /// </summary>
         public SortOrder OrderX
         {
             get { return (SortOrder)GetValue(OrderXProperty); }
             set { SetValue(OrderXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OrderY"/> dependency property.
+        /// </summary>
         public static DependencyProperty OrderYProperty = DependencyProperty.Register(nameof(OrderY), typeof(SortOrder), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(SortOrder.Ascending));
 
+        /// <summary>
+        /// Gets or sets the required sort order for Y values.
+        /// </summary>
         public SortOrder OrderY
         {
             get { return (SortOrder)GetValue(OrderYProperty); }
             set { SetValue(OrderYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(double), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
 
+        /// <summary>
+        /// Gets or sets the maximum allowed X value for validation.
+        /// </summary>
         public double MaximumX
         {
             get { return (double)GetValue(MaximumXProperty); }
             set { SetValue(MaximumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(double), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(double.MinValue));
 
+        /// <summary>
+        /// Gets or sets the minimum allowed X value for validation.
+        /// </summary>
         public double MinimumX
         {
             get { return (double)GetValue(MinimumXProperty); }
             set { SetValue(MinimumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
 
+        /// <summary>
+        /// Gets or sets the maximum allowed Y value for validation.
+        /// </summary>
         public double MaximumY
         {
             get { return (double)GetValue(MaximumYProperty); }
             set { SetValue(MaximumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(double.MinValue));
 
+        /// <summary>
+        /// Gets or sets the minimum allowed Y value for validation.
+        /// </summary>
         public double MinimumY
         {
             get { return (double)GetValue(MinimumYProperty); }
             set { SetValue(MinimumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the control is read-only.
+        /// </summary>
         public bool IsReadOnly
         {
             get { return (bool)GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ShowToolBar"/> dependency property.
+        /// </summary>
         public static DependencyProperty ShowToolBarProperty = DependencyProperty.Register(nameof(ShowToolBar), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the toolbar is visible.
+        /// </summary>
         public bool ShowToolBar
         {
             get { return (bool)GetValue(ShowToolBarProperty); }
             set { SetValue(ShowToolBarProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XValuesShared"/> dependency property.
+        /// </summary>
         public static DependencyProperty XValuesSharedProperty = DependencyProperty.Register(nameof(XValuesShared), typeof(bool), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(false));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether X values are shared across distributions.
+        /// </summary>
         public bool XValuesShared
         {
             get { return (bool)GetValue(XValuesSharedProperty); }
             set { SetValue(XValuesSharedProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnHeaderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.Register(nameof(ColumnHeaderStyle), typeof(Style), typeof(UncertainTableEditor), new FrameworkPropertyMetadata(null));
 
+        /// <summary>
+        /// Gets or sets the style for column headers in the data grid.
+        /// </summary>
         public Style ColumnHeaderStyle
         {
             get { return (Style)GetValue(ColumnHeaderStyleProperty); }
