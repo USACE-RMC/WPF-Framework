@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Resource Include="Themes\Generic\Images\*.png" />
-    <Resource Include="Themes\Generic\Images\*.PNG" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
