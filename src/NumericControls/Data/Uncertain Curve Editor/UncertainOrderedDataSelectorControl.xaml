@@ -38,7 +38,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <DockPanel Name="CurveUncertaintyPanel" VerticalAlignment="Stretch" Margin="0,0,2,5" Visibility="{Binding Path=IsReadOnly, Converter={StaticResource VisibilityConverter}}">
-            <TextBlock Text="Distribution" TextAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+            <TextBlock Text="Distribution" TextAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Left" Foreground="{DynamicResource EnvironmentWindowText}"/>
             <ComboBox Name="CurveUncertaintyComboBox" Margin="5,0,0,0" IsEnabled="{Binding Path=IsReadOnly, Converter={StaticResource RevBoolConverter}, FallbackValue=False, TargetNullValue=False}" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="CurveUncertaintyComboBox_SelectionChanged" DockPanel.Dock="Left">
             </ComboBox>
         </DockPanel>
@@ -56,12 +56,8 @@
                         <ColumnDefinition Width="{Binding ElementName=Column1, Path=ActualWidth}" />
                         <ColumnDefinition Width="{Binding ElementName=Column2, Path=ActualWidth}" />
                     </Grid.ColumnDefinitions>
-                    <DataGridColumnHeader Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False">
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding XColumnHeader}"/>
-                    </DataGridColumnHeader>
-                    <DataGridColumnHeader Grid.Column="2" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False">
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding YColumnHeader}"/>
-                    </DataGridColumnHeader>
+                    <DataGridColumnHeader Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False" Content="{Binding XColumnHeader}"/>
+                    <DataGridColumnHeader Grid.Column="2" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False" Content="{Binding YColumnHeader}"/>
                 </Grid>
             </Border>
 

@@ -516,7 +516,7 @@
     <!-- Default style for DataGridColumnHeader -->
     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}"/>
 
-    <!-- Theme-aware Row Header Style with gradient background and hover effects -->
+    <!-- Theme-aware Row Header Style (flat, no gradient to match row items) -->
     <Style x:Key="RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}">
         <Setter Property="ContentTemplate">
             <Setter.Value>
@@ -532,8 +532,9 @@
         </Setter>
         <Setter Property="Height" Value="22"/>
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
+        <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Background}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
-        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        <Setter Property="BorderThickness" Value="0,0,1,0"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -543,36 +544,20 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DataGridRowHeader}">
                     <Grid>
-                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-                            <Grid Name="HeaderGrid" SnapsToDevicePixels="True" Margin="1,0,0,0">
-                                <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">
-                                        <LinearGradientBrush.GradientStops>
-                                            <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
-                                            <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
-                                        </LinearGradientBrush.GradientStops>
-                                    </LinearGradientBrush>
-                                </Grid.Background>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <ContentPresenter Margin="{TemplateBinding Padding}" Grid.Column="0" SnapsToDevicePixels="True"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            </Grid>
+                        <Border Name="HeaderBorder"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <Thumb x:Name="PART_TopHeaderGripper" VerticalAlignment="Top" Style="{StaticResource RowHeaderGripperStyle}"/>
                         <Thumb x:Name="PART_BottomHeaderGripper" VerticalAlignment="Bottom" Style="{StaticResource RowHeaderGripperStyle}"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="HeaderGrid" Value="{DynamicResource DataGrid.Header.MouseOver.Background}"/>
-                            <Setter TargetName="HeaderGrid" Property="Margin" Value="0"/>
-                        </Trigger>
-                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter Property="Background" TargetName="HeaderGrid" Value="{DynamicResource DataGrid.Header.MouseOver.Background}"/>
-                            <Setter TargetName="HeaderGrid" Property="Margin" Value="0"/>
+                            <Setter Property="Background" TargetName="HeaderBorder" Value="{DynamicResource DataGrid.Row.MouseOver.Background}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

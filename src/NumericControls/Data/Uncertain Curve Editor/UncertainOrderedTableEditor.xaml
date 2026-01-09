@@ -40,8 +40,8 @@
                     <ColumnDefinition Width="{Binding ElementName=Column1, Path=ActualWidth}" />
                     <ColumnDefinition Width="{Binding ElementName=Column2, Path=ActualWidth}" />
                 </Grid.ColumnDefinitions>
-                <DataGridColumnHeader Name="XGridColumnHeader" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False" Content="{Binding XColumnHeader}" Style="{Binding Path=ColumnHeaderStyle}"/>
-                <DataGridColumnHeader Name="YGridColumnHeader" Grid.Column="2" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False" Content="{Binding YColumnHeader}" Style="{Binding Path=ColumnHeaderStyle}"/>
+                <DataGridColumnHeader Name="XGridColumnHeader" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False" Content="{Binding XColumnHeader}"/>
+                <DataGridColumnHeader Name="YGridColumnHeader" Grid.Column="2" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsHitTestVisible="False" Content="{Binding YColumnHeader}"/>
             </Grid>
         </Border>
 
