@@ -16,32 +16,64 @@
         <cntrls:BooleanToDoubleConverter x:Key="BoolToLabelDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="5"/>
         <cntrls:BooleanToDoubleConverter x:Key="BoolToTitleDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="8"/>
         <cntrls:BooleanToColorConverter x:Key="BoolToColorConverter" TrueValue="Black" FalseValue="Transparent"/>
-        <SolidColorBrush x:Key="ReadOnlyBackGround" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
         <Style x:Key="ReadOnlyTextBackgroundCellStyle" TargetType="DataGridCell">
             <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
                 </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+                </MultiTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="ReadOnlyValueBackgroundCellStyle" TargetType="DataGridCell">
-            <Setter Property="Background" Value="{StaticResource ReadOnlyBackGround}"></Setter>
-            <Setter Property="TextBlock.TextAlignment"  Value="Right"></Setter>
+            <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+            <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
                 </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+                </MultiTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="ParameterValueCellStyle" TargetType="DataGridCell">
             <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBox.Static.Foreground}"/>
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
                 </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+                </MultiTrigger>
                 <DataTrigger Binding="{Binding Path=IsValid, UpdateSourceTrigger=PropertyChanged}" Value="False">
                     <Setter Property="Background" Value="{DynamicResource DataGrid.Cell.Error.Background}"/>
                     <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Error.Border}"/>
