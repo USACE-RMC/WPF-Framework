@@ -9,7 +9,12 @@
 	<SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <Resource Include="Themes\Generic\Images\*.png" />
+    <Resource Include="Themes\Generic\Images\*.PNG" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>False</Optimize>
     <WarningLevel>1</WarningLevel>
@@ -18,9 +23,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>1</WarningLevel>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(TargetFramework)' == 'net481'">
 	<LangVersion>latest</LangVersion>
   </PropertyGroup>
-  
+
 </Project>
