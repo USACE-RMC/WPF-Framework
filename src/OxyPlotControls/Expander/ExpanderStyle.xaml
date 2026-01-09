@@ -48,9 +48,7 @@
                                                                         <ColumnDefinition Width="10"/>
                                                                         <ColumnDefinition Width="*"/>
                                                                     </Grid.ColumnDefinitions>
-                                                                    <!--<Ellipse x:Name="circle" StrokeThickness="0" Fill="{x:Null}" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>-->
                                                                     <Polygon x:Name="arrow" Fill="Transparent" Points="0,-3 4,2 8,-3" HorizontalAlignment="Center" SnapsToDevicePixels="false" StrokeThickness="1" VerticalAlignment="Center" RenderTransformOrigin="0.6,.1">
-                                                                        <!--1,-3 5,2 9,-3-->
                                                                         <Polygon.Stroke>
                                                                             <SolidColorBrush Color="Black"/>
                                                                         </Polygon.Stroke>
@@ -78,7 +76,6 @@
                                                                         <Condition Property="IsChecked" Value="True"/>
                                                                     </MultiTrigger.Conditions>
                                                                     <Setter Property="Background" TargetName="Border1" Value="#FFdeeeff"/>
-                                                                    <!--<Setter Property="BorderBrush" TargetName="Border1" Value="#FFdeeeff"/>-->
                                                                 </MultiTrigger>
                                                                 <MultiTrigger>
                                                                     <MultiTrigger.Conditions>
@@ -91,15 +88,10 @@
                                                                     <Setter Property="Fill" TargetName="arrow" Value="Black"/>
                                                                 </MultiTrigger>
                                                                 <Trigger Property="IsPressed" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF3C77DD"/>
-                                                                <Setter Property="StrokeThickness" TargetName="circle" Value="1.5"/>-->
                                                                     <Setter Property="Background" TargetName="Border1" Value="#FFD9ECFF"/>
                                                                     <Setter Property="BorderBrush" TargetName="Border1" Value="#FF3C77DD"/>
-                                                                    <!--<Setter Property="BorderThickness" TargetName="Border1" Value="1"/>-->
                                                                 </Trigger>
                                                                 <Trigger Property="IsEnabled" Value="False">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FFBCBCBC"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFE6E6E6"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="#FF707070"/>
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>
@@ -137,7 +129,6 @@
                                                                                 <RotateTransform Angle="-90"/>
                                                                             </TransformGroup>
                                                                         </Grid.LayoutTransform>
-                                                                        <!--<Ellipse x:Name="circle" StrokeThickness="0" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>-->
                                                                         <Polygon x:Name="arrow" Fill="Green" Points="0,0 3.5,3.5 7,0" HorizontalAlignment="Center" SnapsToDevicePixels="false" StrokeThickness="1" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                                                                             <Polygon.Stroke>
                                                                                 <SolidColorBrush Color="Black"/>
@@ -160,19 +151,12 @@
                                                                     <Setter Property="Points" TargetName="arrow" Value="0,0 3.5,3.5 7,0"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF5593FF"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFF3F9FF"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="Black"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsPressed" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF3C77DD"/>
-                                                                    <Setter Property="StrokeThickness" TargetName="circle" Value="1.5"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFD9ECFF"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="Black"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsEnabled" Value="False">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FFBCBCBC"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFE6E6E6"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="#FF707070"/>
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>
@@ -204,7 +188,6 @@
                                                                                 <RotateTransform Angle="180"/>
                                                                             </TransformGroup>
                                                                         </Grid.LayoutTransform>
-                                                                        <!--<Ellipse x:Name="circle" StrokeThickness="0" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>-->
                                                                         <Polygon x:Name="arrow" Fill="Green" Points="0,0 3.5,3.5 7,0" HorizontalAlignment="Center" SnapsToDevicePixels="false" StrokeThickness="1" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                                                                             <Polygon.Stroke>
                                                                                 <SolidColorBrush Color="Black"/>
@@ -227,19 +210,12 @@
                                                                     <Setter Property="Points" TargetName="arrow" Value="0,0 3.5,3.5 7,0"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF5593FF"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFF3F9FF"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="Black"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsPressed" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF3C77DD"/>
-                                                                    <Setter Property="StrokeThickness" TargetName="circle" Value="1.5"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFD9ECFF"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="Black"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsEnabled" Value="False">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FFBCBCBC"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFE6E6E6"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="#FF707070"/>
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>
@@ -271,7 +247,6 @@
                                                                                 <RotateTransform Angle="90"/>
                                                                             </TransformGroup>
                                                                         </Grid.LayoutTransform>
-                                                                        <!--<Ellipse x:Name="circle" StrokeThickness="0" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>-->
                                                                         <Polygon x:Name="arrow" Fill="Black" Points="0,0 3.5,3.5 7,0" HorizontalAlignment="Center" SnapsToDevicePixels="false" StrokeThickness="1" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
                                                                             <Polygon.Stroke>
                                                                                 <SolidColorBrush Color="Black"/>
@@ -294,19 +269,12 @@
                                                                     <Setter Property="Points" TargetName="arrow" Value="0,0 3.5,3.5 7,0"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF5593FF"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFF3F9FF"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="Black"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsPressed" Value="True">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FF3C77DD"/>
-                                                                    <Setter Property="StrokeThickness" TargetName="circle" Value="1.5"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFD9ECFF"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="Black"/>
                                                                 </Trigger>
                                                                 <Trigger Property="IsEnabled" Value="False">
-                                                                    <!--<Setter Property="Stroke" TargetName="circle" Value="#FFBCBCBC"/>
-                                                                    <Setter Property="Fill" TargetName="circle" Value="#FFE6E6E6"/>-->
                                                                     <Setter Property="Stroke" TargetName="arrow" Value="#FF707070"/>
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>

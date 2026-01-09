@@ -121,7 +121,6 @@ namespace OxyPlotControls
         /// </summary>
         public void CloseExpanders()
         {
-            // LabelingEXP.IsExpanded = false;
             DisplayEXP.IsExpanded = false;
         }
 
@@ -134,7 +133,6 @@ namespace OxyPlotControls
             switch (expansionZone)
             {
                 case OxyPlotPropertiesControl.PropertyEXP.Series_General:
-                    // LabelingEXP.IsExpanded = true;
                     DisplayEXP.IsExpanded = true;
                     break;
                 case OxyPlotPropertiesControl.PropertyEXP.Series_Display:
