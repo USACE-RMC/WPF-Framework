@@ -37,19 +37,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NumericControls.Distributions.Univariate
 {
@@ -294,6 +285,10 @@ namespace NumericControls.Distributions.Univariate
 
         private bool _showTickLines = true;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether tick lines are displayed on the plot axes.
+        /// </summary>
+        /// <value><c>true</c> to show tick lines; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool ShowTickLines
         {
             get => _showTickLines;
@@ -328,20 +323,28 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Dependency property for expanding the distribution pdf plot.
+        /// Identifies the <see cref="ExpandPlot"/> dependency property.
         /// </summary>
         public static DependencyProperty ExpandPlotProperty = DependencyProperty.Register(nameof(ExpandPlot), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
 
         /// <summary>
-        /// Gets and sets the distribution options.
+        /// Gets or sets a value indicating whether the plot expander is expanded by default.
         /// </summary>
+        /// <value><c>true</c> if the plot is expanded; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool ExpandPlot
         {
             get => (bool)GetValue(ExpandPlotProperty);
             set => SetValue(ExpandPlotProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ExpanderStyle"/> dependency property.
+        /// </summary>
         public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(nameof(ExpanderStyle), typeof(Style), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the style applied to the expander controls.
+        /// </summary>
         public Style ExpanderStyle
         {
             get { return (Style)GetValue(ExpanderStyleProperty); }
@@ -349,13 +352,14 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Dependency property for showing the distribution summary statistics.
+        /// Identifies the <see cref="ShowStatistics"/> dependency property.
         /// </summary>
         public static DependencyProperty ShowStatisticsProperty = DependencyProperty.Register(nameof(ShowStatistics), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
 
         /// <summary>
-        /// Gets and sets the distribution options.
+        /// Gets or sets a value indicating whether the summary statistics table is visible.
         /// </summary>
+        /// <value><c>true</c> to show summary statistics; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool ShowStatistics
         {
             get => (bool)GetValue(ShowStatisticsProperty);
@@ -640,14 +644,6 @@ namespace NumericControls.Distributions.Univariate
             param.IsValid = false;
             param.ErrorMessage = errorMessage;
         }
-
-
-        //private List<double> _sampleData;
-        //private bool _addSampleData = false;
-        //private bool _fitted = false;
-        //public bool FitToData { get; set; } = false;
-
-
 
         /// <summary>
         /// Update the PDF plot.

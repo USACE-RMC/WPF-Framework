@@ -30,27 +30,17 @@
 
 using GenericControls;
 using Numerics.Data;
-using OxyPlot;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NumericControls
 {
@@ -101,63 +91,10 @@ namespace NumericControls
                 thisControl.DateTimeSelectorColumn.Visibility = Visibility.Visible;
                 thisControl.DateTimeColumn.IsReadOnly = false;
             }
-
-            //var c = (DateToStringConverter)thisControl.TryFindResource("DateConverter");
-            //if (c == null) { return; }
-
-            //switch (newCurve.TimeInterval)
-            //{
-            //    case TimeInterval.OneMinute:
-            //    case TimeInterval.FiveMinute:
-            //    case TimeInterval.FifteenMinute:
-            //    case TimeInterval.ThirtyMinute:
-            //        c.Pattern = "MMM-dd-yyyy HH:mm";
-            //        break;
-            //    case TimeInterval.OneHour:
-            //    case TimeInterval.SixHour:
-            //    case TimeInterval.TwelveHour:
-            //        c.Pattern = "MMM-dd-yyyy HH";
-            //        break;
-            //    case TimeInterval.OneDay:
-            //    case TimeInterval.SevenDay:
-            //    case TimeInterval.OneMonth:
-            //    case TimeInterval.OneQuarter:
-            //    case TimeInterval.OneYear:
-            //        c.Pattern = "MMM-dd-yyyy";
-            //        break;
-            //    case TimeInterval.Irregular:
-            //        thisControl.DateTimeSelectorColumn.Visibility = Visibility.Visible;
-            //        thisControl.DateTimeColumn.IsReadOnly = false;
-            //        c.Pattern = "MMM-dd-yyyy HH:mm:ss";
-            //        break;
-            //    default:
-            //        break;
-            //}
-
-
-            // Define the data
-            //thisControl.SeriesRows.Clear();
-            // 
-            //TimeSeriesRowItem rowItem;
-            //foreach (SeriesOrdinate<DateTime, double> o in newCurve)
-            //{
-
-            //rowItem = new TimeSeriesRowItem(o.Index, o.Value, thisControl.XColumnHeader, thisControl.YColumnHeader, thisControl.SeriesRows, thisControl.MinimumX, thisControl.MaximumX, thisControl.MinimumY, thisControl.MaximumY, false, SortOrder.None);
-            //rowItem.PropertyChanged += thisControl.RowItemPropertyChanged;
-            //thisControl.SeriesRows.Add(rowItem);
-            //}
-        }
-
-        private void RowItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-
-            //TimeSeriesRowItem rItem = (TimeSeriesRowItem)sender;
-            //int dataIndex = SeriesRows.IndexOf(rItem);
-            //Series[dataIndex] = rItem.GetOrdinate();
         }
 
         /// <summary>
-        /// Get and set the selected probability distribution.
+        /// Gets or sets the time series data displayed in the table.
         /// </summary>
         public TimeSeries Series
         {
@@ -165,57 +102,107 @@ namespace NumericControls
             set { SetValue(SeriesProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(DateTime), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(DateTime.MaxValue));
+
+        /// <summary>
+        /// Gets or sets the maximum allowed date/time value for validation.
+        /// </summary>
         public DateTime MaximumX
         {
             get { return (DateTime)GetValue(MaximumXProperty); }
             set { SetValue(MaximumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumX"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(DateTime), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(DateTime.MinValue));
+
+        /// <summary>
+        /// Gets or sets the minimum allowed date/time value for validation.
+        /// </summary>
         public DateTime MinimumX
         {
             get { return (DateTime)GetValue(MinimumXProperty); }
             set { SetValue(MinimumXProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MaximumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(double.MaxValue));
+
+        /// <summary>
+        /// Gets or sets the maximum allowed Y value for validation.
+        /// </summary>
         public double MaximumY
         {
             get { return (double)GetValue(MaximumYProperty); }
             set { SetValue(MaximumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="MinimumY"/> dependency property.
+        /// </summary>
         public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(double.MinValue));
+
+        /// <summary>
+        /// Gets or sets the minimum allowed Y value for validation.
+        /// </summary>
         public double MinimumY
         {
             get { return (double)GetValue(MinimumYProperty); }
             set { SetValue(MinimumYProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsReadOnly"/> dependency property.
+        /// </summary>
         public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the control is read-only.
+        /// </summary>
         public bool IsReadOnly
         {
             get { return (bool)GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="XColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(TimeSeriesTable), new FrameworkPropertyMetadata("X Data"));
+
+        /// <summary>
+        /// Gets or sets the column header text for the date/time (X) column.
+        /// </summary>
         public string XColumnHeader
         {
             get { return (string)GetValue(XColumnHeaderProperty); }
             set { SetValue(XColumnHeaderProperty, value); }
         }
 
+        /// <summary>
+        /// Identifies the <see cref="YColumnHeader"/> dependency property.
+        /// </summary>
         public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(TimeSeriesTable), new FrameworkPropertyMetadata("Y Data"));
+
+        /// <summary>
+        /// Gets or sets the column header text for the value (Y) column.
+        /// </summary>
         public string YColumnHeader
         {
             get { return (string)GetValue(YColumnHeaderProperty); }
             set { SetValue(YColumnHeaderProperty, value); }
         }
 
-        //public ObservableCollection<object> SeriesRows { get; private set; } = new ObservableCollection<object>();
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeSeriesTable"/> class.
+        /// </summary>
         public TimeSeriesTable()
         {
             InitializeComponent();
