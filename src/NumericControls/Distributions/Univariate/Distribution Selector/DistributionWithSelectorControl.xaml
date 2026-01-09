@@ -10,34 +10,68 @@
     <UserControl.Resources>
         <cntrls:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
     </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ToggleButton Grid.Column="0" Name="PopupToggleButton" VerticalAlignment="Center" HorizontalAlignment="Center"
-                      IsHitTestVisible="{Binding ElementName=DistributionPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}" 
-                      Padding="0" Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
-            <Image Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" Source="pack://application:,,,/NumericControls;Component/Resources/EditButtonIcon.png"/>
+        <!-- Edit button to toggle distribution selector popup -->
+        <ToggleButton Grid.Column="0"
+                      Name="PopupToggleButton"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      IsHitTestVisible="{Binding ElementName=DistributionPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}"
+                      Padding="0"
+                      Background="Transparent"
+                      BorderBrush="Transparent"
+                      BorderThickness="0">
+            <Image Width="16"
+                   Height="16"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Source="pack://application:,,,/NumericControls;Component/Resources/EditButtonIcon.png"/>
         </ToggleButton>
 
-        <TextBlock Grid.Column="1" Name="DistributionTextBlock" VerticalAlignment="Center" Margin="3,0,0,0"/>
+        <!-- Display text for selected distribution -->
+        <TextBlock Grid.Column="1"
+                   Name="DistributionTextBlock"
+                   VerticalAlignment="Center"
+                   Margin="3,0,0,0"/>
 
-        <!--POPUP PLACEMENT HACK-->
-        <Rectangle x:Name="PART_PopPlacer" Fill="Red" Width="0" Height="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-                   Focusable="False" Visibility="Hidden" IsHitTestVisible="False"/>
+        <!-- Hidden rectangle used for popup placement alignment -->
+        <Rectangle x:Name="PART_PopPlacer"
+                   Fill="Red"
+                   Width="0"
+                   Height="0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Focusable="False"
+                   Visibility="Hidden"
+                   IsHitTestVisible="False"/>
 
-        <Popup Name="DistributionPopup" IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
-               Placement="Right" PlacementTarget="{Binding ElementName=PART_PopPlacer}"
-               PopupAnimation="Slide" AllowsTransparency="True" StaysOpen="False">
-            <Border Background="#F6F6F6" BorderBrush="Gray" BorderThickness="1" MouseEnter="Border_MouseEnter" MouseLeave="Border_MouseLeave" ContextMenuClosing="Border_ContextMenuClosing">
-                <local:DistributionSelectorControl x:Name="SelectorControl" Margin="5"
+        <!-- Distribution selector popup -->
+        <Popup Name="DistributionPopup"
+               IsOpen="{Binding ElementName=PopupToggleButton, Path=IsChecked, Mode=TwoWay}"
+               Placement="Right"
+               PlacementTarget="{Binding ElementName=PART_PopPlacer}"
+               PopupAnimation="Slide"
+               AllowsTransparency="True"
+               StaysOpen="False">
+            <Border Background="#F6F6F6"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    MouseEnter="Border_MouseEnter"
+                    MouseLeave="Border_MouseLeave"
+                    ContextMenuClosing="Border_ContextMenuClosing">
+                <local:DistributionSelectorControl x:Name="SelectorControl"
+                                                   Margin="5"
                                                    Width="300"
                                                    BackgroundColor="#F6F6F6"
                                                    ShowAxisTitle="False"
                                                    ShowTickLines="False"
-                                                   SelectedDistribution="{Binding ElementName=DistributionWithSelector, Path=SelectedDistribution,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                   SelectedDistribution="{Binding ElementName=DistributionWithSelector, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                    Distributions="{Binding ElementName=DistributionWithSelector, Path=Distributions, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                    ShowPlot="{Binding ElementName=DistributionWithSelector, Path=ShowPlot}"
                                                    ShowStatistics="{Binding ElementName=DistributionWithSelector, Path=ShowStatistics}">

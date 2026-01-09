@@ -155,104 +155,11 @@ namespace NumericControls
             }
         }
 
-        //private void Source_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        //{
-
-        //}
-
-        //private void MathButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (_source == null || _series == null) { return; }
-        //    Mouse.OverrideCursor = Cursors.Wait;
-
-        //    try
-        //    {
-        //        //ComboBox cmbo = (ComboBox)MathFunction.InnerContent;
-        //        //KeyValuePair<MathFunctionType, string> selectedFunction = (KeyValuePair<MathFunctionType, string>)cmbo.SelectedItem;
-        //        MathFunctionType functionType = MathFunctionType.Add; //(MathFunctionType)PresetItemsControl.SelectedItem; //selectedFunction.Key;
-
-        //        if (ValueTextBox.ValueIsValid == false)
-        //        {
-        //            //update text notification
-        //            NotificationText.Text = "*Operand is not valid for this operation.";
-        //        }
-
-        //        double value = ValueTextBox.Value;
-
-        //        if (_selectedValueRowIndices.Count == 0 || _selectedValueRowIndices.Count == _series.Count)
-        //        {
-        //            if (functionType == MathFunctionType.Add)
-        //            {
-        //                _series.Add(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Subtract)
-        //            {
-        //                _series.Subtract(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Multiply)
-        //            {
-        //                _series.Multiply(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Divide)
-        //            {
-        //                _series.Divide(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Exponentiate)
-        //            {
-        //                _series.Exponentiate(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Logarithm)
-        //            {
-        //                _series.LogTransform(value);
-        //            }
-        //            else if (functionType == MathFunctionType.Inverse)
-        //            {
-        //                _series.Inverse();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (functionType == MathFunctionType.Add)
-        //            {
-        //                _series.Add(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Subtract)
-        //            {
-        //                _series.Subtract(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Multiply)
-        //            {
-        //                _series.Multiply(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Divide)
-        //            {
-        //                _series.Divide(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Exponentiate)
-        //            {
-        //                _series.Exponentiate(value, _selectedValueRowIndices);
-        //            }
-        //            else if (functionType == MathFunctionType.Logarithm)
-        //            {
-        //                _series.LogTransform(_selectedValueRowIndices, value);
-        //            }
-        //            else if (functionType == MathFunctionType.Inverse)
-        //            {
-        //                _series.Inverse();
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-        //        return;
-        //    }
-        //    finally
-        //    {
-        //        Mouse.OverrideCursor = null;
-        //    }
-        //}
-
+        /// <summary>
+        /// Handles the click event for a math function button and applies the selected mathematical operation.
+        /// </summary>
+        /// <param name="sender">The button that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -392,39 +299,6 @@ namespace NumericControls
             }
 
         }
-        //private void MathFunctionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //ComboBox cmbo = (ComboBox)sender;
-        //KeyValuePair<MathFunctionType, string> selectedFunction = (KeyValuePair<MathFunctionType, string>)(cmbo.SelectedItem);
-        //MathFunctionType functionType = selectedFunction.Key;
-        //if (functionType == MathFunctionType.Add ||
-        //    functionType == MathFunctionType.Subtract ||
-        //    functionType == MathFunctionType.Multiply ||
-        //    functionType == MathFunctionType.Divide)
-        //{
-        //    OperandTextBlock.Text = "Value";
-        //    MathValue.Number = 0;
-        //    MathValue.Visibility = Visibility.Visible;
-        //}
-        //else if (functionType == MathFunctionType.Exponentiate)
-        //{
-        //    OperandTextBlock.Text = "Power";
-        //    MathValue.Number = 2;
-        //    MathValue.Visibility = Visibility.Visible;
-        //}
-        //else if (functionType == MathFunctionType.Logarithm)
-        //{
-        //    OperandTextBlock.Text = "Base";
-        //    MathValue.Number = 10;
-        //    MathValue.Visibility = Visibility.Visible;
-        //}
-        //else if (functionType == MathFunctionType.Inverse)
-        //{
-        //    OperandTextBlock.Text = "Value";
-        //    MathValue.Number = 0;
-        //    MathValue.Visibility = Visibility.Collapsed;
-        //}
-        //}
     }
 
     public class MathFunctionTypeToNameConverter : IValueConverter

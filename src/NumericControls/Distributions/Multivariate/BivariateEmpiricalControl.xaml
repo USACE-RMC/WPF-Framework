@@ -10,6 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="BivariateEmpericalCDFControl_Loaded">
     <UserControl.Resources>
+        <!-- Cell style for bold row/column headers -->
         <Style x:Key="BoldCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0,0,2,0"/>
@@ -22,6 +23,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Cell style for upper-left corner cell -->
         <Style x:Key="UpperLeftCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="BorderThickness" Value="0,0,2,0"/>
             <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
@@ -46,8 +49,11 @@
             </Setter>
         </Style>
     </UserControl.Resources>
+
     <Grid>
+        <!-- Tab control for input table and plot views -->
         <TabControl Margin="4" TabStripPlacement="Top" Background="Transparent">
+            <!-- Input table tab -->
             <TabItem Header="Input Table" Style="{DynamicResource HorizontalTabItemStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -122,8 +128,9 @@
                     </cntrls:CopyPasteDataGrid>
 
                 </Grid>
-
             </TabItem>
+
+            <!-- Plot tab -->
             <TabItem Header="Plot" Style="{DynamicResource HorizontalTabItemStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>

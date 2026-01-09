@@ -10,6 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
+        <!-- Column header style with wrapped text and sorting support -->
         <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -22,6 +23,8 @@
             <Setter Property="VerticalContentAlignment" Value="Bottom" />
             <EventSetter Event="Click" Handler="DataGridColumnHeader_Click"/>
         </Style>
+
+        <!-- Cell style for read-only/disabled cells -->
         <Style x:Key="Right_CellStyleDisabled" TargetType="{x:Type DataGridCell}">
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
             <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
@@ -35,6 +38,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Cell style for editable cells -->
         <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
             <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
@@ -70,16 +75,20 @@
 
         </Style>
 
+        <!-- Converters for date/time and numeric value formatting -->
         <local:DateToStringConverter x:Key="DateConverter"/>
         <local:DoubleToFontFamilyConverter x:Key="DoubleToItalicsConverter"/>
         <cntrls:DoubleToNAConverter x:Key="NAConverter"/>
         <cntrls:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>
     </Control.Resources>
+
     <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <!-- Toolbar with math calculator popup -->
         <StackPanel Orientation="Horizontal">
             <cntrls:DataGridToolbar 
                 Name="TimeSeriesDataGridToolBar" 
@@ -151,6 +160,7 @@
             </Popup>
         </StackPanel>
 
+        <!-- Time series data grid with date/time and value columns -->
         <cntrls:CopyPasteDataGrid
             x:Name="TimeSeriesDataGrid"
             Grid.Row="1"

@@ -64,10 +64,6 @@ namespace NumericControls
         private double _x;
         private double _y;
 
-
-        // Private _propertyNames() As String
-        // Private _propertyDisplayNames() As String
-
         /// <summary>
         /// Relative tolerance for comparing double values.
         /// </summary>
@@ -267,7 +263,6 @@ namespace NumericControls
             _xColumnHeader = xColumnHeader;
             _yColumnHeader = yColumnHeader;
             AddDataRules();
-            // AddHandler Me.PropertyChanged, AddressOf UpdateDistribution
         }
 
         /// <summary>
@@ -287,13 +282,14 @@ namespace NumericControls
             NotifyPropertyChanged();
         }
 
-        /// <summary>
-        /// Adds validation rules for this row item.
-        /// </summary>
+        /// <inheritdoc/>
         public override void AddValidationRules()
         {
         }
 
+        /// <summary>
+        /// Adds data validation rules including range checks and ordering constraints.
+        /// </summary>
         private void AddDataRules()
         {
             if (XOrder != SortOrder.None)
@@ -306,11 +302,7 @@ namespace NumericControls
             AddRule(nameof(Y), () => Y > MaxYValue, "Y values must be less than or equal to " + MaxYValue + ".");
         }
 
-        /// <summary>
-        /// Gets the display name for a property.
-        /// </summary>
-        /// <param name="propertyName">The property name.</param>
-        /// <returns>The display name for the property.</returns>
+        /// <inheritdoc/>
         public override string PropertyDisplayName(string propertyName)
         {
             if (propertyName == nameof(X)) return _xColumnHeader;
@@ -318,11 +310,7 @@ namespace NumericControls
             return propertyName;
         }
 
-        /// <summary>
-        /// Determines whether a property should be displayed in the grid.
-        /// </summary>
-        /// <param name="propertyName">The property name.</param>
-        /// <returns>True if the property should be displayed; otherwise, false.</returns>
+        /// <inheritdoc/>
         public override bool IsGridDisplayable(string propertyName)
         {
             switch (propertyName)

@@ -10,6 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
+        <!-- Column header style with wrapped text and sorting support -->
         <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -35,15 +36,18 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+
+        <!-- Distribution selector panel -->
         <DockPanel Name="CurveUncertaintyPanel" VerticalAlignment="Stretch" Margin="0,0,2,5" Visibility="{Binding Path=IsReadOnly, Converter={StaticResource VisibilityConverter}}">
             <TextBlock Text="Distribution" TextAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Left" Foreground="{DynamicResource EnvironmentWindowText}"/>
             <ComboBox Name="CurveUncertaintyComboBox" Margin="5,0,0,0" IsEnabled="{Binding Path=IsReadOnly, Converter={StaticResource RevBoolConverter}, FallbackValue=False, TargetNullValue=False}" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="CurveUncertaintyComboBox_SelectionChanged" DockPanel.Dock="Left">
             </ComboBox>
         </DockPanel>
 
-        <Grid Grid.Column="0" Grid.Row="1" Margin="0,0,2,0" >
+        <!-- Data table with merged headers -->
+        <Grid Grid.Column="0" Grid.Row="1" Margin="0,0,2,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="1*"/>
@@ -80,10 +84,10 @@
                                        DataPasted="ValidationGrid_DataPasted"/>
         </Grid>
 
-
+        <!-- Resizable splitter between table and plot -->
         <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="-2,0,0,0" Width="4" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Transparent"/>
 
-        <!-- Plot Grid -->
+        <!-- Plot grid with uncertainty visualization -->
         <Grid Grid.Column="1" Grid.RowSpan="2" Margin="2,0,0,0" Background="{DynamicResource PlotWindowBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>

@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
+        <!-- Column header style with wrapped text and sorting support -->
         <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -28,11 +29,13 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
+        <!-- Data grid toolbar -->
         <cntrls:DataGridToolbar Name="ValidationGridToolbar"
                                 Grid.Row="0"
                                 DataGrid="{Binding ElementName=ValidationGrid, Mode=OneTime}"
                                 ToolOrientation="Horizontal"/>
 
+        <!-- Merged column headers for X and Y data -->
         <Border Grid.Row="1" BorderBrush="{DynamicResource DataGrid.Static.Border}" BorderThickness="1">
             <Grid Name="MergedColumnHeaderGrid">
                 <Grid.ColumnDefinitions>
@@ -45,6 +48,7 @@
             </Grid>
         </Border>
 
+        <!-- Validation data grid for uncertain ordered data -->
         <cntrls:ValidationDataGrid
             Name="ValidationGrid" x:FieldModifier="public" Grid.Row="2"
             AutoGenerateColumns="True"

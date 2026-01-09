@@ -8,26 +8,38 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Control.Resources>
+        <!-- Column header style with wrapped text and sorting support -->
         <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
                     <DataTemplate>
-                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Bottom" FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Bottom"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Stretch"
+                                   Text="{Binding}"/>
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Bottom" />
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Bottom"/>
             <EventSetter Event="Click" Handler="DataGridColumnHeader_Click"/>
         </Style>
     </Control.Resources>
+
     <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+        <!-- Validation data grid for ordered curve data -->
         <cntrls:ValidationDataGrid x:Name="ValidationGrid"
                                    x:FieldModifier="public"
                                    AutoGenerateColumns="True"
                                    CanUserResizeColumns="False"
-                                   SelectionMode="Extended" SelectionUnit="CellOrRowHeader"
-                                   CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeRows="False" CanUserSortColumns="False"
+                                   SelectionMode="Extended"
+                                   SelectionUnit="CellOrRowHeader"
+                                   CanUserDeleteRows="False"
+                                   CanUserAddRows="False"
+                                   CanUserResizeRows="False"
+                                   CanUserSortColumns="False"
                                    CanUserReorderColumns="False"
                                    CanUserAddInsertDeleteRows="True"
                                    RowHeight="24"

@@ -65,6 +65,11 @@ namespace NumericControls
     {
         public static DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(new TimeSeries(), SetData));
 
+        /// <summary>
+        /// Handles changes to the Series property and configures the grid for the time interval type.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private static void SetData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -75,12 +80,10 @@ namespace NumericControls
             thisControl.DateTimeSelectorColumn.Visibility = Visibility.Collapsed;
             thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("Right_CellStyleDisabled");
             if (e.NewValue == null) { return; }
-            // 
             TimeSeries newSeries = e.NewValue as TimeSeries;
             if (newSeries == null)
             {
                 thisControl.TimeSeriesDataGrid.IsEnabled = false;
-                //thisControl.SeriesRows.Clear();
                 return;
             }
 
@@ -252,11 +255,21 @@ namespace NumericControls
             { return false; }
         }
 
+        /// <summary>
+        /// Converts a math function type to an icon image.
+        /// </summary>
+        /// <param name="fnc">The math function type.</param>
+        /// <returns>An Image containing the function's icon.</returns>
         private Image FunctionToImage(MathFunctionType fnc)
         {
             return new Image { Source = MathFunctionTypeToIconConverter.GetIcon(fnc) };
         }
 
+        /// <summary>
+        /// Handles calculator button clicks and applies mathematical operations to selected cells.
+        /// </summary>
+        /// <param name="sender">The menu item that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void CalculatorButton_Click(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
@@ -324,22 +337,28 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles column header clicks to select all cells in the clicked column.
+        /// </summary>
+        /// <param name="sender">The column header that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void DataGridColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             DataGridColumnHeader columnHeader = sender as DataGridColumnHeader;
             if (columnHeader == null) return;
-            // 
             TimeSeriesDataGrid.SelectedCells.Clear();
-
-            // There is just no better way I can find using the built in selection tools.
-            //TimeSeriesDataGrid.SelectAllCells();
             foreach (var item in TimeSeriesDataGrid.Items)
             {
                 TimeSeriesDataGrid.SelectedCells.Add(new DataGridCellInfo(item, columnHeader.Column));
             }
         }
 
-
+        /// <summary>
+        /// Handles preview add rows event to create new time series ordinates before they are added to the grid.
+        /// </summary>
+        /// <param name="startRowIndex">The starting row index for the new rows.</param>
+        /// <param name="nRows">The number of rows to add.</param>
+        /// <param name="cancelAddRows">Whether to cancel the add rows operation.</param>
         private void TimeSeriesDataGrid_PreviewAddRows(int startRowIndex, int nRows, ref bool cancelAddRows)
         {
             cancelAddRows = true;
@@ -364,6 +383,11 @@ namespace NumericControls
             if (Series.SuppressCollectionChanged == false) { TimeSeriesDataGrid.Items.Refresh(); }
         }
 
+        /// <summary>
+        /// Handles the math popup opened event and initializes the math editor control.
+        /// </summary>
+        /// <param name="sender">The popup that was opened.</param>
+        /// <param name="e">The event arguments.</param>
         private void MathPopup_Opened(object sender, EventArgs e)
         {
             if (sender == null || sender.GetType() != typeof(Popup)) { return; }
@@ -383,6 +407,11 @@ namespace NumericControls
             picker.ValueTextBox.SelectAll();
         }
 
+        /// <summary>
+        /// Handles preview key down events to handle the Delete key for clearing cell values.
+        /// </summary>
+        /// <param name="sender">The data grid.</param>
+        /// <param name="e">The key event arguments.</param>
         private void TimeSeriesDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var grid = (CopyPasteDataGrid)sender;
@@ -409,28 +438,50 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles rows added to the grid and re-enables collection changed notifications.
+        /// </summary>
+        /// <param name="startRowIndex">The starting row index of added rows.</param>
+        /// <param name="nRows">The number of rows added.</param>
         private void TimeSeriesDataGrid_RowsAdded(int startRowIndex, int nRows)
         {
             Series.SuppressCollectionChanged = false;
             Series.RaiseCollectionChangedReset();
         }
 
+        /// <summary>
+        /// Handles preview delete rows event to suppress collection changed notifications during deletion.
+        /// </summary>
+        /// <param name="rowindices">The indices of rows to be deleted.</param>
+        /// <param name="cancel">Whether to cancel the delete operation.</param>
         private void TimeSeriesDataGrid_PreviewDeleteRows(List<int> rowindices, ref bool cancel)
         {
             Series.SuppressCollectionChanged = true;
         }
 
+        /// <summary>
+        /// Handles rows deleted from the grid and re-enables collection changed notifications.
+        /// </summary>
+        /// <param name="rowindices">The indices of deleted rows.</param>
         private void TimeSeriesDataGrid_RowsDeleted(List<int> rowindices)
         {
             Series.SuppressCollectionChanged = false;
             Series.RaiseCollectionChangedReset();
         }
 
+        /// <summary>
+        /// Handles preview paste data event to suppress collection changed notifications during paste.
+        /// </summary>
+        /// <param name="clipboardData">The clipboard data being pasted.</param>
+        /// <param name="cancelPaste">Whether to cancel the paste operation.</param>
         private void TimeSeriesDataGrid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
         {
             Series.SuppressCollectionChanged = true;
         }
 
+        /// <summary>
+        /// Handles data pasted into the grid and re-enables collection changed notifications.
+        /// </summary>
         private void TimeSeriesDataGrid_DataPasted()
         {
             Series.SuppressCollectionChanged = false;
@@ -455,13 +506,8 @@ namespace NumericControls
 
     public class DateToStringConverter : IValueConverter
     {
-        string _pattern = $"{Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern} {Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern}"; // "MMM-dd-yyyy HH:mm:ss";
+        string _pattern = $"{Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern} {Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern}";
         readonly CultureInfo _fp = Thread.CurrentThread.CurrentCulture;
-
-        ///// <summary>
-        ///// Default output pattern is "MMM-dd-yyyy HH:mm:ss"
-        ///// </summary>
-        //public string Pattern { get => _pattern; set => _pattern = value; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -70,6 +70,12 @@ namespace NumericControls
             set { SetValue(StratificationOptionsCollectionProperty, value); }
         }
 
+        /// <summary>
+        /// Callback invoked when the StratificationOptionsCollection property changes.
+        /// Updates the data grid with the new collection of stratification options.
+        /// </summary>
+        /// <param name="d">The dependency object whose property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void SetStratificationOptionsCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -188,8 +194,11 @@ namespace NumericControls
         public static DependencyProperty IsProbabilityProperty = DependencyProperty.Register(nameof(IsProbability), typeof(bool), typeof(BinDefinitionControl), new PropertyMetadata(false, IsProbabilityChanged));
 
         /// <summary>
-        /// When IsProbability is changed, update the row items in the validation data grid.
+        /// Callback invoked when the IsProbability property changes.
+        /// Updates all row items in the validation data grid with the new probability setting.
         /// </summary>
+        /// <param name="d">The dependency object whose property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void IsProbabilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
@@ -227,6 +236,12 @@ namespace NumericControls
             ValidationGrid.ItemsSource = StratificationOptionsRows;
         }
 
+        /// <summary>
+        /// Handles the collection changed event for stratification options rows.
+        /// Manages property change event subscriptions for added and removed items.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">Collection changed event arguments containing details about the change.</param>
         private void StratificationOptionsRows_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -246,6 +261,12 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the click event on a data grid column header.
+        /// Selects all cells in the clicked column.
+        /// </summary>
+        /// <param name="sender">The column header that was clicked.</param>
+        /// <param name="e">The routed event arguments.</param>
         private void DataGridColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Primitives.DataGridColumnHeader columnHeader = sender as System.Windows.Controls.Primitives.DataGridColumnHeader;
@@ -258,28 +279,55 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the event when rows are added to the validation grid.
+        /// Updates the source collection with the new data.
+        /// </summary>
+        /// <param name="startrow">The starting row index of the added rows.</param>
+        /// <param name="numrows">The number of rows that were added.</param>
         private void ValidationGrid_RowsAdded(int startrow, int numrows)
         {
             UpdateSource();
         }
 
+        /// <summary>
+        /// Handles the event when rows are deleted from the validation grid.
+        /// Updates the source collection after deletion.
+        /// </summary>
+        /// <param name="rowindices">The list of indices of rows that were deleted.</param>
         private void ValidationGrid_RowsDeleted(List<int> rowindices)
         {
             UpdateSource();
 
         }
 
+        /// <summary>
+        /// Handles the preview paste event before data is pasted into the validation grid.
+        /// Sets a flag to indicate that a paste operation is in progress.
+        /// </summary>
+        /// <param name="clipboardData">The two-dimensional array of clipboard data to be pasted.</param>
+        /// <param name="cancelPaste">Reference to a boolean that can be set to true to cancel the paste operation.</param>
         private void ValidationGrid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
         {
             _pastingData = true;
         }
 
+        /// <summary>
+        /// Handles the event after data has been pasted into the validation grid.
+        /// Resets the pasting flag and updates the source collection.
+        /// </summary>
         private void ValidationGrid_DataPasted()
         {
             _pastingData = false;
             UpdateSource();
         }
 
+        /// <summary>
+        /// Handles the event after columns are auto-generated for the validation grid.
+        /// Applies custom header styles and string formatting to the columns.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void ValidationGrid_AutoGeneratedColumns(object sender, EventArgs e)
         {
             foreach (var c in ValidationGrid.Columns)
@@ -290,7 +338,8 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Update the source dataset which triggers dependency property changed.
+        /// Updates the source stratification options collection from the current row items.
+        /// Triggers the dependency property changed event to notify consumers of the updated data.
         /// </summary>
         private void UpdateSource()
         {
@@ -307,6 +356,12 @@ namespace NumericControls
             _settingSource = false;
         }
 
+        /// <summary>
+        /// Handles property changed events for individual row items.
+        /// Updates the source collection when any row item property changes.
+        /// </summary>
+        /// <param name="sender">The row item whose property changed.</param>
+        /// <param name="e">Property changed event arguments containing the name of the changed property.</param>
         private void RItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             StratificationOptionsRowItem rItem = (StratificationOptionsRowItem)sender;

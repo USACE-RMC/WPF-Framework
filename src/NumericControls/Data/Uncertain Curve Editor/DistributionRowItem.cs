@@ -357,7 +357,6 @@ namespace NumericControls
             {
                 throw new Exception("Uncertain Ordered Paired Data editor can only work with distributions with 4 parameters or less.");
             }
-            // 
             _p1 = parameters[0];
             if (parameters.Count() >= 2) { _p2 = parameters[1]; }
             if (parameters.Count() >= 3) { _p3 = parameters[2]; }
@@ -365,7 +364,6 @@ namespace NumericControls
             _propertyNames = _distribution.GetParameterPropertyNames;
             _propertyDisplayNames = new string[(_propertyNames.Count())];
             string[,] paramString = _distribution.ParametersToString;
-            // 
             for (int i = 0; i < paramString.GetLength(0); i++)
             {
                 _propertyDisplayNames[i] = paramString[i, 0];
@@ -396,13 +394,11 @@ namespace NumericControls
             if (_propertyNames.Count() >= 2) { newParams[1] = P2; }
             if (_propertyNames.Count() >= 3) { newParams[2] = P3; }
             if (_propertyNames.Count() >= 4) { newParams[3] = P4; }
-            // 
             _distribution.SetParameters(newParams);
 
             if (_distribution.ParametersValid == false)
             {
                 var argError = _distribution.ValidateParameters(newParams, false);
-                // 
                 for (int i = 0; i < _propertyNames.Count(); i++)
                     RuleMap["P" + (i + 1)].ErrorMessage = argError.Message;
                 return true;
