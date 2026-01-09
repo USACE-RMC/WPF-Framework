@@ -27,7 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Windows;
 
 namespace GenericControls
@@ -223,17 +223,6 @@ namespace GenericControls
             {
                 _thousandsSeperator = value;
             }
-        }
-
-        /// <summary>
-        /// Gets and sets whether the thousands separator will be displayed.
-        /// </summary>
-        /// <remarks>This property is obsolete. Use <see cref="ThousandsSeparator"/> instead.</remarks>
-        [System.Obsolete("Use ThousandsSeparator instead (correct spelling).")]
-        public bool ThousandsSeperator
-        {
-            get => ThousandsSeparator;
-            set => ThousandsSeparator = value;
         }
 
         #endregion

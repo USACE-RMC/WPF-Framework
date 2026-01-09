@@ -27,16 +27,14 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
+
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml.Linq;
 
 namespace GenericControls
 {
@@ -351,7 +349,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the stack panel separator style.
         /// </summary>
-        public static DependencyProperty StackPanelSeperatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeperatorStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelSeparatorStyle(), StackPanelSeperatorStylePropertyCallback));
+        public static DependencyProperty StackPanelSeparatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeparatorStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelSeparatorStyle(), StackPanelSeperatorStylePropertyCallback));
 
         /// <summary>
         /// Callback method invoked when the StackPanelSeperatorStyle property changes.
@@ -390,15 +388,15 @@ namespace GenericControls
         /// <summary>
         /// Gets or sets the stack panel separator style.
         /// </summary>
-        public Style StackPanelSeperatorStyle
+        public Style StackPanelSeparatorStyle
         {
             get
             {
-                return (Style)this.GetValue(StackPanelSeperatorStyleProperty);
+                return (Style)this.GetValue(StackPanelSeparatorStyleProperty);
             }
             set
             {
-                this.SetValue(StackPanelSeperatorStyleProperty, value);
+                this.SetValue(StackPanelSeparatorStyleProperty, value);
             }
         }
 

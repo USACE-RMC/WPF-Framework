@@ -27,8 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -208,19 +207,19 @@ namespace GenericControls
         /// <summary>
         /// Removes the specified file path from the recent files list.
         /// </summary>
-        /// <param name="filepath">The full file path to remove.</param>
-        public void RemoveFile(string filepath)
+        /// <param name="filePath">The full file path to remove.</param>
+        public void RemoveFile(string filePath)
         {
-            Persister.RemoveFile(filepath, MaxNumberOfFiles);
+            Persister.RemoveFile(filePath, MaxNumberOfFiles);
         }
 
         /// <summary>
         /// Inserts a file into the recent files list.
         /// </summary>
-        /// <param name="filepath">The full file path to remove.</param>
-        public void InsertFile(string filepath)
+        /// <param name="filePath">The full file path to remove.</param>
+        public void InsertFile(string filePath)
         {
-            Persister.InsertFile(filepath, MaxNumberOfFiles);
+            Persister.InsertFile(filePath, MaxNumberOfFiles);
         }
 
         /// <summary>
@@ -287,7 +286,7 @@ namespace GenericControls
             int iMenuItem = FileMenu.Items.IndexOf(this);
             foreach (RecentFile r in _RecentFiles)
             {
-                string header = GetMenuItemText(r.Number, r.Filepath, r.DisplayPath);
+                string header = GetMenuItemText(r.Number, r.FilePath, r.DisplayPath);
 
                 r.MenuItem = new MenuItem() { Header = header };
                 r.MenuItem.Click += MenuItem_Click;
@@ -483,14 +482,14 @@ namespace GenericControls
         private class RecentFile
         {
             public int Number = 0;
-            public string Filepath = "";
+            public string FilePath = "";
             public MenuItem MenuItem = null;
 
             public string DisplayPath
             {
                 get
                 {
-                    return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Filepath), System.IO.Path.GetFileNameWithoutExtension(Filepath));
+                    return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), System.IO.Path.GetFileNameWithoutExtension(FilePath));
                 }
             }
 
@@ -498,11 +497,11 @@ namespace GenericControls
             /// Initializes a new instance of the <see cref="RecentFile"/> class.
             /// </summary>
             /// <param name="number">The numeric index of the file.</param>
-            /// <param name="filepath">The full file path.</param>
-            public RecentFile(int number, string filepath)
+            /// <param name="filePath">The full file path.</param>
+            public RecentFile(int number, string filePath)
             {
                 Number = number;
-                Filepath = filepath;
+                FilePath = filePath;
             }
         }
 
@@ -514,26 +513,26 @@ namespace GenericControls
             /// <summary>
             /// Gets the file path associated with the clicked menu item.
             /// </summary>
-            public string Filepath
+            public string FilePath
             {
                 get
                 {
-                    return m_Filepath;
+                    return _filePath;
                 }
                 private set
                 {
-                    m_Filepath = value;
+                    _filePath = value;
                 }
             }
-            private string m_Filepath;
+            private string _filePath;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="MenuClickEventArgs"/> class.
             /// </summary>
-            /// <param name="filepath">The file path associated with the event.</param>
-            public MenuClickEventArgs(string filepath)
+            /// <param name="filePath">The file path associated with the event.</param>
+            public MenuClickEventArgs(string filePath)
             {
-                Filepath = filepath;
+                FilePath = filePath;
             }
         }
 
@@ -576,7 +575,7 @@ namespace GenericControls
             {
                 if (r.MenuItem.Equals(menuItem))
                 {
-                    return r.Filepath;
+                    return r.FilePath;
                 }
             }
 
@@ -839,9 +838,9 @@ namespace GenericControls
             /// <summary>
             /// Inserts a file path at the top of the MRU list and shifts existing entries.
             /// </summary>
-            /// <param name="filepath">The full file path to insert.</param>
+            /// <param name="filePath">The full file path to insert.</param>
             /// <param name="max">The maximum number of entries allowed.</param>
-            public void InsertFile(string filepath, int max)
+            public void InsertFile(string filePath, int max)
             {
                 var k = Registry.CurrentUser.OpenSubKey(RegistryKey);
                 if (k is null)
@@ -849,7 +848,7 @@ namespace GenericControls
                 // 
                 k = Registry.CurrentUser.OpenSubKey(RegistryKey, true);
                 // 
-                RemoveFile(filepath, max);
+                RemoveFile(filePath, max);
                 // 
                 for (int i = max - 2; i >= 0; i -= 1)
                 {
@@ -863,15 +862,15 @@ namespace GenericControls
                     k.SetValue(sNext, oThis);
                 }
                 // 
-                k.SetValue(Key(0), filepath);
+                k.SetValue(Key(0), filePath);
             }
 
             /// <summary>
             /// Removes a file path from the MRU list.
             /// </summary>
-            /// <param name="filepath">The full file path to remove.</param>
+            /// <param name="filePath">The full file path to remove.</param>
             /// <param name="max">The maximum number of entries to search.</param>
-            public void RemoveFile(string filepath, int max)
+            public void RemoveFile(string filePath, int max)
             {
                 var k = Registry.CurrentUser.OpenSubKey(RegistryKey);
                 if (k is null)
@@ -885,7 +884,7 @@ namespace GenericControls
                     ;
 
                     string s = (string)k.GetValue(Key(i));
-                    if (s is not null && s.Equals(filepath, StringComparison.CurrentCultureIgnoreCase))
+                    if (s is not null && s.Equals(filePath, StringComparison.CurrentCultureIgnoreCase))
                     {
                         RemoveFile(i, max);
                         goto again;

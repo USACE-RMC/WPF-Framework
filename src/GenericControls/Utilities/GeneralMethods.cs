@@ -27,10 +27,8 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Collections.Generic;
+
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -233,23 +231,23 @@ namespace GenericControls
     /// Copies all files in one directory to another directory.
     /// </summary>
     /// <param name="sourcePath">Directory path to be copied.</param>
-    /// <param name="destPath">Destination directory where files will be copied to.</param>
-        public static void CopyDirectory(string sourcePath, string destPath)
+    /// <param name="destinationPath">Destination directory where files will be copied to.</param>
+        public static void CopyDirectory(string sourcePath, string destinationPath)
         {
-            if (!Directory.Exists(destPath))
+            if (!Directory.Exists(destinationPath))
             {
-                Directory.CreateDirectory(destPath);
+                Directory.CreateDirectory(destinationPath);
             }
 
             foreach (string file__1 in Directory.GetFiles(sourcePath))
             {
-                string dest = System.IO.Path.Combine(destPath, System.IO.Path.GetFileName(file__1));
+                string dest = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(file__1));
                 File.Copy(file__1, dest);
             }
 
             foreach (string folder in Directory.GetDirectories(sourcePath))
             {
-                string dest = System.IO.Path.Combine(destPath, System.IO.Path.GetFileName(folder));
+                string dest = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(folder));
                 CopyDirectory(folder, dest);
             }
         }
@@ -258,14 +256,14 @@ namespace GenericControls
         /// Recursively copies the files with a UI progress bar and text updates.
         /// </summary>
         /// <param name="sourcePath">Source directory path.</param>
-        /// <param name="destPath">Destination directory path.</param>
+        /// <param name="destinationPath">Destination directory path.</param>
         /// <param name="theProgressBar">ProgressBar to visually update progress.</param>
         /// <param name="progressText">TextBlock to show progress messages.</param>
-        public static void CopyDirectory(string sourcePath, string destPath, ProgressBar theProgressBar, TextBlock progressText)
+        public static void CopyDirectory(string sourcePath, string destinationPath, ProgressBar theProgressBar, TextBlock progressText)
         {
-            if (!Directory.Exists(destPath))
+            if (!Directory.Exists(destinationPath))
             {
-                Directory.CreateDirectory(destPath);
+                Directory.CreateDirectory(destinationPath);
             }
             if (!Directory.Exists(sourcePath))
                 return;
@@ -277,7 +275,7 @@ namespace GenericControls
             var UpdatePbTDelegate = new UpdateProgressBarDelegate(progressText.SetValue);
             for (int i = 0, loopTo = DirectoryFiles.Count() - 1; i <= loopTo; i++)
             {
-                string dest = System.IO.Path.Combine(destPath, System.IO.Path.GetFileName(DirectoryFiles[i]));
+                string dest = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(DirectoryFiles[i]));
                 File.Copy(DirectoryFiles[i], dest);
                 Dispatcher.CurrentDispatcher.Invoke(updatePbDelegate, DispatcherPriority.Background, new object[] { System.Windows.Controls.Primitives.RangeBase.ValueProperty, 100 * i / (double)DirectoryFiles.Count() });
                 Dispatcher.CurrentDispatcher.Invoke(UpdatePbTDelegate, DispatcherPriority.Background, new object[] { TextBlock.TextProperty, (int)Math.Round(100d * (i / (double)DirectoryFiles.Count())) + "% Copying From " + DirName });
@@ -285,7 +283,7 @@ namespace GenericControls
             // 
             foreach (string folder in Directory.GetDirectories(sourcePath))
             {
-                string dest = System.IO.Path.Combine(destPath, System.IO.Path.GetFileName(folder));
+                string dest = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(folder));
                 CopyDirectory(folder, dest, theProgressBar, progressText);
             }
 
