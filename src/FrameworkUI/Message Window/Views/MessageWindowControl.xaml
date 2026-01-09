@@ -32,34 +32,34 @@
                     <TextBlock x:Name="ErrorsButtonText" VerticalAlignment="Center" Text="Errors"/>
                 </StackPanel>
             </Button>
-            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeperatorStyle}"/>
+            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="WarningsButton" ToolTip="Warnings" Cursor="Hand" Click="WarningsButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelPressedButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
                     <Image Margin="1" Source="{StaticResource WarningImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                     <TextBlock x:Name="WarningsButtonText" VerticalAlignment="Center" Text="Warnings"/>
                 </StackPanel>
             </Button>
-            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeperatorStyle}"/>
+            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="MessagesButton" ToolTip="Messages" Cursor="Hand" Click="MessagesButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
                     <Image Margin="1" Source="{StaticResource MessageImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock x:Name="MessageButtonText" VerticalAlignment="Center" Text="Messages"/>
                 </StackPanel>
             </Button>
-            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeperatorStyle}"/>
+            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="EventsButton" ToolTip="Events" Cursor="Hand" Click="EventsButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
                     <Image Margin="1" Source="{StaticResource EventImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality" />
                     <TextBlock x:Name="EventsButtonText" VerticalAlignment="Center" Text="Events"/>
                 </StackPanel>
             </Button>
-            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeperatorStyle}"/>
+            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="ClearFiltersButton" ToolTip="Clear All Filters" Height="24" Width="24" Cursor="Hand" IsEnabled="False" Click="ClearFiltersButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}">
                 <Viewbox Margin="3">
                     <Image Source="{StaticResource ClearMessageFilter}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Viewbox>
             </Button>
-            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeperatorStyle}"/>
+            <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="ExportToTextFileButton" ToolTip="Export to Text File" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}"
                     Height="24" Width="24" Cursor="Hand" Click="ExportToTextFileButton_Click" >
                 <Viewbox Margin="3">

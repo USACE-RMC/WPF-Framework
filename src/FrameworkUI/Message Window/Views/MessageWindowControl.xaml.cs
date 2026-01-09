@@ -28,13 +28,8 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -102,15 +97,15 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// Dependency property for the stack panel separator style.
         /// </summary>
-        public static DependencyProperty StackPanelSeperatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeperatorStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
+        public static DependencyProperty StackPanelSeparatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeparatorStyle), typeof(Style), typeof(MessageWindowControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the stack panel separator style.
         /// </summary>
-        public Style StackPanelSeperatorStyle
+        public Style StackPanelSeparatorStyle
         {
-            get { return (Style)this.GetValue(StackPanelSeperatorStyleProperty); }
-            set { this.SetValue(StackPanelSeperatorStyleProperty, value); }
+            get { return (Style)this.GetValue(StackPanelSeparatorStyleProperty); }
+            set { this.SetValue(StackPanelSeparatorStyleProperty, value); }
         }
 
         /// <summary>

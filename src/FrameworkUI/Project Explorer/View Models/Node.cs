@@ -29,14 +29,9 @@
 */
 
 using GenericControls;
-// using OxyplotControls; // External dependency not included in this repository
-using FrameworkInterfaces;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,7 +39,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Xml.Linq;
 
 namespace FrameworkUI.ProjectExplorer
 {
@@ -401,10 +395,10 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Raise property changed event.
         /// </summary>
-        /// <param name="propertyname">Name of property that changed.</param>
-        protected void RaisePropertyChange(string propertyname)
+        /// <param name="propertyName">Name of property that changed.</param>
+        protected void RaisePropertyChange(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

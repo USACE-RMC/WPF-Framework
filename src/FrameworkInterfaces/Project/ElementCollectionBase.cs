@@ -28,9 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using FrameworkInterfaces.Undo;
@@ -223,10 +221,10 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Raise property changed event.
         /// </summary>
-        /// <param name="propertyname">Name of property that changed.</param>
-        public void RaisePropertyChange(string propertyname)
+        /// <param name="propertyName">Name of property that changed.</param>
+        public void RaisePropertyChange(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             SetIsDirty(true);
         }
 

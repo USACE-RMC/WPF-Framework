@@ -28,14 +28,10 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -1362,12 +1358,12 @@ namespace FrameworkUI
         /// <summary>
         /// Open recent project.
         /// </summary>
-        /// <param name="fullfileName">The full name of the project to open.</param>
+        /// <param name="fullFileName">The full name of the project to open.</param>
         /// <param name="killProcessIfAlreadyOpen">Determines whether to send a message that the project is already open, or to kill the current process.</param>
-        public void OpenRecentProject(string fullfileName, bool killProcessIfAlreadyOpen = false)
+        public void OpenRecentProject(string fullFileName, bool killProcessIfAlreadyOpen = false)
         {
             // If the project is already open in this application, then exit
-            if (ProjectNode.Project.FullFileName == fullfileName) return;
+            if (ProjectNode.Project.FullFileName == fullFileName) return;
             // Next, see if this project file is already open by another instance of this application
             var current = Process.GetCurrentProcess();
             var processes = Process.GetProcessesByName(current.ProcessName);
@@ -1375,7 +1371,7 @@ namespace FrameworkUI
             {
                 if (process.Id != current.Id)
                 {
-                    if (process.MainWindowTitle == ShellPublicVariables.SoftwareName + " " + ProjectNode.Project.SoftwareVersion + "  -  " + fullfileName + "")
+                    if (process.MainWindowTitle == ShellPublicVariables.SoftwareName + " " + ProjectNode.Project.SoftwareVersion + "  -  " + fullFileName + "")
                     {
                         // There is already an instance with this project opened, so send a message or kill the current process.
                         if (killProcessIfAlreadyOpen == true)
@@ -1384,21 +1380,21 @@ namespace FrameworkUI
                         }
                         else
                         {
-                            MessageBox.Show(Path.GetFileNameWithoutExtension(fullfileName) + " is already open in another instance of " + ShellPublicVariables.SoftwareName);
+                            MessageBox.Show(Path.GetFileNameWithoutExtension(fullFileName) + " is already open in another instance of " + ShellPublicVariables.SoftwareName);
                             return;
                         }
                     }
                 }
             }
             CloseProject();
-            OpenProject(fullfileName);
+            OpenProject(fullFileName);
         }
 
         /// <summary>
         /// Open project file.
         /// </summary>
-        /// <param name="fullfileName">The full name of the project to open.</param>
-        public void OpenProject(string fullfileName)
+        /// <param name="fullFileName">The full name of the project to open.</param>
+        public void OpenProject(string fullFileName)
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
@@ -1407,14 +1403,14 @@ namespace FrameworkUI
             AutoBackup.DeleteBackupProjectFile();
 
             // Add recent file to list
-            RecentFiles.AddItem(fullfileName);
+            RecentFiles.AddItem(fullFileName);
 
             // Clear message window
             FrameworkInterfaces.Messaging.Messenger.GetInstance().Clear();
 
             // Close and Open project
             ProjectNode.Project.Close();
-            ProjectNode.Project.FullFileName = fullfileName;
+            ProjectNode.Project.FullFileName = fullFileName;
             ProjectNode.Project.Open();
             LoadProjectNode();
             
@@ -1920,6 +1916,7 @@ namespace FrameworkUI
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.ToString());
                     MessageBox.Show("There was an unexpected error when trying to compact and optimize the project file.", "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
@@ -1953,6 +1950,7 @@ namespace FrameworkUI
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.ToString());
                     MessageBox.Show("There was an unexpected error when trying to zip the project file.", "Zip Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 

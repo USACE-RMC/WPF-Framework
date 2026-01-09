@@ -28,8 +28,6 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;

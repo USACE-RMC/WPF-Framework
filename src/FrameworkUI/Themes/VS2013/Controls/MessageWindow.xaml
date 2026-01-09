@@ -123,7 +123,7 @@
         <Setter Property="StackPanelBackgroundColor" Value="{DynamicResource StackPanelBackground}" />
         <Setter Property="StackPanelButtonStyle" Value="{DynamicResource MessageWindowButtonStyle}"/>
         <Setter Property="StackPanelPressedButtonStyle" Value="{DynamicResource MessageWindowPressedButtonStyle}"/>
-        <Setter Property="StackPanelSeperatorStyle" Value="{DynamicResource VerticalSeparatorStyle}"/>
+        <Setter Property="StackPanelSeparatorStyle" Value="{DynamicResource VerticalSeparatorStyle}"/>
         <Setter Property="BackgroundColor" Value="{DynamicResource MessageWindow.Background}" />
         <Setter Property="CenterColumnHeaderStyle" Value="{DynamicResource MessageWindowDataGridCenterHeaderStyle}"/>
         <Setter Property="LeftColumnHeaderStyle" Value="{DynamicResource MessageWindowDataGridLeftHeaderStyle}"/>
