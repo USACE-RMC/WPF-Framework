@@ -128,6 +128,9 @@ namespace NumericControls.Distributions.Univariate
         /// </summary>
         public delegate void DistributionChangedEventHandler();
 
+        /// <summary>
+        /// Raises the <see cref="DistributionChanged"/> event to notify subscribers of distribution changes.
+        /// </summary>
         private void DistributionChangedRaiser()
         {
             DistributionChanged?.Invoke();

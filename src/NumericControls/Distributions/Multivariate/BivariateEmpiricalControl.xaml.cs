@@ -79,9 +79,8 @@ namespace NumericControls
             // 
             X2HeaderBorder.Style = DefaultX2HeaderBorderStyle();
             X2HeaderTextBlock.Style = DefaultX2HeaderTextBlockStyle();
-            // 
+            //
             _dt.ColumnChanged += TableColumnChanged;
-            // AddHandler _dt.RowChanged, AddressOf TableRowChanged
             _dt.TableNewRow += TableNewRowAdded;
             // 
             // Column buttons
@@ -123,6 +122,12 @@ namespace NumericControls
         /// </summary>
         public static DependencyProperty BivariateCDFProperty = DependencyProperty.Register(nameof(BivariateCDF), typeof(BivariateEmpirical), typeof(BivariateEmpiricalControl), new PropertyMetadata(null, BivariateCDFPropertyCallback));
 
+        /// <summary>
+        /// Property changed callback for the BivariateCDF dependency property.
+        /// Updates the data grid with the bivariate distribution data.
+        /// </summary>
+        /// <param name="d">The dependency object on which the property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void BivariateCDFPropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BivariateEmpiricalControl thisControl = (BivariateEmpiricalControl)d;
@@ -175,6 +180,10 @@ namespace NumericControls
             set { SetValue(BivariateCDFProperty, value); }
         }
 
+        /// <summary>
+        /// Creates the default style for the X2 header border.
+        /// </summary>
+        /// <returns>A style for the X2 header border.</returns>
         private static Style DefaultX2HeaderBorderStyle()
         {
             var s = new Style(typeof(Border));
@@ -185,6 +194,10 @@ namespace NumericControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default style for the X2 header text block.
+        /// </summary>
+        /// <returns>A style for the X2 header text block.</returns>
         private static Style DefaultX2HeaderTextBlockStyle()
         {
             var s = new Style(typeof(TextBlock));
@@ -201,6 +214,10 @@ namespace NumericControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default style for the X1 header border.
+        /// </summary>
+        /// <returns>A style for the X1 header border.</returns>
         private static Style DefaultX1HeaderBorderStyle()
         {
             var s = new Style(typeof(Border));
@@ -211,6 +228,10 @@ namespace NumericControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default style for the X1 header text block with vertical text rotation.
+        /// </summary>
+        /// <returns>A style for the X1 header text block.</returns>
         private static Style DefaultX1HeaderTextBlockStyle()
         {
             var s = new Style(typeof(TextBlock));
@@ -232,6 +253,11 @@ namespace NumericControls
 
         public static DependencyProperty X2HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X2HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderBorderStyle(), X2HeaderBorderStylePropertyCallback));
 
+        /// <summary>
+        /// Property changed callback for the X2HeaderBorderStyle dependency property.
+        /// </summary>
+        /// <param name="d">The dependency object on which the property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void X2HeaderBorderStylePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BivariateEmpiricalControl bvc = (BivariateEmpiricalControl)d;
@@ -246,6 +272,11 @@ namespace NumericControls
 
         public static DependencyProperty X2HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X2HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderTextBlockStyle(), X2HeaderTextBlockStylePropertyCallback));
 
+        /// <summary>
+        /// Property changed callback for the X2HeaderTextBlockStyle dependency property.
+        /// </summary>
+        /// <param name="d">The dependency object on which the property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void X2HeaderTextBlockStylePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BivariateEmpiricalControl bvc = (BivariateEmpiricalControl)d;
@@ -260,6 +291,11 @@ namespace NumericControls
 
         public static DependencyProperty X1HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X1HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderBorderStyle(), X1HeaderBorderStylePropertyCallback));
 
+        /// <summary>
+        /// Property changed callback for the X1HeaderBorderStyle dependency property.
+        /// </summary>
+        /// <param name="d">The dependency object on which the property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void X1HeaderBorderStylePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BivariateEmpiricalControl bvc = (BivariateEmpiricalControl)d;
@@ -274,6 +310,11 @@ namespace NumericControls
 
         public static DependencyProperty X1HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X1HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderTextBlockStyle(), X1HeaderTextBlockStylePropertyCallback));
 
+        /// <summary>
+        /// Property changed callback for the X1HeaderTextBlockStyle dependency property.
+        /// </summary>
+        /// <param name="d">The dependency object on which the property changed.</param>
+        /// <param name="e">Event arguments containing the old and new property values.</param>
         private static void X1HeaderTextBlockStylePropertyCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             BivariateEmpiricalControl bvc = (BivariateEmpiricalControl)d;
@@ -314,6 +355,12 @@ namespace NumericControls
         private MenuItem _insertColumnCMI;
         private MenuItem _deleteColumnCMI;
 
+        /// <summary>
+        /// Handles the Loaded event of the control.
+        /// Initializes the data grid and adds custom toolbar buttons.
+        /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void BivariateEmpericalCDFControl_Loaded(object sender, RoutedEventArgs e)
         {
             RefreshDataGridView();
@@ -329,6 +376,11 @@ namespace NumericControls
             _isLoaded = true;
         }
 
+        /// <summary>
+        /// Handles the TableNewRow event. Initializes new row cells to zero instead of DBNull.
+        /// </summary>
+        /// <param name="sender">The data table that raised the event.</param>
+        /// <param name="e">Event arguments containing the new row.</param>
         private void TableNewRowAdded(object sender, DataTableNewRowEventArgs e)
         {
             // This is needed to set the new row data values to zero.
@@ -336,6 +388,12 @@ namespace NumericControls
                 if (e.Row[i] == DBNull.Value) e.Row[i] = 0;
         }
 
+        /// <summary>
+        /// Handles changes to data table column values.
+        /// Validates the changed data and updates the bivariate CDF and plot.
+        /// </summary>
+        /// <param name="sender">The data table that raised the event.</param>
+        /// <param name="e">Event arguments containing the changed column information.</param>
         private void TableColumnChanged(object sender, DataColumnChangeEventArgs e)
         {
             if (_pastingData == true) return;
@@ -348,6 +406,12 @@ namespace NumericControls
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Handles the add columns button click event.
+        /// Adds new columns to the right of the data grid.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void AddColumns_Click(object sender, RoutedEventArgs e)
         {
             if (BivariateCDFDataGrid == null) return;
@@ -358,6 +422,12 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the insert columns button click event.
+        /// Inserts new columns at the selected position in the data grid.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void InsertColumns_Click(object sender, RoutedEventArgs e)
         {
             if (BivariateCDFDataGrid == null) return;
@@ -369,6 +439,12 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the delete columns button click event.
+        /// Removes the selected columns from the data grid.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void DeleteColumns_Click(object sender, RoutedEventArgs e)
         {
             if (BivariateCDFDataGrid == null) return;
@@ -391,6 +467,11 @@ namespace NumericControls
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Adds or inserts columns into the data table.
+        /// </summary>
+        /// <param name="nColumnsToAdd">The number of columns to add.</param>
+        /// <param name="insertIndex">The index at which to insert columns, or -1 to append to the end.</param>
         private void AddColumns(int nColumnsToAdd, int insertIndex = -1)
         {
             _addingColumns = true;
@@ -430,6 +511,9 @@ namespace NumericControls
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Resets column names to sequential default values (Column0, Column1, etc.).
+        /// </summary>
         private void ResetColumnNames()
         {
             // First set all column names to temporary names
@@ -440,6 +524,13 @@ namespace NumericControls
                 _dt.Columns[i].ColumnName = $"Column{i}";
         }
 
+        /// <summary>
+        /// Handles the PreviewAddRows event of the data grid.
+        /// Prevents adding rows to the header row and redirects to insert rows instead.
+        /// </summary>
+        /// <param name="startRowIndex">The index where rows will be added.</param>
+        /// <param name="nRows">The number of rows to add.</param>
+        /// <param name="cancelAddRows">Reference parameter to cancel the add operation.</param>
         private void BivariateCDFDataGrid_PreviewAddRows(int startRowIndex, int nRows, ref bool cancelAddRows)
         {
             _addingRows = true;
@@ -459,15 +550,26 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the RowsAdded event of the data grid.
+        /// Validates the newly added rows and updates the bivariate CDF.
+        /// </summary>
+        /// <param name="startRowIndex">The index of the first added row.</param>
+        /// <param name="nRows">The number of rows added.</param>
         private void BivariateCDFDataGrid_RowsAdded(int startRowIndex, int nRows)
         {
-            // RefreshDataGridView()
             for (int i = startRowIndex; i < startRowIndex + nRows; i++)
                 ValidateData(i, -1);
             _addingRows = false;
             if (_pastingData == false) UpdateBivariateCDF();
         }
 
+        /// <summary>
+        /// Handles the PreviewDeleteRows event of the data grid.
+        /// Prevents deletion of the header row (row 0).
+        /// </summary>
+        /// <param name="rowindices">The list of row indices to delete.</param>
+        /// <param name="cancel">Reference parameter to cancel the delete operation.</param>
         private void BivariateCDFDataGrid_PreviewDeleteRows(List<int> rowindices, ref bool cancel)
         {
             if (rowindices == null) return;
@@ -476,6 +578,11 @@ namespace NumericControls
             if (zeroIndex >= 0) rowindices.RemoveAt(zeroIndex);
         }
 
+        /// <summary>
+        /// Handles the RowsDeleted event of the data grid.
+        /// Validates data and updates the bivariate CDF and plot after deletion.
+        /// </summary>
+        /// <param name="rowindices">The list of deleted row indices.</param>
         private void BivariateCDFDataGrid_RowsDeleted(List<int> rowindices)
         {
             ValidateData();
@@ -483,6 +590,12 @@ namespace NumericControls
             UpdatePlot();
         }
 
+        /// <summary>
+        /// Handles the PreviewPasteData event of the data grid.
+        /// Prevents pasting into cell (0,0) and expands columns if needed.
+        /// </summary>
+        /// <param name="clipboardData">The clipboard data to paste.</param>
+        /// <param name="cancelPaste">Reference parameter to cancel the paste operation.</param>
         private void BivariateCDFDataGrid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
         {
             _pastingData = true;
@@ -515,9 +628,13 @@ namespace NumericControls
                 BivariateCDFDataGrid.ItemsSource = null;
                 BivariateCDFDataGrid.ItemsSource = _dt.DefaultView;
                 BivariateCDFDataGrid.SelectedCells.Add(new DataGridCellInfo(BivariateCDFDataGrid.GetCell(rowIndex, columnIndex)));
-            } 
+            }
         }
 
+        /// <summary>
+        /// Handles the DataPasted event of the data grid.
+        /// Validates pasted data and updates the bivariate CDF and plot.
+        /// </summary>
         private void BivariateCDFDataGrid_DataPasted()
         {
             RefreshDataGridView();
@@ -527,16 +644,13 @@ namespace NumericControls
             UpdatePlot();
         }
 
-        /* TODO ERROR: Skipped EndRegionDirectiveTrivia */
-        /* TODO ERROR: Skipped RegionDirectiveTrivia */
+        /// <summary>
+        /// Validates all data in the grid or a specific cell based on the provided indices.
+        /// </summary>
+        /// <param name="rowIndex">The row index to validate, or -1 to validate all rows.</param>
+        /// <param name="columnIndex">The column index to validate, or -1 to validate all columns.</param>
         private void ValidateData(int rowIndex = -1, int columnIndex = -1)
         {
-            // 
-            // If IsNothing(BivariateCDFDataGrid.ItemsSource) Then Exit Sub
-            // Debug.Print(DirectCast(BivariateCDFDataGrid.ItemsSource, DataView).Table.Rows.Count.ToString)
-            // Debug.Print(_dt.Rows.Count.ToString)
-            // Debug.Print(BivariateCDFDataGrid.Items.Count.ToString)
-            // BivariateCDFDataGrid.CommitEdit(DataGridEditingUnit.Cell, True)
             if (_dt.Rows.Count == 0)
                 return;
             if (_dt.Columns.Count == 0)
@@ -549,6 +663,11 @@ namespace NumericControls
             ValidateProbabilities(rowIndex, columnIndex);
         }
 
+        /// <summary>
+        /// Validates X2 values (column headers) ensuring they are in ascending order.
+        /// </summary>
+        /// <param name="rowIndex">The row index to validate, or -1 to validate all rows.</param>
+        /// <param name="columnIndex">The column index to validate, or -1 to validate all columns.</param>
         private void ValidateX2Values(int rowIndex = -1, int columnIndex = -1)
         {
             if (rowIndex > 0)
@@ -607,6 +726,11 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Validates X1 values (row headers) ensuring they are in ascending order.
+        /// </summary>
+        /// <param name="rowIndex">The row index to validate, or -1 to validate all rows.</param>
+        /// <param name="columnIndex">The column index to validate, or -1 to validate all columns.</param>
         private void ValidateX1Values(int rowIndex = -1, int columnIndex = -1)
         {
             if (columnIndex > 0) return;
@@ -662,6 +786,11 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Validates probability values ensuring they are between 0 and 1 and increase appropriately.
+        /// </summary>
+        /// <param name="rowIndex">The row index to validate, or -1 to validate all rows.</param>
+        /// <param name="columnIndex">The column index to validate, or -1 to validate all columns.</param>
         private void ValidateProbabilities(int rowIndex = -1, int columnIndex = -1)
         {
             if (columnIndex == 0 || rowIndex == 0)
@@ -711,6 +840,14 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Validates a single probability cell ensuring it meets range and ordering constraints.
+        /// </summary>
+        /// <param name="rowIndex">The row index of the cell to validate.</param>
+        /// <param name="columnIndex">The column index of the cell to validate.</param>
+        /// <param name="rangeMessage">The error message for range validation.</param>
+        /// <param name="ascendingYMessage">The error message for Y-axis ordering validation.</param>
+        /// <param name="ascendingXMessage">The error message for X-axis ordering validation.</param>
         private void ValidateProbability(int rowIndex, int columnIndex, string rangeMessage, string ascendingYMessage, string ascendingXMessage)
         {
             var cell = BivariateCDFDataGrid.GetCell(rowIndex, columnIndex);
@@ -734,6 +871,13 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Sets the validation state of a data grid cell with visual feedback.
+        /// </summary>
+        /// <param name="cell">The cell to set validation for.</param>
+        /// <param name="isValid">Whether the cell is valid.</param>
+        /// <param name="tooltip">The tooltip message to display for invalid cells.</param>
+        /// <param name="isY">Whether this is a Y-axis cell (requires different styling).</param>
         private void SetCellValidation(DataGridCell cell, bool isValid, string tooltip, bool isY = false)
         {
             // Setting the background colors and borders is a real pain with this control. The first column has to be handled differently to render reasonably well. 
@@ -764,6 +908,9 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Updates the BivariateCDF property with current data from the data grid.
+        /// </summary>
         private void UpdateBivariateCDF()
         {
             if (BivariateCDF == null) return;
@@ -791,8 +938,10 @@ namespace NumericControls
 
         private List<LineSeries> _lineSeriesList = new List<LineSeries>();
 
-        
-    private void UpdatePlot()
+        /// <summary>
+        /// Updates the plot with line series for each column of data.
+        /// </summary>
+        private void UpdatePlot()
         {
             // If the plot is nothing, then exit
             if (Plot == null) return;
@@ -829,6 +978,12 @@ namespace NumericControls
 
         }
 
+        /// <summary>
+        /// Handles the AutoGeneratingColumn event of the data grid.
+        /// Customizes column appearance and formatting.
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments containing the column being generated.</param>
         private void BivariateCDFDataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
             e.Column.Width = new DataGridLength(1d, DataGridLengthUnitType.Star);
@@ -836,18 +991,18 @@ namespace NumericControls
 
             if (e.PropertyName == "Column0")
             {
-                // CType(e.Column, DataGridTextColumn).ElementStyle = CType(Resources("ColumnStyle"), Style)
-                // CType(e.Column, DataGridTextColumn).EditingElementStyle = CType(Resources("ColumnEditStyle"), Style)
                 ((DataGridTextColumn)e.Column).CellStyle = (Style)Resources["BoldCellStyle"];
             }
             else
             {
-                //(e.Column as DataGridTextColumn).Binding.StringFormat = "{0:0.#####E+00}";
                 (e.Column as DataGridTextColumn).Binding.TargetNullValue = Double.NaN.ToString();
                 (e.Column as DataGridTextColumn).HeaderStyle = (Style)Resources["headerTemplate"];
             }
         }
 
+        /// <summary>
+        /// Refreshes the data grid view by styling the top row and upper left cell.
+        /// </summary>
         private void RefreshDataGridView()
         {
             // Top Row
@@ -860,15 +1015,26 @@ namespace NumericControls
             // Upper left cell
             var upperLeftCell = BivariateCDFDataGrid.GetCell(0, 0);
             upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
-            // DirectCast(upperLeftCell.Content, TextBlock).Focusable = False
         }
 
+        /// <summary>
+        /// Handles the BeginningEdit event of the data grid.
+        /// Prevents editing of the top-left cell (0,0).
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments containing the cell being edited.</param>
         private void BivariateCDFDataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             // Ensure that the top left cell can't be edited.
             if (e.Column.DisplayIndex == 0 && e.Row.GetIndex() == 0) e.Cancel = true;
         }
 
+        /// <summary>
+        /// Handles the SelectedCellsChanged event of the data grid.
+        /// Enables or disables insert and delete buttons based on cell selection.
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments containing the selection changes.</param>
         private void BivariateCDFDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
             if (BivariateCDFDataGrid.SelectedCells.Count <= 0)
@@ -883,15 +1049,21 @@ namespace NumericControls
             }
         }
 
+        /// <summary>
+        /// Handles the SizeChanged event of the data grid.
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments containing size information.</param>
         private void BivariateCDFDataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // If BivariateCDFDataGrid.Columns.Count = 0 Then Exit Sub
-            // XHeaderBorder.Margin = New Thickness(BivariateCDFDataGrid.Columns(0).ActualWidth, XHeaderBorder.Margin.Top, XHeaderBorder.Margin.Right, XHeaderBorder.Margin.Bottom)
-            // Dim topRow = BivariateCDFDataGrid.GetRow(0)
-            // If topRow Is Nothing Then Exit Sub
-            // YHeaderBorder.Margin = New Thickness(YHeaderBorder.Margin.Left, topRow.ActualHeight, YHeaderBorder.Margin.Right, YHeaderBorder.Margin.Bottom)
         }
 
+        /// <summary>
+        /// Handles the LayoutUpdated event of the data grid.
+        /// Adjusts the header margins to align with the first column and row.
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments.</param>
         private void BivariateCDFDataGrid_LayoutUpdated(object sender, EventArgs e)
         {
             if (BivariateCDFDataGrid.Columns.Count == 0) return;

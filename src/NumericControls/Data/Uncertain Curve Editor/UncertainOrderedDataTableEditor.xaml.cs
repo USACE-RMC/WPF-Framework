@@ -158,10 +158,14 @@ namespace NumericControls
             set { SetValue(OrderYProperty, value); }
         }
 
+        /// <summary>
+        /// Handles property changed callbacks for ordering and strictness properties.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private static void PropertyChanged_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
-            // 
             foreach (var dist in thisControl._distributions)
             {
                 dist.OrderX = thisControl.OrderX;
@@ -303,13 +307,17 @@ namespace NumericControls
         public static DependencyProperty SelectedUncertainOrderedDataProperty = DependencyProperty.Register(nameof(SelectedUncertainOrderedData), typeof(UncertainOrderedPairedData), typeof(UncertainOrderedDataTableEditor), new PropertyMetadata(null, SelectedUncertainData_Callback));
         private bool _settingSelected = false;
 
+        /// <summary>
+        /// Handles changes to the SelectedUncertainOrderedData property and synchronizes the UI.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private static void SelectedUncertainData_Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
             if (d.GetType() != typeof(UncertainOrderedDataTableEditor)) return;
             UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
             if (thisControl._updatingSelected == true) return;
-            // Using collection changed to update the other distribution options caused issues with event handlers not being let go when the control was closed.
 
             UncertainOrderedPairedData newData = e.NewValue as UncertainOrderedPairedData;
             if (newData == null) return;
@@ -330,8 +338,6 @@ namespace NumericControls
                 thisControl.CurveUncertaintyComboBox.SelectedIndex = -1;
                 return;
             }
-            // 
-            // If thisControl._distributions(index).Equals(newData) = False Then
             thisControl._settingSelected = true;
             thisControl.CurveUncertaintyComboBox.SelectedIndex = -1;
             thisControl._distributions[index] = newData;
@@ -348,11 +354,15 @@ namespace NumericControls
 
         private bool _updatingSelected = false;
 
+        /// <summary>
+        /// Handles selection changes in the curve uncertainty combobox.
+        /// </summary>
+        /// <param name="sender">The combobox that changed.</param>
+        /// <param name="e">The selection changed event arguments.</param>
         private void CurveUncertaintyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_settingSelected == true) return;
             _updatingSelected = true;
-            // 
             if (CurveUncertaintyComboBox.SelectedIndex >= 0)
             {
                 SelectedUncertainOrderedData = _distributions[CurveUncertaintyComboBox.SelectedIndex];
@@ -391,8 +401,10 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// When the dependency property changes, this sets the distribution options.
+        /// Handles changes to the DistributionOptions property and updates the available distributions.
         /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The property changed event arguments.</param>
         private static void DistributionOptionsCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
@@ -418,19 +430,15 @@ namespace NumericControls
                 foreach (var dist in distOptions)
                 {
                     if (thisControl._distributions.Any(o => o.Distribution == dist)) continue;
-                    // 
                     distribution = UnivariateDistributionFactory.CreateDistribution(dist);
                     if (distribution == null) continue;
-                    // 
                     var ordinates = new List<UncertainOrdinate>();
                     for (int i = 0; i <= 1; i++)
                         ordinates.Add(new UncertainOrdinate(i, UnivariateDistributionFactory.CreateDistribution(dist)));
-                    // 
                     var uncertainData = new UncertainOrderedPairedData(ordinates, thisControl.IsStrictX, thisControl.OrderX, thisControl.IsStrictY, thisControl.OrderY, dist);
                     thisControl._distributions.Add(uncertainData);
                 }
             }
-            // 
         }
 
         /// <summary>

@@ -194,17 +194,7 @@ namespace NumericControls
             _xMax = xMax;
         }
 
-        /// <summary>
-        /// Adds validation rules for the row data, including range checks and ordering constraints.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// <b> Authors: </b>
-        /// <list type="bullet">
-        ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
-        /// </list>
-        /// </para>
-        /// </remarks>
+        /// <inheritdoc/>
         public override void AddValidationRules()
         {
             AddRule(nameof(P), () => P > 1d, "Probability must be less than or equal to 1");
@@ -215,19 +205,7 @@ namespace NumericControls
             AddRule(nameof(X), () => OrderRule<double, UnivariateDistributionValidatingRow>(o => o.X, nameof(X)), "X values must be in ascending order");
         }
 
-        /// <summary>
-        /// Gets the display name for a property.
-        /// </summary>
-        /// <param name="propertyName">The name of the property.</param>
-        /// <returns>The display-friendly name of the property.</returns>
-        /// <remarks>
-        /// <para>
-        /// <b> Authors: </b>
-        /// <list type="bullet">
-        ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
-        /// </list>
-        /// </para>
-        /// </remarks>
+        /// <inheritdoc/>
         public override string PropertyDisplayName(string propertyName)
         {
             switch (propertyName)
@@ -238,19 +216,7 @@ namespace NumericControls
             }
         }
 
-        /// <summary>
-        /// Determines whether the specified property should be displayed in the data grid.
-        /// </summary>
-        /// <param name="propertyName">The name of the property.</param>
-        /// <returns>True if the property should be displayed; otherwise, false.</returns>
-        /// <remarks>
-        /// <para>
-        /// <b> Authors: </b>
-        /// <list type="bullet">
-        ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
-        /// </list>
-        /// </para>
-        /// </remarks>
+        /// <inheritdoc/>
         public override bool IsGridDisplayable(string propertyName)
         {
             if ((propertyName == nameof(X)) || (propertyName == nameof(P))) return true;

@@ -14,9 +14,7 @@
         SizeToContent="Height"
         ContentRendered="Window_ContentRendered">
     <Grid FocusManager.FocusedElement="{Binding ElementName=ValueTextBox}">
-        <!--Add Rows-->
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -25,48 +23,38 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock 
-            Margin="4,4,0,4" 
-            Name="NameLabel" 
-            Text="Name" 
-            TextAlignment="Right"
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Center"/>
+        <!-- Label for the numeric input -->
+        <TextBlock Margin="4,4,0,4"
+                   Name="NameLabel"
+                   Text="Name"
+                   TextAlignment="Right"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Center"/>
 
-        <!--<cntrls:NumericTextBox2 x:Name="NumberTBox" Width="50" Grid.Row="1" HorizontalAlignment="Stretch" Margin="4" VerticalAlignment="Stretch" />-->
-        <cntrls:NumericTextBox2 
-            x:Name="ValueTextBox"
-            DockPanel.Dock="Top"
-            Width="60"
-            Height="22"
-            Grid.Column="1" 
-            Margin="4"
-            HorizontalAlignment="Right"
-            ToolTip="Operand for the math function."
-            CanHaveNegative="True" />
+        <!-- Numeric input field -->
+        <cntrls:NumericTextBox2 x:Name="ValueTextBox"
+                                DockPanel.Dock="Top"
+                                Width="60"
+                                Height="22"
+                                Grid.Column="1"
+                                Margin="4"
+                                HorizontalAlignment="Right"
+                                ToolTip="Operand for the math function."
+                                CanHaveNegative="True"/>
 
-        <Button 
-            Name="OKButton" 
-            IsDefault="True" 
-            Click="OKButton_Click" 
-            Content="OK" 
-            VerticalContentAlignment="Center" 
-            HorizontalContentAlignment="Center" 
-            Margin="4" 
-            Cursor="Hand"
-            Grid.Row="0" 
-            Grid.Column="2" 
-            Height="22" 
-            Width="60"
-            HorizontalAlignment="Right"/>
-
-        <!--Ok and Cancel buttons-->
-        <!--<Grid x:Name="ButtonGrid" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="83"/>
-                --><!--<ColumnDefinition Width="83"/>--><!--
-            </Grid.ColumnDefinitions>
-            --><!--<Button Name="CancelButton" IsCancel="True" Click="CancelButton_Click" Content="Cancel" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Margin="4" Cursor="Hand"/>--><!--
-        </Grid>-->
+        <!-- OK button to accept the value -->
+        <Button Name="OKButton"
+                IsDefault="True"
+                Click="OKButton_Click"
+                Content="OK"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Margin="4"
+                Cursor="Hand"
+                Grid.Row="0"
+                Grid.Column="2"
+                Height="22"
+                Width="60"
+                HorizontalAlignment="Right"/>
     </Grid>
 </Window>
