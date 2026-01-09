@@ -21,6 +21,7 @@
             <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Setter Property="TextBlock.TextAlignment" Value="Left"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
@@ -41,6 +42,7 @@
             <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
@@ -61,6 +63,7 @@
             <Setter Property="Foreground" Value="{DynamicResource TextBox.Static.Foreground}"/>
             <Setter Property="TextBlock.TextAlignment" Value="Right"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
