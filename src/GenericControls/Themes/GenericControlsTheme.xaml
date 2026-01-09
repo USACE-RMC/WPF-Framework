@@ -89,7 +89,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="StackPanelButtonStyle" Value="{StaticResource StackPanelButtonStyleBase}"/>
-        <Setter Property="StackPanelSeperatorStyle" Value="{StaticResource VerticalSeparatorStyle}"/>
+        <Setter Property="StackPanelSeparatorStyle" Value="{StaticResource VerticalSeparatorStyle}"/>
     </Style>
 
     <Style TargetType="{x:Type local:DataGridToolbar}" BasedOn="{StaticResource DataGridToolbarStyle}"/>
