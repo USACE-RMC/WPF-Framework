@@ -9,7 +9,6 @@
     <ImageSource x:Key="RecentProjects">/FrameworkUI;component/Resources/RecentProjects.png</ImageSource>
     <ImageSource x:Key="Exit">/FrameworkUI;component/Resources/ShutDown.png</ImageSource>
     <ImageSource x:Key="Browse">/FrameworkUI;component/Resources/Browse.png</ImageSource>
-    <ImageSource x:Key="Search">/FrameworkUI;component/Resources/Search.png</ImageSource>
 
     <!--View Menu-->
     <ImageSource x:Key="ProjectExplorer">/FrameworkUI;component/Resources/ProjectExplorer.png</ImageSource>
