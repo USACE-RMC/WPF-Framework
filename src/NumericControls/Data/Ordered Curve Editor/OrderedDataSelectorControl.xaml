@@ -54,16 +54,32 @@
 
         <GridSplitter Grid.Column="1" Margin="-2,0,0,0" Width="4" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Transparent"/>
 
-        <oxy:Plot x:Name="Plot" Grid.Column="1" Margin="2,0,0,0" Background="Transparent" LegendBackground="#8CFFFFFF" LegendBorder="DarkGray" LegendPosition="{Binding PlotLegendPosition}" Title="{Binding PlotTitle}">
-            <oxy:Plot.Axes>
-                <oxy:LinearAxis Position="Left" Title="{Binding YAxisLabel}" AbsoluteMinimum="{Binding YAxisMinimum}" AbsoluteMaximum="{Binding YAxisMaximum}" AxisTitleDistance="20" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
-                <oxy:LinearAxis Position="Bottom" Title="{Binding XAxisLabel}" AbsoluteMinimum="{Binding XAxisMinimum}" AbsoluteMaximum="{Binding XAxisMaximum}" AxisTitleDistance="15" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
-            </oxy:Plot.Axes>
-            <oxy:Plot.Series>
-                <oxy:LineSeries Name="CurveLine" Title="Curve" Color="Black" MarkerFill="Transparent" ItemsSource="{Binding CurveLinePoints}"/>
-            </oxy:Plot.Series>
-        </oxy:Plot>
-
-        <oxyCntrls:OxyPlotToolbar Background="{Binding ElementName=Plot, Path=Background}" VerticalAlignment="Stretch" Plot="{Binding ElementName=Plot, Mode=OneTime}" ToolBarOrientation="Vertical" Grid.Column="2" PropertiesCalled="OxyplotToolbar_PropertiesCalled"/>
+        <!-- Plot Grid -->
+        <Grid Grid.Column="1" Margin="2,0,0,0" Background="{DynamicResource PlotWindowBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <oxy:Plot x:Name="Plot" x:FieldModifier="public" 
+                      Grid.Column="0" 
+                      Background="Transparent" 
+                      PlotAreaBackground="White" 
+                      LegendBackground="#8CFFFFFF" 
+                      LegendBorder="DarkGray" 
+                      LegendPosition="{Binding PlotLegendPosition}" 
+                      Title="{Binding PlotTitle}">
+                <oxy:Plot.Axes>
+                    <oxy:LinearAxis Position="Left" Title="{Binding YAxisLabel}" AbsoluteMinimum="{Binding YAxisMinimum}" AbsoluteMaximum="{Binding YAxisMaximum}" AxisTitleDistance="20" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
+                    <oxy:LinearAxis Position="Bottom" Title="{Binding XAxisLabel}" AbsoluteMinimum="{Binding XAxisMinimum}" AbsoluteMaximum="{Binding XAxisMaximum}" AxisTitleDistance="15" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
+                </oxy:Plot.Axes>
+                <oxy:Plot.Series>
+                    <oxy:LineSeries Name="CurveLine" Title="Curve" Color="Black" MarkerFill="Transparent" ItemsSource="{Binding CurveLinePoints}"/>
+                </oxy:Plot.Series>
+            </oxy:Plot>
+            <oxyCntrls:OxyPlotToolbar Grid.Column="1" VerticalAlignment="Stretch" ToolBarOrientation="Vertical" 
+                              Plot="{Binding ElementName=Plot, Mode=OneTime}" 
+                              Background="{Binding ElementName=Plot, Path=Background}" 
+                              PropertiesCalled="OxyplotToolbar_PropertiesCalled"/>
+        </Grid>
     </Grid>
 </UserControl>

@@ -23,7 +23,7 @@
             <EventSetter Event="Click" Handler="DataGridColumnHeader_Click"/>
         </Style>
     </Control.Resources>
-    <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+    <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" >
         <Grid.Resources>
             <cntrls:BooleanToVisibilityConverter x:Key="VisibilityConverter" TrueValue="Collapsed" FalseValue="Visible"></cntrls:BooleanToVisibilityConverter>
             <cntrls:ReverseBooleanConverter x:Key="RevBoolConverter"/>
@@ -35,7 +35,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <DockPanel Name="CurveUncertaintyPanel" VerticalAlignment="Stretch" Margin="0,0,2,5" Visibility="{Binding Path=IsReadOnly, Converter={StaticResource VisibilityConverter}}">
             <TextBlock Text="Distribution" TextAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Left" Foreground="{DynamicResource EnvironmentWindowText}"/>
@@ -43,7 +43,7 @@
             </ComboBox>
         </DockPanel>
 
-        <Grid Grid.Column="0" Grid.Row="1" Margin="0,0,2,0">
+        <Grid Grid.Column="0" Grid.Row="1" Margin="0,0,2,0" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="1*"/>
@@ -83,22 +83,38 @@
 
         <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="-2,0,0,0" Width="4" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Transparent"/>
 
-        <oxy:Plot x:Name="Plot" x:FieldModifier="public" Grid.Column="1" Grid.RowSpan="2" Margin="2,0,0,0" Background="Transparent" PlotAreaBackground="White" LegendBackground="#8CFFFFFF" LegendBorder="DarkGray" LegendPosition="{Binding PlotLegendPosition}" Title="{Binding PlotTitle}">
-            <oxy:Plot.Axes>
-                <oxy:LinearAxis Position="Left" Title="{Binding YAxisLabel}" AbsoluteMinimum="{Binding YAxisMinimum}" AbsoluteMaximum="{Binding YAxisMaximum}" AxisTitleDistance="20" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
-                <oxy:LinearAxis Position="Bottom" Title="{Binding XAxisLabel}" AbsoluteMinimum="{Binding XAxisMinimum}" AbsoluteMaximum="{Binding XAxisMaximum}" AxisTitleDistance="15" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
-            </oxy:Plot.Axes>
-            <oxy:Plot.Series>
-                <oxy:AreaSeries Name="UncertaintyBoundsArea" Title="Uncertainty Bounds" Fill="#CC7DC8E6" MarkerFill="Transparent" StrokeThickness="0" ItemsSource="{Binding AreaPoints}" DataFieldX="X1" DataFieldX2="X2" DataFieldY="Y1" DataFieldY2="Y2"/>
-                <oxy:LineSeries Name="MinimumLine" Title="Minimum" Color="Blue" MarkerFill="Transparent" ItemsSource="{Binding MinimumLinePoints}"/>
-                <oxy:LineSeries Name="MaximumLine" Title="Maximum" Color="Red" MarkerFill="Transparent" ItemsSource="{Binding MaximumLinePoints}"/>
-                <oxy:LineSeries Name="MeanLine" Title="Mean" Color="Black" MarkerFill="Transparent" ItemsSource="{Binding MeanLinePoints}"/>
-                <oxy:LineSeries Name="MedianLine" Title="Median" Color="Black" MarkerFill="Transparent" LineStyle="DashDashDot" ItemsSource="{Binding MedianLinePoints}"/>
-                <oxy:LineSeries Name="ModeLine" Title="Mode" Color="Black" MarkerFill="Transparent" LineStyle="Dot" ItemsSource="{Binding ModeLinePoints}"/>
-            </oxy:Plot.Series>
-        </oxy:Plot>
-
-        <oxyCntrls:OxyPlotToolbar Background="{Binding ElementName=Plot, Path=Background}" VerticalAlignment="Stretch" Plot="{Binding ElementName=Plot, Mode=OneTime}" ToolBarOrientation="Vertical" Grid.Column="2" Grid.RowSpan="2" PropertiesCalled="OxyplotToolbar_PropertiesCalled"/>
-
+        <!-- Plot Grid -->
+        <Grid Grid.Column="1" Grid.RowSpan="2" Margin="2,0,0,0" Background="{DynamicResource PlotWindowBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <oxy:Plot x:Name="Plot" x:FieldModifier="public" 
+                      Grid.Column="0" 
+                      Background="Transparent" 
+                      PlotAreaBackground="White" 
+                      LegendBackground="#8CFFFFFF" 
+                      LegendBorder="DarkGray" 
+                      LegendPosition="{Binding PlotLegendPosition}" 
+                      Title="{Binding PlotTitle}">
+                <oxy:Plot.Axes>
+                    <oxy:LinearAxis Position="Left" Title="{Binding YAxisLabel}" AbsoluteMinimum="{Binding YAxisMinimum}" AbsoluteMaximum="{Binding YAxisMaximum}" AxisTitleDistance="20" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
+                    <oxy:LinearAxis Position="Bottom" Title="{Binding XAxisLabel}" AbsoluteMinimum="{Binding XAxisMinimum}" AbsoluteMaximum="{Binding XAxisMaximum}" AxisTitleDistance="15" TitleFontSize="20" MajorGridlineStyle="Solid" MinorGridlineStyle="Dash"/>
+                </oxy:Plot.Axes>
+                <oxy:Plot.Series>
+                    <oxy:AreaSeries Name="UncertaintyBoundsArea" Title="Uncertainty Bounds" Fill="#CC7DC8E6" MarkerFill="Transparent" StrokeThickness="0" ItemsSource="{Binding AreaPoints}" DataFieldX="X1" DataFieldX2="X2" DataFieldY="Y1" DataFieldY2="Y2"/>
+                    <oxy:LineSeries Name="MinimumLine" Title="Minimum" Color="Blue" MarkerFill="Transparent" ItemsSource="{Binding MinimumLinePoints}"/>
+                    <oxy:LineSeries Name="MaximumLine" Title="Maximum" Color="Red" MarkerFill="Transparent" ItemsSource="{Binding MaximumLinePoints}"/>
+                    <oxy:LineSeries Name="MeanLine" Title="Mean" Color="Black" MarkerFill="Transparent" ItemsSource="{Binding MeanLinePoints}"/>
+                    <oxy:LineSeries Name="MedianLine" Title="Median" Color="Black" MarkerFill="Transparent" LineStyle="DashDashDot" ItemsSource="{Binding MedianLinePoints}"/>
+                    <oxy:LineSeries Name="ModeLine" Title="Mode" Color="Black" MarkerFill="Transparent" LineStyle="Dot" ItemsSource="{Binding ModeLinePoints}"/>
+                </oxy:Plot.Series>
+            </oxy:Plot>
+            <oxyCntrls:OxyPlotToolbar Grid.Column="1" VerticalAlignment="Stretch" ToolBarOrientation="Vertical" 
+                                      Plot="{Binding ElementName=Plot, Mode=OneTime}" 
+                                      Background="{Binding ElementName=Plot, Path=Background}" 
+                                      PropertiesCalled="OxyplotToolbar_PropertiesCalled"/>
+        </Grid>
+        
     </Grid>
 </UserControl>
