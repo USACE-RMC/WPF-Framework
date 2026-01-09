@@ -180,11 +180,8 @@ namespace OxyPlotControls
                     barSeries.Foreground = (Brush)brushConverter.ConvertFromString(labelingElement.Attribute("TextColor")!.Value)!;
                 if (labelingElement.Attribute("Font") != null)
                     barSeries.InternalSeries.Font = labelingElement.Attribute("Font")!.Value;
-                if (labelingElement.Attribute("FontSize") != null)
-                {
-                    if (double.TryParse(labelingElement.Attribute("FontSize")!.Value, out double fontSize))
-                        barSeries.FontSize = fontSize;
-                }
+                if (GetDoubleAttribute(labelingElement, "FontSize", out double fontSize))
+                    barSeries.FontSize = fontSize;
                 if (labelingElement.Attribute("FontWeight") != null)
                     barSeries.FontWeight = (FontWeight)fontWeightConverter.ConvertFromString(labelingElement.Attribute("FontWeight")!.Value)!;
                 if (labelingElement.Attribute("Padding") != null)
@@ -213,11 +210,8 @@ namespace OxyPlotControls
                     barSeries.Color = (Color)ColorConverter.ConvertFromString(displayElement.Attribute("Color")!.Value)!;
                 if (displayElement.Attribute("Fill") != null)
                     barSeries.FillColor = (Color)ColorConverter.ConvertFromString(displayElement.Attribute("Fill")!.Value)!;
-                if (displayElement.Attribute("LineThickness") != null)
-                {
-                    if (double.TryParse(displayElement.Attribute("LineThickness")!.Value, out double strokeThickness))
-                        barSeries.StrokeThickness = strokeThickness;
-                }
+                if (GetDoubleAttribute(displayElement, "LineThickness", out double strokeThickness))
+                    barSeries.StrokeThickness = strokeThickness;
             }
         }
 
@@ -237,7 +231,7 @@ namespace OxyPlotControls
             labelProps.SetAttributeValue("LabelPlacement", barSeries.LabelPlacement.ToString());
             labelProps.SetAttributeValue("TextColor", barSeries.Foreground.ToString());
             labelProps.SetAttributeValue("Font", barSeries.FontFamily);
-            labelProps.SetAttributeValue("FontSize", barSeries.FontSize);
+            labelProps.SetAttributeValue("FontSize", barSeries.FontSize.ToString("G17", CultureInfo.InvariantCulture));
             labelProps.SetAttributeValue("FontWeight", barSeries.FontWeight.ToString());
             labelProps.SetAttributeValue("Padding", barSeries.Padding.ToString());
             labelProps.SetAttributeValue("RenderInLegend", barSeries.RenderInLegend);
@@ -252,7 +246,7 @@ namespace OxyPlotControls
             displayProps.SetAttributeValue("Background", barSeries.Background);
             displayProps.SetAttributeValue("Color", barSeries.Foreground);
             displayProps.SetAttributeValue("Fill", barSeries.FillColor);
-            displayProps.SetAttributeValue("LineThickness", barSeries.StrokeThickness);
+            displayProps.SetAttributeValue("LineThickness", barSeries.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
             properties.Add(displayProps);
 
             return properties;
