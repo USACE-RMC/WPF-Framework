@@ -46,10 +46,7 @@
                StaysOpen="False">
             <Border Background="{DynamicResource EnvironmentWindowBackground}"
                     BorderBrush="{DynamicResource Button.Static.Border}"
-                    BorderThickness="1"
-                    MouseEnter="Border_MouseEnter"
-                    MouseLeave="Border_MouseLeave"
-                    ContextMenuClosing="Border_ContextMenuClosing">
+                    BorderThickness="1">
                 <local:DistributionSelectorControl x:Name="SelectorControl"
                                                    Margin="5"
                                                    Width="300"
