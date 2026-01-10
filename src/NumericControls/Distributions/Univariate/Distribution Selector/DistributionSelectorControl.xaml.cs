@@ -176,7 +176,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for the selected distribution.
         /// </summary>
-        public static DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SelectedDistributionProperty_Callback));
+        public static DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorControl), new PropertyMetadata(null, SelectedDistributionProperty_Callback));
 
         /// <summary>
         /// Property changed callback for the SelectedDistribution dependency property.
