@@ -65,7 +65,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for the selected distribution.
         /// </summary>
-        public static DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorPopup), new PropertyMetadata(new Normal(), SetDistribution));
+        public static DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorPopup), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, SetDistribution));
         /// <summary>
         /// Get and set the selected probability distribution.
         /// </summary>
