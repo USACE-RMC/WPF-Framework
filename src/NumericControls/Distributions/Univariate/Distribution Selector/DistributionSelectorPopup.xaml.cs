@@ -148,7 +148,7 @@ namespace NumericControls.Distributions.Univariate
             // 
             if (e.NewValue == null)
             {
-                thisControl.DistributionTextBlock.Text = "No Distribution Selected"; // .DistributionCombobox.SelectedIndex = -1
+                thisControl.DistributionTextBlock.Text = "No Distribution Selected"; 
             }
             else
             {
@@ -160,7 +160,7 @@ namespace NumericControls.Distributions.Univariate
                 }
                 else
                 {
-                    // Set the distribution textblock text.
+                    // Set the distribution text block text.
                     var sb = new StringBuilder(newDistribution.DisplayName + " (");
                     var shortNames = newDistribution.ParameterNamesShortForm;
                     var paramVals = newDistribution.GetParameters;

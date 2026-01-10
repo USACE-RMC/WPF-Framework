@@ -95,15 +95,16 @@
                     <DockPanel Grid.Column="0">
                         <TextBlock DockPanel.Dock="Top" Text="Distribution Selector Control" Style="{StaticResource SectionHeaderStyle}"/>
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource DescriptionStyle}"
-                                   Text="Full-featured distribution selector with parameters, plot, and summary statistics. All controls on this page share the same bound distribution."/>
+                                   Text="Full-featured distribution selector with parameters, plot, and summary statistics. ."/>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-                            <uni:DistributionSelectorControl x:Name="myOtherControl" Width="400"
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Left">
+                            <uni:DistributionSelectorControl x:Name="DistSelectorWithFitting" Width="400"
                                 BorderBrush="{DynamicResource Button.Static.Border}"
                                 BackgroundColor="{DynamicResource EnvironmentWindowBackground}"
                                 BorderThickness="1"
                                 SelectedDistribution="{Binding ElementName=MyWindow, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ShowAxisTitle="True"
+                                ShowTickLines="True"
                                 DistributionTitle="Sample Distribution"
                                 ShowAxisLabel="True"/>
                         </ScrollViewer>
@@ -113,7 +114,7 @@
                     <DockPanel Grid.Column="2">
                         <TextBlock DockPanel.Dock="Top" Text="Distribution Selector Popups" Style="{StaticResource SectionHeaderStyle}"/>
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource DescriptionStyle}"
-                                   Text="Compact popup controls for space-constrained layouts. Click the dropdown to open the distribution selector."/>
+                                   Text="Compact popup controls for space-constrained layouts. All pop-up controls on this page share the same bound distribution. Click the buttons below to open the distribution selector."/>
 
                         <StackPanel DockPanel.Dock="Top">
                             <!-- Full Popup: Parameters, Plot, and Statistics -->
@@ -122,7 +123,7 @@
                             <TextBlock Style="{StaticResource DescriptionStyle}"
                                        Text="Complete popup with all distribution information including summary statistics table."/>
                             <uni:DistributionSelectorPopup
-                                SelectedDistribution="{Binding ElementName=MyWindow, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedDistribution="{Binding ElementName=MyWindow, Path=PopUpDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ShowPlot="True" ShowStatistics="True"
                                 VerticalAlignment="Top" HorizontalAlignment="Left"
                                 MinWidth="200"/>
@@ -133,7 +134,7 @@
                             <TextBlock Style="{StaticResource DescriptionStyle}"
                                        Text="Medium-sized popup showing parameter table and probability density plot."/>
                             <uni:DistributionSelectorPopup
-                                SelectedDistribution="{Binding ElementName=MyWindow, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedDistribution="{Binding ElementName=MyWindow, Path=PopUpDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ShowPlot="True" ShowStatistics="False"
                                 VerticalAlignment="Top" HorizontalAlignment="Left"
                                 MinWidth="200"/>
@@ -144,7 +145,7 @@
                             <TextBlock Style="{StaticResource DescriptionStyle}"
                                        Text="Minimal popup showing only the distribution type selector and parameter table."/>
                             <uni:DistributionWithSelectorControl
-                                SelectedDistribution="{Binding ElementName=MyWindow, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedDistribution="{Binding ElementName=MyWindow, Path=PopUpDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 ShowPlot="False" ShowStatistics="False"
                                 VerticalAlignment="Top" HorizontalAlignment="Left"/>
 

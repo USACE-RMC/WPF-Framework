@@ -114,13 +114,10 @@ namespace NumericControls.Distributions.Univariate
         /// </summary>
         public DistributionSelectorControl()
         {
-
             // This call is required by the designer.
             InitializeComponent();
 
             // Add any initialization after the InitializeComponent() call.
-
-            // DistributionOptions = DefaultDistributionOptions
             InitializeControl();
         }
 
@@ -143,10 +140,6 @@ namespace NumericControls.Distributions.Univariate
             SummaryStatisticsList.Add(new SummaryStatistic("50%", "", ""));
             SummaryStatisticsList.Add(new SummaryStatistic("75%", "", ""));
             SummaryStatisticsList.Add(new SummaryStatistic("95%", "", ""));
-            // Goodness of fit statistics (indices 12, 13, 14)
-            SummaryStatisticsList.Add(new SummaryStatistic("RMSE", "", " - "));
-            SummaryStatisticsList.Add(new SummaryStatistic("Chi-Squared", "", " - "));
-            SummaryStatisticsList.Add(new SummaryStatistic("K-S", "", " - "));
 
             // Bind the summary and parameter data tables
             ParametersTable.ItemsSource = ParameterList;
@@ -400,8 +393,6 @@ namespace NumericControls.Distributions.Univariate
             if (d == null) { return; }
             if (d.GetType() != typeof(DistributionSelectorControl)) { return; }
             DistributionSelectorControl thisControl = (DistributionSelectorControl)d;
-            //if (thisControl.DistributionCombobox == null) { return; }
-            // 
             thisControl.UpdateHistogram();
             thisControl.UpdateDistributionStats();
         }
@@ -467,7 +458,7 @@ namespace NumericControls.Distributions.Univariate
 
                 if (Plot.Series.Contains(_histogramSeries) == false) { Plot.Series.Insert(0, _histogramSeries); }
                 //show fit options (filtered by those that implement IEstimate()
-                if (DistributionCanEstimate() == true)
+                if (DistributionCanBeEstimated() == true)
                 {
                     EstimateParametersButton.Visibility = Visibility.Visible;
                 }
@@ -495,10 +486,21 @@ namespace NumericControls.Distributions.Univariate
                 SummaryStatisticsList[10].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[4], 4, false);
                 SummaryStatisticsList[11].DataStat = NumberFormatHelper.FormatDouble(summaryPercentiles[5], 4, false);
 
-                // Reset goodness of fit stats (will be updated in UpdateDistributionStats)
-                SummaryStatisticsList[12].DataStat = " - ";
-                SummaryStatisticsList[13].DataStat = " - ";
-                SummaryStatisticsList[14].DataStat = " - ";
+                if (DistributionCanBeEstimated() && SummaryStatisticsList.Count != 15)
+                {
+                    // Add goodness of fit stats
+                    SummaryStatisticsList.Add(new SummaryStatistic("RMSE", "", " - "));
+                    SummaryStatisticsList.Add(new SummaryStatistic("Chi-Squared", "", " - "));
+                    SummaryStatisticsList.Add(new SummaryStatistic("K-S", "", " - "));
+                }
+                else
+                {
+                    // Remove goodness of fit stats
+                    for (int i = SummaryStatisticsList.Count - 1; i >= 12; i--)
+                    {
+                        SummaryStatisticsList.RemoveAt(i);
+                    }
+                }
 
                 SummaryTable.Items.Refresh();
 
@@ -547,7 +549,6 @@ namespace NumericControls.Distributions.Univariate
 
             if (DistributionCombobox.SelectedIndex == -1)
             {
-                //SelectedDistribution = null;
                 UpdatePDFPlot();
                 UpdateDistributionStats();
                 return;
@@ -555,8 +556,21 @@ namespace NumericControls.Distributions.Univariate
             // 
             UnivariateDistributionBase currentDistribution = (UnivariateDistributionBase)DistributionCombobox.SelectedItem;
 
-            if (currentDistribution.Type == UnivariateDistributionType.Empirical) { }
-            else if (currentDistribution.Type == UnivariateDistributionType.KernelDensity) { }
+            if (currentDistribution.Type == UnivariateDistributionType.Empirical) 
+            {
+                // Enter in min, max limits for empirical
+                // Enter x values and probabilities for empirical
+                // - must be comma delimited within brackets {,,}
+                // - need to make sure parsing is culture-aware
+            }
+            else if (currentDistribution.Type == UnivariateDistributionType.KernelDensity) 
+            {
+                // Assume Gaussian kernel for now
+                // Use default bandwidth
+                // Enter sample data for kernel density
+                // - must be comma delimited within brackets {,,}
+                // - need to make sure parsing is culture-aware
+            }
             else
             {
                 string[,] paramString = currentDistribution.ParametersToString;
@@ -576,7 +590,7 @@ namespace NumericControls.Distributions.Univariate
             if (_propertyChanging == false) { SetDistributionParameters(false); }
 
             //show fit options (filtered by those that implement IEstimate()
-            if (SampleData != null && SampleData.Length > 0 && DistributionCanEstimate() == true)
+            if (SampleData != null && SampleData.Length > 0 && DistributionCanBeEstimated() == true)
             {
                 EstimateParametersButton.Visibility = Visibility.Visible;
             }
@@ -590,7 +604,7 @@ namespace NumericControls.Distributions.Univariate
         /// Determines whether the currently selected distribution supports parameter estimation.
         /// </summary>
         /// <returns><c>true</c> if the distribution implements parameter estimation; otherwise, <c>false</c>.</returns>
-        private bool DistributionCanEstimate()
+        private bool DistributionCanBeEstimated()
         {
             if (SelectedDistribution != null)
             {
@@ -710,16 +724,7 @@ namespace NumericControls.Distributions.Univariate
                 Plot.Visibility = Visibility.Visible;
                 double[,] PDFgraph;
 
-                if (SelectedDistribution.Type == UnivariateDistributionType.Empirical)
-                {
-                    List<StratificationBin> range = Stratify.XValues(new StratificationOptions(SelectedDistribution.InverseCDF(0.001d), SelectedDistribution.InverseCDF(0.999d), 500));
-                    PDFgraph = SelectedDistribution.CreatePDFGraph(range);
-                }
-                else if (SelectedDistribution.Type == UnivariateDistributionType.KernelDensity)
-                {
-                    PDFgraph = null;
-                }
-                else if (SelectedDistribution.Type == UnivariateDistributionType.Deterministic)
+                if (SelectedDistribution.Type == UnivariateDistributionType.Deterministic)
                 {
                     PDFgraph = new double[5, 2];
                     PDFgraph[0, 0] = 0d;
@@ -738,7 +743,7 @@ namespace NumericControls.Distributions.Univariate
                     List<StratificationBin> range = Stratify.XValues(new StratificationOptions(SelectedDistribution.InverseCDF(0.001d), SelectedDistribution.InverseCDF(0.999d), 500));
                     PDFgraph = SelectedDistribution.CreatePDFGraph(range);
                 }
-                // 
+                 
                 // Create PDF Plot
                 OxyPlot.Series.AreaSeries arSeries = (OxyPlot.Series.AreaSeries)PDF.InternalSeries;
                 arSeries.Points.Clear();
@@ -781,10 +786,15 @@ namespace NumericControls.Distributions.Univariate
                 SummaryStatisticsList[9].DistStat = nanValue;
                 SummaryStatisticsList[10].DistStat = nanValue;
                 SummaryStatisticsList[11].DistStat = nanValue;
-                // Reset goodness of fit stats
-                SummaryStatisticsList[12].DistStat = " - ";
-                SummaryStatisticsList[13].DistStat = " - ";
-                SummaryStatisticsList[14].DistStat = " - ";
+
+                if (DistributionCanBeEstimated() && SummaryStatisticsList.Count == 15)
+                {
+                    // Reset goodness of fit stats
+                    SummaryStatisticsList[12].DistStat = " - ";
+                    SummaryStatisticsList[13].DistStat = " - ";
+                    SummaryStatisticsList[14].DistStat = " - ";
+                }
+
                 SummaryTable.Items.Refresh();
             }
             else
@@ -804,7 +814,7 @@ namespace NumericControls.Distributions.Univariate
                 SummaryStatisticsList[11].DistStat = NumberFormatHelper.FormatDouble(SelectedDistribution.InverseCDF(0.95d), 4, false);
 
                 // Add Goodness of fit stats with culture-aware formatting
-                if (SampleData != null && DistributionCanEstimate() == true)
+                if (SampleData != null && DistributionCanBeEstimated() == true)
                 {
                     var data = SampleData.ToArray();
                     Array.Sort(data);
@@ -813,16 +823,27 @@ namespace NumericControls.Distributions.Univariate
                     var chi = GoodnessOfFit.ChiSquared(data, SelectedDistribution);
                     var ks = GoodnessOfFit.KolmogorovSmirnov(data, SelectedDistribution);
 
+                    if (SummaryStatisticsList.Count == 12)
+                    {
+                        // Add goodness of fit stats
+                        SummaryStatisticsList.Add(new SummaryStatistic("RMSE", "", " - "));
+                        SummaryStatisticsList.Add(new SummaryStatistic("Chi-Squared", "", " - "));
+                        SummaryStatisticsList.Add(new SummaryStatistic("K-S", "", " - "));
+                    }
+
                     SummaryStatisticsList[12].DistStat = NumberFormatHelper.FormatDouble(rmse, 4, false);
                     SummaryStatisticsList[13].DistStat = NumberFormatHelper.FormatDouble(chi, 4, false);
                     SummaryStatisticsList[14].DistStat = NumberFormatHelper.FormatDouble(ks, 4, false);
                 }
                 else
                 {
-                    // Reset goodness of fit stats when not applicable
-                    SummaryStatisticsList[12].DistStat = " - ";
-                    SummaryStatisticsList[13].DistStat = " - ";
-                    SummaryStatisticsList[14].DistStat = " - ";
+                    if (SummaryStatisticsList.Count == 15)
+                    {
+                        // Reset goodness of fit stats when not applicable
+                        SummaryStatisticsList[12].DistStat = " - ";
+                        SummaryStatisticsList[13].DistStat = " - ";
+                        SummaryStatisticsList[14].DistStat = " - ";
+                    }
                 }
 
                 SummaryTable.Items.Refresh();
@@ -837,12 +858,23 @@ namespace NumericControls.Distributions.Univariate
         /// <param name="e">Event arguments.</param>
         private void EstimateParametersButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DistributionCanEstimate() == true)
+            if (DistributionCanBeEstimated() == true)
             {
                 var estimatedDistribution = SelectedDistribution.Clone();
                 if (estimatedDistribution.Type == UnivariateDistributionType.Pert)
                 {
                     ((Pert)estimatedDistribution).Estimate(SampleData, ParameterEstimationMethod.MethodOfPercentiles);
+                }
+                else if (estimatedDistribution.Type == UnivariateDistributionType.Empirical)
+                {
+                    var pp = PlottingPositions.Weibull(SampleData.Length);
+                    var x = SampleData.Clone() as double[];
+                    Array.Sort(x);
+                    ((EmpiricalDistribution)estimatedDistribution).SetParameters(x, pp);
+                }
+                else if (estimatedDistribution.Type == UnivariateDistributionType.KernelDensity)
+                {
+                    ((KernelDensity)estimatedDistribution).SetSampleData(SampleData);
                 }
                 else
                 {
