@@ -515,12 +515,16 @@ namespace NumericControls.Distributions.Univariate
         /// </summary>
         private void Grid_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Check if the click is outside the ParametersTable
-            if (!IsMouseOverElement(ParametersTable, e))
+            // Check if the click is outside the ParametersTable and not on the ComboBox
+            if (!IsMouseOverElement(ParametersTable, e) && !IsMouseOverElement(DistributionCombobox, e))
             {
-                // Clear selection and move focus away from the DataGrid
-                ParametersTable.UnselectAllCells();
-                Keyboard.ClearFocus();
+                // Don't clear focus if a ComboBox dropdown is open
+                if (!DistributionCombobox.IsDropDownOpen)
+                {
+                    // Clear selection and move focus away from the DataGrid
+                    ParametersTable.UnselectAllCells();
+                    Keyboard.ClearFocus();
+                }
             }
         }
 
