@@ -88,8 +88,8 @@
     <Style x:Key="DataGridToolbarStyle" TargetType="{x:Type local:DataGridToolbar}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
-        <Setter Property="StackPanelButtonStyle" Value="{StaticResource StackPanelButtonStyleBase}"/>
-        <Setter Property="StackPanelSeparatorStyle" Value="{StaticResource VerticalSeparatorStyle}"/>
+        <Setter Property="StackPanelButtonStyle" Value="{DynamicResource StackPanelButtonStyleBase}"/>
+        <Setter Property="StackPanelSeparatorStyle" Value="{DynamicResource VerticalSeparatorStyle}"/>
     </Style>
 
     <Style TargetType="{x:Type local:DataGridToolbar}" BasedOn="{StaticResource DataGridToolbarStyle}"/>
