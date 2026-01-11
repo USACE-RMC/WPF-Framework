@@ -95,38 +95,17 @@
                 DataGrid="{Binding ElementName=TimeSeriesDataGrid, Mode=OneTime}" 
                 ToolOrientation="Horizontal"/>
 
-            <ToggleButton 
-                x:Name="PresetToggleButton" 
-                Width="38" Height="24" 
+            <ToggleButton
+                x:Name="PresetToggleButton"
+                Width="24" Height="24"
                 Padding="0"
-                HorizontalContentAlignment="Stretch" 
-                VerticalContentAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
                 ToolTip="Calculator"
-                Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
                 IsHitTestVisible="{Binding ElementName=PresetsPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
-                <Grid 
-                    Margin="-1"
-                    Width="38"
-                    Height="24">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="14"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Rectangle
-                        Width="16" Height="16"
-                        VerticalAlignment="Center"
-                        Fill="{DynamicResource CalculatorIconBrush}"/>
-
-                    <Path
-                        Grid.Column="1"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Margin="4 0"
-                        Fill="{DynamicResource EnvironmentWindowText}"
-                        Data="M 0,0 L 3,5 L 6,0 Z"/>
-                </Grid>
+                <ContentControl
+                    Content="{DynamicResource CalculatorIcon}"
+                    Width="16" Height="16"/>
             </ToggleButton>
 
             <!--PLACEMENT HACK-->
