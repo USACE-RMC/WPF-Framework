@@ -73,6 +73,7 @@
         <ResourceDictionary Source="Label.xaml"/>
         <ResourceDictionary Source="ListView.xaml"/>
         <ResourceDictionary Source="Menu.xaml"/>
+        <ResourceDictionary Source="MetroWindowStyle.xaml"/>
         <ResourceDictionary Source="ScrollBar.xaml"/>
         <ResourceDictionary Source="Separator.xaml"/>
         <ResourceDictionary Source="Slider.xaml"/>
