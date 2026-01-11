@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
+using GenericControls;
 using OxyPlot.Wpf;
 
 namespace OxyPlotControls.Demo
@@ -7,7 +8,7 @@ namespace OxyPlotControls.Demo
     /// <summary>
     /// Interaction logic for OxyPlotPropertiesDialog.xaml
     /// </summary>
-    public partial class OxyPlotPropertiesDialog : Window
+    public partial class OxyPlotPropertiesDialog : MetroDialogWindow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OxyPlotPropertiesDialog"/> class.

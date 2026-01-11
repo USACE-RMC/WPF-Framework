@@ -38,6 +38,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
+using GenericControls;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -51,7 +52,7 @@ namespace OxyPlotControls.Demo
     /// Interaction logic for MainWindow.xaml.
     /// Demonstrates OxyPlot controls with various series types.
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         /// <summary>
         /// Dependency property for the test axis name binding property.

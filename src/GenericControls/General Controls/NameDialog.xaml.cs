@@ -48,7 +48,7 @@ namespace GenericControls
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class NameDialog
+    public partial class NameDialog : MetroDialogWindow
     {
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.

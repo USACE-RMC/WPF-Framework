@@ -1,18 +1,20 @@
-<Window x:Class="NumericControls.Demo.MainWindow" x:Name="MyWindow"
+<cntrls:MetroWindow x:Class="NumericControls.Demo.MainWindow" x:Name="MyWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumericControls.Demo"
+        xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
         xmlns:ds="clr-namespace:NumericControls;assembly=NumericControls"
         xmlns:uni="clr-namespace:NumericControls.Distributions.Univariate;assembly=NumericControls"
         ContentRendered="MainWindow_ContentRendered"
         mc:Ignorable="d"
         Title="NumericControls Demo - USACE Risk Management Center"
         Height="750" Width="1100" MinWidth="900" MinHeight="600"
+        Style="{DynamicResource MetroWindowStyle}"
         Background="{DynamicResource EnvironmentWindowBackground}">
 
-    <Window.Resources>
+    <cntrls:MetroWindow.Resources>
         <ResourceDictionary>
             <!-- Demo section header style -->
             <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
@@ -31,7 +33,7 @@
                 <Setter Property="Margin" Value="0,0,0,8"/>
             </Style>
         </ResourceDictionary>
-    </Window.Resources>
+    </cntrls:MetroWindow.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -362,4 +364,4 @@
             </Grid>
         </Border>
     </Grid>
-</Window>
+</cntrls:MetroWindow>

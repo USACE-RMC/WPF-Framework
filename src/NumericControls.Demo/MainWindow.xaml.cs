@@ -31,6 +31,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using GenericControls;
 using Numerics.Data;
 using Numerics.Distributions;
 using Numerics.Sampling;
@@ -67,7 +68,7 @@ namespace NumericControls.Demo
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
         /// <summary>
         /// Gets a list of available univariate distribution options for the distribution selector control.
