@@ -8,7 +8,7 @@
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              mc:Ignorable="d"
              Background="{DynamicResource EnvironmentWindowBackground}"
-             d:DesignHeight="120" d:DesignWidth="280">
+             d:DesignHeight="140" d:DesignWidth="260">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:MathFunctionTypeToNameConverter x:Key="FnToNameCvrtr"/>
@@ -24,11 +24,11 @@
         </Grid.ColumnDefinitions>
 
         <!-- Math function buttons and operand input -->
-        <DockPanel Width="90">
+        <DockPanel Width="72">
             <!-- Operand input field -->
             <cntrls:NumericTextBox2 x:Name="ValueTextBox"
                                     DockPanel.Dock="Top"
-                                    Width="85"
+                                    Width="68"
                                     Height="22"
                                     HorizontalAlignment="Center"
                                     ToolTip="Operand for the math function."
@@ -41,7 +41,7 @@
                           BorderThickness="1"
                           AlternationCount="1"
                           Padding="0"
-                          Width="90"
+                          Width="72"
                           DockPanel.Dock="Top"
                           HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
@@ -81,7 +81,7 @@
                           BorderThickness="1"
                           AlternationCount="1"
                           Padding="0"
-                          Width="90"
+                          Width="72"
                           DockPanel.Dock="Top"
                           HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
