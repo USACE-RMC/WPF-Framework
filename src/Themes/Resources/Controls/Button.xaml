@@ -85,40 +85,58 @@
     <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource ToggleButtonStyle}"/>
 
     <Style x:Key="StackPanelToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowText}" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Padding" Value="2" />
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource ToolbarButtonDefaultText}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border Name="Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                    <Border x:Name="Border" BorderThickness="1">
+                        <ContentPresenter x:Name="Content" Margin="2"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Button.MouseOver.Border}" />
+                        <!-- Hovered -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="False" />
+                                <Condition Property="IsChecked" Value="False" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToolbarButtonHoveredBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ToolbarButtonHoveredBorder}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource ToolbarButtonHoveredText}" />
+                        </MultiTrigger>
+
+                        <!-- Pressed -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToolbarButtonPressedBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ToolbarButtonPressedBorder}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource ToolbarButtonPressedText}" />
+                        </MultiTrigger>
+
+                        <!-- Checked (toggle is on) -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource ToolbarButtonPressedBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ToolbarButtonPressedBorder}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource ToolbarButtonPressedText}" />
                         </Trigger>
-                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource Button.MouseOver.Border}" />
+
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ToolbarButtonDisabledText}" />
+                            <Setter Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource Button.MouseOver.Background}" />
-            </Trigger>
-            <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                <Setter Property="Background" Value="{DynamicResource Button.MouseOver.Background}" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}" />
-                <Setter Property="Opacity" Value="0.5" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
