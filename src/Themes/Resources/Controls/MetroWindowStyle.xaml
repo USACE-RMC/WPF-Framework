@@ -101,7 +101,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
                     <Border x:Name="WindowBorder" Margin="{Binding Source={x:Static SystemParameters.WindowNonClientFrameThickness}}"
-                            Background="{TemplateBinding BorderBrush}">
+                            Background="{DynamicResource EnvironmentWindowBackground}">
                         <Grid>
                             <Border BorderThickness="1">
                                 <AdornerDecorator>
@@ -270,7 +270,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
                     <Border x:Name="WindowBorder" Margin="{Binding Source={x:Static SystemParameters.WindowNonClientFrameThickness}}"
-                            Background="{TemplateBinding BorderBrush}">
+                            Background="{DynamicResource EnvironmentWindowBackground}">
                         <Grid>
                             <Border BorderThickness="1">
                                 <AdornerDecorator>
