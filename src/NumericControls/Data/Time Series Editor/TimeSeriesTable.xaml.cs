@@ -262,13 +262,13 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Converts a math function type to an icon rectangle with the appropriate brush.
+        /// Converts a math function type to an icon element.
         /// </summary>
         /// <param name="fnc">The math function type.</param>
-        /// <returns>A Rectangle filled with the function's icon brush.</returns>
-        private Rectangle FunctionToImage(MathFunctionType fnc)
+        /// <returns>A ContentControl containing the function's icon.</returns>
+        private ContentControl FunctionToImage(MathFunctionType fnc)
         {
-            return new Rectangle { Width = 16, Height = 16, Fill = MathFunctionTypeToIconConverter.GetIconBrush(fnc) };
+            return new ContentControl { Width = 16, Height = 16, Content = MathFunctionTypeToIconConverter.GetIcon(fnc) };
         }
 
         /// <summary>

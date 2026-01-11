@@ -67,8 +67,8 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Rectangle Width="16" Height="16"
-                                       Fill="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
+                            <ContentControl Width="16" Height="16"
+                                            Content="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -107,8 +107,8 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Rectangle Width="16" Height="16"
-                                       Fill="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
+                            <ContentControl Width="16" Height="16"
+                                            Content="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

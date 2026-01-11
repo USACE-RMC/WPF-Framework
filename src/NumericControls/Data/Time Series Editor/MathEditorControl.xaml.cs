@@ -384,11 +384,44 @@ namespace NumericControls
     public class MathFunctionTypeToIconConverter : IValueConverter
     {
         /// <summary>
+        /// Gets the icon resource key for a mathematical function type.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>The resource key for the function's icon.</returns>
+        public static string GetIconResourceKey(MathFunctionType function)
+        {
+            switch (function)
+            {
+                case MathFunctionType.Add: return "CalculatorPlusIcon";
+                case MathFunctionType.Subtract: return "CalculatorMinusIcon";
+                case MathFunctionType.Multiply: return "CalculatorMultiplyIcon";
+                case MathFunctionType.Divide: return "CalculatorDivideIcon";
+                case MathFunctionType.Exponentiate: return "CalculatorExpIcon";
+                case MathFunctionType.Logarithm: return "CalculatorLogIcon";
+                case MathFunctionType.Inverse: return "CalculatorInvertIcon";
+                case MathFunctionType.Replace: return "CalculatorReplaceIcon";
+                case MathFunctionType.Interpolate: return "CalculatorInterpolateIcon";
+                default: return "CalculatorIcon";
+            }
+        }
+
+        /// <summary>
+        /// Gets the icon element for a mathematical function type from application resources.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>A <see cref="FrameworkElement"/> representing the function's icon.</returns>
+        public static FrameworkElement GetIcon(MathFunctionType function)
+        {
+            string resourceKey = GetIconResourceKey(function);
+            return Application.Current.TryFindResource(resourceKey) as FrameworkElement;
+        }
+
+        /// <summary>
         /// Gets the icon brush resource key for a mathematical function type.
         /// </summary>
         /// <param name="function">The mathematical function type.</param>
         /// <returns>The resource key for the function's icon brush.</returns>
-        public static string GetIconResourceKey(MathFunctionType function)
+        public static string GetIconBrushResourceKey(MathFunctionType function)
         {
             switch (function)
             {
@@ -412,7 +445,7 @@ namespace NumericControls
         /// <returns>A <see cref="Brush"/> representing the function's icon.</returns>
         public static Brush GetIconBrush(MathFunctionType function)
         {
-            string resourceKey = GetIconResourceKey(function);
+            string resourceKey = GetIconBrushResourceKey(function);
             return Application.Current.TryFindResource(resourceKey) as Brush;
         }
 
@@ -421,7 +454,7 @@ namespace NumericControls
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
 
-            return GetIconBrush((MathFunctionType)value);
+            return GetIcon((MathFunctionType)value);
         }
 
         /// <inheritdoc/>
