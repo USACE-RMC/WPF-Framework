@@ -14,7 +14,7 @@
         <!--Add Rows-->
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="32"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="32"/>
         </Grid.RowDefinitions>
