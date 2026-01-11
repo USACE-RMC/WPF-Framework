@@ -50,12 +50,12 @@ namespace NumericControls
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class NumericEntry : MetroDialogWindow
+    public partial class NumericEntryDialog : MetroDialogWindow
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NumericEntry"/> class.
+        /// Initializes a new instance of the <see cref="NumericEntryDialog"/> class.
         /// </summary>
-        public NumericEntry()
+        public NumericEntryDialog()
         {
             InitializeComponent();
         }

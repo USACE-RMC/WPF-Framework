@@ -294,7 +294,7 @@ namespace NumericControls
 
             if (HasOperand(f))
             {
-                var w = new NumericEntry() { Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner };
+                var w = new NumericEntryDialog() { Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner };
                 var c = new MathFunctionTypeToNameConverter();
                 var cToolTip = new MathFunctionTypeToTooltipConverter();
                 w.Title = (string)c.Convert(f, f.GetType(), null, null);
