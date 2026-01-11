@@ -260,28 +260,23 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- INVERT ICON                                                                  -->
-    <!-- Teal circular swap arrows                                                    -->
+    <!-- Teal "1/x" inline diagonal                                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="CalculatorInvertIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Top curved arrow pointing right -->
-            <Path Data="M3,5 A5,5 0 0 1 13,5"
-                  Stroke="#14B8A6" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  Fill="Transparent"/>
-            <Path Data="M11,2 L13,5 L10,6"
-                  Stroke="#14B8A6" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  StrokeLineJoin="Round" Fill="Transparent"/>
-            <!-- Bottom curved arrow pointing left -->
-            <Path Data="M13,11 A5,5 0 0 1 3,11"
-                  Stroke="#14B8A6" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  Fill="Transparent"/>
-            <Path Data="M5,14 L3,11 L6,10"
-                  Stroke="#14B8A6" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  StrokeLineJoin="Round" Fill="Transparent"/>
+            <!-- 1 -->
+            <TextBlock Text="1" FontFamily="Cambria" FontSize="11" FontWeight="Bold"
+                       Foreground="#14B8A6"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="1,0,0,0"/>
+            <!-- Diagonal slash -->
+            <Path Data="M4,14 L12,2" Stroke="#14B8A6" StrokeThickness="1.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- x -->
+            <TextBlock Text="x" FontFamily="Cambria" FontSize="11" FontStyle="Italic" FontWeight="SemiBold"
+                       Foreground="#14B8A6"
+                       HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Margin="0,0,1,0"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorInvertIconBrush" Stretch="Uniform">
@@ -366,21 +361,24 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- INTERPOLATE ICON                                                             -->
-    <!-- Pink curve with bold endpoint dots                                           -->
+    <!-- Pink two dots with gapped line between                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="CalculatorInterpolateIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Interpolation curve - bolder -->
-            <Path Data="M2,12 C5,12 6,4 8,8 C10,12 11,4 14,4"
+            <!-- Left line segment -->
+            <Path Data="M4,12 L6,9"
                   Stroke="#EC4899" StrokeThickness="2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  Fill="Transparent"/>
-            <!-- Start point - larger -->
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Right line segment (gap in middle) -->
+            <Path Data="M10,7 L12,4"
+                  Stroke="#EC4899" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Start point -->
             <Ellipse Width="4" Height="4" Fill="#EC4899"
                      HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-            <!-- End point - larger -->
+            <!-- End point -->
             <Ellipse Width="4" Height="4" Fill="#EC4899"
-                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorInterpolateIconBrush" Stretch="Uniform">
