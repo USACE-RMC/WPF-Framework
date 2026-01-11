@@ -1165,9 +1165,9 @@ namespace OxyPlotControls
                 IsOpen = true
             };
             // Use theme-aware colors for the tooltip
-            toolTip.SetResourceReference(ToolTip.BackgroundProperty, "EnvironmentToolTipBackground");
-            toolTip.SetResourceReference(ToolTip.BorderBrushProperty, "EnvironmentToolTipBorder");
-            toolTip.SetResourceReference(ToolTip.ForegroundProperty, "EnvironmentToolTipText");
+            toolTip.SetResourceReference(Control.BackgroundProperty, "EnvironmentToolTipBackground");
+            toolTip.SetResourceReference(Control.BorderBrushProperty, "EnvironmentToolTipBorder");
+            toolTip.SetResourceReference(Control.ForegroundProperty, "EnvironmentToolTipText");
             lineAnnotation.ToolTip = toolTip;
         }
 
