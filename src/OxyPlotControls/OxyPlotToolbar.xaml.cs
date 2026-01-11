@@ -1158,14 +1158,16 @@ namespace OxyPlotControls
                 FontFamily = Plot.FontFamily,
                 FontSize = Plot.FontSize,
                 FontWeight = Plot.FontWeight,
-                Background = Brushes.White,
-                BorderBrush = Brushes.Transparent,
                 Placement = PlacementMode.Relative,
                 PlacementTarget = Plot.canvas,
                 Padding = new Thickness(1),
                 Margin = new Thickness(0),
                 IsOpen = true
             };
+            // Use theme-aware colors for the tooltip
+            toolTip.SetResourceReference(ToolTip.BackgroundProperty, "EnvironmentToolTipBackground");
+            toolTip.SetResourceReference(ToolTip.BorderBrushProperty, "EnvironmentToolTipBorder");
+            toolTip.SetResourceReference(ToolTip.ForegroundProperty, "EnvironmentToolTipText");
             lineAnnotation.ToolTip = toolTip;
         }
 
