@@ -99,30 +99,53 @@
                 x:Name="PresetToggleButton"
                 Width="38" Height="24"
                 Padding="0"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
+                BorderThickness="0"
+                Background="Transparent"
                 ToolTip="Calculator"
-                Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
                 IsHitTestVisible="{Binding ElementName=PresetsPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
-                <Grid Width="36" Height="22">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="22"/>
-                        <ColumnDefinition Width="14"/>
-                    </Grid.ColumnDefinitions>
-
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="border"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            SnapsToDevicePixels="True">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          SnapsToDevicePixels="True"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background"
+                                                    Value="{DynamicResource Button.MouseOver.Background}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background"
+                                                    Value="{DynamicResource Button.Pressed.Background}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="border" Property="Background"
+                                                    Value="{DynamicResource Button.Pressed.Background}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Style>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <ContentControl
                         Content="{DynamicResource CalculatorIcon}"
                         Width="16" Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"/>
-
+                        Margin="4,0,2,0"/>
                     <Path
-                        Grid.Column="1"
                         VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
+                        Margin="0,0,4,0"
                         Fill="{DynamicResource EnvironmentWindowText}"
-                        Data="M 0,0 L 3,5 L 6,0 Z"/>
-                </Grid>
+                        Data="M 0,0 L 3,4 L 6,0 Z"/>
+                </StackPanel>
             </ToggleButton>
 
             <!--PLACEMENT HACK-->

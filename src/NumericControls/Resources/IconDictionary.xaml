@@ -24,19 +24,31 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- CALCULATOR BASE ICON                                                         -->
-    <!-- Simple calculator outline - theme aware                                      -->
+    <!-- Modern calculator with clean lines - theme aware                             -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="CalculatorIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Calculator body -->
-            <Path Data="M3,1 H13 A1,1 0 0 1 14,2 V14 A1,1 0 0 1 13,15 H3 A1,1 0 0 1 2,14 V2 A1,1 0 0 1 3,1 Z"
+            <!-- Calculator body - rounded rectangle -->
+            <Path Data="M3,1 H13 A2,2 0 0 1 15,3 V13 A2,2 0 0 1 13,15 H3 A2,2 0 0 1 1,13 V3 A2,2 0 0 1 3,1 Z"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                  Fill="Transparent" StrokeLineJoin="Round"/>
+            <!-- Display screen -->
+            <Path Data="M3,3 H13 V6 H3 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}" Opacity="0.3"/>
+            <!-- Plus symbol -->
+            <Path Data="M5,9 H7 M6,8 V10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="Transparent"/>
-            <!-- Display -->
-            <Path Data="M4,3 H12 V5 H4 Z"
-                  Fill="{DynamicResource EnvironmentWindowText}"/>
-            <!-- Buttons -->
-            <Path Data="M5,7 H6 M8,7 H9 M11,7 H12 M5,9 H6 M8,9 H9 M11,9 H12 M5,11 H6 M8,11 H9 M11,11 H12"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Minus symbol -->
+            <Path Data="M9,9 H11"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Equals symbol -->
+            <Path Data="M5,12 H7 M5,13.5 H7"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Multiply symbol -->
+            <Path Data="M9,11.5 L11,13.5 M11,11.5 L9,13.5"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
@@ -46,20 +58,20 @@
             <DrawingGroup>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M3,1 H13 A1,1 0 0 1 14,2 V14 A1,1 0 0 1 13,15 H3 A1,1 0 0 1 2,14 V2 A1,1 0 0 1 3,1 Z"/>
+                        <PathGeometry Figures="M3,1 H13 A2,2 0 0 1 15,3 V13 A2,2 0 0 1 13,15 H3 A2,2 0 0 1 1,13 V3 A2,2 0 0 1 3,1 Z"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1"/>
+                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1.5" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="4,3,8,2"/>
-                    </GeometryDrawing.Geometry>
+                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="M3,3 H13 V6 H3 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Thickness="0"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M5,7 H6 M8,7 H9 M11,7 H12 M5,9 H6 M8,9 H9 M11,9 H12 M5,11 H6 M8,11 H9 M11,11 H12"/>
+                        <PathGeometry Figures="M5,9 H7 M6,8 V10 M9,9 H11 M5,12 H7 M5,13.5 H7 M9,11.5 L11,13.5 M11,11.5 L9,13.5"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
                         <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1" StartLineCap="Round" EndLineCap="Round"/>
