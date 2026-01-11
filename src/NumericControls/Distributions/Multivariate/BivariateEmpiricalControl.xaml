@@ -132,7 +132,7 @@
 
             <!-- Plot tab -->
             <TabItem Header="Plot" Style="{DynamicResource HorizontalTabItemStyle}">
-                <Grid>
+                <Grid Background="{DynamicResource PlotWindowBackground}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>

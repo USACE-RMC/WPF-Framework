@@ -98,7 +98,7 @@
                                    Text="Full-featured distribution selector with parameters, plot, and summary statistics. ."/>
 
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" HorizontalAlignment="Left">
-                            <uni:DistributionSelectorControl x:Name="DistSelectorWithFitting" Width="400"
+                            <uni:DistributionSelectorControl x:Name="DistSelectorWithFitting" Width="400" 
                                 BorderBrush="{DynamicResource Button.Static.Border}"
                                 BackgroundColor="{DynamicResource EnvironmentWindowBackground}"
                                 BorderThickness="1"
