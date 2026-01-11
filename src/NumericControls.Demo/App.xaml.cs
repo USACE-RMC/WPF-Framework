@@ -53,6 +53,20 @@ namespace NumericControls.Demo
     public partial class App : Application
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class.
+        /// </summary>
+        public App()
+        {
+            // Set WPF to use the current culture for all bindings (international number support)
+            // This ensures StringFormat in XAML bindings uses the user's locale settings
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(
+                        System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag)));
+        }
+
+        /// <summary>
         /// Handles the application startup event.
         /// Initializes the theme system before creating any UI elements.
         /// </summary>

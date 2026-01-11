@@ -69,6 +69,14 @@ namespace FrameworkUI.Demo
         /// </summary>
         public App()
         {
+            // Set WPF to use the current culture for all bindings (international number support)
+            // This ensures StringFormat in XAML bindings uses the user's locale settings
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(
+                        System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag)));
+
             // Set up global exception handlers for debugging
             AppDomain.CurrentDomain.UnhandledException += (s, args) =>
             {
