@@ -33,6 +33,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using GenericControls;
 using Microsoft.Win32;
 using OxyPlot.Wpf;
 
@@ -42,7 +43,7 @@ namespace OxyPlotControls
     /// A dialog window for saving OxyPlot charts as image files.
     /// Supports PNG, PDF, and SVG formats with customizable dimensions.
     /// </summary>
-    public partial class SavePlotImageDialog : Window
+    public partial class SavePlotImageDialog : MetroDialogWindow
     {
         private Plot _plot;
 

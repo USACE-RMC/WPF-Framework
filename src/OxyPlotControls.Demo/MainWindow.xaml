@@ -1,17 +1,19 @@
-<Window x:Class="OxyPlotControls.Demo.MainWindow" x:Name="TestWindow"
+<cntrls:MetroWindow x:Class="OxyPlotControls.Demo.MainWindow" x:Name="TestWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OxyPlotControls.Demo"
+        xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:controls="clr-namespace:OxyPlotControls;assembly=OxyPlotControls"
         mc:Ignorable="d"
         Title="OxyPlotControls Demo - USACE Risk Management Center"
         Height="750" Width="1100" MinWidth="900" MinHeight="600"
+        Style="{DynamicResource MetroWindowStyle}"
         Background="{DynamicResource EnvironmentWindowBackground}">
 
-    <Window.Resources>
+    <cntrls:MetroWindow.Resources>
         <ResourceDictionary>
             <!-- Demo section header style -->
             <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
@@ -50,7 +52,7 @@
                 </Style.Triggers>
             </Style>
         </ResourceDictionary>
-    </Window.Resources>
+    </cntrls:MetroWindow.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -281,4 +283,4 @@
             </Grid>
         </Border>
     </Grid>
-</Window>
+</cntrls:MetroWindow>

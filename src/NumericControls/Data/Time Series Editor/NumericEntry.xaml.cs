@@ -29,6 +29,7 @@
 */
 
 using System.Windows;
+using GenericControls;
 
 namespace NumericControls
 {
@@ -49,7 +50,7 @@ namespace NumericControls
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class NumericEntry : Window
+    public partial class NumericEntry : MetroDialogWindow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NumericEntry"/> class.
