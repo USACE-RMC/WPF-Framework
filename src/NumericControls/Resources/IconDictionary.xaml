@@ -24,22 +24,21 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- CALCULATOR BASE ICON                                                         -->
-    <!-- Simple calculator outline                                                    -->
+    <!-- Simple calculator outline - theme aware                                      -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Calculator body -->
-            <Rectangle Width="12" Height="14" RadiusX="1" RadiusY="1"
-                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                       Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Path Data="M3,1 H13 A1,1 0 0 1 14,2 V14 A1,1 0 0 1 13,15 H3 A1,1 0 0 1 2,14 V2 A1,1 0 0 1 3,1 Z"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  Fill="Transparent"/>
             <!-- Display -->
-            <Rectangle Width="8" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
-                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,3,0,0"/>
+            <Path Data="M4,3 H12 V5 H4 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}"/>
             <!-- Buttons -->
-            <Path Data="M5,7 H7 M9,7 H11 M5,9.5 H7 M9,9.5 H11 M5,12 H7 M9,12 H11"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Path Data="M5,7 H6 M8,7 H9 M11,7 H12 M5,9 H6 M8,9 H9 M11,9 H12 M5,11 H6 M8,11 H9 M11,11 H12"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorIconBrush" Stretch="Uniform">
@@ -47,10 +46,10 @@
             <DrawingGroup>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="2,1,12,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M3,1 H13 A1,1 0 0 1 14,2 V14 A1,1 0 0 1 13,15 H3 A1,1 0 0 1 2,14 V2 A1,1 0 0 1 3,1 Z"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1.5"/>
+                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
@@ -60,10 +59,10 @@
                 </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M5,7 H7 M9,7 H11 M5,9.5 H7 M9,9.5 H11 M5,12 H7 M9,12 H11"/>
+                        <PathGeometry Figures="M5,7 H6 M8,7 H9 M11,7 H12 M5,9 H6 M8,9 H9 M11,9 H12 M5,11 H6 M8,11 H9 M11,11 H12"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -74,12 +73,11 @@
     <!-- ADD / PLUS ICON                                                              -->
     <!-- Green plus sign for addition                                                 -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorPlusIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorPlusIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M8,3 V13 M3,8 H13"
-                  Stroke="#16A34A" StrokeThickness="2.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  Stroke="#16A34A" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorPlusIconBrush" Stretch="Uniform">
@@ -89,7 +87,7 @@
                     <PathGeometry Figures="M8,3 V13 M3,8 H13"/>
                 </GeometryDrawing.Geometry>
                 <GeometryDrawing.Pen>
-                    <Pen Brush="#16A34A" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                    <Pen Brush="#16A34A" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
                 </GeometryDrawing.Pen>
             </GeometryDrawing>
         </DrawingBrush.Drawing>
@@ -99,12 +97,11 @@
     <!-- SUBTRACT / MINUS ICON                                                        -->
     <!-- Red minus sign for subtraction                                               -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorMinusIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorMinusIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M3,8 H13"
-                  Stroke="#DC2626" StrokeThickness="2.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  Stroke="#DC2626" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorMinusIconBrush" Stretch="Uniform">
@@ -114,7 +111,7 @@
                     <PathGeometry Figures="M3,8 V8.01 M3,8 H13"/>
                 </GeometryDrawing.Geometry>
                 <GeometryDrawing.Pen>
-                    <Pen Brush="#DC2626" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                    <Pen Brush="#DC2626" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
                 </GeometryDrawing.Pen>
             </GeometryDrawing>
         </DrawingBrush.Drawing>
@@ -124,12 +121,11 @@
     <!-- MULTIPLY ICON                                                                -->
     <!-- Orange X for multiplication                                                  -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorMultiplyIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorMultiplyIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M4,4 L12,12 M12,4 L4,12"
-                  Stroke="#F97316" StrokeThickness="2.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  Stroke="#F97316" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorMultiplyIconBrush" Stretch="Uniform">
@@ -139,7 +135,7 @@
                     <PathGeometry Figures="M4,4 L12,12 M12,4 L4,12"/>
                 </GeometryDrawing.Geometry>
                 <GeometryDrawing.Pen>
-                    <Pen Brush="#F97316" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                    <Pen Brush="#F97316" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
                 </GeometryDrawing.Pen>
             </GeometryDrawing>
         </DrawingBrush.Drawing>
@@ -149,11 +145,11 @@
     <!-- DIVIDE ICON                                                                  -->
     <!-- Purple division symbol (obelus)                                              -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorDivideIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorDivideIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Horizontal line -->
             <Path Data="M3,8 H13"
-                  Stroke="#8B5CF6" StrokeThickness="2.5"
+                  Stroke="#8B5CF6" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
             <!-- Top dot -->
             <Ellipse Width="3" Height="3" Fill="#8B5CF6"
@@ -171,7 +167,7 @@
                         <PathGeometry Figures="M3,8 H13"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#8B5CF6" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="#8B5CF6" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Brush="#8B5CF6">
@@ -192,11 +188,11 @@
     <!-- LOGARITHM ICON                                                               -->
     <!-- Cyan log curve symbol                                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorLogIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorLogIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Log curve -->
             <Path Data="M2,13 Q4,13 5,10 T9,4 Q11,2 14,2"
-                  Stroke="#0891B2" StrokeThickness="2"
+                  Stroke="#0891B2" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   Fill="Transparent"/>
             <!-- Base indicator dot -->
@@ -212,7 +208,7 @@
                         <PathGeometry Figures="M2,13 Q4,13 5,10 T9,4 Q11,2 14,2"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#0891B2" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="#0891B2" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Brush="#0891B2">
@@ -228,11 +224,11 @@
     <!-- EXPONENT / POWER ICON                                                        -->
     <!-- Blue x with superscript n                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorExpIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorExpIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Base 'x' -->
             <Path Data="M2,6 L8,13 M8,6 L2,13"
-                  Stroke="#2563EB" StrokeThickness="2"
+                  Stroke="#2563EB" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
             <!-- Superscript 'n' -->
             <Path Data="M10,2 V6 M10,3 Q10,2 11.5,2 T13,3 V6"
@@ -249,7 +245,7 @@
                         <PathGeometry Figures="M2,6 L8,13 M8,6 L2,13"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#2563EB" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="#2563EB" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
@@ -268,24 +264,24 @@
     <!-- INVERT ICON                                                                  -->
     <!-- Teal circular arrows (1/x or flip)                                           -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorInvertIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorInvertIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Top arrow curving right -->
             <Path Data="M4,6 A4,4 0 0 1 12,6"
-                  Stroke="#14B8A6" StrokeThickness="2"
+                  Stroke="#14B8A6" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   Fill="Transparent"/>
             <Path Data="M10,3 L12,6 L9,7"
-                  Stroke="#14B8A6" StrokeThickness="2"
+                  Stroke="#14B8A6" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   StrokeLineJoin="Round" Fill="Transparent"/>
             <!-- Bottom arrow curving left -->
             <Path Data="M12,10 A4,4 0 0 1 4,10"
-                  Stroke="#14B8A6" StrokeThickness="2"
+                  Stroke="#14B8A6" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   Fill="Transparent"/>
             <Path Data="M6,13 L4,10 L7,9"
-                  Stroke="#14B8A6" StrokeThickness="2"
+                  Stroke="#14B8A6" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   StrokeLineJoin="Round" Fill="Transparent"/>
         </Grid>
@@ -298,7 +294,7 @@
                         <PathGeometry Figures="M4,6 A4,4 0 0 1 12,6"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
@@ -306,7 +302,7 @@
                         <PathGeometry Figures="M10,3 L12,6 L9,7"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
+                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
@@ -314,7 +310,7 @@
                         <PathGeometry Figures="M12,10 A4,4 0 0 1 4,10"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
@@ -322,7 +318,7 @@
                         <PathGeometry Figures="M6,13 L4,10 L7,9"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
+                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -333,16 +329,16 @@
     <!-- REPLACE ICON                                                                 -->
     <!-- Amber bidirectional horizontal arrows                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorReplaceIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorReplaceIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Right arrow -->
             <Path Data="M2,5 H12 M9,2 L12,5 L9,8"
-                  Stroke="#F59E0B" StrokeThickness="2"
+                  Stroke="#F59E0B" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   StrokeLineJoin="Round"/>
             <!-- Left arrow -->
             <Path Data="M14,11 H4 M7,8 L4,11 L7,14"
-                  Stroke="#F59E0B" StrokeThickness="2"
+                  Stroke="#F59E0B" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   StrokeLineJoin="Round"/>
         </Grid>
@@ -355,7 +351,7 @@
                         <PathGeometry Figures="M2,5 H12 M9,2 L12,5 L9,8"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#F59E0B" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
+                        <Pen Brush="#F59E0B" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
@@ -363,7 +359,7 @@
                         <PathGeometry Figures="M14,11 H4 M7,8 L4,11 L7,14"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#F59E0B" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
+                        <Pen Brush="#F59E0B" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -374,19 +370,19 @@
     <!-- INTERPOLATE ICON                                                             -->
     <!-- Pink curve with endpoint dots                                                -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorInterpolateIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="CalculatorInterpolateIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Interpolation curve -->
             <Path Data="M2,12 Q5,12 8,8 T14,4"
-                  Stroke="#EC4899" StrokeThickness="2"
+                  Stroke="#EC4899" StrokeThickness="1.5"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   Fill="Transparent"/>
             <!-- Start point -->
-            <Ellipse Width="4" Height="4" Fill="#EC4899"
-                     HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+            <Ellipse Width="3" Height="3" Fill="#EC4899"
+                     HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0.5,0,0,0.5"/>
             <!-- End point -->
-            <Ellipse Width="4" Height="4" Fill="#EC4899"
-                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0"/>
+            <Ellipse Width="3" Height="3" Fill="#EC4899"
+                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2.5,0.5,0"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorInterpolateIconBrush" Stretch="Uniform">
@@ -397,17 +393,17 @@
                         <PathGeometry Figures="M2,12 Q5,12 8,8 T14,4"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#EC4899" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                        <Pen Brush="#EC4899" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Brush="#EC4899">
                     <GeometryDrawing.Geometry>
-                        <EllipseGeometry Center="2,12" RadiusX="2" RadiusY="2"/>
+                        <EllipseGeometry Center="2,12" RadiusX="1.5" RadiusY="1.5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
                 <GeometryDrawing Brush="#EC4899">
                     <GeometryDrawing.Geometry>
-                        <EllipseGeometry Center="14,4" RadiusX="2" RadiusY="2"/>
+                        <EllipseGeometry Center="14,4" RadiusX="1.5" RadiusY="1.5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -418,11 +414,11 @@
     <!-- EDIT / PENCIL ICON                                                           -->
     <!-- Clean pencil icon for editing                                                -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="EditIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="EditIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Pencil body -->
             <Path Data="M2,14 L3,10 L12,1 L15,4 L6,13 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   StrokeLineJoin="Round" Fill="#F59E0B"/>
             <!-- Pencil tip -->
             <Path Data="M2,14 L3,10 L6,13 Z"
@@ -453,7 +449,7 @@
     <!-- RUN / PLAY ICON                                                              -->
     <!-- Green play triangle for execute actions                                      -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="RunIcon" Width="16" Height="16" x:Shared="False">
+    <Viewbox x:Key="RunIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M4,2 L14,8 L4,14 Z"
                   Fill="#16A34A" Stroke="#15803D" StrokeThickness="1"
