@@ -4,252 +4,184 @@
     <!--
     NumericControls Vector Icon Dictionary
 
-    Professional vector icons that adapt to Light, Blue, and Dark themes.
-    Icons use DynamicResource bindings to theme colors for automatic updates.
+    Modern, clean vector icons using Path elements with strokes.
+    Matches the style of GenericControls icons for visual consistency.
+
+    Color Palette:
+    - #16A34A (Green): Add/Plus operations
+    - #DC2626 (Red): Subtract/Remove operations
+    - #F97316 (Orange): Multiply operations
+    - #8B5CF6 (Purple): Divide operations
+    - #2563EB (Blue): Exponent/Power operations
+    - #0891B2 (Cyan): Log operations
+    - #14B8A6 (Teal): Invert operations
+    - #F59E0B (Amber): Replace operations
+    - #EC4899 (Pink): Interpolate operations
 
     Usage:
-    <ContentControl Content="{DynamicResource CalculatorIcon}" Width="16" Height="16"/>
-    or
-    <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorIconBrush}"/>
+    <ContentControl Content="{StaticResource CalculatorPlusIcon}" Width="16" Height="16"/>
     -->
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- CALCULATOR BASE ICON                                                         -->
-    <!-- A simple calculator with display and button grid                             -->
+    <!-- Simple calculator outline                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Calculator body -->
+            <Rectangle Width="12" Height="14" RadiusX="1" RadiusY="1"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                       Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <!-- Display -->
+            <Rectangle Width="8" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,3,0,0"/>
+            <!-- Buttons -->
+            <Path Data="M5,7 H7 M9,7 H11 M5,9.5 H7 M9,9.5 H11 M5,12 H7 M9,12 H11"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
+                <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,14,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Border}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,14,14" RadiusX="1" RadiusY="1"/>
+                        <RectangleGeometry Rect="2,1,12,14" RadiusX="1" RadiusY="1"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1.5"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,10,3"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Button grid -->
                 <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
                     <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="11,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                            <RectangleGeometry Rect="11,12,2,2"/>
-                        </GeometryGroup>
+                        <RectangleGeometry Rect="4,3,8,2"/>
                     </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M5,7 H7 M9,7 H11 M5,9.5 H7 M9,9.5 H11 M5,12 H7 M9,12 H11"/>
+                    </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR PLUS ICON                                                         -->
-    <!-- Calculator with green plus overlay                                           -->
+    <!-- ADD / PLUS ICON                                                              -->
+    <!-- Green plus sign for addition                                                 -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorPlusIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <Path Data="M8,3 V13 M3,8 H13"
+                  Stroke="#16A34A" StrokeThickness="2.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorPlusIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Plus sign (green) -->
-                <GeometryDrawing Brush="#16C60C">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="11,4,4,2"/>
-                            <RectangleGeometry Rect="12,3,2,4"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
+            <GeometryDrawing>
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M8,3 V13 M3,8 H13"/>
+                </GeometryDrawing.Geometry>
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#16A34A" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR MINUS ICON                                                        -->
-    <!-- Calculator with red minus overlay                                            -->
+    <!-- SUBTRACT / MINUS ICON                                                        -->
+    <!-- Red minus sign for subtraction                                               -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorMinusIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <Path Data="M3,8 H13"
+                  Stroke="#DC2626" StrokeThickness="2.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorMinusIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Minus sign (red) -->
-                <GeometryDrawing Brush="#E51400">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="11,4,4,2"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
+            <GeometryDrawing>
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M3,8 V8.01 M3,8 H13"/>
+                </GeometryDrawing.Geometry>
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#DC2626" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR MULTIPLY ICON                                                     -->
-    <!-- Calculator with multiply (X) overlay                                         -->
+    <!-- MULTIPLY ICON                                                                -->
+    <!-- Orange X for multiplication                                                  -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorMultiplyIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <Path Data="M4,4 L12,12 M12,4 L4,12"
+                  Stroke="#F97316" StrokeThickness="2.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorMultiplyIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Multiply X sign (orange) -->
-                <GeometryDrawing Brush="#F7630C">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M11,2 L12.5,2 L15,4.5 L15,6 L13.5,6 L11,3.5 Z M15,2 L15,3.5 L12.5,6 L11,6 L11,4.5 L13.5,2 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
+            <GeometryDrawing>
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M4,4 L12,12 M12,4 L4,12"/>
+                </GeometryDrawing.Geometry>
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#F97316" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR DIVIDE ICON                                                       -->
-    <!-- Calculator with divide overlay                                               -->
+    <!-- DIVIDE ICON                                                                  -->
+    <!-- Purple division symbol (obelus)                                              -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorDivideIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Horizontal line -->
+            <Path Data="M3,8 H13"
+                  Stroke="#8B5CF6" StrokeThickness="2.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Top dot -->
+            <Ellipse Width="3" Height="3" Fill="#8B5CF6"
+                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,3,0,0"/>
+            <!-- Bottom dot -->
+            <Ellipse Width="3" Height="3" Fill="#8B5CF6"
+                     HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorDivideIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M3,8 H13"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="#8B5CF6" Thickness="2.5" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
+                <GeometryDrawing Brush="#8B5CF6">
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
+                        <EllipseGeometry Center="8,4" RadiusX="1.5" RadiusY="1.5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
+                <GeometryDrawing Brush="#8B5CF6">
                     <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Divide sign (purple) -->
-                <GeometryDrawing Brush="#881798">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <EllipseGeometry Center="13,2" RadiusX="1" RadiusY="1"/>
-                            <RectangleGeometry Rect="11,4,4,1.5"/>
-                            <EllipseGeometry Center="13,7" RadiusX="1" RadiusY="1"/>
-                        </GeometryGroup>
+                        <EllipseGeometry Center="8,12" RadiusX="1.5" RadiusY="1.5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -257,37 +189,35 @@
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR LOG ICON                                                          -->
-    <!-- "log" text icon                                                              -->
+    <!-- LOGARITHM ICON                                                               -->
+    <!-- Cyan log curve symbol                                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorLogIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Log curve -->
+            <Path Data="M2,13 Q4,13 5,10 T9,4 Q11,2 14,2"
+                  Stroke="#0891B2" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Fill="Transparent"/>
+            <!-- Base indicator dot -->
+            <Ellipse Width="3" Height="3" Fill="#0891B2"
+                     HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="1,0,0,1"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorLogIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Background -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="0,0,16,16" RadiusX="2" RadiusY="2"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="0,0,16,16" RadiusX="2" RadiusY="2"/>
+                        <PathGeometry Figures="M2,13 Q4,13 5,10 T9,4 Q11,2 14,2"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="#0891B2" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <!-- "log" text using paths -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
+                <GeometryDrawing Brush="#0891B2">
                     <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <!-- l -->
-                            <RectangleGeometry Rect="2,3,1.5,10"/>
-                            <!-- o -->
-                            <PathGeometry Figures="M5,7 L8,7 L8,13 L5,13 Z M6,8.5 L7,8.5 L7,11.5 L6,11.5 Z"/>
-                            <!-- g -->
-                            <PathGeometry Figures="M9.5,7 L13,7 L13,14 L9.5,14 L9.5,12.5 L11.5,12.5 L11.5,13 L9.5,13 Z M10.5,8.5 L11.5,8.5 L11.5,11 L10.5,11 Z"/>
-                        </GeometryGroup>
+                        <EllipseGeometry Center="2.5,13.5" RadiusX="1.5" RadiusY="1.5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -295,208 +225,190 @@
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR EXP ICON                                                          -->
-    <!-- Calculator with exponent (^) overlay                                         -->
+    <!-- EXPONENT / POWER ICON                                                        -->
+    <!-- Blue x with superscript n                                                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorExpIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Base 'x' -->
+            <Path Data="M2,6 L8,13 M8,6 L2,13"
+                  Stroke="#2563EB" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <!-- Superscript 'n' -->
+            <Path Data="M10,2 V6 M10,3 Q10,2 11.5,2 T13,3 V6"
+                  Stroke="#2563EB" StrokeThickness="1.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  StrokeLineJoin="Round"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorExpIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
+                <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M2,6 L8,13 M8,6 L2,13"/>
                     </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#2563EB" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M10,2 V6 M10,3 Q10,2 11.5,2 T13,3 V6"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="#2563EB" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Exp caret ^ (cyan) -->
-                <GeometryDrawing Brush="#0078D4">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M11,5 L13,2 L15,5 L14,5 L13,3.5 L12,5 Z"/>
-                    </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR INVERT ICON                                                       -->
-    <!-- Calculator with circular arrows (invert/swap)                                -->
+    <!-- INVERT ICON                                                                  -->
+    <!-- Teal circular arrows (1/x or flip)                                           -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorInvertIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Top arrow curving right -->
+            <Path Data="M4,6 A4,4 0 0 1 12,6"
+                  Stroke="#14B8A6" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Fill="Transparent"/>
+            <Path Data="M10,3 L12,6 L9,7"
+                  Stroke="#14B8A6" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  StrokeLineJoin="Round" Fill="Transparent"/>
+            <!-- Bottom arrow curving left -->
+            <Path Data="M12,10 A4,4 0 0 1 4,10"
+                  Stroke="#14B8A6" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Fill="Transparent"/>
+            <Path Data="M6,13 L4,10 L7,9"
+                  Stroke="#14B8A6" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  StrokeLineJoin="Round" Fill="Transparent"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorInvertIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
+                <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M4,6 A4,4 0 0 1 12,6"/>
                     </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M10,3 L12,6 L9,7"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
+                <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
+                        <PathGeometry Figures="M12,10 A4,4 0 0 1 4,10"/>
                     </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
+                <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
+                        <PathGeometry Figures="M6,13 L4,10 L7,9"/>
                     </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Invert arrows (teal) -->
-                <GeometryDrawing Brush="#00B7C3">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M13,1.5 A2.5,2.5 0 0 1 15,4 L14,4 A1.5,1.5 0 0 0 13,2.5 Z M15,4 L15,2 L16,3 Z M13,6.5 A2.5,2.5 0 0 0 11,4 L12,4 A1.5,1.5 0 0 1 13,5.5 Z M11,4 L11,6 L10,5 Z"/>
-                    </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#14B8A6" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR REPLACE ICON                                                      -->
-    <!-- Calculator with replace arrows                                               -->
+    <!-- REPLACE ICON                                                                 -->
+    <!-- Amber bidirectional horizontal arrows                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorReplaceIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Right arrow -->
+            <Path Data="M2,5 H12 M9,2 L12,5 L9,8"
+                  Stroke="#F59E0B" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  StrokeLineJoin="Round"/>
+            <!-- Left arrow -->
+            <Path Data="M14,11 H4 M7,8 L4,11 L7,14"
+                  Stroke="#F59E0B" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  StrokeLineJoin="Round"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorReplaceIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
+                <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M2,5 H12 M9,2 L12,5 L9,8"/>
                     </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#F59E0B" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
+                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M14,11 H4 M7,8 L4,11 L7,14"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="#F59E0B" Thickness="2" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Replace arrows (gold) -->
-                <GeometryDrawing Brush="#FFB900">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <!-- Right arrow -->
-                            <PathGeometry Figures="M11,2 L15,2 L15,3 L11,3 Z M14,1 L16,2.5 L14,4 Z"/>
-                            <!-- Left arrow -->
-                            <PathGeometry Figures="M11,5 L15,5 L15,6 L11,6 Z M12,4 L10,5.5 L12,7 Z"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CALCULATOR INTERPOLATE ICON                                                  -->
-    <!-- Calculator with interpolation curve                                          -->
+    <!-- INTERPOLATE ICON                                                             -->
+    <!-- Pink curve with endpoint dots                                                -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="CalculatorInterpolateIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Interpolation curve -->
+            <Path Data="M2,12 Q5,12 8,8 T14,4"
+                  Stroke="#EC4899" StrokeThickness="2"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                  Fill="Transparent"/>
+            <!-- Start point -->
+            <Ellipse Width="4" Height="4" Fill="#EC4899"
+                     HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+            <!-- End point -->
+            <Ellipse Width="4" Height="4" Fill="#EC4899"
+                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="CalculatorInterpolateIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Calculator body -->
-                <GeometryDrawing Brush="{DynamicResource Button.Static.Background}">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,11,14" RadiusX="1" RadiusY="1"/>
+                        <PathGeometry Figures="M2,12 Q5,12 8,8 T14,4"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource Button.Static.Border}" Thickness="1"/>
+                        <Pen Brush="#EC4899" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
-                <!-- Display -->
-                <GeometryDrawing Brush="{DynamicResource AccentBrush}">
+                <GeometryDrawing Brush="#EC4899">
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="3,3,7,3"/>
+                        <EllipseGeometry Center="2,12" RadiusX="2" RadiusY="2"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Button grid -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
+                <GeometryDrawing Brush="#EC4899">
                     <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <RectangleGeometry Rect="3,8,2,2"/>
-                            <RectangleGeometry Rect="7,8,2,2"/>
-                            <RectangleGeometry Rect="3,12,2,2"/>
-                            <RectangleGeometry Rect="7,12,2,2"/>
-                        </GeometryGroup>
+                        <EllipseGeometry Center="14,4" RadiusX="2" RadiusY="2"/>
                     </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Interpolation curve and dots (magenta) -->
-                <GeometryDrawing Brush="#E3008C">
-                    <GeometryDrawing.Geometry>
-                        <GeometryGroup>
-                            <EllipseGeometry Center="11,6" RadiusX="1" RadiusY="1"/>
-                            <EllipseGeometry Center="15,2" RadiusX="1" RadiusY="1"/>
-                        </GeometryGroup>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M11,6 Q13,4 15,2"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#E3008C" Thickness="1"/>
-                    </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -504,37 +416,34 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EDIT / PENCIL ICON                                                           -->
-    <!-- Professional pencil icon for editing                                         -->
+    <!-- Clean pencil icon for editing                                                -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="EditIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <!-- Pencil body -->
+            <Path Data="M2,14 L3,10 L12,1 L15,4 L6,13 Z"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
+                  StrokeLineJoin="Round" Fill="#F59E0B"/>
+            <!-- Pencil tip -->
+            <Path Data="M2,14 L3,10 L6,13 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="EditIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
             <DrawingGroup>
-                <!-- Pencil body -->
-                <GeometryDrawing Brush="#FFB900">
+                <GeometryDrawing Brush="#F59E0B">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M2,11 L5,14 L14,5 L11,2 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Pencil tip -->
-                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M1,15 L2,11 L5,14 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Eraser -->
-                <GeometryDrawing Brush="#E3008C">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M11,2 L14,5 L15,4 L12,1 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Outline -->
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M1,15 L2,11 L11,2 L12,1 L15,4 L14,5 L5,14 Z"/>
+                        <PathGeometry Figures="M2,14 L3,10 L12,1 L15,4 L6,13 Z"/>
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="0.5"/>
+                        <Pen Brush="{DynamicResource EnvironmentWindowText}" Thickness="1" LineJoin="Round"/>
                     </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M2,14 L3,10 L6,13 Z"/>
+                    </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingBrush.Drawing>
@@ -542,81 +451,26 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- RUN / PLAY ICON                                                              -->
-    <!-- Green play triangle for run/execute actions                                  -->
+    <!-- Green play triangle for execute actions                                      -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="RunIcon" Width="16" Height="16" x:Shared="False">
+        <Grid Width="16" Height="16">
+            <Path Data="M4,2 L14,8 L4,14 Z"
+                  Fill="#16A34A" Stroke="#15803D" StrokeThickness="1"
+                  StrokeLineJoin="Round"/>
+        </Grid>
+    </Viewbox>
     <DrawingBrush x:Key="RunIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <!-- Play triangle -->
-                <GeometryDrawing Brush="#16C60C">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M3,1 L15,8 L3,15 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Subtle outline for visibility -->
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M3,1 L15,8 L3,15 Z"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#107C10" Thickness="0.5"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-            </DrawingGroup>
+            <GeometryDrawing Brush="#16A34A">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M4,2 L14,8 L4,14 Z"/>
+                </GeometryDrawing.Geometry>
+                <GeometryDrawing.Pen>
+                    <Pen Brush="#15803D" Thickness="1" LineJoin="Round"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
         </DrawingBrush.Drawing>
     </DrawingBrush>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- VIEWBOX-WRAPPED ICONS FOR DIRECT USE                                         -->
-    <!-- These can be used directly as Content for buttons/menu items                 -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <Viewbox x:Key="CalculatorIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorPlusIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorPlusIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorMinusIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorMinusIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorMultiplyIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorMultiplyIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorDivideIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorDivideIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorLogIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorLogIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorExpIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorExpIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorInvertIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorInvertIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorReplaceIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorReplaceIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="CalculatorInterpolateIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource CalculatorInterpolateIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="EditIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource EditIconBrush}"/>
-    </Viewbox>
-
-    <Viewbox x:Key="RunIcon" x:Shared="False" Width="16" Height="16">
-        <Rectangle Width="16" Height="16" Fill="{DynamicResource RunIconBrush}"/>
-    </Viewbox>
 
 </ResourceDictionary>
