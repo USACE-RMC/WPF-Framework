@@ -43,9 +43,7 @@
                PlacementTarget="{Binding ElementName=PART_PopPlacer}"
                PopupAnimation="Slide"
                AllowsTransparency="True"
-               StaysOpen="False"
-               Opened="DistributionPopup_Opened"
-               Closed="DistributionPopup_Closed">
+               StaysOpen="False">
             <Border Background="{DynamicResource EnvironmentWindowBackground}"
                     BorderBrush="{DynamicResource Button.Static.Border}"
                     BorderThickness="1"

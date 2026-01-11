@@ -61,15 +61,6 @@ namespace NumericControls.Distributions.Univariate
         public DistributionSelectorPopup()
         {
             InitializeComponent();
-            Loaded += DistributionSelectorPopup_Loaded;
-        }
-
-        /// <summary>
-        /// Handles the Loaded event to ensure the distribution text is updated when the control loads.
-        /// </summary>
-        private void DistributionSelectorPopup_Loaded(object sender, RoutedEventArgs e)
-        {
-            UpdateDistributionText();
         }
         /// <summary>
         /// Dependency property for the selected distribution.
@@ -221,59 +212,6 @@ namespace NumericControls.Distributions.Univariate
         {
             DistributionPopup.IsOpen = false;
             DistributionPopup.IsOpen = true;
-        }
-
-        /// <summary>
-        /// When the popup opens, ensure the distribution text reflects the current bound distribution.
-        /// This handles cases where the distribution was changed in another bound control.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DistributionPopup_Opened(object sender, EventArgs e)
-        {
-            UpdateDistributionText();
-        }
-
-        /// <summary>
-        /// When the popup closes, update the distribution text to ensure it reflects the current distribution.
-        /// This handles cases where the distribution was changed in another bound control.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DistributionPopup_Closed(object sender, EventArgs e)
-        {
-            UpdateDistributionText();
-        }
-
-        /// <summary>
-        /// Updates the distribution text block to display the current distribution's name and parameters.
-        /// </summary>
-        private void UpdateDistributionText()
-        {
-            if (SelectedDistribution == null)
-            {
-                DistributionTextBlock.Text = "No Distribution Selected";
-            }
-            else if (Distributions.FirstOrDefault(o => o.Type == SelectedDistribution.Type) == null)
-            {
-                DistributionTextBlock.Text = "No Distribution Selected";
-            }
-            else
-            {
-                var sb = new StringBuilder(SelectedDistribution.DisplayName + " (");
-                var shortNames = SelectedDistribution.ParameterNamesShortForm;
-                var paramVals = SelectedDistribution.GetParameters;
-                for (int i = 0; i < shortNames.Count(); i++)
-                {
-                    sb.Append(shortNames[i]);
-                    sb.Append("=");
-                    sb.Append(string.Format("{0:0.#####}", paramVals[i]));
-                    if (i != shortNames.Count() - 1)
-                        sb.Append(", ");
-                }
-                sb.Append(")");
-                DistributionTextBlock.Text = sb.ToString();
-            }
         }
     }
 }
