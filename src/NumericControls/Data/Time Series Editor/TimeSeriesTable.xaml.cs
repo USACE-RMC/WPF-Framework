@@ -337,6 +337,7 @@ namespace NumericControls
             }
 
             // Reselect cells
+            TimeSeriesDataGrid.SelectedCells.Clear();
             foreach (DataGridCellInfo cellInfo in selectedCells)
             {
                 TimeSeriesDataGrid.SelectedCells.Add(cellInfo);
