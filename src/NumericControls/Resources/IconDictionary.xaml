@@ -219,19 +219,20 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EXPONENT / POWER ICON                                                        -->
-    <!-- Blue x with superscript n                                                    -->
+    <!-- Blue x with superscript n - text based                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="CalculatorExpIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Base 'x' -->
-            <Path Data="M2,6 L8,13 M8,6 L2,13"
-                  Stroke="#2563EB" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <TextBlock Text="x" FontFamily="Cambria" FontSize="12" FontStyle="Italic" FontWeight="SemiBold"
+                       Foreground="#2563EB"
+                       HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                       Margin="1,0,0,0"/>
             <!-- Superscript 'n' -->
-            <Path Data="M10,2 V6 M10,3 Q10,2 11.5,2 T13,3 V6"
-                  Stroke="#2563EB" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  StrokeLineJoin="Round"/>
+            <TextBlock Text="n" FontFamily="Cambria" FontSize="8" FontStyle="Italic" FontWeight="SemiBold"
+                       Foreground="#2563EB"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="8,1,0,0"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorExpIconBrush" Stretch="Uniform">
@@ -259,28 +260,22 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- INVERT ICON                                                                  -->
-    <!-- Teal circular arrows (1/x or flip)                                           -->
+    <!-- Teal "1/x" text representation                                               -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="CalculatorInvertIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Top arrow curving right -->
-            <Path Data="M4,6 A4,4 0 0 1 12,6"
-                  Stroke="#14B8A6" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  Fill="Transparent"/>
-            <Path Data="M10,3 L12,6 L9,7"
-                  Stroke="#14B8A6" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  StrokeLineJoin="Round" Fill="Transparent"/>
-            <!-- Bottom arrow curving left -->
-            <Path Data="M12,10 A4,4 0 0 1 4,10"
-                  Stroke="#14B8A6" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  Fill="Transparent"/>
-            <Path Data="M6,13 L4,10 L7,9"
-                  Stroke="#14B8A6" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  StrokeLineJoin="Round" Fill="Transparent"/>
+            <!-- 1/x as stacked fraction -->
+            <TextBlock Text="1" FontFamily="Cambria" FontSize="8" FontWeight="Bold"
+                       Foreground="#14B8A6"
+                       HorizontalAlignment="Center" VerticalAlignment="Top"
+                       Margin="0,0,0,0"/>
+            <!-- Fraction bar -->
+            <Path Data="M4,8 H12" Stroke="#14B8A6" StrokeThickness="1.5"
+                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+            <TextBlock Text="x" FontFamily="Cambria" FontSize="8" FontStyle="Italic" FontWeight="SemiBold"
+                       Foreground="#14B8A6"
+                       HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                       Margin="0,0,0,0"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorInvertIconBrush" Stretch="Uniform">
@@ -365,21 +360,16 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- INTERPOLATE ICON                                                             -->
-    <!-- Pink curve with endpoint dots                                                -->
+    <!-- Pink "int" text for interpolate                                              -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="CalculatorInterpolateIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Interpolation curve -->
-            <Path Data="M2,12 Q5,12 8,8 T14,4"
-                  Stroke="#EC4899" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  Fill="Transparent"/>
-            <!-- Start point -->
-            <Ellipse Width="3" Height="3" Fill="#EC4899"
-                     HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0.5,0,0,0.5"/>
-            <!-- End point -->
-            <Ellipse Width="3" Height="3" Fill="#EC4899"
-                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2.5,0.5,0"/>
+            <!-- "int" text with tighter letter spacing -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="i" FontSize="11" FontWeight="Bold" Foreground="#EC4899"/>
+                <TextBlock Text="n" FontSize="11" FontWeight="Bold" Foreground="#EC4899" Margin="-1,0,0,0"/>
+                <TextBlock Text="t" FontSize="11" FontWeight="Bold" Foreground="#EC4899" Margin="-1,0,0,0"/>
+            </StackPanel>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorInterpolateIconBrush" Stretch="Uniform">
