@@ -83,38 +83,27 @@ namespace NumericControls
             //
             _dt.ColumnChanged += TableColumnChanged;
             _dt.TableNewRow += TableNewRowAdded;
-            // 
+             
             // Column buttons
-            // 
             // Add
             _addColumnButton.Click += AddColumns_Click;
-            var addImage = new Image() { Margin = new Thickness(1d), Stretch = Stretch.Uniform, Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.add_column) };
-            RenderOptions.SetEdgeMode(addImage, EdgeMode.Aliased);
-            RenderOptions.SetBitmapScalingMode(addImage, BitmapScalingMode.HighQuality);
-            _addColumnButton.Content = addImage;
+            _addColumnButton.Content = (Viewbox)FindResource("AddColumnIcon");
             // Insert
             _insertColumnButton.Click += InsertColumns_Click;
-            var insertImage = new Image() { Margin = new Thickness(1d), Stretch = Stretch.Uniform, Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.insert_column) };
-            RenderOptions.SetEdgeMode(insertImage, EdgeMode.Aliased);
-            RenderOptions.SetBitmapScalingMode(insertImage, BitmapScalingMode.HighQuality);
-            _insertColumnButton.Content = insertImage;
+            _insertColumnButton.Content = (Viewbox)FindResource("InsertColumnIcon");
             // Delete
             _deleteColumnButton.Click += DeleteColumns_Click;
-            var deleteImage = new Image() { Margin = new Thickness(1d), Stretch = Stretch.Uniform, Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.delete_column) };
-            RenderOptions.SetEdgeMode(deleteImage, EdgeMode.Aliased);
-            RenderOptions.SetBitmapScalingMode(deleteImage, BitmapScalingMode.HighQuality);
-            _deleteColumnButton.Content = deleteImage;
-            // 
+            _deleteColumnButton.Content = (Viewbox)FindResource("DeleteColumnIcon");
+            
             // Column Context Items
-            // 
             // Add
-            _addColumnCMI.Icon = new Image() { Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.add_column) };
+            _addColumnCMI.Icon = (Viewbox)FindResource("AddColumnIcon");
             _addColumnCMI.Click += AddColumns_Click;
             // Insert 
-            _insertColumnCMI.Icon = new Image() { Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.insert_column) };
+            _insertColumnCMI.Icon = (Viewbox)FindResource("InsertColumnIcon");
             _insertColumnCMI.Click += InsertColumns_Click;
             // Delete 
-            _deleteColumnCMI.Icon = new Image() { Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.delete_column) };
+            _deleteColumnCMI.Icon = (Viewbox)FindResource("DeleteColumnIcon");
             _deleteColumnCMI.Click += DeleteColumns_Click;
         }
 

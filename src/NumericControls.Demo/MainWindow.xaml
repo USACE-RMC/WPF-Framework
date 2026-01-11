@@ -80,11 +80,11 @@
         </Border>
 
         <!-- Main Content - Tab Control -->
-        <TabControl Grid.Row="1" Margin="10" SelectedIndex="0">
+        <TabControl Grid.Row="1" Margin="5" SelectedIndex="0">
 
             <!-- ==================== TAB 1: Distribution Selector ==================== -->
             <TabItem Header="Distribution Selector">
-                <Grid Margin="15">
+                <Grid Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="20"/>
