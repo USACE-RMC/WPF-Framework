@@ -75,7 +75,7 @@ namespace GenericControls.Demo
     /// </para>
     /// </remarks>
     [SupportedOSPlatform("windows")]
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
         #region Private Fields
 
