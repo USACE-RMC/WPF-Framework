@@ -150,7 +150,7 @@
                 Placement="Left"
                 Opened="MathPopup_Opened">
                 <Border
-                    BorderBrush="{DynamicResource EnvironmentWindowText}"
+                    BorderBrush="{DynamicResource MenuPopupDefaultBorder}"
                     Background="{DynamicResource EnvironmentWindowBackground}"
                     BorderThickness="1">
                     <local:MathEditorControl Margin="5"/>
