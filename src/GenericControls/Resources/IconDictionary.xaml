@@ -33,12 +33,12 @@
     <!-- Add Row(s) - Row lines with green plus sign -->
     <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Row lines -->
-            <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
+            <!-- Row lines - centered at Y=2,6,10 -->
+            <Path Data="M0,2 H10 M0,6 H10 M0,10 H10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- Plus sign -->
-            <Path Data="M12,4 V12 M8,8 H16"
+                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- Plus sign - centered vertically -->
+            <Path Data="M12,3 V11 M8,7 H16"
                   Stroke="#16A34A" StrokeThickness="2"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
@@ -47,12 +47,12 @@
     <!-- Insert Row(s) - Row lines with blue arrow pointing up -->
     <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Row lines -->
-            <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
+            <!-- Row lines - centered at Y=2,6,10 -->
+            <Path Data="M0,2 H10 M0,6 H10 M0,10 H10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- Insert arrow - centered at Y=8 -->
-            <Path Data="M12,12 V4 M9,7 L12,4 L15,7"
+                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- Insert arrow - centered vertically -->
+            <Path Data="M12,11 V3 M9,6 L12,3 L15,6"
                   Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
@@ -61,12 +61,12 @@
     <!-- Delete Row(s) - Row lines with red X -->
     <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Row lines -->
-            <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
+            <!-- Row lines - centered at Y=2,6,10 -->
+            <Path Data="M0,2 H10 M0,6 H10 M0,10 H10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- X mark - centered at Y=8 -->
-            <Path Data="M9,5 L15,11 M15,5 L9,11"
+                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- X mark - centered vertically -->
+            <Path Data="M9,4 L15,10 M15,4 L9,10"
                   Stroke="#DC2626" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
