@@ -36,26 +36,24 @@
         <cntrls:NumericTextBox2 x:Name="ValueTextBox"
                                 DockPanel.Dock="Top"
                                 Width="60"
-                                Height="22"
+                                Height="24"
                                 Grid.Column="1"
                                 Margin="4"
                                 HorizontalAlignment="Right"
                                 ToolTip="Operand for the math function."
                                 CanHaveNegative="True"/>
 
-        <!-- OK button to accept the value -->
+        <!-- Apply button to accept the value -->
         <Button Name="OKButton"
                 IsDefault="True"
                 Click="OKButton_Click"
-                Content="OK"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
+                Content="Apply"
                 Margin="4"
                 Cursor="Hand"
                 Grid.Row="0"
                 Grid.Column="2"
-                Height="22"
-                Width="60"
+                Height="24"
+                Width="75"
                 HorizontalAlignment="Right"/>
     </Grid>
 </cntrls:MetroDialogWindow>
