@@ -114,12 +114,9 @@
                         <ColumnDefinition Width="14"/>
                     </Grid.ColumnDefinitions>
 
-                    <Image 
-                        Height="24"
-                        Source="pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png" 
-                        Stretch="None" 
-                        RenderOptions.EdgeMode="Aliased" 
-                        RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Rectangle
+                        Width="16" Height="16"
+                        Fill="{DynamicResource CalculatorIconBrush}"/>
 
                     <Path
                         Grid.Column="1"

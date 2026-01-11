@@ -36,7 +36,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace NumericControls
 {
@@ -227,7 +229,7 @@ namespace NumericControls
                 else { nonOperands.Add(fnc); }
             }
 
-            var x = new MenuItem() { Header = "Calculator", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png")) } };
+            var x = new MenuItem() { Header = "Calculator", Icon = new Rectangle { Width = 16, Height = 16, Fill = Application.Current.TryFindResource("CalculatorIconBrush") as Brush } };
             foreach (MathFunctionType fnc in operands)
             {
                 x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
@@ -260,13 +262,13 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Converts a math function type to an icon image.
+        /// Converts a math function type to an icon rectangle with the appropriate brush.
         /// </summary>
         /// <param name="fnc">The math function type.</param>
-        /// <returns>An Image containing the function's icon.</returns>
-        private Image FunctionToImage(MathFunctionType fnc)
+        /// <returns>A Rectangle filled with the function's icon brush.</returns>
+        private Rectangle FunctionToImage(MathFunctionType fnc)
         {
-            return new Image { Source = MathFunctionTypeToIconConverter.GetIcon(fnc) };
+            return new Rectangle { Width = 16, Height = 16, Fill = MathFunctionTypeToIconConverter.GetIconBrush(fnc) };
         }
 
         /// <summary>

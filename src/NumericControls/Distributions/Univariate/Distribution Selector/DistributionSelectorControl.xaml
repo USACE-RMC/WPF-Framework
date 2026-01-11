@@ -130,7 +130,7 @@
                 Visibility="Collapsed" 
                 ToolTip="Click to estimate parameters for the selected distribution based on the sample data."
                 Click="EstimateParametersButton_Click">
-                <Image Source="/NumericControls;component/Resources/Run.png" Width="16" Height="16"/>
+                <Rectangle Width="16" Height="16" Fill="{DynamicResource RunIconBrush}"/>
             </Button>
         </Grid>
 

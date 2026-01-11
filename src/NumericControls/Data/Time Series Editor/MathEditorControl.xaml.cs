@@ -35,6 +35,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace NumericControls
@@ -378,30 +379,41 @@ namespace NumericControls
     }
 
     /// <summary>
-    /// Converts a <see cref="MathFunctionType"/> enumeration value to its icon image for use in UI bindings.
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its icon brush for use in UI bindings.
     /// </summary>
     public class MathFunctionTypeToIconConverter : IValueConverter
     {
         /// <summary>
-        /// Gets the icon image for a mathematical function type.
+        /// Gets the icon brush resource key for a mathematical function type.
         /// </summary>
         /// <param name="function">The mathematical function type.</param>
-        /// <returns>A <see cref="BitmapImage"/> representing the function's icon.</returns>
-        public static BitmapImage GetIcon(MathFunctionType function)
+        /// <returns>The resource key for the function's icon brush.</returns>
+        public static string GetIconResourceKey(MathFunctionType function)
         {
             switch (function)
             {
-                case MathFunctionType.Add: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorPlus_16x.png"));
-                case MathFunctionType.Subtract: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMinus_16x.png"));
-                case MathFunctionType.Multiply: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMultiply_16x.png"));
-                case MathFunctionType.Divide: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorDivide_16x.png"));
-                case MathFunctionType.Exponentiate: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorExp_16x.png"));
-                case MathFunctionType.Logarithm: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorLog_16x.png"));
-                case MathFunctionType.Inverse: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorInvert_16x.png"));
-                case MathFunctionType.Replace: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorReplace_16x.png"));
-                case MathFunctionType.Interpolate: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorInterpolate_16x.png"));
-                default: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png"));
+                case MathFunctionType.Add: return "CalculatorPlusIconBrush";
+                case MathFunctionType.Subtract: return "CalculatorMinusIconBrush";
+                case MathFunctionType.Multiply: return "CalculatorMultiplyIconBrush";
+                case MathFunctionType.Divide: return "CalculatorDivideIconBrush";
+                case MathFunctionType.Exponentiate: return "CalculatorExpIconBrush";
+                case MathFunctionType.Logarithm: return "CalculatorLogIconBrush";
+                case MathFunctionType.Inverse: return "CalculatorInvertIconBrush";
+                case MathFunctionType.Replace: return "CalculatorReplaceIconBrush";
+                case MathFunctionType.Interpolate: return "CalculatorInterpolateIconBrush";
+                default: return "CalculatorIconBrush";
             }
+        }
+
+        /// <summary>
+        /// Gets the icon brush for a mathematical function type from application resources.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>A <see cref="Brush"/> representing the function's icon.</returns>
+        public static Brush GetIconBrush(MathFunctionType function)
+        {
+            string resourceKey = GetIconResourceKey(function);
+            return Application.Current.TryFindResource(resourceKey) as Brush;
         }
 
         /// <inheritdoc/>
@@ -409,7 +421,7 @@ namespace NumericControls
         {
             if (value == null || value.GetType() != typeof(MathFunctionType)) { return null; }
 
-            return GetIcon((MathFunctionType)value);
+            return GetIconBrush((MathFunctionType)value);
         }
 
         /// <inheritdoc/>

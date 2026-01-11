@@ -67,10 +67,8 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Image Source="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"
-                                   Stretch="None"
-                                   RenderOptions.EdgeMode="Aliased"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <Rectangle Width="16" Height="16"
+                                       Fill="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -109,10 +107,8 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Image Source="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"
-                                   Stretch="None"
-                                   RenderOptions.EdgeMode="Aliased"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <Rectangle Width="16" Height="16"
+                                       Fill="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

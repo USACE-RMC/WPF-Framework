@@ -2,6 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:NumericControls">
 
+    <ResourceDictionary.MergedDictionaries>
+        <!-- Vector Icon Resources -->
+        <ResourceDictionary Source="/NumericControls;component/Resources/IconDictionary.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <!--
     NumericControls Theme Resource Dictionary
 

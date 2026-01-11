@@ -27,11 +27,10 @@
                       Background="Transparent"
                       BorderBrush="Transparent"
                       BorderThickness="0">
-            <Image Width="16"
-                   Height="16"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Source="pack://application:,,,/NumericControls;Component/Resources/EditButtonIcon.png"/>
+            <Rectangle Width="16" Height="16"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Fill="{DynamicResource EditIconBrush}"/>
         </ToggleButton>
 
         <!-- Display text for selected distribution -->
