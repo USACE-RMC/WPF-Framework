@@ -98,13 +98,7 @@
             <!--Separator-->
             <Separator x:Name="MathFunctionSeparator" Style="{DynamicResource VerticalSeparatorStyle}" />
 
-            <!-- Calculator button-->
-            <!--<Button x:Name="MathFunctionButton" ToolTip="Math Functions" Height="24" Width="24" Cursor="Hand" 
-                    Style="{DynamicResource StackPanelButtonStyleBase}"
-                    IsHitTestVisible="{Binding ElementName=PresetsPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
-                <ContentControl Content="{DynamicResource CalculatorIcon}"/>
-            </Button>-->
-
+            
             <ToggleButton
                 x:Name="PresetToggleButton"
                 Width="24" Height="24"
