@@ -109,7 +109,7 @@
                 Style="{DynamicResource StackPanelToggleButtonStyle}"
                 IsHitTestVisible="{Binding ElementName=PresetsPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
                 <ContentControl
-                    Content="{DynamicResource CalculatorIcon}"
+                    Content="{DynamicResource MathFunctionIcon}"
                     Width="16" Height="16"/>
             </ToggleButton>
 

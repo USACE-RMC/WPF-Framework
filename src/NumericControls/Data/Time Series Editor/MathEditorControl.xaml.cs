@@ -392,16 +392,16 @@ namespace NumericControls
         {
             switch (function)
             {
-                case MathFunctionType.Add: return "CalculatorPlusIcon";
-                case MathFunctionType.Subtract: return "CalculatorMinusIcon";
-                case MathFunctionType.Multiply: return "CalculatorMultiplyIcon";
-                case MathFunctionType.Divide: return "CalculatorDivideIcon";
-                case MathFunctionType.Exponentiate: return "CalculatorExpIcon";
-                case MathFunctionType.Logarithm: return "CalculatorLogIcon";
-                case MathFunctionType.Inverse: return "CalculatorInvertIcon";
-                case MathFunctionType.Replace: return "CalculatorReplaceIcon";
-                case MathFunctionType.Interpolate: return "CalculatorInterpolateIcon";
-                default: return "CalculatorIcon";
+                case MathFunctionType.Add: return "PlusIcon";
+                case MathFunctionType.Subtract: return "MinusIcon";
+                case MathFunctionType.Multiply: return "MultiplyIcon";
+                case MathFunctionType.Divide: return "DivideIcon";
+                case MathFunctionType.Exponentiate: return "ExpIcon";
+                case MathFunctionType.Logarithm: return "LogIcon";
+                case MathFunctionType.Inverse: return "InvertIcon";
+                case MathFunctionType.Replace: return "ReplaceIcon";
+                case MathFunctionType.Interpolate: return "InterpolateIcon";
+                default: return "MathFunctionIcon";
             }
         }
 
@@ -414,39 +414,6 @@ namespace NumericControls
         {
             string resourceKey = GetIconResourceKey(function);
             return Application.Current.TryFindResource(resourceKey) as FrameworkElement;
-        }
-
-        /// <summary>
-        /// Gets the icon brush resource key for a mathematical function type.
-        /// </summary>
-        /// <param name="function">The mathematical function type.</param>
-        /// <returns>The resource key for the function's icon brush.</returns>
-        public static string GetIconBrushResourceKey(MathFunctionType function)
-        {
-            switch (function)
-            {
-                case MathFunctionType.Add: return "CalculatorPlusIconBrush";
-                case MathFunctionType.Subtract: return "CalculatorMinusIconBrush";
-                case MathFunctionType.Multiply: return "CalculatorMultiplyIconBrush";
-                case MathFunctionType.Divide: return "CalculatorDivideIconBrush";
-                case MathFunctionType.Exponentiate: return "CalculatorExpIconBrush";
-                case MathFunctionType.Logarithm: return "CalculatorLogIconBrush";
-                case MathFunctionType.Inverse: return "CalculatorInvertIconBrush";
-                case MathFunctionType.Replace: return "CalculatorReplaceIconBrush";
-                case MathFunctionType.Interpolate: return "CalculatorInterpolateIconBrush";
-                default: return "CalculatorIconBrush";
-            }
-        }
-
-        /// <summary>
-        /// Gets the icon brush for a mathematical function type from application resources.
-        /// </summary>
-        /// <param name="function">The mathematical function type.</param>
-        /// <returns>A <see cref="Brush"/> representing the function's icon.</returns>
-        public static Brush GetIconBrush(MathFunctionType function)
-        {
-            string resourceKey = GetIconBrushResourceKey(function);
-            return Application.Current.TryFindResource(resourceKey) as Brush;
         }
 
         /// <inheritdoc/>

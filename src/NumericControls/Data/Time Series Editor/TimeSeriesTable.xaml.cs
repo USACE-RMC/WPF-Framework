@@ -229,17 +229,17 @@ namespace NumericControls
                 else { nonOperands.Add(fnc); }
             }
 
-            var x = new MenuItem() { Header = "Calculator", Icon = new Rectangle { Width = 16, Height = 16, Fill = Application.Current.TryFindResource("CalculatorIconBrush") as Brush } };
+            var x = new MenuItem() { Header = "Math Functions", Icon = Application.Current.TryFindResource("MathFunctionIcon") };
             foreach (MathFunctionType fnc in operands)
             {
                 x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
                 MenuItem h = (MenuItem)x.Items[x.Items.Count - 1];
-                h.Click += CalculatorButton_Click;
+                h.Click += MathFunctionButton_Click;
             }
             foreach (MathFunctionType fnc in nonOperands)
             {
                 x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
-                ((MenuItem)x.Items[x.Items.Count - 1]).Click += CalculatorButton_Click;
+                ((MenuItem)x.Items[x.Items.Count - 1]).Click += MathFunctionButton_Click;
             }
 
             TimeSeriesDataGrid.CustomMenuItems.Add(x);
@@ -276,7 +276,7 @@ namespace NumericControls
         /// </summary>
         /// <param name="sender">The menu item that was clicked.</param>
         /// <param name="e">The routed event arguments.</param>
-        private void CalculatorButton_Click(object sender, RoutedEventArgs e)
+        private void MathFunctionButton_Click(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
             if (x == null) { return; }

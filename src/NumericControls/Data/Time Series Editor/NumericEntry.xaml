@@ -12,6 +12,7 @@
         ShowInTaskbar="True"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height"
+        Background="{DynamicResource EnvironmentWindowBackground}"
         ContentRendered="Window_ContentRendered">
     <Grid FocusManager.FocusedElement="{Binding ElementName=ValueTextBox}">
         <Grid.RowDefinitions>
@@ -29,7 +30,8 @@
                    Text="Name"
                    TextAlignment="Right"
                    HorizontalAlignment="Stretch"
-                   VerticalAlignment="Center"/>
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource EnvironmentWindowText}" />
 
         <!-- Numeric input field -->
         <cntrls:NumericTextBox2 x:Name="ValueTextBox"

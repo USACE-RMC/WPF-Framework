@@ -26,7 +26,7 @@
     <!-- MATH FUNCTION ICON (fx)                                                      -->
     <!-- "fx" symbol for math functions - theme aware                                 -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="MathFunctionIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Italic f - larger -->
             <TextBlock Text="f" FontFamily="Cambria" FontSize="14" FontStyle="Italic" FontWeight="SemiBold"
@@ -40,114 +40,48 @@
                        Margin="6,0,0,1"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GlyphRunDrawing ForegroundBrush="{DynamicResource EnvironmentWindowText}">
-                    <GlyphRunDrawing.GlyphRun>
-                        <GlyphRun CaretStops="{x:Null}" ClusterMap="{x:Null}" IsSideways="False"
-                                  GlyphOffsets="{x:Null}" GlyphIndices="73"
-                                  AdvanceWidths="7" FontRenderingEmSize="14"
-                                  BaselineOrigin="1,12">
-                            <GlyphRun.GlyphTypeface>
-                                <GlyphTypeface FontUri="C:\Windows\Fonts\segoeuii.ttf"/>
-                            </GlyphRun.GlyphTypeface>
-                        </GlyphRun>
-                    </GlyphRunDrawing.GlyphRun>
-                </GlyphRunDrawing>
-                <GlyphRunDrawing ForegroundBrush="{DynamicResource EnvironmentWindowText}">
-                    <GlyphRunDrawing.GlyphRun>
-                        <GlyphRun CaretStops="{x:Null}" ClusterMap="{x:Null}" IsSideways="False"
-                                  GlyphOffsets="{x:Null}" GlyphIndices="91"
-                                  AdvanceWidths="4" FontRenderingEmSize="7"
-                                  BaselineOrigin="8,14">
-                            <GlyphRun.GlyphTypeface>
-                                <GlyphTypeface FontUri="C:\Windows\Fonts\segoeuii.ttf"/>
-                            </GlyphRun.GlyphTypeface>
-                        </GlyphRun>
-                    </GlyphRunDrawing.GlyphRun>
-                </GlyphRunDrawing>
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- ADD / PLUS ICON                                                              -->
     <!-- Green plus sign for addition                                                 -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorPlusIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="PlusIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M8,3 V13 M3,8 H13"
                   Stroke="#16A34A" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorPlusIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <GeometryDrawing>
-                <GeometryDrawing.Geometry>
-                    <PathGeometry Figures="M8,3 V13 M3,8 H13"/>
-                </GeometryDrawing.Geometry>
-                <GeometryDrawing.Pen>
-                    <Pen Brush="#16A34A" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
-                </GeometryDrawing.Pen>
-            </GeometryDrawing>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- SUBTRACT / MINUS ICON                                                        -->
     <!-- Red minus sign for subtraction                                               -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorMinusIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="MinusIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M3,8 H13"
                   Stroke="#DC2626" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorMinusIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <GeometryDrawing>
-                <GeometryDrawing.Geometry>
-                    <PathGeometry Figures="M3,8 V8.01 M3,8 H13"/>
-                </GeometryDrawing.Geometry>
-                <GeometryDrawing.Pen>
-                    <Pen Brush="#DC2626" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
-                </GeometryDrawing.Pen>
-            </GeometryDrawing>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- MULTIPLY ICON                                                                -->
     <!-- Orange X for multiplication                                                  -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorMultiplyIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="MultiplyIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <Path Data="M4,4 L12,12 M12,4 L4,12"
                   Stroke="#F97316" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorMultiplyIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <GeometryDrawing>
-                <GeometryDrawing.Geometry>
-                    <PathGeometry Figures="M4,4 L12,12 M12,4 L4,12"/>
-                </GeometryDrawing.Geometry>
-                <GeometryDrawing.Pen>
-                    <Pen Brush="#F97316" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
-                </GeometryDrawing.Pen>
-            </GeometryDrawing>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- DIVIDE ICON                                                                  -->
     <!-- Purple division symbol (obelus)                                              -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorDivideIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="DivideIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Horizontal line -->
             <Path Data="M3,8 H13"
@@ -161,36 +95,12 @@
                      HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorDivideIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M3,8 H13"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#8B5CF6" Thickness="2" StartLineCap="Round" EndLineCap="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="#8B5CF6">
-                    <GeometryDrawing.Geometry>
-                        <EllipseGeometry Center="8,4" RadiusX="1.5" RadiusY="1.5"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="#8B5CF6">
-                    <GeometryDrawing.Geometry>
-                        <EllipseGeometry Center="8,12" RadiusX="1.5" RadiusY="1.5"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- LOGARITHM ICON                                                               -->
     <!-- "log" text in cyan                                                           -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorLogIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="LogIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- "log" text with tighter letter spacing -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -200,28 +110,12 @@
             </StackPanel>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorLogIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <GlyphRunDrawing ForegroundBrush="#0891B2">
-                <GlyphRunDrawing.GlyphRun>
-                    <GlyphRun CaretStops="{x:Null}" ClusterMap="{x:Null}" IsSideways="False"
-                              GlyphOffsets="{x:Null}" GlyphIndices="79 82 74"
-                              AdvanceWidths="5.5 5.5 5.5" FontRenderingEmSize="11"
-                              BaselineOrigin="1,12">
-                        <GlyphRun.GlyphTypeface>
-                            <GlyphTypeface FontUri="C:\Windows\Fonts\segoeui.ttf"/>
-                        </GlyphRun.GlyphTypeface>
-                    </GlyphRun>
-                </GlyphRunDrawing.GlyphRun>
-            </GlyphRunDrawing>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EXPONENT / POWER ICON                                                        -->
     <!-- Blue x with superscript n - text based                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorExpIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="ExpIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Base 'x' -->
             <TextBlock Text="x" FontFamily="Cambria" FontSize="14" FontStyle="Italic" FontWeight="SemiBold"
@@ -235,34 +129,12 @@
                        Margin="8,-1,0,0"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorExpIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M2,6 L8,13 M8,6 L2,13"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#2563EB" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M10,2 V6 M10,3 Q10,2 11.5,2 T13,3 V6"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#2563EB" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- INVERT ICON                                                                  -->
     <!-- Teal "1/x" inline diagonal                                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorInvertIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="InvertIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- 1 -->
             <TextBlock Text="1" FontFamily="Cambria" FontSize="11" FontWeight="Bold"
@@ -279,50 +151,12 @@
                        Margin="0,0,1,0"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorInvertIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M4,6 A4,4 0 0 1 12,6"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M10,3 L12,6 L9,7"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M12,10 A4,4 0 0 1 4,10"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M6,13 L4,10 L7,9"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#14B8A6" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- REPLACE ICON                                                                 -->
     <!-- Amber bidirectional horizontal arrows                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorReplaceIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="ReplaceIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Right arrow -->
             <Path Data="M2,5 H12 M9,2 L12,5 L9,8"
@@ -336,34 +170,12 @@
                   StrokeLineJoin="Round"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorReplaceIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M2,5 H12 M9,2 L12,5 L9,8"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#F59E0B" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M14,11 H4 M7,8 L4,11 L7,14"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#F59E0B" Thickness="1.5" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- INTERPOLATE ICON                                                             -->
     <!-- Pink two dots with gapped line between                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="CalculatorInterpolateIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="InterpolateIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Left line segment -->
             <Path Data="M4,12 L6,9"
@@ -374,37 +186,13 @@
                   Stroke="#EC4899" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
             <!-- Start point -->
-            <Ellipse Width="4" Height="4" Fill="#EC4899"
+            <Ellipse Width="5" Height="5" Fill="#EC4899"
                      HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
             <!-- End point -->
-            <Ellipse Width="4" Height="4" Fill="#EC4899"
+            <Ellipse Width="5" Height="5" Fill="#EC4899"
                      HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0"/>
         </Grid>
     </Viewbox>
-    <DrawingBrush x:Key="CalculatorInterpolateIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M2,12 Q5,12 8,8 T14,4"/>
-                    </GeometryDrawing.Geometry>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#EC4899" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="#EC4899">
-                    <GeometryDrawing.Geometry>
-                        <EllipseGeometry Center="2,12" RadiusX="1.5" RadiusY="1.5"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="#EC4899">
-                    <GeometryDrawing.Geometry>
-                        <EllipseGeometry Center="14,4" RadiusX="1.5" RadiusY="1.5"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EDIT / PENCIL ICON                                                           -->
