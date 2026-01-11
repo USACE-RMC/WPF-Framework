@@ -32,8 +32,8 @@
         <!--Ok and Cancel buttons-->
         <Grid Grid.Row="3" Height="32" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="83"/>
-                <ColumnDefinition Width="83"/>
+                <ColumnDefinition Width="82"/>
+                <ColumnDefinition Width="82"/>
             </Grid.ColumnDefinitions>
             <Button Name="OKButton" IsDefault="True" Click="OKButton_Click" Content="OK" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Margin="4" Cursor="Hand"/>
             <Button Name="CancelButton" IsCancel="True" Click="CancelButton_Click" Content="Cancel" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Margin="4" Cursor="Hand"/>
