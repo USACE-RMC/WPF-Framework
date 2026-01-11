@@ -224,15 +224,15 @@
     <Viewbox x:Key="CalculatorExpIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Base 'x' -->
-            <TextBlock Text="x" FontFamily="Cambria" FontSize="12" FontStyle="Italic" FontWeight="SemiBold"
+            <TextBlock Text="x" FontFamily="Cambria" FontSize="14" FontStyle="Italic" FontWeight="SemiBold"
                        Foreground="#2563EB"
                        HorizontalAlignment="Left" VerticalAlignment="Bottom"
                        Margin="1,0,0,0"/>
             <!-- Superscript 'n' -->
-            <TextBlock Text="n" FontFamily="Cambria" FontSize="8" FontStyle="Italic" FontWeight="SemiBold"
+            <TextBlock Text="n" FontFamily="Cambria" FontSize="10" FontStyle="Italic" FontWeight="SemiBold"
                        Foreground="#2563EB"
                        HorizontalAlignment="Left" VerticalAlignment="Top"
-                       Margin="8,1,0,0"/>
+                       Margin="8,-1,0,0"/>
         </Grid>
     </Viewbox>
     <DrawingBrush x:Key="CalculatorExpIconBrush" Stretch="Uniform">
