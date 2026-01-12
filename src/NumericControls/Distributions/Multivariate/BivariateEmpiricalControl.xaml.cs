@@ -88,23 +88,23 @@ namespace NumericControls
             // Column buttons
             // Add
             _addColumnButton.Click += AddColumns_Click;
-            _addColumnButton.Content = (Viewbox)FindResource("AddColumnIcon");
+            _addColumnButton.Content = (Viewbox)TryFindResource("AddColumnIcon");
             // Insert
             _insertColumnButton.Click += InsertColumns_Click;
-            _insertColumnButton.Content = (Viewbox)FindResource("InsertColumnIcon");
+            _insertColumnButton.Content = (Viewbox)TryFindResource("InsertColumnIcon");
             // Delete
             _deleteColumnButton.Click += DeleteColumns_Click;
-            _deleteColumnButton.Content = (Viewbox)FindResource("DeleteColumnIcon");
+            _deleteColumnButton.Content = (Viewbox)TryFindResource("DeleteColumnIcon");
             
             // Column Context Items
             // Add
-            _addColumnCMI.Icon = (Viewbox)FindResource("AddColumnIcon");
+            _addColumnCMI.Icon = (Viewbox)TryFindResource("AddColumnIcon");
             _addColumnCMI.Click += AddColumns_Click;
             // Insert 
-            _insertColumnCMI.Icon = (Viewbox)FindResource("InsertColumnIcon");
+            _insertColumnCMI.Icon = (Viewbox)TryFindResource("InsertColumnIcon");
             _insertColumnCMI.Click += InsertColumns_Click;
             // Delete 
-            _deleteColumnCMI.Icon = (Viewbox)FindResource("DeleteColumnIcon");
+            _deleteColumnCMI.Icon = (Viewbox)TryFindResource("DeleteColumnIcon");
             _deleteColumnCMI.Click += DeleteColumns_Click;
         }
 

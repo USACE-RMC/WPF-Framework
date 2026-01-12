@@ -281,7 +281,7 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Calendar Icon - Calendar with clock overlay -->
-    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False" >
         <Grid Width="16" Height="16">
             <!-- Calendar body -->
             <Path Data="M1,3 H12 V14 H1 Z"
