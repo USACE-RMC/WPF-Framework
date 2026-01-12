@@ -208,6 +208,24 @@
 
     <Style x:Key="ClockControlStyle" TargetType="{x:Type local:ClockControl}">
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+        <!-- Clock face border -->
+        <Setter Property="BorderBrush" Value="{DynamicResource Button.Static.Border}"/>
+        <!-- Clock face background - slightly different from window background for visibility -->
+        <Setter Property="FaceColor" Value="{DynamicResource Button.Static.Background}"/>
+        <!-- Selected indicator background (hour/minute circle when selected) -->
+        <Setter Property="SelectedColor" Value="{DynamicResource AccentBrush}"/>
+        <!-- Font color for clock numbers -->
+        <Setter Property="FontColor" Value="{DynamicResource EnvironmentWindowText}"/>
+        <!-- Font color when selected -->
+        <Setter Property="SelectedFontColor" Value="{DynamicResource Button.Pressed.Foreground}"/>
+        <!-- Clock hand colors -->
+        <Setter Property="HandColor" Value="{DynamicResource EnvironmentWindowText}"/>
+        <Setter Property="PreviewHandColor" Value="{DynamicResource Button.Static.Border}"/>
+        <!-- Highlight color on hover -->
+        <Setter Property="HighlightColor" Value="{DynamicResource Button.MouseOver.Background}"/>
+        <!-- Digital time display colors -->
+        <Setter Property="TimeColor" Value="{DynamicResource EnvironmentWindowText}"/>
+        <Setter Property="SelectedTimeColor" Value="{DynamicResource EnvironmentWindowText}"/>
     </Style>
 
     <Style TargetType="{x:Type local:ClockControl}" BasedOn="{StaticResource ClockControlStyle}"/>
