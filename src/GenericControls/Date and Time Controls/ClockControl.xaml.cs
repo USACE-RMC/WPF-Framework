@@ -1150,9 +1150,8 @@ namespace GenericControls
             IsHitTestVisible = false;
             SetBinding(CornerRadiusProperty, new Binding() { Path = new PropertyPath("ActualHeight"), Source = this });
             SetBinding(WidthProperty, new Binding() { Path = new PropertyPath("ActualHeight"), Source = this });
-            // Create inner text with display-optimized rendering for clarity when scaled
+            // Create inner text
             var tBox = new TextBlock() { FontSize = 7d, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, TextAlignment = TextAlignment.Center };
-            TextOptions.SetTextFormattingMode(tBox, TextFormattingMode.Display);
             tBox.SetBinding(TextBlock.TextProperty, new Binding() { Path = new PropertyPath(nameof(TimeValue)), Source = this });
             tBox.SetBinding(TextBlock.ForegroundProperty, new Binding() { Path = new PropertyPath("FontColor"), Source = this });
             // add text to circle
