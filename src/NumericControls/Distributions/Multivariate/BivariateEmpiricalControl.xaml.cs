@@ -1017,10 +1017,14 @@ namespace NumericControls
 
             if (e.PropertyName == "Column0")
             {
+                e.Column.Header = "X";
                 ((DataGridTextColumn)e.Column).CellStyle = (Style)Resources["BoldCellStyle"];
             }
             else
             {
+                // Extract column number and create Y1, Y2, etc. header
+                string columnNumber = e.PropertyName.Replace("Column", "");
+                e.Column.Header = "Y" + columnNumber;
                 (e.Column as DataGridTextColumn).Binding.TargetNullValue = Double.NaN.ToString();
                 (e.Column as DataGridTextColumn).HeaderStyle = (Style)Resources["headerTemplate"];
             }
@@ -1038,18 +1042,7 @@ namespace NumericControls
             topRow.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
 
             // Apply styles to cells in the top row
-            var upperLeftCell = BivariateCDFDataGrid.GetCell(0, 0);
-            if (upperLeftCell != null)
-                upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
-
-            // Apply TopRowCellStyle to all other cells in row 0 (X2 values)
-            var topRowCellStyle = (Style)Resources["TopRowCellStyle"];
-            for (int col = 1; col < BivariateCDFDataGrid.Columns.Count; col++)
-            {
-                var cell = BivariateCDFDataGrid.GetCell(0, col);
-                if (cell != null)
-                    cell.Style = topRowCellStyle;
-            }
+            ApplyTopRowCellStyles();
         }
 
         /// <summary>
@@ -1065,6 +1058,32 @@ namespace NumericControls
                 // Style the top row with a bottom border separator
                 e.Row.BorderThickness = new Thickness(0d, 0d, 0d, 2d);
                 e.Row.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
+
+                // Apply cell styles after the row is fully loaded
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ApplyTopRowCellStyles();
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            }
+        }
+
+        /// <summary>
+        /// Applies styles to cells in the top row (row 0).
+        /// </summary>
+        private void ApplyTopRowCellStyles()
+        {
+            // Apply style to upper-left cell
+            var upperLeftCell = BivariateCDFDataGrid.GetCell(0, 0);
+            if (upperLeftCell != null)
+                upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
+
+            // Apply TopRowCellStyle to all other cells in row 0 (X2 values)
+            var topRowCellStyle = (Style)Resources["TopRowCellStyle"];
+            for (int col = 1; col < BivariateCDFDataGrid.Columns.Count; col++)
+            {
+                var cell = BivariateCDFDataGrid.GetCell(0, col);
+                if (cell != null)
+                    cell.Style = topRowCellStyle;
             }
         }
 
