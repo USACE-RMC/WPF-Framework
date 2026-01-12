@@ -64,6 +64,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Button.xaml"/>
+        <ResourceDictionary Source="Calendar.xaml"/>
         <ResourceDictionary Source="CheckBox.xaml"/>
         <ResourceDictionary Source="ComboBox.xaml"/>
         <ResourceDictionary Source="DataGrid.xaml"/>
