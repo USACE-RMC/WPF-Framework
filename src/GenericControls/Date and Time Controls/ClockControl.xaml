@@ -143,8 +143,8 @@
             </StackPanel>
         </Border>
 
-        <Viewbox Grid.Row="1" Margin="0,5,0,0">
-            <Canvas x:Name="MyCanvas" Width="100" Height="100">
+        <Viewbox Grid.Row="1" Margin="0,5,0,0" UseLayoutRounding="True">
+            <Canvas x:Name="MyCanvas" Width="100" Height="100" TextOptions.TextFormattingMode="Display">
                 <Ellipse Name="ClockFace" Fill="{Binding ElementName=TimePicker, Path=FaceColor}" Width="100" Height="100" MouseMove="ClockFace_MouseMove" MouseDown="ClockFace_MouseDown" MouseUp="ClockFace_MouseUp" MouseEnter="ClockFace_MouseEnter" MouseLeave="ClockFace_MouseLeave"></Ellipse>
                 <Border Name="AMFace" Style="{StaticResource AMPMStyle}" Visibility="{Binding ElementName=TimePicker, Path=Is24Hour, Converter={StaticResource TrueToCollapsed}}">
                     <TextBlock Name="AMText" Text="AM" FontSize="7" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
