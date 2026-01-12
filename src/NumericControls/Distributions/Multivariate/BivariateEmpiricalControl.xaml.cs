@@ -1034,13 +1034,38 @@ namespace NumericControls
             // Top Row
             var topRow = BivariateCDFDataGrid.GetRow(0);
             if (topRow == null) return;
-            topRow.FontWeight = FontWeights.Bold;
-            topRow.Foreground = (SolidColorBrush)Resources["HazardColor"];
             topRow.BorderThickness = new Thickness(0d, 0d, 0d, 2d);
             topRow.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
-            // Upper left cell
+
+            // Apply styles to cells in the top row
             var upperLeftCell = BivariateCDFDataGrid.GetCell(0, 0);
-            upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
+            if (upperLeftCell != null)
+                upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
+
+            // Apply TopRowCellStyle to all other cells in row 0 (X2 values)
+            var topRowCellStyle = (Style)Resources["TopRowCellStyle"];
+            for (int col = 1; col < BivariateCDFDataGrid.Columns.Count; col++)
+            {
+                var cell = BivariateCDFDataGrid.GetCell(0, col);
+                if (cell != null)
+                    cell.Style = topRowCellStyle;
+            }
+        }
+
+        /// <summary>
+        /// Handles the LoadingRow event of the data grid.
+        /// Applies styling to the top row (row 0) when it is loaded or reloaded.
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments containing the row being loaded.</param>
+        private void BivariateCDFDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            if (e.Row.GetIndex() == 0)
+            {
+                // Style the top row with a bottom border separator
+                e.Row.BorderThickness = new Thickness(0d, 0d, 0d, 2d);
+                e.Row.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
+            }
         }
 
         /// <summary>
