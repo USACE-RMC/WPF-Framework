@@ -1037,7 +1037,7 @@ namespace NumericControls
             topRow.FontWeight = FontWeights.Bold;
             topRow.Foreground = (SolidColorBrush)Resources["HazardColor"];
             topRow.BorderThickness = new Thickness(0d, 0d, 0d, 2d);
-            topRow.BorderBrush = new SolidColorBrush(Colors.Black);
+            topRow.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
             // Upper left cell
             var upperLeftCell = BivariateCDFDataGrid.GetCell(0, 0);
             upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
