@@ -167,13 +167,14 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X2 header border.
+        /// Uses theme-aware resources to match the DataGrid column header style.
         /// </summary>
         /// <returns>A style for the X2 header border.</returns>
         private static Style DefaultX2HeaderBorderStyle()
         {
             var s = new Style(typeof(Border));
-            s.Setters.Add(new Setter(Border.BackgroundProperty, SystemColors.ControlBrush));
-            s.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromArgb(255, 104, 140, 175))));
+            s.Setters.Add(new Setter { Property = Border.BackgroundProperty, Value = new DynamicResourceExtension("DataGrid.Row.Background") });
+            s.Setters.Add(new Setter { Property = Border.BorderBrushProperty, Value = new DynamicResourceExtension("DataGrid.Header.Border") });
             s.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(1d, 1d, 1d, 0d)));
             s.Setters.Add(new Setter(UIElement.IsHitTestVisibleProperty, false));
             return s;
@@ -181,6 +182,7 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X2 header text block.
+        /// Uses theme-aware resources to match the DataGrid column header style.
         /// </summary>
         /// <returns>A style for the X2 header text block.</returns>
         private static Style DefaultX2HeaderTextBlockStyle()
@@ -191,7 +193,7 @@ namespace NumericControls
             s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
             s.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
             s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
-            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter { Property = TextBlock.ForegroundProperty, Value = new DynamicResourceExtension("DataGrid.Header.Foreground") });
             s.Setters.Add(new Setter(FrameworkElement.MarginProperty, new Thickness(2d)));
             s.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.Bold));
             // s.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.WrapWithOverflow))
@@ -201,13 +203,14 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X1 header border.
+        /// Uses theme-aware resources to match the DataGrid row header style.
         /// </summary>
         /// <returns>A style for the X1 header border.</returns>
         private static Style DefaultX1HeaderBorderStyle()
         {
             var s = new Style(typeof(Border));
-            s.Setters.Add(new Setter(Border.BackgroundProperty, SystemColors.ControlBrush));
-            s.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromArgb(255, 104, 140, 175))));
+            s.Setters.Add(new Setter { Property = Border.BackgroundProperty, Value = new DynamicResourceExtension("DataGrid.Row.Background") });
+            s.Setters.Add(new Setter { Property = Border.BorderBrushProperty, Value = new DynamicResourceExtension("DataGrid.Header.Border") });
             s.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(1d, 1d, 0d, 1d)));
             s.Setters.Add(new Setter(UIElement.IsHitTestVisibleProperty, false));
             return s;
@@ -215,6 +218,7 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X1 header text block with vertical text rotation.
+        /// Uses theme-aware resources to match the DataGrid row header style.
         /// </summary>
         /// <returns>A style for the X1 header text block.</returns>
         private static Style DefaultX1HeaderTextBlockStyle()
@@ -225,7 +229,7 @@ namespace NumericControls
             s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
             s.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
             s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
-            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter { Property = TextBlock.ForegroundProperty, Value = new DynamicResourceExtension("DataGrid.Header.Foreground") });
             s.Setters.Add(new Setter(FrameworkElement.MarginProperty, new Thickness(2d)));
             s.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.Bold));
             // s.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.WrapWithOverflow))
