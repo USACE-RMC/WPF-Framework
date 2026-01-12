@@ -22,8 +22,6 @@
             <Setter Property="Height" Value="15"/>
             <Setter Property="CornerRadius" Value="15"/>
             <Setter Property="Background" Value="{Binding ElementName=TimePicker, Path=FaceColor}"/>
-            <Setter Property="BorderBrush" Value="{Binding ElementName=TimePicker, Path=BorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
             <EventSetter Event="MouseEnter" Handler="AMPMBorder_MouseEnter"/>
             <EventSetter Event="MouseLeave" Handler="AMPMBorder_MouseLeave"/>
             <EventSetter Event="MouseUp" Handler="AMPMBorder_MouseUp"/>
@@ -105,7 +103,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text=":" FontSize="{Binding ElementName=TimePicker, Path=TimeFontSize}" Foreground="{Binding ElementName=TimePicker, Path=TimeColor}"></TextBlock>
+                <TextBlock Text=":" FontSize="{Binding ElementName=TimePicker, Path=TimeFontSize}"></TextBlock>
                 <TextBlock Text="{Binding ElementName=TimePicker, Path=Time, Converter={StaticResource MinuteTimeToTextConverter}}" MouseUp="MinutesMouseUp">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
@@ -150,12 +148,12 @@
 
         <Viewbox Grid.Row="1" Margin="0,5,0,0">
             <Canvas x:Name="MyCanvas" Width="100" Height="100">
-                <Ellipse Name="ClockFace" Fill="{Binding ElementName=TimePicker, Path=FaceColor}" Stroke="{Binding ElementName=TimePicker, Path=BorderBrush}" StrokeThickness="1" Width="100" Height="100" MouseMove="ClockFace_MouseMove" MouseDown="ClockFace_MouseDown" MouseUp="ClockFace_MouseUp" MouseEnter="ClockFace_MouseEnter" MouseLeave="ClockFace_MouseLeave"></Ellipse>
+                <Ellipse Name="ClockFace" Fill="{Binding ElementName=TimePicker, Path=FaceColor}" Width="100" Height="100" MouseMove="ClockFace_MouseMove" MouseDown="ClockFace_MouseDown" MouseUp="ClockFace_MouseUp" MouseEnter="ClockFace_MouseEnter" MouseLeave="ClockFace_MouseLeave"></Ellipse>
                 <Border Name="AMFace" Style="{StaticResource AMPMStyle}" Visibility="{Binding ElementName=TimePicker, Path=Is24Hour, Converter={StaticResource TrueToCollapsed}}">
-                    <TextBlock Name="AMText" Text="AM" FontSize="7" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Foreground="{Binding ElementName=TimePicker, Path=FontColor}"/>
+                    <TextBlock Name="AMText" Text="AM" FontSize="7" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
                 </Border>
                 <Border Name="PMFace" Style="{StaticResource AMPMStyle}" Margin="85,0,0,0" Visibility="{Binding ElementName=TimePicker, Path=Is24Hour, Converter={StaticResource TrueToCollapsed}}">
-                    <TextBlock Name="PMText" Text="PM" FontSize="7" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Foreground="{Binding ElementName=TimePicker, Path=FontColor}"/>
+                    <TextBlock Name="PMText" Text="PM" FontSize="7" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
                 </Border>
                 <Grid x:Name="HoursGrid" Width="{Binding ActualWidth, ElementName=MyCanvas}" Height="{Binding ActualHeight, ElementName=MyCanvas}" Visibility="{Binding ElementName=TimePicker, Path=IsHours, Converter={StaticResource FalseToCollapsed}, UpdateSourceTrigger=PropertyChanged}" IsHitTestVisible="False">
                     <Line x:Name="PreviewHourHandLine" X1="0" Y1="0" X2="0" Y2="0" Stroke="{Binding ElementName=TimePicker, Path=PreviewHandColor}" StrokeThickness="1" IsHitTestVisible="False">
