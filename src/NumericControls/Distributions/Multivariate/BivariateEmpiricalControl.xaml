@@ -37,12 +37,31 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <!-- Editable column header style with gradient background -->
         <Style x:Key="headerTemplate" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
-                        <Border BorderBrush="{DynamicResource DataGrid.Header.Border}" BorderThickness="1" Background="{DynamicResource EnvironmentWindowBackground}">
-                            <TextBox Text="{TemplateBinding Content}" Background="{DynamicResource EnvironmentWindowBackground}" Foreground="{DynamicResource EnvironmentWindowText}" BorderThickness="0"/>
+                        <Border BorderBrush="{DynamicResource DataGrid.Header.Border}" BorderThickness="0,0,1,1">
+                            <Grid SnapsToDevicePixels="True">
+                                <Grid.Background>
+                                    <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">
+                                        <LinearGradientBrush.GradientStops>
+                                            <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
+                                            <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
+                                        </LinearGradientBrush.GradientStops>
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                                <TextBox Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                         Background="Transparent"
+                                         Foreground="{DynamicResource DataGrid.Header.Foreground}"
+                                         BorderThickness="0"
+                                         FontWeight="Bold"
+                                         TextAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Stretch"
+                                         Padding="6,3,6,3"/>
+                            </Grid>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>

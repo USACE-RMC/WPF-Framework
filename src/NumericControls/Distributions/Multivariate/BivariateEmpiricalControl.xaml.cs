@@ -31,6 +31,7 @@
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Numerics.Distributions;
 using OxyPlot.Wpf;
@@ -1092,10 +1093,45 @@ namespace NumericControls
         private void BivariateCDFDataGrid_LayoutUpdated(object sender, EventArgs e)
         {
             if (BivariateCDFDataGrid.Columns.Count == 0) return;
-            X2HeaderBorder.Margin = new Thickness(BivariateCDFDataGrid.Columns[0].ActualWidth, X2HeaderBorder.Margin.Top, X2HeaderBorder.Margin.Right, X2HeaderBorder.Margin.Bottom);
+
+            // Calculate left margin for X2Header: row header width + Column0 width
+            double rowHeaderWidth = GetRowHeaderWidth();
+            double leftMargin = rowHeaderWidth + BivariateCDFDataGrid.Columns[0].ActualWidth;
+            X2HeaderBorder.Margin = new Thickness(leftMargin, X2HeaderBorder.Margin.Top, X2HeaderBorder.Margin.Right, X2HeaderBorder.Margin.Bottom);
+
             var topRow = BivariateCDFDataGrid.GetRow(0);
             if (topRow == null) return;
             X1HeaderBorder.Margin = new Thickness(X1HeaderBorder.Margin.Left, topRow.ActualHeight, X1HeaderBorder.Margin.Right, X1HeaderBorder.Margin.Bottom);
+        }
+
+        /// <summary>
+        /// Gets the actual width of the DataGrid row headers.
+        /// </summary>
+        /// <returns>The row header width, or 0 if not found.</returns>
+        private double GetRowHeaderWidth()
+        {
+            var rowHeader = FindVisualChild<DataGridRowHeader>(BivariateCDFDataGrid);
+            return rowHeader?.ActualWidth ?? 0;
+        }
+
+        /// <summary>
+        /// Finds the first visual child of the specified type in the visual tree.
+        /// </summary>
+        /// <typeparam name="T">The type of child to find.</typeparam>
+        /// <param name="parent">The parent element to search.</param>
+        /// <returns>The first child of the specified type, or null if not found.</returns>
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
         }
 
 
