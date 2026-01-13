@@ -38,6 +38,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericControls.Demo", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OxyPlotControls.Demo", "src\OxyPlotControls.Demo\OxyPlotControls.Demo.csproj", "{1BC0C4C8-6550-7A4C-B64B-FBE8D37E5CDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionParserControls", "src\ExpressionParserControls\ExpressionParserControls.csproj", "{F445A252-E53E-3CB1-1FD9-4215FF282CF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionParserControls.Demo", "src\ExpressionParserControls.Demo\ExpressionParserControls.Demo.csproj", "{E0212538-7B84-9078-9FC7-917F0F04F046}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -158,6 +162,22 @@ Global
 		{1BC0C4C8-6550-7A4C-B64B-FBE8D37E5CDD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1BC0C4C8-6550-7A4C-B64B-FBE8D37E5CDD}.Release|x64.ActiveCfg = Release|Any CPU
 		{1BC0C4C8-6550-7A4C-B64B-FBE8D37E5CDD}.Release|x64.Build.0 = Release|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Debug|x64.Build.0 = Debug|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Release|x64.ActiveCfg = Release|Any CPU
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2}.Release|x64.Build.0 = Release|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Debug|x64.Build.0 = Debug|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0212538-7B84-9078-9FC7-917F0F04F046}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +197,8 @@ Global
 		{65AC57AC-E65A-94EE-9E3E-E4916798798A} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
 		{5414DDD0-A423-2405-AB2A-739BAA0FAF68} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
 		{1BC0C4C8-6550-7A4C-B64B-FBE8D37E5CDD} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
+		{F445A252-E53E-3CB1-1FD9-4215FF282CF2} = {2B3C4D5E-6F78-90AB-12CD-34EF56789012}
+		{E0212538-7B84-9078-9FC7-917F0F04F046} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E6F7890-AB12-CD34-EF56-789012345678}
