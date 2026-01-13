@@ -123,11 +123,20 @@ namespace OxyPlotControls.Demo
             InitializeComponent();
 
             // Subscribe to PlotChanged events for testing
-            OxyPlotToolBar.PlotChanged += OnPlotChanged;
-            PropertiesControl.PlotChanged += OnPlotChanged;
+            // Note: Subscriptions moved to Loaded event to avoid potential initialization issues
+            Loaded += MainWindow_Loaded;
 
             // Trigger line series in combobox (unbound)
             Combobox1.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Handles the Loaded event. Subscribes to PlotChanged events after all controls are fully loaded.
+        /// </summary>
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            OxyPlotToolBar.PlotChanged += OnPlotChanged;
+            PropertiesControl.PlotChanged += OnPlotChanged;
         }
 
         /// <summary>
