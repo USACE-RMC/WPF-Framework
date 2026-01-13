@@ -281,27 +281,34 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Calendar Icon - Calendar with clock overlay -->
-    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False" >
+    <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Calendar body -->
-            <Path Data="M1,3 H12 V14 H1 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="12" Height="12"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}"
+                       Margin="0,2,0,0"
+                       VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Calendar top bar -->
-            <Rectangle Width="11" Height="2.5" Fill="{DynamicResource EnvironmentWindowText}"
-                       Margin="1,3,0,0"
+            <Rectangle Width="12" Height="3" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="0,2,0,0"
                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Calendar binding rings -->
-            <Path Data="M4,1 V4 M9,1 V4"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Calendar grid dots (representing dates) -->
-            <Path Data="M3,8 H4 M6,8 H7 M9,8 H10 M3,11 H4 M6,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="1" Height="3" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="3,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="1" Height="3" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="8,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- Calendar grid dots (representing dates) - using filled rectangles -->
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="2,7,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="5,7,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="8,7,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="2,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="5,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Clock circle -->
             <Ellipse Width="7" Height="7"
                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
