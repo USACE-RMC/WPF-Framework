@@ -265,6 +265,7 @@
                 Padding="15,6">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
@@ -275,7 +276,15 @@
                            Opacity="0.6"
                            FontSize="11"/>
 
-                <TextBlock Grid.Column="1"
+                <!-- PlotChanged Test Label -->
+                <TextBlock x:Name="PlotChangedLabel"
+                           Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource AccentBrush}"/>
+
+                <TextBlock Grid.Column="2"
                            Text="Select a series type from the dropdown to see different chart types"
                            Foreground="{DynamicResource EnvironmentWindowText}"
                            Opacity="0.6"
