@@ -10,7 +10,8 @@
              MinWidth="200"
              MinHeight="100"
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Binding.SourceUpdated="OnBindingSourceUpdated">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -87,7 +88,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Minimum"
                                 Visibility="Collapsed"
-                                SelectedDateTime="{Binding ElementName=AxisProperties, Path=Axis.Minimum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DateNumberConverter}}"
+                                SelectedDateTime="{Binding ElementName=AxisProperties, Path=Axis.Minimum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DateNumberConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
@@ -99,7 +100,7 @@
                                 Title="Minimum"
                                 CanHaveNegative="True"
                                 DefaultNumber="{x:Static sys:Double.NaN}"
-                                Number="{Binding ElementName=AxisProperties, Path=Axis.Minimum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Number="{Binding ElementName=AxisProperties, Path=Axis.Minimum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"
                                 PreviewNumberChanged="AxisMinimum_PreviewNumberChanged"/>
@@ -112,7 +113,7 @@
                                 Title="Maximum"
                                 Height="24"
                                 Visibility="Collapsed"
-                                SelectedDateTime="{Binding ElementName=AxisProperties, Path=Axis.Maximum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DateNumberConverter}}"
+                                SelectedDateTime="{Binding ElementName=AxisProperties, Path=Axis.Maximum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DateNumberConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
@@ -124,7 +125,7 @@
                                 Title="Maximum"
                                 CanHaveNegative="True"
                                 DefaultNumber="{x:Static sys:Double.NaN}"
-                                Number="{Binding ElementName=AxisProperties, Path=Axis.Maximum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Number="{Binding ElementName=AxisProperties, Path=Axis.Maximum, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"
                                 PreviewNumberChanged="AxisMaximum_PreviewNumberChanged"/>
@@ -195,7 +196,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Axis Line Color"
-                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.AxislineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}}"
+                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.AxislineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}, NotifyOnSourceUpdated=True}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
                             <!--Axis Line Style  (USER)-->
@@ -206,7 +207,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Axis Line Style"
                                 DashArrayOptions="{Binding ElementName=AxisProperties, Path=LineStyleOptions}"
-                                SelectedDashArray="{Binding ElementName=AxisProperties, Path=Axis.AxislineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                                SelectedDashArray="{Binding ElementName=AxisProperties, Path=Axis.AxislineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
@@ -217,7 +218,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Axis Line Thickness"
                                 WidthOptions="{StaticResource LineWidthOptions}"
-                                SelectedWidth="{Binding Axis.AxislineThickness, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedWidth="{Binding Axis.AxislineThickness, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
@@ -229,7 +230,7 @@
                                 Title="Axis Distance"
                                 CanHaveNegative="True"
                                 NumericOptions="{StaticResource PaddingOptions}"
-                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.AxisDistance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.AxisDistance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
@@ -243,17 +244,20 @@
                                 <cntrls:BooleanPropertyControl.IsSelected>
                                     <MultiBinding
                                         Converter="{StaticResource ReverseConverter}"
-                                        UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                                        UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"
+                                        NotifyOnSourceUpdated="True">
                                         <Binding
                                             Path="Axis.StartPosition"
                                             ElementName="AxisProperties"
                                             UpdateSourceTrigger="PropertyChanged"
-                                            Mode="TwoWay"/>
+                                            Mode="TwoWay"
+                                            NotifyOnSourceUpdated="True"/>
                                         <Binding
                                             Path="Axis.EndPosition"
                                             ElementName="AxisProperties"
                                             UpdateSourceTrigger="PropertyChanged"
-                                            Mode="TwoWay"/>
+                                            Mode="TwoWay"
+                                            NotifyOnSourceUpdated="True"/>
                                         <Binding
                                             Path="Axis"
                                             ElementName="AxisProperties"
@@ -268,7 +272,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Position at Zero Crossing"
-                                IsSelected="{Binding ElementName=AxisProperties, Path=Axis.PositionAtZeroCrossing, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                IsSelected="{Binding ElementName=AxisProperties, Path=Axis.PositionAtZeroCrossing, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 IsEnabled="{Binding ElementName=AxisProperties, Path=Axis.IsEnabled}"/>
 
 
@@ -316,7 +320,7 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="400"
                                 Title="Text"
-                                Text="{Binding Axis.Title, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Text="{Binding Axis.Title, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Title Color-->
@@ -324,7 +328,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Color"
-                                SelectedColor="{Binding Axis.TitleColor, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}}"/>
+                                SelectedColor="{Binding Axis.TitleColor, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}, NotifyOnSourceUpdated=True}"/>
 
                             <!--Title Font-->
                             <cntrls:FontSelectorControl
@@ -332,7 +336,7 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Font"
-                                FontFamilyString="{Binding Path=Axis.TitleFont, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                FontFamilyString="{Binding Path=Axis.TitleFont, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Title Font Size-->
@@ -343,7 +347,7 @@
                                 Title="Font Size"
                                 CanHaveNegative="False"
                                 NumericOptions="{StaticResource FontSizeOptions}"
-                                SelectedNumber="{Binding Axis.TitleFontSize, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}}"
+                                SelectedNumber="{Binding Axis.TitleFontSize, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Title Font Weight-->
@@ -352,7 +356,7 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Font Weight"
-                                SelectedFontWeight="{Binding Path=Axis.TitleFontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedFontWeight="{Binding Path=Axis.TitleFontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Title Distance (DEVELOPER)-->
@@ -362,7 +366,7 @@
                                 Title="Distance From Axis"
                                 CanHaveNegative="True"
                                 NumericOptions="{StaticResource PaddingOptions}"
-                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.AxisTitleDistance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.AxisTitleDistance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Units-->
@@ -371,7 +375,7 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Units"
-                                Text="{Binding Axis.Unit, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource EmptyToNullConverter}}"
+                                Text="{Binding Axis.Unit, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource EmptyToNullConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                         </DockPanel>
@@ -396,7 +400,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Text Color"
-                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.TextColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}}"/>
+                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.TextColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}, NotifyOnSourceUpdated=True}"/>
 
                             <!--Axis Label Font-->
                             <cntrls:FontSelectorControl
@@ -404,7 +408,7 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Font"
-                                FontFamilyString="{Binding Path=Axis.Font, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                FontFamilyString="{Binding Path=Axis.Font, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Label Font Size-->
@@ -415,7 +419,7 @@
                                 Title="Font Size"
                                 CanHaveNegative="False"
                                 NumericOptions="{StaticResource FontSizeOptions}"
-                                SelectedNumber="{Binding Axis.FontSize, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}}"
+                                SelectedNumber="{Binding Axis.FontSize, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Label Font Weight-->
@@ -424,7 +428,7 @@
                                 DockPanel.Dock="Top"
                                 MaxPropertyWidth="200"
                                 Title="Font Weight"
-                                SelectedFontWeight="{Binding Path=Axis.FontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedFontWeight="{Binding Path=Axis.FontWeight, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Text Angle-->
@@ -435,7 +439,7 @@
                                 Title="Text Angle"
                                 CanHaveNegative="True"
                                 NumericOptions="{StaticResource AngleOptions}"
-                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.Angle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.Angle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Axis Tick Distance-->
@@ -446,7 +450,7 @@
                                 Title="Tick To Label Distance"
                                 CanHaveNegative="True"
                                 NumericOptions="{StaticResource PaddingOptions}"
-                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.AxisTickToLabelDistance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedNumber="{Binding ElementName=AxisProperties, Path=Axis.AxisTickToLabelDistance, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl2, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Label Category-->
@@ -489,7 +493,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Superscript Notation"
-                                IsSelected="{Binding ElementName=AxisProperties, Path=Axis.UseSuperExponentialFormat, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                IsSelected="{Binding ElementName=AxisProperties, Path=Axis.UseSuperExponentialFormat, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
 
                             <!--Axis Labels (Category Axis Only, Binding is set in code behind)-->
                             <cntrls:StringListPropertyControl
@@ -538,7 +542,7 @@
                             <cntrls:ColorPropertyControl
                                 Margin="0 2" DockPanel.Dock="Top"
                                 Title="Major Grid Line Color"
-                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.MajorGridlineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}}"/>
+                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.MajorGridlineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}, NotifyOnSourceUpdated=True}"/>
 
                             <!--Major Grid Line Style-->
                             <cntrls:LineStyleSelectorControl
@@ -547,7 +551,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Major Grid Line Style"
                                 DashArrayOptions="{Binding ElementName=AxisProperties, Path=LineStyleOptions}"
-                                SelectedDashArray="{Binding ElementName=AxisProperties, Path=Axis.MajorGridlineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                                SelectedDashArray="{Binding ElementName=AxisProperties, Path=Axis.MajorGridlineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Major Grid Line Thickness-->
@@ -557,7 +561,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Major Grid Line Thickness"
                                 WidthOptions="{StaticResource LineWidthOptions}"
-                                SelectedWidth="{Binding Axis.MajorGridlineThickness, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedWidth="{Binding Axis.MajorGridlineThickness, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Major Grid Line Step-->
@@ -568,7 +572,7 @@
                                 Title="Major Step"
                                 CanHaveNegative="False"
                                 DefaultNumber="{x:Static sys:Double.NaN}"
-                                Number="{Binding ElementName=AxisProperties, Path=Axis.MajorStep, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Number="{Binding ElementName=AxisProperties, Path=Axis.MajorStep, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Major Tick Size-->
@@ -578,7 +582,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Major Tick Size"
                                 CanHaveNegative="False"
-                                Number="{Binding ElementName=AxisProperties, Path=Axis.MajorTickSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Number="{Binding ElementName=AxisProperties, Path=Axis.MajorTickSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
                         </DockPanel>
 
@@ -598,7 +602,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Minor Grid Line Color"
-                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.MinorGridlineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}}"/>
+                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.MinorGridlineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}, NotifyOnSourceUpdated=True}"/>
 
                             <!--Minor Grid Line Style-->
                             <cntrls:LineStyleSelectorControl
@@ -607,7 +611,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Minor Grid Line Style"
                                 DashArrayOptions="{Binding ElementName=AxisProperties, Path=LineStyleOptions}"
-                                SelectedDashArray="{Binding ElementName=AxisProperties, Path=Axis.MinorGridlineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                                SelectedDashArray="{Binding ElementName=AxisProperties, Path=Axis.MinorGridlineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Minor Grid Line Thickness-->
@@ -617,7 +621,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Minor Grid Line Thickness"
                                 WidthOptions="{StaticResource LineWidthOptions}"
-                                SelectedWidth="{Binding Axis.MinorGridlineThickness, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SelectedWidth="{Binding Axis.MinorGridlineThickness, ElementName=AxisProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Minor Grid Line Step-->
@@ -628,7 +632,7 @@
                                 Title="Minor Step"
                                 CanHaveNegative="False"
                                 DefaultNumber="{x:Static sys:Double.NaN}"
-                                Number="{Binding ElementName=AxisProperties, Path=Axis.MinorStep, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Number="{Binding ElementName=AxisProperties, Path=Axis.MinorStep, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                             <!--Minor Tick Size-->
@@ -638,7 +642,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Minor Tick Size"
                                 CanHaveNegative="False"
-                                Number="{Binding ElementName=AxisProperties, Path=Axis.MinorTickSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Number="{Binding ElementName=AxisProperties, Path=Axis.MinorTickSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl3, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                         </DockPanel>
@@ -665,7 +669,7 @@
                                 <cntrls:ContentPropertyControl.InnerContent>
                                     <ComboBox
                                         ItemsSource="{Binding AxisTickStyleOptions}"
-                                        SelectedValue="{Binding Path=Axis.TickStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                        SelectedValue="{Binding Path=Axis.TickStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                                 </cntrls:ContentPropertyControl.InnerContent>
                             </cntrls:ContentPropertyControl>
 
@@ -674,7 +678,7 @@
                                 Margin="0 2"
                                 DockPanel.Dock="Top"
                                 Title="Tick Line Color"
-                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.TicklineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}}"/>
+                                SelectedColor="{Binding ElementName=AxisProperties, Path=Axis.TicklineColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertColorToBrush}, NotifyOnSourceUpdated=True}"/>
 
                             <!--Is Tick Centered (Category Axis Only, Binding is set in code behind)-->
                             <cntrls:BooleanPropertyControl

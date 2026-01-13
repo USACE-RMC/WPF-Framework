@@ -47,17 +47,42 @@ namespace OxyPlotControls
     /// </summary>
     public partial class GeneralPlotControl : UserControl
     {
+        #region Fields
+
         /// <summary>
         /// The XML tag name used for serializing general plot properties.
         /// </summary>
         public static readonly string GeneralPropertiesTag = "General";
 
         /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when any plot property has been modified through user interaction.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when bindings update the source (Plot) properties.
+        /// Subscribe to this event to track unsaved changes and update dirty state.
+        /// The event is suppressed during control initialization and when Plot property changes.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
+        #region Dependency Properties
+
+        /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
         public static DependencyProperty PlotProperty = DependencyProperty.Register(
             nameof(Plot), typeof(Wpf.Plot), typeof(GeneralPlotControl),
-            new PropertyMetadata(null, OnPlotChanged));
+            new PropertyMetadata(null, OnPlotPropertyChanged));
 
         /// <summary>
         /// Gets or sets the OxyPlot Plot control that this control edits.
@@ -83,29 +108,75 @@ namespace OxyPlotControls
             set { SetValue(ExpanderStyleProperty, value); }
         }
 
+        #endregion
+
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneralPlotControl"/> class.
         /// </summary>
         public GeneralPlotControl()
         {
             InitializeComponent();
+
+            // Enable PlotChanged events after control is fully loaded
+            Loaded += (s, e) => _suppressPlotChanged = false;
         }
 
+        #endregion
+
+        #region Protected Methods
+
         /// <summary>
-        /// Called when the Plot property changes.
-        /// Forces a layout update to ensure bindings are properly synchronized.
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
         /// </summary>
-        private static void OnPlotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Called when the Plot dependency property changes.
+        /// Suppresses PlotChanged events during the update and forces a layout refresh.
+        /// </summary>
+        /// <param name="d">The dependency object (GeneralPlotControl instance).</param>
+        /// <param name="e">The event arguments containing old and new values.</param>
+        private static void OnPlotPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is GeneralPlotControl control && e.NewValue != null)
             {
+                // Suppress events while bindings update to new Plot
+                control._suppressPlotChanged = true;
+
                 // Force layout update to sync bindings
                 control.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
                 {
                     control.UpdateLayout();
+                    // Re-enable events after bindings have settled
+                    control._suppressPlotChanged = false;
                 }));
             }
         }
+
+        /// <summary>
+        /// Handles the Binding.SourceUpdated attached event.
+        /// Called when any binding with NotifyOnSourceUpdated=True updates its source.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        #endregion
 
         /// <summary>
         /// Serializes general plot properties to an XML element for persistence.

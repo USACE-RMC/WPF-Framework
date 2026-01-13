@@ -44,6 +44,32 @@ namespace OxyPlotControls
     /// </summary>
     public partial class AnnotationSelectorControl : UserControl
     {
+        #region Fields
+
+        /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when any annotation property has been modified through user interaction.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when the child AnnotationControl's PlotChanged event fires,
+        /// indicating that annotation properties have been modified by the user.
+        /// Subscribe to this event to track unsaved changes and update dirty state.
+        /// The event is suppressed during control initialization.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AnnotationSelectorControl"/> class.
         /// </summary>
@@ -51,7 +77,45 @@ namespace OxyPlotControls
         {
             InitializeComponent();
             SetDefaultComboboxStyle();
+
+            // Subscribe to child AnnotationControl's PlotChanged event to bubble it up
+            AnnotationPropertiesControl.PlotChanged += AnnotationPropertiesControl_PlotChanged;
+
+            // Enable PlotChanged events after control is fully loaded
+            Loaded += (s, e) => _suppressPlotChanged = false;
         }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
+        /// </summary>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Handles the PlotChanged event from the child AnnotationControl.
+        /// Bubbles up the event by raising our own PlotChanged event.
+        /// </summary>
+        /// <param name="sender">The source of the event (child AnnotationControl).</param>
+        /// <param name="e">The event arguments.</param>
+        private void AnnotationPropertiesControl_PlotChanged(object? sender, EventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        #endregion
 
         /// <summary>
         /// The XML tag name used for serializing annotations properties.

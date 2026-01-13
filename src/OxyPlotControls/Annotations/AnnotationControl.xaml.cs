@@ -48,13 +48,73 @@ namespace OxyPlotControls
     /// </summary>
     public partial class AnnotationControl : UserControl
     {
+        #region Fields
+
+        /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when any annotation property has been modified through user interaction.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when bindings update the source (Annotation) properties.
+        /// Subscribe to this event to track unsaved changes and update dirty state.
+        /// The event is suppressed during control initialization and when Annotation property changes.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AnnotationControl"/> class.
         /// </summary>
         public AnnotationControl()
         {
             InitializeComponent();
+
+            // Enable PlotChanged events after control is fully loaded
+            Loaded += (s, e) => _suppressPlotChanged = false;
         }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
+        /// </summary>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Handles the Binding.SourceUpdated attached event.
+        /// Called when any binding with NotifyOnSourceUpdated=True updates its source.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        #endregion
 
         /// <summary>
         /// XML element tag used for serializing annotation properties.
@@ -125,6 +185,7 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Handles changes to the Annotation property and updates the control's UI accordingly.
+        /// Suppresses PlotChanged events during the update and forces a layout refresh.
         /// </summary>
         /// <param name="d">The dependency object that changed.</param>
         /// <param name="e">Event args containing the old and new values.</param>
@@ -135,6 +196,9 @@ namespace OxyPlotControls
             var thisControl = (AnnotationControl)d;
 
             if (e.NewValue == null) return;
+
+            // Suppress events while bindings update to new Annotation
+            thisControl._suppressPlotChanged = true;
 
             // Show Expanders
             thisControl.TextEXP.Visibility = Visibility.Visible;
@@ -198,6 +262,8 @@ namespace OxyPlotControls
             thisControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
             {
                 thisControl.UpdateLayout();
+                // Re-enable events after bindings have settled
+                thisControl._suppressPlotChanged = false;
             }));
         }
 

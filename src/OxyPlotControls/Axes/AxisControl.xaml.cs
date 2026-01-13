@@ -48,7 +48,30 @@ namespace OxyPlotControls
     /// </summary>
     public partial class AxisControl : UserControl
     {
+        #region Fields
+
         private static readonly double Epsilon = 0.0000000000000001;
+
+        /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when any axis property has been modified through user interaction.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when bindings update the source (Axis) properties.
+        /// Subscribe to this event to track unsaved changes and update dirty state.
+        /// The event is suppressed during control initialization and when Axis property changes.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
 
         /// <summary>
         /// XML element tag used for serializing axis properties.
@@ -109,11 +132,45 @@ namespace OxyPlotControls
         public AxisControl()
         {
             InitializeComponent();
+
+            // Enable PlotChanged events after control is fully loaded
+            Loaded += (s, e) => _suppressPlotChanged = false;
         }
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
+        /// </summary>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
+        #region Private Event Handlers
+
+        /// <summary>
+        /// Handles the Binding.SourceUpdated attached event.
+        /// Called when any binding with NotifyOnSourceUpdated=True updates its source.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        #endregion
 
         /// <summary>
         /// Initializes the plot when the Axis property changes.
         /// Configures UI elements and bindings based on the axis type.
+        /// Suppresses PlotChanged events during the update and forces a layout refresh.
         /// </summary>
         /// <param name="d">The dependency object.</param>
         /// <param name="e">The event args containing the old and new axis values.</param>
@@ -123,6 +180,9 @@ namespace OxyPlotControls
             if (d.GetType() != typeof(AxisControl)) return;
             var thisControl = (AxisControl)d;
 
+            // Suppress events while bindings update to new Axis
+            thisControl._suppressPlotChanged = true;
+
             var oldAxis = e.OldValue as Wpf.Axis;
             if (oldAxis != null)
             {
@@ -130,10 +190,20 @@ namespace OxyPlotControls
             }
 
             var newAxis = e.NewValue as Wpf.Axis;
-            if (newAxis == null || thisControl.Content == null) return;
+            if (newAxis == null || thisControl.Content == null)
+            {
+                // Re-enable events if we're exiting early
+                thisControl._suppressPlotChanged = false;
+                return;
+            }
 
             var axisTypeComboBox = thisControl.AxisTypeSelector.InnerContent as ComboBox;
-            if (axisTypeComboBox == null) return;
+            if (axisTypeComboBox == null)
+            {
+                // Re-enable events if we're exiting early
+                thisControl._suppressPlotChanged = false;
+                return;
+            }
 
             bool isSupportedType = true;
 
@@ -290,9 +360,19 @@ namespace OxyPlotControls
             }
 
             var labelTypeComboBox = thisControl.LabelTypeSelector.InnerContent as ComboBox;
-            if (labelTypeComboBox == null) return;
+            if (labelTypeComboBox == null)
+            {
+                // Re-enable events if we're exiting early
+                thisControl._suppressPlotChanged = false;
+                return;
+            }
             labelTypeComboBox.SelectionChanged -= thisControl.LabelType_SelectionChanged;
-            if (newAxis.GetType() == typeof(Wpf.DateTimeAxis) || newAxis.GetType() == typeof(Wpf.CategoryAxis)) return;
+            if (newAxis.GetType() == typeof(Wpf.DateTimeAxis) || newAxis.GetType() == typeof(Wpf.CategoryAxis))
+            {
+                // Re-enable events if we're exiting early
+                thisControl._suppressPlotChanged = false;
+                return;
+            }
 
             string stringFormatCategory = "";
             string stringFormatDecimal = "";
@@ -339,6 +419,8 @@ namespace OxyPlotControls
             thisControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
             {
                 thisControl.UpdateLayout();
+                // Re-enable events after bindings have settled
+                thisControl._suppressPlotChanged = false;
             }));
         }
 
