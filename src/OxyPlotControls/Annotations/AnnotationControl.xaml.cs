@@ -789,4 +789,100 @@ namespace OxyPlotControls
             return new ScreenVector(p.X, p.Y);
         }
     }
+
+    /// <summary>
+    /// Converts between OxyPlot HorizontalAlignment and WPF HorizontalAlignment types.
+    /// </summary>
+    /// <remarks>
+    /// OxyPlot uses different enum values: Left=-1, Center=0, Right=1
+    /// WPF uses: Left=0, Center=1, Right=2, Stretch=3
+    /// This converter properly maps between the two.
+    /// </remarks>
+    public class OxyHorizontalAlignmentConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converts an OxyPlot HorizontalAlignment to a WPF HorizontalAlignment.
+        /// </summary>
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return System.Windows.HorizontalAlignment.Center;
+            if (value.GetType() != typeof(OxyPlot.HorizontalAlignment)) return System.Windows.HorizontalAlignment.Center;
+
+            var oxyAlignment = (OxyPlot.HorizontalAlignment)value;
+            return oxyAlignment switch
+            {
+                OxyPlot.HorizontalAlignment.Left => System.Windows.HorizontalAlignment.Left,
+                OxyPlot.HorizontalAlignment.Center => System.Windows.HorizontalAlignment.Center,
+                OxyPlot.HorizontalAlignment.Right => System.Windows.HorizontalAlignment.Right,
+                _ => System.Windows.HorizontalAlignment.Center
+            };
+        }
+
+        /// <summary>
+        /// Converts a WPF HorizontalAlignment back to an OxyPlot HorizontalAlignment.
+        /// </summary>
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return OxyPlot.HorizontalAlignment.Center;
+            if (value.GetType() != typeof(System.Windows.HorizontalAlignment)) return OxyPlot.HorizontalAlignment.Center;
+
+            var wpfAlignment = (System.Windows.HorizontalAlignment)value;
+            return wpfAlignment switch
+            {
+                System.Windows.HorizontalAlignment.Left => OxyPlot.HorizontalAlignment.Left,
+                System.Windows.HorizontalAlignment.Center => OxyPlot.HorizontalAlignment.Center,
+                System.Windows.HorizontalAlignment.Right => OxyPlot.HorizontalAlignment.Right,
+                System.Windows.HorizontalAlignment.Stretch => OxyPlot.HorizontalAlignment.Center, // Stretch not supported in OxyPlot
+                _ => OxyPlot.HorizontalAlignment.Center
+            };
+        }
+    }
+
+    /// <summary>
+    /// Converts between OxyPlot VerticalAlignment and WPF VerticalAlignment types.
+    /// </summary>
+    /// <remarks>
+    /// OxyPlot uses different enum values: Top=-1, Middle=0, Bottom=1
+    /// WPF uses: Top=0, Center=1, Bottom=2, Stretch=3
+    /// This converter properly maps between the two.
+    /// </remarks>
+    public class OxyVerticalAlignmentConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converts an OxyPlot VerticalAlignment to a WPF VerticalAlignment.
+        /// </summary>
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return System.Windows.VerticalAlignment.Center;
+            if (value.GetType() != typeof(OxyPlot.VerticalAlignment)) return System.Windows.VerticalAlignment.Center;
+
+            var oxyAlignment = (OxyPlot.VerticalAlignment)value;
+            return oxyAlignment switch
+            {
+                OxyPlot.VerticalAlignment.Top => System.Windows.VerticalAlignment.Top,
+                OxyPlot.VerticalAlignment.Middle => System.Windows.VerticalAlignment.Center,
+                OxyPlot.VerticalAlignment.Bottom => System.Windows.VerticalAlignment.Bottom,
+                _ => System.Windows.VerticalAlignment.Center
+            };
+        }
+
+        /// <summary>
+        /// Converts a WPF VerticalAlignment back to an OxyPlot VerticalAlignment.
+        /// </summary>
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return OxyPlot.VerticalAlignment.Middle;
+            if (value.GetType() != typeof(System.Windows.VerticalAlignment)) return OxyPlot.VerticalAlignment.Middle;
+
+            var wpfAlignment = (System.Windows.VerticalAlignment)value;
+            return wpfAlignment switch
+            {
+                System.Windows.VerticalAlignment.Top => OxyPlot.VerticalAlignment.Top,
+                System.Windows.VerticalAlignment.Center => OxyPlot.VerticalAlignment.Middle,
+                System.Windows.VerticalAlignment.Bottom => OxyPlot.VerticalAlignment.Bottom,
+                System.Windows.VerticalAlignment.Stretch => OxyPlot.VerticalAlignment.Middle, // Stretch not supported in OxyPlot
+                _ => OxyPlot.VerticalAlignment.Middle
+            };
+        }
+    }
 }

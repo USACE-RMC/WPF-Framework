@@ -19,6 +19,7 @@
                     <local:OxyAutomaticColorConverter x:Key="OxyAutoColorConverter"/>
                     <local:OxyDefaultFontSizeConverter x:Key="DefaultFontSizeConverter"/>
                     <cntrls:DoubleToGridLengthConverter x:Key="ActualToLengthConverter" />
+                    <local:OxyHorizontalAlignmentConverter x:Key="OxyHorizontalAlignmentConverter"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -145,7 +146,7 @@
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Item Alignment"
-                    Alignment="{Binding Path=Plot.LegendItemAlignment, ElementName=LegendProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                    Alignment="{Binding Path=Plot.LegendItemAlignment, ElementName=LegendProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyHorizontalAlignmentConverter}}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
             </DockPanel>

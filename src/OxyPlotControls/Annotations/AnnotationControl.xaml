@@ -27,6 +27,8 @@
                     <cntrls:ThicknessToDoubleConverter x:Key="ConvertThicknessToDouble"/>
                     <local:OxyDefaultFontSizeConverter x:Key="DefaultFontSizeConverter"/>
                     <cntrls:DoubleToGridLengthConverter x:Key="ActualToLengthConverter" />
+                    <local:OxyHorizontalAlignmentConverter x:Key="OxyHorizontalAlignmentConverter"/>
+                    <local:OxyVerticalAlignmentConverter x:Key="OxyVerticalAlignmentConverter"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -186,7 +188,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Horizontal Alignment"
-                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextHorizontalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextHorizontalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyHorizontalAlignmentConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextHorizontalAlignment, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -197,7 +199,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Vertical Alignment"
-                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextVerticalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextVerticalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyVerticalAlignmentConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextVerticalAlignment, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
