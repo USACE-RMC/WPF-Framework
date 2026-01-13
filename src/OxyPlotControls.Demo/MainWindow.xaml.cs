@@ -111,14 +111,43 @@ namespace OxyPlotControls.Demo
         private readonly Dictionary<string, System.Collections.IEnumerable> _categoryAxisLabelsRegistry = new Dictionary<string, System.Collections.IEnumerable>();
 
         /// <summary>
+        /// Counter to track the number of PlotChanged events for testing.
+        /// </summary>
+        private int _plotChangedCount = 0;
+
+        /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
 
+            // Subscribe to PlotChanged events for testing
+            // Note: Subscriptions moved to Loaded event to avoid potential initialization issues
+            Loaded += MainWindow_Loaded;
+
             // Trigger line series in combobox (unbound)
             Combobox1.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Handles the Loaded event. Subscribes to PlotChanged events after all controls are fully loaded.
+        /// </summary>
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            OxyPlotToolBar.PlotChanged += OnPlotChanged;
+            PropertiesControl.PlotChanged += OnPlotChanged;
+        }
+
+        /// <summary>
+        /// Handles PlotChanged events from the toolbar and properties control.
+        /// Updates the status bar label with the timestamp.
+        /// </summary>
+        private void OnPlotChanged(object? sender, EventArgs e)
+        {
+            _plotChangedCount++;
+            string source = sender?.GetType().Name ?? "Unknown";
+            PlotChangedLabel.Text = $"Plot Changed #{_plotChangedCount} from {source} at {DateTime.Now:HH:mm:ss.fff}";
         }
 
         private List<DataPoint> CreateNormalDist(double x0, double x1, double mean, double variance, int n = 1001)

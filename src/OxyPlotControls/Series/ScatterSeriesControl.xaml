@@ -7,7 +7,8 @@
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Binding.SourceUpdated="OnBindingSourceUpdated">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -56,7 +57,7 @@
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="400"
                     Title="Title"
-                    Text="{Binding Series.Title, ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Text="{Binding Series.Title, ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Visibility (DEVELOPER)-->
@@ -64,14 +65,14 @@
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Is Visible"
-                    IsSelected="{Binding ElementName=ScatterSeriesProperties, Path=Series.Visibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource VisibilityToBoolConverter}}"/>
+                    IsSelected="{Binding ElementName=ScatterSeriesProperties, Path=Series.Visibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource VisibilityToBoolConverter}}"/>
 
                 <!--Render In Legend (DEVELOPER)-->
                 <cntrls:BooleanPropertyControl
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Show In Legend"
-                    IsSelected="{Binding ElementName=ScatterSeriesProperties, Path=Series.RenderInLegend, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    IsSelected="{Binding ElementName=ScatterSeriesProperties, Path=Series.RenderInLegend, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
 
             </DockPanel>
         </Expander>
@@ -96,7 +97,7 @@
                     <cntrls:ContentPropertyControl.InnerContent>
                         <ComboBox
                             ItemsSource="{Binding MarkerTypeOptions}"
-                            SelectedValue="{Binding Path=Series.MarkerType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            SelectedValue="{Binding Path=Series.MarkerType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                     </cntrls:ContentPropertyControl.InnerContent>
                 </cntrls:ContentPropertyControl>
 
@@ -108,12 +109,14 @@
                     <cntrls:ColorPropertyControl.SelectedColor>
                         <MultiBinding
                                 Converter="{StaticResource MarkerFillConverter}"
-                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"
+                                NotifyOnSourceUpdated="True">
                             <Binding
                                     Path="Series.MarkerFill"
                                     ElementName="ScatterSeriesProperties"
                                     UpdateSourceTrigger="PropertyChanged"
-                                    Mode="TwoWay"/>
+                                    Mode="TwoWay"
+                                    NotifyOnSourceUpdated="True"/>
                             <Binding
                                     Path="Series"
                                     ElementName="ScatterSeriesProperties"
@@ -130,7 +133,7 @@
                         Title="Marker Size"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=ScatterSeriesProperties, Path=Series.MarkerSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedNumber="{Binding ElementName=ScatterSeriesProperties, Path=Series.MarkerSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--MarkerStroke (LineSeries and ScatterSeries)-->
@@ -141,12 +144,14 @@
                     <cntrls:ColorPropertyControl.SelectedColor>
                         <MultiBinding
                                 Converter="{StaticResource MarkerStrokeConverter}"
-                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"
+                                NotifyOnSourceUpdated="True">
                             <Binding
                                     Path="Series.MarkerStroke"
                                     ElementName="ScatterSeriesProperties"
                                     UpdateSourceTrigger="PropertyChanged"
-                                    Mode="TwoWay"/>
+                                    Mode="TwoWay"
+                                    NotifyOnSourceUpdated="True"/>
                             <Binding
                                     Path="Series"
                                     ElementName="ScatterSeriesProperties"
@@ -163,7 +168,7 @@
                         Title="Marker Line Thickness"
                         WidthOptions="{StaticResource LineWidthOptions}"
                         SelectedWidth="{Binding Series.MarkerStrokeThickness,
-                        ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
             </DockPanel>
@@ -186,7 +191,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Color"
-                        SelectedColor="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                 <!--ErrorBarStopWidth (ScatterErrorSeries Only)-->
@@ -194,7 +199,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Stop Width"
-                        Number="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarStopWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarStopWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarStopWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -204,7 +209,7 @@
                         DockPanel.Dock="Top"
                         Title="Thickness"
                         WidthOptions="{StaticResource LineWidthOptions}"
-                        SelectedWidth="{Binding Series.ErrorBarStrokeThickness, ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedWidth="{Binding Series.ErrorBarStrokeThickness, ElementName=ScatterSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=ScatterSeriesProperties, Path=Series.ErrorBarStrokeThickness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -213,7 +218,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Minimum Error Size"
-                        Number="{Binding ElementName=ScatterSeriesProperties, Path=Series.MinimumErrorSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=ScatterSeriesProperties, Path=Series.MinimumErrorSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=ScatterSeriesProperties, Path=Series.MinimumErrorSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 

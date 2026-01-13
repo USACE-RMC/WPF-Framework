@@ -48,13 +48,73 @@ namespace OxyPlotControls
     /// </summary>
     public partial class AnnotationControl : UserControl
     {
+        #region Fields
+
+        /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when any annotation property has been modified through user interaction.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when bindings update the source (Annotation) properties.
+        /// Subscribe to this event to track unsaved changes and update dirty state.
+        /// The event is suppressed during control initialization and when Annotation property changes.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AnnotationControl"/> class.
         /// </summary>
         public AnnotationControl()
         {
             InitializeComponent();
+
+            // Enable PlotChanged events after control is fully loaded
+            Loaded += (s, e) => _suppressPlotChanged = false;
         }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
+        /// </summary>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Handles the Binding.SourceUpdated attached event.
+        /// Called when any binding with NotifyOnSourceUpdated=True updates its source.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        #endregion
 
         /// <summary>
         /// XML element tag used for serializing annotation properties.
@@ -125,6 +185,7 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Handles changes to the Annotation property and updates the control's UI accordingly.
+        /// Suppresses PlotChanged events during the update and forces a layout refresh.
         /// </summary>
         /// <param name="d">The dependency object that changed.</param>
         /// <param name="e">Event args containing the old and new values.</param>
@@ -135,6 +196,9 @@ namespace OxyPlotControls
             var thisControl = (AnnotationControl)d;
 
             if (e.NewValue == null) return;
+
+            // Suppress events while bindings update to new Annotation
+            thisControl._suppressPlotChanged = true;
 
             // Show Expanders
             thisControl.TextEXP.Visibility = Visibility.Visible;
@@ -198,6 +262,8 @@ namespace OxyPlotControls
             thisControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
             {
                 thisControl.UpdateLayout();
+                // Re-enable events after bindings have settled
+                thisControl._suppressPlotChanged = false;
             }));
         }
 
@@ -721,6 +787,102 @@ namespace OxyPlotControls
             if (value.GetType() != typeof(System.Windows.Point)) return null;
             var p = (System.Windows.Point)value;
             return new ScreenVector(p.X, p.Y);
+        }
+    }
+
+    /// <summary>
+    /// Converts between OxyPlot HorizontalAlignment and WPF HorizontalAlignment types.
+    /// </summary>
+    /// <remarks>
+    /// OxyPlot uses different enum values: Left=-1, Center=0, Right=1
+    /// WPF uses: Left=0, Center=1, Right=2, Stretch=3
+    /// This converter properly maps between the two.
+    /// </remarks>
+    public class OxyHorizontalAlignmentConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converts an OxyPlot HorizontalAlignment to a WPF HorizontalAlignment.
+        /// </summary>
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return System.Windows.HorizontalAlignment.Center;
+            if (value.GetType() != typeof(OxyPlot.HorizontalAlignment)) return System.Windows.HorizontalAlignment.Center;
+
+            var oxyAlignment = (OxyPlot.HorizontalAlignment)value;
+            return oxyAlignment switch
+            {
+                OxyPlot.HorizontalAlignment.Left => System.Windows.HorizontalAlignment.Left,
+                OxyPlot.HorizontalAlignment.Center => System.Windows.HorizontalAlignment.Center,
+                OxyPlot.HorizontalAlignment.Right => System.Windows.HorizontalAlignment.Right,
+                _ => System.Windows.HorizontalAlignment.Center
+            };
+        }
+
+        /// <summary>
+        /// Converts a WPF HorizontalAlignment back to an OxyPlot HorizontalAlignment.
+        /// </summary>
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return OxyPlot.HorizontalAlignment.Center;
+            if (value.GetType() != typeof(System.Windows.HorizontalAlignment)) return OxyPlot.HorizontalAlignment.Center;
+
+            var wpfAlignment = (System.Windows.HorizontalAlignment)value;
+            return wpfAlignment switch
+            {
+                System.Windows.HorizontalAlignment.Left => OxyPlot.HorizontalAlignment.Left,
+                System.Windows.HorizontalAlignment.Center => OxyPlot.HorizontalAlignment.Center,
+                System.Windows.HorizontalAlignment.Right => OxyPlot.HorizontalAlignment.Right,
+                System.Windows.HorizontalAlignment.Stretch => OxyPlot.HorizontalAlignment.Center, // Stretch not supported in OxyPlot
+                _ => OxyPlot.HorizontalAlignment.Center
+            };
+        }
+    }
+
+    /// <summary>
+    /// Converts between OxyPlot VerticalAlignment and WPF VerticalAlignment types.
+    /// </summary>
+    /// <remarks>
+    /// OxyPlot uses different enum values: Top=-1, Middle=0, Bottom=1
+    /// WPF uses: Top=0, Center=1, Bottom=2, Stretch=3
+    /// This converter properly maps between the two.
+    /// </remarks>
+    public class OxyVerticalAlignmentConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converts an OxyPlot VerticalAlignment to a WPF VerticalAlignment.
+        /// </summary>
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return System.Windows.VerticalAlignment.Center;
+            if (value.GetType() != typeof(OxyPlot.VerticalAlignment)) return System.Windows.VerticalAlignment.Center;
+
+            var oxyAlignment = (OxyPlot.VerticalAlignment)value;
+            return oxyAlignment switch
+            {
+                OxyPlot.VerticalAlignment.Top => System.Windows.VerticalAlignment.Top,
+                OxyPlot.VerticalAlignment.Middle => System.Windows.VerticalAlignment.Center,
+                OxyPlot.VerticalAlignment.Bottom => System.Windows.VerticalAlignment.Bottom,
+                _ => System.Windows.VerticalAlignment.Center
+            };
+        }
+
+        /// <summary>
+        /// Converts a WPF VerticalAlignment back to an OxyPlot VerticalAlignment.
+        /// </summary>
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return OxyPlot.VerticalAlignment.Middle;
+            if (value.GetType() != typeof(System.Windows.VerticalAlignment)) return OxyPlot.VerticalAlignment.Middle;
+
+            var wpfAlignment = (System.Windows.VerticalAlignment)value;
+            return wpfAlignment switch
+            {
+                System.Windows.VerticalAlignment.Top => OxyPlot.VerticalAlignment.Top,
+                System.Windows.VerticalAlignment.Center => OxyPlot.VerticalAlignment.Middle,
+                System.Windows.VerticalAlignment.Bottom => OxyPlot.VerticalAlignment.Bottom,
+                System.Windows.VerticalAlignment.Stretch => OxyPlot.VerticalAlignment.Middle, // Stretch not supported in OxyPlot
+                _ => OxyPlot.VerticalAlignment.Middle
+            };
         }
     }
 }

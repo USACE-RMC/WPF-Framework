@@ -52,6 +52,33 @@ namespace OxyPlotControls
     /// </summary>
     public partial class OxyPlotToolbar : UserControl
     {
+        #region PlotChanged Event
+
+        /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        /// <summary>
+        /// Occurs when the plot has been modified by user interactions through the toolbar.
+        /// This includes adding/moving annotations, editing text directly on the chart,
+        /// and other direct plot modifications.
+        /// </summary>
+        public event EventHandler? PlotChanged;
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
+        /// </summary>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
         #region Construction
 
         /// <summary>
@@ -90,6 +117,25 @@ namespace OxyPlotControls
             _leaderLine.StrokeDashArray = new DoubleCollection(LineStyle.DashDashDot.GetDashArray());
 
             _c.Children.Add(_leaderLine);
+
+            Loaded += OxyPlotToolbar_Loaded;
+            Unloaded += OxyPlotToolbar_Unloaded;
+        }
+
+        /// <summary>
+        /// Handles the Loaded event. Enables PlotChanged notifications.
+        /// </summary>
+        private void OxyPlotToolbar_Loaded(object sender, RoutedEventArgs e)
+        {
+            _suppressPlotChanged = false;
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event. Disables PlotChanged notifications.
+        /// </summary>
+        private void OxyPlotToolbar_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _suppressPlotChanged = true;
         }
 
         #endregion
@@ -568,6 +614,9 @@ namespace OxyPlotControls
         {
             if (_addAnnotationToolMode != AddToolMode.None)
             {
+                // Fire PlotChanged if an annotation was actually created
+                bool annotationWasCreated = _targetAddAnnotation != null;
+
                 if (_addAnnotationToolMode == AddToolMode.AddPolygonAnnotation || _addAnnotationToolMode == AddToolMode.AddPolylineAnnotation)
                 {
                     _leaderLine.Visibility = Visibility.Collapsed;
@@ -578,6 +627,12 @@ namespace OxyPlotControls
                 _doubleClicked = false;
                 _addAnnotationToolMode = AddToolMode.None;
                 _targetAddAnnotation = null!;
+
+                // Notify that the plot has changed (annotation was added)
+                if (annotationWasCreated)
+                {
+                    OnPlotChanged();
+                }
 
                 if (PanButton.IsChecked == true)
                 {
@@ -650,6 +705,7 @@ namespace OxyPlotControls
                     {
                         if (!newArrow.IsEnabled) return;
                         newArrow.Color = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.TextAnnotation))
@@ -693,6 +749,7 @@ namespace OxyPlotControls
                     {
                         if (!newText.IsEnabled) return;
                         newText.Background = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.RectangleAnnotation))
@@ -764,6 +821,7 @@ namespace OxyPlotControls
                     {
                         if (!newRect.IsEnabled) return;
                         newRect.Fill = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.EllipseAnnotation))
@@ -835,6 +893,7 @@ namespace OxyPlotControls
                     {
                         if (!newEllipse.IsEnabled) return;
                         newEllipse.Fill = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.PointAnnotation))
@@ -882,6 +941,7 @@ namespace OxyPlotControls
                     {
                         if (!newPoint.IsEnabled) return;
                         newPoint.Fill = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.PolygonAnnotation))
@@ -983,6 +1043,7 @@ namespace OxyPlotControls
                     {
                         if (!newPolygon.IsEnabled) return;
                         newPolygon.Fill = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.PolylineAnnotation))
@@ -1070,6 +1131,7 @@ namespace OxyPlotControls
                     {
                         if (!newPolyline.IsEnabled) return;
                         newPolyline.Color = _originalColor;
+                        OnPlotChanged();
                     };
                 }
                 else if (item.GetType() == typeof(Wpf.LineAnnotation))
@@ -1138,6 +1200,7 @@ namespace OxyPlotControls
                         if (!newLine.IsEnabled) return;
                         newLine.Color = _originalColor;
                         CloseLineAnnotationTooltip(newLine);
+                        OnPlotChanged();
                     };
                 }
             }
@@ -2261,6 +2324,7 @@ namespace OxyPlotControls
                             {
                                 Plot.Annotations.Remove(wpfAnno);
                                 Plot.InvalidatePlot(false);
+                                OnPlotChanged();
                             };
 
                             _contextMenu.Items.Add(editAnnoItem);
@@ -2685,6 +2749,9 @@ namespace OxyPlotControls
                 {
                     Plot.TitleColor = currentTextColor;
                 }
+
+                // Notify that the plot has changed (text was edited)
+                OnPlotChanged();
             };
         }
 

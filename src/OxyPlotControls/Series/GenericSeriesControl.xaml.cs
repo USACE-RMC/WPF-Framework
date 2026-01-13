@@ -47,6 +47,29 @@ namespace OxyPlotControls
     /// </summary>
     public partial class GenericSeriesControl : UserControl
     {
+        #region Fields
+
+        /// <summary>
+        /// Suppresses PlotChanged events during initial loading and series property updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when a series property value changes through user interaction with the control.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when binding source updates occur, indicating that the plot
+        /// should be refreshed to reflect the property changes. The event is suppressed
+        /// during initial control loading and when the Series property is being set.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
         #region Constants
 
         /// <summary>
@@ -267,6 +290,37 @@ namespace OxyPlotControls
         public GenericSeriesControl()
         {
             InitializeComponent();
+            Loaded += (s, e) => _suppressPlotChanged = false;
+        }
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event.
+        /// </summary>
+        /// <remarks>
+        /// This method checks the <see cref="_suppressPlotChanged"/> flag before raising the event.
+        /// The event will not be raised during initial loading or when the Series property is being updated.
+        /// </remarks>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Handles the SourceUpdated event for bindings in this control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data containing information about the binding that was updated.</param>
+        /// <remarks>
+        /// This method is called when any TwoWay binding with NotifyOnSourceUpdated=True
+        /// updates its source. It triggers the <see cref="PlotChanged"/> event to signal
+        /// that the plot should be refreshed.
+        /// </remarks>
+        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            OnPlotChanged();
         }
 
         /// <summary>
@@ -278,13 +332,26 @@ namespace OxyPlotControls
             if (d.GetType() != typeof(GenericSeriesControl)) return;
             var thisControl = (GenericSeriesControl)d;
 
+            // Suppress PlotChanged events during series property updates
+            thisControl._suppressPlotChanged = true;
+
             // Reset all visibility properties to defaults
             thisControl.ResetSeriesTypeVisibility();
 
-            if (e.NewValue == null) return;
+            if (e.NewValue == null)
+            {
+                // Re-enable PlotChanged events if no new value
+                thisControl._suppressPlotChanged = false;
+                return;
+            }
 
             var wpfSeries = e.NewValue as OxyPlot.Wpf.Series;
-            if (wpfSeries == null) return;
+            if (wpfSeries == null)
+            {
+                // Re-enable PlotChanged events if series is null
+                thisControl._suppressPlotChanged = false;
+                return;
+            }
 
             // Update visibility based on series type
             thisControl.UpdateSeriesTypeVisibility(wpfSeries);
@@ -293,6 +360,8 @@ namespace OxyPlotControls
             thisControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
             {
                 thisControl.UpdateLayout();
+                // Re-enable PlotChanged events after layout is complete
+                thisControl._suppressPlotChanged = false;
             }));
         }
 
