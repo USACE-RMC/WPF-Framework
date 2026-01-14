@@ -153,7 +153,7 @@ namespace DatabaseControls
         /// <param name="openProperties">Whether to open the properties panel.</param>
         /// <param name="propertyExpander">The property expander to display.</param>
         /// <param name="selectedObject">The selected object in the plot.</param>
-        private void PlotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
+        private void PlotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject)
         {
             if (!openProperties)
             {

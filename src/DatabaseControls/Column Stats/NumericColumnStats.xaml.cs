@@ -222,8 +222,8 @@ namespace DatabaseControls
 
             BreaksTable.TableToolbarTray.Visibility = Visibility.Collapsed;
 
-            HistogramSeries.FillColor = Color.FromArgb(75, 220, 20, 60);
-            HistogramSeries.StrokeColor = Color.FromArgb(255, 255, 0, 0);
+            HistogramSeries.FillColor = OxyColor.FromArgb(75, 220, 20, 60);
+            HistogramSeries.StrokeColor = OxyColor.FromArgb(255, 255, 0, 0);
         }
 
         #endregion
@@ -466,7 +466,7 @@ namespace DatabaseControls
         /// <param name="openProperties">Whether to open the properties panel.</param>
         /// <param name="propertyExpander">The property expander to display.</param>
         /// <param name="selectedObject">The selected object in the plot.</param>
-        private void PlotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP propertyExpander, object selectedObject)
+        private void PlotToolbar_PropertiesCalled(Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject)
         {
             if (!openProperties)
             {

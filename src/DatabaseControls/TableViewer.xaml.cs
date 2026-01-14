@@ -451,7 +451,7 @@ namespace DatabaseControls
                 if (!newView.ParentDatabase.DataBaseOpen) newView.ParentDatabase.Open();
 
                 thisControl._columnSortOrder = SortOrder.None;
-                thisControl._columnsSortedOrder = new SortOrder[newView.ColumnNames.Count];
+                thisControl._columnsSortedOrder = new SortOrder[newView.ColumnNames.Count()];
 
                 thisControl.Refresh();
 
@@ -902,7 +902,7 @@ namespace DatabaseControls
 
         #region Update Methods
 
-        private void UpdateVisibleRows()
+        internal void UpdateVisibleRows()
         {
             if (DataView == null || _rowId == null) return;
             int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);

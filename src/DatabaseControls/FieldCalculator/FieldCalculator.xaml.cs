@@ -35,6 +35,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using DatabaseManager;
 using ExpressionParser;
+using ExpressionParser.Parser;
 
 namespace DatabaseControls
 {
@@ -212,7 +213,7 @@ namespace DatabaseControls
                 columnData = new object[_dbView.NumberOfRows];
             }
 
-            if (!t.ContainsVariable)
+            if (!t.ContainsVariable())
             {
                 for (int i = 0; i < columnData.Length; i++)
                 {
@@ -444,7 +445,7 @@ namespace DatabaseControls
             {
                 return;
             }
-            var errors = ExpressionCalculator.GetParseTree().GetErrors();
+            var errors = ExpressionCalculator.GetParseTree().GetErrors;
             var errorWindow = new ErrorWindow(errors, "Errors Encountered in Expression");
             errorWindow.Show();
         }
@@ -465,7 +466,7 @@ namespace DatabaseControls
                 return;
             }
 
-            List<ParseError> errorList = parseNode.GetErrors();
+            List<ParseError> errorList = parseNode.GetErrors;
 
             // Check that output type is correct
             ErrorLogButton.IsEnabled = errorList.Count > 0;
@@ -489,7 +490,7 @@ namespace DatabaseControls
                         return;
                     }
 
-                    if (parseNode.ContainsVariable)
+                    if (parseNode.ContainsVariable())
                     {
                         var variables = parseNode.GetVariableNodes();
                         object[] firstRow = _dbView.GetRow(0);

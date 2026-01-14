@@ -133,7 +133,7 @@ namespace DatabaseControls
             if (_viewer == null)
                 return;
 
-            if (_viewer.GetSelectedRows().Count > 0)
+            if (_viewer.GetSelectedRows.Count > 0)
                 SelectedOnlyCheckbox.IsEnabled = true;
 
             object[] fieldData = _viewer.DataView.GetColumn(_viewer.DataView.ColumnNames[_columnIndex]);
@@ -170,7 +170,7 @@ namespace DatabaseControls
             object[] fieldData;
 
             object[] tempData = _viewer.DataView.GetColumn(_viewer.DataView.ColumnNames[_columnIndex]);
-            List<int> selectedRows = _viewer.GetSelectedRows();
+            List<int> selectedRows = _viewer.GetSelectedRows;
 
             if (selectedRows.Count > 0)
             {
