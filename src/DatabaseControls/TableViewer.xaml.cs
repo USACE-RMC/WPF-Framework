@@ -2453,7 +2453,7 @@ namespace DatabaseControls
         private void UndoLastEdit()
         {
             if (!DataView.CanUndo()) return;
-            DataView.Undo();
+            DataView.UndoEdit();
             UpdateVisibleRows();
             UpdateUndoRedoButtons();
         }
@@ -2464,7 +2464,7 @@ namespace DatabaseControls
         private void RedoLastEdit()
         {
             if (!DataView.CanRedo()) return;
-            DataView.Redo();
+            DataView.RedoEdit();
             UpdateVisibleRows();
             UpdateUndoRedoButtons();
         }
