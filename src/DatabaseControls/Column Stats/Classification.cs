@@ -410,7 +410,7 @@ namespace DatabaseControls
         /// Fisher-Jenks algorithm, which provides good results with better performance for large datasets.
         /// </para>
         /// </remarks>
-        public static double[] JenksNaturalBreaks(double[] data, int nClasses, bool dataIsSorted, ref int[] breakCounts)
+        public static double[] JenksNaturalBreaks(double[] data, int nClasses, bool dataIsSorted, ref int[]? breakCounts)
         {
             if (nClasses <= 0) return Array.Empty<double>();
             if (data == null) return Array.Empty<double>();
@@ -499,7 +499,7 @@ namespace DatabaseControls
 
             if (distinctValues.Length != sortedData.Length)
             {
-                int[] argbreakCounts = null;
+                int[]? argbreakCounts = null;
                 double[] initialBreaks = JenksNaturalBreaks(distinctValues, nClasses, true, ref argbreakCounts);
 
                 for (int i = 0; i < sortedData.Length; i++)

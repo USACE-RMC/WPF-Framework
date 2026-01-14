@@ -238,7 +238,6 @@ namespace DatabaseControls
 
             Dictionary<string, int> dict = new Dictionary<string, int>();
             int emptyCount = 0;
-            string tempString;
 
             for (int i = 0; i < Data.Length; i++)
             {
@@ -248,12 +247,12 @@ namespace DatabaseControls
                 }
                 else
                 {
-                    tempString = Convert.ToString(Data[i]);
-                    if (dict.ContainsKey(tempString))
+                    string? tempString = Convert.ToString(Data[i]);
+                    if (tempString != null && dict.ContainsKey(tempString))
                     {
                         dict[tempString] += 1;
                     }
-                    else
+                    else if (tempString != null)
                     {
                         dict.Add(tempString, 1);
                     }

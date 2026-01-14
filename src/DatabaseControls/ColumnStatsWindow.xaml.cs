@@ -69,15 +69,13 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="theViewer">The TableViewer control containing the data to analyze.</param>
         /// <param name="columnIndex">The zero-based index of the column to display statistics for.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="theViewer"/> is null.</exception>
         public ColumnStatsWindow(TableViewer theViewer, int columnIndex)
         {
             InitializeComponent();
 
+            _viewer = theViewer ?? throw new ArgumentNullException(nameof(theViewer));
             _columnIndex = columnIndex;
-            _viewer = theViewer;
-
-            if (_viewer == null)
-                return;
 
             string fieldName = _viewer.DataView.ColumnNames[_columnIndex];
             Title = fieldName + " Summary Statistics";
@@ -130,9 +128,6 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ColumnStatsWindow_ContentRendered(object sender, EventArgs e)
         {
-            if (_viewer == null)
-                return;
-
             if (_viewer.GetSelectedRows.Count > 0)
                 SelectedOnlyCheckbox.IsEnabled = true;
 

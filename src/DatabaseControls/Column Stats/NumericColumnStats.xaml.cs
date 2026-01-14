@@ -370,7 +370,7 @@ namespace DatabaseControls
         {
             NumericColumnStats thisControl = (NumericColumnStats)d;
 
-            double[] newValue = e.NewValue as double[];
+            double[]? newValue = e.NewValue as double[];
             if (newValue == null)
             {
                 thisControl._sortedData = new double[] { };
@@ -589,27 +589,30 @@ namespace DatabaseControls
             StatsTable.DataView.EditColumn(1, columnData);
             StatsTable.UpdateVisibleRows();
 
-            // Update histogram numeric output format
-            _stringFormat = "{0:0}";
-            double range = _sortedData.Last() - _sortedData[0];
-            if (range < 0.1)
+            // Update histogram numeric output format (only if data exists)
+            if (_sortedData != null && _sortedData.Length > 0)
             {
-                _stringFormat = "{0:0.####}";
-            }
-            else if (range < 1)
-            {
-                _stringFormat = "{0:0.###}";
-            }
-            else if (range < 10)
-            {
-                _stringFormat = "{0:0.##}";
-            }
-            else if (range < 100)
-            {
-                _stringFormat = "{0:0.#}";
-            }
+                _stringFormat = "{0:0}";
+                double range = _sortedData.Last() - _sortedData[0];
+                if (range < 0.1)
+                {
+                    _stringFormat = "{0:0.####}";
+                }
+                else if (range < 1)
+                {
+                    _stringFormat = "{0:0.###}";
+                }
+                else if (range < 10)
+                {
+                    _stringFormat = "{0:0.##}";
+                }
+                else if (range < 100)
+                {
+                    _stringFormat = "{0:0.#}";
+                }
 
-            HistogramSeries.LabelFormatString = _stringFormat;
+                HistogramSeries.LabelFormatString = _stringFormat;
+            }
             Plot();
         }
 

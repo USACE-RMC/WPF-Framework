@@ -45,8 +45,9 @@ namespace DatabaseControls
 
         /// <summary>
         /// Reference to the parent TableViewer control that contains the data to search.
+        /// This may be null when the control is instantiated by the WPF designer.
         /// </summary>
-        private readonly TableViewer _tableViewer;
+        private readonly TableViewer? _tableViewer;
 
         /// <summary>
         /// The current row index position in the search.
@@ -105,7 +106,7 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void FindNextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(FindText.Text))
+            if (_tableViewer == null || string.IsNullOrEmpty(FindText.Text))
                 return;
 
             // Reset found flag at start of each search to ensure proper "not found" message display
@@ -163,7 +164,7 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void FindPreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(FindText.Text))
+            if (_tableViewer == null || string.IsNullOrEmpty(FindText.Text))
                 return;
 
             // Reset found flag at start of each search to ensure proper "not found" message display

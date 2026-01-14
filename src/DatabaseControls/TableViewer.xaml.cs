@@ -100,94 +100,184 @@ namespace DatabaseControls
 
         #region Dependency Properties
 
+        /// <summary>
+        /// Identifies the <see cref="DataView"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty DataViewProperty = DependencyProperty.Register(
             nameof(DataView), typeof(DataTableView), typeof(TableViewer),
             new UIPropertyMetadata(null, new PropertyChangedCallback(LoadView)));
 
+        /// <summary>
+        /// Identifies the <see cref="AllCellsSelected"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty AllCellsSelectedProperty = DependencyProperty.Register(
             nameof(AllCellsSelected), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false));
 
+        /// <summary>
+        /// Identifies the <see cref="RowHeight"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowHeightProperty = DependencyProperty.Register(
             nameof(RowHeight), typeof(double), typeof(TableViewer), new UIPropertyMetadata(23.0));
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnHeaderHeight"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ColumnHeaderHeightProperty = DependencyProperty.Register(
             nameof(ColumnHeaderHeight), typeof(GridLength), typeof(TableViewer), new UIPropertyMetadata(GridLength.Auto));
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnHeaderTextblockStyle"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ColumnHeaderTextblockStyleProperty = DependencyProperty.Register(
             nameof(ColumnHeaderTextblockStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultColumnHeaderTextblockStyle()));
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnHeaderBorderStyle"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ColumnHeaderBorderStyleProperty = DependencyProperty.Register(
             nameof(ColumnHeaderBorderStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultColumnHeaderBorderStyle()));
 
+        /// <summary>
+        /// Identifies the <see cref="RowHeaderTextblockStyle"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowHeaderTextblockStyleProperty = DependencyProperty.Register(
             nameof(RowHeaderTextblockStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultRowHeaderTextblockStyle()));
 
+        /// <summary>
+        /// Identifies the <see cref="RowHeaderBorderStyle"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowHeaderBorderStyleProperty = DependencyProperty.Register(
             nameof(RowHeaderBorderStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultRowHeaderBorderStyle()));
 
+        /// <summary>
+        /// Identifies the <see cref="ShowRowHeaders"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ShowRowHeadersProperty = DependencyProperty.Register(
             nameof(ShowRowHeaders), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="Editable"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty EditableProperty = DependencyProperty.Register(
             nameof(Editable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false));
 
+        /// <summary>
+        /// Identifies the <see cref="HasFieldCalculator"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty HasFieldCalculatorProperty = DependencyProperty.Register(
             nameof(HasFieldCalculator), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="HasSaveButton"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty HasSaveButtonProperty = DependencyProperty.Register(
             nameof(HasSaveButton), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="HasUndoRedoButtons"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty HasUndoRedoButtonsProperty = DependencyProperty.Register(
             nameof(HasUndoRedoButtons), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="RowSelectable"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowSelectableProperty = DependencyProperty.Register(
             nameof(RowSelectable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="CellTextblockStyle"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty CellTextblockStyleProperty = DependencyProperty.Register(
             nameof(CellTextblockStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultCellTextblockStyle()));
 
+        /// <summary>
+        /// Identifies the <see cref="SelectedColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(
             nameof(SelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(240, 0, 120, 215))));
 
+        /// <summary>
+        /// Identifies the <see cref="ActiveCellForeground"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ActiveCellForegroundProperty = DependencyProperty.Register(
             nameof(ActiveCellForeground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White)));
 
+        /// <summary>
+        /// Identifies the <see cref="ActiveCellBackground"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ActiveCellBackgroundProperty = DependencyProperty.Register(
             nameof(ActiveCellBackground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 21, 107, 176))));
 
+        /// <summary>
+        /// Identifies the <see cref="DeSelectedColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty DeSelectedColorProperty = DependencyProperty.Register(
             nameof(DeSelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Transparent));
 
+        /// <summary>
+        /// Identifies the <see cref="SelectedForegroundColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty SelectedForegroundColorProperty = DependencyProperty.Register(
             nameof(SelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White)));
 
+        /// <summary>
+        /// Identifies the <see cref="DeSelectedForegroundColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty DeSelectedForegroundColorProperty = DependencyProperty.Register(
             nameof(DeSelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Black));
 
+        /// <summary>
+        /// Identifies the <see cref="RowColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowColorProperty = DependencyProperty.Register(
             nameof(RowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.White));
 
+        /// <summary>
+        /// Identifies the <see cref="AlternateRowColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty AlternateRowColorProperty = DependencyProperty.Register(
             nameof(AlternateRowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 243, 249, 247))));
 
+        /// <summary>
+        /// Identifies the <see cref="RowLineColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowLineColorProperty = DependencyProperty.Register(
             nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
 
+        /// <summary>
+        /// Identifies the <see cref="RowLineThickness"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty RowLineThicknessProperty = DependencyProperty.Register(
             nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnLineColor"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ColumnLineColorProperty = DependencyProperty.Register(
             nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnLineThickness"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ColumnLineThicknessProperty = DependencyProperty.Register(
             nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
 
+        /// <summary>
+        /// Identifies the <see cref="ColumnSelectable"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty ColumnSelectableProperty = DependencyProperty.Register(
             nameof(ColumnSelectable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="CellSelectable"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty CellSelectableProperty = DependencyProperty.Register(
             nameof(CellSelectable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
 
+        /// <summary>
+        /// Identifies the <see cref="AutoFitColumns"/> dependency property.
+        /// </summary>
         public static readonly DependencyProperty AutoFitColumnsProperty = DependencyProperty.Register(
             nameof(AutoFitColumns), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false));
 
@@ -195,185 +285,324 @@ namespace DatabaseControls
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the data source for the table viewer.
+        /// </summary>
+        /// <value>The <see cref="DataTableView"/> containing the data to display.</value>
         public DataTableView DataView
         {
             get => (DataTableView)GetValue(DataViewProperty);
             set => SetValue(DataViewProperty, value);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether only selected rows are currently being displayed.
+        /// </summary>
+        /// <value><c>true</c> if showing selected rows only; otherwise, <c>false</c>.</value>
         public bool ShowingSelectedRowsOnly => _selectedRowsOnly;
+
+        /// <summary>
+        /// Gets the list of currently selected row indices in the data table.
+        /// </summary>
+        /// <value>A list of zero-based row indices that are currently selected.</value>
         public List<int> GetSelectedRows => _selectedDataRowIndices;
+
+        /// <summary>
+        /// Gets the row index of the currently active cell.
+        /// </summary>
+        /// <value>The zero-based row index of the active cell in the virtual (visible) grid.</value>
         public int ActiveCellRowIndex => _activeCellVirtualRowIndex;
+
+        /// <summary>
+        /// Gets the column index of the currently active cell.
+        /// </summary>
+        /// <value>The zero-based column index of the active cell in the data table.</value>
         public int ActiveCellColumnIndex => _activeCellDataColumnIndex;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether all cells in the table are selected.
+        /// </summary>
+        /// <value><c>true</c> if all cells are selected; otherwise, <c>false</c>.</value>
         public bool AllCellsSelected
         {
             get => (bool)GetValue(AllCellsSelectedProperty);
             set => SetValue(AllCellsSelectedProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the height of each data row in pixels.
+        /// </summary>
+        /// <value>The row height in pixels. Default is 23.0.</value>
         public double RowHeight
         {
             get => (double)GetValue(RowHeightProperty);
             set => SetValue(RowHeightProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the height of the column header row.
+        /// </summary>
+        /// <value>The column header height as a <see cref="GridLength"/>. Default is Auto.</value>
         public GridLength ColumnHeaderHeight
         {
             get => (GridLength)GetValue(ColumnHeaderHeightProperty);
             set => SetValue(ColumnHeaderHeightProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the style applied to column header text blocks.
+        /// </summary>
+        /// <value>The <see cref="Style"/> for column header TextBlock elements.</value>
         public Style ColumnHeaderTextblockStyle
         {
             get => (Style)GetValue(ColumnHeaderTextblockStyleProperty);
             set => SetValue(ColumnHeaderTextblockStyleProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the style applied to column header borders.
+        /// </summary>
+        /// <value>The <see cref="Style"/> for column header Border elements.</value>
         public Style ColumnHeaderBorderStyle
         {
             get => (Style)GetValue(ColumnHeaderBorderStyleProperty);
             set => SetValue(ColumnHeaderBorderStyleProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the style applied to row header text blocks.
+        /// </summary>
+        /// <value>The <see cref="Style"/> for row header TextBlock elements.</value>
         public Style RowHeaderTextblockStyle
         {
             get => (Style)GetValue(RowHeaderTextblockStyleProperty);
             set => SetValue(RowHeaderTextblockStyleProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the style applied to row header borders.
+        /// </summary>
+        /// <value>The <see cref="Style"/> for row header Border elements.</value>
         public Style RowHeaderBorderStyle
         {
             get => (Style)GetValue(RowHeaderBorderStyleProperty);
             set => SetValue(RowHeaderBorderStyleProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether row headers are visible.
+        /// </summary>
+        /// <value><c>true</c> to show row headers; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool ShowRowHeaders
         {
             get => (bool)GetValue(ShowRowHeadersProperty);
             set => SetValue(ShowRowHeadersProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether cells can be edited.
+        /// </summary>
+        /// <value><c>true</c> if the table is editable; otherwise, <c>false</c>. Default is <c>false</c>.</value>
         public bool Editable
         {
             get => (bool)GetValue(EditableProperty);
             set => SetValue(EditableProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the field calculator button is visible.
+        /// </summary>
+        /// <value><c>true</c> to show the field calculator; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool HasFieldCalculator
         {
             get => (bool)GetValue(HasFieldCalculatorProperty);
             set => SetValue(HasFieldCalculatorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the save button is visible.
+        /// </summary>
+        /// <value><c>true</c> to show the save button; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool HasSaveButton
         {
             get => (bool)GetValue(HasSaveButtonProperty);
             set => SetValue(HasSaveButtonProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the undo/redo buttons are visible.
+        /// </summary>
+        /// <value><c>true</c> to show undo/redo buttons; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool HasUndoRedoButtons
         {
             get => (bool)GetValue(HasUndoRedoButtonsProperty);
             set => SetValue(HasUndoRedoButtonsProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether entire rows can be selected.
+        /// </summary>
+        /// <value><c>true</c> to allow row selection; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool RowSelectable
         {
             get => (bool)GetValue(RowSelectableProperty);
             set => SetValue(RowSelectableProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the style applied to cell text blocks.
+        /// </summary>
+        /// <value>The <see cref="Style"/> for cell TextBlock elements.</value>
         public Style CellTextblockStyle
         {
             get => (Style)GetValue(CellTextblockStyleProperty);
             set => SetValue(CellTextblockStyleProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the background color for selected cells.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used to fill selected cells.</value>
         public Brush SelectedColor
         {
             get => (Brush)GetValue(SelectedColorProperty);
             set => SetValue(SelectedColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the foreground color for the active cell.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used for the active cell's text.</value>
         public Brush ActiveCellForeground
         {
             get => (Brush)GetValue(ActiveCellForegroundProperty);
             set => SetValue(ActiveCellForegroundProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the background color for the active cell.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used to fill the active cell.</value>
         public Brush ActiveCellBackground
         {
             get => (Brush)GetValue(ActiveCellBackgroundProperty);
             set => SetValue(ActiveCellBackgroundProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the background color for deselected cells.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used to fill deselected cells.</value>
         public Brush DeSelectedColor
         {
             get => (Brush)GetValue(DeSelectedColorProperty);
             set => SetValue(DeSelectedColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the foreground color for selected cells.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used for selected cell text.</value>
         public Brush SelectedForegroundColor
         {
             get => (Brush)GetValue(SelectedForegroundColorProperty);
             set => SetValue(SelectedForegroundColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the foreground color for deselected cells.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used for deselected cell text.</value>
         public Brush DeSelectedForegroundColor
         {
             get => (Brush)GetValue(DeSelectedForegroundColorProperty);
             set => SetValue(DeSelectedForegroundColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the background color for odd-numbered rows.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used to fill odd rows.</value>
         public Brush RowColor
         {
             get => (Brush)GetValue(RowColorProperty);
             set => SetValue(RowColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the background color for even-numbered rows.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used to fill even rows.</value>
         public Brush AlternateRowColor
         {
             get => (Brush)GetValue(AlternateRowColorProperty);
             set => SetValue(AlternateRowColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the color of horizontal row separator lines.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used for row lines.</value>
         public Brush RowLineColor
         {
             get => (Brush)GetValue(RowLineColorProperty);
             set => SetValue(RowLineColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the thickness of horizontal row separator lines.
+        /// </summary>
+        /// <value>The line thickness in pixels. Default is 1.0.</value>
         public double RowLineThickness
         {
             get => (double)GetValue(RowLineThicknessProperty);
             set => SetValue(RowLineThicknessProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the color of vertical column separator lines.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used for column lines.</value>
         public Brush ColumnLineColor
         {
             get => (Brush)GetValue(ColumnLineColorProperty);
             set => SetValue(ColumnLineColorProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the thickness of vertical column separator lines.
+        /// </summary>
+        /// <value>The line thickness in pixels. Default is 1.0.</value>
         public double ColumnLineThickness
         {
             get => (double)GetValue(ColumnLineThicknessProperty);
             set => SetValue(ColumnLineThicknessProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether entire columns can be selected.
+        /// </summary>
+        /// <value><c>true</c> to allow column selection; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool ColumnSelectable
         {
             get => (bool)GetValue(ColumnSelectableProperty);
             set => SetValue(ColumnSelectableProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether individual cells can be selected.
+        /// </summary>
+        /// <value><c>true</c> to allow cell selection; otherwise, <c>false</c>. Default is <c>true</c>.</value>
         public bool CellSelectable
         {
             get => (bool)GetValue(CellSelectableProperty);
             set => SetValue(CellSelectableProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether column widths are automatically adjusted to fit content.
+        /// </summary>
+        /// <value><c>true</c> to auto-fit columns; otherwise, <c>false</c>. Default is <c>false</c>.</value>
         public bool AutoFitColumns
         {
             get => (bool)GetValue(AutoFitColumnsProperty);
@@ -384,14 +613,29 @@ namespace DatabaseControls
 
         #region Events
 
+        /// <summary>
+        /// Occurs when the set of selected row indices changes.
+        /// </summary>
         public event Action<List<int>>? SelectedRowIndicesChanged;
+
+        /// <summary>
+        /// Occurs when the active cell location changes.
+        /// </summary>
         public event Action? ActiveCellLocationChanged;
+
+        /// <summary>
+        /// Occurs when the right mouse button is released on a row header.
+        /// Provides the context menu and row index for custom menu handling.
+        /// </summary>
         public event Action<ContextMenu, int>? RowRightButtonUp;
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TableViewer"/> class.
+        /// </summary>
         public TableViewer()
         {
             InitializeComponent();
@@ -469,11 +713,19 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Marks the specified columns as read-only, preventing edits to their cells.
+        /// </summary>
+        /// <param name="columnIndices">Array of zero-based column indices to mark as read-only.</param>
         public void SetColumnsAsReadOnly(int[] columnIndices)
         {
             foreach (var idx in columnIndices) _readOnlyColumns.Add(idx);
         }
 
+        /// <summary>
+        /// Marks the specified columns as read-only by column name, preventing edits to their cells.
+        /// </summary>
+        /// <param name="columnNames">Array of column names to mark as read-only.</param>
         public void SetColumnsAsReadOnly(string[] columnNames)
         {
             foreach (var name in columnNames)
@@ -1064,6 +1316,12 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Sets the active cell to the specified row and column, optionally scrolling to make it visible.
+        /// </summary>
+        /// <param name="rowIndex">The zero-based row index of the cell to activate.</param>
+        /// <param name="columnIndex">The zero-based column index of the cell to activate.</param>
+        /// <param name="scroll">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
         public void SetActiveCell(int rowIndex, int columnIndex, bool scroll)
         {
             _activeCellVirtualRowIndex = rowIndex;
@@ -1148,6 +1406,11 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
+        /// <summary>
+        /// Resizes a column to the specified width, or auto-fits to content if no width is specified.
+        /// </summary>
+        /// <param name="columnIndex">The zero-based index of the column to resize.</param>
+        /// <param name="columnWidth">The desired column width in pixels. If -1 or less than 6, the column auto-fits to its content.</param>
         public void ResizeColumnWidth(int columnIndex, int columnWidth = -1)
         {
             if (columnWidth > 5)
@@ -1183,6 +1446,10 @@ namespace DatabaseControls
 
         private void ColumnsGridSizeChanged(object sender, SizeChangedEventArgs e) => RefreshColumnWidths();
 
+        /// <summary>
+        /// Recalculates and applies column widths to all columns in the grid.
+        /// </summary>
+        /// <param name="setActive">If <c>true</c>, resets the active cell styling after refresh. Default is <c>true</c>.</param>
         public void RefreshColumnWidths(bool setActive = true)
         {
             if (_columnWidths == null || DataView == null) return;
@@ -1812,7 +2079,9 @@ namespace DatabaseControls
         /// <summary>
         /// Handles the ShowAll button click to show all rows instead of selected rows only.
         /// </summary>
-        private void ShowAll_Checked(object sender, RoutedEventArgs e)
+        /// <param name="sender">The source of the event, or null if called programmatically.</param>
+        /// <param name="e">The event arguments, or null if called programmatically.</param>
+        private void ShowAll_Checked(object? sender, RoutedEventArgs? e)
         {
             _selectedRowsOnly = false;
             double rowsAreaHeight = HorizontalScrollViewer.ActualHeight - ColumnHeadersGrid.ActualHeight;
@@ -1919,7 +2188,7 @@ namespace DatabaseControls
                 }
                 else
                 {
-                    ShowAll_Checked(null, null!);
+                    ShowAll_Checked(null, null);
                     _selectedDataRowIndices = attributeSelector.GetSelectedRows;
                     ShowSelected_Checked(null, null!);
                 }
@@ -2546,7 +2815,7 @@ namespace DatabaseControls
             }
             else if (_selectedDataRowIndices.Count <= 0 && _selectedRowsOnly)
             {
-                ShowAll_Checked(null, null!);
+                ShowAll_Checked(null, null);
             }
             else if (_selectedRowsOnly)
             {
@@ -2701,7 +2970,7 @@ namespace DatabaseControls
                 set => SetValue(CellStyleProperty, value);
             }
 
-            public new static readonly DependencyProperty ForegroundProperty = DependencyProperty.Register(
+            public static readonly DependencyProperty ForegroundProperty = DependencyProperty.Register(
                 nameof(Foreground), typeof(Brush), typeof(Cell), new PropertyMetadata(Brushes.Black));
 
             public Brush Foreground

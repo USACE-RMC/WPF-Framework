@@ -59,12 +59,12 @@ namespace DatabaseControls
         /// <summary>
         /// The name of the field being created or updated.
         /// </summary>
-        private string _fieldName;
+        private string? _fieldName;
 
         /// <summary>
         /// List of row indices that are currently selected in the data table.
         /// </summary>
-        private readonly List<int> _selectedRows;
+        private readonly List<int>? _selectedRows;
 
         /// <summary>
         /// Indicates whether this calculator is being used for "Select By Attribute" functionality.
@@ -93,7 +93,7 @@ namespace DatabaseControls
         /// <param name="readOnlyColumns">Set of column indices that should not be editable.</param>
         /// <param name="header">Optional header/field name. If provided, the field selection UI is hidden and this field is used.</param>
         /// <param name="isSelectByAttribute">If true, the calculator operates in "Select By Attribute" mode for filtering records.</param>
-        public FieldCalculator(DataTableView dataView, List<int> selectedRows, HashSet<int> readOnlyColumns, string header = null, bool isSelectByAttribute = false)
+        public FieldCalculator(DataTableView dataView, List<int>? selectedRows, HashSet<int> readOnlyColumns, string? header = null, bool isSelectByAttribute = false)
         {
             // This call is required by the designer.
             InitializeComponent();
@@ -290,7 +290,7 @@ namespace DatabaseControls
             if (_isSelectByAttribute)
             {
                 _rowsToSelect = new List<int>();
-                if (useSelectedRows)
+                if (useSelectedRows && _selectedRows != null)
                 {
                     for (int i = 0; i < _selectedRows.Count; i++)
                     {
@@ -347,7 +347,7 @@ namespace DatabaseControls
                     return;
                 }
 
-                if (useSelectedRows)
+                if (useSelectedRows && _selectedRows != null)
                 {
                     // Loop through selected cells
                     int[] rowIndices = new int[_selectedRows.Count];

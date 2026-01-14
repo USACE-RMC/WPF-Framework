@@ -45,12 +45,12 @@ namespace DatabaseControls
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// The backing field for the Errors property.
         /// </summary>
-        private ObservableCollection<ErrorItem> _errors;
+        private ObservableCollection<ErrorItem> _errors = new ObservableCollection<ErrorItem>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorWindow"/> class with a list of string error messages.
