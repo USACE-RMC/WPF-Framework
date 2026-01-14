@@ -46,11 +46,6 @@ namespace DatabaseControls
     public partial class FieldCalculator : Window
     {
         /// <summary>
-        /// The currently selected text in the expression editor.
-        /// </summary>
-        private string _selectedText;
-
-        /// <summary>
         /// Reference to the data table view being operated on.
         /// </summary>
         private readonly DataTableView _dbView;
@@ -433,10 +428,8 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void UpdateExistingRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (IsLoaded)
-            {
-                _existingField = UpdateExistingRadioButton.IsChecked == true;
-            }
+            // Update the field flag regardless of IsLoaded state to ensure proper initialization
+            _existingField = UpdateExistingRadioButton.IsChecked == true;
         }
 
         /// <summary>

@@ -507,7 +507,7 @@ namespace DatabaseControls
                     if (sortedData[i] > initialBreaks[classIdx])
                     {
                         classIdx += 1;
-                        if (classIdx > classes.Length) classIdx = classes.Length - 1;
+                        if (classIdx >= classes.Length) classIdx = classes.Length - 1;
                     }
 
                     classes[classIdx].Sum += sortedData[i];

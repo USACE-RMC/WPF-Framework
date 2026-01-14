@@ -1339,13 +1339,87 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
+        /// <summary>
+        /// Sorts the table data by the specified column using type-specific comparison.
+        /// Handles all common data types including numeric, string, boolean, and DateTime.
+        /// DBNull values are sorted to the beginning (ascending) or end (descending).
+        /// </summary>
+        /// <param name="columnIndex">The zero-based index of the column to sort by.</param>
+        /// <param name="ascending">True to sort in ascending order, false for descending.</param>
         private void SortColumn(int columnIndex, bool ascending)
         {
             var columnData = DataView.GetColumn(columnIndex);
-            var sorted = columnData.Select((x, i) => new KeyValuePair<object, int>(x, i))
-                .OrderBy(x => x.Key?.ToString() ?? "").ToList();
+            var columnType = DataView.ColumnTypes[columnIndex];
+            List<int> idx;
 
-            var idx = sorted.Select(x => x.Value).ToList();
+            // Type-specific sorting to ensure proper comparison (especially for numeric types)
+            if (columnType == typeof(byte))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<byte, int>(Convert.IsDBNull(x) ? byte.MinValue : Convert.ToByte(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(short))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<short, int>(Convert.IsDBNull(x) ? short.MinValue : Convert.ToInt16(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(ushort))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<ushort, int>(Convert.IsDBNull(x) ? ushort.MinValue : Convert.ToUInt16(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(int))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<int, int>(Convert.IsDBNull(x) ? int.MinValue : Convert.ToInt32(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(uint))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<uint, int>(Convert.IsDBNull(x) ? uint.MinValue : Convert.ToUInt32(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(long))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<long, int>(Convert.IsDBNull(x) ? long.MinValue : Convert.ToInt64(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(ulong))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<ulong, int>(Convert.IsDBNull(x) ? ulong.MinValue : Convert.ToUInt64(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(float))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<float, int>(Convert.IsDBNull(x) ? float.NaN : Convert.ToSingle(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(double))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<double, int>(Convert.IsDBNull(x) ? double.NaN : Convert.ToDouble(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(decimal))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<decimal, int>(Convert.IsDBNull(x) ? decimal.MinValue : Convert.ToDecimal(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(DateTime))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<DateTime, int>(Convert.IsDBNull(x) ? DateTime.MinValue : Convert.ToDateTime(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else if (columnType == typeof(bool))
+            {
+                var sorted = columnData.Select((x, i) => new KeyValuePair<bool, int>(Convert.IsDBNull(x) ? false : Convert.ToBoolean(x), i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+            else
+            {
+                // Default to string comparison for unknown types
+                var sorted = columnData.Select((x, i) => new KeyValuePair<string, int>(x?.ToString() ?? "", i)).OrderBy(x => x.Key).ToList();
+                idx = sorted.Select(x => x.Value).ToList();
+            }
+
             if (!ascending) idx.Reverse();
 
             for (int i = 0; i < idx.Count; i++)

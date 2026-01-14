@@ -380,6 +380,15 @@ namespace DatabaseControls
                 Array.Sort(thisControl._sortedData);
             }
 
+            // Guard against empty array access
+            if (thisControl._sortedData.Length == 0)
+            {
+                thisControl.DefaultR = 1.0;
+                thisControl.DefaultIntervalSize = 1.0;
+                thisControl.UpdateDataView();
+                return;
+            }
+
             thisControl.DefaultR = Math.Pow(thisControl._sortedData[thisControl._sortedData.Length - 1] / thisControl._sortedData.Average(), 1.0 / (3 - 1));
             double defaultInterval = (thisControl._sortedData[thisControl._sortedData.Length - 1] - thisControl._sortedData[0]) / 5; // 5 equally sized bins
             if (thisControl.DefaultIntervalSize == thisControl.IntervalSize)

@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:parser="clr-namespace:ExpressionParserControls;assembly=ExpressionParserControls"
-    Title="Field Calculator" Height="400" Width="600" MinHeight="305" ResizeMode="CanResize" Icon="pack://application:,,,/DataTableViewControl;component/Resources/calculator_16x.png">
+    Title="Field Calculator" Height="400" Width="600" MinHeight="305" ResizeMode="CanResize" Icon="pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png">
     <Grid Background="WhiteSmoke">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,10 +23,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Name="UpdateExistingRadioButton" IsChecked="True"/>
-            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}"/>
-            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Name="CreateNewFieldRadioButton"/>
-            <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}"/>
+            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
+            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
+            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
+            <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}" TextChanged="NewFieldName_TextChanged"/>
         </Grid>
 
         <Grid Grid.Row="2" Margin="5,5,5,0">

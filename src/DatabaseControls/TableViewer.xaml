@@ -109,7 +109,7 @@
                         Stretch="None"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png" />
+                        Source="/GenericControls;component/Resources/paste.png" />
 
                 </Button>
 
