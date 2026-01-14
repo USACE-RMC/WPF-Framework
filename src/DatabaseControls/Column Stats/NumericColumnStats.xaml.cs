@@ -36,6 +36,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using DatabaseManager;
 using Numerics.Data.Statistics;
 using OxyPlot;
@@ -222,8 +223,8 @@ namespace DatabaseControls
 
             BreaksTable.TableToolbarTray.Visibility = Visibility.Collapsed;
 
-            HistogramSeries.FillColor = OxyColor.FromArgb(75, 220, 20, 60);
-            HistogramSeries.StrokeColor = OxyColor.FromArgb(255, 255, 0, 0);
+            HistogramSeries.FillColor = Color.FromArgb(75, 220, 20, 60);
+            HistogramSeries.StrokeColor = Color.FromArgb(255, 255, 0, 0);
         }
 
         #endregion
@@ -470,9 +471,9 @@ namespace DatabaseControls
         {
             if (!openProperties)
             {
-                if (PropertiesControl.Visibility == Visibility.Visible)
+                if (PropertiesControl.Visibility == Visibility.Visible && propertyExpander.HasValue)
                 {
-                    PropertiesControl.ExpandProperty(propertyExpander, selectedObject);
+                    PropertiesControl.ExpandProperty(propertyExpander.Value, selectedObject);
                 }
                 return;
             }
@@ -482,7 +483,8 @@ namespace DatabaseControls
                 if (PropertiesControl.Visibility == Visibility.Collapsed)
                 {
                     PropertiesControl.Visibility = Visibility.Visible;
-                    PropertiesControl.ExpandProperty(propertyExpander);
+                    if (propertyExpander.HasValue)
+                        PropertiesControl.ExpandProperty(propertyExpander.Value);
                 }
                 else
                 {
@@ -492,7 +494,8 @@ namespace DatabaseControls
             else
             {
                 PropertiesControl.Visibility = Visibility.Visible;
-                PropertiesControl.ExpandProperty(propertyExpander, selectedObject);
+                if (propertyExpander.HasValue)
+                    PropertiesControl.ExpandProperty(propertyExpander.Value, selectedObject);
             }
         }
 

@@ -157,9 +157,9 @@ namespace DatabaseControls
         {
             if (!openProperties)
             {
-                if (PropertiesControl.Visibility == Visibility.Visible)
+                if (PropertiesControl.Visibility == Visibility.Visible && propertyExpander.HasValue)
                 {
-                    PropertiesControl.ExpandProperty(propertyExpander, selectedObject);
+                    PropertiesControl.ExpandProperty(propertyExpander.Value, selectedObject);
                 }
                 return;
             }
@@ -169,7 +169,8 @@ namespace DatabaseControls
                 if (PropertiesControl.Visibility == Visibility.Collapsed)
                 {
                     PropertiesControl.Visibility = Visibility.Visible;
-                    PropertiesControl.ExpandProperty(propertyExpander);
+                    if (propertyExpander.HasValue)
+                        PropertiesControl.ExpandProperty(propertyExpander.Value);
                 }
                 else
                 {
@@ -179,7 +180,8 @@ namespace DatabaseControls
             else
             {
                 PropertiesControl.Visibility = Visibility.Visible;
-                PropertiesControl.ExpandProperty(propertyExpander, selectedObject);
+                if (propertyExpander.HasValue)
+                    PropertiesControl.ExpandProperty(propertyExpander.Value, selectedObject);
             }
         }
 
