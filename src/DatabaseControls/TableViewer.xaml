@@ -233,6 +233,7 @@
                     x:Name="OpenFC"
                     ToolTip="Open Field Calculator"
                     ToolTipService.ShowOnDisabled="True"
+                    Click="OpenFC_Click"
                     Height="24" Width="24"
                     Visibility="{Binding HasFieldCalculator, Converter={StaticResource BooleanToVisibility}}"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
@@ -249,6 +250,7 @@
                     x:Name="Undo"
                     ToolTip="Undo"
                     ToolTipService.ShowOnDisabled="True"
+                    Click="Undo_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
                     Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}}"
@@ -268,6 +270,7 @@
                     x:Name="Redo"
                     ToolTip="Redo"
                     ToolTipService.ShowOnDisabled="True"
+                    Click="Redo_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
                     Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}}"
@@ -287,6 +290,7 @@
                     x:Name="SaveButton"
                     ToolTip="Save All Edits"
                     ToolTipService.ShowOnDisabled="True"
+                    Click="SaveButton_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
                     Visibility="{Binding HasSaveButton, Converter={StaticResource BooleanToVisibility}}"
@@ -354,7 +358,7 @@
                     </Grid.RowDefinitions>
                     <Grid x:Name="ColumnHeadersGrid" HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Row="0" MouseLeftButtonDown="ColumnsGrid_MouseLeftButtonDown" MouseMove="ColumnsGrid_MouseMove" MouseLeftButtonUp="ColumnsGrid_MouseLeftButtonUp"/>
                     <Grid x:Name="RowColorGrid" Grid.Row="1" HorizontalAlignment="Left" Width="{Binding ElementName=GridPanel, Path=ActualWidth}" VerticalAlignment="Top" Background="Transparent" Focusable="False" IsHitTestVisible="False"/>
-                    <Grid x:Name="GridPanel" Grid.Row="1" HorizontalAlignment="Left" Background="Transparent" MouseWheel="TestGridPanel_MouseWheel" VerticalAlignment="Top" Focusable="True"/>
+                    <Grid x:Name="GridPanel" Grid.Row="1" HorizontalAlignment="Left" Background="Transparent" MouseWheel="TestGridPanel_MouseWheel" MouseLeftButtonDown="GridPanel_MouseLeftButtonDown" MouseMove="GridPanel_MouseMove" MouseLeftButtonUp="GridPanel_MouseLeftButtonUp" VerticalAlignment="Top" Focusable="True"/>
                     <Canvas x:Name="GridLinesCanvas" Grid.Row="1" IsHitTestVisible="False" HorizontalAlignment="Left"/>
                 </Grid>
             </ScrollViewer>

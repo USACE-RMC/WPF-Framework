@@ -1212,20 +1212,532 @@ namespace DatabaseControls
                 VerticalScrollbar.Value += 3;
         }
 
-        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e) { /* TODO: Implement key navigation */ }
-        private void Grid_KeyDown(object sender, KeyEventArgs e) { /* TODO: Implement key handling */ }
-        private void PreviewEditText(object sender, KeyEventArgs e) { /* TODO: Implement edit preview */ }
-        private void EditTextLostFocus(object sender, RoutedEventArgs e) { /* TODO: Implement edit completion */ }
+        /// <summary>
+        /// Handles the PreviewKeyDown event for keyboard navigation (PageUp, PageDown, Arrow keys).
+        /// </summary>
+        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            int lastRowDataIndex = firstRowDataIndex + _visibleRowCount - 1;
+            int rowIndex = _activeCellVirtualRowIndex - firstRowDataIndex;
 
-        private void RowsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
-        private void RowsGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) { }
-        private void RowsGrid_MouseMove(object sender, MouseEventArgs e) { }
-        private void RowsGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e) { }
+            if (e.Key == Key.PageDown)
+            {
+                if (lastRowDataIndex == DataView.NumberOfRows - 1) return;
+                if (_cellEditTextBox.IsFocused) GridPanel.Focus();
+                VerticalScrollbar.Value += _visibleRowCount;
+                int maxRows = _selectedRowsOnly ? _selectedDataRowIndices.Count : DataView.NumberOfRows;
+                if ((_activeCellVirtualRowIndex + _visibleRowCount) < maxRows - _visibleRowCount)
+                    SetActiveCell(_activeCellVirtualRowIndex + _visibleRowCount, _activeCellDataColumnIndex);
+                else
+                    SetActiveCell((int)Math.Floor(VerticalScrollbar.Value) + rowIndex, _activeCellDataColumnIndex);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.PageUp)
+            {
+                if (firstRowDataIndex == 0) return;
+                if (_cellEditTextBox.IsFocused) GridPanel.Focus();
+                VerticalScrollbar.Value -= _visibleRowCount;
+                if ((firstRowDataIndex - _visibleRowCount) >= 0)
+                    SetActiveCell(_activeCellVirtualRowIndex - _visibleRowCount, _activeCellDataColumnIndex);
+                else
+                    SetActiveCell((int)Math.Floor(VerticalScrollbar.Value) + rowIndex, _activeCellDataColumnIndex);
+                e.Handled = true;
+                return;
+            }
+
+            if (_cellEditTextBox.IsFocused) return;
+
+            if (e.Key == Key.Left)
+            {
+                if (_activeCellDataColumnIndex > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex - 1);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Down)
+            {
+                int maxRows = _selectedRowsOnly ? _selectedDataRowIndices.Count : DataView.NumberOfRows;
+                if (_activeCellVirtualRowIndex < maxRows - 1)
+                    SetActiveCell(_activeCellVirtualRowIndex + 1, _activeCellDataColumnIndex);
+                if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+                if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Right)
+            {
+                if (_activeCellDataColumnIndex < DataView.ColumnNames.Count() - 1)
+                    SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex + 1);
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Up)
+            {
+                if (_activeCellVirtualRowIndex > 0)
+                    SetActiveCell(_activeCellVirtualRowIndex - 1, _activeCellDataColumnIndex);
+                if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+                if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+                e.Handled = true;
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Handles the KeyDown event for Tab, Enter, copy/paste, and cell editing.
+        /// </summary>
+        private void Grid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (_cellEditTextBox.IsFocused) return;
+            if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl) return;
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift) return;
+
+            int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            int lastRowDataIndex = firstRowDataIndex + _visibleRowCount - 1;
+
+            if (e.Key == Key.Tab)
+            {
+                if (_activeCellDataColumnIndex < DataView.ColumnNames.Count() - 1)
+                    SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex + 1);
+                if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+                if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Enter)
+            {
+                int maxRows = _selectedRowsOnly ? _selectedDataRowIndices.Count : DataView.NumberOfRows;
+                if (_activeCellVirtualRowIndex < maxRows - 1)
+                    SetActiveCell(_activeCellVirtualRowIndex + 1, _activeCellDataColumnIndex);
+                if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+                if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+                e.Handled = true;
+                return;
+            }
+
+            // Filter out non-character keys
+            if ((e.Key < Key.NumPad0 || e.Key > Key.Divide) && (e.Key < Key.D0 || e.Key > Key.D9) &&
+                (e.Key < Key.A || e.Key > Key.Z) && (e.Key < Key.Oem1 || e.Key > Key.Oem3) &&
+                (e.Key < Key.OemOpenBrackets || e.Key > Key.OemQuotes) && e.Key != Key.Space)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Escape)
+            {
+                Clipboard.Clear();
+                return;
+            }
+
+            // Copy/Paste Logic
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (e.Key == Key.V && Editable && !_selectedRowsOnly)
+                {
+                    if (Clipboard.ContainsText())
+                    {
+                        if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+                        if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+                        Paste();
+                    }
+                }
+                else if (e.Key == Key.C)
+                {
+                    Copy();
+                }
+                else if (e.Key == Key.A)
+                {
+                    AllCellsSelected = true;
+                    _selectedDataRowIndices.Clear();
+                    _selectedCellIndices.Clear();
+                    _selectedColumnIndices.Clear();
+                    DeSelectAllCells();
+                    SetSelectedCells();
+                }
+                else if (e.Key == Key.Z && Undo.IsEnabled && Undo.Visibility == Visibility.Visible)
+                {
+                    UndoLastEdit();
+                }
+                else if (e.Key == Key.Y && Redo.IsEnabled && Redo.Visibility == Visibility.Visible)
+                {
+                    RedoLastEdit();
+                }
+                return;
+            }
+
+            // Enter cell edit logic
+            if (Editable && !_readOnlyColumns.Contains(_activeCellDataColumnIndex))
+            {
+                if (_activeCellVirtualRowIndex < firstRowDataIndex)
+                {
+                    VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+                    firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                }
+                if (_activeCellVirtualRowIndex > lastRowDataIndex)
+                {
+                    VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+                    firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                }
+                if (_activeCellVirtualRowIndex < 0) return;
+
+                int rowIndex = _activeCellVirtualRowIndex - firstRowDataIndex;
+                _mouseSelectionMode = SelectionMode.EditSelect;
+                string initialText = GetCellText(rowIndex, _activeCellDataColumnIndex);
+                _cellEditTextBox.Tag = new Tuple<string, Point>(initialText, new Point(_activeCellDataColumnIndex, GetDataRowIndex(rowIndex)));
+                Grid.SetColumn(_cellEditTextBox, _activeCellDataColumnIndex);
+                Grid.SetRow(_cellEditTextBox, rowIndex);
+                if (GridPanel.Children.Contains(_cellEditTextBox)) GridPanel.Children.Remove(_cellEditTextBox);
+                GridPanel.Children.Add(_cellEditTextBox);
+                _cellEditTextBox.SelectAll();
+                PreviewEditText(null, e);
+                _cellEditTextBox.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Handles special keys (Enter, Tab, Escape) during cell editing.
+        /// </summary>
+        private void PreviewEditText(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Tab)
+            {
+                GridPanel.Focus();
+            }
+            else if (e.Key == Key.Escape)
+            {
+                _cellEditTextBox.Text = GetCellText(Grid.GetRow(_cellEditTextBox), Grid.GetColumn(_cellEditTextBox));
+                GridPanel.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Handles the LostFocus event for the cell edit TextBox, saving changes to the data.
+        /// </summary>
+        private void EditTextLostFocus(object sender, RoutedEventArgs e)
+        {
+            var editBox = (TextBox)sender;
+            int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            int lastRowDataIndex = firstRowDataIndex + _visibleRowCount - 1;
+            if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
+            if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
+
+            int columnIndex, rowIndex;
+            if (editBox.Tag is not Tuple<string, Point> tagTuple)
+            {
+                columnIndex = Grid.GetColumn(editBox);
+                rowIndex = _activeCellVirtualRowIndex - firstRowDataIndex;
+                rowIndex = GetDataRowIndex(rowIndex);
+            }
+            else
+            {
+                columnIndex = (int)tagTuple.Item2.X;
+                rowIndex = (int)tagTuple.Item2.Y;
+            }
+
+            GridPanel.Children.Remove(editBox);
+            string newText = editBox.Text;
+            var originalTag = editBox.Tag as Tuple<string, Point>;
+            if (originalTag != null && originalTag.Item1 != newText)
+            {
+                try
+                {
+                    DataView.EditCell(rowIndex, columnIndex, newText);
+                    if (_selectedRowsOnly)
+                    {
+                        int selectedRowOffset;
+                        if (_columnSortOrder == SortOrder.None)
+                            selectedRowOffset = _rowOffset![_selectedDataRowIndices.IndexOf(rowIndex)];
+                        else
+                            selectedRowOffset = Array.IndexOf(_sortedSelectedRowOffsets!, _rowOffset![rowIndex]);
+                        SetCellText(selectedRowOffset - firstRowDataIndex, columnIndex, newText);
+                    }
+                    else
+                    {
+                        SetCellText(_rowOffset![rowIndex] - firstRowDataIndex, columnIndex, newText);
+                    }
+                    UpdateUndoRedoButtons();
+                    SetActiveCell();
+                    _mouseSelectionMode = SelectionMode.None;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseLeftButtonDown event on the row headers grid to start row selection.
+        /// </summary>
+        private void RowsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_selectedRowsOnly)
+            {
+                _mouseSelectionMode = SelectionMode.None;
+                return;
+            }
+
+            AllCellsSelected = false;
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) &&
+                !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                if (_selectedDataRowIndices.Count > 0)
+                {
+                    _selectedDataRowIndices.Clear();
+                    SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+                }
+                _selectedCellIndices.Clear();
+                _selectedColumnIndices.Clear();
+                DeSelectAllCells();
+            }
+
+            Point gridPosition = e.GetPosition(GridPanel);
+            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                _mouseDownVirtualRowIndex = GetTableRowIndex(gridPosition) + (int)Math.Floor(VerticalScrollbar.Value);
+                _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
+                double widthSums = 0;
+                int counter = 0;
+                while (widthSums <= HorizontalScrollViewer.HorizontalOffset && counter < ColumnHeadersGrid.ColumnDefinitions.Count)
+                {
+                    widthSums += ColumnHeadersGrid.ColumnDefinitions[counter].ActualWidth;
+                    counter++;
+                }
+                _activeCellDataColumnIndex = Math.Max(0, counter - 1);
+            }
+
+            _mouseSelectionMode = RowSelectable ? SelectionMode.RowSelect : SelectionMode.None;
+            ((UIElement)sender).CaptureMouse();
+        }
+
+        /// <summary>
+        /// Handles the MouseLeftButtonUp event on the row headers grid to complete row selection.
+        /// </summary>
+        private void RowsGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AllCellsSelected = false;
+            int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+            Point gridPosition = e.GetPosition(GridPanel);
+            int mouseUpVirtualRowIndex = GetTableRowIndex(gridPosition) + verticalScrollBarValue;
+
+            if (_mouseSelectionMode == SelectionMode.RowSelect)
+            {
+                int rowStep = mouseUpVirtualRowIndex < _mouseDownVirtualRowIndex ? -1 : 1;
+                for (int i = _mouseDownVirtualRowIndex; rowStep > 0 ? i <= mouseUpVirtualRowIndex : i >= mouseUpVirtualRowIndex; i += rowStep)
+                    _selectedDataRowIndices.Add(_rowId![i]);
+                _selectedDataRowIndices = _selectedDataRowIndices.Distinct().ToList();
+                _selectedDataRowIndices.Sort();
+                SetSelectedCells();
+                SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+            }
+
+            UpdateSelectionButtonStates();
+            _mouseSelectionMode = SelectionMode.None;
+            ((UIElement)sender).ReleaseMouseCapture();
+        }
+
+        /// <summary>
+        /// Handles the MouseMove event on the row headers grid for drag selection of rows.
+        /// </summary>
+        private void RowsGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point gridPosition = e.GetPosition(GridPanel);
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (_mouseSelectionMode == SelectionMode.None || _mouseSelectionMode == SelectionMode.EditSelect) return;
+
+                AllCellsSelected = false;
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) ||
+                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    DeSelectAllCells();
+                    SetSelectedCells();
+                }
+                else
+                {
+                    DeSelectAllCells();
+                }
+
+                int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+                int mouseMoveDataRowIndex = GetTableRowIndex(gridPosition) + verticalScrollBarValue;
+
+                if (_mouseSelectionMode == SelectionMode.RowSelect)
+                {
+                    int rowStep = mouseMoveDataRowIndex < _mouseDownVirtualRowIndex ? -1 : 1;
+                    int startRow, endRow;
+
+                    if (_mouseDownVirtualRowIndex < verticalScrollBarValue)
+                    {
+                        startRow = 0;
+                        endRow = mouseMoveDataRowIndex - verticalScrollBarValue;
+                    }
+                    else if (_mouseDownVirtualRowIndex > verticalScrollBarValue + _visibleRowCount - 1)
+                    {
+                        startRow = _visibleRowCount - 1;
+                        endRow = mouseMoveDataRowIndex - verticalScrollBarValue;
+                    }
+                    else
+                    {
+                        startRow = _mouseDownVirtualRowIndex - verticalScrollBarValue;
+                        endRow = mouseMoveDataRowIndex - verticalScrollBarValue;
+                    }
+
+                    for (int i = startRow; rowStep > 0 ? i <= endRow : i >= endRow; i += rowStep)
+                        for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                            SelectCell(j, i);
+                }
+                SetActiveCell();
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseRightButtonUp event on the row headers grid for context menu.
+        /// </summary>
+        private void RowsGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            int dataRowIndex = GetDataRowIndex(GetTableRowIndex(e.GetPosition(GridPanel)));
+
+            if (_selectedDataRowIndices.BinarySearch(dataRowIndex) < 0)
+            {
+                _selectedDataRowIndices.Clear();
+                _selectedDataRowIndices.Add(dataRowIndex);
+                DeSelectAllCells();
+                SetSelectedCells();
+                SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+            }
+
+            var rowMenu = new ContextMenu();
+            if (Editable)
+            {
+                string headerText = _selectedDataRowIndices.Count == 1 ? "Delete Row" : "Delete Rows";
+                var rowMenuItem = new MenuItem
+                {
+                    Header = headerText,
+                    IsEnabled = Editable,
+                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/delete_row.png")) }
+                };
+                rowMenuItem.Click += DeleteRows;
+                rowMenu.Items.Add(rowMenuItem);
+            }
+
+            rowMenu.IsOpen = true;
+            RowRightButtonUp?.Invoke(rowMenu, dataRowIndex);
+        }
+
         private void RowsGrid_MouseWheel(object sender, MouseWheelEventArgs e) => TestGridPanel_MouseWheel(sender, e);
 
-        private void ColumnsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
-        private void ColumnsGrid_MouseMove(object sender, MouseEventArgs e) { }
-        private void ColumnsGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) { }
+        /// <summary>
+        /// Handles the MouseLeftButtonDown event on the column headers grid to start column selection.
+        /// </summary>
+        private void ColumnsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AllCellsSelected = false;
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) &&
+                !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift) && !_selectedRowsOnly)
+            {
+                if (_selectedDataRowIndices.Count > 0)
+                {
+                    _selectedDataRowIndices.Clear();
+                    SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+                }
+                _selectedCellIndices.Clear();
+                _selectedColumnIndices.Clear();
+                DeSelectAllCells();
+            }
+
+            Point gridPosition = e.GetPosition(GridPanel);
+            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
+                _activeCellVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                _activeCellDataColumnIndex = _mouseDownColumnIndex;
+            }
+
+            if (_selectedRowsOnly)
+                _mouseSelectionMode = SelectionMode.None;
+            else if (ColumnSelectable)
+                _mouseSelectionMode = SelectionMode.ColumnSelect;
+            else
+                _mouseSelectionMode = SelectionMode.None;
+
+            // Double-click to sort
+            if (e.ClickCount == 2)
+            {
+                _mouseSelectionMode = SelectionMode.None;
+                _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
+                if (!_selectedRowsOnly) _selectedColumnIndices.Add(_mouseDownColumnIndex);
+                if (_columnSortOrder == SortOrder.Ascending)
+                    SortColumnDescending();
+                else
+                    SortColumnAscending();
+                return;
+            }
+            ((UIElement)sender).CaptureMouse();
+        }
+
+        /// <summary>
+        /// Handles the MouseMove event on the column headers grid for drag selection of columns.
+        /// </summary>
+        private void ColumnsGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point gridPosition = e.GetPosition(GridPanel);
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (_mouseSelectionMode == SelectionMode.None) return;
+
+                AllCellsSelected = false;
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) ||
+                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    DeSelectAllCells();
+                    SetSelectedCells();
+                }
+                else
+                {
+                    DeSelectAllCells();
+                }
+
+                if (_mouseSelectionMode == SelectionMode.ColumnSelect)
+                {
+                    int columnIndex = GetTableColumnIndex(gridPosition);
+                    int columnStep = columnIndex < _mouseDownColumnIndex ? -1 : 1;
+                    for (int i = _mouseDownColumnIndex; columnStep > 0 ? i <= columnIndex : i >= columnIndex; i += columnStep)
+                        for (int j = 0; j < _visibleRowCount; j++)
+                            SelectCell(i, j);
+                }
+                SetActiveCell();
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseLeftButtonUp event on the column headers grid to complete column selection.
+        /// </summary>
+        private void ColumnsGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AllCellsSelected = false;
+            Point gridPosition = e.GetPosition(GridPanel);
+            int mouseUpColumnIndex = GetTableColumnIndex(gridPosition);
+
+            if (_mouseSelectionMode == SelectionMode.ColumnSelect)
+            {
+                int columnStep = mouseUpColumnIndex < _mouseDownColumnIndex ? -1 : 1;
+                for (int i = _mouseDownColumnIndex; columnStep > 0 ? i <= mouseUpColumnIndex : i >= mouseUpColumnIndex; i += columnStep)
+                    _selectedColumnIndices.Add(i);
+                _selectedColumnIndices = _selectedColumnIndices.Distinct().ToList();
+                _selectedColumnIndices.Sort();
+                SetSelectedCells();
+            }
+
+            UpdateSelectionButtonStates();
+            _mouseSelectionMode = SelectionMode.None;
+            ((UIElement)sender).ReleaseMouseCapture();
+        }
 
         private void SelectAllLeftMouseDown(object sender, MouseButtonEventArgs e) { }
         private void SelectAllLeftMouseUp(object sender, MouseButtonEventArgs e)
@@ -1251,10 +1763,376 @@ namespace DatabaseControls
         private void PasteButton_Click(object sender, RoutedEventArgs e) => Paste();
         private void ExportTableButton_Click(object sender, RoutedEventArgs e) => ExportTable();
 
-        private void ShowAll_Checked(object sender, RoutedEventArgs e) { /* TODO */ }
-        private void ShowSelected_Checked(object sender, RoutedEventArgs e) { /* TODO */ }
-        private void DeSelectAll_Click(object sender, RoutedEventArgs e) { /* TODO */ }
-        private void SelectByAttribute_Click(object sender, RoutedEventArgs e) { /* TODO */ }
+        /// <summary>
+        /// Handles the ShowAll button click to show all rows instead of selected rows only.
+        /// </summary>
+        private void ShowAll_Checked(object sender, RoutedEventArgs e)
+        {
+            _selectedRowsOnly = false;
+            double rowsAreaHeight = HorizontalScrollViewer.ActualHeight - ColumnHeadersGrid.ActualHeight;
+            VerticalScrollbar.Maximum = DataView.NumberOfRows - (int)Math.Floor(rowsAreaHeight / RowHeight);
+            if (_selectedDataRowIndices.Count > 0)
+            {
+                VerticalScrollbar.Value = _selectedDataRowIndices[0] > VerticalScrollbar.Maximum
+                    ? VerticalScrollbar.Maximum - 1
+                    : _selectedDataRowIndices[0];
+            }
+            _visibleRowCount = (int)Math.Floor(rowsAreaHeight / RowHeight);
+            if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
+            LoadRows();
+            SetSelectedCells();
+            UpdateRowHeaders();
+            ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            ShowAll.IsEnabled = false;
+            GridPanel.Focus();
+        }
+
+        /// <summary>
+        /// Handles the ShowSelected button click to show only selected rows.
+        /// </summary>
+        private void ShowSelected_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_selectedDataRowIndices.Count > 0)
+            {
+                if (_columnSortOrder != SortOrder.None)
+                {
+                    _sortedSelectedRowOffsets = new int[_selectedDataRowIndices.Count];
+                    for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+                        _sortedSelectedRowOffsets[i] = _rowOffset![_selectedDataRowIndices[i]];
+                    Array.Sort(_sortedSelectedRowOffsets);
+                    if (_columnSortOrder == SortOrder.Descending)
+                        Array.Reverse(_sortedSelectedRowOffsets);
+                }
+
+                _selectedRowsOnly = true;
+                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowAllIcon_22x22.png"));
+                ShowAll.IsEnabled = true;
+                if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
+                VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
+                VerticalScrollbar.Value = 0;
+                LoadRows();
+                _activeCellDataColumnIndex = 0;
+                _activeCellVirtualRowIndex = 0;
+                SetSelectedCells();
+                UpdateRowHeaders();
+            }
+            GridPanel.Focus();
+        }
+
+        /// <summary>
+        /// Handles the DeSelectAll button click to clear all selections.
+        /// </summary>
+        private void DeSelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedDataRowIndices.Count > 0)
+            {
+                _selectedDataRowIndices.Clear();
+                SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+            }
+            DeSelectAllCells();
+            SetSelectedCells();
+            ShowSelected.IsEnabled = false;
+            ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            DeSelectAll.IsEnabled = false;
+            ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+
+            if (_selectedRowsOnly)
+            {
+                _selectedRowsOnly = false;
+                _visibleRowCount = (int)Math.Floor((HorizontalScrollViewer.ActualHeight - ColumnHeadersGrid.ActualHeight) / RowHeight);
+                if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
+                VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
+                LoadRows();
+                SetSelectedCells();
+                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ShowAll.IsEnabled = false;
+            }
+            GridPanel.Focus();
+        }
+
+        /// <summary>
+        /// Handles the SelectByAttribute button click to open the attribute selector dialog.
+        /// </summary>
+        private void SelectByAttribute_Click(object sender, RoutedEventArgs e)
+        {
+            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, null, true);
+            attributeSelector.ContentRendered += SelectorRendered;
+
+            if (attributeSelector.ShowDialog() == true)
+            {
+                AllCellsSelected = false;
+                _selectedDataRowIndices.Clear();
+                _selectedCellIndices.Clear();
+                _selectedColumnIndices.Clear();
+                DeSelectAllCells();
+                if (!_selectedRowsOnly)
+                {
+                    _selectedDataRowIndices = attributeSelector.GetSelectedRows;
+                }
+                else
+                {
+                    ShowAll_Checked(null, null!);
+                    _selectedDataRowIndices = attributeSelector.GetSelectedRows;
+                    ShowSelected_Checked(null, null!);
+                }
+                SetSelectedCells();
+                UpdateSelectionButtonStates();
+                SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+                _attributeSelectorString = attributeSelector.ExpressionCalculator.GetExpressionText();
+                attributeSelector.ContentRendered -= SelectorRendered;
+            }
+            GridPanel.Focus();
+        }
+
+        private void SelectorRendered(object? sender, EventArgs e)
+        {
+            if (sender is FieldCalculator fc && !string.IsNullOrEmpty(_attributeSelectorString))
+                fc.ExpressionCalculator.SetExpressionText(_attributeSelectorString);
+        }
+
+        private void CalculatorRendered(object? sender, EventArgs e)
+        {
+            if (sender is FieldCalculator fc && !string.IsNullOrEmpty(_fieldCalculatorString))
+                fc.ExpressionCalculator.SetExpressionText(_fieldCalculatorString);
+        }
+
+        /// <summary>
+        /// Handles the MouseLeftButtonDown event on the GridPanel for cell selection.
+        /// </summary>
+        private void GridPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point gridPosition = e.GetPosition(GridPanel);
+
+            if (_selectedRowsOnly)
+            {
+                // Re-select the previously active cell
+                int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                int lastRowDataIndex = firstRowDataIndex + _visibleRowCount - 1;
+                if (_activeCellVirtualRowIndex >= firstRowDataIndex && _activeCellVirtualRowIndex <= lastRowDataIndex)
+                    SelectCell(_activeCellDataColumnIndex, _activeCellVirtualRowIndex - firstRowDataIndex);
+
+                _mouseSelectionMode = SelectionMode.None;
+                _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
+                _mouseDownVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value) + GetTableRowIndex(gridPosition);
+                _activeCellDataColumnIndex = _mouseDownColumnIndex;
+                _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
+                ActiveCellLocationChanged?.Invoke();
+                SetActiveCell();
+
+                if (e.ClickCount == 2 && Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+                {
+                    _mouseSelectionMode = SelectionMode.EditSelect;
+                    int rowIndex = GetTableRowIndex(gridPosition);
+                    string initialText = GetCellText(rowIndex, _mouseDownColumnIndex);
+                    _cellEditTextBox.Tag = new Tuple<string, Point>(initialText, new Point(_mouseDownColumnIndex, GetDataRowIndex(rowIndex)));
+                    Grid.SetColumn(_cellEditTextBox, _mouseDownColumnIndex);
+                    Grid.SetRow(_cellEditTextBox, rowIndex);
+                    _cellEditTextBox.Text = initialText;
+                    if (GridPanel.Children.Contains(_cellEditTextBox)) GridPanel.Children.Remove(_cellEditTextBox);
+                    GridPanel.Children.Add(_cellEditTextBox);
+                    _cellEditTextBox.SelectAll();
+                    return;
+                }
+                ((UIElement)sender).CaptureMouse();
+                return;
+            }
+
+            AllCellsSelected = false;
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) &&
+                !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                if (_selectedDataRowIndices.Count > 0)
+                {
+                    _selectedDataRowIndices.Clear();
+                    SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+                }
+                _selectedCellIndices.Clear();
+                _selectedColumnIndices.Clear();
+                DeSelectAllCells();
+            }
+
+            if (!Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                _mouseDownVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value) + GetTableRowIndex(gridPosition);
+                _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
+                _activeCellDataColumnIndex = _mouseDownColumnIndex;
+                _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
+                ActiveCellLocationChanged?.Invoke();
+            }
+
+            if (CellSelectable)
+                _mouseSelectionMode = SelectionMode.CellSelect;
+            else if (RowSelectable)
+                _mouseSelectionMode = SelectionMode.RowSelect;
+            else if (ColumnSelectable)
+                _mouseSelectionMode = SelectionMode.ColumnSelect;
+            else
+                _mouseSelectionMode = SelectionMode.None;
+
+            if (e.ClickCount == 2 && Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+            {
+                _mouseSelectionMode = SelectionMode.EditSelect;
+                int rowIndex = GetTableRowIndex(gridPosition);
+                _mouseDownVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value) + rowIndex;
+                string initialText = GetCellText(rowIndex, _mouseDownColumnIndex);
+                _cellEditTextBox.Tag = new Tuple<string, Point>(initialText, new Point(_mouseDownColumnIndex, GetDataRowIndex(rowIndex)));
+                Grid.SetColumn(_cellEditTextBox, _mouseDownColumnIndex);
+                Grid.SetRow(_cellEditTextBox, rowIndex);
+                _cellEditTextBox.Text = initialText;
+                if (GridPanel.Children.Contains(_cellEditTextBox)) GridPanel.Children.Remove(_cellEditTextBox);
+                GridPanel.Children.Add(_cellEditTextBox);
+                _cellEditTextBox.SelectAll();
+                return;
+            }
+            ((UIElement)sender).CaptureMouse();
+        }
+
+        /// <summary>
+        /// Handles the MouseMove event on the GridPanel for drag selection.
+        /// </summary>
+        private void GridPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (_mouseSelectionMode == SelectionMode.None || _mouseSelectionMode == SelectionMode.EditSelect) return;
+
+                AllCellsSelected = false;
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) ||
+                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    DeSelectAllCells();
+                    SetSelectedCells();
+                }
+                else
+                {
+                    DeSelectAllCells();
+                }
+
+                int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+                Point gridPosition = e.GetPosition(GridPanel);
+
+                if (_mouseSelectionMode == SelectionMode.CellSelect)
+                {
+                    int tableRowIndex = GetTableRowIndex(gridPosition);
+                    int mouseMoveDataRowIndex = tableRowIndex + verticalScrollBarValue;
+                    int mouseMoveColumnIndex = GetTableColumnIndex(gridPosition);
+                    int rowStep = mouseMoveDataRowIndex >= _activeCellVirtualRowIndex ? 1 : -1;
+                    int columnStep = mouseMoveColumnIndex >= _activeCellDataColumnIndex ? 1 : -1;
+                    int startValue = _activeCellVirtualRowIndex - verticalScrollBarValue;
+                    if (startValue < 0) startValue = 0;
+                    if (startValue > _visibleRowCount - 1) startValue = _visibleRowCount - 1;
+
+                    for (int i = _activeCellDataColumnIndex; columnStep > 0 ? i <= mouseMoveColumnIndex : i >= mouseMoveColumnIndex; i += columnStep)
+                        for (int j = startValue; rowStep > 0 ? j <= (mouseMoveDataRowIndex - verticalScrollBarValue) : j >= (mouseMoveDataRowIndex - verticalScrollBarValue); j += rowStep)
+                            SelectCell(i, j);
+                }
+                else if (_mouseSelectionMode == SelectionMode.RowSelect)
+                {
+                    int mouseMoveDataRowIndex = GetTableRowIndex(gridPosition) + verticalScrollBarValue;
+                    int rowStep = mouseMoveDataRowIndex < _mouseDownVirtualRowIndex ? -1 : 1;
+                    int startRow, endRow;
+
+                    if (_mouseDownVirtualRowIndex < verticalScrollBarValue)
+                    {
+                        startRow = 0;
+                        endRow = mouseMoveDataRowIndex - verticalScrollBarValue;
+                    }
+                    else if (_mouseDownVirtualRowIndex > verticalScrollBarValue + _visibleRowCount - 1)
+                    {
+                        startRow = _visibleRowCount - 1;
+                        endRow = mouseMoveDataRowIndex - verticalScrollBarValue;
+                    }
+                    else
+                    {
+                        startRow = _mouseDownVirtualRowIndex - verticalScrollBarValue;
+                        endRow = mouseMoveDataRowIndex - verticalScrollBarValue;
+                    }
+
+                    for (int i = startRow; rowStep > 0 ? i <= endRow : i >= endRow; i += rowStep)
+                        for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                            SelectCell(j, i);
+                }
+                else if (_mouseSelectionMode == SelectionMode.ColumnSelect)
+                {
+                    int columnIndex = GetTableColumnIndex(gridPosition);
+                    int columnStep = columnIndex < _mouseDownColumnIndex ? -1 : 1;
+                    for (int i = _mouseDownColumnIndex; columnStep > 0 ? i <= columnIndex : i >= columnIndex; i += columnStep)
+                        for (int j = 0; j < _visibleRowCount; j++)
+                            SelectCell(i, j);
+                }
+                SetActiveCell();
+            }
+        }
+
+        /// <summary>
+        /// Handles the MouseLeftButtonUp event on the GridPanel to complete selection.
+        /// </summary>
+        private void GridPanel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            AllCellsSelected = false;
+            Point gridPosition = e.GetPosition(GridPanel);
+            int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+            int mouseUpDataRowIndex = GetTableRowIndex(gridPosition) + verticalScrollBarValue;
+            int mouseUpColumnIndex = GetTableColumnIndex(gridPosition);
+
+            if (_mouseSelectionMode == SelectionMode.CellSelect)
+            {
+                if (_activeCellVirtualRowIndex == mouseUpDataRowIndex && _activeCellDataColumnIndex == mouseUpColumnIndex)
+                {
+                    if (_selectedCellIndices.ContainsKey(_rowId![mouseUpDataRowIndex]))
+                        _selectedCellIndices[_rowId[mouseUpDataRowIndex]].Add(mouseUpColumnIndex);
+                    else
+                        _selectedCellIndices.Add(_rowId[mouseUpDataRowIndex], new SortedSet<int> { mouseUpColumnIndex });
+                }
+                else
+                {
+                    int rowStep = mouseUpDataRowIndex >= _activeCellVirtualRowIndex ? 1 : -1;
+                    int columnStep = mouseUpColumnIndex >= _activeCellDataColumnIndex ? 1 : -1;
+
+                    for (int i = _activeCellVirtualRowIndex; rowStep > 0 ? i <= mouseUpDataRowIndex : i >= mouseUpDataRowIndex; i += rowStep)
+                    {
+                        if (!_selectedCellIndices.ContainsKey(_rowId![i]))
+                            _selectedCellIndices.Add(_rowId[i], new SortedSet<int>());
+                        for (int j = _activeCellDataColumnIndex; columnStep > 0 ? j <= mouseUpColumnIndex : j >= mouseUpColumnIndex; j += columnStep)
+                            _selectedCellIndices[_rowId[i]].Add(j);
+                    }
+                }
+                SetSelectedCells();
+            }
+            else if (_mouseSelectionMode == SelectionMode.RowSelect)
+            {
+                int rowStep = mouseUpDataRowIndex < _mouseDownVirtualRowIndex ? -1 : 1;
+                for (int i = _mouseDownVirtualRowIndex; rowStep > 0 ? i <= mouseUpDataRowIndex : i >= mouseUpDataRowIndex; i += rowStep)
+                    _selectedDataRowIndices.Add(_rowId![i]);
+                _selectedDataRowIndices = _selectedDataRowIndices.Distinct().ToList();
+                _selectedDataRowIndices.Sort();
+                _mouseDownColumnIndex = _activeCellDataColumnIndex;
+                _mouseDownVirtualRowIndex = _activeCellVirtualRowIndex;
+                SetSelectedCells();
+                SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+            }
+            else if (_mouseSelectionMode == SelectionMode.ColumnSelect)
+            {
+                int columnStep = mouseUpColumnIndex < _mouseDownColumnIndex ? -1 : 1;
+                for (int i = _mouseDownColumnIndex; columnStep > 0 ? i <= mouseUpColumnIndex : i >= mouseUpColumnIndex; i += columnStep)
+                    _selectedColumnIndices.Add(i);
+                _selectedColumnIndices = _selectedColumnIndices.Distinct().ToList();
+                _selectedColumnIndices.Sort();
+                SetSelectedCells();
+            }
+            else if (_mouseSelectionMode == SelectionMode.EditSelect)
+            {
+                _cellEditTextBox.Focus();
+            }
+
+            if (_mouseSelectionMode != SelectionMode.EditSelect)
+            {
+                UpdateSelectionButtonStates();
+            }
+
+            _mouseSelectionMode = SelectionMode.None;
+            ((UIElement)sender).ReleaseMouseCapture();
+        }
 
         private void CreateColumnContextMenu(object sender, MouseButtonEventArgs e)
         {
@@ -1486,12 +2364,189 @@ namespace DatabaseControls
 
         #region Undo/Redo
 
+        /// <summary>
+        /// Updates the enabled state and icons of the Undo, Redo, and Save buttons.
+        /// </summary>
         private void UpdateUndoRedoButtons()
         {
             if (DataView == null) return;
-            Undo.IsEnabled = DataView.CanUndo();
-            Redo.IsEnabled = DataView.CanRedo();
-            SaveButton.IsEnabled = DataView.CanUndo();
+
+            if (DataView.CanUndo())
+            {
+                Undo.IsEnabled = true;
+                SaveButton.IsEnabled = true;
+                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Undo.png"));
+                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Save.ico"));
+            }
+            else
+            {
+                Undo.IsEnabled = false;
+                SaveButton.IsEnabled = false;
+                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/UndoDisabled.png"));
+                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SaveDisabled.ico"));
+            }
+
+            if (DataView.CanRedo())
+            {
+                Redo.IsEnabled = true;
+                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Redo.png"));
+            }
+            else
+            {
+                Redo.IsEnabled = false;
+                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/RedoDisabled.png"));
+            }
+        }
+
+        /// <summary>
+        /// Handles the Undo button click event.
+        /// </summary>
+        private void Undo_Click(object sender, RoutedEventArgs e) => UndoLastEdit();
+
+        /// <summary>
+        /// Handles the Redo button click event.
+        /// </summary>
+        private void Redo_Click(object sender, RoutedEventArgs e) => RedoLastEdit();
+
+        /// <summary>
+        /// Handles the Save button click event.
+        /// </summary>
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to save edits?", "Apply Edits", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                try
+                {
+                    DataView.ApplyEdits();
+                    UpdateUndoRedoButtons();
+                    Mouse.OverrideCursor = null;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error Saving Edits", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    Mouse.OverrideCursor = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the OpenFC (Field Calculator) button click event.
+        /// </summary>
+        private void OpenFC_Click(object sender, RoutedEventArgs e)
+        {
+            var fc = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns);
+            fc.ContentRendered += CalculatorRendered;
+
+            if (fc.ShowDialog() == true)
+            {
+                _fieldCalculatorString = fc.ExpressionCalculator.GetExpressionText();
+                UpdateVisibleRows();
+                UpdateUndoRedoButtons();
+                fc.ContentRendered -= CalculatorRendered;
+            }
+        }
+
+        /// <summary>
+        /// Undoes the last edit operation.
+        /// </summary>
+        private void UndoLastEdit()
+        {
+            if (!DataView.CanUndo()) return;
+            DataView.Undo();
+            UpdateVisibleRows();
+            UpdateUndoRedoButtons();
+        }
+
+        /// <summary>
+        /// Redoes the last undone edit operation.
+        /// </summary>
+        private void RedoLastEdit()
+        {
+            if (!DataView.CanRedo()) return;
+            DataView.Redo();
+            UpdateVisibleRows();
+            UpdateUndoRedoButtons();
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Sets the text of a visible cell in the GridPanel.
+        /// </summary>
+        private void SetCellText(int tableRowIndex, int columnIndex, string text)
+        {
+            if (tableRowIndex < 0 || tableRowIndex >= _visibleRowCount) return;
+            if (columnIndex < 0 || columnIndex >= DataView.ColumnNames.Count()) return;
+            var cell = (Cell)GridPanel.Children[tableRowIndex * DataView.ColumnNames.Count() + columnIndex];
+            cell.Text = text;
+        }
+
+        /// <summary>
+        /// Updates the selection button states based on current selection.
+        /// </summary>
+        private void UpdateSelectionButtonStates()
+        {
+            if (_selectedDataRowIndices.Count > 0 && !_selectedRowsOnly)
+            {
+                ShowSelected.IsEnabled = true;
+                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowSelectedIcon_22x22.png"));
+                DeSelectAll.IsEnabled = true;
+                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"));
+            }
+            else if (_selectedDataRowIndices.Count <= 0 && _selectedRowsOnly)
+            {
+                ShowAll_Checked(null, null!);
+            }
+            else if (_selectedRowsOnly)
+            {
+                // Do nothing - keep current state
+            }
+            else
+            {
+                ShowSelected.IsEnabled = false;
+                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                DeSelectAll.IsEnabled = false;
+                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            }
+        }
+
+        /// <summary>
+        /// Deletes the selected rows from the data view.
+        /// </summary>
+        private void DeleteRows(object sender, RoutedEventArgs e)
+        {
+            if (_selectedDataRowIndices.Count == 0) return;
+
+            string message = _selectedDataRowIndices.Count == 1
+                ? "Are you sure you want to delete the selected row?"
+                : $"Are you sure you want to delete {_selectedDataRowIndices.Count} selected rows?";
+
+            if (MessageBox.Show(message, "Delete Rows", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Mouse.OverrideCursor = Cursors.Wait;
+                    // Delete rows in reverse order to maintain correct indices
+                    var sortedIndices = _selectedDataRowIndices.OrderByDescending(i => i).ToList();
+                    foreach (int rowIndex in sortedIndices)
+                        DataView.DeleteRow(rowIndex);
+
+                    _selectedDataRowIndices.Clear();
+                    SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
+                    RefreshView();
+                    UpdateUndoRedoButtons();
+                    UpdateSelectionButtonStates();
+                    Mouse.OverrideCursor = null;
+                }
+                catch (Exception ex)
+                {
+                    Mouse.OverrideCursor = null;
+                    MessageBox.Show(ex.Message, "Error Deleting Rows", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         #endregion
