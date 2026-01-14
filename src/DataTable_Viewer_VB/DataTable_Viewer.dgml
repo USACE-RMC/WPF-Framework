@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xsd="http://www.w3.org/2001/XMLSchema" xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="2005" Bounds="342.516666666667,999.4,201.223333333333,141.92" Group="Expanded" Label="2005" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="2008" Bounds="20,999.4,292.516666666667,253.84" Group="Expanded" Label="2008" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="2010" Bounds="658.946666666667,547.68,531.173333333333,365.76" Group="Expanded" Label="2010" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="2012" Bounds="20,40,643.176666666667,477.68" Group="Expanded" Label="2012" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="2013" Bounds="693.176666666667,40,643.176666666667,477.68" Group="Expanded" Label="2013" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="2015" Bounds="20,547.68,608.946666666667,421.72" Group="Expanded" Label="2015" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="AssemblyLoad.exe" Bounds="1906.16,326.72,116.82,25.96" Company="" Filename="C:\Programs\AssemblyAlexPoopyHead\AssemblyLoad.exe" Label="AssemblyLoad.exe" VersionInfo="1.0.0.0" type="ModuleNodeWrapper" />
+    <Node Id="DataBase_Reader.dll" Bounds="2021.94947428385,80.2816321095784,110.756666666667,25.96" Company="US Army Corps of Engineers" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/DataBase_Reader.dll" Label="DataBase_Reader" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="DataTableViewControl.dll" Bounds="2009.91056644256,24.3215321095785,136.713333333333,25.96" Company="US Army Corps of Engineers" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/DataTableViewControl.dll" Label="DataTableViewControl" type="AssemblyNodeWrapper" />
+    <Node Id="FieldCalculationParser.dll" Bounds="2176.62389977589,26.3376781496592,135.733333333334,25.96" Company="US Army Corps of Engineers" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/FieldCalculationParser.dll" Label="FieldCalculationParser" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="Microsoft Visual C++  ARM Libraries" Bounds="1402.17666666667,587.68,132.056666666667,25.96" Label="Microsoft Visual C++" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  Compilers 2010 Standard - enu - x64" Bounds="678.946666666667,867.48,299.983333333333,25.9599999999999" Label="Microsoft Visual C++ Compilers 2010 Standard - enu" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  Compilers 2010 Standard - enu - x86" Bounds="678.946666666667,811.52,299.983333333333,25.9599999999999" Label="Microsoft Visual C++ Compilers 2010 Standard - enu" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64 Libraries" Bounds="1240.12,587.68,132.056666666667,25.96" Label="Microsoft Visual C++" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64 Native Compilers" Bounds="1240.12,643.64,153.79,25.96" Label="Microsoft Visual C++ x64" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64 Native Compilers - ENU Resources" Bounds="1449.32666666667,699.6,255.736666666667,25.96" Label="Microsoft Visual C++ x64 Native Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64-arm Cross Compilers" Bounds="1240.12,699.6,179.206666666667,25.96" Label="Microsoft Visual C++ x64-arm" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64-arm Cross Compilers - ENU Resources" Bounds="1240.12,811.52,275.893333333333,25.9599999999999" Label="Microsoft Visual C++ x64-arm Cross Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64-x86 Cross Compilers" Bounds="1423.91,643.64,177.036666666667,25.96" Label="Microsoft Visual C++ x64-x86" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x64-x86 Cross Compilers - ENU Resources" Bounds="1240.12,755.56,273.723333333333,25.96" Label="Microsoft Visual C++ x64-x86 Cross Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++  x86 Libraries" Bounds="1564.23333333333,587.68,132.056666666667,25.96" Label="Microsoft Visual C++" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2005 Redistributable" Bounds="362.516666666667,1039.4,132.056666666667,25.96" Label="Microsoft Visual C++" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2005 Redistributable (x64)" Bounds="362.516666666667,1095.36,161.223333333333,25.96" Label="Microsoft Visual C++ 2005" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.17" Bounds="40,1039.4,252.516666666667,25.96" Label="Microsoft Visual C++ 2008 Redistributable -" VersionInfo="9.0.30729.17 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.6161" Bounds="40,1207.28,252.516666666667,25.96" Label="Microsoft Visual C++ 2008 Redistributable -" VersionInfo="9.0.30729.6161 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2008 Redistributable - x86 9.0.30729.4974" Bounds="40,1095.36,252.516666666667,25.96" Label="Microsoft Visual C++ 2008 Redistributable -" VersionInfo="9.0.30729.4974 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2008 Redistributable - x86 9.0.30729.6161" Bounds="40,1151.32,252.516666666667,25.96" Label="Microsoft Visual C++ 2008 Redistributable -" VersionInfo="9.0.30729.6161 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2010  x64 Designtime - 10.0.30319" Bounds="678.946666666667,643.64,246.376666666667,25.96" Label="Microsoft Visual C++ 2010 x64 Designtime" VersionInfo="10.0.30319.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219" Bounds="678.946666666667,755.56,266.163333333333,25.96" Label="Microsoft Visual C++ 2010 x64 Redistributable" VersionInfo="10.0.40219.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2010  x64 Runtime - 10.0.40219" Bounds="939.533333333333,587.68,230.586666666667,25.96" Label="Microsoft Visual C++ 2010 x64 Runtime" VersionInfo="10.0.40219.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219" Bounds="678.946666666667,699.6,266.163333333333,25.96" Label="Microsoft Visual C++ 2010 x86 Redistributable" VersionInfo="10.0.40219.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2010  x86 Runtime - 10.0.40219" Bounds="678.946666666667,587.68,230.586666666667,25.96" Label="Microsoft Visual C++ 2010 x86 Runtime" VersionInfo="10.0.40219.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 32-bit Compilers - ENU Resources" Bounds="40,191.92,260.856666666667,25.96" Label="Microsoft Visual C++ 2012 32-bit Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 32bit Compilers - ENU Resources" Bounds="295.803333333333,135.96,256.056666666667,25.96" Label="Microsoft Visual C++ 2012 32bit Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 Compilers" Bounds="40,80,132.056666666667,25.96" Label="Microsoft Visual C++" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 Compilers - ENU Resources" Bounds="40,135.96,225.803333333333,25.96" Label="Microsoft Visual C++ 2012 Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 Core Libraries" Bounds="202.056666666667,80,161.223333333333,25.96" Label="Microsoft Visual C++ 2012" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610" Bounds="343.403333333333,303.84,273.403333333333,25.96" Label="Microsoft Visual C++ 2012 Redistributable (x64)" VersionInfo="11.0.60610.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610" Bounds="40,303.84,273.403333333333,25.96" Label="Microsoft Visual C++ 2012 Redistributable (x86)" VersionInfo="11.0.60610.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x64 Additional Runtime - 11.0.60610" Bounds="40,471.72,288.46,25.96" Label="Microsoft Visual C++ 2012 x64 Additional Runtime" VersionInfo="11.0.60610.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x64 Debug Runtime - 11.0.60610" Bounds="40,247.88,269.473333333333,25.96" Label="Microsoft Visual C++ 2012 x64 Debug Runtime" VersionInfo="11.0.60610.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x64 Minimum Runtime - 11.0.60610" Bounds="40,415.76,284.716666666667,25.96" Label="Microsoft Visual C++ 2012 x64 Minimum Runtime" VersionInfo="11.0.60610.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x86 Additional Runtime - 11.0.60610" Bounds="354.716666666667,415.76,288.46,25.96" Label="Microsoft Visual C++ 2012 x86 Additional Runtime" VersionInfo="11.0.60610.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x86 Debug Runtime - 11.0.60610" Bounds="330.856666666667,191.92,269.473333333333,25.96" Label="Microsoft Visual C++ 2012 x86 Debug Runtime" VersionInfo="11.0.60610.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x86 Minimum Runtime - 11.0.60610" Bounds="40,359.8,284.716666666667,25.96" Label="Microsoft Visual C++ 2012 x86 Minimum Runtime" VersionInfo="11.0.60610.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2012 x86-x64 Compilers" Bounds="393.28,80,161.223333333333,25.96" Label="Microsoft Visual C++ 2012" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013  x64 Designtime - 12.0.21005" Bounds="713.176666666667,191.92,246.376666666667,25.96" Label="Microsoft Visual C++ 2013 x64 Designtime" VersionInfo="12.0.21005.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 32bit Compilers - ENU Resources" Bounds="989.553333333333,191.92,256.056666666667,25.96" Label="Microsoft Visual C++ 2013 32bit Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Compilers" Bounds="713.176666666667,80,132.056666666667,25.96" Label="Microsoft Visual C++" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Compilers - ENU Resources" Bounds="904.4,135.96,225.803333333333,25.96" Label="Microsoft Visual C++ 2013 Compilers -" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Core Libraries" Bounds="1066.45666666667,80,161.223333333333,25.96" Label="Microsoft Visual C++ 2013" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Extended Libraries" Bounds="713.176666666667,135.96,161.223333333333,25.96" Label="Microsoft Visual C++ 2013" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Microsoft Foundation Class Libraries" Bounds="713.176666666667,359.8,278.61,25.96" Label="Microsoft Visual C++ 2013 Microsoft Foundation" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.21005" Bounds="1016.58,303.84,273.403333333333,25.96" Label="Microsoft Visual C++ 2013 Redistributable (x64)" VersionInfo="12.0.21005.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 Redistributable (x86) - 12.0.21005" Bounds="713.176666666667,303.84,273.403333333333,25.96" Label="Microsoft Visual C++ 2013 Redistributable (x86)" VersionInfo="12.0.21005.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x64 Additional Runtime - 12.0.21005" Bounds="713.176666666667,471.72,288.46,25.96" Label="Microsoft Visual C++ 2013 x64 Additional Runtime" VersionInfo="12.0.21005.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x64 Debug Runtime - 12.0.21005" Bounds="1012.65,247.88,269.473333333333,25.96" Label="Microsoft Visual C++ 2013 x64 Debug Runtime" VersionInfo="12.0.21005.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x64 Minimum Runtime - 12.0.21005" Bounds="713.176666666667,415.76,284.716666666667,25.96" Label="Microsoft Visual C++ 2013 x64 Minimum Runtime" VersionInfo="12.0.21005.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x86 Additional Runtime - 12.0.21005" Bounds="1027.89333333333,415.76,288.46,25.96" Label="Microsoft Visual C++ 2013 x86 Additional Runtime" VersionInfo="12.0.21005.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x86 Debug Runtime - 12.0.21005" Bounds="713.176666666667,247.88,269.473333333333,25.96" Label="Microsoft Visual C++ 2013 x86 Debug Runtime" VersionInfo="12.0.21005.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x86 Minimum Runtime - 12.0.21005" Bounds="1021.78666666667,359.8,284.716666666667,25.96" Label="Microsoft Visual C++ 2013 x86 Minimum Runtime" VersionInfo="12.0.21005.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2013 x86-x64 Compilers" Bounds="875.233333333333,80,161.223333333333,25.96" Label="Microsoft Visual C++ 2013" VersionInfo="0.0.0.0 (Unknown)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.24215" Bounds="40,699.6,273.403333333333,25.96" Label="Microsoft Visual C++ 2015 Redistributable (x64)" VersionInfo="14.0.24215.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 Redistributable (x86) - 14.0.24215" Bounds="40,643.64,273.403333333333,25.96" Label="Microsoft Visual C++ 2015 Redistributable (x86)" VersionInfo="14.0.24215.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 x64 Additional Runtime - 14.0.24215" Bounds="40,923.44,288.46,25.9599999999999" Label="Microsoft Visual C++ 2015 x64 Additional Runtime" VersionInfo="14.0.24215.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 x64 Debug Runtime - 14.0.24215" Bounds="339.473333333333,587.68,269.473333333333,25.96" Label="Microsoft Visual C++ 2015 x64 Debug Runtime" VersionInfo="14.0.24215.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 x64 Minimum Runtime - 14.0.24215" Bounds="40,811.52,284.716666666667,25.9599999999999" Label="Microsoft Visual C++ 2015 x64 Minimum Runtime" VersionInfo="14.0.24215.0 (x64)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 x86 Additional Runtime - 14.0.24215" Bounds="40,867.48,288.46,25.9599999999999" Label="Microsoft Visual C++ 2015 x86 Additional Runtime" VersionInfo="14.0.24215.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 x86 Debug Runtime - 14.0.24215" Bounds="40,587.68,269.473333333333,25.96" Label="Microsoft Visual C++ 2015 x86 Debug Runtime" VersionInfo="14.0.24215.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Microsoft Visual C++ 2015 x86 Minimum Runtime - 14.0.24215" Bounds="40,755.56,284.716666666667,25.96" Label="Microsoft Visual C++ 2015 x86 Minimum Runtime" VersionInfo="14.0.24215.0 (x86)" type="VCRuntimeNodeWrapper" />
+    <Node Id="Other" Bounds="1220.12,547.68,504.943333333333,309.8" Group="Expanded" Label="Other" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="OxyPlot.Wpf.dll" Bounds="1892.87354889352,25.2265670385481,85.7033333333334,25.96" Company="OxyPlot" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/OxyPlot.Wpf.dll" Label="OxyPlot.Wpf" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="OxyPlot.dll" Bounds="1905.29225667318,83.7011495697021,61.0833333333333,25.96" Company="OxyPlot" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/OxyPlot.dll" Label="OxyPlot" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="Statistics.dll" Bounds="2200.79201985677,85.1591306793213,65.8366666666667,25.96" Company="US Army Corps of Engineers" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/Statistics.dll" Label="Statistics" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="System.Data.SQLite.dll" Bounds="2016.39582655165,137.43902734748,121.816666666667,25.96" Company="http://system.data.sqlite.org/" Filename="file:///C:/Users/q0hecwlf/Perforce/Consequences/ConsequenceToolLibraries_Main_WLF/ConsequenceToolLibraries/Output/Debug/System.Data.SQLite.dll" Label="System.Data.SQLite" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="Visual C Runtimes" Bounds="1985.8266315562,388.883393974347,134.696666666667,25" Group="Collapsed" Label="Visual C Runtimes" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="btpload32.dll" Bounds="1959.10992953137,270.759951220703,89.7033333333334,25.96" Company="BeyondTrust Software, Inc." Filename="C:\Windows\system32\btpload32.dll" Label="btpload32.dll" VersionInfo="6.7.3.0" type="ModuleNodeWrapper" />
+    <Node Id="detoured.dll" Bounds="1844.88316293341,270.760005465376,84.2266666666667,25.96" Filename="C:\Program Files (x86)\NVIDIA Corporation\CoProcManager\detoured.dll" Label="detoured.dll" type="ModuleNodeWrapper" />
+    <Node Id="nvd3d9wrap.dll" Bounds="1775.06333333333,326.72,101.096666666667,25.96" Company="NVIDIA Corporation" Filename="C:\Program Files (x86)\NVIDIA Corporation\CoProcManager\nvd3d9wrap.dll" Label="nvd3d9wrap.dll" VersionInfo="9.18.13.4752" type="ModuleNodeWrapper" />
+    <Node Id="nvdxgiwrap.dll" Bounds="2225.21333333333,270.76,96.5700000000002,25.96" Company="NVIDIA Corporation" Filename="C:\Program Files (x86)\NVIDIA Corporation\CoProcManager\nvdxgiwrap.dll" Label="nvdxgiwrap.dll" VersionInfo="9.18.13.4752" type="ModuleNodeWrapper" />
+    <Node Id="nvinit.dll" Bounds="1750.19639631877,270.759951248491,64.6866666666667,25.96" Company="NVIDIA Corporation" Filename="C:\Windows\SysWOW64\nvinit.dll" Label="nvinit.dll" VersionInfo="9.18.13.4752" type="ModuleNodeWrapper" />
+    <Node Id="privman32.dll" Bounds="2103.68,270.76,91.5333333333333,25.96" Company="BeyondTrust Software, Inc." Filename="C:\Windows\system32\privman32.dll" Label="privman32.dll" VersionInfo="6.7.3.0" type="ModuleNodeWrapper" />
+  </Nodes>
+  <Links>
+    <Link Source="2005" Target="Microsoft Visual C++ 2005 Redistributable" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2005" Target="Microsoft Visual C++ 2005 Redistributable (x64)" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2008" Target="Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.17" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2008" Target="Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.6161" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2008" Target="Microsoft Visual C++ 2008 Redistributable - x86 9.0.30729.4974" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2008" Target="Microsoft Visual C++ 2008 Redistributable - x86 9.0.30729.6161" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++  Compilers 2010 Standard - enu - x64" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++  Compilers 2010 Standard - enu - x86" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++ 2010  x64 Designtime - 10.0.30319" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++ 2010  x64 Runtime - 10.0.40219" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2010" Target="Microsoft Visual C++ 2010  x86 Runtime - 10.0.40219" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 32-bit Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 32bit Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 Core Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 Redistributable (x64) - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 Redistributable (x86) - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x64 Additional Runtime - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x64 Debug Runtime - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x64 Minimum Runtime - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x86 Additional Runtime - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x86 Debug Runtime - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x86 Minimum Runtime - 11.0.60610" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2012" Target="Microsoft Visual C++ 2012 x86-x64 Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013  x64 Designtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 32bit Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Core Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Extended Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Microsoft Foundation Class Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 Redistributable (x86) - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x64 Additional Runtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x64 Debug Runtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x64 Minimum Runtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x86 Additional Runtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x86 Debug Runtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x86 Minimum Runtime - 12.0.21005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2013" Target="Microsoft Visual C++ 2013 x86-x64 Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 Redistributable (x64) - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 Redistributable (x86) - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 x64 Additional Runtime - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 x64 Debug Runtime - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 x64 Minimum Runtime - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 x86 Additional Runtime - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 x86 Debug Runtime - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="2015" Target="Microsoft Visual C++ 2015 x86 Minimum Runtime - 14.0.24215" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="DataBase_Reader.dll" Target="System.Data.SQLite.dll" Bounds="2077.31325367124,106.241632109578,0.00918372984187954,22.197396008178" Label="" LabelBounds="2081.31784553617,109.361157573704,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="DataBase_Reader.dll" Bounds="2077.6967737414,50.2815321095785,0.352558704907096,21.0013679100664" Label="" LabelBounds="2081.87305313356,52.8357861671246,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="FieldCalculationParser.dll" Bounds="2146.62389977589,38.1306396725748,21.0006619491041,0.254719963669913" Label="" LabelBounds="2157.09848724575,18.2979996435898,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="OxyPlot.Wpf.dll" Bounds="1987.57670082394,37.7355456869434,22.3338656186206,0.141803300046675" Label="" LabelBounds="1998.70633187764,41.8064473377793,0.0999999999999091,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="OxyPlot.dll" Bounds="1973.60479204614,50.2815321095785,73.5274415483429,30.6531622345326" Label="" LabelBounds="2011.13810143233,67.4541179311334,0.0999999999999091,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="Statistics.dll" Bounds="2111.43178506531,50.2815321095785,82.2092924003555,32.175215777663" Label="" LabelBounds="2153.21535495691,46.3989792892988,0,15.96" />
+    <Link Source="FieldCalculationParser.dll" Target="Statistics.dll" Bounds="2237.71160824487,52.2976781496592,4.40011235150541,24.0088942350263" Label="" LabelBounds="2243.91221012744,56.682660646856,0,15.96" />
+    <Link Source="Other" Target="Microsoft Visual C++  ARM Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64 Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64 Native Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64 Native Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64-arm Cross Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64-arm Cross Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64-x86 Cross Compilers" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x64-x86 Cross Compilers - ENU Resources" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Other" Target="Microsoft Visual C++  x86 Libraries" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="OxyPlot.Wpf.dll" Target="OxyPlot.dll" Bounds="1935.74934616393,51.1865670385481,0.0437150576647127,23.5145980835884" Label="" LabelBounds="1939.77120369277,54.9601479660061,0.0999999999999091,15.96" />
+    <Link Source="Visual C Runtimes" Target="2005" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Visual C Runtimes" Target="2008" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Visual C Runtimes" Target="2010" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Visual C Runtimes" Target="2012" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Visual C Runtimes" Target="2013" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Visual C Runtimes" Target="2015" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="Visual C Runtimes" Target="Other" Category="Contains" Label="" type="ContainerLink" />
+  </Links>
+  <Categories>
+    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
+  </Categories>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="Company" DataType="System.String" />
+    <Property Id="Filename" DataType="System.String" />
+    <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="LabelBounds" DataType="System.Windows.Rect" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="VersionInfo" DataType="System.String" />
+    <Property Id="type" DataType="System.String" />
+    <Property Id="xsd" DataType="System.String" />
+    <Property Id="xsi" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

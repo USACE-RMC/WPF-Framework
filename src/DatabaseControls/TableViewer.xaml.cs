@@ -1,0 +1,1686 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using DatabaseManager;
+using Microsoft.Win32;
+
+namespace DatabaseControls
+{
+    /// <summary>
+    /// A WPF control for viewing and interacting with database tables.
+    /// </summary>
+    public partial class TableViewer : UserControl
+    {
+        #region Enums
+
+        private enum SelectionMode : byte
+        {
+            CellSelect = 0,
+            RowSelect = 1,
+            ColumnSelect = 2,
+            None = 3,
+            All = 4,
+            EditSelect = 5
+        }
+
+        private enum SortOrder : byte
+        {
+            Ascending = 2,
+            Descending = 1,
+            None = 0
+        }
+
+        #endregion
+
+        #region Fields
+
+        private int _visibleRowCount;
+        private bool _isLoaded = false;
+        private int _activeCellDataColumnIndex = 0;
+        private int _activeCellVirtualRowIndex = 0;
+        private int _mouseDownVirtualRowIndex;
+        private int _mouseDownColumnIndex;
+        private SelectionMode _mouseSelectionMode = SelectionMode.None;
+        private List<int> _selectedDataRowIndices = new List<int>();
+        private List<int> _selectedColumnIndices = new List<int>();
+        private SortedDictionary<int, SortedSet<int>> _selectedCellIndices = new SortedDictionary<int, SortedSet<int>>();
+        private bool _selectedRowsOnly = false;
+        private string _attributeSelectorString = "";
+        private int[]? _rowOffset;
+        private int[]? _rowId;
+        private int[]? _sortedSelectedRowOffsets;
+        private SortOrder _columnSortOrder;
+        private SortOrder[]? _columnsSortedOrder;
+        private GridLength[]? _columnWidths;
+        private readonly TextBox _cellEditTextBox;
+        private string _fieldCalculatorString = "";
+        private HashSet<int> _readOnlyColumns = new HashSet<int>();
+
+        #endregion
+
+        #region Dependency Properties
+
+        public static readonly DependencyProperty DataViewProperty = DependencyProperty.Register(
+            nameof(DataView), typeof(DataTableView), typeof(TableViewer),
+            new UIPropertyMetadata(null, new PropertyChangedCallback(LoadView)));
+
+        public static readonly DependencyProperty AllCellsSelectedProperty = DependencyProperty.Register(
+            nameof(AllCellsSelected), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false));
+
+        public static readonly DependencyProperty RowHeightProperty = DependencyProperty.Register(
+            nameof(RowHeight), typeof(double), typeof(TableViewer), new UIPropertyMetadata(23.0));
+
+        public static readonly DependencyProperty ColumnHeaderHeightProperty = DependencyProperty.Register(
+            nameof(ColumnHeaderHeight), typeof(GridLength), typeof(TableViewer), new UIPropertyMetadata(GridLength.Auto));
+
+        public static readonly DependencyProperty ColumnHeaderTextblockStyleProperty = DependencyProperty.Register(
+            nameof(ColumnHeaderTextblockStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultColumnHeaderTextblockStyle()));
+
+        public static readonly DependencyProperty ColumnHeaderBorderStyleProperty = DependencyProperty.Register(
+            nameof(ColumnHeaderBorderStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultColumnHeaderBorderStyle()));
+
+        public static readonly DependencyProperty RowHeaderTextblockStyleProperty = DependencyProperty.Register(
+            nameof(RowHeaderTextblockStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultRowHeaderTextblockStyle()));
+
+        public static readonly DependencyProperty RowHeaderBorderStyleProperty = DependencyProperty.Register(
+            nameof(RowHeaderBorderStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultRowHeaderBorderStyle()));
+
+        public static readonly DependencyProperty ShowRowHeadersProperty = DependencyProperty.Register(
+            nameof(ShowRowHeaders), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty EditableProperty = DependencyProperty.Register(
+            nameof(Editable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false));
+
+        public static readonly DependencyProperty HasFieldCalculatorProperty = DependencyProperty.Register(
+            nameof(HasFieldCalculator), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty HasSaveButtonProperty = DependencyProperty.Register(
+            nameof(HasSaveButton), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty HasUndoRedoButtonsProperty = DependencyProperty.Register(
+            nameof(HasUndoRedoButtons), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty RowSelectableProperty = DependencyProperty.Register(
+            nameof(RowSelectable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty CellTextblockStyleProperty = DependencyProperty.Register(
+            nameof(CellTextblockStyle), typeof(Style), typeof(TableViewer), new PropertyMetadata(GetDefaultCellTextblockStyle()));
+
+        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(
+            nameof(SelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(240, 0, 120, 215))));
+
+        public static readonly DependencyProperty ActiveCellForegroundProperty = DependencyProperty.Register(
+            nameof(ActiveCellForeground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White)));
+
+        public static readonly DependencyProperty ActiveCellBackgroundProperty = DependencyProperty.Register(
+            nameof(ActiveCellBackground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 21, 107, 176))));
+
+        public static readonly DependencyProperty DeSelectedColorProperty = DependencyProperty.Register(
+            nameof(DeSelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Transparent));
+
+        public static readonly DependencyProperty SelectedForegroundColorProperty = DependencyProperty.Register(
+            nameof(SelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White)));
+
+        public static readonly DependencyProperty DeSelectedForegroundColorProperty = DependencyProperty.Register(
+            nameof(DeSelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Black));
+
+        public static readonly DependencyProperty RowColorProperty = DependencyProperty.Register(
+            nameof(RowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.White));
+
+        public static readonly DependencyProperty AlternateRowColorProperty = DependencyProperty.Register(
+            nameof(AlternateRowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 243, 249, 247))));
+
+        public static readonly DependencyProperty RowLineColorProperty = DependencyProperty.Register(
+            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
+
+        public static readonly DependencyProperty RowLineThicknessProperty = DependencyProperty.Register(
+            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
+
+        public static readonly DependencyProperty ColumnLineColorProperty = DependencyProperty.Register(
+            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
+
+        public static readonly DependencyProperty ColumnLineThicknessProperty = DependencyProperty.Register(
+            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
+
+        public static readonly DependencyProperty ColumnSelectableProperty = DependencyProperty.Register(
+            nameof(ColumnSelectable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty CellSelectableProperty = DependencyProperty.Register(
+            nameof(CellSelectable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(true));
+
+        public static readonly DependencyProperty AutoFitColumnsProperty = DependencyProperty.Register(
+            nameof(AutoFitColumns), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false));
+
+        #endregion
+
+        #region Properties
+
+        public DataTableView DataView
+        {
+            get => (DataTableView)GetValue(DataViewProperty);
+            set => SetValue(DataViewProperty, value);
+        }
+
+        public bool ShowingSelectedRowsOnly => _selectedRowsOnly;
+        public List<int> GetSelectedRows => _selectedDataRowIndices;
+        public int ActiveCellRowIndex => _activeCellVirtualRowIndex;
+        public int ActiveCellColumnIndex => _activeCellDataColumnIndex;
+
+        public bool AllCellsSelected
+        {
+            get => (bool)GetValue(AllCellsSelectedProperty);
+            set => SetValue(AllCellsSelectedProperty, value);
+        }
+
+        public double RowHeight
+        {
+            get => (double)GetValue(RowHeightProperty);
+            set => SetValue(RowHeightProperty, value);
+        }
+
+        public GridLength ColumnHeaderHeight
+        {
+            get => (GridLength)GetValue(ColumnHeaderHeightProperty);
+            set => SetValue(ColumnHeaderHeightProperty, value);
+        }
+
+        public Style ColumnHeaderTextblockStyle
+        {
+            get => (Style)GetValue(ColumnHeaderTextblockStyleProperty);
+            set => SetValue(ColumnHeaderTextblockStyleProperty, value);
+        }
+
+        public Style ColumnHeaderBorderStyle
+        {
+            get => (Style)GetValue(ColumnHeaderBorderStyleProperty);
+            set => SetValue(ColumnHeaderBorderStyleProperty, value);
+        }
+
+        public Style RowHeaderTextblockStyle
+        {
+            get => (Style)GetValue(RowHeaderTextblockStyleProperty);
+            set => SetValue(RowHeaderTextblockStyleProperty, value);
+        }
+
+        public Style RowHeaderBorderStyle
+        {
+            get => (Style)GetValue(RowHeaderBorderStyleProperty);
+            set => SetValue(RowHeaderBorderStyleProperty, value);
+        }
+
+        public bool ShowRowHeaders
+        {
+            get => (bool)GetValue(ShowRowHeadersProperty);
+            set => SetValue(ShowRowHeadersProperty, value);
+        }
+
+        public bool Editable
+        {
+            get => (bool)GetValue(EditableProperty);
+            set => SetValue(EditableProperty, value);
+        }
+
+        public bool HasFieldCalculator
+        {
+            get => (bool)GetValue(HasFieldCalculatorProperty);
+            set => SetValue(HasFieldCalculatorProperty, value);
+        }
+
+        public bool HasSaveButton
+        {
+            get => (bool)GetValue(HasSaveButtonProperty);
+            set => SetValue(HasSaveButtonProperty, value);
+        }
+
+        public bool HasUndoRedoButtons
+        {
+            get => (bool)GetValue(HasUndoRedoButtonsProperty);
+            set => SetValue(HasUndoRedoButtonsProperty, value);
+        }
+
+        public bool RowSelectable
+        {
+            get => (bool)GetValue(RowSelectableProperty);
+            set => SetValue(RowSelectableProperty, value);
+        }
+
+        public Style CellTextblockStyle
+        {
+            get => (Style)GetValue(CellTextblockStyleProperty);
+            set => SetValue(CellTextblockStyleProperty, value);
+        }
+
+        public Brush SelectedColor
+        {
+            get => (Brush)GetValue(SelectedColorProperty);
+            set => SetValue(SelectedColorProperty, value);
+        }
+
+        public Brush ActiveCellForeground
+        {
+            get => (Brush)GetValue(ActiveCellForegroundProperty);
+            set => SetValue(ActiveCellForegroundProperty, value);
+        }
+
+        public Brush ActiveCellBackground
+        {
+            get => (Brush)GetValue(ActiveCellBackgroundProperty);
+            set => SetValue(ActiveCellBackgroundProperty, value);
+        }
+
+        public Brush DeSelectedColor
+        {
+            get => (Brush)GetValue(DeSelectedColorProperty);
+            set => SetValue(DeSelectedColorProperty, value);
+        }
+
+        public Brush SelectedForegroundColor
+        {
+            get => (Brush)GetValue(SelectedForegroundColorProperty);
+            set => SetValue(SelectedForegroundColorProperty, value);
+        }
+
+        public Brush DeSelectedForegroundColor
+        {
+            get => (Brush)GetValue(DeSelectedForegroundColorProperty);
+            set => SetValue(DeSelectedForegroundColorProperty, value);
+        }
+
+        public Brush RowColor
+        {
+            get => (Brush)GetValue(RowColorProperty);
+            set => SetValue(RowColorProperty, value);
+        }
+
+        public Brush AlternateRowColor
+        {
+            get => (Brush)GetValue(AlternateRowColorProperty);
+            set => SetValue(AlternateRowColorProperty, value);
+        }
+
+        public Brush RowLineColor
+        {
+            get => (Brush)GetValue(RowLineColorProperty);
+            set => SetValue(RowLineColorProperty, value);
+        }
+
+        public double RowLineThickness
+        {
+            get => (double)GetValue(RowLineThicknessProperty);
+            set => SetValue(RowLineThicknessProperty, value);
+        }
+
+        public Brush ColumnLineColor
+        {
+            get => (Brush)GetValue(ColumnLineColorProperty);
+            set => SetValue(ColumnLineColorProperty, value);
+        }
+
+        public double ColumnLineThickness
+        {
+            get => (double)GetValue(ColumnLineThicknessProperty);
+            set => SetValue(ColumnLineThicknessProperty, value);
+        }
+
+        public bool ColumnSelectable
+        {
+            get => (bool)GetValue(ColumnSelectableProperty);
+            set => SetValue(ColumnSelectableProperty, value);
+        }
+
+        public bool CellSelectable
+        {
+            get => (bool)GetValue(CellSelectableProperty);
+            set => SetValue(CellSelectableProperty, value);
+        }
+
+        public bool AutoFitColumns
+        {
+            get => (bool)GetValue(AutoFitColumnsProperty);
+            set => SetValue(AutoFitColumnsProperty, value);
+        }
+
+        #endregion
+
+        #region Events
+
+        public event Action<List<int>>? SelectedRowIndicesChanged;
+        public event Action? ActiveCellLocationChanged;
+        public event Action<ContextMenu, int>? RowRightButtonUp;
+
+        #endregion
+
+        #region Constructor
+
+        public TableViewer()
+        {
+            InitializeComponent();
+            _cellEditTextBox = new TextBox { Padding = new Thickness(0, 3, 0, 2) };
+            _cellEditTextBox.PreviewKeyDown += PreviewEditText;
+            _cellEditTextBox.LostFocus += EditTextLostFocus;
+            EditorToolbar.IsEnabled = false;
+        }
+
+        #endregion
+
+        #region Loading
+
+        private static void LoadView(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d == null || d.GetType() != typeof(TableViewer)) return;
+            var thisControl = (TableViewer)d;
+
+            if (e.OldValue != null && e.OldValue is DataTableView oldView)
+            {
+                oldView.RowsAdded -= thisControl.TableViewRowsAdded;
+                oldView.RowsDeleted -= thisControl.TableViewRowsDeleted;
+                oldView.ColumnsAdded -= thisControl.TableViewColumnsAdded;
+                oldView.ColumnsDeleted -= thisControl.TableViewColumnsDeleted;
+            }
+
+            if (e.NewValue == null || !(e.NewValue is DataTableView))
+            {
+                thisControl._selectedCellIndices = new SortedDictionary<int, SortedSet<int>>();
+                thisControl._selectedColumnIndices = new List<int>();
+                thisControl._selectedDataRowIndices = new List<int>();
+                thisControl._activeCellDataColumnIndex = 0;
+                thisControl._activeCellVirtualRowIndex = 0;
+                thisControl._selectedRowsOnly = false;
+                thisControl.ColumnHeadersGrid.SizeChanged -= thisControl.ColumnsGridSizeChanged;
+                thisControl.GridPanel.Children.Clear();
+                thisControl.RowHeadersGrid.Children.Clear();
+                thisControl.RowColorGrid.Children.Clear();
+                thisControl.ColumnHeadersGrid.Children.Clear();
+                thisControl.GridPanel.RowDefinitions.Clear();
+                thisControl.RowHeadersGrid.RowDefinitions.Clear();
+                thisControl.RowColorGrid.RowDefinitions.Clear();
+                thisControl.ColumnHeadersGrid.ColumnDefinitions.Clear();
+                thisControl.GridPanel.ColumnDefinitions.Clear();
+                thisControl.GridLinesCanvas.Children.Clear();
+                thisControl.SelectionToolbar.IsEnabled = false;
+                thisControl.EditorToolbar.IsEnabled = false;
+            }
+            else
+            {
+                var newView = (DataTableView)e.NewValue;
+                newView.RowsAdded += thisControl.TableViewRowsAdded;
+                newView.RowsDeleted += thisControl.TableViewRowsDeleted;
+                newView.ColumnsAdded += thisControl.TableViewColumnsAdded;
+                newView.ColumnsDeleted += thisControl.TableViewColumnsDeleted;
+
+                if (!newView.ParentDatabase.DataBaseOpen) newView.ParentDatabase.Open();
+
+                thisControl._columnSortOrder = SortOrder.None;
+                thisControl._columnsSortedOrder = new SortOrder[newView.ColumnNames.Count];
+
+                thisControl.Refresh();
+
+                if (thisControl.ShowRowHeaders)
+                {
+                    double pixelsPerDip = VisualTreeHelper.GetDpi(thisControl).PixelsPerDip;
+                    thisControl.RowHeadersColumnDefinition.Width = new GridLength(
+                        (int)(new FormattedText(newView.NumberOfRows.ToString(), CultureInfo.GetCultureInfo("en-us"),
+                            FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+                            12, Brushes.Black, pixelsPerDip).Width) + 3);
+                }
+
+                thisControl.SelectionToolbar.IsEnabled = true;
+                thisControl.EditorToolbar.IsEnabled = true;
+            }
+        }
+
+        public void SetColumnsAsReadOnly(int[] columnIndices)
+        {
+            foreach (var idx in columnIndices) _readOnlyColumns.Add(idx);
+        }
+
+        public void SetColumnsAsReadOnly(string[] columnNames)
+        {
+            foreach (var name in columnNames)
+                _readOnlyColumns.Add(Array.IndexOf(DataView.ColumnNames, name));
+        }
+
+        #endregion
+
+        #region Database Events
+
+        private void TableViewColumnsDeleted(int[] columnIndices)
+        {
+            Array.Sort(columnIndices);
+            for (int i = columnIndices.Length - 1; i >= 0; i--)
+            {
+                _selectedColumnIndices.Remove(columnIndices[i]);
+                for (int j = 0; j < _selectedColumnIndices.Count; j++)
+                    if (_selectedColumnIndices[j] > columnIndices[i]) _selectedColumnIndices[j] -= 1;
+
+                if (_activeCellDataColumnIndex >= columnIndices[i]) _activeCellDataColumnIndex -= 1;
+                if (_activeCellDataColumnIndex < 0) _activeCellDataColumnIndex = 0;
+
+                if (_columnsSortedOrder![columnIndices[i]] != SortOrder.None) RemoveSort();
+
+                var updated = new SortOrder[_columnsSortedOrder.Length - 1];
+                for (int j = 0; j < columnIndices[i]; j++) updated[j] = _columnsSortedOrder[j];
+                for (int j = columnIndices[i]; j < _columnsSortedOrder.Length - 1; j++) updated[j] = _columnsSortedOrder[j + 1];
+                _columnsSortedOrder = updated;
+            }
+            UpdateUndoRedoButtons();
+            NumberOfColumnsChanged();
+        }
+
+        private void TableViewColumnsAdded(int[] columnIndices)
+        {
+            Array.Sort(columnIndices);
+            for (int i = 0; i < columnIndices.Length; i++)
+            {
+                for (int j = 0; j < _selectedColumnIndices.Count; j++)
+                    if (_selectedColumnIndices[j] >= columnIndices[i]) _selectedColumnIndices[j] += 1;
+
+                if (_activeCellDataColumnIndex >= columnIndices[i]) _activeCellDataColumnIndex += 1;
+                if (_activeCellDataColumnIndex > DataView.ColumnNames.Count() - 1)
+                    _activeCellDataColumnIndex = DataView.ColumnNames.Count() - 1;
+
+                var updated = new SortOrder[_columnsSortedOrder!.Length + 1];
+                for (int j = 0; j < columnIndices[i]; j++) updated[j] = _columnsSortedOrder[j];
+                updated[columnIndices[i]] = SortOrder.None;
+                for (int j = columnIndices[i] + 1; j < updated.Length; j++) updated[j] = _columnsSortedOrder[j - 1];
+                _columnsSortedOrder = updated;
+            }
+            UpdateUndoRedoButtons();
+            NumberOfColumnsChanged();
+        }
+
+        private void TableViewRowsAdded(int[] rowIndices)
+        {
+            Array.Sort(rowIndices);
+            for (int i = 0; i < rowIndices.Length; i++)
+            {
+                for (int j = 0; j < _selectedDataRowIndices.Count; j++)
+                    if (_selectedDataRowIndices[j] >= rowIndices[i]) _selectedDataRowIndices[j] += 1;
+
+                if (_activeCellVirtualRowIndex >= rowIndices[i]) _activeCellVirtualRowIndex += 1;
+                if (_activeCellVirtualRowIndex > DataView.NumberOfRows - 1)
+                    _activeCellVirtualRowIndex = DataView.NumberOfRows - 1;
+            }
+            NumberOfRowsChanged();
+            UpdateUndoRedoButtons();
+        }
+
+        private void TableViewRowsDeleted(int[] rowIndices)
+        {
+            Array.Sort(rowIndices);
+            for (int i = rowIndices.Length - 1; i >= 0; i--)
+            {
+                _selectedDataRowIndices.Remove(rowIndices[i]);
+                for (int j = 0; j < _selectedDataRowIndices.Count; j++)
+                    if (_selectedDataRowIndices[j] > rowIndices[i]) _selectedDataRowIndices[j] -= 1;
+
+                _selectedCellIndices.Remove(rowIndices[i]);
+
+                if (_activeCellVirtualRowIndex >= rowIndices[i]) _activeCellVirtualRowIndex -= 1;
+                if (_activeCellVirtualRowIndex < 0) _activeCellVirtualRowIndex = 0;
+            }
+            NumberOfRowsChanged();
+            UpdateUndoRedoButtons();
+        }
+
+        #endregion
+
+        #region Refresh Methods
+
+        private void Refresh()
+        {
+            if (DataView == null) return;
+            if (!DataView.ParentDatabase.DataBaseOpen) DataView.ParentDatabase.Open();
+
+            _selectedCellIndices = new SortedDictionary<int, SortedSet<int>>();
+            _selectedColumnIndices = new List<int>();
+            _selectedDataRowIndices = new List<int>();
+            _activeCellDataColumnIndex = 0;
+            _activeCellVirtualRowIndex = 0;
+            _selectedRowsOnly = false;
+
+            _rowId = new int[DataView.NumberOfRows];
+            _rowOffset = new int[_rowId.Length];
+            for (int i = 0; i < _rowId.Length; i++) _rowId[i] = i;
+            _rowId.CopyTo(_rowOffset, 0);
+
+            ColumnHeadersGrid.SizeChanged -= ColumnsGridSizeChanged;
+
+            GridPanel.Children.Clear();
+            RowHeadersGrid.Children.Clear();
+            RowColorGrid.Children.Clear();
+            ColumnHeadersGrid.Children.Clear();
+            GridPanel.RowDefinitions.Clear();
+            RowHeadersGrid.RowDefinitions.Clear();
+            RowColorGrid.RowDefinitions.Clear();
+            ColumnHeadersGrid.ColumnDefinitions.Clear();
+
+            _visibleRowCount = GetMaxRows(false);
+            if (_visibleRowCount < 0) _visibleRowCount = 0;
+            if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
+
+            VerticalScrollbar.ValueChanged -= VerticalScrollBar_ValueChanged;
+            VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
+            VerticalScrollbar.ValueChanged += VerticalScrollBar_ValueChanged;
+            VerticalScrollbar.ViewportSize = _visibleRowCount;
+
+            if (_columnsSortedOrder == null || _columnsSortedOrder.Length != DataView.ColumnNames.Count())
+                Array.Resize(ref _columnsSortedOrder, DataView.ColumnNames.Count());
+
+            GridPanel.ColumnDefinitions.Clear();
+            GridLinesCanvas.Children.Clear();
+            CreateColumns();
+
+            for (int i = 0; i < _columnsSortedOrder.Length; i++)
+            {
+                if (_columnsSortedOrder[i] == SortOrder.Ascending)
+                    ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(true);
+                else if (_columnsSortedOrder[i] == SortOrder.Descending)
+                    ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(false);
+            }
+
+            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
+            var rowLine = new Line
+            {
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+            };
+            BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
+            GridLinesCanvas.Children.Add(rowLine);
+
+            LoadRows();
+            this.UpdateLayout();
+            DeSelectAllCells();
+            SetSelectedCells();
+            SetActiveCell();
+            RefreshColumnWidths();
+            UpdateRowHeaders();
+        }
+
+        private void RefreshView()
+        {
+            if (!_isLoaded || DataView == null) return;
+            int newNumberRows = GetMaxRows();
+            if (newNumberRows != _visibleRowCount)
+            {
+                _visibleRowCount = newNumberRows;
+                if (_selectedRowsOnly)
+                {
+                    if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
+                    VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
+                }
+                else
+                {
+                    if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
+                    VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
+                }
+                VerticalScrollbar.ViewportSize = _visibleRowCount;
+                LoadRows();
+                SetSelectedCells();
+                UpdateRowHeaders();
+            }
+            RefreshColumnWidths();
+        }
+
+        private void NumberOfRowsChanged()
+        {
+            _visibleRowCount = GetMaxRows();
+            VerticalScrollbar.ValueChanged -= VerticalScrollBar_ValueChanged;
+
+            if (_selectedRowsOnly)
+            {
+                if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
+                VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
+            }
+            else
+            {
+                if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
+                VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
+            }
+
+            if ((int)Math.Floor(VerticalScrollbar.Value) > (int)VerticalScrollbar.Maximum)
+                VerticalScrollbar.Value = (int)VerticalScrollbar.Maximum;
+
+            VerticalScrollbar.ValueChanged += VerticalScrollBar_ValueChanged;
+
+            _rowId = new int[DataView.NumberOfRows];
+            _rowOffset = new int[_rowId.Length];
+
+            if (_columnSortOrder == SortOrder.None)
+            {
+                for (int i = 0; i < _rowId.Length; i++) _rowId[i] = i;
+                _rowId.CopyTo(_rowOffset, 0);
+            }
+            else
+            {
+                for (int i = 0; i < _columnsSortedOrder!.Length; i++)
+                {
+                    if (_columnsSortedOrder[i] == SortOrder.Ascending) SortColumn(i, true);
+                    else if (_columnsSortedOrder[i] == SortOrder.Descending) SortColumn(i, false);
+                }
+            }
+
+            VerticalScrollbar.ViewportSize = _visibleRowCount;
+            LoadRows();
+
+            if (ShowRowHeaders)
+            {
+                double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+                RowHeadersColumnDefinition.Width = new GridLength(
+                    (int)(new FormattedText(DataView.NumberOfRows.ToString(), CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+                        12, Brushes.Black, pixelsPerDip).Width) + 3);
+            }
+
+            UpdateRowHeaders();
+            SetSelectedCells();
+            if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
+        }
+
+        private void NumberOfColumnsChanged()
+        {
+            ColumnHeadersGrid.SizeChanged -= ColumnsGridSizeChanged;
+            GridPanel.Children.Clear();
+            RowHeadersGrid.Children.Clear();
+            RowColorGrid.Children.Clear();
+            ColumnHeadersGrid.Children.Clear();
+            GridPanel.RowDefinitions.Clear();
+            RowHeadersGrid.RowDefinitions.Clear();
+            RowColorGrid.RowDefinitions.Clear();
+            ColumnHeadersGrid.ColumnDefinitions.Clear();
+            GridPanel.ColumnDefinitions.Clear();
+            GridLinesCanvas.Children.Clear();
+            CreateColumns();
+
+            for (int i = 0; i < _columnsSortedOrder!.Length; i++)
+            {
+                if (_columnsSortedOrder[i] == SortOrder.Ascending)
+                    ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(true);
+                else if (_columnsSortedOrder[i] == SortOrder.Descending)
+                    ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(false);
+            }
+
+            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
+            var rowLine = new Line
+            {
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+            };
+            BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
+            GridLinesCanvas.Children.Add(rowLine);
+
+            LoadRows();
+            SetSelectedCells();
+            RefreshColumnWidths();
+            UpdateRowHeaders();
+        }
+
+        private int GetMaxRows(bool updateLayout = true)
+        {
+            if (updateLayout) this.UpdateLayout();
+            int maxNumberRows;
+            var parentWindow = Window.GetWindow(this);
+
+            if ((parentWindow != null && parentWindow.WindowState == WindowState.Maximized) ||
+                HorizontalScrollViewer.ActualHeight < HorizontalScrollViewer.ViewportHeight)
+                maxNumberRows = (int)Math.Floor((HorizontalScrollViewer.ActualHeight - ColumnHeadersGrid.ActualHeight) / RowHeight) + 1;
+            else
+                maxNumberRows = (int)Math.Floor((HorizontalScrollViewer.ViewportHeight - ColumnHeadersGrid.ActualHeight) / RowHeight) + 1;
+
+            if (VerticalScrollbar.Value == VerticalScrollbar.Maximum) maxNumberRows -= 1;
+            return maxNumberRows < 0 ? 0 : maxNumberRows;
+        }
+
+        #endregion
+
+        #region Grid Setup
+
+        private void CreateColumns()
+        {
+            ColumnHeadersGrid.SizeChanged += ColumnsGridSizeChanged;
+            _columnWidths = new GridLength[DataView.ColumnNames.Count()];
+            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+            {
+                ColumnDefinition colDef;
+                if (AutoFitColumns)
+                {
+                    colDef = new ColumnDefinition();
+                    _columnWidths[i] = new GridLength(1, GridUnitType.Star);
+                }
+                else
+                {
+                    int columnWidth = (int)(new FormattedText(DataView.ColumnNames[i], CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+                        12, Brushes.Black, pixelsPerDip).Width) + 12;
+                    colDef = new ColumnDefinition { Width = new GridLength(columnWidth) };
+                    _columnWidths[i] = new GridLength(columnWidth);
+                }
+                ColumnHeadersGrid.ColumnDefinitions.Add(colDef);
+
+                var header = new ColumnHeader(DataView.ColumnNames[i], DataView.ColumnTypes[i])
+                {
+                    HeaderTextblockStyle = ColumnHeaderTextblockStyle,
+                    HeaderBorderStyle = ColumnHeaderBorderStyle
+                };
+                header.MouseRightButtonUp += CreateColumnContextMenu;
+                Grid.SetColumn(header, i);
+                ColumnHeadersGrid.Children.Add(header);
+
+                if (i < DataView.ColumnNames.Count() - 1)
+                {
+                    var resizer = new GridSplitter
+                    {
+                        Background = Brushes.Transparent, Width = 10,
+                        Margin = new Thickness(0, 0, -5, 0),
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    };
+                    resizer.MouseDoubleClick += ResizeColumnSplitterDoubleClick;
+                    resizer.DragDelta += ResizeColumnSplitterDragDelta;
+                    resizer.DragCompleted += ResizeColumnSplitterDragComplete;
+                    Grid.SetZIndex(resizer, 1);
+                    Grid.SetColumn(resizer, i);
+                    ColumnHeadersGrid.Children.Add(resizer);
+                }
+
+                GridPanel.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+
+            if (DataView.ColumnNames.Count() == 0) return;
+
+            var lengthBinding = new Binding(nameof(Grid.ActualHeight)) { Source = GridPanel };
+            for (int i = 0; i <= DataView.ColumnNames.Count(); i++)
+            {
+                var gridLine = new Line
+                {
+                    SnapsToDevicePixels = true, X1 = 0, Y1 = 0, X2 = 0,
+                    StrokeThickness = ColumnLineThickness, Stroke = ColumnLineColor
+                };
+                BindingOperations.SetBinding(gridLine, Line.Y2Property, lengthBinding);
+                GridLinesCanvas.Children.Add(gridLine);
+            }
+
+            RefreshColumnWidths(false);
+        }
+
+        private void LoadRows()
+        {
+            if (GridLinesCanvas.Children.Count > DataView.ColumnNames.Count() + 2)
+                GridLinesCanvas.Children.RemoveRange(DataView.ColumnNames.Count() + 2, GridLinesCanvas.Children.Count - 2 - DataView.ColumnNames.Count());
+
+            GridPanel.Children.Clear();
+            GridPanel.RowDefinitions.Clear();
+            RowHeadersGrid.Children.Clear();
+            RowHeadersGrid.RowDefinitions.Clear();
+            RowColorGrid.Children.Clear();
+            RowColorGrid.RowDefinitions.Clear();
+
+            for (int i = 0; i < _visibleRowCount; i++) AddRow();
+        }
+
+        private void AddRow()
+        {
+            int rowIndex = GridPanel.RowDefinitions.Count;
+            GridPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+
+            var rowColor = new Border { Background = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor };
+            Grid.SetRow(rowColor, rowIndex);
+            RowColorGrid.Children.Add(rowColor);
+
+            var rowHeader = new RowHeader { HeaderTextblockStyle = RowHeaderTextblockStyle, HeaderBorderStyle = RowHeaderBorderStyle };
+            Grid.SetRow(rowHeader, rowIndex);
+            RowHeadersGrid.Children.Add(rowHeader);
+
+            for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+            {
+                var cell = new Cell { CellStyle = CellTextblockStyle };
+                Grid.SetRow(cell, rowIndex);
+                Grid.SetColumn(cell, j);
+                GridPanel.Children.Add(cell);
+            }
+
+            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
+            var rowLine = new Line
+            {
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+            };
+            BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
+            GridLinesCanvas.Children.Add(rowLine);
+
+            UpdateVisibleRows();
+        }
+
+        #endregion
+
+        #region Update Methods
+
+        private void UpdateVisibleRows()
+        {
+            if (DataView == null || _rowId == null) return;
+            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
+
+            for (int i = 0; i < _visibleRowCount; i++)
+            {
+                int dataRowIndex = GetDataRowIndex(i);
+                if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) continue;
+
+                for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                {
+                    var cell = (Cell)GridPanel.Children[i * DataView.ColumnNames.Count() + j];
+                    var value = DataView.GetCell(dataRowIndex, j);
+                    cell.Text = value?.ToString() ?? "";
+                }
+            }
+        }
+
+        private void UpdateRowHeaders()
+        {
+            if (DataView == null || _rowId == null) return;
+            for (int i = 0; i < _visibleRowCount; i++)
+            {
+                int dataRowIndex = GetDataRowIndex(i);
+                if (i < RowHeadersGrid.Children.Count)
+                    ((RowHeader)RowHeadersGrid.Children[i]).Text = (dataRowIndex + 1).ToString();
+            }
+        }
+
+        private int GetDataRowIndex(int tableRowIndex)
+        {
+            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            if (_selectedRowsOnly)
+            {
+                if (_columnSortOrder == SortOrder.None)
+                {
+                    int selectedIndex = firstRowIndex + tableRowIndex;
+                    return selectedIndex < _selectedDataRowIndices.Count ? _selectedDataRowIndices[selectedIndex] : -1;
+                }
+                else
+                {
+                    int sortedIndex = firstRowIndex + tableRowIndex;
+                    return sortedIndex < _sortedSelectedRowOffsets!.Length ? _rowId![_sortedSelectedRowOffsets[sortedIndex]] : -1;
+                }
+            }
+            return _rowId![firstRowIndex + tableRowIndex];
+        }
+
+        private string GetCellText(int tableRowIndex, int columnIndex)
+        {
+            int dataRowIndex = GetDataRowIndex(tableRowIndex);
+            if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) return "";
+            var value = DataView.GetCell(dataRowIndex, columnIndex);
+            return value?.ToString() ?? "";
+        }
+
+        private int GetTableRowIndex(Point gridPosition)
+        {
+            int rowIndex = (int)Math.Floor(gridPosition.Y / RowHeight);
+            if (rowIndex < 0) rowIndex = 0;
+            if (rowIndex >= _visibleRowCount) rowIndex = _visibleRowCount - 1;
+            return rowIndex;
+        }
+
+        private int GetTableColumnIndex(Point gridPosition)
+        {
+            double runningWidth = 0;
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+            {
+                runningWidth += ColumnHeadersGrid.ColumnDefinitions[i].ActualWidth;
+                if (gridPosition.X < runningWidth) return i;
+            }
+            return DataView.ColumnNames.Count() - 1;
+        }
+
+        #endregion
+
+        #region Selection
+
+        private void SetSelectedCells()
+        {
+            if (DataView == null) return;
+            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
+
+            if (AllCellsSelected)
+            {
+                for (int i = 0; i < _visibleRowCount; i++)
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                        SelectCell(j, i);
+                return;
+            }
+
+            foreach (var rowIndex in _selectedDataRowIndices)
+            {
+                int tableRow = _rowOffset![rowIndex] - firstRowIndex;
+                if (tableRow >= 0 && tableRow < _visibleRowCount)
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                        SelectCell(j, tableRow);
+            }
+
+            foreach (var colIndex in _selectedColumnIndices)
+                for (int i = 0; i < _visibleRowCount; i++)
+                    SelectCell(colIndex, i);
+
+            foreach (var kvp in _selectedCellIndices)
+            {
+                int tableRow = _rowOffset![kvp.Key] - firstRowIndex;
+                if (tableRow >= 0 && tableRow < _visibleRowCount)
+                    foreach (var colIndex in kvp.Value)
+                        SelectCell(colIndex, tableRow);
+            }
+        }
+
+        private void DeSelectAllCells()
+        {
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                for (int j = 0; j < GridPanel.RowDefinitions.Count; j++)
+                    DeSelectCell(i, j);
+        }
+
+        private void SelectCell(int columnIndex, int rowIndex)
+        {
+            if (rowIndex < 0 || rowIndex >= _visibleRowCount) return;
+            if (columnIndex < 0 || columnIndex >= DataView.ColumnNames.Count()) return;
+            var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
+            cell.Background = SelectedColor;
+            cell.Foreground = SelectedForegroundColor;
+        }
+
+        private void DeSelectCell(int columnIndex, int rowIndex)
+        {
+            if (rowIndex < 0 || rowIndex >= _visibleRowCount) return;
+            if (columnIndex < 0 || columnIndex >= DataView.ColumnNames.Count()) return;
+            var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
+            cell.Background = DeSelectedColor;
+            cell.Foreground = DeSelectedForegroundColor;
+        }
+
+        private void SetActiveCell(int rowIndex = -1, int columnIndex = -1)
+        {
+            if (DataView == null || DataView.NumberOfRows == 0) return;
+            if (rowIndex >= 0) _activeCellVirtualRowIndex = rowIndex;
+            if (columnIndex >= 0) _activeCellDataColumnIndex = columnIndex;
+
+            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            int tableRow = _activeCellVirtualRowIndex - firstRowIndex;
+
+            if (tableRow >= 0 && tableRow < _visibleRowCount)
+            {
+                var cell = (Cell)GridPanel.Children[tableRow * DataView.ColumnNames.Count() + _activeCellDataColumnIndex];
+                cell.Background = ActiveCellBackground;
+                cell.Foreground = ActiveCellForeground;
+            }
+        }
+
+        public void SetActiveCell(int rowIndex, int columnIndex, bool scroll)
+        {
+            _activeCellVirtualRowIndex = rowIndex;
+            _activeCellDataColumnIndex = columnIndex;
+            if (scroll)
+            {
+                int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                int lastRowIndex = firstRowIndex + _visibleRowCount - 1;
+                if (rowIndex < firstRowIndex) VerticalScrollbar.Value = rowIndex;
+                if (rowIndex > lastRowIndex) VerticalScrollbar.Value = rowIndex - _visibleRowCount + 1;
+            }
+            DeSelectAllCells();
+            SetSelectedCells();
+            SetActiveCell();
+            ActiveCellLocationChanged?.Invoke();
+        }
+
+        #endregion
+
+        #region Resize Logic
+
+        private void ResizeColumnSplitterDragComplete(object sender, DragCompletedEventArgs e) { }
+
+        private void ResizeColumnSplitterDragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var splitter = (GridSplitter)sender;
+            int columnIndex = Grid.GetColumn(splitter);
+            double newColumnWidth = ColumnHeadersGrid.ColumnDefinitions[columnIndex].ActualWidth + e.HorizontalChange;
+            ResizeColumnWidth(columnIndex, (int)newColumnWidth);
+        }
+
+        private void ResizeColumnSplitterDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                var splitter = (GridSplitter)sender;
+                int columnIndex = Grid.GetColumn(splitter);
+                ResizeColumnWidth(columnIndex);
+                Mouse.OverrideCursor = null;
+            }
+            catch { Mouse.OverrideCursor = null; }
+        }
+
+        public void ResizeColumnWidth(int columnIndex, int columnWidth = -1)
+        {
+            if (columnWidth > 5)
+            {
+                _columnWidths![columnIndex] = new GridLength(columnWidth);
+            }
+            else
+            {
+                var data = DataView.GetColumn(DataView.ColumnNames[columnIndex]);
+                double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+                int max = (int)(new FormattedText(DataView.ColumnNames[columnIndex], CultureInfo.GetCultureInfo("en-us"),
+                    FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+                    12, Brushes.Black, pixelsPerDip).Width) + 12;
+
+                int stringLength = 0;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    string stringData = data[i]?.ToString() ?? "";
+                    if (stringLength <= stringData.Length)
+                    {
+                        stringLength = stringData.Length;
+                        int formattedWidth = (int)(new FormattedText(stringData, CultureInfo.GetCultureInfo("en-us"),
+                            FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+                            12, Brushes.Black, pixelsPerDip).Width) + 6;
+                        if (formattedWidth > max) max = formattedWidth;
+                    }
+                }
+                if (max < 6) max = 6;
+                _columnWidths![columnIndex] = new GridLength(max);
+            }
+            RefreshColumnWidths();
+        }
+
+        private void ColumnsGridSizeChanged(object sender, SizeChangedEventArgs e) => RefreshColumnWidths();
+
+        public void RefreshColumnWidths(bool setActive = true)
+        {
+            if (_columnWidths == null || DataView == null) return;
+            double runningWidth = 0;
+            int sumStar = 0;
+            var columnWidths = new double[DataView.ColumnNames.Count()];
+
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+            {
+                if (_columnWidths[i].IsAuto || _columnWidths[i].IsAbsolute)
+                {
+                    columnWidths[i] = _columnWidths[i].Value;
+                    runningWidth += _columnWidths[i].Value;
+                }
+                else if (_columnWidths[i].IsStar)
+                    sumStar += (int)_columnWidths[i].Value;
+            }
+
+            double remainingSpace = HorizontalScrollViewer.ActualWidth - ColumnLineThickness - runningWidth;
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+            {
+                if (_columnWidths[i].IsStar)
+                {
+                    if (sumStar == 0) sumStar = (int)_columnWidths[i].Value;
+                    double starredWidth = remainingSpace * _columnWidths[i].Value / sumStar;
+                    if (starredWidth < 10) starredWidth = 10;
+                    columnWidths[i] = starredWidth;
+                }
+            }
+
+            runningWidth = 0;
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+            {
+                ColumnHeadersGrid.ColumnDefinitions[i].Width = new GridLength(columnWidths[i]);
+                GridPanel.ColumnDefinitions[i].Width = new GridLength(columnWidths[i]);
+                runningWidth += columnWidths[i];
+                ((Line)GridLinesCanvas.Children[i + 1]).X1 = runningWidth;
+                ((Line)GridLinesCanvas.Children[i + 1]).X2 = runningWidth;
+            }
+
+            if (setActive) SetActiveCell();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void TableViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+            bool wasFalse = !_isLoaded;
+            _isLoaded = true;
+            if (wasFalse) RefreshView();
+        }
+
+        private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateVisibleRows();
+            UpdateRowHeaders();
+            DeSelectAllCells();
+            SetSelectedCells();
+            SetActiveCell();
+        }
+
+        private void VerticalScrollbar_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e) { }
+
+        private void HorizontalScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e) => RefreshView();
+
+        private void TestGridPanel_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0 && VerticalScrollbar.Value > 0)
+                VerticalScrollbar.Value -= 3;
+            else if (e.Delta < 0 && VerticalScrollbar.Value < VerticalScrollbar.Maximum)
+                VerticalScrollbar.Value += 3;
+        }
+
+        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e) { /* TODO: Implement key navigation */ }
+        private void Grid_KeyDown(object sender, KeyEventArgs e) { /* TODO: Implement key handling */ }
+        private void PreviewEditText(object sender, KeyEventArgs e) { /* TODO: Implement edit preview */ }
+        private void EditTextLostFocus(object sender, RoutedEventArgs e) { /* TODO: Implement edit completion */ }
+
+        private void RowsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
+        private void RowsGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) { }
+        private void RowsGrid_MouseMove(object sender, MouseEventArgs e) { }
+        private void RowsGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e) { }
+        private void RowsGrid_MouseWheel(object sender, MouseWheelEventArgs e) => TestGridPanel_MouseWheel(sender, e);
+
+        private void ColumnsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
+        private void ColumnsGrid_MouseMove(object sender, MouseEventArgs e) { }
+        private void ColumnsGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) { }
+
+        private void SelectAllLeftMouseDown(object sender, MouseButtonEventArgs e) { }
+        private void SelectAllLeftMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            AllCellsSelected = !AllCellsSelected;
+            DeSelectAllCells();
+            SetSelectedCells();
+            SetActiveCell();
+        }
+
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            AllCellsSelected = !AllCellsSelected;
+            _selectedDataRowIndices.Clear();
+            _selectedCellIndices.Clear();
+            _selectedColumnIndices.Clear();
+            DeSelectAllCells();
+            SetSelectedCells();
+        }
+
+        private void CopyButton_Click(object sender, RoutedEventArgs e) => Copy();
+        private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e) => Copy(true);
+        private void PasteButton_Click(object sender, RoutedEventArgs e) => Paste();
+        private void ExportTableButton_Click(object sender, RoutedEventArgs e) => ExportTable();
+
+        private void ShowAll_Checked(object sender, RoutedEventArgs e) { /* TODO */ }
+        private void ShowSelected_Checked(object sender, RoutedEventArgs e) { /* TODO */ }
+        private void DeSelectAll_Click(object sender, RoutedEventArgs e) { /* TODO */ }
+        private void SelectByAttribute_Click(object sender, RoutedEventArgs e) { /* TODO */ }
+
+        private void CreateColumnContextMenu(object sender, MouseButtonEventArgs e)
+        {
+            var header = (ColumnHeader)sender;
+            _mouseDownColumnIndex = Grid.GetColumn(header);
+            var menu = new ContextMenu();
+
+            var sortAsc = new MenuItem { Header = "Sort Ascending" };
+            sortAsc.Click += (s, args) => SortColumnAscending();
+            menu.Items.Add(sortAsc);
+
+            var sortDesc = new MenuItem { Header = "Sort Descending" };
+            sortDesc.Click += (s, args) => SortColumnDescending();
+            menu.Items.Add(sortDesc);
+
+            var removeSort = new MenuItem { Header = "Remove Sort" };
+            removeSort.Click += (s, args) => RemoveSort();
+            menu.Items.Add(removeSort);
+
+            menu.IsOpen = true;
+        }
+
+        #endregion
+
+        #region Sorting
+
+        private void RemoveSort()
+        {
+            _columnSortOrder = SortOrder.None;
+            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                _columnsSortedOrder![i] = SortOrder.None;
+
+            for (int i = 0; i < _rowId!.Length; i++)
+                _rowId[i] = i;
+            _rowId.CopyTo(_rowOffset!, 0);
+
+            UpdateVisibleRows();
+            if (!_selectedRowsOnly) { DeSelectAllCells(); SetSelectedCells(); }
+            ((ColumnHeader)ColumnHeadersGrid.Children[_mouseDownColumnIndex * 2]).RemoveSorter();
+            UpdateRowHeaders();
+        }
+
+        private void SortColumnDescending()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                SortColumn(_mouseDownColumnIndex, false);
+                _columnSortOrder = SortOrder.Descending;
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                    _columnsSortedOrder![i] = SortOrder.None;
+                _columnsSortedOrder![_mouseDownColumnIndex] = SortOrder.Descending;
+
+                UpdateVisibleRows();
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                    ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).RemoveSorter();
+                ((ColumnHeader)ColumnHeadersGrid.Children[_mouseDownColumnIndex * 2]).AddSorter(false);
+                UpdateRowHeaders();
+                Mouse.OverrideCursor = null;
+            }
+            catch { Mouse.OverrideCursor = null; }
+        }
+
+        private void SortColumnAscending()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                SortColumn(_mouseDownColumnIndex, true);
+                _columnSortOrder = SortOrder.Ascending;
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                    _columnsSortedOrder![i] = SortOrder.None;
+                _columnsSortedOrder![_mouseDownColumnIndex] = SortOrder.Ascending;
+
+                UpdateVisibleRows();
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                    ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).RemoveSorter();
+                ((ColumnHeader)ColumnHeadersGrid.Children[_mouseDownColumnIndex * 2]).AddSorter(true);
+                UpdateRowHeaders();
+                Mouse.OverrideCursor = null;
+            }
+            catch { Mouse.OverrideCursor = null; }
+        }
+
+        private void SortColumn(int columnIndex, bool ascending)
+        {
+            var columnData = DataView.GetColumn(columnIndex);
+            var sorted = columnData.Select((x, i) => new KeyValuePair<object, int>(x, i))
+                .OrderBy(x => x.Key?.ToString() ?? "").ToList();
+
+            var idx = sorted.Select(x => x.Value).ToList();
+            if (!ascending) idx.Reverse();
+
+            for (int i = 0; i < idx.Count; i++)
+                _rowOffset![idx[i]] = i;
+            idx.CopyTo(_rowId!);
+        }
+
+        #endregion
+
+        #region Clipboard
+
+        private void Copy(bool includeHeaders = false)
+        {
+            if (DataView == null) return;
+            var sb = new System.Text.StringBuilder();
+
+            if (includeHeaders)
+            {
+                for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                {
+                    sb.Append(DataView.ColumnNames[j]);
+                    if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
+                }
+                sb.AppendLine();
+            }
+
+            if (AllCellsSelected)
+            {
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        sb.Append(DataView.GetCell(i, j)?.ToString() ?? "");
+                        if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
+                    }
+                    sb.AppendLine();
+                }
+            }
+
+            Clipboard.SetText(sb.ToString());
+        }
+
+        private void Paste()
+        {
+            if (!Clipboard.ContainsText() || !Editable) return;
+            // TODO: Implement paste logic
+        }
+
+        private void ExportTable()
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = "CSV Files (*.csv)|*.csv|Excel Files (*.xlsx)|*.xlsx",
+                DefaultExt = ".csv"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                // TODO: Implement export
+            }
+        }
+
+        #endregion
+
+        #region Undo/Redo
+
+        private void UpdateUndoRedoButtons()
+        {
+            if (DataView == null) return;
+            Undo.IsEnabled = DataView.CanUndo();
+            Redo.IsEnabled = DataView.CanRedo();
+            SaveButton.IsEnabled = DataView.CanUndo();
+        }
+
+        #endregion
+
+        #region Nested Classes
+
+        private class ColumnHeader : Border
+        {
+            public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+                nameof(Text), typeof(string), typeof(ColumnHeader), new PropertyMetadata(""));
+
+            public string Text
+            {
+                get => (string)GetValue(TextProperty);
+                set => SetValue(TextProperty, value);
+            }
+
+            public static readonly DependencyProperty HeaderTextblockStyleProperty = DependencyProperty.Register(
+                nameof(HeaderTextblockStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(null));
+
+            public Style HeaderTextblockStyle
+            {
+                get => (Style)GetValue(HeaderTextblockStyleProperty);
+                set => SetValue(HeaderTextblockStyleProperty, value);
+            }
+
+            public static readonly DependencyProperty HeaderBorderStyleProperty = DependencyProperty.Register(
+                nameof(HeaderBorderStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(null));
+
+            public Style HeaderBorderStyle
+            {
+                get => (Style)GetValue(HeaderBorderStyleProperty);
+                set => SetValue(HeaderBorderStyleProperty, value);
+            }
+
+            private readonly Viewbox _sortDownViewBox = new Viewbox { Width = 9, Visibility = Visibility.Collapsed, Margin = new Thickness(2, 0, 2, 0) };
+            private readonly Viewbox _sortUpViewBox = new Viewbox { Width = 9, Visibility = Visibility.Collapsed, Margin = new Thickness(2, 0, 2, 0) };
+
+            public ColumnHeader(string columnName, Type columnType)
+            {
+                var g = new Grid();
+                g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                var downArrow = new Polygon { Points = new PointCollection { new Point(0, 0), new Point(8, 0), new Point(4, 6) }, Fill = Brushes.Black };
+                _sortDownViewBox.Child = downArrow;
+                g.Children.Add(_sortDownViewBox);
+
+                var upArrow = new Polygon { Points = new PointCollection { new Point(4, 0), new Point(8, 6), new Point(0, 6) }, Fill = Brushes.Black };
+                _sortUpViewBox.Child = upArrow;
+                g.Children.Add(_sortUpViewBox);
+
+                var tBlock = new TextBlock
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = Brushes.Transparent,
+                    FontWeight = FontWeights.Bold,
+                    TextTrimming = TextTrimming.CharacterEllipsis
+                };
+                tBlock.SetBinding(TextBlock.TextProperty, new Binding(nameof(Text)) { Source = this });
+                tBlock.SetBinding(TextBlock.StyleProperty, new Binding(nameof(HeaderTextblockStyle)) { Source = this });
+                Grid.SetColumn(tBlock, 1);
+                g.Children.Add(tBlock);
+
+                SetBinding(Border.StyleProperty, new Binding(nameof(HeaderBorderStyle)) { Source = this });
+                Child = g;
+                Text = columnName;
+
+                string typeName = columnType.Name;
+                ToolTip = $"{columnName}\nType: {typeName}";
+            }
+
+            public void RemoveSorter()
+            {
+                _sortDownViewBox.Visibility = Visibility.Collapsed;
+                _sortUpViewBox.Visibility = Visibility.Collapsed;
+            }
+
+            public void AddSorter(bool ascending)
+            {
+                _sortDownViewBox.Visibility = ascending ? Visibility.Collapsed : Visibility.Visible;
+                _sortUpViewBox.Visibility = ascending ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private class Cell : Border
+        {
+            public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+                nameof(Text), typeof(string), typeof(Cell), new PropertyMetadata(""));
+
+            public string Text
+            {
+                get => (string)GetValue(TextProperty);
+                set => SetValue(TextProperty, value);
+            }
+
+            public static readonly DependencyProperty CellStyleProperty = DependencyProperty.Register(
+                nameof(CellStyle), typeof(Style), typeof(Cell), new PropertyMetadata(null));
+
+            public Style CellStyle
+            {
+                get => (Style)GetValue(CellStyleProperty);
+                set => SetValue(CellStyleProperty, value);
+            }
+
+            public new static readonly DependencyProperty ForegroundProperty = DependencyProperty.Register(
+                nameof(Foreground), typeof(Brush), typeof(Cell), new PropertyMetadata(Brushes.Black));
+
+            public Brush Foreground
+            {
+                get => (Brush)GetValue(ForegroundProperty);
+                set => SetValue(ForegroundProperty, value);
+            }
+
+            public Cell()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch;
+                VerticalAlignment = VerticalAlignment.Stretch;
+                Background = Brushes.Transparent;
+                IsHitTestVisible = false;
+
+                var tBlock = new TextBlock();
+                tBlock.SetBinding(TextBlock.StyleProperty, new Binding(nameof(CellStyle)) { Source = this });
+                tBlock.SetBinding(TextBlock.TextProperty, new Binding(nameof(Text)) { Source = this });
+                tBlock.SetBinding(TextBlock.ForegroundProperty, new Binding(nameof(Foreground)) { Source = this });
+                Child = tBlock;
+            }
+        }
+
+        private class RowHeader : Border
+        {
+            public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+                nameof(Text), typeof(string), typeof(RowHeader), new PropertyMetadata(""));
+
+            public string Text
+            {
+                get => (string)GetValue(TextProperty);
+                set => SetValue(TextProperty, value);
+            }
+
+            public static readonly DependencyProperty HeaderTextblockStyleProperty = DependencyProperty.Register(
+                nameof(HeaderTextblockStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(null));
+
+            public Style HeaderTextblockStyle
+            {
+                get => (Style)GetValue(HeaderTextblockStyleProperty);
+                set => SetValue(HeaderTextblockStyleProperty, value);
+            }
+
+            public static readonly DependencyProperty HeaderBorderStyleProperty = DependencyProperty.Register(
+                nameof(HeaderBorderStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(null));
+
+            public Style HeaderBorderStyle
+            {
+                get => (Style)GetValue(HeaderBorderStyleProperty);
+                set => SetValue(HeaderBorderStyleProperty, value);
+            }
+
+            public RowHeader()
+            {
+                var tBlock = new TextBlock
+                {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(2, 0, 0, 0),
+                    Background = Brushes.Transparent
+                };
+                tBlock.SetBinding(TextBlock.TextProperty, new Binding(nameof(Text)) { Source = this });
+                tBlock.SetBinding(TextBlock.StyleProperty, new Binding(nameof(HeaderTextblockStyle)) { Source = this });
+                SetBinding(Border.StyleProperty, new Binding(nameof(HeaderBorderStyle)) { Source = this });
+                Child = tBlock;
+            }
+        }
+
+        #endregion
+
+        #region Default Styles
+
+        private static Style GetDefaultCellTextblockStyle()
+        {
+            var s = new Style(typeof(TextBlock));
+            s.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            s.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Left));
+            s.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
+            s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
+            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter(TextBlock.IsHitTestVisibleProperty, false));
+            s.Setters.Add(new Setter(TextBlock.MarginProperty, new Thickness(2, 0, 2, 0)));
+            return s;
+        }
+
+        private static Style GetDefaultColumnHeaderTextblockStyle()
+        {
+            var s = new Style(typeof(TextBlock));
+            s.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+            s.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+            s.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
+            s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
+            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.Bold));
+            s.Setters.Add(new Setter(TextBlock.TextWrappingProperty, TextWrapping.WrapWithOverflow));
+            s.Setters.Add(new Setter(TextBlock.IsHitTestVisibleProperty, false));
+            return s;
+        }
+
+        private static Style GetDefaultColumnHeaderBorderStyle()
+        {
+            var columnHeaderBackground = new LinearGradientBrush(
+                new GradientStopCollection { new GradientStop(SystemColors.ControlLightLightColor, 0.25), new GradientStop(Color.FromArgb(255, 237, 238, 243), 1) },
+                new Point(0, 0), new Point(0, 1));
+
+            var s = new Style(typeof(Border));
+            s.Setters.Add(new Setter(Border.HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            s.Setters.Add(new Setter(Border.VerticalAlignmentProperty, VerticalAlignment.Stretch));
+            s.Setters.Add(new Setter(Border.BackgroundProperty, columnHeaderBackground));
+            s.Setters.Add(new Setter(Border.CornerRadiusProperty, new CornerRadius(0.5)));
+            s.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromRgb(204, 206, 219))));
+            s.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(1)));
+            s.Setters.Add(new Setter(Border.MarginProperty, new Thickness(-0.5)));
+            s.Setters.Add(new Setter(Border.MinHeightProperty, 23.0));
+            s.Setters.Add(new Setter(Border.SnapsToDevicePixelsProperty, true));
+
+            var mouseOverTrigger = new Trigger { Property = IsMouseOverProperty, Value = true };
+            mouseOverTrigger.Setters.Add(new Setter(Border.BackgroundProperty, new SolidColorBrush(Color.FromRgb(201, 222, 245))));
+            s.Triggers.Add(mouseOverTrigger);
+
+            return s;
+        }
+
+        private static Style GetDefaultRowHeaderTextblockStyle()
+        {
+            var s = new Style(typeof(TextBlock));
+            s.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Left));
+            s.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+            s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
+            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter(TextBlock.MarginProperty, new Thickness(2, 0, 0, 0)));
+            s.Setters.Add(new Setter(TextBlock.IsHitTestVisibleProperty, false));
+            return s;
+        }
+
+        private static Style GetDefaultRowHeaderBorderStyle()
+        {
+            var rowHeaderBackground = new LinearGradientBrush(
+                new GradientStopCollection { new GradientStop(SystemColors.ControlLightLightColor, 0.25), new GradientStop(Color.FromArgb(255, 237, 238, 243), 1) },
+                new Point(0, 0), new Point(1, 0));
+
+            var s = new Style(typeof(Border));
+            s.Setters.Add(new Setter(Border.HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            s.Setters.Add(new Setter(Border.VerticalAlignmentProperty, VerticalAlignment.Stretch));
+            s.Setters.Add(new Setter(Border.BackgroundProperty, rowHeaderBackground));
+            s.Setters.Add(new Setter(Border.CornerRadiusProperty, new CornerRadius(0)));
+            s.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromRgb(204, 206, 219))));
+            s.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(1)));
+            s.Setters.Add(new Setter(Border.MarginProperty, new Thickness(0, -0.5, 0, -0.5)));
+            s.Setters.Add(new Setter(Border.SnapsToDevicePixelsProperty, true));
+            return s;
+        }
+
+        #endregion
+    }
+}

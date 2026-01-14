@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <RootNamespace>DataTableViewControl</RootNamespace>
+    <AssemblyName>DataTableViewControl</AssemblyName>
+    <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <MyType>Custom</MyType>
+    <ProjectGuid>{F2DFD3E7-92C5-4828-B7E8-BB6D3B9A24BE}</ProjectGuid>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>..\Output\x86\Debug\</OutputPath>
+    <DocumentationFile>DataTableViewControl.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>..\Output\x86\Release\</OutputPath>
+    <DocumentationFile>DataTableViewControl.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DocumentationFile>DataTableViewControl.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DocumentationFile>DataTableViewControl.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>DataTableViewControl.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>DataTableViewControl.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ExpressionParser">
+      <HintPath>..\..\expression-parser\ExpressionParser\bin\Release\ExpressionParser.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressionParserControls">
+      <HintPath>..\..\expression-parser\ExpressionParserControls\bin\Release\ExpressionParserControls.dll</HintPath>
+    </Reference>
+    <Reference Include="GenericControls">
+      <HintPath>..\..\genericcontrols\GenericControls\bin\$(Configuration)\GenericControls.dll</HintPath>
+    </Reference>
+    <Reference Include="Numerics">
+      <HintPath>..\..\numerics\4.8.1\Numerics\bin\Debug\Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot">
+      <HintPath>..\..\oxyplotcontrols\OxyplotControls\Resources\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf">
+      <HintPath>..\..\oxyplotcontrols\OxyplotControls\Resources\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyplotControls">
+      <HintPath>..\..\oxyplotcontrols\OxyplotControls\bin\$(Configuration)\OxyplotControls.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Column Stats\AlphabeticColumnStats.xaml.vb">
+      <DependentUpon>AlphabeticColumnStats.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Column Stats\Classification.vb" />
+    <Compile Include="Column Stats\NumericColumnStats.xaml.vb">
+      <DependentUpon>NumericColumnStats.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ColumnStatsWindow.xaml.vb">
+      <DependentUpon>ColumnStatsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FieldCalculator\CalculatorHelpWindow.xaml.vb">
+      <DependentUpon>CalculatorHelpWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FieldCalculator\ErrorItem.vb" />
+    <Compile Include="FieldCalculator\ErrorWindow.xaml.vb">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FieldCalculator\FieldCalculator.xaml.vb">
+      <DependentUpon>FieldCalculator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FindAndReplace.xaml.vb">
+      <DependentUpon>FindAndReplace.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TableViewer - Copy.xaml.vb">
+      <DependentUpon>TableViewer - Copy.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TableViewer.xaml.vb">
+      <DependentUpon>TableViewer.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Column Stats\AlphabeticColumnStats.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Column Stats\NumericColumnStats.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ColumnStatsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FieldCalculator\CalculatorHelpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FieldCalculator\ErrorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FieldCalculator\FieldCalculator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FindAndReplace.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\TableViewerResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TableViewer - Copy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TableViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows" />
+    <Import Include="System.Windows.Controls" />
+    <Import Include="System.Windows.Data" />
+    <Import Include="System.Windows.Documents" />
+    <Import Include="System.Windows.Input" />
+    <Import Include="System.Windows.Shapes" />
+    <Import Include="System.Windows.Media" />
+    <Import Include="System.Windows.Media.Imaging" />
+    <Import Include="System.Windows.Navigation" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="My Project\AssemblyInfo.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DataTable_Viewer.dgml" />
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <AppDesigner Include="My Project\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ClearSelectionIconDisabled_22x22.png" />
+    <Resource Include="Resources\ClearSelectionIcon_22x22.png" />
+    <Resource Include="Resources\Save.ico" />
+    <Resource Include="Resources\SaveDisabled.ico" />
+    <Resource Include="Resources\ShowAllIcon_22x22.png" />
+    <Resource Include="Resources\ShowSelectedIcon_22x22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\DownArrow.png" />
+    <Resource Include="Resources\UpArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\calculator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\UndoDisabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\RedoDisabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\FieldCalculator.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Divide.png" />
+    <Resource Include="Resources\Equals.png" />
+    <Resource Include="Resources\Exponent.png" />
+    <Resource Include="Resources\Minus.png" />
+    <Resource Include="Resources\Mult.png" />
+    <Resource Include="Resources\Plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SelectByAttribute.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FieldCalculator\Select By Attribute Help\SelectByAttribute.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\AvailableFields.png" />
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\CalculationsArea.png" />
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\FieldCalculator.html" />
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\FieldCalculator.png" />
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\FieldSelection.png" />
+    <EmbeddedResource Include="FieldCalculator\Field Calculator Help\Functions.png" />
+    <EmbeddedResource Include="FieldCalculator\Select By Attribute Help\SelectByAttribute.html" />
+    <EmbeddedResource Include="FieldCalculator\Select By Attribute Help\SelectByAttributeCalculationsArea.png" />
+    <EmbeddedResource Include="FieldCalculator\Select By Attribute Help\SelectByAttributeHelp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\calculatorDisabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataBase_Reader\DatabaseManager.vbproj">
+      <Project>{2ef100a7-8984-4165-8b2a-017fe610a9d3}</Project>
+      <Name>DatabaseManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\QuickFind_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\calculator_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SelectByAttribute_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SummaryStatistics_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\deselect_all_cells_16x.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
