@@ -638,7 +638,10 @@ namespace DatabaseControls
             UpdateRowHeaders();
         }
 
-        private void RefreshView()
+        /// <summary>
+        /// Refreshes the view by adjusting visible rows based on the control's size.
+        /// </summary>
+        public void RefreshView()
         {
             if (!_isLoaded || DataView == null) return;
             int newNumberRows = GetMaxRows();
@@ -902,7 +905,10 @@ namespace DatabaseControls
 
         #region Update Methods
 
-        internal void UpdateVisibleRows()
+        /// <summary>
+        /// Updates the text content of all visible cells from the DataView.
+        /// </summary>
+        public void UpdateVisibleRows()
         {
             if (DataView == null || _rowId == null) return;
             int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
@@ -1073,6 +1079,46 @@ namespace DatabaseControls
             SetSelectedCells();
             SetActiveCell();
             ActiveCellLocationChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Resets focus from the cell edit TextBox to the GridPanel if currently editing.
+        /// </summary>
+        public void SetEditingCell()
+        {
+            if (!_cellEditTextBox.IsFocused) return;
+            GridPanel.Focus();
+        }
+
+        /// <summary>
+        /// Programmatically updates the selected row indices and refreshes the selection display.
+        /// </summary>
+        /// <param name="newSelectedRowIndices">Array of row indices to select, or null to clear selection.</param>
+        public void UpdateSelectedRowIndices(int[]? newSelectedRowIndices)
+        {
+            if (newSelectedRowIndices == null)
+            {
+                _selectedDataRowIndices.Clear();
+            }
+            else
+            {
+                _selectedDataRowIndices = newSelectedRowIndices.ToList();
+                _selectedDataRowIndices.Sort();
+            }
+
+            DeSelectAllCells();
+            if (!_selectedRowsOnly)
+            {
+                SetSelectedCells();
+            }
+            else
+            {
+                ShowAll_Checked(null, null);
+                SetSelectedCells();
+                ShowSelected_Checked(null, null);
+            }
+
+            UpdateSelectionButtonStates();
         }
 
         #endregion
@@ -1790,7 +1836,9 @@ namespace DatabaseControls
         /// <summary>
         /// Handles the ShowSelected button click to show only selected rows.
         /// </summary>
-        private void ShowSelected_Checked(object sender, RoutedEventArgs e)
+        /// <param name="sender">The source of the event, or null if called programmatically.</param>
+        /// <param name="e">The event arguments, or null if called programmatically.</param>
+        public void ShowSelected_Checked(object? sender, RoutedEventArgs? e)
         {
             if (_selectedDataRowIndices.Count > 0)
             {
