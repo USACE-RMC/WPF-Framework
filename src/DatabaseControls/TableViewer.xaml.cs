@@ -51,7 +51,7 @@ namespace DatabaseControls
     /// </summary>
     public partial class TableViewer : UserControl
     {
-        #region Enums
+        #region Enumerations
 
         private enum SelectionMode : byte
         {
