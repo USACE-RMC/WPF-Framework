@@ -204,7 +204,7 @@ namespace DatabaseControls
         {
             object[] columnData;
 
-            if (useSelectedRows)
+            if (useSelectedRows && _selectedRows != null)
             {
                 columnData = new object[_selectedRows.Count];
             }
@@ -234,7 +234,7 @@ namespace DatabaseControls
                 }
 
                 // Grab the appropriate row data and update the column information to be edited.
-                if (useSelectedRows)
+                if (useSelectedRows && _selectedRows != null)
                 {
                     for (int i = 0; i < columnData.Length; i++)
                     {

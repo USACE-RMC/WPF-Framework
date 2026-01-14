@@ -736,6 +736,11 @@ namespace DatabaseControls
 
         #region Database Events
 
+        /// <summary>
+        /// Handles the event when columns are deleted from the data view.
+        /// Updates selection indices, active cell position, and sort order accordingly.
+        /// </summary>
+        /// <param name="columnIndices">Array of indices of the deleted columns.</param>
         private void TableViewColumnsDeleted(int[] columnIndices)
         {
             Array.Sort(columnIndices);
@@ -759,6 +764,11 @@ namespace DatabaseControls
             NumberOfColumnsChanged();
         }
 
+        /// <summary>
+        /// Handles the event when columns are added to the data view.
+        /// Updates selection indices, active cell position, and sort order accordingly.
+        /// </summary>
+        /// <param name="columnIndices">Array of indices where columns were added.</param>
         private void TableViewColumnsAdded(int[] columnIndices)
         {
             Array.Sort(columnIndices);
@@ -781,6 +791,11 @@ namespace DatabaseControls
             NumberOfColumnsChanged();
         }
 
+        /// <summary>
+        /// Handles the event when rows are added to the data view.
+        /// Updates selection indices and active cell position accordingly.
+        /// </summary>
+        /// <param name="rowIndices">Array of indices where rows were added.</param>
         private void TableViewRowsAdded(int[] rowIndices)
         {
             Array.Sort(rowIndices);
@@ -797,6 +812,11 @@ namespace DatabaseControls
             UpdateUndoRedoButtons();
         }
 
+        /// <summary>
+        /// Handles the event when rows are deleted from the data view.
+        /// Updates selection indices, cell selection, and active cell position accordingly.
+        /// </summary>
+        /// <param name="rowIndices">Array of indices of the deleted rows.</param>
         private void TableViewRowsDeleted(int[] rowIndices)
         {
             Array.Sort(rowIndices);
@@ -819,6 +839,10 @@ namespace DatabaseControls
 
         #region Refresh Methods
 
+        /// <summary>
+        /// Performs a complete refresh of the table viewer, resetting all state and reloading data.
+        /// Clears selections, recreates columns, and reloads visible rows.
+        /// </summary>
         private void Refresh()
         {
             if (DataView == null) return;
@@ -918,6 +942,10 @@ namespace DatabaseControls
             RefreshColumnWidths();
         }
 
+        /// <summary>
+        /// Handles changes to the number of rows in the data view.
+        /// Recalculates visible row count, scrollbar settings, row mappings, and reloads visible rows.
+        /// </summary>
         private void NumberOfRowsChanged()
         {
             _visibleRowCount = GetMaxRows();
@@ -973,6 +1001,10 @@ namespace DatabaseControls
             if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
         }
 
+        /// <summary>
+        /// Handles changes to the number of columns in the data view.
+        /// Clears and recreates all grid elements, restores sort indicators, and reloads visible rows.
+        /// </summary>
         private void NumberOfColumnsChanged()
         {
             ColumnHeadersGrid.SizeChanged -= ColumnsGridSizeChanged;
@@ -1012,6 +1044,11 @@ namespace DatabaseControls
             UpdateRowHeaders();
         }
 
+        /// <summary>
+        /// Calculates the maximum number of rows that can be displayed in the current viewport.
+        /// </summary>
+        /// <param name="updateLayout">If true, forces a layout update before calculation. Default is true.</param>
+        /// <returns>The maximum number of visible rows that fit in the viewport.</returns>
         private int GetMaxRows(bool updateLayout = true)
         {
             if (updateLayout) this.UpdateLayout();
@@ -1032,6 +1069,10 @@ namespace DatabaseControls
 
         #region Grid Setup
 
+        /// <summary>
+        /// Creates all column definitions, column headers, and grid splitters for the table.
+        /// Sets initial column widths based on header text length.
+        /// </summary>
         private void CreateColumns()
         {
             ColumnHeadersGrid.SizeChanged += ColumnsGridSizeChanged;
@@ -1102,6 +1143,10 @@ namespace DatabaseControls
             RefreshColumnWidths(false);
         }
 
+        /// <summary>
+        /// Clears and reloads all visible rows in the grid.
+        /// Removes excess grid lines and recreates row structures for the current visible row count.
+        /// </summary>
         private void LoadRows()
         {
             if (GridLinesCanvas.Children.Count > DataView.ColumnNames.Count() + 2)
@@ -1117,6 +1162,10 @@ namespace DatabaseControls
             for (int i = 0; i < _visibleRowCount; i++) AddRow();
         }
 
+        /// <summary>
+        /// Adds a new row to the grid with all necessary elements including cells, row header,
+        /// background color, and separator line.
+        /// </summary>
         private void AddRow()
         {
             int rowIndex = GridPanel.RowDefinitions.Count;
@@ -1179,6 +1228,9 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Updates the row header labels to display the correct row numbers.
+        /// </summary>
         private void UpdateRowHeaders()
         {
             if (DataView == null || _rowId == null) return;
@@ -1190,6 +1242,12 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Converts a table row index (visible position) to the actual data row index.
+        /// Accounts for scrolling, row selection mode, and sorting.
+        /// </summary>
+        /// <param name="tableRowIndex">The visible row index in the grid.</param>
+        /// <returns>The corresponding data row index, or -1 if out of bounds.</returns>
         private int GetDataRowIndex(int tableRowIndex)
         {
             int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
@@ -1209,6 +1267,12 @@ namespace DatabaseControls
             return _rowId![firstRowIndex + tableRowIndex];
         }
 
+        /// <summary>
+        /// Gets the text content of a cell at the specified table position.
+        /// </summary>
+        /// <param name="tableRowIndex">The visible row index in the grid.</param>
+        /// <param name="columnIndex">The column index.</param>
+        /// <returns>The cell text, or an empty string if the cell is out of bounds.</returns>
         private string GetCellText(int tableRowIndex, int columnIndex)
         {
             int dataRowIndex = GetDataRowIndex(tableRowIndex);
@@ -1217,6 +1281,11 @@ namespace DatabaseControls
             return value?.ToString() ?? "";
         }
 
+        /// <summary>
+        /// Determines the table row index from a grid position (mouse coordinates).
+        /// </summary>
+        /// <param name="gridPosition">The position within the grid panel.</param>
+        /// <returns>The row index at the specified position, clamped to valid bounds.</returns>
         private int GetTableRowIndex(Point gridPosition)
         {
             int rowIndex = (int)Math.Floor(gridPosition.Y / RowHeight);
@@ -1225,6 +1294,11 @@ namespace DatabaseControls
             return rowIndex;
         }
 
+        /// <summary>
+        /// Determines the table column index from a grid position (mouse coordinates).
+        /// </summary>
+        /// <param name="gridPosition">The position within the grid panel.</param>
+        /// <returns>The column index at the specified position.</returns>
         private int GetTableColumnIndex(Point gridPosition)
         {
             double runningWidth = 0;
@@ -1240,6 +1314,10 @@ namespace DatabaseControls
 
         #region Selection
 
+        /// <summary>
+        /// Applies selection highlighting to all cells that are currently selected.
+        /// Handles row selection, column selection, individual cell selection, and select-all states.
+        /// </summary>
         private void SetSelectedCells()
         {
             if (DataView == null) return;
@@ -1274,6 +1352,9 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Removes selection highlighting from all visible cells.
+        /// </summary>
         private void DeSelectAllCells()
         {
             for (int i = 0; i < DataView.ColumnNames.Count(); i++)
@@ -1281,6 +1362,11 @@ namespace DatabaseControls
                     DeSelectCell(i, j);
         }
 
+        /// <summary>
+        /// Applies selection highlighting to a specific cell.
+        /// </summary>
+        /// <param name="columnIndex">The column index of the cell.</param>
+        /// <param name="rowIndex">The visible row index of the cell.</param>
         private void SelectCell(int columnIndex, int rowIndex)
         {
             if (rowIndex < 0 || rowIndex >= _visibleRowCount) return;
@@ -1290,6 +1376,11 @@ namespace DatabaseControls
             cell.Foreground = SelectedForegroundColor;
         }
 
+        /// <summary>
+        /// Removes selection highlighting from a specific cell.
+        /// </summary>
+        /// <param name="columnIndex">The column index of the cell.</param>
+        /// <param name="rowIndex">The visible row index of the cell.</param>
         private void DeSelectCell(int columnIndex, int rowIndex)
         {
             if (rowIndex < 0 || rowIndex >= _visibleRowCount) return;
@@ -1299,6 +1390,12 @@ namespace DatabaseControls
             cell.Foreground = DeSelectedForegroundColor;
         }
 
+        /// <summary>
+        /// Updates the visual appearance of the active cell with active cell colors.
+        /// Optionally updates the stored active cell position.
+        /// </summary>
+        /// <param name="rowIndex">The row index to set as active, or -1 to keep current.</param>
+        /// <param name="columnIndex">The column index to set as active, or -1 to keep current.</param>
         private void SetActiveCell(int rowIndex = -1, int columnIndex = -1)
         {
             if (DataView == null || DataView.NumberOfRows == 0) return;
@@ -1383,8 +1480,18 @@ namespace DatabaseControls
 
         #region Resize Logic
 
+        /// <summary>
+        /// Handles completion of a column splitter drag operation. Currently unused but required for event binding.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ResizeColumnSplitterDragComplete(object sender, DragCompletedEventArgs e) { }
 
+        /// <summary>
+        /// Handles column splitter drag delta to resize columns during drag.
+        /// </summary>
+        /// <param name="sender">The source of the event (the GridSplitter).</param>
+        /// <param name="e">The event data containing the drag delta.</param>
         private void ResizeColumnSplitterDragDelta(object sender, DragDeltaEventArgs e)
         {
             var splitter = (GridSplitter)sender;
@@ -1393,6 +1500,11 @@ namespace DatabaseControls
             ResizeColumnWidth(columnIndex, (int)newColumnWidth);
         }
 
+        /// <summary>
+        /// Handles double-click on column splitter to auto-fit the column width to content.
+        /// </summary>
+        /// <param name="sender">The source of the event (the GridSplitter).</param>
+        /// <param name="e">The event data.</param>
         private void ResizeColumnSplitterDoubleClick(object sender, MouseButtonEventArgs e)
         {
             try
@@ -1444,6 +1556,11 @@ namespace DatabaseControls
             RefreshColumnWidths();
         }
 
+        /// <summary>
+        /// Handles size changes in the columns grid by refreshing all column widths.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ColumnsGridSizeChanged(object sender, SizeChangedEventArgs e) => RefreshColumnWidths();
 
         /// <summary>
@@ -1497,6 +1614,12 @@ namespace DatabaseControls
 
         #region Event Handlers
 
+        /// <summary>
+        /// Handles the Loaded event of the TableViewer control.
+        /// Triggers an initial view refresh when the control is first loaded.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void TableViewer_Loaded(object sender, RoutedEventArgs e)
         {
             bool wasFalse = !_isLoaded;
@@ -1504,6 +1627,12 @@ namespace DatabaseControls
             if (wasFalse) RefreshView();
         }
 
+        /// <summary>
+        /// Handles vertical scrollbar value changes to update visible content.
+        /// Refreshes visible rows, row headers, and cell selection when scrolling.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data containing old and new values.</param>
         private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateVisibleRows();
@@ -1513,10 +1642,26 @@ namespace DatabaseControls
             SetActiveCell();
         }
 
+        /// <summary>
+        /// Handles changes to the vertical scrollbar's enabled state. Currently unused.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void VerticalScrollbar_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e) { }
 
+        /// <summary>
+        /// Handles size changes of the horizontal scroll viewer by refreshing the view.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void HorizontalScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e) => RefreshView();
 
+        /// <summary>
+        /// Handles mouse wheel scrolling on the grid panel.
+        /// Scrolls up or down by 3 rows based on wheel direction.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data containing wheel delta.</param>
         private void TestGridPanel_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta > 0 && VerticalScrollbar.Value > 0)
@@ -1527,7 +1672,10 @@ namespace DatabaseControls
 
         /// <summary>
         /// Handles the PreviewKeyDown event for keyboard navigation (PageUp, PageDown, Arrow keys).
+        /// Manages page-based and cell-based navigation throughout the grid.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
@@ -1943,6 +2091,11 @@ namespace DatabaseControls
             RowRightButtonUp?.Invoke(rowMenu, dataRowIndex);
         }
 
+        /// <summary>
+        /// Forwards mouse wheel events from the row headers grid to the main grid panel handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void RowsGrid_MouseWheel(object sender, MouseWheelEventArgs e) => TestGridPanel_MouseWheel(sender, e);
 
         /// <summary>
@@ -2052,7 +2205,18 @@ namespace DatabaseControls
             ((UIElement)sender).ReleaseMouseCapture();
         }
 
+        /// <summary>
+        /// Handles the MouseLeftButtonDown event on the select-all button. Currently unused.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SelectAllLeftMouseDown(object sender, MouseButtonEventArgs e) { }
+
+        /// <summary>
+        /// Handles the MouseLeftButtonUp event on the select-all button to toggle all cells selection.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SelectAllLeftMouseUp(object sender, MouseButtonEventArgs e)
         {
             AllCellsSelected = !AllCellsSelected;
@@ -2061,6 +2225,11 @@ namespace DatabaseControls
             SetActiveCell();
         }
 
+        /// <summary>
+        /// Handles the SelectAll button click to toggle selection of all cells.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)
         {
             AllCellsSelected = !AllCellsSelected;
@@ -2071,9 +2240,32 @@ namespace DatabaseControls
             SetSelectedCells();
         }
 
+        /// <summary>
+        /// Handles the Copy button click to copy selected cells to clipboard.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CopyButton_Click(object sender, RoutedEventArgs e) => Copy();
+
+        /// <summary>
+        /// Handles the Copy With Headers button click to copy selected cells with column headers.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e) => Copy(true);
+
+        /// <summary>
+        /// Handles the Paste button click to paste clipboard content to selected cells.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void PasteButton_Click(object sender, RoutedEventArgs e) => Paste();
+
+        /// <summary>
+        /// Handles the Export Table button click to export table data.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void ExportTableButton_Click(object sender, RoutedEventArgs e) => ExportTable();
 
         /// <summary>
@@ -2201,12 +2393,24 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
+        /// <summary>
+        /// Handles the ContentRendered event for the attribute selector dialog.
+        /// Restores the previous expression text if available.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void SelectorRendered(object? sender, EventArgs e)
         {
             if (sender is FieldCalculator fc && !string.IsNullOrEmpty(_attributeSelectorString))
                 fc.ExpressionCalculator.SetExpressionText(_attributeSelectorString);
         }
 
+        /// <summary>
+        /// Handles the ContentRendered event for the field calculator dialog.
+        /// Restores the previous expression text if available.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void CalculatorRendered(object? sender, EventArgs e)
         {
             if (sender is FieldCalculator fc && !string.IsNullOrEmpty(_fieldCalculatorString))
@@ -2214,8 +2418,11 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Handles the MouseLeftButtonDown event on the GridPanel for cell selection.
+        /// Handles the MouseLeftButtonDown event on the GridPanel for cell selection and editing.
+        /// Manages click-based cell selection, shift+click range selection, and double-click editing.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void GridPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point gridPosition = e.GetPosition(GridPanel);
@@ -2451,6 +2658,11 @@ namespace DatabaseControls
             ((UIElement)sender).ReleaseMouseCapture();
         }
 
+        /// <summary>
+        /// Creates and displays the column context menu with sorting options.
+        /// </summary>
+        /// <param name="sender">The column header that was right-clicked.</param>
+        /// <param name="e">The event data.</param>
         private void CreateColumnContextMenu(object sender, MouseButtonEventArgs e)
         {
             var header = (ColumnHeader)sender;
@@ -2476,6 +2688,9 @@ namespace DatabaseControls
 
         #region Sorting
 
+        /// <summary>
+        /// Removes any active sort and restores the original row order.
+        /// </summary>
         private void RemoveSort()
         {
             _columnSortOrder = SortOrder.None;
@@ -2492,6 +2707,10 @@ namespace DatabaseControls
             UpdateRowHeaders();
         }
 
+        /// <summary>
+        /// Sorts the current column in descending order.
+        /// Updates the visual sort indicator on the column header.
+        /// </summary>
         private void SortColumnDescending()
         {
             try
@@ -2513,6 +2732,10 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
+        /// <summary>
+        /// Sorts the current column in ascending order.
+        /// Updates the visual sort indicator on the column header.
+        /// </summary>
         private void SortColumnAscending()
         {
             try
@@ -2626,6 +2849,10 @@ namespace DatabaseControls
 
         #region Clipboard
 
+        /// <summary>
+        /// Copies selected cells to the clipboard in tab-separated format.
+        /// </summary>
+        /// <param name="includeHeaders">If true, includes column headers as the first row.</param>
         private void Copy(bool includeHeaders = false)
         {
             if (DataView == null) return;
@@ -2657,12 +2884,19 @@ namespace DatabaseControls
             Clipboard.SetText(sb.ToString());
         }
 
+        /// <summary>
+        /// Pastes clipboard content into the table starting at the active cell.
+        /// Expects tab-separated data with line breaks between rows.
+        /// </summary>
         private void Paste()
         {
             if (!Clipboard.ContainsText() || !Editable) return;
             // TODO: Implement paste logic
         }
 
+        /// <summary>
+        /// Opens a save dialog and exports the table data to CSV or Excel format.
+        /// </summary>
         private void ExportTable()
         {
             var dialog = new SaveFileDialog

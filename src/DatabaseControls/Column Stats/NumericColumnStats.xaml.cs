@@ -626,7 +626,7 @@ namespace DatabaseControls
             Mouse.OverrideCursor = Cursors.Wait;
 
             double[] breaks = Array.Empty<double>();
-            int[] rangeCounts = new int[breaks.Length];
+            int[]? rangeCounts = null;
 
             if (JenksBreaksItem.IsSelected)
             {
