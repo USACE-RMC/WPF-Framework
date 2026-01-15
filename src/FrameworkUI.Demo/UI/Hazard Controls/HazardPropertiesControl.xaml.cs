@@ -621,19 +621,10 @@ namespace FrameworkUI.Demo.UI
                     e.Column.MinWidth = 20;
                     e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
                     ((DataGridTextColumn)e.Column).CellStyle = (Style)FindResource("Right_CellStyle");
-                    ((DataGridTextColumn)e.Column).HeaderStyle = (Style)FindResource("Center_ColumnHeaderStyle");
 
-                    // Add tooltip to column header style
-                    var headerStyle = new Style(typeof(DataGridColumnHeader));
-                    var currentStyle = ((DataGridTextColumn)e.Column).HeaderStyle;
-
-                    if (currentStyle != null)
-                    {
-                        foreach (Setter setter in currentStyle.Setters)
-                        {
-                            headerStyle.Setters.Add(setter);
-                        }
-                    }
+                    // Create header style based on Center_ColumnHeaderStyle with tooltip
+                    var baseHeaderStyle = (Style)FindResource("Center_ColumnHeaderStyle");
+                    var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
 
                     headerStyle.Setters.Add(new Setter(ToolTipProperty, new TextBlock
                     {
