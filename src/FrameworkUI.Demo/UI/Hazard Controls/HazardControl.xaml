@@ -25,7 +25,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="5" Background="Transparent">
         <TabControl Grid.Row="0" TabStripPlacement="Top" Background="Transparent" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Graphical Results" Style="{DynamicResource HorizontalTabItemStyle}">
                 <Grid>
@@ -127,7 +127,7 @@
 
                     <cntrls:SeparatorWithHeader Header="Frequency Curve Results" Grid.Column="0" Grid.Row="0" Margin="5" />
 
-                    <cntrls:CopyPasteDataGrid x:Name="FrequencyCurveTable" Grid.Column="0" Grid.Row="1" Margin="0,0,4,0" Style="{DynamicResource ValidationDataGridStyle}"  
+                    <cntrls:CopyPasteDataGrid x:Name="FrequencyCurveTable" Grid.Column="0" Grid.Row="1" Margin="0,0,4,0"  
                                            AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="Cell" HeadersVisibility="Column" IsReadOnly="True"
                                            CanUserAddInsertDeleteRows="False" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeRows="False" 
                                            CanUserResizeColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False"  >
@@ -165,7 +165,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <cntrls:CopyPasteDataGrid Name="SummaryStatisticsTable" Grid.Row="0" Margin="4,0,0,0" HeadersVisibility="Column" Style="{DynamicResource ValidationDataGridStyle}"
+                        <cntrls:CopyPasteDataGrid Name="SummaryStatisticsTable" Grid.Row="0" Margin="4,0,0,0" HeadersVisibility="Column"
                                        AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="Cell" IsReadOnly="True"
                                        CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeColumns="True" 
                                        CanUserResizeRows="False" CanUserSortColumns="False" CanUserReorderColumns="False"
