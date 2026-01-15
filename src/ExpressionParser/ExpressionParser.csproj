@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <RootNamespace>ExpressionParser</RootNamespace>
+    <AssemblyName>ExpressionParser</AssemblyName>
+
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>embedded</DebugType>
+	
+    <Description>ExpressionParser is a free and open-source library for .NET developed by USACE-RMC, providing a lexer and parser for evaluating mathematical and logical expressions with Excel-like syntax.</Description>
+    <PackageProjectUrl>https://github.com/USACE-RMC/ExpressionParser</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/USACE-RMC/ExpressionParser</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Title>ExpressionParser</Title>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Company>USACE-RMC</Company>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>expression parser; lexer; formula evaluation; math expressions; logical expressions; AST; calculator</PackageTags>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageId>RMC.ExpressionParser</PackageId>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0|AnyCPU'">
+    <NoWarn />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
+    <NoWarn />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--https://github.com/dotnet/reproducible-builds-->
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <!--https://github.com/dotnet/sourcelink/tree/main-->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+  </ItemGroup>
+
+
+</Project>

@@ -262,7 +262,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the SQLite file.</param>
         private void LoadSqliteFile(string filePath)
         {
-            var tableReader = new SQLiteManager(filePath);
+            var tableReader = new DatabaseManager.SQLiteManager(filePath);
 
             TableComboBox.IsEnabled = true;
             TableComboBox.Items.Clear();
