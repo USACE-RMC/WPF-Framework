@@ -1222,29 +1222,8 @@ namespace DatabaseControls
                 for (int j = 0; j < DataView.ColumnNames.Count(); j++)
                 {
                     var cell = (Cell)GridPanel.Children[i * DataView.ColumnNames.Count() + j];
-                    try
-                    {
-                        var value = DataView.GetCell(dataRowIndex, j);
-                        cell.Text = value?.ToString() ?? "";
-                    }
-                    catch (FormatException)
-                    {
-                        // Handle format exceptions (e.g., DateTime parsing issues) by displaying
-                        // the raw string value instead
-                        try
-                        {
-                            var rawValue = DataView.GetStoredCell(dataRowIndex, j);
-                            cell.Text = rawValue?.ToString() ?? "#FORMAT!";
-                        }
-                        catch
-                        {
-                            cell.Text = "#FORMAT!";
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        cell.Text = "#ERROR!";
-                    }
+                    var value = DataView.GetCell(dataRowIndex, j);
+                    cell.Text = value?.ToString() ?? "";
                 }
             }
         }
@@ -1293,33 +1272,13 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="tableRowIndex">The visible row index in the grid.</param>
         /// <param name="columnIndex">The column index.</param>
-        /// <returns>The cell text, or an empty string if the cell is out of bounds or an error occurs.</returns>
+        /// <returns>The cell text, or an empty string if the cell is out of bounds.</returns>
         private string GetCellText(int tableRowIndex, int columnIndex)
         {
             int dataRowIndex = GetDataRowIndex(tableRowIndex);
             if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) return "";
-            try
-            {
-                var value = DataView.GetCell(dataRowIndex, columnIndex);
-                return value?.ToString() ?? "";
-            }
-            catch (FormatException)
-            {
-                // Handle format exceptions by trying to get the raw stored value
-                try
-                {
-                    var rawValue = DataView.GetStoredCell(dataRowIndex, columnIndex);
-                    return rawValue?.ToString() ?? "";
-                }
-                catch
-                {
-                    return "";
-                }
-            }
-            catch
-            {
-                return "";
-            }
+            var value = DataView.GetCell(dataRowIndex, columnIndex);
+            return value?.ToString() ?? "";
         }
 
         /// <summary>
