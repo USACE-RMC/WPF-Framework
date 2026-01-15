@@ -42,6 +42,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using Xceed.Wpf.AvalonDock.Layout;
+using FrameworkUI.Demo.UI;
 
 namespace FrameworkUI.Demo
 {
@@ -136,45 +137,44 @@ namespace FrameworkUI.Demo
             FrameworkUI.UserSettings.CreateAutoRecoverBackup = false;
 
             // Create the project model
-            DemoProject.Project project = new DemoProject.Project();//TotalRisk.Project.GetInstance()
-            var projectNode = new ExampleProjectNode(project);//{ Style = (Style)FindResource("TreeViewItemStyle") }
+            DemoProject project = DemoProject.GetInstance();
+            var projectNode = new DemoProjectNode(project) { Style = (Style)FindResource("TreeViewItemStyle") };
 
             // Create and Show the Main Window
             FrameworkUI.MainWindow mainWindow = new FrameworkUI.MainWindow(); //{ ProjectNode = projectNode }; 
             mainWindow.ProjectNode = projectNode;
 
-            var treeGrid = new Grid();
-            //var treeStyle = (Style)FindResource("TreeViewStyle");
-            var itemStyle = (Style)FindResource("ElementNodeStyle");
-            ExplorerTreeView explorer = new ExplorerTreeView();
-            var layerCollection = new NodeCollection(null, explorer); //{ ShowCreateNewContextItem = false };
-            layerCollection.NodeHeader.HeaderText = "Layers";
-            var g = new NodeGroup(layerCollection, explorer) { IsCheckBoxNode = true };//, Style = itemStyle };
-            g.NodeHeader.HeaderText = "Grouped Items";
-            g.Add(CreateNode("Test 1", g, explorer, itemStyle));
-            g.Add(CreateNode("Test 2", g, explorer, itemStyle));
-            layerCollection.Add(g);
-            layerCollection.Add(CreateNode("Test 3", g, explorer,itemStyle));
-            layerCollection.Add(CreateNode("Test 4", g, explorer, itemStyle));
-            layerCollection.Add(CreateNode("Test 5", g, explorer, itemStyle));
-            layerCollection.Add(CreateNode("Test 6", g, explorer, itemStyle));
-            layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
-            layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
-            explorer.Items.Add(layerCollection);
-            var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) };
-            treeGrid.Children.Add(explorer);
-            document.Content = treeGrid;
-            document.ContentId = "MapLayers"; //element.ParentCollection.Name
-            document.Title = "Map Layers";
+            //var treeGrid = new Grid();
+            ////var treeStyle = (Style)FindResource("TreeViewStyle");
+            //var itemStyle = (Style)FindResource("ElementNodeStyle");
+            //ExplorerTreeView explorer = new ExplorerTreeView();
+            //var layerCollection = new NodeCollection(null, explorer); //{ ShowCreateNewContextItem = false };
+            //layerCollection.NodeHeader.HeaderText = "Layers";
+            //var g = new NodeGroup(layerCollection, explorer) { IsCheckBoxNode = true };//, Style = itemStyle };
+            //g.NodeHeader.HeaderText = "Grouped Items";
+            //g.Add(CreateNode("Test 1", g, explorer, itemStyle));
+            //g.Add(CreateNode("Test 2", g, explorer, itemStyle));
+            //layerCollection.Add(g);
+            //layerCollection.Add(CreateNode("Test 3", g, explorer,itemStyle));
+            //layerCollection.Add(CreateNode("Test 4", g, explorer, itemStyle));
+            //layerCollection.Add(CreateNode("Test 5", g, explorer, itemStyle));
+            //layerCollection.Add(CreateNode("Test 6", g, explorer, itemStyle));
+            //layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
+            //layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
+            //explorer.Items.Add(layerCollection);
+            //var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) };
+            //treeGrid.Children.Add(explorer);
+            //document.Content = treeGrid;
+            //document.ContentId = "MapLayers"; //element.ParentCollection.Name
+            //document.Title = "Map Layers";
+            //mainWindow.OpenDocument(document, null);
 
-            mainWindow.OpenDocument(document, null);
-
-            // Open the Theme Demo document to demonstrate the new Themes library
-            var themeDemo = new LayoutDocument() { CanClose = false };
-            themeDemo.Content = new UI.ThemeDemoControl();
-            themeDemo.ContentId = "ThemeDemo";
-            themeDemo.Title = "Theme Demo";
-            mainWindow.OpenDocument(themeDemo, null);
+            //// Open the Theme Demo document to demonstrate the new Themes library
+            //var themeDemo = new LayoutDocument() { CanClose = false };
+            //themeDemo.Content = new UI.ThemeDemoControl();
+            //themeDemo.ContentId = "ThemeDemo";
+            //themeDemo.Title = "Theme Demo";
+            //mainWindow.OpenDocument(themeDemo, null);
 
             // =================================================================
             // SOFTWARE UPDATE SERVICE EXAMPLE

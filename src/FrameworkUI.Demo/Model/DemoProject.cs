@@ -82,6 +82,10 @@ namespace FrameworkUI.Demo
         {
             InitializeMessages();
 
+            _hazardFunctions = new HazardElementCollection(this);
+            _responseFunctions = new ResponseElementCollection(this);
+            _consequenceFunctions = new ConsequenceElementCollection(this);
+
             _hazardFunctions.ObjectSaved += ElementCollection_Saved;
             _responseFunctions.ObjectSaved += ElementCollection_Saved;
             _consequenceFunctions.ObjectSaved += ElementCollection_Saved;
@@ -264,30 +268,12 @@ namespace FrameworkUI.Demo
             Save();
         }
 
-        /// <summary>
-        /// Creates a new dummy project.
-        /// </summary>
-        public void CreateNewDummyProject()
-        {
-            // Set project meta data and properties
-            FullFileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".demo";
-            Name = "Blank Project";
-            Description = "This is a blank project file.";
-            CreationDate = DateTime.Now;
-            LastModified = DateTime.Now;
-
-            // Load element collections.
-            _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
-            { _hazardFunctions, _responseFunctions, _consequenceFunctions});
-
-            Save();
-        }
-
         /// <inheritdoc/>
         public override void Open()
         {
             _openingProject = true;
-            SetIsDirty(false);
+            IsUndoEnabled = false;
+
 
             //
             // Load from disk or database
@@ -302,14 +288,18 @@ namespace FrameworkUI.Demo
             _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
             { _hazardFunctions, _responseFunctions, _consequenceFunctions});
 
-            SetIsDirty(false);
             NameOnDisk = Name;
+            IsUndoEnabled = true;
+            ClearUndoHistory();
+            SetIsDirty(false);
             _openingProject = false;
         }
 
         /// <inheritdoc/>
         public override void Close()
         {
+            _messenger.Clear(this);
+
             // Close all project element collections.. 
             _hazardFunctions.Clear();
             _responseFunctions.Clear();
@@ -347,6 +337,8 @@ namespace FrameworkUI.Demo
                 ElementCollections[i].Save();
             }
 
+            NameOnDisk = Name;
+            MarkUndoSavePoint();
             SetIsDirty(false);
             RaiseObjectSaved(this);
         }

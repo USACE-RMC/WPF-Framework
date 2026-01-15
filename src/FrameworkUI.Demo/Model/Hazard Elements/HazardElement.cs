@@ -71,6 +71,10 @@ namespace FrameworkUI.Demo
             CreationDate = DateTime.Now;
             LastModified = DateTime.Now;
 
+            _probabilityOrdinates = new ObservableCollection<double>() { 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99 };
+            _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
+
+
             InitializeMessages();
 
             SetIsDirty(false);
@@ -584,6 +588,8 @@ namespace FrameworkUI.Demo
         /// <inheritdoc/>
         public override void Delete()
         {
+            _messenger.Clear(this);
+            _undoManager.Clear();
             SetIsDirty(false);
             //
             // Delete from disk or database
@@ -595,12 +601,15 @@ namespace FrameworkUI.Demo
         public override void Open()
         {
             _messenger.Clear(this);
+            IsUndoEnabled =false;
 
             //
             // Load from disk or database
             //
 
             SetElementValidation();
+            IsUndoEnabled = true;
+            ClearUndoHistory();
             SetIsDirty(false);
         }
 
@@ -619,8 +628,9 @@ namespace FrameworkUI.Demo
             // Save to disk or database
             //
 
-            SetIsDirty(false);
             _nameOnDisk = Name;
+            MarkUndoSavePoint();
+            SetIsDirty(false);
             RaiseObjectSaved(this);
         }
 

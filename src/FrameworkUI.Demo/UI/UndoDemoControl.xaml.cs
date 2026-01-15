@@ -31,7 +31,6 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using FrameworkUI.Demo.DemoProject.Undo_Demo;
 using FrameworkInterfaces.Undo;
 
 namespace FrameworkUI.Demo.UI

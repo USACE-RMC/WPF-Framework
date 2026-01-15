@@ -189,7 +189,6 @@
                 <dbCntrls:TableViewer
                    x:Name="ParameterSetTableViewer" 
                    RowSelectable="True" 
-                   Style="{StaticResource TableViewerStyle}"
                    ColumnSelectable="True" 
                    CellSelectable="True" 
                    ShowRowHeaders="False"
