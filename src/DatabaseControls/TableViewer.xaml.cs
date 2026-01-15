@@ -1160,6 +1160,8 @@ namespace DatabaseControls
             RowColorGrid.RowDefinitions.Clear();
 
             for (int i = 0; i < _visibleRowCount; i++) AddRow();
+
+            UpdateVisibleRows();
         }
 
         /// <summary>
@@ -1198,8 +1200,6 @@ namespace DatabaseControls
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
-
-            UpdateVisibleRows();
         }
 
         #endregion
