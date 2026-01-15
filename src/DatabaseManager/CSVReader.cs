@@ -1060,6 +1060,16 @@ namespace DatabaseManager
             /// <returns>The cell value at the specified position.</returns>
             protected override object GetStoredCell(int storedColumnIndex, int storedRowIndex)
             {
+                if (storedColumnIndex < 0 || storedColumnIndex >= _table.Columns.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
+                        $"Column index must be between 0 and {_table.Columns.Count - 1}.");
+                }
+                if (storedRowIndex < 0 || storedRowIndex >= _table.Rows.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_table.Rows.Count - 1}.");
+                }
                 return _table.Rows[storedRowIndex][storedColumnIndex];
             }
 
@@ -1071,6 +1081,11 @@ namespace DatabaseManager
             /// <returns>The cell value at the specified position.</returns>
             protected override object GetStoredCell(string storedColumnName, int storedRowIndex)
             {
+                if (storedRowIndex < 0 || storedRowIndex >= _table.Rows.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_table.Rows.Count - 1}.");
+                }
                 return _table.Rows[storedRowIndex][storedColumnName];
             }
 
@@ -1082,10 +1097,28 @@ namespace DatabaseManager
             /// <returns>An array of cell values at the specified positions.</returns>
             protected override object[] GetStoredCells(int[] storedColumnIndices, int[] storedRowIndices)
             {
+                // Validate all indices before proceeding
+                for (int i = 0; i < storedColumnIndices.Length; i++)
+                {
+                    if (storedColumnIndices[i] < 0 || storedColumnIndices[i] >= _table.Columns.Count)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedColumnIndices),
+                            $"Column index {storedColumnIndices[i]} at position {i} is out of range. Must be between 0 and {_table.Columns.Count - 1}.");
+                    }
+                }
+                for (int i = 0; i < storedRowIndices.Length; i++)
+                {
+                    if (storedRowIndices[i] < 0 || storedRowIndices[i] >= _table.Rows.Count)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedRowIndices),
+                            $"Row index {storedRowIndices[i]} at position {i} is out of range. Must be between 0 and {_table.Rows.Count - 1}.");
+                    }
+                }
+
                 var result = new object[(storedColumnIndices.Count())];
                 for (int i = 0; i < storedColumnIndices.Count(); i++)
-                { 
-                    result[i] = _table.Rows[storedRowIndices[i]][storedColumnIndices[i]]; 
+                {
+                    result[i] = _table.Rows[storedRowIndices[i]][storedColumnIndices[i]];
                 }
                 return result.ToArray();
             }

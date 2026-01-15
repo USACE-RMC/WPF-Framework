@@ -2590,6 +2590,16 @@ namespace DatabaseManager
             /// </summary>
             protected override object GetStoredCell(int storedColumnIndex, int storedRowIndex)
             {
+                if (storedColumnIndex < 0 || storedColumnIndex >= _storedColumnNames.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
+                        $"Column index must be between 0 and {_storedColumnNames.Length - 1}.");
+                }
+                if (storedRowIndex < 0 || storedRowIndex >= _rowIdArray.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_rowIdArray.Length - 1}.");
+                }
                 return GetStoredCell(_storedColumnNames[storedColumnIndex], storedRowIndex);
             }
 
@@ -2598,6 +2608,11 @@ namespace DatabaseManager
             /// </summary>
             protected override object GetStoredCell(string storedColumnName, int storedRowIndex)
             {
+                if (storedRowIndex < 0 || storedRowIndex >= _rowIdArray.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_rowIdArray.Length - 1}.");
+                }
                 using (var command = new SQLiteCommand("SELECT [" + storedColumnName + "] FROM [" + _tableName + "] WHERE rowid=" + _rowIdArray[storedRowIndex], _dbConnection))
                 {
                     try
@@ -2675,6 +2690,24 @@ namespace DatabaseManager
             /// </summary>
             protected override object[] GetStoredCells(int[] storedColumnIndices, int[] storedRowIndices)
             {
+                // Validate all indices before proceeding
+                for (int i = 0; i < storedColumnIndices.Length; i++)
+                {
+                    if (storedColumnIndices[i] < 0 || storedColumnIndices[i] >= _storedColumnNames.Length)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedColumnIndices),
+                            $"Column index {storedColumnIndices[i]} at position {i} is out of range. Must be between 0 and {_storedColumnNames.Length - 1}.");
+                    }
+                }
+                for (int i = 0; i < storedRowIndices.Length; i++)
+                {
+                    if (storedRowIndices[i] < 0 || storedRowIndices[i] >= _rowIdArray.Length)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedRowIndices),
+                            $"Row index {storedRowIndices[i]} at position {i} is out of range. Must be between 0 and {_rowIdArray.Length - 1}.");
+                    }
+                }
+
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (wasOpen == false)
                 {
@@ -2726,6 +2759,11 @@ namespace DatabaseManager
             /// </summary>
             protected override object[] GetStoredColumn(int storedColumnIndex)
             {
+                if (storedColumnIndex < 0 || storedColumnIndex >= _storedColumnNames.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
+                        $"Column index must be between 0 and {_storedColumnNames.Length - 1}.");
+                }
                 return GetStoredColumn(_storedColumnNames[storedColumnIndex]);
             }
 
