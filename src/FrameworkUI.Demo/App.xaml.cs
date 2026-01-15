@@ -140,6 +140,8 @@ namespace FrameworkUI.Demo
             DemoProject project = DemoProject.GetInstance();
             var projectNode = new DemoProjectNode(project) { Style = (Style)FindResource("TreeViewItemStyle") };
 
+            project.CreateNewDummyProject();
+
             // Create and Show the Main Window
             FrameworkUI.MainWindow mainWindow = new FrameworkUI.MainWindow(); //{ ProjectNode = projectNode }; 
             mainWindow.ProjectNode = projectNode;

@@ -77,6 +77,8 @@ namespace FrameworkUI.Demo
 
             InitializeMessages();
 
+            _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+
             SetIsDirty(false);
         }
 

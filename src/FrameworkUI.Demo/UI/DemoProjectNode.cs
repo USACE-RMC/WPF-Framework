@@ -74,29 +74,29 @@ namespace FrameworkUI.Demo.UI
             _plotPropertiesControl = new OxyPlotPropertiesControl() { Margin = new Thickness(0, 0, 5, 5) };
             _plotPropertiesControl.ClosePropertiesCalled += (x) => { ClosePlotProperties_Click(x.Plot); };
 
-            for (int i = 0; i < ChildNodes.Count; i++)
-            {
-                ElementNodeCollection elementnodeCollection = ChildNodes[i] as ElementNodeCollection;
-                if (elementnodeCollection == null) continue;
+            //for (int i = 0; i < ChildNodes.Count; i++)
+            //{
+            //    ElementNodeCollection elementnodeCollection = ChildNodes[i] as ElementNodeCollection;
+            //    if (elementnodeCollection == null) continue;
 
-                // Custom menu item to add hazard
-                var myCustomMenuItem = new MenuItem() { Header = "Add Hazard (Custom Item)...", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Hazard_Icon) } };
-                myCustomMenuItem.Click += (s, e) => { CreateNewHazardElement(elementnodeCollection); };
-                elementnodeCollection.CustomContextItems.Add(myCustomMenuItem);
+            //    // Custom menu item to add hazard
+            //    var myCustomMenuItem = new MenuItem() { Header = "Add Hazard (Custom Item)...", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Hazard_Icon) } };
+            //    myCustomMenuItem.Click += (s, e) => { CreateNewHazardElement(elementnodeCollection); };
+            //    elementnodeCollection.CustomContextItems.Add(myCustomMenuItem);
 
-                // Allow groups to add hazard like the parent node collection
-                elementnodeCollection.GroupAdded += (g) =>
-                {
-                    var gCustomMenuItem = new MenuItem() { Header = "Add Hazard (Custom Item)...", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Hazard_Icon) } };
-                    gCustomMenuItem.Click += (s, e) =>
-                    {
-                        var newHazard = CreateNewHazardElement(elementnodeCollection);
-                        Node n = elementnodeCollection.ChildNodes.FirstOrDefault(o => o.GetType() == typeof(ElementNode) && ((ElementNode)o).Element == newHazard);
-                        n.Move(elementnodeCollection, g, elementnodeCollection.ChildNodes.IndexOf(n), g.ChildNodes.Count);
-                    };
-                    g.CustomContextItems.Add(gCustomMenuItem);
-                };
-            }
+            //    // Allow groups to add hazard like the parent node collection
+            //    elementnodeCollection.GroupAdded += (g) =>
+            //    {
+            //        var gCustomMenuItem = new MenuItem() { Header = "Add Hazard (Custom Item)...", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Hazard_Icon) } };
+            //        gCustomMenuItem.Click += (s, e) =>
+            //        {
+            //            var newHazard = CreateNewHazardElement(elementnodeCollection);
+            //            Node n = elementnodeCollection.ChildNodes.FirstOrDefault(o => o.GetType() == typeof(ElementNode) && ((ElementNode)o).Element == newHazard);
+            //            n.Move(elementnodeCollection, g, elementnodeCollection.ChildNodes.IndexOf(n), g.ChildNodes.Count);
+            //        };
+            //        g.CustomContextItems.Add(gCustomMenuItem);
+            //    };
+            //}
         }
 
         /// <summary>

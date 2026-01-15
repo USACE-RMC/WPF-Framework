@@ -268,6 +268,25 @@ namespace FrameworkUI.Demo
             Save();
         }
 
+        /// <summary>
+        /// Creates a new dummy project.
+        /// </summary>
+        public void CreateNewDummyProject()
+        {
+            // Set project meta data and properties
+            FullFileName = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".demo";
+            Name = "Blank Project";
+            Description = "This is a blank project file.";
+            CreationDate = DateTime.Now;
+            LastModified = DateTime.Now;
+
+            // Load element collections.
+            _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
+            { _hazardFunctions, _responseFunctions, _consequenceFunctions});
+
+            Save();
+        }
+
         /// <inheritdoc/>
         public override void Open()
         {
