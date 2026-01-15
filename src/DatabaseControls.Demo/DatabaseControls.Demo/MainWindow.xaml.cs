@@ -277,7 +277,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the CSV file.</param>
         private void LoadCsvFile(string filePath)
         {
-            _databaseReader = new CsvReader(filePath, hasHeader: true, skipRows: 1, isReadOnly: false);
+            _databaseReader = new CsvReader(filePath, true, 1, false);
 
             TableComboBox.Items.Clear();
             TableComboBox.Items.Add(Path.GetFileNameWithoutExtension(filePath));
