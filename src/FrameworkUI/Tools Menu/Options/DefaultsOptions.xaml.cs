@@ -69,7 +69,7 @@ namespace FrameworkUI
         /// </summary>
         public string DefaultLocation
         {
-            get { return GetValue(DefaultLocationProperty).ToString(); }
+            get { return GetValue(DefaultLocationProperty)?.ToString() ?? string.Empty; }
             set { SetValue(DefaultLocationProperty, value); }
         }
 

@@ -69,7 +69,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         public string HeaderText
         {
-            get { return GetValue(HeaderTextProperty).ToString(); }
+            get { return GetValue(HeaderTextProperty)?.ToString() ?? string.Empty; }
             set { SetValue(HeaderTextProperty, value); }
         }
 
@@ -83,7 +83,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         public string HeaderDescription
         {
-            get { return GetValue(HeaderDescriptionProperty).ToString(); }
+            get { return GetValue(HeaderDescriptionProperty)?.ToString() ?? string.Empty; }
             set { SetValue(HeaderDescriptionProperty, value); }
         }
 
@@ -237,7 +237,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         public string RenameText
         {
-            get { return GetValue(RenameTextProperty).ToString(); }
+            get { return GetValue(RenameTextProperty)?.ToString() ?? string.Empty; }
             set { SetValue(RenameTextProperty, value); }
         }
 

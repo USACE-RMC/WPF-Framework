@@ -72,7 +72,7 @@ namespace FrameworkUI
         /// </summary>
         public string ColorTheme
         {
-            get { return GetValue(ColorThemeProperty).ToString(); }
+            get { return GetValue(ColorThemeProperty)?.ToString() ?? string.Empty; }
             set { SetValue(ColorThemeProperty, value); }
         }
 
