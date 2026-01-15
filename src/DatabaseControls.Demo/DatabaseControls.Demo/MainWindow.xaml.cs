@@ -57,7 +57,7 @@ namespace DatabaseControls.Demo
         /// <summary>
         /// The database manager instance used to read and manage database connections.
         /// </summary>
-        private DatabaseManager.DatabaseManager? _databaseReader;
+        private DatabaseManager.DatabaseManager? _databaseManager;
 
         #endregion
 
@@ -116,7 +116,8 @@ namespace DatabaseControls.Demo
             switch (extension)
             {
                 case ".mdb":
-                    LoadMdbFile(inputFile);
+                    MessageBox.Show("MDB file support is not available in this .NET version.");
+                    //LoadMdbFile(inputFile);
                     break;
 
                 case ".dbf":
@@ -151,13 +152,13 @@ namespace DatabaseControls.Demo
                 return;
             }
 
-            if (_databaseReader == null)
+            if (_databaseManager == null)
             {
                 return;
             }
 
             string selectedTable = (string)TableComboBox.SelectedValue;
-            DataTableView tableView = _databaseReader.GetTableManager(selectedTable);
+            DataTableView tableView = _databaseManager.GetTableManager(selectedTable);
             TestViewer.DataView = tableView;
         }
 
@@ -217,25 +218,29 @@ namespace DatabaseControls.Demo
 
         #region Private Methods
 
+        /* This will not work in .Net 9.0 because the necessary OleDb drivers are not available.
+         * Consider using a third-party library for MDB access if needed.
+        */
+
         /// <summary>
         /// Loads a Microsoft Access database file (.mdb) and populates the table combo box.
         /// </summary>
         /// <param name="filePath">The path to the MDB file.</param>
-        private void LoadMdbFile(string filePath)
-        {
-            var tableReader = new MdbReader(filePath);
+        //private void LoadMdbFile(string filePath)
+        //{
+        //    var tableReader = new MdbReader(filePath);
 
-            TableComboBox.IsEnabled = true;
-            TableComboBox.Items.Clear();
+        //    TableComboBox.IsEnabled = true;
+        //    TableComboBox.Items.Clear();
 
-            string[] tableNames = tableReader.GetTableNames();
-            foreach (string tableName in tableNames)
-            {
-                TableComboBox.Items.Add(tableName);
-            }
+        //    string[] tableNames = tableReader.GetTableNames();
+        //    foreach (string tableName in tableNames)
+        //    {
+        //        TableComboBox.Items.Add(tableName);
+        //    }
 
-            _databaseReader = tableReader;
-        }
+        //    _databaseManager = tableReader;
+        //}
 
         /// <summary>
         /// Loads a dBASE database file (.dbf) directly into the viewer.
@@ -243,7 +248,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the DBF file.</param>
         private void LoadDbfFile(string filePath)
         {
-            _databaseReader = new DbfReader(filePath);
+            _databaseManager = new DbfReader(filePath);
 
             TableComboBox.Items.Clear();
             TableComboBox.Items.Add(Path.GetFileNameWithoutExtension(filePath));
@@ -268,7 +273,7 @@ namespace DatabaseControls.Demo
                 TableComboBox.Items.Add(tableName);
             }
 
-            _databaseReader = tableReader;
+            _databaseManager = tableReader;
         }
 
         /// <summary>
@@ -277,7 +282,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the CSV file.</param>
         private void LoadCsvFile(string filePath)
         {
-            _databaseReader = new CsvReader(filePath, true, 1, false);
+            _databaseManager = new CsvReader(filePath, true, 1, false);
 
             TableComboBox.Items.Clear();
             TableComboBox.Items.Add(Path.GetFileNameWithoutExtension(filePath));
