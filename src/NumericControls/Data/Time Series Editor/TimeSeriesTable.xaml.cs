@@ -36,7 +36,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace NumericControls
 {
@@ -227,17 +229,17 @@ namespace NumericControls
                 else { nonOperands.Add(fnc); }
             }
 
-            var x = new MenuItem() { Header = "Calculator", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png")) } };
+            var x = new MenuItem() { Header = "Math Functions", Icon = Application.Current.TryFindResource("MathFunctionIcon") };
             foreach (MathFunctionType fnc in operands)
             {
                 x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
                 MenuItem h = (MenuItem)x.Items[x.Items.Count - 1];
-                h.Click += CalculatorButton_Click;
+                h.Click += MathFunctionButton_Click;
             }
             foreach (MathFunctionType fnc in nonOperands)
             {
                 x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
-                ((MenuItem)x.Items[x.Items.Count - 1]).Click += CalculatorButton_Click;
+                ((MenuItem)x.Items[x.Items.Count - 1]).Click += MathFunctionButton_Click;
             }
 
             TimeSeriesDataGrid.CustomMenuItems.Add(x);
@@ -260,13 +262,13 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Converts a math function type to an icon image.
+        /// Converts a math function type to an icon element.
         /// </summary>
         /// <param name="fnc">The math function type.</param>
-        /// <returns>An Image containing the function's icon.</returns>
-        private Image FunctionToImage(MathFunctionType fnc)
+        /// <returns>A ContentControl containing the function's icon.</returns>
+        private ContentControl FunctionToImage(MathFunctionType fnc)
         {
-            return new Image { Source = MathFunctionTypeToIconConverter.GetIcon(fnc) };
+            return new ContentControl { Width = 16, Height = 16, Content = MathFunctionTypeToIconConverter.GetIcon(fnc) };
         }
 
         /// <summary>
@@ -274,7 +276,7 @@ namespace NumericControls
         /// </summary>
         /// <param name="sender">The menu item that was clicked.</param>
         /// <param name="e">The routed event arguments.</param>
-        private void CalculatorButton_Click(object sender, RoutedEventArgs e)
+        private void MathFunctionButton_Click(object sender, RoutedEventArgs e)
         {
             var x = sender as MenuItem;
             if (x == null) { return; }
@@ -292,7 +294,7 @@ namespace NumericControls
 
             if (HasOperand(f))
             {
-                var w = new NumericEntry() { Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner };
+                var w = new NumericEntryDialog() { Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner };
                 var c = new MathFunctionTypeToNameConverter();
                 var cToolTip = new MathFunctionTypeToTooltipConverter();
                 w.Title = (string)c.Convert(f, f.GetType(), null, null);
@@ -335,6 +337,7 @@ namespace NumericControls
             }
 
             // Reselect cells
+            TimeSeriesDataGrid.SelectedCells.Clear();
             foreach (DataGridCellInfo cellInfo in selectedCells)
             {
                 TimeSeriesDataGrid.SelectedCells.Add(cellInfo);

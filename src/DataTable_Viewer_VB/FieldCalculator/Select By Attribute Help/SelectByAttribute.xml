@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<HelpDocument title="Select By Attribute Help" width="850" height="700" >
+  <Topic name="Select By Attribute" keywords="MainForm" AssemblyName="DataTableViewControl" RootNamespace="DataTableViewControl" Images="SelectByAttributeCalculationsArea.png,SelectByAttributeHelp.png,Functions.png,AvailableFields.png">SelectByAttribute.html</Topic>
+</HelpDocument>

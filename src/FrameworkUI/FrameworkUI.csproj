@@ -23,4 +23,9 @@
     <ProjectReference Include="..\SoftwareUpdate\SoftwareUpdate.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Resources\*.png" />
+    <Resource Include="Resources\*.xml" />
+  </ItemGroup>
+
 </Project>

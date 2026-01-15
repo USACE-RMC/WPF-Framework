@@ -42,11 +42,11 @@
         <!--Add Ok and Cancel Buttons-->
         <Grid Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Name="btn_Ok" Click="btn_Apply_Click" IsDefault="True" Content="Apply"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0"  Width="83" Height="24" Margin="6,0,0,6" Cursor="Hand" />
-            <Button Name="btn_Cancel" Click="btn_Cancel_Click" IsCancel="True" Content="Cancel" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Width="83" Height="24" Margin="6,0,6,6" Cursor="Hand"/>
+            <Button Name="btn_Ok" Click="btn_Apply_Click" IsDefault="True" Content="Apply" Grid.Column="0" Width="75" Height="24" Margin="6,0,0,6" Cursor="Hand"/>
+            <Button Name="btn_Cancel" Click="btn_Cancel_Click" IsCancel="True" Content="Cancel" Grid.Column="1" Width="75" Height="24" Margin="6,0,6,6" Cursor="Hand"/>
         </Grid>
 
     </Grid>

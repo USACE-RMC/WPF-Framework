@@ -16,7 +16,7 @@
         <cntrls:BooleanToDoubleConverter x:Key="BoolToLabelDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="5"/>
         <cntrls:BooleanToDoubleConverter x:Key="BoolToTitleDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="8"/>
         <cntrls:BooleanToColorConverter x:Key="BoolToColorConverter" TrueValue="Black" FalseValue="Transparent"/>
-        <SolidColorBrush x:Key="ReadOnlyBackGround" Color="#FFF5F5F5"></SolidColorBrush>
+        <SolidColorBrush x:Key="ReadOnlyBackGround" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
         <Style x:Key="Left_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -382,7 +382,7 @@
                 Visibility="Collapsed" 
                 ToolTip="Click to estimate parameters for the selected distribution based on the sample data."
                 Click="EstimateParametersButton_Click">
-                <Image Source="/NumericControls;component/Resources/Run.png" Width="16" Height="16"/>
+                <Rectangle Width="16" Height="16" Fill="{DynamicResource RunIconBrush}"/>
             </Button>
         </Grid>
 

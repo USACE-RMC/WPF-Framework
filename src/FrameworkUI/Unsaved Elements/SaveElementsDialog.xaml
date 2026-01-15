@@ -51,13 +51,13 @@
         <!--Buttons-->
         <Grid Grid.Row="2" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Name="btn_Save" Click="Btn_Save_Click" Content="Save" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Width="83" Height="24" Margin="6,0,0,6" Cursor="Hand" />
-            <Button Name="btn_DontSave" Click="Btn_DontSave_Click" Content="Don't Save" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Width="83" Height="24" Margin="6,0,0,6" Cursor="Hand" />
-            <Button Name="btn_Cancel" Click="Btn_Cancel_Click" Content="Cancel" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="2" Width="83" Height="24" Margin="6,0,6,6" Cursor="Hand"/>
+            <Button Name="btn_Save" Click="Btn_Save_Click" Content="Save" Grid.Column="0" Width="75" Height="24" Margin="6,0,0,6" Cursor="Hand"/>
+            <Button Name="btn_DontSave" Click="Btn_DontSave_Click" Content="Don't Save" Grid.Column="1" Width="75" Height="24" Margin="6,0,0,6" Cursor="Hand"/>
+            <Button Name="btn_Cancel" Click="Btn_Cancel_Click" Content="Cancel" Grid.Column="2" Width="75" Height="24" Margin="6,0,6,6" Cursor="Hand"/>
         </Grid>
     </Grid>
 </Window>

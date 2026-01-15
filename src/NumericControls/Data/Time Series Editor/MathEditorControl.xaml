@@ -7,8 +7,8 @@
              xmlns:local="clr-namespace:NumericControls"
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              mc:Ignorable="d"
-             Background="White"
-             d:DesignHeight="120" d:DesignWidth="240">
+             Background="{DynamicResource EnvironmentWindowBackground}"
+             d:DesignHeight="140" d:DesignWidth="260">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:MathFunctionTypeToNameConverter x:Key="FnToNameCvrtr"/>
@@ -24,11 +24,11 @@
         </Grid.ColumnDefinitions>
 
         <!-- Math function buttons and operand input -->
-        <DockPanel Width="65">
+        <DockPanel Width="72">
             <!-- Operand input field -->
             <cntrls:NumericTextBox2 x:Name="ValueTextBox"
                                     DockPanel.Dock="Top"
-                                    Width="60"
+                                    Width="68"
                                     Height="22"
                                     HorizontalAlignment="Center"
                                     ToolTip="Operand for the math function."
@@ -37,11 +37,11 @@
             <!-- Math function buttons requiring an operand -->
             <ItemsControl x:Name="OperandItemsControl"
                           BorderBrush="Transparent"
-                          Background="White"
+                          Background="{DynamicResource EnvironmentWindowBackground}"
                           BorderThickness="1"
                           AlternationCount="1"
                           Padding="0"
-                          Width="70"
+                          Width="72"
                           DockPanel.Dock="Top"
                           HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
@@ -67,10 +67,8 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Image Source="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"
-                                   Stretch="None"
-                                   RenderOptions.EdgeMode="Aliased"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <ContentControl Width="16" Height="16"
+                                            Content="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -79,11 +77,11 @@
             <!-- Math function buttons not requiring an operand -->
             <ItemsControl x:Name="NoOperandItemsControl"
                           BorderBrush="Transparent"
-                          Background="White"
+                          Background="{DynamicResource EnvironmentWindowBackground}"
                           BorderThickness="1"
                           AlternationCount="1"
                           Padding="0"
-                          Width="70"
+                          Width="72"
                           DockPanel.Dock="Top"
                           HorizontalContentAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
@@ -109,10 +107,8 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Image Source="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"
-                                   Stretch="None"
-                                   RenderOptions.EdgeMode="Aliased"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <ContentControl Width="16" Height="16"
+                                            Content="{Binding {}, Converter={StaticResource FnToIconCvrtr}}"/>
                         </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -125,6 +121,7 @@
             <TextBlock x:Name="NotificationText"
                        DockPanel.Dock="Top"
                        Text="Applies to all."
+                       Foreground="{DynamicResource EnvironmentWindowText}"
                        TextWrapping="Wrap"
                        Margin="0,0,0,2"
                        VerticalAlignment="Top"

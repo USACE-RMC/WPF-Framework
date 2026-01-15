@@ -7,7 +7,8 @@
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Binding.SourceUpdated="OnBindingSourceUpdated">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -65,7 +66,7 @@
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="400"
                     Title="Title"
-                    Text="{Binding Series.Title, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Text="{Binding Series.Title, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                     <!--Visibility (DEVELOPER)-->
@@ -73,14 +74,14 @@
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Is Visible"
-                    IsSelected="{Binding ElementName=SeriesProperties, Path=Series.Visibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource VisibilityToBoolConverter}}"/>
+                    IsSelected="{Binding ElementName=SeriesProperties, Path=Series.Visibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource VisibilityToBoolConverter}}"/>
 
                     <!--Render In Legend (DEVELOPER)-->
                     <cntrls:BooleanPropertyControl
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Show In Legend"
-                    IsSelected="{Binding ElementName=SeriesProperties, Path=Series.RenderInLegend, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    IsSelected="{Binding ElementName=SeriesProperties, Path=Series.RenderInLegend, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
 
                     <!--Series Color (Standard - hidden for specialized series)-->
                     <cntrls:ColorPropertyControl
@@ -135,7 +136,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Lower Line Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.Color2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.Color2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowTwoColorControls}"/>
 
                     <!--ThreeColorLineSeries: Upper Line Color (above high limit)-->
@@ -143,7 +144,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Upper Line Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.ColorHi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.ColorHi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowThreeColorControls}"/>
 
                     <!--ThreeColorLineSeries: Middle Line Color (between limits)-->
@@ -175,7 +176,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Lower Line Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.ColorLo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.ColorLo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowThreeColorControls}"/>
 
                     <!--CandleStickSeries: Increasing Color-->
@@ -183,7 +184,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Increasing Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.IncreasingColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.IncreasingColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowCandleStickColors}"/>
 
                     <!--CandleStickSeries: Decreasing Color-->
@@ -191,7 +192,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Decreasing Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.DecreasingColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.DecreasingColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowCandleStickColors}"/>
 
                     <!--FillColor (BarSeries Only)-->
@@ -199,7 +200,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Fill"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.FillColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.FillColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.FillColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--LineStyle (LineSeries and BoxPlotSeries Only - hidden for StairStepSeries)-->
@@ -208,7 +209,7 @@
                         DockPanel.Dock="Top"
                         Title="Line Style"
                         DashArrayOptions="{Binding ElementName=SeriesProperties, Path=LineStyleOptions}"
-                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource LineStyleConverter}}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStandardLineStyle}"/>
 
@@ -218,7 +219,7 @@
                         DockPanel.Dock="Top"
                         Title="Horizontal Line Style"
                         DashArrayOptions="{Binding ElementName=SeriesProperties, Path=LineStyleOptions}"
-                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource LineStyleConverter}}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}"/>
 
@@ -228,7 +229,7 @@
                         DockPanel.Dock="Top"
                         Title="Vertical Line Style"
                         DashArrayOptions="{Binding ElementName=SeriesProperties, Path=LineStyleOptions}"
-                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.VerticalLineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.VerticalLineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource LineStyleConverter}}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}"/>
 
@@ -237,7 +238,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Line Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.Stroke, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.Stroke, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.Stroke, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--StrokeColor (BarSeries Only)-->
@@ -245,7 +246,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Line Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.StrokeColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.StrokeColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.StrokeColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--StrokeThickness (LineSeries And BoxPlotSeries BarSeries - hidden for StairStepSeries)-->
@@ -253,7 +254,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Line Thickness"
-                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.StrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.StrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStandardLineStyle}"/>
 
@@ -262,7 +263,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Horizontal Line Thickness"
-                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.StrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.StrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}"/>
 
@@ -271,7 +272,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Vertical Line Thickness"
-                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.VerticalStrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.VerticalStrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}"/>
 
@@ -282,7 +283,7 @@
                         Title="Bar Width"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.BarWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.BarWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.BarWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -293,7 +294,7 @@
                         Title="Column Width"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.ColumnWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.ColumnWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ColumnWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -344,7 +345,7 @@
                         Title="Marker Resolution"
                         CanHaveNegative="False"
                         ToolTip="High value equals lower resolution but faster display rendering."
-                        NumericOptions="{StaticResource LineWidthOptions}" SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.MarkerResolution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        NumericOptions="{StaticResource LineWidthOptions}" SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.MarkerResolution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.MarkerResolution, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -355,7 +356,7 @@
                         Title="Marker Size"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.MarkerSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.MarkerSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.MarkerSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -391,7 +392,7 @@
                         Title="Marker Line Thickness"
                         WidthOptions="{StaticResource LineWidthOptions}"
                         SelectedWidth="{Binding Series.MarkerStrokeThickness,
-                        ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.MarkerStrokeThickness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -405,7 +406,7 @@
                         <cntrls:ContentPropertyControl.InnerContent>
                             <ComboBox
                             ItemsSource="{Binding MarkerTypeOptions}"
-                            SelectedValue="{Binding Path=Series.MarkerType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            SelectedValue="{Binding Path=Series.MarkerType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                         </cntrls:ContentPropertyControl.InnerContent>
                     </cntrls:ContentPropertyControl>
 
@@ -433,7 +434,7 @@
                         Title="Box Width"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.BoxWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.BoxWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.BoxWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -442,7 +443,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Fill Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.Fill, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.Fill, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.Fill, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--ShowMedianAsDot (BoxPlotSeries Only)-->
@@ -450,7 +451,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Median As Dot"
-                        IsSelected="{Binding ElementName=SeriesProperties, Path=Series.ShowMedianAsDot, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        IsSelected="{Binding ElementName=SeriesProperties, Path=Series.ShowMedianAsDot, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ShowMedianAsDot, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--MedianPointSize (BoxPlotSeries Only)-->
@@ -459,7 +460,7 @@
                         DockPanel.Dock="Top"
                         Title="Median Point Size"
                         CanHaveNegative="False"
-                        NumericOptions="{StaticResource LineWidthOptions}" SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.MedianPointSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        NumericOptions="{StaticResource LineWidthOptions}" SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.MedianPointSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.MedianPointSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -469,7 +470,7 @@
                         DockPanel.Dock="Top"
                         Title="Median Thickness"
                         WidthOptions="{StaticResource LineWidthOptions}"
-                        SelectedWidth="{Binding Series.MedianThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedWidth="{Binding Series.MedianThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.MedianThickness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -480,7 +481,7 @@
                         Title="Outlier Size"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.OutlierSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedNumber="{Binding ElementName=SeriesProperties, Path=Series.OutlierSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.OutlierSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -494,7 +495,7 @@
                         <cntrls:ContentPropertyControl.InnerContent>
                             <ComboBox
                             ItemsSource="{Binding MarkerTypeOptions}"
-                            SelectedValue="{Binding Path=Series.OutlierType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            SelectedValue="{Binding Path=Series.OutlierType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                         </cntrls:ContentPropertyControl.InnerContent>
                     </cntrls:ContentPropertyControl>
 
@@ -503,7 +504,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Show Box"
-                        IsSelected="{Binding ElementName=SeriesProperties, Path=Series.ShowBox, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        IsSelected="{Binding ElementName=SeriesProperties, Path=Series.ShowBox, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ShowBox, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--WhiskerWidth (BoxPlotSeries Only)-->
@@ -512,7 +513,7 @@
                         DockPanel.Dock="Top"
                         Title="Whisker Length"
                         CanHaveNegative="False"
-                        NumericOptions="{StaticResource LineWidthOptions}" SelectedNumber="{Binding Series.WhiskerWidth, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        NumericOptions="{StaticResource LineWidthOptions}" SelectedNumber="{Binding Series.WhiskerWidth, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.WhiskerWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -537,7 +538,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Color"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
                     <!--ErrorBarStopWidth (ScatterErrorSeries Only)-->
@@ -545,7 +546,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Stop Width"
-                        Number="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarStopWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarStopWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarStopWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -555,7 +556,7 @@
                         DockPanel.Dock="Top"
                         Title="Thickness"
                         WidthOptions="{StaticResource LineWidthOptions}"
-                        SelectedWidth="{Binding Series.ErrorBarStrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        SelectedWidth="{Binding Series.ErrorBarStrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarStrokeThickness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -564,7 +565,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Minimum Error Size"
-                        Number="{Binding ElementName=SeriesProperties, Path=Series.MinimumErrorSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=SeriesProperties, Path=Series.MinimumErrorSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.MinimumErrorSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
@@ -591,7 +592,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Color Threshold"
-                        Number="{Binding ElementName=SeriesProperties, Path=Series.Limit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=SeriesProperties, Path=Series.Limit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowTwoColorControls}"/>
 
@@ -601,7 +602,7 @@
                         DockPanel.Dock="Top"
                         Title="Lower Line Style"
                         DashArrayOptions="{Binding ElementName=SeriesProperties, Path=LineStyleOptions}"
-                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyle2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyle2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource LineStyleConverter}}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowTwoColorControls}"/>
 
@@ -610,7 +611,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Low Threshold"
-                        Number="{Binding ElementName=SeriesProperties, Path=Series.LimitLo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=SeriesProperties, Path=Series.LimitLo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowThreeColorControls}"/>
 
@@ -619,7 +620,7 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="High Threshold"
-                        Number="{Binding ElementName=SeriesProperties, Path=Series.LimitHi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=SeriesProperties, Path=Series.LimitHi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowThreeColorControls}"/>
 
@@ -629,7 +630,7 @@
                         DockPanel.Dock="Top"
                         Title="Lower Line Style"
                         DashArrayOptions="{Binding ElementName=SeriesProperties, Path=LineStyleOptions}"
-                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyleLo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyleLo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource LineStyleConverter}}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowThreeColorControls}"/>
 
@@ -639,7 +640,7 @@
                         DockPanel.Dock="Top"
                         Title="Upper Line Style"
                         DashArrayOptions="{Binding ElementName=SeriesProperties, Path=LineStyleOptions}"
-                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyleHi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                        SelectedDashArray="{Binding ElementName=SeriesProperties, Path=Series.LineStyleHi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource LineStyleConverter}}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowThreeColorControls}"/>
 
@@ -649,7 +650,7 @@
                         DockPanel.Dock="Top"
                         Title="Candle Width"
                         CanHaveNegative="False"
-                        Number="{Binding ElementName=SeriesProperties, Path=Series.CandleWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Number="{Binding ElementName=SeriesProperties, Path=Series.CandleWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowCandleStickColors}"/>
 

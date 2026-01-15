@@ -95,40 +95,22 @@
                 DataGrid="{Binding ElementName=TimeSeriesDataGrid, Mode=OneTime}" 
                 ToolOrientation="Horizontal"/>
 
-            <ToggleButton 
-                x:Name="PresetToggleButton" 
-                Width="38" Height="24" 
+            <!--Separator-->
+            <Separator x:Name="MathFunctionSeparator" Style="{DynamicResource VerticalSeparatorStyle}" />
+
+            
+            <ToggleButton
+                x:Name="PresetToggleButton"
+                Width="24" Height="24"
                 Padding="0"
-                HorizontalContentAlignment="Stretch" 
-                VerticalContentAlignment="Center"
-                ToolTip="Calculator"
-                Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
+                Background="Transparent"
+                BorderThickness="0"
+                ToolTip="Math Functions"
+                Style="{DynamicResource StackPanelToggleButtonStyle}"
                 IsHitTestVisible="{Binding ElementName=PresetsPopup, Path=IsOpen, Converter={StaticResource ReverseBoolConverter}}">
-                <Grid 
-                    Margin="-1"
-                    Width="38"
-                    Height="24">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="14"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Image 
-                        Height="24"
-                        Source="pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png" 
-                        Stretch="None" 
-                        RenderOptions.EdgeMode="Aliased" 
-                        RenderOptions.BitmapScalingMode="HighQuality"/>
-
-                    <Path
-                        Grid.Column="1"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Margin="4 0"
-                        Fill="{DynamicResource EnvironmentWindowText}"
-                        Data="M 0,0 L 3,5 L 6,0 Z"/>
-                </Grid>
+                <ContentControl
+                    Content="{DynamicResource MathFunctionIcon}"
+                    Width="16" Height="16"/>
             </ToggleButton>
 
             <!--PLACEMENT HACK-->
@@ -152,7 +134,7 @@
                 Placement="Left"
                 Opened="MathPopup_Opened">
                 <Border
-                    BorderBrush="{DynamicResource EnvironmentWindowText}"
+                    BorderBrush="{DynamicResource MenuPopupDefaultBorder}"
                     Background="{DynamicResource EnvironmentWindowBackground}"
                     BorderThickness="1">
                     <local:MathEditorControl Margin="5"/>

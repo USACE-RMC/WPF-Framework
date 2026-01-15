@@ -98,8 +98,8 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Save the project as a new project.
         /// </summary>
-        /// <param name="newfullFileName">The full file name of the new project.</param>
-        void SaveAs(string newfullFileName);
+        /// <param name="newFullFileName">The full file name of the new project.</param>
+        void SaveAs(string newFullFileName);
 
         /// <summary>
         /// Zip the project file.

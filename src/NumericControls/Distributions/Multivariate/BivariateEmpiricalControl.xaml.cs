@@ -31,6 +31,7 @@
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Numerics.Distributions;
 using OxyPlot.Wpf;
@@ -83,38 +84,27 @@ namespace NumericControls
             //
             _dt.ColumnChanged += TableColumnChanged;
             _dt.TableNewRow += TableNewRowAdded;
-            // 
+             
             // Column buttons
-            // 
             // Add
             _addColumnButton.Click += AddColumns_Click;
-            var addImage = new Image() { Margin = new Thickness(1d), Stretch = Stretch.Uniform, Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.add_column) };
-            RenderOptions.SetEdgeMode(addImage, EdgeMode.Aliased);
-            RenderOptions.SetBitmapScalingMode(addImage, BitmapScalingMode.HighQuality);
-            _addColumnButton.Content = addImage;
+            _addColumnButton.Content = (Viewbox)TryFindResource("AddColumnIcon");
             // Insert
             _insertColumnButton.Click += InsertColumns_Click;
-            var insertImage = new Image() { Margin = new Thickness(1d), Stretch = Stretch.Uniform, Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.insert_column) };
-            RenderOptions.SetEdgeMode(insertImage, EdgeMode.Aliased);
-            RenderOptions.SetBitmapScalingMode(insertImage, BitmapScalingMode.HighQuality);
-            _insertColumnButton.Content = insertImage;
+            _insertColumnButton.Content = (Viewbox)TryFindResource("InsertColumnIcon");
             // Delete
             _deleteColumnButton.Click += DeleteColumns_Click;
-            var deleteImage = new Image() { Margin = new Thickness(1d), Stretch = Stretch.Uniform, Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.delete_column) };
-            RenderOptions.SetEdgeMode(deleteImage, EdgeMode.Aliased);
-            RenderOptions.SetBitmapScalingMode(deleteImage, BitmapScalingMode.HighQuality);
-            _deleteColumnButton.Content = deleteImage;
-            // 
+            _deleteColumnButton.Content = (Viewbox)TryFindResource("DeleteColumnIcon");
+            
             // Column Context Items
-            // 
             // Add
-            _addColumnCMI.Icon = new Image() { Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.add_column) };
+            _addColumnCMI.Icon = (Viewbox)TryFindResource("AddColumnIcon");
             _addColumnCMI.Click += AddColumns_Click;
             // Insert 
-            _insertColumnCMI.Icon = new Image() { Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.insert_column) };
+            _insertColumnCMI.Icon = (Viewbox)TryFindResource("InsertColumnIcon");
             _insertColumnCMI.Click += InsertColumns_Click;
             // Delete 
-            _deleteColumnCMI.Icon = new Image() { Source = GenericControls.GeneralMethods.Bitmap2BitmapSource(Properties.Resources.delete_column) };
+            _deleteColumnCMI.Icon = (Viewbox)TryFindResource("DeleteColumnIcon");
             _deleteColumnCMI.Click += DeleteColumns_Click;
         }
 
@@ -178,13 +168,14 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X2 header border.
+        /// Uses theme-aware resources to match the DataGrid column header style.
         /// </summary>
         /// <returns>A style for the X2 header border.</returns>
         private static Style DefaultX2HeaderBorderStyle()
         {
             var s = new Style(typeof(Border));
-            s.Setters.Add(new Setter(Border.BackgroundProperty, SystemColors.ControlBrush));
-            s.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromArgb(255, 104, 140, 175))));
+            s.Setters.Add(new Setter { Property = Border.BackgroundProperty, Value = new DynamicResourceExtension("DataGrid.Row.Background") });
+            s.Setters.Add(new Setter { Property = Border.BorderBrushProperty, Value = new DynamicResourceExtension("DataGrid.Header.Border") });
             s.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(1d, 1d, 1d, 0d)));
             s.Setters.Add(new Setter(UIElement.IsHitTestVisibleProperty, false));
             return s;
@@ -192,6 +183,7 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X2 header text block.
+        /// Uses theme-aware resources to match the DataGrid column header style.
         /// </summary>
         /// <returns>A style for the X2 header text block.</returns>
         private static Style DefaultX2HeaderTextBlockStyle()
@@ -202,7 +194,7 @@ namespace NumericControls
             s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
             s.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
             s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
-            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter { Property = TextBlock.ForegroundProperty, Value = new DynamicResourceExtension("DataGrid.Header.Foreground") });
             s.Setters.Add(new Setter(FrameworkElement.MarginProperty, new Thickness(2d)));
             s.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.Bold));
             // s.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.WrapWithOverflow))
@@ -212,13 +204,14 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X1 header border.
+        /// Uses theme-aware resources to match the DataGrid row header style.
         /// </summary>
         /// <returns>A style for the X1 header border.</returns>
         private static Style DefaultX1HeaderBorderStyle()
         {
             var s = new Style(typeof(Border));
-            s.Setters.Add(new Setter(Border.BackgroundProperty, SystemColors.ControlBrush));
-            s.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromArgb(255, 104, 140, 175))));
+            s.Setters.Add(new Setter { Property = Border.BackgroundProperty, Value = new DynamicResourceExtension("DataGrid.Row.Background") });
+            s.Setters.Add(new Setter { Property = Border.BorderBrushProperty, Value = new DynamicResourceExtension("DataGrid.Header.Border") });
             s.Setters.Add(new Setter(Border.BorderThicknessProperty, new Thickness(1d, 1d, 0d, 1d)));
             s.Setters.Add(new Setter(UIElement.IsHitTestVisibleProperty, false));
             return s;
@@ -226,6 +219,7 @@ namespace NumericControls
 
         /// <summary>
         /// Creates the default style for the X1 header text block with vertical text rotation.
+        /// Uses theme-aware resources to match the DataGrid row header style.
         /// </summary>
         /// <returns>A style for the X1 header text block.</returns>
         private static Style DefaultX1HeaderTextBlockStyle()
@@ -236,7 +230,7 @@ namespace NumericControls
             s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
             s.Setters.Add(new Setter(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis));
             s.Setters.Add(new Setter(TextBlock.BackgroundProperty, Brushes.Transparent));
-            s.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.Black));
+            s.Setters.Add(new Setter { Property = TextBlock.ForegroundProperty, Value = new DynamicResourceExtension("DataGrid.Header.Foreground") });
             s.Setters.Add(new Setter(FrameworkElement.MarginProperty, new Thickness(2d)));
             s.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.Bold));
             // s.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.WrapWithOverflow))
@@ -1023,10 +1017,14 @@ namespace NumericControls
 
             if (e.PropertyName == "Column0")
             {
+                e.Column.Header = "X";
                 ((DataGridTextColumn)e.Column).CellStyle = (Style)Resources["BoldCellStyle"];
             }
             else
             {
+                // Extract column number and create Y1, Y2, etc. header
+                string columnNumber = e.PropertyName.Replace("Column", "");
+                e.Column.Header = "Y" + columnNumber;
                 (e.Column as DataGridTextColumn).Binding.TargetNullValue = Double.NaN.ToString();
                 (e.Column as DataGridTextColumn).HeaderStyle = (Style)Resources["headerTemplate"];
             }
@@ -1040,13 +1038,53 @@ namespace NumericControls
             // Top Row
             var topRow = BivariateCDFDataGrid.GetRow(0);
             if (topRow == null) return;
-            topRow.FontWeight = FontWeights.Bold;
-            topRow.Foreground = (SolidColorBrush)Resources["HazardColor"];
             topRow.BorderThickness = new Thickness(0d, 0d, 0d, 2d);
-            topRow.BorderBrush = new SolidColorBrush(Colors.Black);
-            // Upper left cell
+            topRow.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
+
+            // Apply styles to cells in the top row
+            ApplyTopRowCellStyles();
+        }
+
+        /// <summary>
+        /// Handles the LoadingRow event of the data grid.
+        /// Applies styling to the top row (row 0) when it is loaded or reloaded.
+        /// </summary>
+        /// <param name="sender">The data grid that raised the event.</param>
+        /// <param name="e">Event arguments containing the row being loaded.</param>
+        private void BivariateCDFDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            if (e.Row.GetIndex() == 0)
+            {
+                // Style the top row with a bottom border separator
+                e.Row.BorderThickness = new Thickness(0d, 0d, 0d, 2d);
+                e.Row.SetResourceReference(Control.BorderBrushProperty, "EnvironmentWindowText");
+
+                // Apply cell styles after the row is fully loaded
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ApplyTopRowCellStyles();
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            }
+        }
+
+        /// <summary>
+        /// Applies styles to cells in the top row (row 0).
+        /// </summary>
+        private void ApplyTopRowCellStyles()
+        {
+            // Apply style to upper-left cell
             var upperLeftCell = BivariateCDFDataGrid.GetCell(0, 0);
-            upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
+            if (upperLeftCell != null)
+                upperLeftCell.Style = (Style)Resources["UpperLeftCellStyle"];
+
+            // Apply TopRowCellStyle to all other cells in row 0 (X2 values)
+            var topRowCellStyle = (Style)Resources["TopRowCellStyle"];
+            for (int col = 1; col < BivariateCDFDataGrid.Columns.Count; col++)
+            {
+                var cell = BivariateCDFDataGrid.GetCell(0, col);
+                if (cell != null)
+                    cell.Style = topRowCellStyle;
+            }
         }
 
         /// <summary>
@@ -1099,10 +1137,45 @@ namespace NumericControls
         private void BivariateCDFDataGrid_LayoutUpdated(object sender, EventArgs e)
         {
             if (BivariateCDFDataGrid.Columns.Count == 0) return;
-            X2HeaderBorder.Margin = new Thickness(BivariateCDFDataGrid.Columns[0].ActualWidth, X2HeaderBorder.Margin.Top, X2HeaderBorder.Margin.Right, X2HeaderBorder.Margin.Bottom);
+
+            // Calculate left margin for X2Header: row header width + Column0 width
+            double rowHeaderWidth = GetRowHeaderWidth();
+            double leftMargin = rowHeaderWidth + BivariateCDFDataGrid.Columns[0].ActualWidth;
+            X2HeaderBorder.Margin = new Thickness(leftMargin, X2HeaderBorder.Margin.Top, X2HeaderBorder.Margin.Right, X2HeaderBorder.Margin.Bottom);
+
             var topRow = BivariateCDFDataGrid.GetRow(0);
             if (topRow == null) return;
             X1HeaderBorder.Margin = new Thickness(X1HeaderBorder.Margin.Left, topRow.ActualHeight, X1HeaderBorder.Margin.Right, X1HeaderBorder.Margin.Bottom);
+        }
+
+        /// <summary>
+        /// Gets the actual width of the DataGrid row headers.
+        /// </summary>
+        /// <returns>The row header width, or 0 if not found.</returns>
+        private double GetRowHeaderWidth()
+        {
+            var rowHeader = FindVisualChild<DataGridRowHeader>(BivariateCDFDataGrid);
+            return rowHeader?.ActualWidth ?? 0;
+        }
+
+        /// <summary>
+        /// Finds the first visual child of the specified type in the visual tree.
+        /// </summary>
+        /// <typeparam name="T">The type of child to find.</typeparam>
+        /// <param name="parent">The parent element to search.</param>
+        /// <returns>The first child of the specified type, or null if not found.</returns>
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
         }
 
 
