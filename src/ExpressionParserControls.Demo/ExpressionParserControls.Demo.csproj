@@ -21,11 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExpressionParserControls\ExpressionParserControls.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="ExpressionParser">
-      <HintPath>..\..\..\expression-parser\ExpressionParser\bin\Debug\net9.0\ExpressionParser.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\ExpressionParser\ExpressionParser.csproj" />
   </ItemGroup>
 </Project>

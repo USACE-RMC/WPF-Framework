@@ -23,19 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
     <ProjectReference Include="..\ExpressionParserControls\ExpressionParserControls.csproj" />
+    <ProjectReference Include="..\ExpressionParser\ExpressionParser.csproj" />
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
     <ProjectReference Include="..\OxyPlotControls\OxyPlotControls.csproj" />
     <ProjectReference Include="..\Themes\Themes.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DatabaseManager">
-      <HintPath>..\..\..\database-management\DatabaseManager\bin\Debug\net9.0\DatabaseManager.dll</HintPath>
-    </Reference>
-    <Reference Include="ExpressionParser">
-      <HintPath>..\..\..\expression-parser\ExpressionParser\bin\Debug\net9.0\ExpressionParser.dll</HintPath>
-    </Reference>
     <Reference Include="Numerics">
       <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
     </Reference>

@@ -28,6 +28,8 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections.Generic;
+
 namespace ExpressionParser
 {
     // Order of operations uses the following precedence levels (source: https://en.wikipedia.org/wiki/Order_of_operations)
