@@ -403,6 +403,37 @@
     <Style TargetType="{x:Type local:CalendarWeekRulePropertyControl}" BasedOn="{StaticResource CalendarWeekRulePropertyControlStyle}"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- DATAGRID CELL STYLES (Backward Compatible)                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Left-aligned Cell Style -->
+    <Style x:Key="Left_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+    </Style>
+
+    <!-- Center-aligned Cell Style -->
+    <Style x:Key="Center_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Center-aligned Read-Only Cell Style -->
+    <Style x:Key="Center_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+        <Setter Property="TextBlock.Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+    </Style>
+
+    <!-- Right-aligned Cell Style -->
+    <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+    </Style>
+
+    <!-- Disabled Cell Style -->
+    <Style x:Key="Disabled_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+        <Setter Property="IsEnabled" Value="False"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- DATAGRID COLUMN AND ROW HEADER STYLES                                        -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
@@ -526,6 +557,90 @@
         <Setter Property="HorizontalContentAlignment" Value="Right"/>
     </Style>
 
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- BACKWARD COMPATIBLE COLUMN HEADER STYLES (Bold)                              -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Left-aligned Column Header Style (Bold) -->
+    <Style x:Key="Left_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Center"
+                               FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Center-aligned Column Header Style (Bold) -->
+    <Style x:Key="Center_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center"
+                               FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Right-aligned Column Header Style (Bold) -->
+    <Style x:Key="Right_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center"
+                               FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- MODAL COLUMN HEADER STYLES (Normal Weight)                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Left-aligned Modal Column Header Style (Normal Weight) -->
+    <Style x:Key="Left_ColumnHeaderStyle_Modal" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Center"
+                               FontWeight="Normal" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Center-aligned Modal Column Header Style (Normal Weight) -->
+    <Style x:Key="Center_ColumnHeaderStyle_Modal" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center"
+                               FontWeight="Normal" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Right-aligned Modal Column Header Style (Normal Weight) -->
+    <Style x:Key="Right_ColumnHeaderStyle_Modal" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource ColumnHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center"
+                               FontWeight="Normal" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- ROW HEADER STYLES                                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
     <!-- Theme-aware Row Header Style (flat, no gradient to match row items) -->
     <Style x:Key="RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}">
         <Setter Property="ContentTemplate">
@@ -558,16 +673,31 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{TemplateBinding Background}">
-                            <ContentPresenter Margin="{TemplateBinding Padding}" SnapsToDevicePixels="True"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Grid Name="HeaderGrid" SnapsToDevicePixels="True" Margin="1,0,0,0">
+                                <Grid.Background>
+                                    <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">
+                                        <LinearGradientBrush.GradientStops>
+                                            <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
+                                            <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
+                                        </LinearGradientBrush.GradientStops>
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                                <ContentPresenter Margin="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
                         </Border>
                         <Thumb x:Name="PART_TopHeaderGripper" VerticalAlignment="Top" Style="{StaticResource RowHeaderGripperStyle}"/>
                         <Thumb x:Name="PART_BottomHeaderGripper" VerticalAlignment="Bottom" Style="{StaticResource RowHeaderGripperStyle}"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="HeaderBorder" Value="{DynamicResource DataGrid.Row.MouseOver.Background}"/>
+                            <Setter Property="Background" TargetName="HeaderGrid" Value="{DynamicResource DataGrid.Header.MouseOver.Background}"/>
+                            <Setter TargetName="HeaderGrid" Property="Margin" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter Property="Background" TargetName="HeaderGrid" Value="{DynamicResource DataGrid.Header.MouseOver.Background}"/>
+                            <Setter TargetName="HeaderGrid" Property="Margin" Value="0"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -577,6 +707,18 @@
 
     <!-- Default style for DataGridRowHeader -->
     <Style TargetType="{x:Type DataGridRowHeader}" BasedOn="{StaticResource RowHeaderStyle}"/>
+
+    <!-- Right-aligned Row Header Style -->
+    <Style x:Key="Right_RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}" BasedOn="{StaticResource RowHeaderStyle}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Right" VerticalAlignment="Center"
+                               FontWeight="Bold" HorizontalAlignment="Stretch" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- COPY PASTE DATAGRID                                                          -->
