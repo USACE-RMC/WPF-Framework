@@ -35,10 +35,10 @@ using System.Text;
 using System.Threading.Tasks;
 using FrameworkInterfaces;
 
-namespace FrameworkUI.Demo.Project.Consequence_Elements
+namespace FrameworkUI.Demo
 {
     /// <summary>
-    /// Collection of consequence function elements for the demo project.
+    /// Collection of response function elements for the demo project.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -53,20 +53,20 @@ namespace FrameworkUI.Demo.Project.Consequence_Elements
     /// </list>
     /// </para>
     /// </remarks>
-    internal class ConsequenceElementCollection : ElementCollectionBase
+    internal class ResponseElementCollection : ElementCollectionBase
     {
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConsequenceElementCollection"/> class.
+        /// Initializes a new instance of the <see cref="ResponseElementCollection"/> class.
         /// </summary>
         /// <param name="parentProject">The parent project that contains this collection.</param>
-        public ConsequenceElementCollection(IProject parentProject) : base(parentProject)
+        public ResponseElementCollection(IProject parentProject) : base(parentProject)
         {
-            Add(new ConsequenceElement("Consequence Function_1", this));
-            Add(new ConsequenceElement("Consequence Function_2", this));
-            Add(new ConsequenceElement("Consequence Function_3", this));
-            Add(new ConsequenceElement("Consequence Function_4", this));
-            Add(new ConsequenceElement("Consequence Function_5", this));
+            Add(new ResponseElement("Response Function_1", this));
+            Add(new ResponseElement("Response Function_2", this));
+            Add(new ResponseElement("Response Function_3", this));
+            Add(new ResponseElement("Response Function_4", this));
+            Add(new ResponseElement("Response Function_5", this));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace FrameworkUI.Demo.Project.Consequence_Elements
         {
             get
             {
-                return "Consequence Functions";
+                return "Response Functions";
             }
         }
 
@@ -91,7 +91,7 @@ namespace FrameworkUI.Demo.Project.Consequence_Elements
         }
 
         /// <summary>
-        /// Adds a consequence element to the collection.
+        /// Adds a response element to the collection.
         /// </summary>
         /// <param name="item">The element to add to the collection.</param>
         public override void Add(IElement item)
@@ -99,7 +99,7 @@ namespace FrameworkUI.Demo.Project.Consequence_Elements
             item.Deleted += ElementDeleted;
             //item.AddMessage += RaiseAddMessage;
             //item.RemoveMessage += RaiseRemoveMessage;
-            ElementList.Add((ConsequenceElement)item);
+            ElementList.Add((ResponseElement)item);
             // Save to disk
             if (_opening == false)
             {
@@ -110,7 +110,7 @@ namespace FrameworkUI.Demo.Project.Consequence_Elements
         }
 
         /// <summary>
-        /// Inserts a consequence element at the specified index in the collection.
+        /// Inserts a response element at the specified index in the collection.
         /// </summary>
         /// <param name="index">The zero-based index at which the element should be inserted.</param>
         /// <param name="item">The element to insert.</param>
@@ -119,7 +119,7 @@ namespace FrameworkUI.Demo.Project.Consequence_Elements
             item.Deleted += ElementDeleted;
             //item.AddMessage += RaiseAddMessage;
             //item.RemoveMessage += RaiseRemoveMessage;
-            ElementList.Insert(index, (ConsequenceElement)item);
+            ElementList.Insert(index, (ResponseElement)item);
             // save to disk
             SetIsDirty(true);
             RaiseElementAddedEvent(item);

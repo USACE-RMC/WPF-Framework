@@ -32,7 +32,7 @@ using System.ComponentModel;
 using System.Drawing;
 
 
-namespace FrameworkInterfaces.Project
+namespace FrameworkInterfaces
 {
     /// <summary>
     /// Provides a buffered base class for project elements with basic property management and validation.

@@ -2768,10 +2768,10 @@ namespace DatabaseManager
             /// <exception cref="Exception">Thrown if the column name does not exist.</exception>
             protected override object GetStoredCell(string storedColumnName, int storedRowIndex)
             {
-                if (storedRowIndex < 0 || storedRowIndex >= _recordStartPositions.Length)
+                if (storedRowIndex < 0 || storedRowIndex >= _recordStartPositions.Count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
-                        $"Row index must be between 0 and {_recordStartPositions.Length - 1}.");
+                        $"Row index must be between 0 and {_recordStartPositions.Count - 1}.");
                 }
                 int columnIndex = Array.IndexOf(_storedColumnNames, storedColumnName);
                 if (columnIndex == -1)
@@ -2794,10 +2794,10 @@ namespace DatabaseManager
                     throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
                         $"Column index must be between 0 and {_storedColumnNames.Length - 1}.");
                 }
-                if (storedRowIndex < 0 || storedRowIndex >= _recordStartPositions.Length)
+                if (storedRowIndex < 0 || storedRowIndex >= _recordStartPositions.Count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
-                        $"Row index must be between 0 and {_recordStartPositions.Length - 1}.");
+                        $"Row index must be between 0 and {_recordStartPositions.Count - 1}.");
                 }
                 return ConvertCellValueToProperType(ReadRawCellSafe(storedColumnIndex, storedRowIndex), _storedColumnTypes[storedColumnIndex]);
             }
@@ -2821,10 +2821,10 @@ namespace DatabaseManager
                 }
                 for (int i = 0; i < storedRowIndices.Length; i++)
                 {
-                    if (storedRowIndices[i] < 0 || storedRowIndices[i] >= _recordStartPositions.Length)
+                    if (storedRowIndices[i] < 0 || storedRowIndices[i] >= _recordStartPositions.Count)
                     {
                         throw new ArgumentOutOfRangeException(nameof(storedRowIndices),
-                            $"Row index {storedRowIndices[i]} at position {i} is out of range. Must be between 0 and {_recordStartPositions.Length - 1}.");
+                            $"Row index {storedRowIndices[i]} at position {i} is out of range. Must be between 0 and {_recordStartPositions.Count - 1}.");
                     }
                 }
 

@@ -103,12 +103,12 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The undo manager for this element. Lazily initialized when first accessed.
         /// </summary>
-        private IUndoManager _undoManager;
+        protected IUndoManager _undoManager;
 
         /// <summary>
         /// Indicates whether undo recording is enabled for this element.
         /// </summary>
-        private bool _isUndoEnabled = true;
+        protected bool _isUndoEnabled = true;
 
         #endregion
 
@@ -187,7 +187,7 @@ namespace FrameworkInterfaces
         /// Gets a value indicating whether the element has unsaved changes.
         /// </summary>
         /// <value><c>true</c> if the element has unsaved changes; otherwise, <c>false</c>.</value>
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; protected set; }
 
         /// <summary>
         /// Gets the display name of the element.
@@ -195,13 +195,16 @@ namespace FrameworkInterfaces
         /// <value>
         /// The display name, which includes an asterisk (*) suffix when the element has unsaved changes.
         /// </value>
-        public string DisplayName { get; private set; }
+        /// 
+
+        ///<inheritdoc/>
+        public string DisplayName { get; protected set; }
 
         /// <summary>
         /// Gets the parent element collection that contains this element.
         /// </summary>
         /// <value>The parent collection, or <c>null</c> if this element is not in a collection.</value>
-        public IElementCollection ParentCollection { get; private set; }
+        public IElementCollection ParentCollection { get; protected set; }
 
         /// <summary>
         /// Gets the undo manager for this element.

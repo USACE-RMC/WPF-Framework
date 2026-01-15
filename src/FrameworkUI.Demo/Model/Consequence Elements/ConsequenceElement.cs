@@ -36,10 +36,10 @@ using System.Text;
 using System.Threading.Tasks;
 using FrameworkInterfaces;
 
-namespace FrameworkUI.Demo.Project.Response_Elements
+namespace FrameworkUI.Demo
 {
     /// <summary>
-    /// Represents a response element in the demo project.
+    /// Represents a consequence element in the demo project.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -54,48 +54,49 @@ namespace FrameworkUI.Demo.Project.Response_Elements
     /// </list>
     /// </para>
     /// </remarks>
-    internal class ResponseElement : ElementBase
+    internal class ConsequenceElement : ElementBase
     {
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseElement"/> class.
+        /// Initializes a new instance of the <see cref="ConsequenceElement"/> class.
         /// </summary>
-        /// <param name="name">The name of the response element.</param>
+        /// <param name="name">The name of the consequence element.</param>
         /// <param name="parentCollection">The parent collection that contains this element.</param>
-        public ResponseElement(string name, IElementCollection parentCollection) : base(name, parentCollection)
+        public ConsequenceElement(string name, IElementCollection parentCollection) : base(name, parentCollection)
         {
             Name = name;
             SetIsDirty(false);
         }
 
         /// <summary>
-        /// Gets or sets the name of the response element.
+        /// Gets or sets the name of the consequence element.
         /// </summary>
         public override string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the description of the response element.
+        /// Gets or sets the description of the consequence element.
         /// </summary>
-        public override string Description { get => "Response Element"; set => throw new NotImplementedException(); }
+        public override string Description { get => "Consequence Element"; set => throw new NotImplementedException(); }
 
         /// <summary>
-        /// Gets the creation date of the response element.
+        /// Gets the creation date of the consequence element.
         /// </summary>
         public override DateTime CreationDate => DateTime.Now;
 
         /// <summary>
-        /// Gets the last modified date of the response element.
+        /// Gets the last modified date of the consequence element.
         /// </summary>
         public override DateTime LastModified => DateTime.Now;
 
         /// <summary>
         /// Gets the name used when saving the element to disk.
         /// </summary>
-        public override string NameOnDisk => "Response Element";
+        public override string NameOnDisk => "Consequence Element";
 
         /// <summary>
         /// Gets the image icon representing the element.
         /// </summary>
-        public override Bitmap ElementImage => Properties.Resources.Delete;
+        public override Bitmap ElementImage => Properties.Resources.Add;
 
         /// <summary>
         /// Gets a value indicating whether this element can be copied from an external project.
@@ -108,7 +109,7 @@ namespace FrameworkUI.Demo.Project.Response_Elements
         public override bool IsValid { get => true; }
 
         /// <summary>
-        /// Creates a copy of the response element.
+        /// Creates a copy of the consequence element.
         /// </summary>
         /// <param name="newName">The name for the copied element. If null, a default name will be used.</param>
         /// <returns>A copy of the element, or null if copying is not implemented.</returns>
@@ -131,7 +132,7 @@ namespace FrameworkUI.Demo.Project.Response_Elements
         }
 
         /// <summary>
-        /// Deletes the response element.
+        /// Deletes the consequence element.
         /// </summary>
         public override void Delete()
         {
@@ -140,7 +141,7 @@ namespace FrameworkUI.Demo.Project.Response_Elements
 
 
         /// <summary>
-        /// Opens the response element for editing.
+        /// Opens the consequence element for editing.
         /// </summary>
         public override void Open()
         {
@@ -148,7 +149,7 @@ namespace FrameworkUI.Demo.Project.Response_Elements
         }
 
         /// <summary>
-        /// Saves the response element to disk.
+        /// Saves the consequence element to disk.
         /// </summary>
         public override void Save()
         {

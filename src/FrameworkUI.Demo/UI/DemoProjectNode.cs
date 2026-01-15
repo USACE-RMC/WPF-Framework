@@ -37,8 +37,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using FrameworkUI.Demo.Project.Hazard_Elements;
-using FrameworkUI.Demo.Project.Undo_Demo;
+
 
 namespace FrameworkUI.Demo
 {
@@ -58,13 +57,13 @@ namespace FrameworkUI.Demo
     /// </list>
     /// </para>
     /// </remarks>
-    public class ExampleProjectNode : FrameworkUIController
+    public class DemoProjectNode : FrameworkUIController
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExampleProjectNode"/> class.
+        /// Initializes a new instance of the <see cref="DemoProjectNode"/> class.
         /// </summary>
         /// <param name="project">The project to be managed by this controller.</param>
-        public ExampleProjectNode(IProject project) : base(project)
+        public DemoProjectNode(IProject project) : base(project)
         {
 
             for (int i = 0; i < ChildNodes.Count; i++)

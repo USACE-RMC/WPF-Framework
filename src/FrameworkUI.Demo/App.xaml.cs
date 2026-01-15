@@ -136,7 +136,7 @@ namespace FrameworkUI.Demo
             FrameworkUI.UserSettings.CreateAutoRecoverBackup = false;
 
             // Create the project model
-            Project.Project project = new Project.Project();//TotalRisk.Project.GetInstance()
+            DemoProject.Project project = new DemoProject.Project();//TotalRisk.Project.GetInstance()
             var projectNode = new ExampleProjectNode(project);//{ Style = (Style)FindResource("TreeViewItemStyle") }
 
             // Create and Show the Main Window

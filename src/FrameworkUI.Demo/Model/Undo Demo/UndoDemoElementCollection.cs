@@ -30,7 +30,7 @@
 
 using FrameworkInterfaces;
 
-namespace FrameworkUI.Demo.Project.Undo_Demo
+namespace FrameworkUI.Demo
 {
     /// <summary>
     /// A demo element collection that showcases the undo/redo functionality for collection operations. This collection demonstrates how to use RecordAddElement and RecordRemoveElement for undo support.
