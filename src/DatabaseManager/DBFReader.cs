@@ -2768,10 +2768,15 @@ namespace DatabaseManager
             /// <exception cref="Exception">Thrown if the column name does not exist.</exception>
             protected override object GetStoredCell(string storedColumnName, int storedRowIndex)
             {
+                if (storedRowIndex < 0 || storedRowIndex >= _recordStartPositions.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_recordStartPositions.Length - 1}.");
+                }
                 int columnIndex = Array.IndexOf(_storedColumnNames, storedColumnName);
                 if (columnIndex == -1)
                 {
-                    throw new Exception("Column Name " + storedColumnName + " does not exist."); 
+                    throw new Exception("Column Name " + storedColumnName + " does not exist.");
                 }
                 return ConvertCellValueToProperType(ReadRawCellSafe(columnIndex, storedRowIndex), _storedColumnTypes[columnIndex]);
             }
@@ -2784,6 +2789,16 @@ namespace DatabaseManager
             /// <returns>The cell value at the specified position.</returns>
             protected override object GetStoredCell(int storedColumnIndex, int storedRowIndex)
             {
+                if (storedColumnIndex < 0 || storedColumnIndex >= _storedColumnNames.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
+                        $"Column index must be between 0 and {_storedColumnNames.Length - 1}.");
+                }
+                if (storedRowIndex < 0 || storedRowIndex >= _recordStartPositions.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_recordStartPositions.Length - 1}.");
+                }
                 return ConvertCellValueToProperType(ReadRawCellSafe(storedColumnIndex, storedRowIndex), _storedColumnTypes[storedColumnIndex]);
             }
 
@@ -2795,10 +2810,28 @@ namespace DatabaseManager
             /// <returns>An array of cell values at the specified positions.</returns>
             protected override object[] GetStoredCells(int[] storedColumnIndices, int[] storedRowIndices)
             {
+                // Validate all indices before proceeding
+                for (int i = 0; i < storedColumnIndices.Length; i++)
+                {
+                    if (storedColumnIndices[i] < 0 || storedColumnIndices[i] >= _storedColumnNames.Length)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedColumnIndices),
+                            $"Column index {storedColumnIndices[i]} at position {i} is out of range. Must be between 0 and {_storedColumnNames.Length - 1}.");
+                    }
+                }
+                for (int i = 0; i < storedRowIndices.Length; i++)
+                {
+                    if (storedRowIndices[i] < 0 || storedRowIndices[i] >= _recordStartPositions.Length)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedRowIndices),
+                            $"Row index {storedRowIndices[i]} at position {i} is out of range. Must be between 0 and {_recordStartPositions.Length - 1}.");
+                    }
+                }
+
                 var cells = new object[(storedColumnIndices.Count())];
                 for (int i = 0; i < storedColumnIndices.Count(); i++)
                 {
-                    cells[i] = ConvertCellValueToProperType(ReadRawCellSafe(storedColumnIndices[i], storedRowIndices[i]), _storedColumnTypes[storedColumnIndices[i]]); 
+                    cells[i] = ConvertCellValueToProperType(ReadRawCellSafe(storedColumnIndices[i], storedRowIndices[i]), _storedColumnTypes[storedColumnIndices[i]]);
                 }
                 return cells;
             }

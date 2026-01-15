@@ -1364,6 +1364,11 @@ namespace DatabaseManager
             }
             protected override object[] GetStoredColumn(int storedColumnIndex)
             {
+                if (storedColumnIndex < 0 || storedColumnIndex >= _storedColumnNames.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
+                        $"Column index must be between 0 and {_storedColumnNames.Length - 1}.");
+                }
                 return GetStoredColumn(_storedColumnNames[storedColumnIndex]);
             }
             #endregion
@@ -1745,6 +1750,11 @@ namespace DatabaseManager
 
             protected override object GetStoredCell(string storedColumnName, int storedRowIndex)
             {
+                if (storedRowIndex < 0 || storedRowIndex >= _rowIdArray.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_rowIdArray.Length - 1}.");
+                }
                 using (var command = new OleDbCommand("SELECT " + storedColumnName + " FROM " + _tableName + " WHERE " + _autoIncrementColumn + " = " + _rowIdArray[storedRowIndex], _dbConnection))
                 {
                     return command.ExecuteScalar();
@@ -1752,6 +1762,16 @@ namespace DatabaseManager
             }
             protected override object GetStoredCell(int storedColumnIndex, int storedRowIndex)
             {
+                if (storedColumnIndex < 0 || storedColumnIndex >= _storedColumnNames.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedColumnIndex), storedColumnIndex,
+                        $"Column index must be between 0 and {_storedColumnNames.Length - 1}.");
+                }
+                if (storedRowIndex < 0 || storedRowIndex >= _rowIdArray.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(storedRowIndex), storedRowIndex,
+                        $"Row index must be between 0 and {_rowIdArray.Length - 1}.");
+                }
                 using (var command = new OleDbCommand("SELECT " + _storedColumnNames[storedColumnIndex] + " FROM " + _tableName + " WHERE " + _autoIncrementColumn + " = " + _rowIdArray[storedRowIndex], _dbConnection))
                 {
                     return command.ExecuteScalar();
@@ -1759,17 +1779,35 @@ namespace DatabaseManager
             }
             protected override object[] GetStoredCells(int[] storedColumnIndices, int[] storedRowIndices)
             {
+                // Validate all indices before proceeding
+                for (int i = 0; i < storedColumnIndices.Length; i++)
+                {
+                    if (storedColumnIndices[i] < 0 || storedColumnIndices[i] >= _storedColumnNames.Length)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedColumnIndices),
+                            $"Column index {storedColumnIndices[i]} at position {i} is out of range. Must be between 0 and {_storedColumnNames.Length - 1}.");
+                    }
+                }
+                for (int i = 0; i < storedRowIndices.Length; i++)
+                {
+                    if (storedRowIndices[i] < 0 || storedRowIndices[i] >= _rowIdArray.Length)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(storedRowIndices),
+                            $"Row index {storedRowIndices[i]} at position {i} is out of range. Must be between 0 and {_rowIdArray.Length - 1}.");
+                    }
+                }
+
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                     _parentDatabase.Open();
-                // 
+                //
                 var result = new object[(storedColumnIndices.Count())];
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
-                        // 
+                        //
                         for (int i = 0, loopTo = storedColumnIndices.Count() - 1; i <= loopTo; i++)
                         {
                             cmd.CommandText = "SELECT [" + _storedColumnNames[storedColumnIndices[i]] + "] FROM [" + _tableName + "] WHERE " + _autoIncrementColumn + " = " + _rowIdArray[storedRowIndices[i]];
@@ -1778,7 +1816,7 @@ namespace DatabaseManager
                     }
                     trans.Commit();
                 }
-                // 
+                //
                 if (wasOpen == false)
                     _parentDatabase.Close();
                 return result;
