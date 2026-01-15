@@ -28,7 +28,7 @@
     <Grid Margin="5" Background="Transparent">
         <TabControl Grid.Row="0" TabStripPlacement="Top" Background="Transparent" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Graphical Results" Style="{DynamicResource HorizontalTabItemStyle}">
-                <Grid>
+                <Grid Background ="{DynamicResource PlotWindowBackground}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -110,7 +110,6 @@
                            ToolBarOrientation="Vertical"  
                            VerticalAlignment="Stretch" 
                            Plot="{Binding ElementName=Plot, Mode=OneTime}"/>
-
                     </DockPanel>
                 </Grid>
             </TabItem>
