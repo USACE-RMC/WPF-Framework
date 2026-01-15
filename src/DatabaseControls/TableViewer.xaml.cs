@@ -1229,17 +1229,8 @@ namespace DatabaseControls
                     }
                     catch (FormatException)
                     {
-                        // Handle format exceptions (e.g., DateTime parsing issues) by displaying
-                        // the raw string value instead
-                        try
-                        {
-                            var rawValue = DataView.GetStoredCell(dataRowIndex, j);
-                            cell.Text = rawValue?.ToString() ?? "#FORMAT!";
-                        }
-                        catch
-                        {
-                            cell.Text = "#FORMAT!";
-                        }
+                        // Handle format exceptions (e.g., DateTime parsing issues)
+                        cell.Text = "#FORMAT!";
                     }
                     catch (Exception)
                     {
@@ -1305,16 +1296,8 @@ namespace DatabaseControls
             }
             catch (FormatException)
             {
-                // Handle format exceptions by trying to get the raw stored value
-                try
-                {
-                    var rawValue = DataView.GetStoredCell(dataRowIndex, columnIndex);
-                    return rawValue?.ToString() ?? "";
-                }
-                catch
-                {
-                    return "";
-                }
+                // Handle format exceptions (e.g., DateTime parsing issues)
+                return "";
             }
             catch
             {
