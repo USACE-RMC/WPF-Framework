@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="WpfCustomViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:DataTable_Viewer"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600">
+    <Grid Name="TableViewerGrid" Background="WhiteSmoke">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" Name="ToolBarsRow"></RowDefinition>
+            <RowDefinition Height="1*" Name="TableViewRow"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <ToolBarTray x:Name="TableToolbarTray" x:FieldModifier="public" Grid.Row="0" Margin="0">
+            <ToolBar Name="SelectionToolbar" ToolTip="Selection Tools" ToolTipService.ShowOnDisabled="True" Margin="0" Padding="0" VerticalAlignment="Stretch">
+                <Button Name="SelectByAttribute" ToolTip="Select By Attribute" ToolTipService.ShowOnDisabled="True" Click="SelectByAttribute_Click" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/SelectByAttribute.png" Name="Image2"></Image>
+                </Button>
+                <Button Name="ShowAll" ToolTip="Show All Records" ToolTipService.ShowOnDisabled="True" Click="ShowAll_Checked" IsEnabled="False" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/ClearSelectionIconDisabled_22x22.png"></Image>
+                </Button>
+                <Button Name="ShowSelected" ToolTip="Show Selected Records Only" ToolTipService.ShowOnDisabled="True" Click="ShowSelected_Checked" IsEnabled="False" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/ClearSelectionIconDisabled_22x22.png"></Image>
+                </Button>
+                <Button Name="DeSelectAll" ToolTip="Deselect All Records" ToolTipService.ShowOnDisabled="True" Click="DeSelectAll_Click" IsEnabled="False" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/ClearSelectionIconDisabled_22x22.png"></Image>
+                </Button>
+            </ToolBar>
+            <ToolBar x:Name="EditorToolbar" x:FieldModifier="public" ToolTip="Editor Toolbar" ToolTipService.ShowOnDisabled="True" Margin="0" Padding="0" VerticalAlignment="Stretch">
+                <Button Name="OpenFC" ToolTip="Open Field Calculator" ToolTipService.ShowOnDisabled="True" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/Calculator.png" Name="Image4"></Image>
+                </Button>
+                <Button Name="Undo" ToolTip="Undo" ToolTipService.ShowOnDisabled="True" IsEnabled="False" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/UndoDisabled.png" Name="Image1"></Image>
+                </Button>
+                <Button Name="Redo" ToolTip="Redo" ToolTipService.ShowOnDisabled="True" IsEnabled="False" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/RedoDisabled.png"></Image>
+                </Button>
+                <Button x:Name="SaveButton" ToolTip="Save All Edits" ToolTipService.ShowOnDisabled="True" IsEnabled="False" Margin="0" Padding="0" VerticalAlignment="Center" Height="24" Width="24">
+                    <Image Source="pack://application:,,,/DataTable_Viewer;component/Resources/SaveDisabled.ico" Name="Image3"></Image>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <Grid Name="TableControlGrid" Background="WhiteSmoke" Grid.Row="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" Name="ColumnHeadersArea"></RowDefinition>
+            <RowDefinition Height="1*" Name="RowsArea"></RowDefinition>
+            <RowDefinition Height="17" Name="HorizontalScrollBarArea"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25" Name="RowsColumnArea"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="17"/>
+        </Grid.ColumnDefinitions>
+
+        <ScrollBar Grid.Column="2" Grid.Row="1" Name="VerticalScrollbar" VerticalAlignment="Stretch" Minimum="0" Maximum="0" SmallChange="1" ValueChanged="VerticalScrollBar_ValueChanged" IsEnabledChanged="VerticalScrollbar_IsEnabledChanged"/>
+            
+        <Grid x:Name="RowsGrid" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseLeftButtonDown="RowsGrid_MouseLeftButtonDown" MouseLeftButtonUp="RowsGrid_MouseLeftButtonUp" MouseMove="RowsGrid_MouseMove" MouseRightButtonUp="RowsGrid_MouseRightButtonUp" MouseWheel="RowsGrid_MouseWheel"/>
+
+        <ScrollViewer Name="HorizontalScrollViewer" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+            <Grid Name="HorizontalViewerGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35" Name="ColumnHead"></RowDefinition>
+                    <RowDefinition Height="1*" Name="RowsAr"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Name="ColumnsGrid" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" MouseLeftButtonDown="ColumnsGrid_MouseLeftButtonDown" MouseMove="ColumnsGrid_MouseMove" MouseLeftButtonUp="ColumnsGrid_MouseLeftButtonUp"/>
+                <Canvas Name="GridLinesCanvas" Grid.Row="1" Grid.Column="0" Background="Whitesmoke" />
+                <Grid Name="GridPanel" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left"  MouseWheel="TestGridPanel_MouseWheel" VerticalAlignment="Top" Background="Transparent" Focusable="True"/>
+            </Grid>
+        </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

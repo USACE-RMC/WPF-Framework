@@ -13,8 +13,8 @@
         <!-- FrameworkUI-specific styles -->
         <ResourceDictionary Source="MainWindowStyle.xaml"/>
         <ResourceDictionary Source="MessageWindow.xaml"/>
-        <ResourceDictionary Source="DataGridToolbar.xaml"/>
-
+        <ResourceDictionary Source="ProjectExplorer.xaml"/>
+        
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

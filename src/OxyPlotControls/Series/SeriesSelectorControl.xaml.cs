@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,6 +41,40 @@ namespace OxyPlotControls
     /// </summary>
     public partial class SeriesSelectorControl : UserControl
     {
+        #region PlotChanged Event
+
+        /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        /// <summary>
+        /// Occurs when any series property in this control has been modified by the user.
+        /// This event bubbles up changes from the child <see cref="SeriesControl"/>.
+        /// </summary>
+        public event EventHandler? PlotChanged;
+
+        /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
+        /// </summary>
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Handles the PlotChanged event from the child <see cref="SeriesControl"/>.
+        /// </summary>
+        private void SeriesPropertiesControl_PlotChanged(object? sender, EventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        #endregion
+
         #region Dependency Properties
 
         /// <summary>
@@ -121,6 +156,27 @@ namespace OxyPlotControls
         public SeriesSelectorControl()
         {
             InitializeComponent();
+
+            Loaded += SeriesSelectorControl_Loaded;
+            Unloaded += SeriesSelectorControl_Unloaded;
+        }
+
+        /// <summary>
+        /// Handles the Loaded event. Subscribes to child control events and enables PlotChanged notifications.
+        /// </summary>
+        private void SeriesSelectorControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            SeriesPropertiesControl.PlotChanged += SeriesPropertiesControl_PlotChanged;
+            _suppressPlotChanged = false;
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event. Unsubscribes from child control events to prevent memory leaks.
+        /// </summary>
+        private void SeriesSelectorControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            SeriesPropertiesControl.PlotChanged -= SeriesPropertiesControl_PlotChanged;
+            _suppressPlotChanged = true;
         }
 
         /// <summary>
@@ -249,6 +305,7 @@ namespace OxyPlotControls
 
             SeriesPropertyControlComboBox.SelectedIndex = index + 1;
             Plot.InvalidatePlot(true);
+            OnPlotChanged();
         }
 
         /// <summary>
@@ -279,6 +336,7 @@ namespace OxyPlotControls
 
             SeriesPropertyControlComboBox.SelectedIndex = index + 1;
             Plot.InvalidatePlot(true);
+            OnPlotChanged();
         }
 
         /// <summary>
@@ -304,6 +362,7 @@ namespace OxyPlotControls
             Plot.Series.Remove(seriesToDelete);
             SeriesPropertyControlComboBox.SelectedIndex = index;
             Plot.InvalidatePlot(false);
+            OnPlotChanged();
 
             SeriesPropertiesControl.CloseExpanders();
         }

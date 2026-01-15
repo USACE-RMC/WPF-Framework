@@ -8,7 +8,8 @@
              mc:Ignorable="d"
              MinWidth="200"
              MinHeight="100"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Binding.SourceUpdated="OnBindingSourceUpdated">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -39,7 +40,7 @@
             Title="Border Thickness"
             Margin="6 0 0 0"/>
 
-        <!--Title Controls-->
+            <!--Title Controls-->
         <Expander x:Name="PlotTitleEXP"
             Grid.Row="0" Margin="0,0,0,8"
             Header="PLOT TITLE"
@@ -50,58 +51,64 @@
 
                 <!--Title Text-->
                 <cntrls:TextPropertyControl
+                    x:Name="TitleTextControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Title"
                     TextWrapping="NoWrap"
-                    Text="{Binding Plot.Title, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                    Text="{Binding Plot.Title, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Title Color-->
                 <cntrls:ColorPropertyControl
+                    x:Name="TitleColorControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Color"
-                    SelectedColor="{Binding Plot.TitleColor, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"/>
+                    SelectedColor="{Binding Plot.TitleColor, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"/>
 
                 <!--Title Font-->
                 <cntrls:FontSelectorControl
+                    x:Name="TitleFontControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Font"
-                    FontFamilyString="{Binding Path=Plot.TitleFont, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    FontFamilyString="{Binding Path=Plot.TitleFont, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Title Font Size-->
                 <cntrls:NumericPropertySelectorControl
+                    x:Name="TitleFontSizeControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Font Size"
                     CanHaveNegative="False"
                     NumericOptions="{StaticResource FontSizeOptions}"
-                    SelectedNumber="{Binding Plot.TitleFontSize, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}}"
+                    SelectedNumber="{Binding Plot.TitleFontSize, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Title Font Weight-->
                 <cntrls:FontWeightSelectorControl
+                    x:Name="TitleFontWeightControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Font Weight"
-                    SelectedFontWeight="{Binding Path=Plot.TitleFontWeight, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    SelectedFontWeight="{Binding Path=Plot.TitleFontWeight, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Title Padding-->
                 <cntrls:NumericPropertySelectorControl
+                    x:Name="TitlePaddingControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Padding"
                     NumericOptions="{StaticResource PaddingOptions}"
-                    SelectedNumber="{Binding Path=Plot.TitlePadding, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    SelectedNumber="{Binding Path=Plot.TitlePadding, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
             </DockPanel>
         </Expander>
@@ -114,50 +121,55 @@
             Style="{Binding ElementName=GeneralPlotProperties, Path=ExpanderStyle}">
             <DockPanel>
 
-                <!--Title Text-->
+                <!--Subtitle Text-->
                 <cntrls:TextPropertyControl
+                    x:Name="SubtitleTextControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     TextWrapping="Wrap"
                     Title="Subtitle"
-                    Text="{Binding Plot.Subtitle, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Text="{Binding Plot.Subtitle, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--SubTitle Color-->
                 <cntrls:ColorPropertyControl
+                    x:Name="SubtitleColorControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Color"
-                    SelectedColor="{Binding Plot.SubtitleColor, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"/>
+                    SelectedColor="{Binding Plot.SubtitleColor, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"/>
 
                 <!--SubTitle Font-->
                 <cntrls:FontSelectorControl
+                    x:Name="SubtitleFontControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Font"
-                    FontFamilyString="{Binding Path=Plot.SubtitleFont, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    FontFamilyString="{Binding Path=Plot.SubtitleFont, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--SubTitle Font Size-->
                 <cntrls:NumericPropertySelectorControl
+                    x:Name="SubtitleFontSizeControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Font Size"
                     CanHaveNegative="False"
                     NumericOptions="{StaticResource FontSizeOptions}"
-                    SelectedNumber="{Binding Plot.SubtitleFontSize, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}}"
+                    SelectedNumber="{Binding Plot.SubtitleFontSize, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--SubTitle Font Weight-->
                 <cntrls:FontWeightSelectorControl
+                    x:Name="SubtitleFontWeightControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Font Weight"
-                    SelectedFontWeight="{Binding Path=Plot.SubtitleFontWeight, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    SelectedFontWeight="{Binding Path=Plot.SubtitleFontWeight, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
             </DockPanel>
 
@@ -174,26 +186,28 @@
 
                 <!--Plot Area Color-->
                 <cntrls:ColorPropertyControl
+                    x:Name="PlotAreaColorControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Plot Area Color"
-                    SelectedColor="{Binding Plot.PlotAreaBackground, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, TargetNullValue=White, Converter={StaticResource BrushToSolidConverter}}"/>
+                    SelectedColor="{Binding Plot.PlotAreaBackground, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, TargetNullValue=White, Converter={StaticResource BrushToSolidConverter}, NotifyOnSourceUpdated=True}"/>
 
                 <!--Plot Area Border Color-->
                 <cntrls:ColorPropertyControl
+                    x:Name="PlotAreaBorderColorControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Border Color"
-                    SelectedColor="{Binding Plot.PlotAreaBorderColor, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"/>
+                    SelectedColor="{Binding Plot.PlotAreaBorderColor, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"/>
 
                 <!--Plot Area Border Thickness-->
                 <cntrls:LineWidthSelectorControl
-                    x:Name="PlotAreaBorderThickness"
+                    x:Name="PlotAreaBorderThicknessControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Border Thickness" WidthOptions="{StaticResource LineWidthOptions}"
-                    SelectedWidth="{Binding Plot.PlotAreaBorderThickness, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}}"/>
+                    SelectedWidth="{Binding Plot.PlotAreaBorderThickness, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}, NotifyOnSourceUpdated=True}"/>
             </DockPanel>
         </Expander>
 
@@ -207,31 +221,36 @@
             <DockPanel>
 
                 <!--Chart Area Padding-->
-                <cntrls:NumericPropertySelectorControl Margin="0 2" DockPanel.Dock="Top" Title="Padding" NumericOptions="{StaticResource PaddingOptions}" 
-                    SelectedNumber="{Binding Path=Plot.Padding, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}}"
+                <cntrls:NumericPropertySelectorControl
+                    x:Name="BackgroundPaddingControl"
+                    Margin="0 2" DockPanel.Dock="Top" Title="Padding" NumericOptions="{StaticResource PaddingOptions}"
+                    SelectedNumber="{Binding Path=Plot.Padding, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
                 <!--Plot Background Color-->
                 <cntrls:ColorPropertyControl
+                    x:Name="BackgroundColorControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     Title="Background Color"
-                    SelectedColor="{Binding Plot.Background, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource BrushToSolidConverter}}"/>
+                    SelectedColor="{Binding Plot.Background, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource BrushToSolidConverter}, NotifyOnSourceUpdated=True}"/>
 
                 <!--Plot Border Color-->
                 <cntrls:ColorPropertyControl
+                    x:Name="BorderColorControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
-                    Title="Border Color" SelectedColor="{Binding Plot.BorderBrush, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource BrushToSolidConverter}}"/>
+                    Title="Border Color" SelectedColor="{Binding Plot.BorderBrush, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource BrushToSolidConverter}, NotifyOnSourceUpdated=True}"/>
 
                 <!--Plot Border Thickness-->
                 <cntrls:LineWidthSelectorControl
+                    x:Name="BorderThicknessControl"
                     Margin="0 2"
                     DockPanel.Dock="Top"
                     MaxPropertyWidth="200"
                     Title="Border Thickness"
                     WidthOptions="{StaticResource LineWidthOptions}"
-                    SelectedWidth="{Binding Plot.BorderThickness, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}}"
+                    SelectedWidth="{Binding Plot.BorderThickness, ElementName=GeneralPlotProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}, NotifyOnSourceUpdated=True}"
                     PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
             </DockPanel>
         </Expander>

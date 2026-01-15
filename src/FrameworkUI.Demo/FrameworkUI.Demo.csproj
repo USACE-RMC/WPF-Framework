@@ -1,0 +1,46 @@
+﻿<!-- FrameworkUI.Demo - Demo application for FrameworkUI -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>FrameworkUI.Demo</RootNamespace>
+    <AssemblyName>FrameworkUI.Demo</AssemblyName>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FrameworkInterfaces\FrameworkInterfaces.csproj" />
+    <ProjectReference Include="..\FrameworkUI\FrameworkUI.csproj" />
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
+    <ProjectReference Include="..\Themes\Themes.csproj" />
+    <ProjectReference Include="..\SoftwareUpdate\SoftwareUpdate.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\*.png" />
+  </ItemGroup>
+
+</Project>

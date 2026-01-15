@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<HelpDocument title="Field Calculator Help" width="850" height="700" >
+  <Topic name="Field Calculator" keywords="MainForm" AssemblyName="DataTableViewControl" RootNamespace="DataTableViewControl" Images="FieldCalculator.png,FieldSelection.png,AvailableFields.png,Functions.png,CalculationsArea.png" >FieldCalculator.html</Topic>
+</HelpDocument>

@@ -33,11 +33,11 @@
     <!-- Add Row(s) - Row lines with green plus sign -->
     <Viewbox x:Key="AddRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Row lines -->
+            <!-- Row lines - centered at Y=3,7,11 -->
             <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- Plus sign -->
+                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- Plus sign - centered vertically -->
             <Path Data="M12,4 V12 M8,8 H16"
                   Stroke="#16A34A" StrokeThickness="2"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
@@ -47,11 +47,11 @@
     <!-- Insert Row(s) - Row lines with blue arrow pointing up -->
     <Viewbox x:Key="InsertRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Row lines -->
+            <!-- Row lines - centered at Y=3,7,11 -->
             <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- Insert arrow - centered at Y=8 -->
+                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- Insert arrow - centered vertically -->
             <Path Data="M12,12 V4 M9,7 L12,4 L15,7"
                   Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
@@ -61,11 +61,11 @@
     <!-- Delete Row(s) - Row lines with red X -->
     <Viewbox x:Key="DeleteRowIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
-            <!-- Row lines -->
+            <!-- Row lines - centered at Y=3,7,11 -->
             <Path Data="M0,3 H10 M0,7 H10 M0,11 H10"
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,1,0,0"/>
-            <!-- X mark - centered at Y=8 -->
+                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- X mark - centered vertically -->
             <Path Data="M9,5 L15,11 M15,5 L9,11"
                   Stroke="#DC2626" StrokeThickness="2"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
@@ -284,24 +284,31 @@
     <Viewbox x:Key="CalendarIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
         <Grid Width="16" Height="16">
             <!-- Calendar body -->
-            <Path Data="M1,3 H12 V14 H1 Z"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
-                  Fill="{DynamicResource TextBox.Static.Background}"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="12" Height="12"
+                       Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                       Fill="{DynamicResource TextBox.Static.Background}"
+                       Margin="0,2,0,0"
+                       VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Calendar top bar -->
-            <Rectangle Width="11" Height="2.5" Fill="{DynamicResource EnvironmentWindowText}"
-                       Margin="1,3,0,0"
+            <Rectangle Width="12" Height="3" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="0,2,0,0"
                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Calendar binding rings -->
-            <Path Data="M4,1 V4 M9,1 V4"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.2"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <!-- Calendar grid dots (representing dates) -->
-            <Path Data="M3,8 H4 M6,8 H7 M9,8 H10 M3,11 H4 M6,11 H7"
-                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1.5"
-                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="1" Height="3" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="3,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="1" Height="3" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="8,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <!-- Calendar grid dots (representing dates) - using filled rectangles -->
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="2,7,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="5,7,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="8,7,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="2,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Rectangle Width="2" Height="2" Fill="{DynamicResource EnvironmentWindowText}"
+                       Margin="5,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Clock circle -->
             <Ellipse Width="7" Height="7"
                      Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xsd="http://www.w3.org/2001/XMLSchema" xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id=".Net Assembiles" Bounds="599.034297281901,1510.22705558594,716.915376383464,284.087655000001" Group="Expanded" Label=".Net Assembiles" UseManualLocation="True" type="ContainerNode" />
+    <Node Id="ClosedXML, Version=0.94.2.0, Culture=neutral, PublicKeyToken=null" Bounds="1025.4691747921,1692.39449192544,163.443333333333,25.96" Company="Francois Botha, Aleksei Pankratev, Manuel de Leon, Amir Ghezelbash" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\ClosedXML.dll" IsDebugMode="false" Label="ClosedXML, Version=0.94.2" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="DataTableViewControl.dll" Bounds="842.505045720867,1550.22721443298,136.713333333333,25.96" Company="US Army Corps of Engineers" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\DataTableViewControl.dll" IsDebugMode="false" Label="DataTableViewControl" type="AssemblyNodeWrapper" />
+    <Node Id="DatabaseManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Bounds="1000.53172718789,1608.20965557717,214.186666666666,25" Company="US Army Corps of Engineers" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\DatabaseManager.dll" Group="Collapsed" IsDebugMode="false" Label="DatabaseManager, Version=1.0.0" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="ExcelNumberFormat, Version=1.0.3.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca" Bounds="897.5228849158,1748.35459192544,205.15,25.96" Company="ExcelNumberFormat developers" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\ExcelNumberFormat.dll" IsDebugMode="false" Label="ExcelNumberFormat, Version=1.0.3" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="ExpressionParserControls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Bounds="1039.01978597005,1550.66859517065,230.313333333333,25.96" Company="" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\ExpressionParserControls.dll" IsDebugMode="false" Label="ExpressionParserControls, Version=1.0.0" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="FastMember, Version=1.3.0.0, Culture=neutral, PublicKeyToken=null" Bounds="1132.67299152387,1748.35459192544,163.276666666667,25.96" Company="Marc Gravell" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\FastMember.dll" IsDebugMode="false" Label="FastMember, Version=1.3.0" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="GenericControls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Bounds="619.034297281901,1550.96289503692,182.386666666667,25.96" Company="IWR-RMC" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\GenericControls.dll" IsDebugMode="false" Label="GenericControls, Version=1.0.0" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9" Bounds="824.279369836883,1672.36885747604,138.75,25.96" Company="OxyPlot" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\OxyPlot.dll" IsDebugMode="false" Label="OxyPlot, Version=1.0.0" UseManualLocation="True" type="AssemblyNodeWrapper" />
+    <Node Id="OxyPlot.Wpf, Version=0.0.1.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0" Bounds="697.039426269531,1606.92299503692,163.37,25.96" Company="OxyPlot" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\OxyPlot.Wpf.dll" IsDebugMode="false" Label="OxyPlot.Wpf, Version=0.0.1" type="AssemblyNodeWrapper" />
+    <Node Id="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139" Bounds="1244.20800699988,1606.69237913379,212.423333333333,25.96" Company="https://system.data.sqlite.org/" Filename="C:\Programs\Git\Repos\geospatial\OpenGLMappingTester\bin\Debug\System.Data.SQLite.dll" IsDebugMode="false" Label="System.Data.SQLite, Version=1.0.113" UseManualLocation="True" type="AssemblyNodeWrapper" />
+  </Nodes>
+  <Links>
+    <Link Source=".Net Assembiles" Target="ClosedXML, Version=0.94.2.0, Culture=neutral, PublicKeyToken=null" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="DataTableViewControl.dll" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="DatabaseManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="ExcelNumberFormat, Version=1.0.3.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="ExpressionParserControls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="FastMember, Version=1.3.0.0, Culture=neutral, PublicKeyToken=null" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="GenericControls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source=".Net Assembiles" Target="OxyPlot.Wpf, Version=0.0.1.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0" Category="Contains" Label="" type="ContainerLink" />
+    <Link Source="ClosedXML, Version=0.94.2.0, Culture=neutral, PublicKeyToken=null" Target="ExcelNumberFormat, Version=1.0.3.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca" Bounds="1032.91482194881,1718.35449699219,49.4356709098377,25.8320120886594" Label="" LabelBounds="1061.64863161451,1731.42859095564,0.0999999999999091,15.96" />
+    <Link Source="ClosedXML, Version=0.94.2.0, Culture=neutral, PublicKeyToken=null" Target="FastMember, Version=1.3.0.0, Culture=neutral, PublicKeyToken=null" Bounds="1132.03751108923,1718.35449699219,49.4500235199955,25.8328435111414" Label="" LabelBounds="1152.6458393817,1731.4290528132,0.0999999999999091,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="DatabaseManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Bounds="955.276976307417,1576.18715332031,100.936644469535,29.4979225002107" Label="" LabelBounds="1006.25631626588,1570.9727559106,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="ExpressionParserControls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Bounds="979.218391520182,1563.33116167842,50.8014092597518,0.0921607161242264" Label="" LabelBounds="1004.57272441809,1543.41724203648,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="GenericControls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Bounds="810.420903442384,1563.45780850345,32.084154744465,0.117648505631905" Label="" LabelBounds="826.42031451037,1567.51663275636,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9" Bounds="896.73851981288,1576.18715332031,12.2945792681385,87.2697089260109" Label="" LabelBounds="906.886002565933,1612.12101316187,0,15.96" />
+    <Link Source="DataTableViewControl.dll" Target="OxyPlot.Wpf, Version=0.0.1.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0" Bounds="817.246907177016,1576.18715332031,63.3631562438105,27.1870611098386" Label="" LabelBounds="853.677291128293,1589.91945243915,0,15.96" />
+    <Link Source="DatabaseManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Target="ClosedXML, Version=0.94.2.0, Culture=neutral, PublicKeyToken=null" Bounds="1107.30353555327,1633.20965557717,0.257409714278992,50.1849598027359" Label="" LabelBounds="1111.43224041075,1650.33239378418,0.0999999999999091,15.96" />
+    <Link Source="DatabaseManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Target="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139" Category="Contains" Bounds="1047.7549501265,1622.64003417969,1.78787572622241E-05,36.9600219726572" Label="" LabelBounds="1042.71475613466,1608.14310279338,0.0999999999999091,15.96" />
+    <Link Source="OxyPlot.Wpf, Version=0.0.1.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0" Target="OxyPlot, Version=1.0.0.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9" Bounds="801.518682144775,1632.88295410156,61.5205585920011,35.0323719666346" Label="" LabelBounds="831.189287794589,1652.13711191263,0,15.96" />
+  </Links>
+  <Categories>
+    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
+  </Categories>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="Company" DataType="System.String" />
+    <Property Id="Filename" DataType="System.String" />
+    <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="IsDebugMode" DataType="System.String" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="LabelBounds" DataType="System.Windows.Rect" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="type" DataType="System.String" />
+    <Property Id="xsd" DataType="System.String" />
+    <Property Id="xsi" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot.Legends;
@@ -45,17 +46,52 @@ namespace OxyPlotControls
     /// </summary>
     public partial class LegendControl : UserControl
     {
+        #region Fields
+
         /// <summary>
         /// The XML tag name used for serializing legend properties.
         /// </summary>
         public static readonly string LegendPropertiesTag = "Legend";
 
         /// <summary>
+        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// </summary>
+        private bool _suppressPlotChanged = true;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when any plot property has been modified through user interaction.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when bindings update the source (Plot) properties.
+        /// Subscribe to this event to track unsaved changes and update dirty state.
+        /// The event is suppressed during control initialization and when Plot property changes.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
+        #region Dependency Properties
+
+        /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty PlotProperty = DependencyProperty.Register(
             nameof(Plot), typeof(Wpf.Plot), typeof(LegendControl),
-            new PropertyMetadata(null, OnPlotChanged));
+            new PropertyMetadata(null, OnPlotPropertyChanged));
+
+        /// <summary>
+        /// Identifies the <see cref="ExpanderStyle"/> dependency property.
+        /// </summary>
+        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
+            nameof(ExpanderStyle), typeof(Style), typeof(LegendControl));
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets or sets the OxyPlot Plot control that this control edits.
@@ -64,6 +100,15 @@ namespace OxyPlotControls
         {
             get { return (Wpf.Plot)GetValue(PlotProperty); }
             set { SetValue(PlotProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the style applied to expander controls within this control.
+        /// </summary>
+        public Style ExpanderStyle
+        {
+            get { return (Style)GetValue(ExpanderStyleProperty); }
+            set { SetValue(ExpanderStyleProperty, value); }
         }
 
         /// <summary>
@@ -91,20 +136,9 @@ namespace OxyPlotControls
         /// </summary>
         public static List<LegendSymbolPlacement> SymbolPlacementOptions { get; } = new List<LegendSymbolPlacement>((LegendSymbolPlacement[])Enum.GetValues(typeof(LegendSymbolPlacement)));
 
-        /// <summary>
-        /// Identifies the <see cref="ExpanderStyle"/> dependency property.
-        /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
-            nameof(ExpanderStyle), typeof(Style), typeof(LegendControl));
+        #endregion
 
-        /// <summary>
-        /// Gets or sets the style applied to expander controls within this control.
-        /// </summary>
-        public Style ExpanderStyle
-        {
-            get { return (Style)GetValue(ExpanderStyleProperty); }
-            set { SetValue(ExpanderStyleProperty, value); }
-        }
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LegendControl"/> class.
@@ -112,27 +146,69 @@ namespace OxyPlotControls
         public LegendControl()
         {
             InitializeComponent();
+
+            // Enable PlotChanged events after control is fully loaded
+            Loaded += (s, e) => _suppressPlotChanged = false;
         }
 
+        #endregion
+
+        #region Protected Methods
+
         /// <summary>
-        /// Called when the Plot property changes.
-        /// Forces a layout update to ensure bindings are properly synchronized.
+        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
         /// </summary>
-        private static void OnPlotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        protected virtual void OnPlotChanged()
+        {
+            if (!_suppressPlotChanged)
+            {
+                PlotChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Called when the Plot dependency property changes.
+        /// Suppresses PlotChanged events during the update and forces a layout refresh.
+        /// </summary>
+        /// <param name="d">The dependency object (LegendControl instance).</param>
+        /// <param name="e">The event arguments containing old and new values.</param>
+        private static void OnPlotPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is LegendControl control && e.NewValue != null)
             {
+                // Suppress events while bindings update to new Plot
+                control._suppressPlotChanged = true;
+
                 // Force layout update to sync bindings
                 control.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
                 {
                     control.UpdateLayout();
+                    // Re-enable events after bindings have settled
+                    control._suppressPlotChanged = false;
                 }));
             }
         }
 
         /// <summary>
+        /// Handles the Binding.SourceUpdated attached event.
+        /// Called when any binding with NotifyOnSourceUpdated=True updates its source.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        /// <summary>
         /// Handles legend property ComboBox selection changes and invalidates the plot to refresh the display.
         /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void LegendPropertyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Invalidate the plot to refresh the legend display
@@ -142,6 +218,8 @@ namespace OxyPlotControls
                 Plot.InvalidatePlot(true);
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Serializes legend properties to an XML element for persistence.

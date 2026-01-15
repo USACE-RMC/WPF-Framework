@@ -35,6 +35,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace NumericControls
@@ -378,30 +379,41 @@ namespace NumericControls
     }
 
     /// <summary>
-    /// Converts a <see cref="MathFunctionType"/> enumeration value to its icon image for use in UI bindings.
+    /// Converts a <see cref="MathFunctionType"/> enumeration value to its icon brush for use in UI bindings.
     /// </summary>
     public class MathFunctionTypeToIconConverter : IValueConverter
     {
         /// <summary>
-        /// Gets the icon image for a mathematical function type.
+        /// Gets the icon resource key for a mathematical function type.
         /// </summary>
         /// <param name="function">The mathematical function type.</param>
-        /// <returns>A <see cref="BitmapImage"/> representing the function's icon.</returns>
-        public static BitmapImage GetIcon(MathFunctionType function)
+        /// <returns>The resource key for the function's icon.</returns>
+        public static string GetIconResourceKey(MathFunctionType function)
         {
             switch (function)
             {
-                case MathFunctionType.Add: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorPlus_16x.png"));
-                case MathFunctionType.Subtract: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMinus_16x.png"));
-                case MathFunctionType.Multiply: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorMultiply_16x.png"));
-                case MathFunctionType.Divide: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorDivide_16x.png"));
-                case MathFunctionType.Exponentiate: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorExp_16x.png"));
-                case MathFunctionType.Logarithm: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorLog_16x.png"));
-                case MathFunctionType.Inverse: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorInvert_16x.png"));
-                case MathFunctionType.Replace: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorReplace_16x.png"));
-                case MathFunctionType.Interpolate: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/CalculatorInterpolate_16x.png"));
-                default: return new BitmapImage(new Uri("pack://application:,,,/NumericControls;component/Resources/Calculator_16x.png"));
+                case MathFunctionType.Add: return "PlusIcon";
+                case MathFunctionType.Subtract: return "MinusIcon";
+                case MathFunctionType.Multiply: return "MultiplyIcon";
+                case MathFunctionType.Divide: return "DivideIcon";
+                case MathFunctionType.Exponentiate: return "ExpIcon";
+                case MathFunctionType.Logarithm: return "LogIcon";
+                case MathFunctionType.Inverse: return "InvertIcon";
+                case MathFunctionType.Replace: return "ReplaceIcon";
+                case MathFunctionType.Interpolate: return "InterpolateIcon";
+                default: return "MathFunctionIcon";
             }
+        }
+
+        /// <summary>
+        /// Gets the icon element for a mathematical function type from application resources.
+        /// </summary>
+        /// <param name="function">The mathematical function type.</param>
+        /// <returns>A <see cref="FrameworkElement"/> representing the function's icon.</returns>
+        public static FrameworkElement GetIcon(MathFunctionType function)
+        {
+            string resourceKey = GetIconResourceKey(function);
+            return Application.Current.TryFindResource(resourceKey) as FrameworkElement;
         }
 
         /// <inheritdoc/>

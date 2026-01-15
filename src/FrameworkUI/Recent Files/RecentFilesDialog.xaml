@@ -56,11 +56,11 @@
         <!--Buttons-->
         <Grid Grid.Row="1" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Name="OpenButton" Click="OpenButton_Click" Content="Open" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Width="83" Height="24" Cursor="Hand" Margin="6,0,0,6" IsEnabled="False"/>
-            <Button Name="ClearListButton"  Click="ClearListButton_Click" Content="Clear List" Width="83" Height="24" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Margin="6,0,6,6" Cursor="Hand"/>
+            <Button Name="OpenButton" Click="OpenButton_Click" Content="Open" Grid.Column="0" Width="75" Height="24" Cursor="Hand" Margin="6,0,0,6" IsEnabled="False"/>
+            <Button Name="ClearListButton" Click="ClearListButton_Click" Content="Clear List" Grid.Column="1" Width="75" Height="24" Cursor="Hand" Margin="6,0,6,6"/>
         </Grid>
     </Grid>
 </Window>

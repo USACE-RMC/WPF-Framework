@@ -9,7 +9,8 @@
              MinWidth="200"
              MinHeight="100"
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Binding.SourceUpdated="OnBindingSourceUpdated">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -26,6 +27,8 @@
                     <cntrls:ThicknessToDoubleConverter x:Key="ConvertThicknessToDouble"/>
                     <local:OxyDefaultFontSizeConverter x:Key="DefaultFontSizeConverter"/>
                     <cntrls:DoubleToGridLengthConverter x:Key="ActualToLengthConverter" />
+                    <local:OxyHorizontalAlignmentConverter x:Key="OxyHorizontalAlignmentConverter"/>
+                    <local:OxyVerticalAlignmentConverter x:Key="OxyVerticalAlignmentConverter"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -61,7 +64,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="400"
                             Title="Text"
-                            Text="{Binding Annotation.Text, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Text="{Binding Annotation.Text, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Text, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -71,7 +74,7 @@
                             Margin="0 2"
                             DockPanel.Dock="Top"
                             Title="Color"
-                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.TextColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.TextColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
 
@@ -81,7 +84,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Font"
-                            FontFamilyString="{Binding Path=Annotation.FontFamily, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource FontFamilyToFontConverter}}"
+                            FontFamilyString="{Binding Path=Annotation.FontFamily, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource FontFamilyToFontConverter}, NotifyOnSourceUpdated=True}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.FontFamily, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -94,7 +97,7 @@
                             Title="Font Size"
                             CanHaveNegative="False"
                             NumericOptions="{StaticResource FontSizeOptions}"
-                            SelectedNumber="{Binding Annotation.FontSize, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}}"
+                            SelectedNumber="{Binding Annotation.FontSize, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DefaultFontSizeConverter}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.FontSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -105,7 +108,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Font Weight"
-                            SelectedFontWeight="{Binding Path=Annotation.FontWeight, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            SelectedFontWeight="{Binding Path=Annotation.FontWeight, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.FontWeight, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -116,7 +119,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Text Margin"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.TextMargin, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.TextMargin, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextMargin, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -129,7 +132,7 @@
                             Title="Padding"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             NumericOptions="{StaticResource PaddingOptions}"
-                            SelectedNumber="{Binding Path=Annotation.Padding, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}}"
+                            SelectedNumber="{Binding Path=Annotation.Padding, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource ConvertThicknessToDouble}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Padding, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
 
@@ -145,7 +148,7 @@
                     <cntrls:ContentPropertyControl.InnerContent>
                         <ComboBox
                                     ItemsSource="{Binding AnnotationTextOrientationOptions}"
-                                    SelectedValue="{Binding Path=Annotation.TextOrientation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                    SelectedValue="{Binding Path=Annotation.TextOrientation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                     </cntrls:ContentPropertyControl.InnerContent>
                 </cntrls:ContentPropertyControl>
 
@@ -158,7 +161,7 @@
                             Title="Angle"
                             CanHaveNegative="True"
                             NumericOptions="{StaticResource AngleOptions}"
-                            SelectedNumber="{Binding ElementName=AnnotationProperties, Path=Annotation.TextRotation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            SelectedNumber="{Binding ElementName=AnnotationProperties, Path=Annotation.TextRotation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextRotation, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -175,7 +178,7 @@
                             IsEnabled="{Binding Annotation.IsEnabled}">
                     <cntrls:ContentPropertyControl.InnerContent>
                         <ComboBox ItemsSource="{Binding TextLinePositionOptions}" ItemStringFormat="P0"
-                                  SelectedValue="{Binding Path=Annotation.TextLinePosition, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                  SelectedValue="{Binding Path=Annotation.TextLinePosition, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                     </cntrls:ContentPropertyControl.InnerContent>
                 </cntrls:ContentPropertyControl>
 
@@ -185,7 +188,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Horizontal Alignment"
-                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextHorizontalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextHorizontalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyHorizontalAlignmentConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextHorizontalAlignment, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -196,7 +199,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Vertical Alignment"
-                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextVerticalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Alignment="{Binding ElementName=AnnotationProperties, Path=Annotation.TextVerticalAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyVerticalAlignmentConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.TextVerticalAlignment, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
@@ -222,7 +225,7 @@
                             Margin="0 2"
                             DockPanel.Dock="Top"
                             Title="Color"
-                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Color, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Color, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Color, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
 
@@ -231,7 +234,7 @@
                             Margin="0 2"
                             DockPanel.Dock="Top"
                             Title="Background"
-                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Background, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Background, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Background, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
 
@@ -239,7 +242,7 @@
                 <cntrls:ColorPropertyControl
                             Margin="0 2" DockPanel.Dock="Top"
                             Title="Fill"
-                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Fill, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Fill, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Fill, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
 
@@ -248,7 +251,7 @@
                             Margin="0 2"
                             DockPanel.Dock="Top"
                             Title="Stroke Color"
-                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Stroke, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}}"
+                            SelectedColor="{Binding ElementName=AnnotationProperties, Path=Annotation.Stroke, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource OxyAutoColorConverter}, NotifyOnSourceUpdated=True}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Stroke, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
 
@@ -258,7 +261,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Stroke Thickness"
-                            WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Annotation.StrokeThickness, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Annotation.StrokeThickness, ElementName=AnnotationProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.StrokeThickness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -271,7 +274,7 @@
                                 MaxPropertyWidth="200"
                                 Title="Line Style"
                                 DashArrayOptions="{Binding ElementName=AnnotationProperties, Path=LineStyleOptions}"
-                                SelectedDashArray="{Binding ElementName=AnnotationProperties, Path=Annotation.LineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}}"
+                                SelectedDashArray="{Binding ElementName=AnnotationProperties, Path=Annotation.LineStyle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource LineStyleConverter}, NotifyOnSourceUpdated=True}"
                                 PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                                 Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.LineStyle, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                                 IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -285,7 +288,7 @@
                             Visibility="{Binding Annotation.Shape, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding Annotation.IsEnabled}">
                             <cntrls:ContentPropertyControl.InnerContent>
-                                <ComboBox ItemsSource="{Binding MarkerTypeOptions}" SelectedValue="{Binding Path=Annotation.Shape, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                <ComboBox ItemsSource="{Binding MarkerTypeOptions}" SelectedValue="{Binding Path=Annotation.Shape, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"/>
                             </cntrls:ContentPropertyControl.InnerContent>
                 </cntrls:ContentPropertyControl>
 
@@ -297,7 +300,7 @@
                             Title="Marker Size"
                             CanHaveNegative="False"
                             NumericOptions="{StaticResource LineWidthOptions}"
-                            SelectedNumber="{Binding ElementName=AnnotationProperties, Path=Annotation.Size, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            SelectedNumber="{Binding ElementName=AnnotationProperties, Path=Annotation.Size, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Size, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -315,7 +318,7 @@
                     <cntrls:ContentPropertyControl.InnerContent>
                         <ComboBox
                                     ItemsSource="{Binding LineAnnotationTypeOptions}"
-                                    SelectedValue="{Binding Path=Annotation.Type, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                    SelectedValue="{Binding Path=Annotation.Type, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                                     SelectionChanged="LineTypeControl_SelectionChanged"/>
                     </cntrls:ContentPropertyControl.InnerContent>
                 </cntrls:ContentPropertyControl>
@@ -327,7 +330,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="X"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.X, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.X, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.X, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -339,7 +342,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Y"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Y, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Y, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Y, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -351,7 +354,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Line Intercept"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Intercept, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Intercept, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Intercept, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -363,7 +366,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Line Slope"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Slope, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Slope, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Slope, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -374,7 +377,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Start Point"
-                            DataPoint="{Binding ElementName=AnnotationProperties, Path=Annotation.StartPoint, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DataPointConverter}}"
+                            DataPoint="{Binding ElementName=AnnotationProperties, Path=Annotation.StartPoint, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DataPointConverter}, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.StartPoint, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -385,7 +388,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="End Point"
-                            DataPoint="{Binding ElementName=AnnotationProperties, Path=Annotation.EndPoint, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DataPointConverter}}"
+                            DataPoint="{Binding ElementName=AnnotationProperties, Path=Annotation.EndPoint, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource DataPointConverter}, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.EndPoint, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -396,7 +399,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Head Length"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.HeadLength, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.HeadLength, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.HeadLength, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -407,7 +410,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Head Width"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.HeadWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.HeadWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.HeadWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>
@@ -418,7 +421,7 @@
                             DockPanel.Dock="Top"
                             MaxPropertyWidth="200"
                             Title="Barb Length"
-                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Veeness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            Number="{Binding ElementName=AnnotationProperties, Path=Annotation.Veeness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                             PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                             Visibility="{Binding ElementName=AnnotationProperties, Path=Annotation.Veeness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"
                             IsEnabled="{Binding ElementName=AnnotationProperties, Path=Annotation.IsEnabled}"/>

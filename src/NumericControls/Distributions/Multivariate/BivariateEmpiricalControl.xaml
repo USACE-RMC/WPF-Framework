@@ -11,10 +11,10 @@
              d:DesignHeight="450" d:DesignWidth="800" Loaded="BivariateEmpericalCDFControl_Loaded">
     <UserControl.Resources>
         <!-- Cell style for bold row/column headers -->
-        <Style x:Key="BoldCellStyle" TargetType="{x:Type DataGridCell}">
+        <Style x:Key="BoldCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0,0,2,0"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource EnvironmentWindowText}"/>
             <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
@@ -25,9 +25,9 @@
         </Style>
 
         <!-- Cell style for upper-left corner cell -->
-        <Style x:Key="UpperLeftCellStyle" TargetType="{x:Type DataGridCell}">
+        <Style x:Key="UpperLeftCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
             <Setter Property="BorderThickness" Value="0,0,2,0"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource EnvironmentWindowText}"/>
             <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
             <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
             <Style.Triggers>
@@ -37,12 +37,43 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Cell style for top row (X2 values) -->
+        <Style x:Key="TopRowCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Editable column header style with gradient background -->
         <Style x:Key="headerTemplate" TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
-                        <Border BorderBrush="{DynamicResource DataGrid.Header.Border}" BorderThickness="1" Background="{DynamicResource EnvironmentWindowBackground}">
-                            <TextBox Text="{TemplateBinding Content}" Background="{DynamicResource EnvironmentWindowBackground}" Foreground="{DynamicResource EnvironmentWindowText}" BorderThickness="0"/>
+                        <Border BorderBrush="{DynamicResource DataGrid.Header.Border}" BorderThickness="0,0,1,1">
+                            <Grid SnapsToDevicePixels="True">
+                                <Grid.Background>
+                                    <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">
+                                        <LinearGradientBrush.GradientStops>
+                                            <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
+                                            <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
+                                        </LinearGradientBrush.GradientStops>
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                                <TextBox Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                         Background="Transparent"
+                                         Foreground="{DynamicResource DataGrid.Header.Foreground}"
+                                         BorderThickness="0"
+                                         FontWeight="Bold"
+                                         TextAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Stretch"
+                                         Padding="6,3,6,3"/>
+                            </Grid>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -94,12 +125,12 @@
                             Foreground="{DynamicResource EnvironmentWindowText}"/>
                     </Border>
 
-                    <cntrls:CopyPasteDataGrid 
-                        Name="BivariateCDFDataGrid" 
+                    <cntrls:CopyPasteDataGrid
+                        Name="BivariateCDFDataGrid"
                         Grid.Row="2"
                         Grid.Column="1"
                         SelectionMode="Extended"
-                        SelectionUnit="Cell" 
+                        SelectionUnit="Cell"
                         HeadersVisibility="All"
                         AutoGeneratingColumn="BivariateCDFDataGrid_AutoGeneratingColumn"
                         SelectedCellsChanged="BivariateCDFDataGrid_SelectedCellsChanged"
@@ -111,7 +142,8 @@
                         PreviewAddRows="BivariateCDFDataGrid_PreviewAddRows"
                         PreviewPasteData="BivariateCDFDataGrid_PreviewPasteData"
                         SizeChanged="BivariateCDFDataGrid_SizeChanged"
-                        LayoutUpdated="BivariateCDFDataGrid_LayoutUpdated">
+                        LayoutUpdated="BivariateCDFDataGrid_LayoutUpdated"
+                        LoadingRow="BivariateCDFDataGrid_LoadingRow">
                         <cntrls:CopyPasteDataGrid.RowHeaderStyle>
                             <Style TargetType="{x:Type DataGridRowHeader}" BasedOn="{StaticResource {x:Type DataGridRowHeader}}">
                                 <Setter Property="Template">
@@ -132,7 +164,7 @@
 
             <!-- Plot tab -->
             <TabItem Header="Plot" Style="{DynamicResource HorizontalTabItemStyle}">
-                <Grid>
+                <Grid Background="{DynamicResource PlotWindowBackground}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>

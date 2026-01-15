@@ -27,11 +27,10 @@
                       Background="Transparent"
                       BorderBrush="Transparent"
                       BorderThickness="0">
-            <Image Width="16"
-                   Height="16"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Source="pack://application:,,,/NumericControls;Component/Resources/EditButtonIcon.png"/>
+            <Rectangle Width="16" Height="16"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Fill="{DynamicResource EditIconBrush}"/>
         </ToggleButton>
 
         <!-- Display text for selected distribution -->
@@ -59,8 +58,8 @@
                PopupAnimation="Slide"
                AllowsTransparency="True"
                StaysOpen="False">
-            <Border Background="#F6F6F6"
-                    BorderBrush="Gray"
+            <Border Background="{DynamicResource EnvironmentWindowBackground}"
+                    BorderBrush="{DynamicResource Button.Static.Border}"
                     BorderThickness="1"
                     MouseEnter="Border_MouseEnter"
                     MouseLeave="Border_MouseLeave"
@@ -68,7 +67,7 @@
                 <local:DistributionSelectorControl x:Name="SelectorControl"
                                                    Margin="5"
                                                    Width="300"
-                                                   BackgroundColor="#F6F6F6"
+                                                   BackgroundColor="{DynamicResource EnvironmentWindowBackground}"
                                                    ShowAxisTitle="False"
                                                    ShowTickLines="False"
                                                    SelectedDistribution="{Binding ElementName=DistributionWithSelector, Path=SelectedDistribution, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

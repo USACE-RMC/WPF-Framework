@@ -122,7 +122,7 @@ namespace NumericControls.Distributions.Univariate
             {
                 if (_selectedDistribution == null && value == null) { return; }
 
-                if (_selectedDistribution==null || _selectedDistribution.Equals(value) == false)
+                if (_selectedDistribution == null || _selectedDistribution.Equals(value) == false)
                 {
                     _selectedDistribution = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedDistribution)));

@@ -139,11 +139,11 @@ namespace FrameworkUI
                 Themes.ThemeService.Instance.SetTheme(themesTheme);
             }
 
-            // Create a new resource dictionary for ProjectUI-specific resources
+            // Create a new resource dictionary for Framework-specific resources
             var themeDictionary = new ResourceDictionary();
-            string blueString = "/ProjectUI;component/Themes/VS2013/BlueTheme.xaml";
-            string darkString = "/ProjectUI;component/Themes/VS2013/DarkTheme.xaml";
-            string lightString = "/ProjectUI;component/Themes/VS2013/LightTheme.xaml";
+            string blueString = "/FrameworkUI;component/Themes/VS2013/BlueTheme.xaml";
+            string darkString = "/FrameworkUI;component/Themes/VS2013/DarkTheme.xaml";
+            string lightString = "/FrameworkUI;component/Themes/VS2013/LightTheme.xaml";
 
             // Remove old ProjectUI theme dictionaries from the current application
             RemoveProjectUIThemeDictionaries(blueString, darkString, lightString);

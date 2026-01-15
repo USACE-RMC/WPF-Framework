@@ -27,6 +27,7 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using OxyPlot.Wpf;
@@ -39,6 +40,19 @@ namespace OxyPlotControls
     /// </summary>
     public partial class SeriesControl : UserControl
     {
+        #region Events
+
+        /// <summary>
+        /// Occurs when a series property value changes through user interaction with any child control.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised when any child series control (LineSeriesControl, BarSeriesControl, etc.)
+        /// raises its PlotChanged event. It bubbles up the event to allow parent controls to refresh the plot.
+        /// </remarks>
+        public event EventHandler? PlotChanged;
+
+        #endregion
+
         #region Dependency Properties
 
         /// <summary>
@@ -99,6 +113,27 @@ namespace OxyPlotControls
         }
 
         /// <summary>
+        /// Raises the <see cref="PlotChanged"/> event.
+        /// </summary>
+        /// <remarks>
+        /// This method is called when any child series control raises its PlotChanged event.
+        /// </remarks>
+        protected virtual void OnPlotChanged()
+        {
+            PlotChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Handles the PlotChanged event from child series controls.
+        /// </summary>
+        /// <param name="sender">The child control that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnChildPlotChanged(object? sender, EventArgs e)
+        {
+            OnPlotChanged();
+        }
+
+        /// <summary>
         /// Handles changes to the Series property by displaying the appropriate property control.
         /// </summary>
         private static void InitializeControl(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -145,7 +180,10 @@ namespace OxyPlotControls
             if (barSeries != null)
             {
                 if (thisControl._barControl == null)
+                {
                     thisControl._barControl = new BarSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
+                    thisControl._barControl.PlotChanged += thisControl.OnChildPlotChanged;
+                }
                 thisControl._barControl.Series = barSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._barControl);
                 return;
@@ -156,7 +194,10 @@ namespace OxyPlotControls
             if (lineSeries != null)
             {
                 if (thisControl._lineControl == null)
+                {
                     thisControl._lineControl = new LineSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
+                    thisControl._lineControl.PlotChanged += thisControl.OnChildPlotChanged;
+                }
                 thisControl._lineControl.Series = lineSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._lineControl);
                 return;
@@ -167,7 +208,10 @@ namespace OxyPlotControls
             if (scatterSeries != null)
             {
                 if (thisControl._scatterControl == null)
+                {
                     thisControl._scatterControl = new ScatterSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
+                    thisControl._scatterControl.PlotChanged += thisControl.OnChildPlotChanged;
+                }
                 thisControl._scatterControl.Series = scatterSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._scatterControl);
                 return;
@@ -178,7 +222,10 @@ namespace OxyPlotControls
             if (boxPlotSeries != null)
             {
                 if (thisControl._boxPlotControl == null)
+                {
                     thisControl._boxPlotControl = new BoxPlotSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
+                    thisControl._boxPlotControl.PlotChanged += thisControl.OnChildPlotChanged;
+                }
                 thisControl._boxPlotControl.Series = boxPlotSeries;
                 thisControl.SeriesGrid.Children.Add(thisControl._boxPlotControl);
                 return;
@@ -186,7 +233,10 @@ namespace OxyPlotControls
 
             // Generic fallback
             if (thisControl._genericControl == null)
+            {
                 thisControl._genericControl = new GenericSeriesControl { ExpanderStyle = thisControl.ExpanderStyle };
+                thisControl._genericControl.PlotChanged += thisControl.OnChildPlotChanged;
+            }
             thisControl._genericControl.Series = wpfSeries;
             thisControl.SeriesGrid.Children.Add(thisControl._genericControl);
         }
