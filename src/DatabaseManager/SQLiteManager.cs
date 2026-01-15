@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 
@@ -115,7 +116,7 @@ namespace DatabaseManager
         #region Database Connection
 
         /// <summary>
-        /// Default connection builder. Designed to optimize insertion time. 
+        /// Default connection builder. Designed to optimize insertion time.
         /// </summary>
         public static SQLiteConnectionStringBuilder DefaultConnectionBuilder
         {
@@ -133,6 +134,9 @@ namespace DatabaseManager
                 connectionBuilder.JournalMode = SQLiteJournalModeEnum.Memory;
                 connectionBuilder.FailIfMissing = false;
                 connectionBuilder.ReadOnly = false;
+                // Use InvariantCulture for DateTime parsing to handle various date formats
+                connectionBuilder.DateTimeFormat = SQLiteDateFormats.InvariantCulture;
+                connectionBuilder.DateTimeKind = DateTimeKind.Local;
                 return connectionBuilder;
             }
         }
@@ -2596,8 +2600,74 @@ namespace DatabaseManager
             {
                 using (var command = new SQLiteCommand("SELECT [" + storedColumnName + "] FROM [" + _tableName + "] WHERE rowid=" + _rowIdArray[storedRowIndex], _dbConnection))
                 {
-                    return command.ExecuteScalar();
+                    try
+                    {
+                        return command.ExecuteScalar();
+                    }
+                    catch (FormatException)
+                    {
+                        // If DateTime parsing fails, try to get the raw string value and parse it with flexible formats
+                        using (var rawCommand = new SQLiteCommand("SELECT CAST([" + storedColumnName + "] AS TEXT) FROM [" + _tableName + "] WHERE rowid=" + _rowIdArray[storedRowIndex], _dbConnection))
+                        {
+                            var rawValue = rawCommand.ExecuteScalar();
+                            if (rawValue is string dateString)
+                            {
+                                return ParseDateTimeFlexible(dateString);
+                            }
+                            return rawValue;
+                        }
+                    }
                 }
+            }
+
+            /// <summary>
+            /// Parses a date/time string using multiple common formats.
+            /// </summary>
+            /// <param name="dateString">The date/time string to parse.</param>
+            /// <returns>A DateTime if parsing succeeds, otherwise the original string.</returns>
+            private static object ParseDateTimeFlexible(string dateString)
+            {
+                if (string.IsNullOrWhiteSpace(dateString))
+                {
+                    return dateString;
+                }
+
+                // Try parsing with various common formats
+                string[] formats = new[]
+                {
+                    "M/d/yyyy h:mm:ss tt",      // US format with 12-hour time: 11/5/2017 4:16:02 PM
+                    "M/d/yyyy H:mm:ss",         // US format with 24-hour time
+                    "M/d/yyyy",                 // US date only
+                    "d/M/yyyy h:mm:ss tt",      // UK format with 12-hour time
+                    "d/M/yyyy H:mm:ss",         // UK format with 24-hour time
+                    "d/M/yyyy",                 // UK date only
+                    "yyyy-MM-dd HH:mm:ss",      // ISO format
+                    "yyyy-MM-dd",               // ISO date only
+                    "yyyy-MM-ddTHH:mm:ss",      // ISO with T separator
+                    "yyyy-MM-ddTHH:mm:ss.fff",  // ISO with milliseconds
+                    "MM/dd/yyyy HH:mm:ss",      // US with leading zeros
+                    "dd/MM/yyyy HH:mm:ss",      // UK with leading zeros
+                };
+
+                if (DateTime.TryParseExact(dateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime result))
+                {
+                    return result;
+                }
+
+                // Fallback: try general parsing with US culture (most common in databases)
+                if (DateTime.TryParse(dateString, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.AllowWhiteSpaces, out result))
+                {
+                    return result;
+                }
+
+                // Final fallback: try with current culture
+                if (DateTime.TryParse(dateString, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out result))
+                {
+                    return result;
+                }
+
+                // If all parsing fails, return the original string
+                return dateString;
             }
 
             /// <summary>
@@ -2610,26 +2680,43 @@ namespace DatabaseManager
                 {
                     _parentDatabase.Open();
                 }
-                // 
+                //
                 var result = new object[(storedColumnIndices.Count())];
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
-                        // 
+                        //
                         for (int i = 0; i < storedColumnIndices.Count(); i++)
                         {
                             cmd.CommandText = "SELECT [" + _storedColumnNames[storedColumnIndices[i]] + "] FROM [" + _tableName + "] WHERE rowid=" + _rowIdArray[storedRowIndices[i]];
-                            result[i] = cmd.ExecuteScalar();
+                            try
+                            {
+                                result[i] = cmd.ExecuteScalar();
+                            }
+                            catch (FormatException)
+                            {
+                                // If DateTime parsing fails, try to get the raw string value and parse it with flexible formats
+                                cmd.CommandText = "SELECT CAST([" + _storedColumnNames[storedColumnIndices[i]] + "] AS TEXT) FROM [" + _tableName + "] WHERE rowid=" + _rowIdArray[storedRowIndices[i]];
+                                var rawValue = cmd.ExecuteScalar();
+                                if (rawValue is string dateString)
+                                {
+                                    result[i] = ParseDateTimeFlexible(dateString);
+                                }
+                                else
+                                {
+                                    result[i] = rawValue;
+                                }
+                            }
                         }
                     }
                     trans.Commit();
                 }
-                // 
+                //
                 if (wasOpen == false)
-                { 
-                    _parentDatabase.Close();              
+                {
+                    _parentDatabase.Close();
                 }
                 return result;
             }
