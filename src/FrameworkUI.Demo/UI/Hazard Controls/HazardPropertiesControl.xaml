@@ -110,6 +110,7 @@
                                     <cntrls:CopyPasteDataGrid x:Name="ParametersTable" Margin="0 2"
                                               DockPanel.Dock="Top"
                                               AutoGenerateColumns="False" 
+                                              HeadersVisibility="Column"
                                               SelectionMode="Extended" 
                                               SelectionUnit="Cell" 
                                               CanUserDeleteRows="False" 
@@ -121,7 +122,6 @@
                                               CanUserAddInsertDeleteRows="False" 
                                               PasteAddsRows="False"
                                               PreviewMouseLeftButtonDown="ParameterDataGrid_PreviewMouseLeftButtonDown"
-                                              Style="{DynamicResource ValidationDataGridStyle}" 
                                               ColumnHeaderStyle="{DynamicResource Center_ColumnHeaderStyle}">
                                         <cntrls:CopyPasteDataGrid.Columns>
                                             <DataGridTextColumn x:Name="NameColumn" IsReadOnly="True" Header="Parameter" Width="*" Binding="{Binding Path=DisplayName}" />
@@ -226,7 +226,6 @@
                                                        CanUserResizeColumns="True" CanUserSortColumns="False" CanUserReorderColumns="False" PasteAddsRows="True" 
                                                        AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" RowsAdded="DataGrid_RowsAdded" RowsDeleted="DataGrid_RowsDeleted"   
                                                        PreviewMouseLeftButtonDown="DataGrid_PreviewMouseLeftButtonDown" 
-                                                       Style="{DynamicResource ValidationDataGridStyle}" 
                                                        ColumnHeaderStyle="{DynamicResource Center_ColumnHeaderStyle}">
                                     </cntrls:ValidationDataGrid>
                                 </DockPanel>

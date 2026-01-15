@@ -780,7 +780,7 @@
     </Style>
 
     <Style x:Key="CopyPasteDataGridStyle" TargetType="{x:Type local:CopyPasteDataGrid}">
-        <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
+        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
         <Setter Property="RowBackground" Value="{DynamicResource DataGrid.Row.Background}"/>
@@ -860,7 +860,7 @@
     </Style>
 
     <Style x:Key="ValidationDataGridStyle" TargetType="{x:Type local:ValidationDataGrid}">
-        <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
+        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
         <Setter Property="RowBackground" Value="{DynamicResource DataGrid.Row.Background}"/>
