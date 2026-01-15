@@ -62,11 +62,6 @@ namespace FrameworkUI.Demo
         /// <param name="parentProject">The parent project that contains this collection.</param>
         public ConsequenceElementCollection(IProject parentProject) : base(parentProject)
         {
-            Add(new ConsequenceElement("Consequence Function_1", this));
-            Add(new ConsequenceElement("Consequence Function_2", this));
-            Add(new ConsequenceElement("Consequence Function_3", this));
-            Add(new ConsequenceElement("Consequence Function_4", this));
-            Add(new ConsequenceElement("Consequence Function_5", this));
         }
 
         /// <summary>

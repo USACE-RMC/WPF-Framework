@@ -57,11 +57,6 @@ namespace FrameworkUI.Demo
         /// <param name="parentProject">The parent project that contains this collection.</param>
         public HazardElementCollection(IProject parentProject) : base(parentProject)
         {
-            Add(new HazardElement("Hazard Functions_1", this));
-            Add(new HazardElement("Hazard Functions_2", this));
-            Add(new HazardElement("Hazard Functions_3", this));
-            Add(new HazardElement("Hazard Functions_4", this));
-            Add(new HazardElement("Hazard Functions_5", this));
         }
 
         /// <summary>

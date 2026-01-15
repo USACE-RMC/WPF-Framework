@@ -62,11 +62,6 @@ namespace FrameworkUI.Demo
         /// <param name="parentProject">The parent project that contains this collection.</param>
         public ResponseElementCollection(IProject parentProject) : base(parentProject)
         {
-            Add(new ResponseElement("Response Function_1", this));
-            Add(new ResponseElement("Response Function_2", this));
-            Add(new ResponseElement("Response Function_3", this));
-            Add(new ResponseElement("Response Function_4", this));
-            Add(new ResponseElement("Response Function_5", this));
         }
 
         /// <summary>
