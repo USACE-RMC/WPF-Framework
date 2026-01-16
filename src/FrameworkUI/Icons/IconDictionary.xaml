@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!--File Menu-->
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- FILE MENU ICONS (PNG Legacy)                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <ImageSource x:Key="NewProject">/FrameworkUI;component/Resources/NewProject.png</ImageSource>
     <ImageSource x:Key="OpenProject">/FrameworkUI;component/Resources/OpenProject.png</ImageSource>
     <ImageSource x:Key="Save">/FrameworkUI;component/Resources/Save.png</ImageSource>
@@ -10,30 +13,98 @@
     <ImageSource x:Key="Exit">/FrameworkUI;component/Resources/ShutDown.png</ImageSource>
     <ImageSource x:Key="Browse">/FrameworkUI;component/Resources/Browse.png</ImageSource>
 
-    <!--View Menu-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- VIEW MENU ICONS (PNG Legacy)                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <ImageSource x:Key="ProjectExplorer">/FrameworkUI;component/Resources/ProjectExplorer.png</ImageSource>
     <ImageSource x:Key="MessageWindow">/FrameworkUI;component/Resources/MessageWindow.png</ImageSource>
     <ImageSource x:Key="PropertiesWindow">/FrameworkUI;component/Resources/PropertiesWindow.png</ImageSource>
     <ImageSource x:Key="AllWindows">/FrameworkUI;component/Resources/AllWindows.png</ImageSource>
 
-    <!--Project Menu-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- PROJECT MENU ICONS (PNG Legacy)                                              -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <ImageSource x:Key="Properties">/FrameworkUI;component/Resources/Properties.png</ImageSource>
 
-    <!--Tools Menu-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- TOOLS MENU ICONS (PNG Legacy)                                                -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <ImageSource x:Key="CompactProject">/FrameworkUI;component/Resources/CompressProject.png</ImageSource>
     <ImageSource x:Key="ZipFile">/FrameworkUI;component/Resources/ZipFile.png</ImageSource>
     <ImageSource x:Key="RestoreBackup">/FrameworkUI;component/Resources/RestoreBackup.png</ImageSource>
     <ImageSource x:Key="Options">/FrameworkUI;component/Resources/Options.png</ImageSource>
 
-    <!--Window Menu-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- WINDOW MENU ICONS (PNG Legacy)                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <ImageSource x:Key="CloseAllWindows">/FrameworkUI;component/Resources/CloseAllWindows.png</ImageSource>
 
-    <!--Help Menu-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- HELP MENU ICONS (PNG Legacy)                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <ImageSource x:Key="Help">/FrameworkUI;component/Resources/Help.png</ImageSource>
     <ImageSource x:Key="PDF">/FrameworkUI;component/Resources/PDF.png</ImageSource>
     <ImageSource x:Key="TCU">/FrameworkUI;component/Resources/TCU.png</ImageSource>
 
-    <!--Edit Menu / Toolbar-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- EDIT MENU / TOOLBAR ICONS - Theme-Aware Vector Graphics (Visual Studio Style)-->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Undo Icon - Curved arrow pointing counter-clockwise (left) -->
+    <DrawingImage x:Key="UndoIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}">
+                    <GeometryDrawing.Geometry>
+                        <!-- Arrow body (curved arc) -->
+                        <PathGeometry Figures="M 8,2 A 6,6 0 1 0 14,8 L 12,8 A 4,4 0 1 1 8,4 L 8,6 L 3,3 L 8,0 Z"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- Redo Icon - Curved arrow pointing clockwise (right) -->
+    <DrawingImage x:Key="RedoIcon">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}">
+                    <GeometryDrawing.Geometry>
+                        <!-- Arrow body (curved arc) - mirrored from Undo -->
+                        <PathGeometry Figures="M 8,2 A 6,6 0 1 1 2,8 L 4,8 A 4,4 0 1 0 8,4 L 8,6 L 13,3 L 8,0 Z"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- Disabled Undo Icon -->
+    <DrawingImage x:Key="UndoIconDisabled">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconDisabledForeground}">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 8,2 A 6,6 0 1 0 14,8 L 12,8 A 4,4 0 1 1 8,4 L 8,6 L 3,3 L 8,0 Z"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- Disabled Redo Icon -->
+    <DrawingImage x:Key="RedoIconDisabled">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconDisabledForeground}">
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 8,2 A 6,6 0 1 1 2,8 L 4,8 A 4,4 0 1 0 8,4 L 8,6 L 13,3 L 8,0 Z"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- Legacy PNG references (kept for backward compatibility) -->
     <ImageSource x:Key="Undo">/FrameworkUI;component/Resources/Undo.png</ImageSource>
     <ImageSource x:Key="Redo">/FrameworkUI;component/Resources/Redo.png</ImageSource>
 

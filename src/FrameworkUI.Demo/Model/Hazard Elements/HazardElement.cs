@@ -30,6 +30,7 @@
 
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
+using FrameworkInterfaces.Undo;
 using Numerics.Distributions;
 using Numerics.Data;
 using System;
@@ -56,7 +57,7 @@ namespace FrameworkUI.Demo
     /// </list>
     /// </para>
     /// </remarks>
-    public class HazardElement : ElementBase
+    public class HazardElement : ElementBase, IUndoableElement
     {
         #region Construction
 

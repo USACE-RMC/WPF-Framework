@@ -94,13 +94,13 @@
                 <!--Undo-->
                 <MenuItem Header="Undo" Command="Undo" InputGestureText="Ctrl+Z">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource Undo}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource UndoIcon}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Redo-->
                 <MenuItem Header="Redo" Command="Redo" InputGestureText="Ctrl+Y">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource Redo}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource RedoIcon}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -242,15 +242,11 @@
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2,4,2"/>
                 <!--Undo-->
                 <Button x:Name="UndoButton" ToolTip="Undo (Ctrl+Z)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Undo">
-                    <Viewbox Margin="1">
-                        <Image Source="{DynamicResource Undo}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Viewbox>
+                    <Image Source="{DynamicResource UndoIcon}" Width="16" Height="16"/>
                 </Button>
                 <!--Redo-->
                 <Button x:Name="RedoButton" ToolTip="Redo (Ctrl+Y)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Redo">
-                    <Viewbox Margin="1">
-                        <Image Source="{DynamicResource Redo}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Viewbox>
+                    <Image Source="{DynamicResource RedoIcon}" Width="16" Height="16"/>
                 </Button>
             </StackPanel>
         </StackPanel>
