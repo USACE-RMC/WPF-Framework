@@ -159,11 +159,12 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Folder Icon (Closed) - Flat minimalist style -->
+    <!-- TEST: Using blue to verify vector icons are loading -->
     <DrawingImage x:Key="FolderIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
                 <!-- Folder body - single flat fill -->
-                <GeometryDrawing Brush="#DCB67A">
+                <GeometryDrawing Brush="#4A90D9">
                     <GeometryDrawing.Geometry>
                         <!-- Tab and body as single shape -->
                         <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 15,3 L 15,14 L 1,14 Z"/>
