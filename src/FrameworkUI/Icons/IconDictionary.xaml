@@ -50,6 +50,42 @@
     <!-- EDIT MENU / TOOLBAR ICONS - Theme-Aware Vector Graphics (Visual Studio Style)-->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
+    <Viewbox x:Key="VSUndoIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M14.8877,5.9717C14.8967,7.5607,14.2837,9.0537,13.1597,10.1757L7.3357,15.9997 7.0937,15.9997 4.3867,13.2927 10.3317,7.3477C10.6967,6.9837 10.8967,6.4987 10.8967,5.9847 10.8967,5.4697 10.6967,4.9847 10.3317,4.6207 9.9637,4.2527 9.4937,4.0377 8.9997,4.0107L8.9997,7.9997 0.999700000000001,7.9997 0.999700000000001,-0.000300000000000189 4.9997,-0.000300000000000189 4.9997,1.4737C6.0807,0.5217 7.4557,0.00170000000000048 8.9127,0.00170000000000048 10.4977,0.00170000000000048 11.9867,0.6177 13.1047,1.7367 14.2457,2.8777 14.8787,4.3817 14.8877,5.9717" />
+                                <GeometryDrawing Brush="#FF00539C" Geometry="F1M12.4531,9.4688L7.2151,14.7068 5.8011,13.2928 11.0391,8.0548C11.5921,7.5018 11.8961,6.7658 11.8961,5.9848 11.8961,5.2018 11.5921,4.4668 11.0391,3.9138 9.8411,2.7158 7.9831,2.7158 6.8421,3.8578L5.7001,4.9998 8.0001,4.9998 8.0001,6.9998 2.0001,6.9998 2.0001,0.9998 4.0001,0.9998 4.0001,3.8718 5.4281,2.4438C7.3491,0.521800000000001 10.4751,0.520799999999999 12.3971,2.4438 14.3751,4.4208 14.3751,7.5478 12.4531,9.4688" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
+
+    <Viewbox x:Key="VSRedoIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M2.8955,1.7363C4.0135,0.6173 5.5015,0.00229999999999997 7.0875,0.00229999999999997 8.5435,0.00229999999999997 9.9185,0.5223 10.9995,1.4743L10.9995,0.000299999999999967 14.9995,0.000299999999999967 14.9995,8.0003 6.9995,8.0003 6.9995,4.0103C6.5055,4.0383 6.0365,4.2523 5.6675,4.6203 5.3035,4.9853 5.1035,5.4693 5.1035,5.9843 5.1035,6.4993 5.3035,6.9833 5.6675,7.3473L11.6135,13.2933 8.9065,16.0003 8.6645,16.0003 2.8395,10.1753C1.7165,9.0533 1.1035,7.5603 1.1125,5.9713 1.1215,4.3813 1.7535,2.8773 2.8955,1.7363" />
+                                <GeometryDrawing Brush="#FF00539C" Geometry="F1M3.6025,2.4434C5.5245,0.521400000000001,8.6515,0.5224,10.5725,2.4434L11.9995,3.8714 11.9995,1.0004 13.9995,1.0004 13.9995,7.0004 7.9995,7.0004 7.9995,5.0004 10.2995,5.0004 9.1575,3.8574C8.0165,2.7154 6.1595,2.7154 4.9605,3.9134 4.4085,4.4664 4.1035,5.2024 4.1035,5.9844 4.1035,6.7664 4.4085,7.5014 4.9605,8.0544L10.1995,13.2934 8.7855,14.7074 3.5465,9.4684C1.6245,7.5474,1.6245,4.4214,3.6025,2.4434" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
+
     <!-- Undo Icon - Visual Studio style curved arrow pointing left -->
     <DrawingImage x:Key="UndoIcon">
         <DrawingImage.Drawing>
@@ -155,7 +191,6 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- PROJECT EXPLORER ICONS - Vector Graphics                                     -->
-    <!-- Matching original PNG folder icons exactly                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <!-- Folder Closed Icon -->
@@ -197,6 +232,8 @@
         </Rectangle>
     </Viewbox>
 
+
+
     <!-- ImageSource versions for NodeHeader (requires ImageSource type) -->
     <DrawingImage x:Key="FolderIcon">
         <DrawingImage.Drawing>
@@ -218,5 +255,50 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- NENU STRIP ICONS                                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!-- New Project Icon -->
+    <Viewbox x:Key="NewProjectIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M16,6.5L16,13.5C16,14.327,15.327,15,14.5,15L3.5,15C2.673,15,2,14.327,2,13.5L2,8 2,6 0,6 0,2 2,2 2,0 6,0 6,2 8,2 8,3 10.618,3 11.618,5 14.5,5C15.327,5,16,5.673,16,6.5" />
+                                <GeometryDrawing Brush="#FFDCB67A" Geometry="F1M15,6.5L15,13.5C15,13.776,14.776,14,14.5,14L3.5,14C3.224,14,3,13.776,3,13.5L3,8 6,8 6,6 8,6 9.5,6 9,5 8,5 8,4 10,4 11,6 14.5,6C14.776,6,15,6.224,15,6.5" />
+                                <GeometryDrawing Brush="#FF388A34" Geometry="F1M7,5L5,5 5,7 3,7 3,5 1,5 1,3 3,3 3,1 5,1 5,3 7,3z" />
+                                <GeometryDrawing Brush="#FFEFEFF0" Geometry="F1M8.0001,5.0002L8.0001,6.0002 9.5001,6.0002 9.0001,5.0002z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
+
+    <!-- Open Project Icon -->
+    <Viewbox x:Key="OpenProjectIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M16,9L16,10.196 13.677,16 2,16C2,16 1.14,15.979 0.57,15.435 0.227,15.103 0,14.617 0,14L0,5C0,3.697,1.005,3,2,3L4.486,3 3.607,2.121 5.729,0 10.246,4.518 9.999,4.765 10.116,5 13,5C13.97,5,15,5.701,15,7L15,9z" />
+                                <GeometryDrawing Brush="#FFDCB67A" Geometry="F1M14,10.0313L14,7.0313C14,6.0313,12.764,6.0313,13,6.0313L9.5,6.0313 9.244,5.5193 8.578,6.1863 9,7.0313 13,7.0313 13,10.0313 4,10.0313 2,15.0313 13,15.0313 15,10.0313z M2,15.0153L1.997,15.0153C1.94,15.0153,1,15.0013,1,14.0313L1,8.9593C1.286,9.2523,1.626,9.4873,2,9.6663z" />
+                                <GeometryDrawing Brush="#FF00529C" Geometry="F1M8.832,4.5176L5.728,7.6216 5.021,6.9136 6.918,5.0176 3.5,5.0176C2.673,5.0176 2,5.6906 2,6.5176 2,7.3446 2.673,8.0176 3.5,8.0176L3.5,9.0176C2.122,9.0176 1,7.8966 1,6.5176 1,5.1396 2.122,4.0176 3.5,4.0176L6.918,4.0176 5.021,2.1216 5.728,1.4136z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
 
 </ResourceDictionary>
