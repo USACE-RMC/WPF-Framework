@@ -200,7 +200,7 @@
             <MenuItem Header="Window" x:Name="WindowMenuItem">
                 <MenuItem Header="Close All Documents" Click="CloseAllDocuments_Click">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource CloseAllWindows}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="{DynamicResource CloseAllWindowsImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <local:OpenWindows x:Name="OpenWindows"/>
