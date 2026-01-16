@@ -155,88 +155,65 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- PROJECT EXPLORER ICONS - Vector Graphics                                     -->
-    <!-- Classic manila folder colors that work across all themes                     -->
+    <!-- Flat, minimalist Visual Studio style folder icons                            -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Folder Icon (Closed) - Classic manila folder -->
+    <!-- Folder Icon (Closed) - Flat minimalist style -->
     <DrawingImage x:Key="FolderIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <!-- Folder back/shadow -->
-                <GeometryDrawing Brush="#BFA560">
+                <!-- Folder body - single flat fill -->
+                <GeometryDrawing Brush="#DCB67A">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,14 L 15,14 L 15,4 Z"/>
+                        <!-- Tab and body as single shape -->
+                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 15,3 L 15,14 L 1,14 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Folder tab -->
-                <GeometryDrawing Brush="#E8D193">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Folder front face -->
-                <GeometryDrawing Brush="#DFC181">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,5 L 1,14 L 15,14 L 15,5 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Folder outline -->
+                <!-- Simple outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#9A7B3C" Thickness="0.8"/>
+                        <Pen Brush="#C19A49" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 15,4 L 15,14 L 1,14 Z"/>
+                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 15,3 L 15,14 L 1,14 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <!-- Folder Open Icon - Classic manila folder opened -->
+    <!-- Folder Open Icon - Flat minimalist style -->
     <DrawingImage x:Key="FolderOpenIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <!-- Folder back (inside visible) -->
-                <GeometryDrawing Brush="#C9B070">
+                <!-- Back panel (visible inside) -->
+                <GeometryDrawing Brush="#E5C88A">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,13 L 13,13 L 13,4 Z"/>
+                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 14,3 L 14,12 L 1,12 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Folder tab -->
-                <GeometryDrawing Brush="#E8D193">
+                <!-- Front flap -->
+                <GeometryDrawing Brush="#DCB67A">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Folder front face (tilted open) -->
-                <GeometryDrawing Brush="#DFC181">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 0,6 L 3,14 L 15,14 L 13,6 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Folder front highlight -->
-                <GeometryDrawing Brush="#E8D193">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 0.5,6.5 L 1,8 L 13,8 L 12.5,6.5 Z"/>
+                        <PathGeometry Figures="M 0,5 L 2,14 L 15,14 L 14,5 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
                 <!-- Back outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#9A7B3C" Thickness="0.8"/>
+                        <Pen Brush="#C19A49" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 13,4 L 13,6"/>
+                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 14,3 L 14,5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
                 <!-- Front outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#9A7B3C" Thickness="0.8"/>
+                        <Pen Brush="#C19A49" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 0,6 L 3,14 L 15,14 L 13,6 Z"/>
+                        <PathGeometry Figures="M 0,5 L 2,14 L 15,14 L 14,5 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
