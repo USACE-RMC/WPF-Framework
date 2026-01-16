@@ -1954,6 +1954,13 @@ namespace FrameworkUI
         /// </summary>
         private void UpdateUndoRedoButtonStates()
         {
+            // Guard against calls during initialization before controls are loaded
+            if (UndoDropdownButton == null || UndoDropdownArrow == null ||
+                RedoDropdownButton == null || RedoDropdownArrow == null)
+            {
+                return;
+            }
+
             var undoManager = GetActiveUndoManager();
             bool canUndo = undoManager?.CanUndo == true;
             bool canRedo = undoManager?.CanRedo == true;
