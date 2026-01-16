@@ -58,13 +58,13 @@
                 <!--New Project-->
                 <MenuItem Header="New Project..." Command="New" InputGestureText="Ctrl+Shift+N">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource NewProject}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource NewProjectImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Open Project-->
                 <MenuItem Header="Open Project..." Command="Open" InputGestureText="Ctrl+Shift+O">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource OpenProject}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource OpenProjectImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
@@ -222,13 +222,13 @@
             <!--New Project-->
             <Button x:Name="NewProjectbutton" ToolTip="Create New Project..." Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="New">
                 <Viewbox Margin="1">
-                    <Image Source="{DynamicResource NewProject}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{DynamicResource NewProjectImage}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Viewbox>
             </Button>
             <!--Open Project-->
             <Button x:Name="OpenProjectbutton" ToolTip="Open Existing Project..." Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Open">
                 <Viewbox Margin="1">
-                    <Image Source="{DynamicResource OpenProject}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{DynamicResource OpenProjectImage}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Viewbox>
             </Button>
             <!--Save Project-->
