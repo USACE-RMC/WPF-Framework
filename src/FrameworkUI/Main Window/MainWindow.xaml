@@ -71,13 +71,13 @@
                 <!--Save-->
                 <MenuItem Header="Save Project" Command="Save" InputGestureText="Ctrl+S">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource Save}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource SaveImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Save As-->
                 <MenuItem Header="Save Project As..." Command="SaveAs" InputGestureText="Ctrl+Shift+S">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource SaveAs}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource SaveAsImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Recent Files-->
@@ -234,7 +234,7 @@
             <!--Save Project-->
             <Button x:Name="SaveProjectbutton" ToolTip="Save Project..." Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"  Height="24" Width="24" Cursor="Hand" Command="Save">
                 <Viewbox Margin="1">
-                    <Image Source="{DynamicResource Save}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{DynamicResource SaveImage}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Viewbox>
             </Button>
             <!--Undo/Redo Separator and Buttons with Dropdowns-->
