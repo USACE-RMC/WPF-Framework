@@ -155,66 +155,64 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- PROJECT EXPLORER ICONS - Vector Graphics                                     -->
-    <!-- Flat, minimalist Visual Studio style folder icons                            -->
+    <!-- Matching original PNG folder icons exactly                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Folder Icon (Closed) - Flat minimalist style -->
-    <!-- TEST: Using blue to verify vector icons are loading -->
+    <!-- Folder Icon (Closed) - Matches Folder.png -->
     <DrawingImage x:Key="FolderIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <!-- Folder body - single flat fill -->
-                <GeometryDrawing Brush="#4A90D9">
+                <!-- Folder fill -->
+                <GeometryDrawing Brush="#DCB67A">
                     <GeometryDrawing.Geometry>
-                        <!-- Tab and body as single shape -->
-                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 15,3 L 15,14 L 1,14 Z"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 7,2 L 8,4 L 15,4 L 15,14 L 1,14 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Simple outline -->
+                <!-- Outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#C19A49" Thickness="1"/>
+                        <Pen Brush="#B8984A" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 15,3 L 15,14 L 1,14 Z"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 7,2 L 8,4 L 15,4 L 15,14 L 1,14 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <!-- Folder Open Icon - Flat minimalist style -->
+    <!-- Folder Open Icon - Matches FolderOpen.png -->
     <DrawingImage x:Key="FolderOpenIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <!-- Back panel (visible inside) -->
-                <GeometryDrawing Brush="#E5C88A">
+                <!-- Interior/back (lighter) -->
+                <GeometryDrawing Brush="#F0DEB5">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 14,3 L 14,12 L 1,12 Z"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 7,2 L 8,4 L 15,4 L 15,14 L 1,14 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Front flap -->
+                <!-- Front edge/lip (horizontal band near top) -->
                 <GeometryDrawing Brush="#DCB67A">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 0,5 L 2,14 L 15,14 L 14,5 Z"/>
+                        <PathGeometry Figures="M 1,5 L 15,5 L 15,7 L 1,7 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Back outline -->
+                <!-- Outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#C19A49" Thickness="1"/>
+                        <Pen Brush="#B8984A" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,3 L 1,1 L 6,1 L 7,3 L 14,3 L 14,5"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 7,2 L 8,4 L 15,4 L 15,14 L 1,14 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Front outline -->
+                <!-- Front edge outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#C19A49" Thickness="1"/>
+                        <Pen Brush="#B8984A" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 0,5 L 2,14 L 15,14 L 14,5 Z"/>
+                        <PathGeometry Figures="M 1,5 L 15,5 M 1,7 L 15,7"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
