@@ -243,42 +243,102 @@
                 <!--Undo Split Button-->
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="UndoButton" ToolTip="Undo (Ctrl+Z)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Undo">
-                        <Image Source="{DynamicResource UndoIcon}" Width="16" Height="16"/>
+                        <Image x:Name="UndoButtonImage" Source="{DynamicResource UndoIcon}" Width="16" Height="16"/>
                     </Button>
-                    <Button x:Name="UndoDropdownButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="12" Cursor="Hand" Click="UndoDropdownButton_Click">
-                        <Path Data="M 0,0 L 3,3 L 6,0 Z" Fill="{DynamicResource ToolbarIconForeground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button x:Name="UndoDropdownButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="12" Cursor="Hand" Click="UndoDropdownButton_Click" IsEnabled="False">
+                        <Path x:Name="UndoDropdownArrow" Data="M 0,0 L 3,3 L 6,0 Z" Fill="{DynamicResource ToolbarIconDisabledForeground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Button>
-                    <Popup x:Name="UndoPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=UndoButton}">
+                    <Popup x:Name="UndoPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=UndoButton}" AllowsTransparency="True">
                         <Border Background="{DynamicResource MenuPopupDefaultBackground}" BorderBrush="{DynamicResource MenuPopupDefaultBorder}" BorderThickness="1" MaxHeight="300">
-                            <ListBox x:Name="UndoListBox" SelectionMode="Extended" SelectionChanged="UndoListBox_SelectionChanged"
-                                     Background="Transparent" BorderThickness="0" MinWidth="200">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Description}" Margin="4,2"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <ListBox x:Name="UndoListBox" SelectionMode="Single" SelectionChanged="UndoListBox_SelectionChanged"
+                                         Background="Transparent" BorderThickness="0" MinWidth="200"
+                                         Foreground="{DynamicResource MenuPopupDefaultText}">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding" Value="8,4"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource MenuPopupDefaultText}"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Background}"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Foreground}"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Background}"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Foreground}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Description}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
                         </Border>
                     </Popup>
                 </StackPanel>
                 <!--Redo Split Button-->
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="RedoButton" ToolTip="Redo (Ctrl+Y)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Redo">
-                        <Image Source="{DynamicResource RedoIcon}" Width="16" Height="16"/>
+                        <Image x:Name="RedoButtonImage" Source="{DynamicResource RedoIcon}" Width="16" Height="16"/>
                     </Button>
-                    <Button x:Name="RedoDropdownButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="12" Cursor="Hand" Click="RedoDropdownButton_Click">
-                        <Path Data="M 0,0 L 3,3 L 6,0 Z" Fill="{DynamicResource ToolbarIconForeground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button x:Name="RedoDropdownButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="12" Cursor="Hand" Click="RedoDropdownButton_Click" IsEnabled="False">
+                        <Path x:Name="RedoDropdownArrow" Data="M 0,0 L 3,3 L 6,0 Z" Fill="{DynamicResource ToolbarIconDisabledForeground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Button>
-                    <Popup x:Name="RedoPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=RedoButton}">
+                    <Popup x:Name="RedoPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=RedoButton}" AllowsTransparency="True">
                         <Border Background="{DynamicResource MenuPopupDefaultBackground}" BorderBrush="{DynamicResource MenuPopupDefaultBorder}" BorderThickness="1" MaxHeight="300">
-                            <ListBox x:Name="RedoListBox" SelectionMode="Extended" SelectionChanged="RedoListBox_SelectionChanged"
-                                     Background="Transparent" BorderThickness="0" MinWidth="200">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Description}" Margin="4,2"/>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <ListBox x:Name="RedoListBox" SelectionMode="Single" SelectionChanged="RedoListBox_SelectionChanged"
+                                         Background="Transparent" BorderThickness="0" MinWidth="200"
+                                         Foreground="{DynamicResource MenuPopupDefaultText}">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding" Value="8,4"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource MenuPopupDefaultText}"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border x:Name="Bd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Background}"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewHover.Foreground}"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Background}"/>
+                                                                <Setter Property="Foreground" Value="{DynamicResource ComboBoxItem.ItemsviewSelected.Foreground}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Description}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
                         </Border>
                     </Popup>
                 </StackPanel>

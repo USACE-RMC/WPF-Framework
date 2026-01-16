@@ -1896,6 +1896,9 @@ namespace FrameworkUI
         {
             var undoManager = GetActiveUndoManager();
             e.CanExecute = undoManager?.CanUndo == true;
+
+            // Update dropdown button states when command state is checked
+            UpdateUndoRedoButtonStates();
         }
 
         /// <summary>
@@ -1943,6 +1946,29 @@ namespace FrameworkUI
         public void UpdateUndoRedoButtonVisibility()
         {
             UndoRedoPanel.Visibility = UserSettings.ShowUndoRedoButtons ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Updates the enabled state and appearance of the undo/redo dropdown buttons
+        /// based on the current undo manager state.
+        /// </summary>
+        private void UpdateUndoRedoButtonStates()
+        {
+            var undoManager = GetActiveUndoManager();
+            bool canUndo = undoManager?.CanUndo == true;
+            bool canRedo = undoManager?.CanRedo == true;
+
+            // Update Undo dropdown button
+            UndoDropdownButton.IsEnabled = canUndo;
+            UndoDropdownArrow.Fill = canUndo
+                ? (System.Windows.Media.Brush)FindResource("ToolbarIconForeground")
+                : (System.Windows.Media.Brush)FindResource("ToolbarIconDisabledForeground");
+
+            // Update Redo dropdown button
+            RedoDropdownButton.IsEnabled = canRedo;
+            RedoDropdownArrow.Fill = canRedo
+                ? (System.Windows.Media.Brush)FindResource("ToolbarIconForeground")
+                : (System.Windows.Media.Brush)FindResource("ToolbarIconDisabledForeground");
         }
 
         /// <summary>
