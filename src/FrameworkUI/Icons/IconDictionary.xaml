@@ -158,63 +158,43 @@
     <!-- Matching original PNG folder icons exactly                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Folder Icon (Closed) - Matches Folder.png exactly (12px tall) -->
-    <DrawingImage x:Key="FolderIcon">
-        <DrawingImage.Drawing>
-            <DrawingGroup>
-                <!-- Folder fill - traced from PNG pixel grid -->
-                <GeometryDrawing Brush="#DCB67A">
-                    <GeometryDrawing.Geometry>
-                        <!-- Tab on left: up at x=2, across to x=7, step down, then main body to x=14 -->
-                        <PathGeometry Figures="M 2,4 L 2,2 L 7,2 L 7,4 L 14,4 L 14,14 L 2,14 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Subtle highlight on tab -->
-                <GeometryDrawing Brush="#E8D8B0">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 7,2 L 7,4 L 9,4 L 9,2 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
+    <!-- Folder Closed Icon -->
+    <Viewbox x:Key="FolderClosedIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M0,0L16,0 16,16 0,16z" />
+                                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M1.5,1L9.61,1 10.61,3 13.496,3C14.323,3,14.996,3.673,14.996,4.5L14.996,12.5C14.996,13.327,14.323,14,13.496,14L1.5,14C0.673,14,0,13.327,0,12.5L0,2.5C0,1.673,0.673,1,1.5,1" />
+                                <GeometryDrawing Brush="#FFEFEFF0" Geometry="F1M1.9998,3.0004L1.9998,4.0004 8.8738,4.0004 8.3738,3.0004z" />
+                                <GeometryDrawing Brush="#FFDBB679" Geometry="F1M2,3L8.374,3 8.874,4 2,4z M13.496,4L10,4 9.992,4 8.992,2 1.5,2C1.225,2,1,2.224,1,2.5L1,12.5C1,12.776,1.225,13,1.5,13L13.496,13C13.773,13,13.996,12.776,13.996,12.5L13.996,4.5C13.996,4.224,13.773,4,13.496,4" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
 
-    <!-- Folder Open Icon - Matches FolderOpen.png exactly -->
-    <DrawingImage x:Key="FolderOpenIcon">
-        <DrawingImage.Drawing>
-            <DrawingGroup>
-                <!-- Back folder panel (lighter, the inside) -->
-                <GeometryDrawing Brush="#E8D8B0">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 12,4 L 12,6 L 1,6 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Front flap - slight tilt, bottom flat -->
-                <GeometryDrawing Brush="#DCB67A">
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,6 L 1,13 L 14,13 L 14,5 L 12,5 L 12,6 Z"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Back outline (tab and top) -->
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#C6A856" Thickness="1"/>
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 12,4 L 12,5"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Front outline -->
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#C6A856" Thickness="1"/>
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,6 L 1,13 L 14,13 L 14,5 L 12,5"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
+    <!-- Folder Opened Icon -->
+    <Viewbox x:Key="FolderOpenedIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M0,0L16,0 16,16 0,16z" />
+                                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M0,2.9688L0,11.9688C0,12.5858 0.227,13.0718 0.57,13.4038 1.14,13.9478 2,13.9688 2,13.9688L13.677,13.9688 16,8.1648 16,6.9688 15,6.9688 15,4.9688C15,3.6698,13.97,2.9688,13,2.9688L10.116,2.9688 9.116,0.9688 2,0.9688C1.005,0.9688,0,1.6658,0,2.9688" />
+                                <GeometryDrawing Brush="#FFDCB67A" Geometry="F1M1,3L1,12C1,12.97,1.94,12.984,1.997,12.984L2,12.984 2,3 8,3 9,5 13,5 13,8 4,8 2,13 13,13 15,8 14,8 14,5C14,4,12.764,4,13,4L9.5,4 8.5,2 2,2C2,2,1,2,1,3" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
 
 </ResourceDictionary>
