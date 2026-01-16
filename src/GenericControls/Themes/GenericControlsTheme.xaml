@@ -48,6 +48,39 @@
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- PLOT AREA BORDER                                                             -->
+    <!-- Container with gradient edges for smooth transition from window background   -->
+    <!-- to plot background. In dark theme, creates a soft vignette effect.           -->
+    <!-- In light/blue themes, gradients are transparent (no visual effect).          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="PlotAreaBorderStyle" TargetType="{x:Type ContentControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContentControl}">
+                    <Grid>
+                        <!-- Base background -->
+                        <Border Background="{DynamicResource PlotWindowBackground}"/>
+
+                        <!-- Content -->
+                        <ContentPresenter/>
+
+                        <!-- Gradient edge overlays (20 pixels thick for fast transition) -->
+                        <Rectangle Height="20" VerticalAlignment="Top"
+                                   Fill="{DynamicResource PlotArea.Edge.Top}" IsHitTestVisible="False"/>
+                        <Rectangle Height="20" VerticalAlignment="Bottom"
+                                   Fill="{DynamicResource PlotArea.Edge.Bottom}" IsHitTestVisible="False"/>
+                        <Rectangle Width="20" HorizontalAlignment="Left"
+                                   Fill="{DynamicResource PlotArea.Edge.Left}" IsHitTestVisible="False"/>
+                        <Rectangle Width="20" HorizontalAlignment="Right"
+                                   Fill="{DynamicResource PlotArea.Edge.Right}" IsHitTestVisible="False"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- DATAGRID TOOLBAR                                                             -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
