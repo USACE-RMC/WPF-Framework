@@ -234,7 +234,7 @@
             <!--Save Project-->
             <Button x:Name="SaveProjectbutton" ToolTip="Save Project..." Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"  Height="24" Width="24" Cursor="Hand" Command="Save">
                 <Viewbox Margin="1">
-                    <Image Source="{DynamicResource SaveImage}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{DynamicResource SaveImage}" Stretch="UniformToFill" />
                 </Viewbox>
             </Button>
             <!--Undo/Redo Separator and Buttons with Dropdowns-->
