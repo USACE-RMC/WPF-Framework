@@ -231,25 +231,63 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- RUN / PLAY ICON                                                              -->
-    <!-- Green play triangle for execute actions                                      -->
+    <!-- Green play triangle for execute actions (VS style)                           -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <Viewbox x:Key="RunIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
-        <Grid Width="16" Height="16">
-            <Path Data="M4,2 L14,8 L4,14 Z"
-                  Fill="#16A34A" Stroke="#15803D" StrokeThickness="1"
-                  StrokeLineJoin="Round"/>
-        </Grid>
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2.9997,-0.000199999999999534L2.9997,15.9998 13.6677,7.9998z" />
+                                <GeometryDrawing Brush="#FF388934" Geometry="F1M4,2L4,14 12,8z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
     </Viewbox>
     <DrawingBrush x:Key="RunIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
-            <GeometryDrawing Brush="#16A34A">
-                <GeometryDrawing.Geometry>
-                    <PathGeometry Figures="M4,2 L14,8 L4,14 Z"/>
-                </GeometryDrawing.Geometry>
-                <GeometryDrawing.Pen>
-                    <Pen Brush="#15803D" Thickness="1" LineJoin="Round"/>
-                </GeometryDrawing.Pen>
-            </GeometryDrawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2.9997,-0.000199999999999534L2.9997,15.9998 13.6677,7.9998z" />
+                <GeometryDrawing Brush="#FF388934" Geometry="F1M4,2L4,14 12,8z" />
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- STOP ICON                                                                    -->
+    <!-- Red stop square for cancel/stop actions (VS style)                           -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <Viewbox x:Key="StopIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M13,13L3,13 3,3 13,3z" />
+                                <GeometryDrawing Brush="#FFA1260D" Geometry="F1M12,12L4,12 4,4 12,4z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
+    <DrawingBrush x:Key="StopIconBrush" Stretch="Uniform">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M13,13L3,13 3,3 13,3z" />
+                <GeometryDrawing Brush="#FFA1260D" Geometry="F1M12,12L4,12 4,4 12,4z" />
+            </DrawingGroup>
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
