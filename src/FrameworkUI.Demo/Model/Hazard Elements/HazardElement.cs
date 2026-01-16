@@ -75,6 +75,14 @@ namespace FrameworkUI.Demo
             _probabilityOrdinates = new ObservableCollection<double>() { 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99 };
             _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
 
+            // Create the undo bridge for collection changes
+            _ordinatesBridge = new UndoableCollectionBridge<double>(
+                _probabilityOrdinates,
+                () => IsUndoEnabled ? _undoManager : null,
+                "probability ordinates",
+                this
+            );
+
 
             InitializeMessages();
 
@@ -249,6 +257,7 @@ namespace FrameworkUI.Demo
         private int _prngSeed = 12345;
         private ParameterEstimationMethod _estimationMethod = ParameterEstimationMethod.MethodOfMoments;
         private ObservableCollection<double> _probabilityOrdinates;
+        private UndoableCollectionBridge<double> _ordinatesBridge;
         private string _chartSettings;
         private bool _isEstimated = false;
         private bool _minmaxComputed = false;
@@ -570,6 +579,8 @@ namespace FrameworkUI.Demo
                 EstimationMethod = EstimationMethod
             };
 
+            // Disable undo recording while copying collection data
+            element.IsUndoEnabled = false;
             element._probabilityOrdinates.Clear();
             foreach (var p in ProbabilityOrdinates)
             {
@@ -577,6 +588,8 @@ namespace FrameworkUI.Demo
             }
             element._chartSettings = _chartSettings != null ? string.Copy(_chartSettings) : null;
             element._isEstimated = false;
+            element.IsUndoEnabled = true;
+            element.ClearUndoHistory();
 
             return element;
         }
@@ -593,6 +606,7 @@ namespace FrameworkUI.Demo
         {
             _messenger.Clear(this);
             _undoManager.Clear();
+            _ordinatesBridge?.Dispose();
             SetIsDirty(false);
             //
             // Delete from disk or database
