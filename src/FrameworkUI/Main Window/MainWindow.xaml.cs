@@ -1945,6 +1945,80 @@ namespace FrameworkUI
             UndoRedoPanel.Visibility = UserSettings.ShowUndoRedoButtons ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// Handles the click event for the undo dropdown button.
+        /// Shows a popup with the list of undoable actions.
+        /// </summary>
+        private void UndoDropdownButton_Click(object sender, RoutedEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null || !undoManager.CanUndo)
+            {
+                UndoPopup.IsOpen = false;
+                return;
+            }
+
+            UndoListBox.ItemsSource = undoManager.UndoStack;
+            UndoListBox.SelectedItems.Clear();
+            UndoPopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Handles the selection changed event for the undo listbox.
+        /// Performs undo operations up to and including the selected action.
+        /// </summary>
+        private void UndoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UndoListBox.SelectedItem == null) return;
+
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            var selectedAction = UndoListBox.SelectedItem as IUndoableAction;
+            if (selectedAction != null)
+            {
+                UndoPopup.IsOpen = false;
+                undoManager.UndoTo(selectedAction);
+            }
+        }
+
+        /// <summary>
+        /// Handles the click event for the redo dropdown button.
+        /// Shows a popup with the list of redoable actions.
+        /// </summary>
+        private void RedoDropdownButton_Click(object sender, RoutedEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null || !undoManager.CanRedo)
+            {
+                RedoPopup.IsOpen = false;
+                return;
+            }
+
+            RedoListBox.ItemsSource = undoManager.RedoStack;
+            RedoListBox.SelectedItems.Clear();
+            RedoPopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Handles the selection changed event for the redo listbox.
+        /// Performs redo operations up to and including the selected action.
+        /// </summary>
+        private void RedoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (RedoListBox.SelectedItem == null) return;
+
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            var selectedAction = RedoListBox.SelectedItem as IUndoableAction;
+            if (selectedAction != null)
+            {
+                RedoPopup.IsOpen = false;
+                undoManager.RedoTo(selectedAction);
+            }
+        }
+
         #endregion
 
         #region View Menu

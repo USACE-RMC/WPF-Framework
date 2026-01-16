@@ -237,17 +237,51 @@
                     <Image Source="{DynamicResource Save}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Viewbox>
             </Button>
-            <!--Undo/Redo Separator and Buttons-->
+            <!--Undo/Redo Separator and Buttons with Dropdowns-->
             <StackPanel x:Name="UndoRedoPanel" Orientation="Horizontal">
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2,4,2"/>
-                <!--Undo-->
-                <Button x:Name="UndoButton" ToolTip="Undo (Ctrl+Z)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Undo">
-                    <Image Source="{DynamicResource UndoIcon}" Width="16" Height="16"/>
-                </Button>
-                <!--Redo-->
-                <Button x:Name="RedoButton" ToolTip="Redo (Ctrl+Y)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Redo">
-                    <Image Source="{DynamicResource RedoIcon}" Width="16" Height="16"/>
-                </Button>
+                <!--Undo Split Button-->
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="UndoButton" ToolTip="Undo (Ctrl+Z)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Undo">
+                        <Image Source="{DynamicResource UndoIcon}" Width="16" Height="16"/>
+                    </Button>
+                    <Button x:Name="UndoDropdownButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="12" Cursor="Hand" Click="UndoDropdownButton_Click">
+                        <Path Data="M 0,0 L 3,3 L 6,0 Z" Fill="{DynamicResource ToolbarIconForeground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Popup x:Name="UndoPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=UndoButton}">
+                        <Border Background="{DynamicResource MenuPopupDefaultBackground}" BorderBrush="{DynamicResource MenuPopupDefaultBorder}" BorderThickness="1" MaxHeight="300">
+                            <ListBox x:Name="UndoListBox" SelectionMode="Extended" SelectionChanged="UndoListBox_SelectionChanged"
+                                     Background="Transparent" BorderThickness="0" MinWidth="200">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Description}" Margin="4,2"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+                <!--Redo Split Button-->
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="RedoButton" ToolTip="Redo (Ctrl+Y)" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Redo">
+                        <Image Source="{DynamicResource RedoIcon}" Width="16" Height="16"/>
+                    </Button>
+                    <Button x:Name="RedoDropdownButton" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="12" Cursor="Hand" Click="RedoDropdownButton_Click">
+                        <Path Data="M 0,0 L 3,3 L 6,0 Z" Fill="{DynamicResource ToolbarIconForeground}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Popup x:Name="RedoPopup" StaysOpen="False" Placement="Bottom" PlacementTarget="{Binding ElementName=RedoButton}">
+                        <Border Background="{DynamicResource MenuPopupDefaultBackground}" BorderBrush="{DynamicResource MenuPopupDefaultBorder}" BorderThickness="1" MaxHeight="300">
+                            <ListBox x:Name="RedoListBox" SelectionMode="Extended" SelectionChanged="RedoListBox_SelectionChanged"
+                                     Background="Transparent" BorderThickness="0" MinWidth="200">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Description}" Margin="4,2"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+                    </Popup>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
         <!--AvalonDock-->

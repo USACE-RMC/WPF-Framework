@@ -50,28 +50,46 @@
     <!-- EDIT MENU / TOOLBAR ICONS - Theme-Aware Vector Graphics (Visual Studio Style)-->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Undo Icon - Curved arrow pointing counter-clockwise (left) -->
+    <!-- Undo Icon - Visual Studio style curved arrow pointing left -->
     <DrawingImage x:Key="UndoIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
+                <!-- Curved arrow arc -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource ToolbarIconForeground}" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 3,7 A 5,5 0 1 1 8,12"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <!-- Arrowhead pointing left -->
                 <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}">
                     <GeometryDrawing.Geometry>
-                        <!-- Arrow body (curved arc) -->
-                        <PathGeometry Figures="M 8,2 A 6,6 0 1 0 14,8 L 12,8 A 4,4 0 1 1 8,4 L 8,6 L 3,3 L 8,0 Z"/>
+                        <PathGeometry Figures="M 0,7 L 5,4 L 5,10 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <!-- Redo Icon - Curved arrow pointing clockwise (right) -->
+    <!-- Redo Icon - Visual Studio style curved arrow pointing right -->
     <DrawingImage x:Key="RedoIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
+                <!-- Curved arrow arc -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource ToolbarIconForeground}" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 13,7 A 5,5 0 1 0 8,12"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <!-- Arrowhead pointing right -->
                 <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}">
                     <GeometryDrawing.Geometry>
-                        <!-- Arrow body (curved arc) - mirrored from Undo -->
-                        <PathGeometry Figures="M 8,2 A 6,6 0 1 1 2,8 L 4,8 A 4,4 0 1 0 8,4 L 8,6 L 13,3 L 8,0 Z"/>
+                        <PathGeometry Figures="M 16,7 L 11,4 L 11,10 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -82,9 +100,17 @@
     <DrawingImage x:Key="UndoIconDisabled">
         <DrawingImage.Drawing>
             <DrawingGroup>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource ToolbarIconDisabledForeground}" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 3,7 A 5,5 0 1 1 8,12"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
                 <GeometryDrawing Brush="{DynamicResource ToolbarIconDisabledForeground}">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 8,2 A 6,6 0 1 0 14,8 L 12,8 A 4,4 0 1 1 8,4 L 8,6 L 3,3 L 8,0 Z"/>
+                        <PathGeometry Figures="M 0,7 L 5,4 L 5,10 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -95,12 +121,31 @@
     <DrawingImage x:Key="RedoIconDisabled">
         <DrawingImage.Drawing>
             <DrawingGroup>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource ToolbarIconDisabledForeground}" Thickness="1.5" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 13,7 A 5,5 0 1 0 8,12"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
                 <GeometryDrawing Brush="{DynamicResource ToolbarIconDisabledForeground}">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 8,2 A 6,6 0 1 1 2,8 L 4,8 A 4,4 0 1 0 8,4 L 8,6 L 13,3 L 8,0 Z"/>
+                        <PathGeometry Figures="M 16,7 L 11,4 L 11,10 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- Dropdown Arrow Icon (small triangle for split buttons) -->
+    <DrawingImage x:Key="DropdownArrowIcon">
+        <DrawingImage.Drawing>
+            <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M 0,0 L 4,4 L 8,0 Z"/>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
         </DrawingImage.Drawing>
     </DrawingImage>
 
