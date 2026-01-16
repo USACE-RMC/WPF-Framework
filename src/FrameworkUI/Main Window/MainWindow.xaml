@@ -222,13 +222,13 @@
             <!--New Project-->
             <Button x:Name="NewProjectbutton" ToolTip="Create New Project..." Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="New">
                 <Viewbox Margin="1">
-                    <Image Source="{DynamicResource NewProjectImage}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{DynamicResource NewProjectImage}" Stretch="UniformToFill"/>
                 </Viewbox>
             </Button>
             <!--Open Project-->
             <Button x:Name="OpenProjectbutton" ToolTip="Open Existing Project..." Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Height="24" Width="24" Cursor="Hand" Command="Open">
                 <Viewbox Margin="1">
-                    <Image Source="{DynamicResource OpenProjectImage}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{DynamicResource OpenProjectImage}" Stretch="UniformToFill"/>
                 </Viewbox>
             </Button>
             <!--Save Project-->
