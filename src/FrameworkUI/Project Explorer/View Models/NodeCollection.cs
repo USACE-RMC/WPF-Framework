@@ -32,6 +32,7 @@ using GenericControls;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace FrameworkUI.ProjectExplorer
 {
@@ -68,8 +69,10 @@ namespace FrameworkUI.ProjectExplorer
 
             // Node Header Appearance
             NodeHeader.ShowToolTip = false;
-            NodeHeader.StaticImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Folder);
-            NodeHeader.ExpandedImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.FolderOpen);
+            NodeHeader.StaticImage = Application.Current.TryFindResource("FolderIcon") as ImageSource
+                ?? GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Folder);
+            NodeHeader.ExpandedImage = Application.Current.TryFindResource("FolderOpenIcon") as ImageSource
+                ?? GeneralMethods.Bitmap2BitmapSource(Properties.Resources.FolderOpen);
 
             // Event Handlers
             _addGroupMenuItem.Click += AddGroup_Click;
