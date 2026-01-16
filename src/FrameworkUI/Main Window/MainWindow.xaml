@@ -85,7 +85,7 @@
                 <!--Exit-->
                 <MenuItem Header="Exit" Command="Close" InputGestureText="Alt+F4">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource Exit}" Stretch="UniformToFill"/>
+                        <Image Source="{DynamicResource ShutDownImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>

@@ -9,17 +9,17 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
-            <!--Message Window-->
-            <ImageSource x:Key="ErrorImage">/FrameworkUI;component/Resources/Error.png</ImageSource>
-            <ImageSource x:Key="WarningImage">/FrameworkUI;component/Resources/Warning.png</ImageSource>
-            <ImageSource x:Key="MessageImage">/FrameworkUI;component/Resources/Information.png</ImageSource>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/FrameworkUI;component/Icons/IconDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <!--Message Window PNG Legacy-->
             <ImageSource x:Key="EventImage">/FrameworkUI;component/Resources/Event.png</ImageSource>
             <ImageSource x:Key="ClearMessageFilter">/FrameworkUI;component/Resources/DeleteFilter.png</ImageSource>
             <ImageSource x:Key="ExportMessagesToTextFile">/FrameworkUI;component/Resources/ExportToText.png</ImageSource>
             <converters:MessageTypeToImageConverter x:Key="MessageTypeToImageConverter"
 													  ErrorImageSource="{StaticResource ErrorImage}"
                                                       WarningImageSource="{StaticResource WarningImage}"
-													  MessageImageSource="{StaticResource MessageImage}"
+													  MessageImageSource="{StaticResource InformationImage}"
                                                       EventImageSource="{StaticResource EventImage}"/>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -28,21 +28,21 @@
         <StackPanel x:Name="MyStackPanel" Margin="2" DockPanel.Dock="Top" Orientation="Horizontal" Background="{Binding ElementName=MWControl, Path=StackPanelBackgroundColor}">
             <Button x:Name="ErrorsButton" ToolTip="Errors" Cursor="Hand" Click="ErrorsButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelPressedButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
-                    <Image Margin="1" Source="{StaticResource ErrorImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Margin="1" Source="{StaticResource ErrorImage}" Stretch="UniformToFill" Width="16" Height="16"/>
                     <TextBlock x:Name="ErrorsButtonText" VerticalAlignment="Center" Text="Errors"/>
                 </StackPanel>
             </Button>
             <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="WarningsButton" ToolTip="Warnings" Cursor="Hand" Click="WarningsButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelPressedButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
-                    <Image Margin="1" Source="{StaticResource WarningImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Margin="1" Source="{StaticResource WarningImage}" Stretch="UniformToFill" Width="16" Height="16"/>
                     <TextBlock x:Name="WarningsButtonText" VerticalAlignment="Center" Text="Warnings"/>
                 </StackPanel>
             </Button>
             <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="MessagesButton" ToolTip="Messages" Cursor="Hand" Click="MessagesButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
-                    <Image Margin="1" Source="{StaticResource MessageImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <Image Margin="1" Source="{StaticResource InformationImage}" Stretch="UniformToFill" Width="16" Height="16"/>
                     <TextBlock x:Name="MessageButtonText" VerticalAlignment="Center" Text="Messages"/>
                 </StackPanel>
             </Button>
