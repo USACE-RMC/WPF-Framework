@@ -28,14 +28,13 @@
     <Grid Margin="5" Background="Transparent">
         <TabControl Grid.Row="0" TabStripPlacement="Top" Background="Transparent" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Graphical Results" Style="{DynamicResource HorizontalTabItemStyle}">
-                <ContentControl Style="{DynamicResource PlotAreaBorderStyle}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <!--Frequency Plot-->
-                        <oxy:Plot x:Name="Plot" Grid.Column="0" Margin="2,2,0,0"
+                <Grid Background ="{DynamicResource PlotWindowBackground}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!--Frequency Plot-->
+                    <oxy:Plot x:Name="Plot" Grid.Column="0" Margin="2,2,0,0"
                               Title="Hazard Distribution"  
                               BorderBrush="Black" 
                               BorderThickness="0" 
@@ -101,19 +100,18 @@
                                ItemsSource="{Binding ModeLinePoints}">
                             </oxy:LineSeries>
                         </oxy:Plot.Series>
-                        </oxy:Plot>
-                        <!--Frequency Plot Toolbar-->
-                        <DockPanel Grid.Column="1">
-                            <oxyCntrls:OxyPlotToolbar
-                               DockPanel.Dock="Top"
-                               x:Name="PlotToolbar"
-                               Background="Transparent"
-                               ToolBarOrientation="Vertical"
-                               VerticalAlignment="Stretch"
-                               Plot="{Binding ElementName=Plot, Mode=OneTime}"/>
-                        </DockPanel>
-                    </Grid>
-                </ContentControl>
+                    </oxy:Plot>
+                    <!--Frequency Plot Toolbar-->
+                    <DockPanel Grid.Column="1">
+                        <oxyCntrls:OxyPlotToolbar 
+                           DockPanel.Dock="Top"
+                           x:Name="PlotToolbar"
+                           Background="Transparent"
+                           ToolBarOrientation="Vertical"  
+                           VerticalAlignment="Stretch" 
+                           Plot="{Binding ElementName=Plot, Mode=OneTime}"/>
+                    </DockPanel>
+                </Grid>
             </TabItem>
             <TabItem Header="Tabular Results" Style="{DynamicResource HorizontalTabItemStyle}">
                 <Grid>

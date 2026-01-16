@@ -24,23 +24,6 @@
     <SolidColorBrush x:Key="EnvironmentWindowText" Color="#FF000000"/>
     <SolidColorBrush x:Key="EnvironmentWindowBackground" Color="#D6DBE9"/>
     <SolidColorBrush x:Key="PlotWindowBackground" Color="#D6DBE9"/>
-    <!-- Plot area edge gradients - transparent for blue theme (no effect needed) -->
-    <LinearGradientBrush x:Key="PlotArea.Edge.Top" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="Transparent" Offset="0"/>
-        <GradientStop Color="Transparent" Offset="1"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlotArea.Edge.Bottom" StartPoint="0,1" EndPoint="0,0">
-        <GradientStop Color="Transparent" Offset="0"/>
-        <GradientStop Color="Transparent" Offset="1"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlotArea.Edge.Left" StartPoint="0,0" EndPoint="1,0">
-        <GradientStop Color="Transparent" Offset="0"/>
-        <GradientStop Color="Transparent" Offset="1"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlotArea.Edge.Right" StartPoint="1,0" EndPoint="0,0">
-        <GradientStop Color="Transparent" Offset="0"/>
-        <GradientStop Color="Transparent" Offset="1"/>
-    </LinearGradientBrush>
     <SolidColorBrush x:Key="EnvironmentToolWindowText" Color="#FF000000"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowDisabledText" Color="#FFA2A4A5"/>
 

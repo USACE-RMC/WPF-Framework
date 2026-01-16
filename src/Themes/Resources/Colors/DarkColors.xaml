@@ -28,24 +28,6 @@
     <SolidColorBrush x:Key="EnvironmentWindowText" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="EnvironmentWindowBackground" Color="#FF2D2D30"/>
     <SolidColorBrush x:Key="PlotWindowBackground" Color="#FF5A5A5E"/>
-    <!-- Plot area edge gradients - fade from EnvironmentWindowBackground to transparent for dark theme -->
-    <!-- Fast transition (0.4 offset) so plot labels near edges remain visible -->
-    <LinearGradientBrush x:Key="PlotArea.Edge.Top" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FF2D2D30" Offset="0"/>
-        <GradientStop Color="#002D2D30" Offset="0.4"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlotArea.Edge.Bottom" StartPoint="0,1" EndPoint="0,0">
-        <GradientStop Color="#FF2D2D30" Offset="0"/>
-        <GradientStop Color="#002D2D30" Offset="0.4"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlotArea.Edge.Left" StartPoint="0,0" EndPoint="1,0">
-        <GradientStop Color="#FF2D2D30" Offset="0"/>
-        <GradientStop Color="#002D2D30" Offset="0.4"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PlotArea.Edge.Right" StartPoint="1,0" EndPoint="0,0">
-        <GradientStop Color="#FF2D2D30" Offset="0"/>
-        <GradientStop Color="#002D2D30" Offset="0.4"/>
-    </LinearGradientBrush>
     <SolidColorBrush x:Key="EnvironmentToolWindowText" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="EnvironmentToolWindowDisabledText" Color="#FF656565"/>
 
