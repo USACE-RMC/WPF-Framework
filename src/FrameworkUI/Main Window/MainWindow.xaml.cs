@@ -1992,7 +1992,7 @@ namespace FrameworkUI
             }
 
             UndoListBox.ItemsSource = undoManager.UndoStack;
-            UndoListBox.SelectedItems.Clear();
+            UndoListBox.SelectedItem = null;
             UndoPopup.IsOpen = true;
         }
 
@@ -2029,7 +2029,7 @@ namespace FrameworkUI
             }
 
             RedoListBox.ItemsSource = undoManager.RedoStack;
-            RedoListBox.SelectedItems.Clear();
+            RedoListBox.SelectedItem = null;
             RedoPopup.IsOpen = true;
         }
 
