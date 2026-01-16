@@ -158,61 +158,61 @@
     <!-- Matching original PNG folder icons exactly                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Folder Icon (Closed) - Matches Folder.png -->
+    <!-- Folder Icon (Closed) - Matches Folder.png exactly -->
     <DrawingImage x:Key="FolderIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <!-- Folder fill -->
+                <!-- Folder fill - traced from PNG -->
                 <GeometryDrawing Brush="#DCB67A">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 2,5 L 2,3 L 6,3 L 7,5 L 13,5 L 13,13 L 2,13 Z"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 14,4 L 14,13 L 1,13 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
                 <!-- Outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#B8984A" Thickness="1"/>
+                        <Pen Brush="#C6A856" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 2,5 L 2,3 L 6,3 L 7,5 L 13,5 L 13,13 L 2,13 Z"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 14,4 L 14,13 L 1,13 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <!-- Folder Open Icon - Matches FolderOpen.png -->
+    <!-- Folder Open Icon - Matches FolderOpen.png exactly -->
     <DrawingImage x:Key="FolderOpenIcon">
         <DrawingImage.Drawing>
             <DrawingGroup>
-                <!-- Back folder (vertical) -->
-                <GeometryDrawing Brush="#E8D4A8">
+                <!-- Back folder panel (lighter, the inside) -->
+                <GeometryDrawing Brush="#E8D8B0">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,5 L 1,3 L 5,3 L 6,5 L 11,5 L 11,12 L 1,12 Z"/>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 12,4 L 12,6 L 1,6 Z"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
-                <!-- Back outline -->
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#B8984A" Thickness="1"/>
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,5 L 1,3 L 5,3 L 6,5 L 11,5 L 11,7"/>
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <!-- Front flap (tilted to the right) -->
+                <!-- Front flap - slight tilt, bottom flat -->
                 <GeometryDrawing Brush="#DCB67A">
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,7 L 4,13 L 15,13 L 11,7 Z"/>
+                        <PathGeometry Figures="M 1,6 L 1,13 L 14,13 L 14,5 L 12,5 L 12,6 Z"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <!-- Back outline (tab and top) -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#C6A856" Thickness="1"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry Figures="M 1,4 L 1,2 L 6,2 L 7,4 L 12,4 L 12,5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
                 <!-- Front outline -->
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#B8984A" Thickness="1"/>
+                        <Pen Brush="#C6A856" Thickness="1"/>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
-                        <PathGeometry Figures="M 1,7 L 4,13 L 15,13 L 11,7 Z"/>
+                        <PathGeometry Figures="M 1,6 L 1,13 L 14,13 L 14,5 L 12,5"/>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingGroup>
