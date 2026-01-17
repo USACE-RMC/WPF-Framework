@@ -177,18 +177,18 @@
                                 <Image Source="{DynamicResource RestoreProjectImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
+                        <!--Check for Updates-->
+                        <MenuItem x:Name="CheckForUpdatesMenuItem" Header="Check for Updates..." Click="CheckForUpdates_Click" Visibility="Collapsed">
+                            <MenuItem.Icon>
+                                <Image Source="{DynamicResource UpdateImage}" Width="16" Height="16"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <CollectionContainer Collection="{Binding Source={StaticResource ToolsMenuItemsSource}}" />
                         <Separator/>
                         <!--Options-->
                         <MenuItem x:Name="OptionsMenuItem" Header="Options..." Click="Options_Click">
                             <MenuItem.Icon>
                                 <Image Source="{DynamicResource OptionsImage}" Width="16" Height="16"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <!--Check for Updates-->
-                        <MenuItem x:Name="CheckForUpdatesMenuItem" Header="Check for Updates..." Click="CheckForUpdates_Click" Visibility="Collapsed">
-                            <MenuItem.Icon>
-                                <Image Source="{DynamicResource UpdateImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
                     </CompositeCollection>

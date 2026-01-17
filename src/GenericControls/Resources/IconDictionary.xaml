@@ -15,7 +15,7 @@
     Semantic colors (remain consistent across themes):
     - #16A34A (Green): Add/Plus operations
     - #DC2626 (Red): Delete/Remove operations
-    - #2563EB (Blue): Insert/Selection/Filter operations
+    - {DynamicResource ToolbarIconAccent} (Blue): Insert/Selection/Filter operations
 
     Usage: Reference icons with StaticResource or DynamicResource
     Example: <ContentControl Content="{StaticResource AddRowIcon}"/>
@@ -53,7 +53,7 @@
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Insert arrow - centered vertically -->
             <Path Data="M12,12 V4 M9,7 L12,4 L15,7"
-                  Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
+                  Stroke="{DynamicResource ToolbarIconAccent}" StrokeThickness="2" StrokeLineJoin="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
     </Viewbox>
@@ -100,7 +100,7 @@
                   VerticalAlignment="Top" HorizontalAlignment="Left" Margin="1,0,0,0"/>
             <!-- Insert arrow pointing left - centered at X=8 -->
             <Path Data="M4,12 H12 M7,9 L4,12 L7,15"
-                  Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
+                  Stroke="{DynamicResource ToolbarIconAccent}" StrokeThickness="2" StrokeLineJoin="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
     </Viewbox>
@@ -132,7 +132,7 @@
                   Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <!-- Selection highlight -->
-            <Rectangle Width="14" Height="14" Fill="#2563EB" Opacity="0.3"
+            <Rectangle Width="14" Height="14" Fill="{DynamicResource ToolbarIconAccent}" Opacity="0.3"
                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid>
     </Viewbox>
@@ -171,7 +171,7 @@
                   Fill="{DynamicResource TextBox.Static.Background}"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Header bar -->
-            <Rectangle Width="8" Height="2" Fill="#2563EB"
+            <Rectangle Width="8" Height="2" Fill="{DynamicResource ToolbarIconAccent}"
                        Margin="3,5,0,0"
                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Lines on front doc -->
@@ -236,11 +236,11 @@
         <Grid Width="16" Height="16">
             <!-- Solid filter funnel - symmetric with flat bottom stem -->
             <Path Data="M1,2 H10 L7,6 V10 H4 V6 Z"
-                  Fill="#2563EB"
+                  Fill="{DynamicResource ToolbarIconAccent}"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Up arrow - centered at X=12 -->
             <Path Data="M12,12 V4 M9,7 L12,4 L15,7"
-                  Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
+                  Stroke="{DynamicResource ToolbarIconAccent}" StrokeThickness="2" StrokeLineJoin="Round"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
@@ -251,11 +251,11 @@
         <Grid Width="16" Height="16">
             <!-- Solid filter funnel - symmetric with flat bottom stem -->
             <Path Data="M1,2 H10 L7,6 V10 H4 V6 Z"
-                  Fill="#2563EB"
+                  Fill="{DynamicResource ToolbarIconAccent}"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <!-- Down arrow - centered at X=12 -->
             <Path Data="M12,4 V12 M9,9 L12,12 L15,9"
-                  Stroke="#2563EB" StrokeThickness="2" StrokeLineJoin="Round"
+                  Stroke="{DynamicResource ToolbarIconAccent}" StrokeThickness="2" StrokeLineJoin="Round"
                   StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
         </Grid>
