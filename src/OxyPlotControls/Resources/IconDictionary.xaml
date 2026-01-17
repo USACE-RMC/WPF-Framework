@@ -222,7 +222,7 @@
         </Grid>
     </Viewbox>
 
-    <Viewbox x:Key ="EditTextboxIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <Viewbox x:Key ="EditTextboxIcon" Width="16" Height="16" x:Shared="False" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
         <Rectangle Width="16" Height="16">
             <Rectangle.Fill>
                 <DrawingBrush>
@@ -250,7 +250,7 @@
         </Rectangle>
     </Viewbox>
 
-    <Viewbox x:Key="FormatIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <Viewbox x:Key="FormatIcon" Width="16" Height="16" x:Shared="False" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
         <Rectangle Width="16" Height="16">
             <Rectangle.Fill>
                 <DrawingBrush>
