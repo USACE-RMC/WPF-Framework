@@ -109,31 +109,31 @@
                 <!--Project Explorer-->
                 <MenuItem Header="Project Explorer" Click="ProjectExplorer_Click">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource ProjectExplorer}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="{DynamicResource ProjectExplorerImage}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Map Explorer-->
                 <!--<MenuItem Header="Map Explorer" Click="MapExplorer_Click" Visibility="Collapsed">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource ProjectExplorer}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="{DynamicResource ProjectExplorerImage}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>-->
                 <!--Message Window-->
                 <MenuItem Header="Message Window" Click="MessageWindow_Click">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource MessageWindow}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="{DynamicResource MessageWindowImage}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Properties Window-->
                 <MenuItem Header="Properties Window" Click="PropertiesWindow_Click">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource PropertiesWindow}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="{DynamicResource PropertiesWindowImage}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--All Windows-->
                 <MenuItem Header="All Windows" Click="AllWindows_Click">
                     <MenuItem.Icon>
-                        <Image Source="{DynamicResource AllWindows}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Image Source="{DynamicResource AllWindowsImage}" Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <!--Default Layout-->
@@ -148,7 +148,7 @@
                         <!--Project Properties-->
                         <MenuItem Header="Project Properties..." Click="ProjectProperties_Click">
                             <MenuItem.Icon>
-                                <Image Source="{DynamicResource Properties}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Image Source="{DynamicResource ProjectPropertiesImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
                     </CompositeCollection>
@@ -167,13 +167,13 @@
                         <!--Zip Project File-->
                         <MenuItem x:Name="ZipMenuItem" Header="Zip Project File..." Click="ZipProjectFile_Click">
                             <MenuItem.Icon>
-                                <Image Source="{DynamicResource ZipFile}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Image Source="{DynamicResource ZipFileImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <!--Restore Project from Backup-->
                         <MenuItem x:Name="RestoreMenuItem" Header="Restore from Backup..." Click="RestoreFromBackup_Click">
                             <MenuItem.Icon>
-                                <Image Source="{DynamicResource RestoreBackup}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Image Source="{DynamicResource RestoreProjectImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <CollectionContainer Collection="{Binding Source={StaticResource ToolsMenuItemsSource}}" />
@@ -181,7 +181,7 @@
                         <!--Options-->
                         <MenuItem x:Name="OptionsMenuItem" Header="Options..." Click="Options_Click">
                             <MenuItem.Icon>
-                                <Image Source="{DynamicResource Options}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Image Source="{DynamicResource OptionsImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <!--Check for Updates-->
