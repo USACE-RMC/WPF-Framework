@@ -43,7 +43,7 @@
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentForegroundColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowForeground}"/>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>

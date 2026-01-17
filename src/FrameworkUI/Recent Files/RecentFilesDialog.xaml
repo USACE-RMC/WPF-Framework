@@ -42,7 +42,7 @@
                 <Style TargetType="DataGridRow">
                     <Setter Property="Height" Value="18"/>
                     <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentForegroundColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowForeground}"/>
                     <Setter Property="ToolTip">
                         <Setter.Value>
                             <TextBlock Text="{Binding FilePath}" TextWrapping="Wrap"/>
