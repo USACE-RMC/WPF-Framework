@@ -2865,44 +2865,22 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Loads an image resource and returns it as a BitmapImage.
+        /// Creates a menu icon from vector resources.
         /// </summary>
-        /// <param name="resourceName">The name of the resource file (e.g., "Format.png").</param>
-        /// <returns>A BitmapImage that can be used as an Image source.</returns>
-        private static BitmapImage LoadResourceImage(string resourceName)
-        {
-            var uri = new Uri($"pack://application:,,,/OxyPlotControls;component/Resources/{resourceName}", UriKind.Absolute);
-            var bitmapImage = new BitmapImage(uri);
-            return bitmapImage;
-        }
-
-        /// <summary>
-        /// Creates an Image control with the specified resource image.
-        /// </summary>
-        /// <param name="resourceName">The name of the resource file (e.g., "Format.png").</param>
-        /// <returns>An Image control with the resource as its source.</returns>
+        /// <param name="resourceName">The name of the icon (e.g., "Format.png" for backwards compatibility).</param>
+        /// <returns>A vector icon element, or null if not found.</returns>
         private static object CreateMenuIcon(string resourceName)
         {
-            // Use vector icons instead of PNG files
-            switch (resourceName)
+            // Use vector icons from IconDictionary
+            return resourceName switch
             {
-                case "Delete.png":
-                    var deleteImage = Application.Current.TryFindResource("DeleteImage") as ImageSource;
-                    if (deleteImage != null)
-                        return new Image { Source = deleteImage, Width = 16, Height = 16 };
-                    break;
-                case "Format.png":
-                    var formatIcon = Application.Current.TryFindResource("FormatIcon");
-                    if (formatIcon != null)
-                        return formatIcon;
-                    break;
-                case "EditTextbox.png":
-                    var editTextboxIcon = Application.Current.TryFindResource("EditTextboxIcon");
-                    if (editTextboxIcon != null)
-                        return editTextboxIcon;
-                    break;
-            }
-            return new Image { Source = LoadResourceImage(resourceName), Width = 16, Height = 16 };
+                "Delete.png" => Application.Current.TryFindResource("DeleteImage") is ImageSource deleteImage
+                    ? new Image { Source = deleteImage, Width = 16, Height = 16 }
+                    : null,
+                "Format.png" => Application.Current.TryFindResource("FormatIcon"),
+                "EditTextbox.png" => Application.Current.TryFindResource("EditTextboxIcon"),
+                _ => null
+            };
         }
 
         #endregion
