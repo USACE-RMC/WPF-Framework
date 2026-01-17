@@ -2883,6 +2883,15 @@ namespace OxyPlotControls
         /// <returns>An Image control with the resource as its source.</returns>
         private static Image CreateMenuIcon(string resourceName)
         {
+            // Use vector icon for Delete instead of PNG
+            if (resourceName == "Delete.png")
+            {
+                var deleteImage = Application.Current.TryFindResource("DeleteImage") as ImageSource;
+                if (deleteImage != null)
+                {
+                    return new Image { Source = deleteImage, Width = 16, Height = 16 };
+                }
+            }
             return new Image { Source = LoadResourceImage(resourceName), Width = 16, Height = 16 };
         }
 
