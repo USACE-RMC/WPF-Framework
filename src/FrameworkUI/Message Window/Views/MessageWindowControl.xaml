@@ -12,10 +12,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/FrameworkUI;component/Icons/IconDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <!--Message Window PNG Legacy-->
-            <ImageSource x:Key="EventImage">/FrameworkUI;component/Resources/Event.png</ImageSource>
-            <ImageSource x:Key="ClearMessageFilter">/FrameworkUI;component/Resources/DeleteFilter.png</ImageSource>
-            <ImageSource x:Key="ExportMessagesToTextFile">/FrameworkUI;component/Resources/ExportToText.png</ImageSource>
             <converters:MessageTypeToImageConverter x:Key="MessageTypeToImageConverter"
 													  ErrorImageSource="{StaticResource ErrorImage}"
                                                       WarningImageSource="{StaticResource WarningImage}"
@@ -49,22 +45,18 @@
             <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="EventsButton" ToolTip="Events" Cursor="Hand" Click="EventsButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,4,0">
-                    <Image Margin="1" Source="{StaticResource EventImage}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <Image Margin="1" Source="{StaticResource EventImage}" Stretch="UniformToFill" Width="16" Height="16"/>
                     <TextBlock x:Name="EventsButtonText" VerticalAlignment="Center" Text="Events"/>
                 </StackPanel>
             </Button>
             <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="ClearFiltersButton" ToolTip="Clear All Filters" Height="24" Width="24" Cursor="Hand" IsEnabled="False" Click="ClearFiltersButton_Click" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}">
-                <Viewbox Margin="3">
-                    <Image Source="{StaticResource ClearMessageFilter}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Viewbox>
+                <Image Margin="3" Source="{StaticResource ClearFilterImage}" Stretch="UniformToFill"/>
             </Button>
             <Separator Style="{Binding ElementName=MWControl, Path=StackPanelSeparatorStyle}"/>
             <Button x:Name="ExportToTextFileButton" ToolTip="Export to Text File" Style="{Binding ElementName=MWControl, Path=StackPanelButtonStyle}"
                     Height="24" Width="24" Cursor="Hand" Click="ExportToTextFileButton_Click" >
-                <Viewbox Margin="3">
-                    <Image Source="{StaticResource ExportMessagesToTextFile}" Stretch="None" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Viewbox>
+                <Image Margin="3" Source="{StaticResource ExportFileImage}" Stretch="UniformToFill"/>
             </Button>
         </StackPanel>
         <!--Data Grid-->

@@ -13,7 +13,7 @@
         Style="{DynamicResource MainWindowStyle}"
         Background="{DynamicResource EnvironmentWindowBackground}"
         Foreground="{DynamicResource EnvironmentWindowText}"
-        Icon="/FrameworkUI;component/Resources/Options.png" 
+        Icon="{DynamicResource OptionsImage}" 
         Loaded="OptionsDialog_Loaded"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Resources>
