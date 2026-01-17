@@ -59,7 +59,7 @@ namespace FrameworkUI
     ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
     /// </para>
     /// </remarks>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
 
         /// <summary>
@@ -75,13 +75,7 @@ namespace FrameworkUI
             MouseMove += Me_MouseMove;
 
             // Add any initialization after the InitializeComponent() call.
-            // Set up menu item icons
-            // https://stackoverflow.com/questions/13592326/making-wpf-applications-look-metro-styled-even-in-windows-7-window-chrome-t 
-            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
-            CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, OnMaximizeWindow, OnCanResizeWindow));
-            CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, OnMinimizeWindow, OnCanMinimizeWindow));
-            CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, OnRestoreWindow, OnCanResizeWindow));
-            // 
+            //
             _projectExplorerTreeView = new ProjectExplorerTreeView() { Style = (Style)FindResource("TreeViewStyle") };
             _messageWindowControl = new MessageWindowControl();
             //
@@ -185,70 +179,6 @@ namespace FrameworkUI
             // Reset the theme dictionary
             Resources.MergedDictionaries.Add(_avalonDockThemeDictionary);
         }
-
-        #region Required Window Functionality
-
-        /// <summary>
-        /// Determines whether the window can be resized based on the current ResizeMode.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void OnCanResizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ResizeMode == ResizeMode.CanResize || ResizeMode == ResizeMode.CanResizeWithGrip;
-        }
-
-        /// <summary>
-        /// Determines whether the window can be minimized based on the current ResizeMode.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ResizeMode != ResizeMode.NoResize;
-        }
-
-        /// <summary>
-        /// Handles the close window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.CloseWindow(this);
-        }
-
-        /// <summary>
-        /// Handles the maximize window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnMaximizeWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.MaximizeWindow(this);
-        }
-
-        /// <summary>
-        /// Handles the minimize window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnMinimizeWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.MinimizeWindow(this);
-        }
-
-        /// <summary>
-        /// Handles the restore window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnRestoreWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.RestoreWindow(this);
-        }
-
-        #endregion
 
         #region Members
 

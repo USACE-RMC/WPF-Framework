@@ -30,8 +30,8 @@
 
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
+using GenericControls;
 
 namespace FrameworkUI
 {
@@ -46,7 +46,7 @@ namespace FrameworkUI
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class OptionsDialog : Window
+    public partial class OptionsDialog : MetroWindow
     {
         /// <summary>
         /// Occurs when the Apply button is clicked.
@@ -62,19 +62,8 @@ namespace FrameworkUI
             // This call is required by the designer.
             InitializeComponent();
             // Add any initialization after the InitializeComponent() call.
-            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
             _mainWindow = mainWindow;
             Owner = _mainWindow;
-        }
-
-        /// <summary>
-        /// Handles the close window command.
-        /// </summary>
-        /// <param name="target">The command target.</param>
-        /// <param name="e">The event arguments.</param>
-        private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.CloseWindow(this);
         }
 
         /// <summary>
