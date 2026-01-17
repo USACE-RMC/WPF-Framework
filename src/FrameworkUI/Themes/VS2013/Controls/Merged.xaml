@@ -10,11 +10,14 @@
 
     <ResourceDictionary.MergedDictionaries>
 
+        <!-- Icon resources - must be loaded before styles that reference them -->
+        <ResourceDictionary Source="/FrameworkUI;component/Icons/IconDictionary.xaml"/>
+
         <!-- FrameworkUI-specific styles -->
         <ResourceDictionary Source="MainWindowStyle.xaml"/>
         <ResourceDictionary Source="MessageWindow.xaml"/>
         <ResourceDictionary Source="ProjectExplorer.xaml"/>
-        
+
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

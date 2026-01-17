@@ -436,10 +436,28 @@ namespace FrameworkUI
             ImageSource image = null;
             if (Collection.Count > 0)
             {
-                using (var sysicon = Icon.ExtractAssociatedIcon(Collection[0].FilePath))
+                try
                 {
-                    image = Imaging.CreateBitmapSourceFromHIcon(sysicon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    if (File.Exists(Collection[0].FilePath))
+                    {
+                        using (var sysicon = Icon.ExtractAssociatedIcon(Collection[0].FilePath))
+                        {
+                            if (sysicon != null)
+                            {
+                                image = Imaging.CreateBitmapSourceFromHIcon(sysicon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                            }
+                        }
+                    }
                 }
+                catch
+                {
+                    // Fall through to use fallback icon
+                }
+            }
+            // Use OpenProjectImage as fallback if no icon could be extracted
+            if (image == null)
+            {
+                image = (ImageSource)Application.Current.TryFindResource("OpenProjectImage");
             }
             var recentFilesDialog = new RecentFilesDialog() { Files = this, FileImage = image, Icon = image };
             recentFilesDialog.ShowDialog();
