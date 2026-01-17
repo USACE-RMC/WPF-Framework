@@ -364,7 +364,7 @@ namespace FrameworkUI
         private void LoadMenuItems()
         {
             int iMenuItem = FileMenu.Items.IndexOf(this);
-            if (Collection.Count == 0) return;
+            //if (Collection.Count == 0) return;
             
             for (int i = 0; i < Collection.Count; i++)
             {
@@ -387,6 +387,14 @@ namespace FrameworkUI
                     break;
                 }
             }
+
+            MoreFilesMenuItem = new MenuItem() { Header = "More Files..." };
+            MoreFilesMenuItem.Click += MoreFilesMenuItem_Click;
+            // add menu item
+            iMenuItem += 1;
+            FileMenu.Items.Insert(iMenuItem, MoreFilesMenuItem);
+
+
             MenuSeparator = new Separator();
             FileMenu.Items.Insert(iMenuItem + 1, MenuSeparator);
             LoadJumpList();
@@ -428,10 +436,28 @@ namespace FrameworkUI
             ImageSource image = null;
             if (Collection.Count > 0)
             {
-                using (var sysicon = Icon.ExtractAssociatedIcon(Collection[0].FilePath))
+                try
                 {
-                    image = Imaging.CreateBitmapSourceFromHIcon(sysicon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    if (File.Exists(Collection[0].FilePath))
+                    {
+                        using (var sysicon = Icon.ExtractAssociatedIcon(Collection[0].FilePath))
+                        {
+                            if (sysicon != null)
+                            {
+                                image = Imaging.CreateBitmapSourceFromHIcon(sysicon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                            }
+                        }
+                    }
                 }
+                catch
+                {
+                    // Fall through to use fallback icon
+                }
+            }
+            // Use OpenProjectImage as fallback if no icon could be extracted
+            if (image == null)
+            {
+                image = (ImageSource)Application.Current.TryFindResource("ApplicationImage");
             }
             var recentFilesDialog = new RecentFilesDialog() { Files = this, FileImage = image, Icon = image };
             recentFilesDialog.ShowDialog();

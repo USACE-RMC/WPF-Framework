@@ -379,6 +379,11 @@
     <SolidColorBrush x:Key="ToolbarOverflowButtonPressedBackground" Color="#007ACC"/>
     <SolidColorBrush x:Key="ToolbarOverflowButtonPressedGlyph" Color="#FFFFFF"/>
 
+    <!-- Toolbar Icon Colors (for vector icons) -->
+    <SolidColorBrush x:Key="ToolbarIconForeground" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="ToolbarIconDisabledForeground" Color="#656565"/>
+    <SolidColorBrush x:Key="ToolbarIconAccent" Color="#007ACC"/>
+
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- TOOLTIP                                                                      -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->

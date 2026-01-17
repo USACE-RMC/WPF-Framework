@@ -12,6 +12,9 @@
                 <!-- Theme resources are loaded by ThemeService.Initialize() in App.xaml.cs -->
                 <!-- This ensures proper loading order and enables runtime theme switching -->
 
+                <!-- GenericControls Theme Resources (for CopyPasteDataGrid, cell/header styles, etc.) -->
+                <ResourceDictionary Source="pack://application:,,,/GenericControls;component/Themes/GenericControlsTheme.xaml"/>
+
                 <!-- Add any custom styles or dictionaries here -->
                 <ResourceDictionary>
 

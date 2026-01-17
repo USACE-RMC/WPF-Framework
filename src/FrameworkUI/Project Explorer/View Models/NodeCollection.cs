@@ -32,6 +32,7 @@ using GenericControls;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace FrameworkUI.ProjectExplorer
 {
@@ -49,9 +50,9 @@ namespace FrameworkUI.ProjectExplorer
     {
         private bool _showSortingContextItems = true;
         private bool _showAddGroupContextItem = true;
-        private readonly MenuItem _addGroupMenuItem = new MenuItem() { Header = "Add Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
-        private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.SortAscending) } };
-        private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.SortDescending) } };
+        private readonly MenuItem _addGroupMenuItem = new MenuItem() { Header = "Add Group" };
+        private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending" };
+        private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending" };
 
         /// <summary>
         /// Construct a new node collection.
@@ -66,10 +67,21 @@ namespace FrameworkUI.ProjectExplorer
             AllowGrouping = true;
             IsReadOnly = true;
 
+            // Set up dynamic icon references for theme support
+            var addGroupIcon = new Image();
+            addGroupIcon.SetResourceReference(Image.SourceProperty, "GroupImage");
+            _addGroupMenuItem.Icon = addGroupIcon;
+            var sortAscIcon = new Image();
+            sortAscIcon.SetResourceReference(Image.SourceProperty, "SortAscendingImage");
+            _sortASCMenuItem.Icon = sortAscIcon;
+            var sortDescIcon = new Image();
+            sortDescIcon.SetResourceReference(Image.SourceProperty, "SortDescendingImage");
+            _sortDSCMenuItem.Icon = sortDescIcon;
+
             // Node Header Appearance
             NodeHeader.ShowToolTip = false;
-            NodeHeader.StaticImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Folder);
-            NodeHeader.ExpandedImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.FolderOpen);
+            NodeHeader.SetResourceReference(NodeHeader.StaticImageProperty, "FolderIcon");
+            NodeHeader.SetResourceReference(NodeHeader.ExpandedImageProperty, "FolderOpenIcon");
 
             // Event Handlers
             _addGroupMenuItem.Click += AddGroup_Click;

@@ -248,7 +248,7 @@ namespace FrameworkUI.Demo.UI
         {
             var nameDialog = new GenericControls.NameDialog(50, "", false, existingElementNames.ToArray(), NameTextBox.GetDefaultInvalidCharacters())
             {
-                Icon = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Add),
+                Icon = Application.Current.TryFindResource("AddImage") as ImageSource,
                 Title = title,
                 Owner = Window.GetWindow(this),
                 Text = initialName

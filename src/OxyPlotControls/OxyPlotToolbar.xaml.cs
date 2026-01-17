@@ -1947,13 +1947,6 @@ namespace OxyPlotControls
 
             _contextMenu = new ContextMenu();
 
-            if (!leftClickBool && Plot.ActualModel.PlotArea.Contains(e.Position))
-            {
-                var formatPlotItem = new MenuItem { Header = "Format Plot Area", Icon = CreateMenuIcon("Format.png") };
-                formatPlotItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.General_PlotArea, Plot.ActualModel.PlotArea);
-                _contextMenu.Items.Add(formatPlotItem);
-            }
-
             // SERIES hit test
             var seriesHTRS = Plot.ActualModel.HitTest(new HitTestArguments(e.Position, 10)).ToList();
             foreach (var htr in seriesHTRS)
@@ -1968,7 +1961,7 @@ namespace OxyPlotControls
                     }
                     else
                     {
-                        var seriesItem = new MenuItem { Header = "Format Series: " + wpfSeries.Title, Icon = CreateMenuIcon("Format.png") };
+                        var seriesItem = new MenuItem { Header = "Format Series: " + wpfSeries.Title, Icon = CreateMenuIcon("Format") };
                         seriesItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Series_General, wpfSeries);
                         _contextMenu.Items.Add(seriesItem);
                     }
@@ -1989,7 +1982,7 @@ namespace OxyPlotControls
                 }
                 else
                 {
-                    var legendItem = new MenuItem { Header = "Format Legend", Icon = CreateMenuIcon("Format.png") };
+                    var legendItem = new MenuItem { Header = "Format Legend", Icon = CreateMenuIcon("Format") };
                     legendItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Legend_Title, legendArea);
                     _contextMenu.Items.Add(legendItem);
                 }
@@ -2014,13 +2007,13 @@ namespace OxyPlotControls
                         }
                         else
                         {
-                            var editTitleItem = new MenuItem { Header = "Edit Plot Title", Icon = CreateMenuIcon("EditTextbox.png") };
+                            var editTitleItem = new MenuItem { Header = "Edit Plot Title", Icon = CreateMenuIcon("EditTextbox") };
                             editTitleItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.General_PlotTitle, Plot.ActualModel.TitleArea);
                                 CreateEditTBX(txtblock, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
                             };
-                            var formatTitleItem = new MenuItem { Header = "Format Plot Title", Icon = CreateMenuIcon("Format.png") };
+                            var formatTitleItem = new MenuItem { Header = "Format Plot Title", Icon = CreateMenuIcon("Format") };
                             formatTitleItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.General_PlotTitle, Plot.ActualModel.TitleArea);
@@ -2042,13 +2035,13 @@ namespace OxyPlotControls
                         }
                         else
                         {
-                            var editSubtitleItem = new MenuItem { Header = "Edit Plot Subtitle", Icon = CreateMenuIcon("EditTextbox.png") };
+                            var editSubtitleItem = new MenuItem { Header = "Edit Plot Subtitle", Icon = CreateMenuIcon("EditTextbox") };
                             editSubtitleItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.General_PlotSubtitle, Plot.ActualModel.TitleArea);
                                 CreateEditTBX(txtblock, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
                             };
-                            var formatSubtitleItem = new MenuItem { Header = "Format Plot Subtitle", Icon = CreateMenuIcon("Format.png") };
+                            var formatSubtitleItem = new MenuItem { Header = "Format Plot Subtitle", Icon = CreateMenuIcon("Format") };
                             formatSubtitleItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.General_PlotSubtitle, Plot.ActualModel.TitleArea);
@@ -2137,7 +2130,7 @@ namespace OxyPlotControls
                             }
                             else
                             {
-                                var editAxisItem = new MenuItem { Header = "Edit Axis Title: " + ax.Title, Icon = CreateMenuIcon("EditTextbox.png") };
+                                var editAxisItem = new MenuItem { Header = "Edit Axis Title: " + ax.Title, Icon = CreateMenuIcon("EditTextbox") };
                                 editAxisItem.Click += (s, args) =>
                                 {
                                     PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.Axes_Title, ax);
@@ -2201,7 +2194,7 @@ namespace OxyPlotControls
                     }
                     else
                     {
-                        var formatAxisItem = new MenuItem { Header = "Format Axis: " + ax.Title, Icon = CreateMenuIcon("Format.png") };
+                        var formatAxisItem = new MenuItem { Header = "Format Axis: " + ax.Title, Icon = CreateMenuIcon("Format") };
                         formatAxisItem.Click += (s, args) =>
                         {
                             PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Axes_Options, ax);
@@ -2231,7 +2224,7 @@ namespace OxyPlotControls
                         }
                         else
                         {
-                            var editAnnoItem = new MenuItem { Header = "Edit Annotation Text: " + annoText, Icon = CreateMenuIcon("EditTextbox.png") };
+                            var editAnnoItem = new MenuItem { Header = "Edit Annotation Text: " + annoText, Icon = CreateMenuIcon("EditTextbox") };
                             editAnnoItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, wpfAnno);
@@ -2316,10 +2309,10 @@ namespace OxyPlotControls
                                 }
                             };
 
-                            var formatAnnoItem = new MenuItem { Header = "Format Annotation: " + annoText, Icon = CreateMenuIcon("Format.png") };
+                            var formatAnnoItem = new MenuItem { Header = "Format Annotation: " + annoText, Icon = CreateMenuIcon("Format") };
                             formatAnnoItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, wpfAnno);
 
-                            var deleteAnnoItem = new MenuItem { Header = "Delete Annotation: " + annoText, Icon = CreateMenuIcon("Delete.png") };
+                            var deleteAnnoItem = new MenuItem { Header = "Delete Annotation: " + annoText, Icon = CreateMenuIcon("Delete") };
                             deleteAnnoItem.Click += (s, args) =>
                             {
                                 Plot.Annotations.Remove(wpfAnno);
@@ -2336,6 +2329,14 @@ namespace OxyPlotControls
 
                 // Only add one CM for annotations
                 break;
+            }
+
+            // Add "Format Plot Area" only if no specific element was clicked and we're in the plot area
+            if (_contextMenu.Items.Count == 0 && !leftClickBool && Plot.ActualModel.PlotArea.Contains(e.Position))
+            {
+                var formatPlotItem = new MenuItem { Header = "Format Plot Area", Icon = CreateMenuIcon("Format") };
+                formatPlotItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.General_PlotArea, Plot.ActualModel.PlotArea);
+                _contextMenu.Items.Add(formatPlotItem);
             }
 
             if (_contextMenu.Items.Count == 0)
@@ -2865,25 +2866,25 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Loads an image resource and returns it as a BitmapImage.
+        /// Creates a menu icon from vector resources.
         /// </summary>
-        /// <param name="resourceName">The name of the resource file (e.g., "Format.png").</param>
-        /// <returns>A BitmapImage that can be used as an Image source.</returns>
-        private static BitmapImage LoadResourceImage(string resourceName)
+        /// <param name="iconName">The name of the icon (e.g., "Format", "Delete", "EditTextbox").</param>
+        /// <returns>A vector icon element, or null if not found.</returns>
+        /// <remarks>
+        /// Uses TryFindResource to search the control's local resources first (for Format, EditTextbox),
+        /// then application resources (for Delete which is in GenericControls).
+        /// </remarks>
+        private object CreateMenuIcon(string iconName)
         {
-            var uri = new Uri($"pack://application:,,,/OxyPlotControls;component/Resources/{resourceName}", UriKind.Absolute);
-            var bitmapImage = new BitmapImage(uri);
-            return bitmapImage;
-        }
-
-        /// <summary>
-        /// Creates an Image control with the specified resource image.
-        /// </summary>
-        /// <param name="resourceName">The name of the resource file (e.g., "Format.png").</param>
-        /// <returns>An Image control with the resource as its source.</returns>
-        private static Image CreateMenuIcon(string resourceName)
-        {
-            return new Image { Source = LoadResourceImage(resourceName), Width = 16, Height = 16 };
+            return iconName switch
+            {
+                "Delete" => TryFindResource("DeleteImage") is ImageSource deleteImage
+                    ? new Image { Source = deleteImage, Width = 16, Height = 16 }
+                    : null,
+                "Format" => TryFindResource("FormatIcon"),
+                "EditTextbox" => TryFindResource("EditTextboxIcon"),
+                _ => null
+            };
         }
 
         #endregion

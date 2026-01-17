@@ -137,7 +137,7 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the event message color.
         /// </summary>
-        public static System.Drawing.Color EventColor { get; set; } = System.Drawing.Color.Black;
+        public static System.Drawing.Color EventColor { get; set; } = System.Drawing.Color.FromArgb(193, 124, 26);
 
         /// <summary>
         /// Gets or sets the default folder location.
@@ -238,7 +238,7 @@ namespace FrameworkUI
             ErrorColor = System.Drawing.Color.Red;
             WarningColor = System.Drawing.Color.DarkOrange;
             MessageColor = System.Drawing.Color.Blue;
-            EventColor = System.Drawing.Color.Black;
+            EventColor = System.Drawing.Color.FromArgb(193, 124, 26);
             // Defaults
             DefaultLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             DefaultValueDigits = 2;

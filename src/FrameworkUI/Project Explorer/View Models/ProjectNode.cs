@@ -30,8 +30,10 @@
 
 using GenericControls;
 using FrameworkInterfaces;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Linq;
 
 namespace FrameworkUI.ProjectExplorer
@@ -62,8 +64,8 @@ namespace FrameworkUI.ProjectExplorer
 
             // Node Header Appearance
             NodeHeader.ShowToolTip = true;
-            NodeHeader.StaticImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Application);
-            NodeHeader.ExpandedImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Application);
+            NodeHeader.SetResourceReference(NodeHeader.StaticImageProperty, "ApplicationImage");
+            NodeHeader.SetResourceReference(NodeHeader.ExpandedImageProperty, "ApplicationImage");
             NodeHeader.MouseLeftButtonUp += NodeHeader_MouseLeftButtonUp;
 
             // Set Bindings

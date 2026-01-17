@@ -59,7 +59,7 @@ namespace FrameworkUI
     ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
     /// </para>
     /// </remarks>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
 
         /// <summary>
@@ -75,13 +75,7 @@ namespace FrameworkUI
             MouseMove += Me_MouseMove;
 
             // Add any initialization after the InitializeComponent() call.
-            // Set up menu item icons
-            // https://stackoverflow.com/questions/13592326/making-wpf-applications-look-metro-styled-even-in-windows-7-window-chrome-t 
-            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
-            CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, OnMaximizeWindow, OnCanResizeWindow));
-            CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, OnMinimizeWindow, OnCanMinimizeWindow));
-            CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, OnRestoreWindow, OnCanResizeWindow));
-            // 
+            //
             _projectExplorerTreeView = new ProjectExplorerTreeView() { Style = (Style)FindResource("TreeViewStyle") };
             _messageWindowControl = new MessageWindowControl();
             //
@@ -185,70 +179,6 @@ namespace FrameworkUI
             // Reset the theme dictionary
             Resources.MergedDictionaries.Add(_avalonDockThemeDictionary);
         }
-
-        #region Required Window Functionality
-
-        /// <summary>
-        /// Determines whether the window can be resized based on the current ResizeMode.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void OnCanResizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ResizeMode == ResizeMode.CanResize || ResizeMode == ResizeMode.CanResizeWithGrip;
-        }
-
-        /// <summary>
-        /// Determines whether the window can be minimized based on the current ResizeMode.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ResizeMode != ResizeMode.NoResize;
-        }
-
-        /// <summary>
-        /// Handles the close window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.CloseWindow(this);
-        }
-
-        /// <summary>
-        /// Handles the maximize window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnMaximizeWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.MaximizeWindow(this);
-        }
-
-        /// <summary>
-        /// Handles the minimize window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnMinimizeWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.MinimizeWindow(this);
-        }
-
-        /// <summary>
-        /// Handles the restore window command.
-        /// </summary>
-        /// <param name="target">The target of the command.</param>
-        /// <param name="e">The event data.</param>
-        private void OnRestoreWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.RestoreWindow(this);
-        }
-
-        #endregion
 
         #region Members
 
@@ -997,7 +927,7 @@ namespace FrameworkUI
             var existingElementNames = element.ParentCollection.Select(x => x.Name.ToString()).ToArray();
             var nameDialog = new NameDialog(50, "", false, existingElementNames, NameTextBox.GetDefaultInvalidCharacters())
             {
-                Icon = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Copy),
+                Icon = Application.Current.FindResource("CopyImage") as ImageSource,
                 Title = "Copy " + element.ParentCollection.Name + "...",
                 Owner = GetWindow(this),
                 Background = (Brush)FindResource("EnvironmentWindowBackground"),
@@ -1896,6 +1826,9 @@ namespace FrameworkUI
         {
             var undoManager = GetActiveUndoManager();
             e.CanExecute = undoManager?.CanUndo == true;
+
+            // Update dropdown button states when command state is checked
+            UpdateUndoRedoButtonStates();
         }
 
         /// <summary>
@@ -1943,6 +1876,110 @@ namespace FrameworkUI
         public void UpdateUndoRedoButtonVisibility()
         {
             UndoRedoPanel.Visibility = UserSettings.ShowUndoRedoButtons ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Updates the enabled state and appearance of the undo/redo dropdown buttons
+        /// based on the current undo manager state.
+        /// </summary>
+        private void UpdateUndoRedoButtonStates()
+        {
+            // Guard against calls during initialization before controls are loaded
+            if (UndoDropdownButton == null || UndoDropdownArrow == null ||
+                RedoDropdownButton == null || RedoDropdownArrow == null)
+            {
+                return;
+            }
+
+            var undoManager = GetActiveUndoManager();
+            bool canUndo = undoManager?.CanUndo == true;
+            bool canRedo = undoManager?.CanRedo == true;
+
+            // Update Undo dropdown button
+            UndoDropdownButton.IsEnabled = canUndo;
+            UndoDropdownArrow.Fill = canUndo
+                ? (System.Windows.Media.Brush)FindResource("ToolbarIconForeground")
+                : (System.Windows.Media.Brush)FindResource("ToolbarIconDisabledForeground");
+
+            // Update Redo dropdown button
+            RedoDropdownButton.IsEnabled = canRedo;
+            RedoDropdownArrow.Fill = canRedo
+                ? (System.Windows.Media.Brush)FindResource("ToolbarIconForeground")
+                : (System.Windows.Media.Brush)FindResource("ToolbarIconDisabledForeground");
+        }
+
+        /// <summary>
+        /// Handles the click event for the undo dropdown button.
+        /// Shows a popup with the list of undoable actions.
+        /// </summary>
+        private void UndoDropdownButton_Click(object sender, RoutedEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null || !undoManager.CanUndo)
+            {
+                UndoPopup.IsOpen = false;
+                return;
+            }
+
+            UndoListBox.ItemsSource = undoManager.UndoStack;
+            UndoListBox.SelectedItem = null;
+            UndoPopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Handles the selection changed event for the undo listbox.
+        /// Performs undo operations up to and including the selected action.
+        /// </summary>
+        private void UndoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (UndoListBox.SelectedItem == null) return;
+
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            var selectedAction = UndoListBox.SelectedItem as IUndoableAction;
+            if (selectedAction != null)
+            {
+                UndoPopup.IsOpen = false;
+                undoManager.UndoTo(selectedAction);
+            }
+        }
+
+        /// <summary>
+        /// Handles the click event for the redo dropdown button.
+        /// Shows a popup with the list of redoable actions.
+        /// </summary>
+        private void RedoDropdownButton_Click(object sender, RoutedEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null || !undoManager.CanRedo)
+            {
+                RedoPopup.IsOpen = false;
+                return;
+            }
+
+            RedoListBox.ItemsSource = undoManager.RedoStack;
+            RedoListBox.SelectedItem = null;
+            RedoPopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Handles the selection changed event for the redo listbox.
+        /// Performs redo operations up to and including the selected action.
+        /// </summary>
+        private void RedoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (RedoListBox.SelectedItem == null) return;
+
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            var selectedAction = RedoListBox.SelectedItem as IUndoableAction;
+            if (selectedAction != null)
+            {
+                RedoPopup.IsOpen = false;
+                undoManager.RedoTo(selectedAction);
+            }
         }
 
         #endregion

@@ -30,7 +30,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using GenericControls;
 
 namespace FrameworkUI
 {
@@ -43,7 +43,7 @@ namespace FrameworkUI
     ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
     /// </para>
     /// </remarks>
-    public partial class OpenWindowsDialog : Window
+    public partial class OpenWindowsDialog : MetroWindow
     {
         /// <summary>
         /// Construct a new open windows dialog.
@@ -52,22 +52,7 @@ namespace FrameworkUI
         {
             // This call is required by the designer.
             InitializeComponent();
-            // Add any initialization after the InitializeComponent() call.
-            // Required window functionality
-            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
-
         }
-
-        /// <summary>
-        /// Handles the window close command.
-        /// </summary>
-        /// <param name="target">The command target.</param>
-        /// <param name="e">The executed routed event arguments.</param>
-        private void OnCloseWindow(object target, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.CloseWindow(this);
-        }
-
 
         /// <summary>
         /// Dependency property for the open windows list.

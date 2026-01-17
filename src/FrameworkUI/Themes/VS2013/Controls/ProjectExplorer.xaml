@@ -246,5 +246,7 @@
     <Style TargetType="{x:Type pe:ElementNodeCollection}" BasedOn="{StaticResource TreeViewItemStyle}" />
     <Style TargetType="{x:Type pe:ElementNodeGroup}" BasedOn="{StaticResource TreeViewItemStyle}"/>
     <Style TargetType="{x:Type pe:ElementNode}" BasedOn="{StaticResource ElementNodeStyle}"/>
+    <Style TargetType="{x:Type pe:NodeGroup}" BasedOn="{StaticResource ElementNodeStyle}"/>
+    <Style TargetType="{x:Type pe:NodeCollection}" BasedOn="{StaticResource TreeViewItemStyle}"/>
 
 </ResourceDictionary>

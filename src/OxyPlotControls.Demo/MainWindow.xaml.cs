@@ -38,6 +38,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
+using System.Windows.Threading;
 using GenericControls;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -137,6 +138,30 @@ namespace OxyPlotControls.Demo
         {
             OxyPlotToolBar.PlotChanged += OnPlotChanged;
             PropertiesControl.PlotChanged += OnPlotChanged;
+
+            // Subscribe to theme changes to refresh plot when theme changes
+            // OxyPlot controls need explicit invalidation because they use a custom rendering pipeline
+            ThemeService.Instance.ThemeChanged += OnThemeChanged;
+        }
+
+        /// <summary>
+        /// Handles theme change events to refresh the plot.
+        /// </summary>
+        /// <remarks>
+        /// OxyPlot controls need to be explicitly invalidated when WPF themes change
+        /// because they use a custom rendering pipeline that doesn't automatically
+        /// respond to resource dictionary changes.
+        /// </remarks>
+        private void OnThemeChanged(object sender, ThemeChangedEventArgs e)
+        {
+            // Dispatch the plot invalidation to ensure the visual tree has updated
+            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
+            {
+                if (TestPlot != null)
+                {
+                    TestPlot.InvalidatePlot(true);
+                }
+            }));
         }
 
         /// <summary>

@@ -30,6 +30,7 @@
 
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
+using FrameworkInterfaces.Undo;
 using Numerics.Distributions;
 using Numerics.Data;
 using System;
@@ -56,7 +57,7 @@ namespace FrameworkUI.Demo
     /// </list>
     /// </para>
     /// </remarks>
-    public class HazardElement : ElementBase
+    public class HazardElement : ElementBase, IUndoableElement
     {
         #region Construction
 
@@ -65,7 +66,8 @@ namespace FrameworkUI.Demo
         /// </summary>
         /// <param name="name">The name of the hazard element.</param>
         /// <param name="parentCollection">The parent collection that contains this element.</param>
-        public HazardElement(string name, IElementCollection parentCollection) : base(name, parentCollection)
+        /// <param name="openFromFile">Optional parameter to open the function from disk upon construction.</param>
+        public HazardElement(string name, IElementCollection parentCollection, bool openFromFile = false) : base(name, parentCollection)
         {
             Name = name;
             CreationDate = DateTime.Now;
@@ -74,11 +76,30 @@ namespace FrameworkUI.Demo
             _probabilityOrdinates = new ObservableCollection<double>() { 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99 };
             _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
 
+            // Create the undo bridge for collection changes
+            _ordinatesBridge = new UndoableCollectionBridge<double>(
+                _probabilityOrdinates,
+                () => IsUndoEnabled ? _undoManager : null,
+                "probability ordinates",
+                this
+            );
+
 
             InitializeMessages();
 
-            _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+            if (openFromFile)
+            {
+                Open();
+                _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+            }
+            else
+            {
+                _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+                _messenger.Add(_descriptionMsg);
+                _messenger.Add(_estimatedMsg);
+            }
 
+            SetElementValidation();
             SetIsDirty(false);
         }
 
@@ -177,10 +198,8 @@ namespace FrameworkUI.Demo
                         item.SourceName = value;
                     }
 
-                    // Validate name
                     _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
                     SetElementValidation();
-
                     RecordPropertyChange(nameof(Name), oldValue, value);
                 }
             }
@@ -197,8 +216,6 @@ namespace FrameworkUI.Demo
                 {
                     var oldValue = _description;
                     _description = value;
-
-                    // Validate description message
                     if (string.IsNullOrEmpty(_description))
                     {
                         _messenger.Add(_descriptionMsg);
@@ -240,7 +257,6 @@ namespace FrameworkUI.Demo
 
         #region Properties and Events
 
-        public static readonly string CollectionName = "<Parametric Hazard Functions>";
         private UnivariateDistributionBase _parentDistribution = new LogPearsonTypeIII();
         private int _effectiveRecordLength = 100;
         private double _confidenceIntervalWidth = 0.9;
@@ -248,7 +264,8 @@ namespace FrameworkUI.Demo
         private int _prngSeed = 12345;
         private ParameterEstimationMethod _estimationMethod = ParameterEstimationMethod.MethodOfMoments;
         private ObservableCollection<double> _probabilityOrdinates;
-        private string _chartSettings;
+        private UndoableCollectionBridge<double> _ordinatesBridge;
+        private string _plotSettings;
         private bool _isEstimated = false;
         private bool _minmaxComputed = false;
         private double[] _minmax = new double[2];
@@ -259,6 +276,7 @@ namespace FrameworkUI.Demo
         private bool _recordLengthValid = true;
         private bool _confidenceIntervalValid = true;
         private bool _realizationsValid = true;
+        private bool _prngSeedValid = true;
         private bool _ordinatesValid = true;
         private bool _estimationMethodValid = true;
 
@@ -347,7 +365,6 @@ namespace FrameworkUI.Demo
                     var oldValue = _effectiveRecordLength;
                     _effectiveRecordLength = value;
 
-                    // Validate record length
                     if (_effectiveRecordLength < 10 || _effectiveRecordLength > 10000)
                     {
                         _recordLengthValid = false;
@@ -358,7 +375,6 @@ namespace FrameworkUI.Demo
                         _recordLengthValid = true;
                         _messenger.Remove(_recordLengthRangeMsg);
                     }
-
                     IsEstimated = false;
                     ClearResults();
                     SetElementValidation();
@@ -381,17 +397,14 @@ namespace FrameworkUI.Demo
                     var oldValue = _confidenceIntervalWidth;
                     _confidenceIntervalWidth = value;
 
-                    // Validate confidence interval width
                     _confidenceIntervalValid = true;
                     _messenger.Remove(_noConfidenceIntervalMsg);
                     _messenger.Remove(_badConfidenceIntervalMsg);
-
                     if (double.IsNaN(_confidenceIntervalWidth))
                     {
                         _confidenceIntervalValid = false;
                         _messenger.Add(_noConfidenceIntervalMsg);
                     }
-
                     if (_confidenceIntervalWidth <= 0 || _confidenceIntervalWidth >= 1)
                     {
                         _confidenceIntervalValid = false;
@@ -420,7 +433,6 @@ namespace FrameworkUI.Demo
                     var oldValue = _realizations;
                     _realizations = value;
 
-                    // Validate realizations
                     if (_realizations < 100 || _realizations > 100000)
                     {
                         _realizationsValid = false;
@@ -431,7 +443,6 @@ namespace FrameworkUI.Demo
                         _realizationsValid = true;
                         _messenger.Remove(_badRealizationsMsg);
                     }
-
                     if (_realizations < 1000)
                     {
                         _messenger.Add(_lowRealizationsWarning);
@@ -463,9 +474,10 @@ namespace FrameworkUI.Demo
                     var oldValue = _prngSeed;
                     _prngSeed = value;
 
-                    // Validate seed
+                    _prngSeedValid = true;
                     if (_prngSeed <= 0)
                     {
+                        _prngSeedValid = false;
                         _messenger.Add(_badSeedMsg);
                     }
                     else
@@ -508,9 +520,21 @@ namespace FrameworkUI.Demo
         public ObservableCollection<double> ProbabilityOrdinates => _probabilityOrdinates;
 
         /// <summary>
-        /// View settings for the chart associated with the hazard function data.
+        /// Gets and sets the plot settings.
         /// </summary>
-        public string ChartSettings => _chartSettings;
+        public string PlotSettings
+        {
+            get => _plotSettings;
+            set
+            {
+                if (_plotSettings != value)
+                {
+                    var oldValue = _plotSettings;
+                    _plotSettings = value;
+                    RecordPropertyChange(nameof(PlotSettings), oldValue, value);
+                }
+            }
+        }
 
         /// <summary>
         /// Determines whether the distribution has been bootstrapped.
@@ -569,13 +593,17 @@ namespace FrameworkUI.Demo
                 EstimationMethod = EstimationMethod
             };
 
+            // Disable undo recording while copying collection data
+            element.IsUndoEnabled = false;
             element._probabilityOrdinates.Clear();
             foreach (var p in ProbabilityOrdinates)
             {
                 element._probabilityOrdinates.Add(p);
             }
-            element._chartSettings = _chartSettings != null ? string.Copy(_chartSettings) : null;
+            element._plotSettings = _plotSettings != null ? string.Copy(_plotSettings) : null;
             element._isEstimated = false;
+            element.IsUndoEnabled = true;
+            element.ClearUndoHistory();
 
             return element;
         }
@@ -592,6 +620,7 @@ namespace FrameworkUI.Demo
         {
             _messenger.Clear(this);
             _undoManager.Clear();
+            _ordinatesBridge?.Dispose();
             SetIsDirty(false);
             //
             // Delete from disk or database
