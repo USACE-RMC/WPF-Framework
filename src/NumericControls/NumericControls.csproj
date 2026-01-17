@@ -35,7 +35,6 @@
     <None Remove="Resources\CalculatorReplace_16x.png" />
     <None Remove="Resources\Calculator_16x.png" />
     <None Remove="Resources\EditButtonIcon.png" />
-    <None Remove="Resources\Run.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,7 +49,6 @@
     <Resource Include="Resources\CalculatorReplace_16x.png" />
     <Resource Include="Resources\Calculator_16x.png" />
     <Resource Include="Resources\EditButtonIcon.png" />
-    <Resource Include="Resources\Run.png" />
   </ItemGroup>
 
   <ItemGroup>

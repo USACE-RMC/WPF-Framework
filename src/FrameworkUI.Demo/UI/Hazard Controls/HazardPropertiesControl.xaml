@@ -140,7 +140,7 @@
                                         <Button Name="SimulateButton" ToolTip="Perform bootstrap analysis"  Grid.Column="1"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
                                              Width="113" Height="24" Margin="0,5,0,0" Cursor="Hand" Click="SimulateButton_Click">
                                             <StackPanel Orientation="Horizontal">
-                                                <Image Source="/FrameworkUI;component/Resources/Run.png" Stretch="None" Margin="0,0,4,0"/>
+                                                <ContentControl Content="{DynamicResource RunIcon}" Width="16" Height="16" Margin="0,0,4,0"/>
                                                 <TextBlock Text="Compute" />
                                             </StackPanel>
                                         </Button>
