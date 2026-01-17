@@ -188,7 +188,7 @@
                         <!--Check for Updates-->
                         <MenuItem x:Name="CheckForUpdatesMenuItem" Header="Check for Updates..." Click="CheckForUpdates_Click" Visibility="Collapsed">
                             <MenuItem.Icon>
-                                <Image Source="{DynamicResource Download}" Stretch="UniformToFill" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Image Source="{DynamicResource UpdateImage}" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
                     </CompositeCollection>

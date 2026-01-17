@@ -539,6 +539,16 @@
         </Rectangle>
     </Viewbox>
 
+    <!-- DrawingImage version of UpdateIcon for menu items -->
+    <DrawingImage x:Key="UpdateImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16H0V0H16Z" />
+                <GeometryDrawing Brush="#005dba" Geometry="F1M15,8A7,7,0,1,1,4.44,2H1.5V1h4l.5.5v4H5V2.829a5.983,5.983,0,1,0,5.57-.244l.43-.9A7.031,7.031,0,0,1,15,8Z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <!-- DrawingImage versions for Tools menu -->
     <DrawingImage x:Key="RestoreProjectImage">
         <DrawingImage.Drawing>
