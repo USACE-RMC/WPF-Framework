@@ -29,7 +29,9 @@
 */
 
 using GenericControls;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace FrameworkUI.ProjectExplorer
 {
@@ -60,8 +62,8 @@ namespace FrameworkUI.ProjectExplorer
 
             // Node Header Appearance
             //NodeHeader.ShowToolTip = true;
-            NodeHeader.StaticImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.MoveDown);
-            NodeHeader.ExpandedImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.MoveUp);
+            NodeHeader.StaticImage = Application.Current.FindResource("MoveDownImage") as ImageSource;
+            NodeHeader.ExpandedImage = Application.Current.FindResource("MoveUpImage") as ImageSource;
 
             // Event Handlers
 
