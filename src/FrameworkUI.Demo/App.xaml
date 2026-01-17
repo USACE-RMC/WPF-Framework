@@ -15,6 +15,9 @@
                 <!-- GenericControls Theme Resources (for CopyPasteDataGrid, cell/header styles, etc.) -->
                 <ResourceDictionary Source="pack://application:,,,/GenericControls;component/Themes/GenericControlsTheme.xaml"/>
 
+                <!-- OxyPlotControls Theme Resources (for plot toolbar, icons, etc.) -->
+                <ResourceDictionary Source="pack://application:,,,/OxyPlotControls;component/Themes/OxyPlotControlsTheme.xaml"/>
+
                 <!-- Add any custom styles or dictionaries here -->
                 <ResourceDictionary>
 

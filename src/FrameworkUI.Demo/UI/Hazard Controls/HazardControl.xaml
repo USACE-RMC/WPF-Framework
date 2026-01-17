@@ -13,6 +13,7 @@
              MinHeight="100"
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="HazardFunctionControl_Loaded"
+             Unloaded="HazardFunctionControl_Unloaded"
              Background="{DynamicResource EnvironmentWindowBackground}"
              Foreground="{DynamicResource EnvironmentWindowText}"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">

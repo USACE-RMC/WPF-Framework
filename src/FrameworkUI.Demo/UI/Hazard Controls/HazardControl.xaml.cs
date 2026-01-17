@@ -12,6 +12,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+using Themes;
 
 
 namespace FrameworkUI.Demo.UI
@@ -193,9 +195,43 @@ namespace FrameworkUI.Demo.UI
                     LowerColumn.Visibility = Visibility.Collapsed;
                     PredictiveColumn.Visibility = Visibility.Collapsed;
                 }
+
+                // Subscribe to theme changes to refresh plot when theme changes
+                ThemeService.Instance.ThemeChanged += OnThemeChanged;
             }
 
             _isLoaded = true;
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event of the control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void HazardFunctionControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // Unsubscribe from theme changes to prevent memory leaks
+            ThemeService.Instance.ThemeChanged -= OnThemeChanged;
+        }
+
+        /// <summary>
+        /// Handles theme change events to refresh the plot.
+        /// </summary>
+        /// <remarks>
+        /// OxyPlot controls need to be explicitly invalidated when WPF themes change
+        /// because they use a custom rendering pipeline that doesn't automatically
+        /// respond to resource dictionary changes.
+        /// </remarks>
+        private void OnThemeChanged(object sender, ThemeChangedEventArgs e)
+        {
+            // Dispatch the plot invalidation to ensure the visual tree has updated
+            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
+            {
+                if (Plot != null)
+                {
+                    Plot.InvalidatePlot(true);
+                }
+            }));
         }
 
         /// <summary>

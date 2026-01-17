@@ -2869,15 +2869,19 @@ namespace OxyPlotControls
         /// </summary>
         /// <param name="iconName">The name of the icon (e.g., "Format", "Delete", "EditTextbox").</param>
         /// <returns>A vector icon element, or null if not found.</returns>
-        private static object CreateMenuIcon(string iconName)
+        /// <remarks>
+        /// Uses TryFindResource to search the control's local resources first (for Format, EditTextbox),
+        /// then application resources (for Delete which is in GenericControls).
+        /// </remarks>
+        private object CreateMenuIcon(string iconName)
         {
             return iconName switch
             {
-                "Delete" => Application.Current.TryFindResource("DeleteImage") is ImageSource deleteImage
+                "Delete" => TryFindResource("DeleteImage") is ImageSource deleteImage
                     ? new Image { Source = deleteImage, Width = 16, Height = 16 }
                     : null,
-                "Format" => Application.Current.TryFindResource("FormatIcon"),
-                "EditTextbox" => Application.Current.TryFindResource("EditTextboxIcon"),
+                "Format" => TryFindResource("FormatIcon"),
+                "EditTextbox" => TryFindResource("EditTextboxIcon"),
                 _ => null
             };
         }
