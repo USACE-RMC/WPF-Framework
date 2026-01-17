@@ -73,12 +73,12 @@ namespace FrameworkUI.Demo
             CreationDate = DateTime.Now;
             LastModified = DateTime.Now;
 
-            _probabilityOrdinates = new ObservableCollection<double>() { 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99 };
-            _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
+            ProbabilityOrdinates = new ProbabilityOrdinates();
+        
 
             // Create the undo bridge for collection changes
             _ordinatesBridge = new UndoableCollectionBridge<double>(
-                _probabilityOrdinates,
+                    _probabilityOrdinates,
                 () => IsUndoEnabled ? _undoManager : null,
                 "probability ordinates",
                 this
@@ -263,7 +263,7 @@ namespace FrameworkUI.Demo
         private int _realizations = 10000;
         private int _prngSeed = 12345;
         private ParameterEstimationMethod _estimationMethod = ParameterEstimationMethod.MethodOfMoments;
-        private ObservableCollection<double> _probabilityOrdinates;
+        private ProbabilityOrdinates _probabilityOrdinates = new ProbabilityOrdinates();
         private UndoableCollectionBridge<double> _ordinatesBridge;
         private string _plotSettings;
         private bool _isEstimated = false;
@@ -517,7 +517,21 @@ namespace FrameworkUI.Demo
         /// <summary>
         /// Gets and sets the exceedance probability values used for plotting the distribution.
         /// </summary>
-        public ObservableCollection<double> ProbabilityOrdinates => _probabilityOrdinates;
+        public ProbabilityOrdinates ProbabilityOrdinates
+        {
+            get => _probabilityOrdinates;
+            private set
+            {
+                if (_probabilityOrdinates != null)
+                    _probabilityOrdinates.CollectionChanged -= ProbabilityOrdinates_CollectionChanged;
+
+                _probabilityOrdinates = value ?? new ProbabilityOrdinates();
+
+                _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
+
+                RaisePropertyChange(nameof(ProbabilityOrdinates));
+            }
+        }
 
         /// <summary>
         /// Gets and sets the plot settings.
@@ -769,8 +783,6 @@ namespace FrameworkUI.Demo
         /// </summary>
         private void ProbabilityOrdinates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            
-
             IsEstimated = false;
             ClearResults();
             SetElementValidation();
