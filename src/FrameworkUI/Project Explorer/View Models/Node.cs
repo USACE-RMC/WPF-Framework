@@ -109,7 +109,7 @@ namespace FrameworkUI.ProjectExplorer
         #endregion
 
         // Context menu items.
-        private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
+        private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Group" };
         private readonly Separator _collectionContentSeparator = new Separator();
         private readonly Separator _moveUpDownSeparator = new Separator();
         private readonly MenuItem _moveUpMenuItem = new MenuItem() { Header = "Move Up" };
@@ -133,6 +133,9 @@ namespace FrameworkUI.ProjectExplorer
             ResetItemsSource();
 
             // Set up dynamic icon references for theme support
+            var groupIcon = new Image();
+            groupIcon.SetResourceReference(Image.SourceProperty, "GroupImage");
+            _groupMenuItem.Icon = groupIcon;
             var moveUpIcon = new Image();
             moveUpIcon.SetResourceReference(Image.SourceProperty, "MoveUpImage");
             _moveUpMenuItem.Icon = moveUpIcon;

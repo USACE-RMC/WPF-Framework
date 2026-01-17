@@ -51,7 +51,7 @@ namespace FrameworkUI.ProjectExplorer
     {
         private readonly MenuItem _unGroupMenuItem = new MenuItem() { Header = "Ungroup" };
         private readonly MenuItem _renameMenuItem = new MenuItem() { Header = "Rename...", InputGestureText = "F2" };
-        private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Add Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
+        private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Add Group" };
         private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending" };
         private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending" };
 
@@ -74,6 +74,9 @@ namespace FrameworkUI.ProjectExplorer
             var renameIcon = new Image();
             renameIcon.SetResourceReference(Image.SourceProperty, "RenameImage");
             _renameMenuItem.Icon = renameIcon;
+            var groupIcon = new Image();
+            groupIcon.SetResourceReference(Image.SourceProperty, "GroupImage");
+            _groupMenuItem.Icon = groupIcon;
             var sortAscIcon = new Image();
             sortAscIcon.SetResourceReference(Image.SourceProperty, "SortAscendingImage");
             _sortASCMenuItem.Icon = sortAscIcon;
@@ -100,8 +103,8 @@ namespace FrameworkUI.ProjectExplorer
 
             NodeHeader.HeaderText = name;
             NodeHeader.ShowToolTip = false;
-            NodeHeader.StaticImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group);
-            NodeHeader.ExpandedImage = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group);
+            NodeHeader.SetResourceReference(NodeHeader.StaticImageProperty, "GroupImage");
+            NodeHeader.SetResourceReference(NodeHeader.ExpandedImageProperty, "GroupImage");
 
             // Event Handlers
             _unGroupMenuItem.Click += Ungroup_Click;

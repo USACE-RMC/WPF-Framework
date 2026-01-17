@@ -50,7 +50,7 @@ namespace FrameworkUI.ProjectExplorer
     {
         private bool _showSortingContextItems = true;
         private bool _showAddGroupContextItem = true;
-        private readonly MenuItem _addGroupMenuItem = new MenuItem() { Header = "Add Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
+        private readonly MenuItem _addGroupMenuItem = new MenuItem() { Header = "Add Group" };
         private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending" };
         private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending" };
 
@@ -68,6 +68,9 @@ namespace FrameworkUI.ProjectExplorer
             IsReadOnly = true;
 
             // Set up dynamic icon references for theme support
+            var addGroupIcon = new Image();
+            addGroupIcon.SetResourceReference(Image.SourceProperty, "GroupImage");
+            _addGroupMenuItem.Icon = addGroupIcon;
             var sortAscIcon = new Image();
             sortAscIcon.SetResourceReference(Image.SourceProperty, "SortAscendingImage");
             _sortASCMenuItem.Icon = sortAscIcon;
