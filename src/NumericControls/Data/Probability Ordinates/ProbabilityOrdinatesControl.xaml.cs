@@ -163,17 +163,12 @@ namespace NumericControls
                 e.Column.MinWidth = 20;
                 e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
                 ((DataGridTextColumn)e.Column).CellStyle = (Style)FindResource("Right_CellStyle");
-                ((DataGridTextColumn)e.Column).HeaderStyle = (Style)FindResource("Center_ColumnHeaderStyle");
 
-                // Add tool tip to column header style
-                var headerStyle = new Style(typeof(DataGridColumnHeader));
-                var currentStyle = ((DataGridTextColumn)e.Column).HeaderStyle;
+                // Create header style based on Center_ColumnHeaderStyle with tooltip
+                // Note: Must use Style constructor with basedOn parameter to preserve the style inheritance chain
+                var baseHeaderStyle = (Style)FindResource("Center_ColumnHeaderStyle");
+                var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
 
-                if (currentStyle != null)
-                {
-                    foreach (var setter in currentStyle.Setters)
-                        headerStyle.Setters.Add(setter);
-                }
                 headerStyle.Setters.Add(new Setter(ToolTipProperty, new TextBlock()
                 {
                     Text = "Enter the desired values as exceedance probabilities.",
