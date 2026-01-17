@@ -1,11 +1,18 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- Merge with GenericControls for shared icons (Run, Stop, Delete, Browse, Download) -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/GenericControls;component/Resources/IconDictionary.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <!--
     NumericControls Vector Icon Dictionary
 
     Modern, clean vector icons using Path elements with strokes.
     Matches the style of GenericControls icons for visual consistency.
+
+    Shared icons from GenericControls: RunIcon, StopIcon, DeleteIcon, BrowseIcon, DownloadIcon
 
     Color Palette:
     - #16A34A (Green): Add/Plus operations
@@ -229,66 +236,5 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- RUN / PLAY ICON                                                              -->
-    <!-- Green play triangle for execute actions (VS style)                           -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="RunIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
-        <Rectangle Width="16" Height="16">
-            <Rectangle.Fill>
-                <DrawingBrush>
-                    <DrawingBrush.Drawing>
-                        <DrawingGroup>
-                            <DrawingGroup.Children>
-                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
-                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2.9997,-0.000199999999999534L2.9997,15.9998 13.6677,7.9998z" />
-                                <GeometryDrawing Brush="#16A34A" Geometry="F1M4,2L4,14 12,8z" />
-                            </DrawingGroup.Children>
-                        </DrawingGroup>
-                    </DrawingBrush.Drawing>
-                </DrawingBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-    </Viewbox>
-    <DrawingBrush x:Key="RunIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
-                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2.9997,-0.000199999999999534L2.9997,15.9998 13.6677,7.9998z" />
-                <GeometryDrawing Brush="#16A34A" Geometry="F1M4,2L4,14 12,8z" />
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- STOP ICON                                                                    -->
-    <!-- Red stop square for cancel/stop actions (VS style)                           -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <Viewbox x:Key="StopIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
-        <Rectangle Width="16" Height="16">
-            <Rectangle.Fill>
-                <DrawingBrush>
-                    <DrawingBrush.Drawing>
-                        <DrawingGroup>
-                            <DrawingGroup.Children>
-                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
-                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M13,13L3,13 3,3 13,3z" />
-                                <GeometryDrawing Brush="#DC2626" Geometry="F1M12,12L4,12 4,4 12,4z" />
-                            </DrawingGroup.Children>
-                        </DrawingGroup>
-                    </DrawingBrush.Drawing>
-                </DrawingBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-    </Viewbox>
-    <DrawingBrush x:Key="StopIconBrush" Stretch="Uniform">
-        <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
-                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M13,13L3,13 3,3 13,3z" />
-                <GeometryDrawing Brush="#DC2626" Geometry="F1M12,12L4,12 4,4 12,4z" />
-            </DrawingGroup>
-        </DrawingBrush.Drawing>
-    </DrawingBrush>
 
 </ResourceDictionary>
