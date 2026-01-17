@@ -95,7 +95,7 @@ namespace FrameworkUI.Demo
         /// <summary>
         /// Gets the image icon representing the element.
         /// </summary>
-        public override Bitmap ElementImage => Properties.Resources.Delete;
+        public override Bitmap ElementImage => Properties.Resources.Hazard_Icon;
 
         /// <summary>
         /// Gets a value indicating whether this element can be copied from an external project.

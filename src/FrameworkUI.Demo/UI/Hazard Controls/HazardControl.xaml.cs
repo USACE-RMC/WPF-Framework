@@ -334,7 +334,7 @@ namespace FrameworkUI.Demo.UI
                 Plot.Axes.Add(newAxis);
                 Plot.InvalidatePlot();
 
-                if (Element == null || Element.ChartSettings == null) return;
+                if (Element == null || Element.PlotSettings == null) return;
 
                // OxyPlotControls.FromXElement(Plot, System.Xml.Linq.XElement.Parse(Element.ChartSettings));
 
