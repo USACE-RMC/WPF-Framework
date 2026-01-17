@@ -31,12 +31,19 @@
         </Grid.ColumnDefinitions>
 
         <!--Data Grid-->
-        <DataGrid x:Name="MyDataGrid" Grid.Column="0" Margin="6" Height="250" Width="400" AutoGenerateColumns="False" IsReadOnly="True" Background="White"  BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1"
-                  GridLinesVisibility="None" HeadersVisibility="Column" SelectionChanged="MyDataGrid_SelectionChanged" >
+        <DataGrid x:Name="MyDataGrid" Grid.Column="0" Margin="6" Height="250" Width="400" 
+                  AutoGenerateColumns="False" 
+                  IsReadOnly="True" 
+                  Background="{DynamicResource EnvironmentWindowbackground}"  
+                  BorderBrush="{DynamicResource SeparatorBorder}" 
+                  BorderThickness="1"
+                  GridLinesVisibility="None" 
+                  HeadersVisibility="Column" 
+                  SelectionChanged="MyDataGrid_SelectionChanged" >
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="{Binding ForegroundColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentForegroundColor}"/>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
