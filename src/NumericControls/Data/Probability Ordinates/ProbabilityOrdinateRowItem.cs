@@ -40,7 +40,7 @@ namespace NumericControls
 {
     /// <summary>
     /// Represents a data grid row item for probability ordinate values, used for specifying
-    /// exceedance probability levels at which to evaluate fitted probability distributions.
+    /// probability levels at which to evaluate probability distributions.
     /// These ordinates are commonly used in frequency analysis and risk assessment applications.
     /// </summary>
     public class ProbabilityOrdinateRowItem : DataGridRowItem
@@ -66,8 +66,8 @@ namespace NumericControls
         private double _probability;
 
         /// <summary>
-        /// Gets or sets the exceedance probability value.
-        /// Must be between 0 and 1, where 0 represents a certain event and 1 represents an impossible event.
+        /// Gets or sets the probability value.
+        /// Must be between 0 and 1.
         /// </summary>
         public double Probability
         {
@@ -88,9 +88,9 @@ namespace NumericControls
         /// </summary>
         public override void AddValidationRules()
         {
-            AddRule(nameof(Probability), () => OrderRule<double, ProbabilityOrdinateRowItem>((x) => x.Probability, nameof(Probability), true, false), "The exceedance probability values must be in ascending order.");
-            AddRule(nameof(Probability), () => Probability < 0d, "The exceedance probability value must be between 0 and 1.");
-            AddRule(nameof(Probability), () => Probability > 1d, "The exceedance probability value must be between 0 and 1.");
+            AddRule(nameof(Probability), () => OrderRule<double, ProbabilityOrdinateRowItem>((x) => x.Probability, nameof(Probability), true, false), "The probability values must be in ascending order.");
+            AddRule(nameof(Probability), () => Probability < 0d, "The probability value must be between 0 and 1.");
+            AddRule(nameof(Probability), () => Probability > 1d, "The probability value must be between 0 and 1.");
         }
 
         /// <summary>

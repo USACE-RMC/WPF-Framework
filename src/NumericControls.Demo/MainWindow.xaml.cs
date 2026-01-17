@@ -207,6 +207,30 @@ namespace NumericControls.Demo
             }
         }
 
+        private ProbabilityOrdinates _probabilityOrdinates = new ProbabilityOrdinates();
+
+        /// <summary>
+        /// Gets or sets the probability ordinates.
+        /// </summary>
+        /// <value>
+        /// An ordered data set containing probability ordinates.
+        /// </value>
+        public ProbabilityOrdinates ProbabilityOrdinates
+        {
+            get
+            {
+                return _probabilityOrdinates;
+            }
+            set
+            {
+                if (_probabilityOrdinates != value)
+                {
+                    _probabilityOrdinates = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProbabilityOrdinates)));
+                }
+            }
+        }
+
         private List<StratificationOptions> _stratificationOptionsCollection = new List<StratificationOptions>();
 
         /// <summary>

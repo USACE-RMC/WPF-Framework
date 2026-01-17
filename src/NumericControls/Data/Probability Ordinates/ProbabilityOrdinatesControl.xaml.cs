@@ -176,7 +176,7 @@ namespace NumericControls
                 }
                 headerStyle.Setters.Add(new Setter(ToolTipProperty, new TextBlock()
                 {
-                    Text = "Enter the desired values as exceedance probabilities.",
+                    Text = "Enter the desired probabilities.",
                     FontWeight = FontWeights.Normal,
                     TextAlignment = TextAlignment.Left,
                     TextWrapping = TextWrapping.Wrap
