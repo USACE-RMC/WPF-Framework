@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace FrameworkUI.ProjectExplorer
 {
@@ -48,11 +49,11 @@ namespace FrameworkUI.ProjectExplorer
     /// </remarks>
     public class NodeGroup : Node
     {
-        private readonly MenuItem _unGroupMenuItem = new MenuItem() { Header = "Ungroup", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Ungroup) } };
-        private readonly MenuItem _renameMenuItem = new MenuItem() { Header = "Rename...", InputGestureText = "F2", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Rename) } };
+        private readonly MenuItem _unGroupMenuItem = new MenuItem() { Header = "Ungroup", Icon = new Image() { Source = Application.Current.FindResource("UngroupImage") as ImageSource } };
+        private readonly MenuItem _renameMenuItem = new MenuItem() { Header = "Rename...", InputGestureText = "F2", Icon = new Image() { Source = Application.Current.FindResource("RenameImage") as ImageSource } };
         private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Add Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
-        private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.SortAscending) } };
-        private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.SortDescending) } };
+        private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending", Icon = new Image() { Source = Application.Current.FindResource("SortAscendingImage") as ImageSource } };
+        private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending", Icon = new Image() { Source = Application.Current.FindResource("SortDescendingImage") as ImageSource } };
 
         /// <summary>
         /// Construct a new node group.

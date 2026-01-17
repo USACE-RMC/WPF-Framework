@@ -32,6 +32,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using GenericControls;
 using FrameworkInterfaces;
 
@@ -92,10 +93,10 @@ namespace FrameworkUI.ProjectExplorer
         /// Context menu items.
         /// </summary>
         //private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
-        private readonly MenuItem _editMenuItem = new MenuItem() { Header = "Edit...", InputGestureText = "Ctrl+E", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.EditWindow) } };
-        private readonly MenuItem _copyMenuItem = new MenuItem() { Header = "Copy...", InputGestureText = "Ctrl+C", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Copy) } };
-        private readonly MenuItem _renameMenuItem = new MenuItem() { Header = "Rename...", InputGestureText = "F2", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Rename) } };
-        private readonly MenuItem _deleteMenuItem = new MenuItem() { Header = "Delete...", InputGestureText = "Del", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Delete) } };
+        private readonly MenuItem _editMenuItem = new MenuItem() { Header = "Edit...", InputGestureText = "Ctrl+E", Icon = new Image() { Source = Application.Current.FindResource("EditWindowImage") as ImageSource } };
+        private readonly MenuItem _copyMenuItem = new MenuItem() { Header = "Copy...", InputGestureText = "Ctrl+C", Icon = new Image() { Source = Application.Current.FindResource("CopyImage") as ImageSource } };
+        private readonly MenuItem _renameMenuItem = new MenuItem() { Header = "Rename...", InputGestureText = "F2", Icon = new Image() { Source = Application.Current.FindResource("RenameImage") as ImageSource } };
+        private readonly MenuItem _deleteMenuItem = new MenuItem() { Header = "Delete...", InputGestureText = "Del", Icon = new Image() { Source = Application.Current.FindResource("DeleteImage") as ImageSource } };
 
         /// <summary>
         /// Event is raised when the element node is selected.

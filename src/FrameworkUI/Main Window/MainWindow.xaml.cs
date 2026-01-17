@@ -997,7 +997,7 @@ namespace FrameworkUI
             var existingElementNames = element.ParentCollection.Select(x => x.Name.ToString()).ToArray();
             var nameDialog = new NameDialog(50, "", false, existingElementNames, NameTextBox.GetDefaultInvalidCharacters())
             {
-                Icon = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Copy),
+                Icon = Application.Current.FindResource("CopyImage") as ImageSource,
                 Title = "Copy " + element.ParentCollection.Name + "...",
                 Owner = GetWindow(this),
                 Background = (Brush)FindResource("EnvironmentWindowBackground"),
