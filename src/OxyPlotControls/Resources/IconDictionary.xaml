@@ -222,4 +222,50 @@
         </Grid>
     </Viewbox>
 
+    <Viewbox x:Key ="EditTextboxIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M10.9998,-0.000199999999999534L10.9998,3.0008 5.0008,3.0008 5.0008,-0.000199999999999534 -0.000199999999999534,-0.000199999999999534 -0.000199999999999534,4.9998 3.9998,4.9998 3.9998,6.9998 6.0008,6.9998 6.0008,13.9998 9.9998,13.9998 9.9998,6.9998 11.9998,6.9998 11.9998,4.9998 15.9998,4.9998 15.9998,-0.000199999999999534z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M0,16L5,16 5,11 0,11z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M11,16L16,16 16,11 11,11z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M3,3L2,3 2,2 3,2z M1,4L4,4 4,1 1,1z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M14,3L13,3 13,2 14,2z M12,4L15,4 15,1 12,1z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M3,14L2,14 2,13 3,13z M1,15L4,15 4,12 1,12z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M14,14L13,14 13,13 14,13z M12,15L15,15 15,12 12,12z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M5,4L5,6 7,6 7,13 9,13 9,6 11,6 11,4z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2,3L3,3 3,1.999 2,1.999z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M13,3L14.001,3 14.001,1.999 13,1.999z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2,14L3,14 3,13 2,13z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M13,14L14.001,14 14.001,13 13,13z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
+
+    <Viewbox x:Key="FormatIcon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Rectangle Width="16" Height="16">
+            <Rectangle.Fill>
+                <DrawingBrush>
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <DrawingGroup.Children>
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M8.4861,5.0776L6.9861,3.5776 0.5711,9.9926 5.9861,15.4056 12.4001,8.9916 10.9011,7.4916 15.4011,2.9916 12.9861,0.5766z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M14,2.9912L12.986,1.9992 9.002,5.9912 10,6.9912z M11,8.9912L7,4.9992 6,5.9912 9.986,10.0002z M6,14.0002L2,9.9922 5,6.9992 9.002,10.9922z" />
+                            </DrawingGroup.Children>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+    </Viewbox>
+
 </ResourceDictionary>
