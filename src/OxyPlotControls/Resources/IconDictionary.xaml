@@ -258,8 +258,8 @@
                         <DrawingGroup>
                             <DrawingGroup.Children>
                                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
-                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M8.4861,5.0776L6.9861,3.5776 0.5711,9.9926 5.9861,15.4056 12.4001,8.9916 10.9011,7.4916 15.4011,2.9916 12.9861,0.5766z" />
-                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M14,2.9912L12.986,1.9992 9.002,5.9912 10,6.9912z M11,8.9912L7,4.9992 6,5.9912 9.986,10.0002z M6,14.0002L2,9.9922 5,6.9992 9.002,10.9922z" />
+                                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M8,5L7,4 1,10 6,15 12,9 11,7 15,3 13,1z" />
+                                <GeometryDrawing Brush="{DynamicResource EnvironmentWindowText}" Geometry="F1M14,3L13,2 9,6 10,7z M11,9L7,5 6,6 10,10z M6,14L2,10 5,7 9,11z" />
                             </DrawingGroup.Children>
                         </DrawingGroup>
                     </DrawingBrush.Drawing>
