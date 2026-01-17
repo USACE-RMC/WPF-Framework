@@ -957,7 +957,7 @@
             <DrawingGroup>
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M0,15L16,15 16,1 0,1z" />
-                <GeometryDrawing Brush="#FF424242" Geometry="F1M14,13L2,13 2,5 14,5z M1,14L15,14 15,2 1,2z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M14,13L2,13 2,5 14,5z M1,14L15,14 15,2 1,2z" />
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M14,13L2,13 2,5 14,5z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
@@ -968,9 +968,9 @@
             <DrawingGroup>
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M2.5857,-0.000199999999999534L0.5857,1.9998 -0.000299999999999745,1.9998 -0.000299999999999745,15.9998 16.0007,15.9998 16.0007,1.9998 5.4657,1.9998 3.4227,-0.000199999999999534z" />
-                <GeometryDrawing Brush="#FF424242" Geometry="F1M15,3L15,15 1,15 1,4.41 1.2,4.61 1.825,5.233 2.595,6 2,6 2,14 14,14 14,6 9.553,6 6.488,3z" />
-                <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M14,6L14,14 2,14 2,6 2.595,6 7.609,11 11,11 11,7.417 9.553,6z" />
-                <GeometryDrawing Brush="#FF00539C" Geometry="F1M8,10L10,9.999 10,8z M3,1L1,3 2,4 4,2z M9,6.999L7,8.999 3,5 5,3z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M15,3L15,15 1,15 1,4.41 1.2,4.61 1.825,5.233 2.595,6 2,6 2,14 14,14 14,6 9.553,6 6.488,3z" />
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M14,6L14,14 2,14 2,6 2.595,6 7.609,11 11,11 11,7.417 9.553,6z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M8,10L10,9.999 10,8z M3,1L1,3 2,4 4,2z M9,6.999L7,8.999 3,5 5,3z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -980,8 +980,8 @@
             <DrawingGroup>
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M0.9999,-0.000199999999999534L0.9999,13.0008 5.0009,13.0008 5.0009,15.9998 15.9999,15.9998 15.9999,7.3788 11.6209,3.0008 10.6049,3.0008 7.6179,-0.000199999999999534z" />
-                <GeometryDrawing Brush="#FF424242" Geometry="F1M14,14L7,14 7,5 10,5 10,9 14,9z M6,11L3,11 3,2 6.798,2 8.81,4 6,4z M11,5.207L13.793,8 11,8z M11.207,4L10.19,4 7.202,1 2,1 2,12 6,12 6,15 15,15 15,7.793z" />
-                <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M14,14L7,14 7,5 10,5 10,9 14,9z M6,11L3,11 3,2 6.798,2 8.81,4 6,4z M11,5.207L13.793,8 11,8z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M14,14L7,14 7,5 10,5 10,9 14,9z M6,11L3,11 3,2 6.798,2 8.81,4 6,4z M11,5.207L13.793,8 11,8z M11.207,4L10.19,4 7.202,1 2,1 2,12 6,12 6,15 15,15 15,7.793z" />
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M14,14L7,14 7,5 10,5 10,9 14,9z M6,11L3,11 3,2 6.798,2 8.81,4 6,4z M11,5.207L13.793,8 11,8z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
@@ -990,12 +990,12 @@
         <DrawingImage.Drawing>
             <DrawingGroup>
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16H0V0H16Z" />
-                <GeometryDrawing Brush="#FF212121" Geometry="F1M12,3.765v8.467L13.152,13H14v1H13l-.277-.084L11.5,13.1l-1.194.811L10.027,14H9V13h.874L11,12.235V3.768L9.848,3H9V2h1l.277.084L11.5,2.9l1.194-.811L12.973,2H14V3h-.874Z" />
-                <GeometryDrawing Brush="#19212121" Geometry="F1M10,10.5H1.5v-5H9.971Z" />
-                <GeometryDrawing Brush="#FF212121" Geometry="F1M10,10v1H1.5L1,10.5v-5L1.5,5H9.972V6H2v4Z" />
-                <GeometryDrawing Brush="#19212121" Geometry="F1M14.5,5.5v5H13v-5Z" />
-                <GeometryDrawing Brush="#FF212121" Geometry="F1M15,5.5v5l-.5.5H13V10h1V6H13V5h1.5Z" />
-                <GeometryDrawing Brush="#FF212121" Geometry="F1M8,7.5v1H3v-1Z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M12,3.765v8.467L13.152,13H14v1H13l-.277-.084L11.5,13.1l-1.194.811L10.027,14H9V13h.874L11,12.235V3.768L9.848,3H9V2h1l.277.084L11.5,2.9l1.194-.811L12.973,2H14V3h-.874Z" />
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M10,10.5H1.5v-5H9.971Z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M10,10v1H1.5L1,10.5v-5L1.5,5H9.972V6H2v4Z" />
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M14.5,5.5v5H13v-5Z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M15,5.5v5l-.5.5H13V10h1V6H13V5h1.5Z" />
+                <GeometryDrawing Brush="{DynamicResource ToolbarIconForeground}" Geometry="F1M8,7.5v1H3v-1Z" />
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
