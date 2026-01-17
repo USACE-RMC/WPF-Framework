@@ -142,6 +142,7 @@ namespace FrameworkUI.ProjectExplorer
                 {
                     IsInEditMode = true;
                 }
+                e.Handled = true;
             }
             // Enter = Stop Renaming OR Edit
             else if (e.Key == Key.Enter)

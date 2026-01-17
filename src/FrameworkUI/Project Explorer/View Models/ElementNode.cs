@@ -304,6 +304,7 @@ namespace FrameworkUI.ProjectExplorer
                 {
                     IsInEditMode = true;
                 }
+                e.Handled = true;
             }
 
             // Enter = Stop Renaming OR Edit
