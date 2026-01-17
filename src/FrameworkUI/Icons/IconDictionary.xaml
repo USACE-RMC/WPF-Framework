@@ -1066,13 +1066,13 @@
                 <!-- First square (top-left) - manila fill with theme-aware border -->
                 <GeometryDrawing Brush="#FFDCB67A" Geometry="M2.5,2.5 L9.5,2.5 L9.5,9.5 L2.5,9.5 Z">
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconForeground}" Thickness="1"/>
+                        <Pen Brush="{DynamicResource ToolbarIconAccent}" Thickness="1"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <!-- Second square (bottom-right) - manila fill with theme-aware border -->
                 <GeometryDrawing Brush="#FFDCB67A" Geometry="M6.5,6.5 L13.5,6.5 L13.5,13.5 L6.5,13.5 Z">
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{DynamicResource ToolbarIconForeground}" Thickness="1"/>
+                        <Pen Brush="{DynamicResource ToolbarIconAccent}" Thickness="1"/>
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
