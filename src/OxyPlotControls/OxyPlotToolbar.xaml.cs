@@ -1947,13 +1947,6 @@ namespace OxyPlotControls
 
             _contextMenu = new ContextMenu();
 
-            if (!leftClickBool && Plot.ActualModel.PlotArea.Contains(e.Position))
-            {
-                var formatPlotItem = new MenuItem { Header = "Format Plot Area", Icon = CreateMenuIcon("Format") };
-                formatPlotItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.General_PlotArea, Plot.ActualModel.PlotArea);
-                _contextMenu.Items.Add(formatPlotItem);
-            }
-
             // SERIES hit test
             var seriesHTRS = Plot.ActualModel.HitTest(new HitTestArguments(e.Position, 10)).ToList();
             foreach (var htr in seriesHTRS)
@@ -2336,6 +2329,14 @@ namespace OxyPlotControls
 
                 // Only add one CM for annotations
                 break;
+            }
+
+            // Add "Format Plot Area" only if no specific element was clicked and we're in the plot area
+            if (_contextMenu.Items.Count == 0 && !leftClickBool && Plot.ActualModel.PlotArea.Contains(e.Position))
+            {
+                var formatPlotItem = new MenuItem { Header = "Format Plot Area", Icon = CreateMenuIcon("Format") };
+                formatPlotItem.Click += (s, args) => PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.General_PlotArea, Plot.ActualModel.PlotArea);
+                _contextMenu.Items.Add(formatPlotItem);
             }
 
             if (_contextMenu.Items.Count == 0)
