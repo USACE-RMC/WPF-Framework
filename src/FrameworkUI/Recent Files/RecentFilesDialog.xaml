@@ -27,7 +27,7 @@
         <DataGrid x:Name="MyDataGrid" Margin="6" Height="250" Width="400" 
                   AutoGenerateColumns="False" 
                   IsReadOnly="True" 
-                  Background="{DynamicResource EnvironmentWindowbackground}" 
+                  Background="{DynamicResource DynamicResource DataGrid.Static.Background}" 
                   BorderBrush="{DynamicResource SeparatorBorder}" 
                   BorderThickness="1"
                   GridLinesVisibility="None" 

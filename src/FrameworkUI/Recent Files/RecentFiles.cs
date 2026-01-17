@@ -457,7 +457,7 @@ namespace FrameworkUI
             // Use OpenProjectImage as fallback if no icon could be extracted
             if (image == null)
             {
-                image = (ImageSource)Application.Current.TryFindResource("OpenProjectImage");
+                image = (ImageSource)Application.Current.TryFindResource("ApplicationImage");
             }
             var recentFilesDialog = new RecentFilesDialog() { Files = this, FileImage = image, Icon = image };
             recentFilesDialog.ShowDialog();
