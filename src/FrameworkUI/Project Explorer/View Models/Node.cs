@@ -112,8 +112,8 @@ namespace FrameworkUI.ProjectExplorer
         private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
         private readonly Separator _collectionContentSeparator = new Separator();
         private readonly Separator _moveUpDownSeparator = new Separator();
-        private readonly MenuItem _moveUpMenuItem = new MenuItem() { Header = "Move Up", Icon = new Image() { Source = Application.Current.FindResource("MoveUpImage") as ImageSource } };
-        private readonly MenuItem _moveDownMenuItem = new MenuItem() { Header = "Move Down", Icon = new Image() { Source = Application.Current.FindResource("MoveDownImage") as ImageSource } };
+        private readonly MenuItem _moveUpMenuItem = new MenuItem() { Header = "Move Up" };
+        private readonly MenuItem _moveDownMenuItem = new MenuItem() { Header = "Move Down" };
 
         protected readonly ObservableCollection<MenuItem> _customContextItems = new ObservableCollection<MenuItem>();
         protected readonly ObservableCollection<MenuItem> _collectionContextItems = new ObservableCollection<MenuItem>();
@@ -131,6 +131,14 @@ namespace FrameworkUI.ProjectExplorer
             if (parentNode != null) ParentNode = parentNode;
             if (parentTreeView != null) ParentTreeView = parentTreeView;
             ResetItemsSource();
+
+            // Set up dynamic icon references for theme support
+            var moveUpIcon = new Image();
+            moveUpIcon.SetResourceReference(Image.SourceProperty, "MoveUpImage");
+            _moveUpMenuItem.Icon = moveUpIcon;
+            var moveDownIcon = new Image();
+            moveDownIcon.SetResourceReference(Image.SourceProperty, "MoveDownImage");
+            _moveDownMenuItem.Icon = moveDownIcon;
 
             // Event Handlers
             _nodeHeader.RenameTextBox.InvalidCharacters = _invalidNameChars;

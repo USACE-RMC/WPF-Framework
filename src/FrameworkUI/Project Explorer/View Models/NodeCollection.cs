@@ -51,8 +51,8 @@ namespace FrameworkUI.ProjectExplorer
         private bool _showSortingContextItems = true;
         private bool _showAddGroupContextItem = true;
         private readonly MenuItem _addGroupMenuItem = new MenuItem() { Header = "Add Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
-        private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending", Icon = new Image() { Source = Application.Current.FindResource("SortAscendingImage") as ImageSource } };
-        private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending", Icon = new Image() { Source = Application.Current.FindResource("SortDescendingImage") as ImageSource } };
+        private readonly MenuItem _sortASCMenuItem = new MenuItem() { Name = "sortASC", Header = "Sort Ascending" };
+        private readonly MenuItem _sortDSCMenuItem = new MenuItem() { Name = "sortDSC", Header = "Sort Descending" };
 
         /// <summary>
         /// Construct a new node collection.
@@ -67,10 +67,18 @@ namespace FrameworkUI.ProjectExplorer
             AllowGrouping = true;
             IsReadOnly = true;
 
+            // Set up dynamic icon references for theme support
+            var sortAscIcon = new Image();
+            sortAscIcon.SetResourceReference(Image.SourceProperty, "SortAscendingImage");
+            _sortASCMenuItem.Icon = sortAscIcon;
+            var sortDescIcon = new Image();
+            sortDescIcon.SetResourceReference(Image.SourceProperty, "SortDescendingImage");
+            _sortDSCMenuItem.Icon = sortDescIcon;
+
             // Node Header Appearance
             NodeHeader.ShowToolTip = false;
-            NodeHeader.StaticImage = Application.Current.FindResource("FolderIcon") as ImageSource;
-            NodeHeader.ExpandedImage = Application.Current.FindResource("FolderOpenIcon") as ImageSource;
+            NodeHeader.SetResourceReference(NodeHeader.StaticImageProperty, "FolderIcon");
+            NodeHeader.SetResourceReference(NodeHeader.ExpandedImageProperty, "FolderOpenIcon");
 
             // Event Handlers
             _addGroupMenuItem.Click += AddGroup_Click;

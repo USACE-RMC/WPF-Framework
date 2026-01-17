@@ -64,9 +64,8 @@ namespace FrameworkUI.ProjectExplorer
 
             // Node Header Appearance
             NodeHeader.ShowToolTip = true;
-            var applicationImage = (ImageSource)Application.Current.FindResource("ApplicationImage");
-            NodeHeader.StaticImage = applicationImage;
-            NodeHeader.ExpandedImage = applicationImage;
+            NodeHeader.SetResourceReference(NodeHeader.StaticImageProperty, "ApplicationImage");
+            NodeHeader.SetResourceReference(NodeHeader.ExpandedImageProperty, "ApplicationImage");
             NodeHeader.MouseLeftButtonUp += NodeHeader_MouseLeftButtonUp;
 
             // Set Bindings

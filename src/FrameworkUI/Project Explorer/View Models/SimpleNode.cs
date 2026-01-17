@@ -62,8 +62,8 @@ namespace FrameworkUI.ProjectExplorer
 
             // Node Header Appearance
             //NodeHeader.ShowToolTip = true;
-            NodeHeader.StaticImage = Application.Current.FindResource("MoveDownImage") as ImageSource;
-            NodeHeader.ExpandedImage = Application.Current.FindResource("MoveUpImage") as ImageSource;
+            NodeHeader.SetResourceReference(NodeHeader.StaticImageProperty, "MoveDownImage");
+            NodeHeader.SetResourceReference(NodeHeader.ExpandedImageProperty, "MoveUpImage");
 
             // Event Handlers
 
