@@ -343,7 +343,7 @@ Include the GenericResources dictionary for styles and icons:
 
 ```xml
 <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/GenericControls;Component/Resources/GenericResources.xaml"/>
+    <ResourceDictionary Source="pack://application:,,,/GenericControls;Component/Resources/ResourceDictionary.xaml"/>
 </ResourceDictionary.MergedDictionaries>
 ```
 

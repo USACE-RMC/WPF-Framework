@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/GenericResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ResourceDictionary.xaml"/>
                 <ResourceDictionary>
                     <local:BooleanToVisibilityConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed"/>
                     <local:ReverseBooleanConverter x:Key="ReverseBoolConverter"/>

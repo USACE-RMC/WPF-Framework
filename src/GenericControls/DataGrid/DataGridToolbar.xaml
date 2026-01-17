@@ -9,7 +9,7 @@
              UseLayoutRounding="True"
              SnapsToDevicePixels="True">
     <UserControl.Resources>
-        <ResourceDictionary Source="../Resources/GenericResources.xaml"/>
+        <ResourceDictionary Source="../Resources/ResourceDictionary.xaml"/>
     </UserControl.Resources>
     <StackPanel Name="ToolbarStackPanel" Orientation="{Binding ElementName=DataGridToolsControl, Path=ToolOrientation, TargetNullValue=Horizontal, FallbackValue=Horizontal}" Background="{Binding ElementName=DataGridToolsControl, Path=BackgroundColor}">
         <!--Add Row(s)-->

@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/IconResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ResourceDictionary.xaml"/>
                 <ResourceDictionary>
                     <cntrls:VisibilityToBooleanConverter x:Key="VisibilityToBoolConverter" VisibleValue="True" CollapsedValue="False" HiddenValue="False"/>
                     <DataTemplate x:Key="ComboItemWithButtonTemplate">

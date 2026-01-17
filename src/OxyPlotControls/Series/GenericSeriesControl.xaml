@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/IconResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ResourceDictionary.xaml"/>
                 <ResourceDictionary>
                     <cntrls:FontFamilyToFontStringConverter x:Key="FontFamilyToFontConverter"/>
                     <local:OxyAutomaticColorConverter x:Key="OxyAutoColorConverter"/>

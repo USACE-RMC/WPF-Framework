@@ -3,18 +3,36 @@
                     xmlns:local="clr-namespace:OxyPlotControls">
 
     <!--
-    OxyPlotControls Theme Resource Dictionary
-
-    This dictionary contains theme-aware styles for OxyPlotControls that use
-    DynamicResource bindings to respond to runtime theme changes.
-
-    All colors are referenced from the Themes library using DynamicResource
-    so they automatically update when the theme is changed.
+    ╔═══════════════════════════════════════════════════════════════════════════════╗
+    ║  OxyPlotControls Theme Resource Dictionary                                    ║
+    ╠═══════════════════════════════════════════════════════════════════════════════╣
+    ║  Contains theme-aware styles for OxyPlotControls components that use          ║
+    ║  DynamicResource bindings to respond to runtime theme changes.                ║
+    ║                                                                               ║
+    ║  CONTENTS:                                                                    ║
+    ║  • ComboBox Styles        - OxyComboBoxStyle with theme support               ║
+    ║  • Button Styles          - OxyButtonStyle for toolbar buttons                ║
+    ║  • Expander Styles        - Property and Excel-style expanders                ║
+    ║  • Tab Styles             - PropertiesTabItemStyle for property panels        ║
+    ║  • Control Styles         - Self-styles for all OxyPlot control types         ║
+    ║                                                                               ║
+    ║  THEME SUPPORT:                                                               ║
+    ║  All colors use DynamicResource bindings to the Themes library.               ║
+    ║  Common theme resources referenced:                                           ║
+    ║  • EnvironmentWindowText/Background - Window colors                           ║
+    ║  • ComboBox.Static/MouseOver.*      - ComboBox state colors                   ║
+    ║  • PropertyGrid.*                   - Property panel theming                  ║
+    ║                                                                               ║
+    ║  USAGE:                                                                       ║
+    ║  Control styles are applied automatically via implicit styling.               ║
+    ║  Named styles can be explicitly referenced:                                   ║
+    ║  <ComboBox Style="{StaticResource OxyComboBoxStyle}"/>                        ║
+    ╚═══════════════════════════════════════════════════════════════════════════════╝
     -->
 
-    <!-- Merge Icon Resources -->
+    <!-- Merge shared resources (icons, data arrays, ComboBox styles) -->
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/OxyPlotControls;component/Resources/IconResources.xaml"/>
+        <ResourceDictionary Source="/OxyPlotControls;component/Resources/ResourceDictionary.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->

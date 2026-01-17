@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/IconResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ResourceDictionary.xaml"/>
                 <ResourceDictionary>
                     <local:OxyLineStyleToDashArrayConverter x:Key="LineStyleConverter"/>
                     <local:OxyAutomaticColorConverter x:Key="OxyAutoColorConverter"/>
