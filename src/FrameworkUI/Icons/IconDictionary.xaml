@@ -1058,31 +1058,23 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <!-- Group icon - all borders in accent color (differentiates from Ungroup which has filled corner nodes) -->
+    <!-- Group icon - two overlapping manila squares with theme-aware borders -->
     <DrawingImage x:Key="GroupImage">
         <DrawingImage.Drawing>
             <DrawingGroup>
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16H0V0H16Z" />
-                <!-- All border lines in accent color -->
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M4,3L8.001,3 8.001,1.999 4,1.999z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M9,5L10,5 10,4 9,4z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M2,8L3,8 3,4 2,4z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M4,10L5.001,10 5.001,9 4,9z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M8,7L12,7 12,6 8,6z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M13,12L14.001,12 14.001,7.999 13,7.999z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M6,12L7,12 7,7.999 6,7.999z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M8,14L12,14 12,13 8,13z" />
-                <!-- Corner L-shaped outlines in accent color -->
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M1,1L4,1 4,2 2,2 2,4 1,4z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M8,1L11,1 11,4 10,4 10,2 8,2z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M1,8L2,8 2,10 4,10 4,11 1,11z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M5,5L8,5 8,6 6,6 6,8 5,8z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M5,12L6,12 6,14 8,14 8,15 5,15z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M12,5L15,5 15,8 14,8 14,6 12,6z" />
-                <GeometryDrawing Brush="{DynamicResource ToolbarIconAccent}" Geometry="F1M14,12L15,12 15,15 12,15 12,14 14,14z" />
-                <!-- Manila inner fill -->
-                <GeometryDrawing Brush="#FFDCB67A" Geometry="F1M9,4L8,4 8,3 4,3 4,4 3,4 3,8 4,8 4,9 5,9 5,5 9,5z" />
-                <GeometryDrawing Brush="#FFDCB67A" Geometry="F1M12,8L12,7 8,7 8,8 7,8 7,12 8,12 8,13 12,13 12,12 13,12 13,8z" />
+                <!-- First square (top-left) - manila fill with theme-aware border -->
+                <GeometryDrawing Brush="#FFDCB67A" Geometry="M2.5,2.5 L9.5,2.5 L9.5,9.5 L2.5,9.5 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource ToolbarIconForeground}" Thickness="1"/>
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <!-- Second square (bottom-right) - manila fill with theme-aware border -->
+                <GeometryDrawing Brush="#FFDCB67A" Geometry="M6.5,6.5 L13.5,6.5 L13.5,13.5 L6.5,13.5 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{DynamicResource ToolbarIconForeground}" Thickness="1"/>
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
