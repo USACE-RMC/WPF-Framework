@@ -1944,26 +1944,91 @@ namespace FrameworkUI
             }
 
             UndoListBox.ItemsSource = undoManager.UndoStack;
-            UndoListBox.SelectedItem = null;
+            UndoListBox.SelectedItems.Clear();
+            UpdateUndoCountLabel(0);
             UndoPopup.IsOpen = true;
         }
 
         /// <summary>
-        /// Handles the selection changed event for the undo listbox.
-        /// Performs undo operations up to and including the selected action.
+        /// Handles mouse movement over the undo listbox to implement VS-style multi-select highlighting.
+        /// Selects all items from the top to the item under the mouse cursor.
         /// </summary>
-        private void UndoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UndoListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (UndoListBox.SelectedItem == null) return;
+            var listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            var element = e.OriginalSource as FrameworkElement;
+            while (element != null && !(element is ListBoxItem))
+            {
+                element = element.Parent as FrameworkElement ?? VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+
+            if (element is ListBoxItem listBoxItem)
+            {
+                int hoveredIndex = listBox.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                if (hoveredIndex >= 0)
+                {
+                    SelectItemsUpToIndex(listBox, hoveredIndex);
+                    UpdateUndoCountLabel(hoveredIndex + 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles mouse leaving the undo listbox to clear selection.
+        /// </summary>
+        private void UndoListBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            UndoListBox.SelectedItems.Clear();
+            UpdateUndoCountLabel(0);
+        }
+
+        /// <summary>
+        /// Handles mouse click on an undo listbox item to perform the undo operation.
+        /// </summary>
+        private void UndoListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox == null || listBox.SelectedItems.Count == 0) return;
 
             var undoManager = GetActiveUndoManager();
             if (undoManager == null) return;
 
-            var selectedAction = UndoListBox.SelectedItem as IUndoableAction;
-            if (selectedAction != null)
+            // Get the last selected item (furthest down in the list)
+            var lastItem = listBox.SelectedItems[listBox.SelectedItems.Count - 1] as IUndoableAction;
+            if (lastItem != null)
             {
                 UndoPopup.IsOpen = false;
-                undoManager.UndoTo(selectedAction);
+                undoManager.UndoTo(lastItem);
+            }
+        }
+
+        /// <summary>
+        /// Updates the undo count label with the current selection count.
+        /// </summary>
+        private void UpdateUndoCountLabel(int count)
+        {
+            if (count == 0)
+                UndoCountLabel.Text = "Undo 1 Action";
+            else if (count == 1)
+                UndoCountLabel.Text = "Undo 1 Action";
+            else
+                UndoCountLabel.Text = $"Undo {count} Actions";
+        }
+
+        /// <summary>
+        /// Handles the click event for "Undo All" to undo all actions in the stack.
+        /// </summary>
+        private void UndoAll_Click(object sender, MouseButtonEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            UndoPopup.IsOpen = false;
+            while (undoManager.CanUndo)
+            {
+                undoManager.Undo();
             }
         }
 
@@ -1981,26 +2046,106 @@ namespace FrameworkUI
             }
 
             RedoListBox.ItemsSource = undoManager.RedoStack;
-            RedoListBox.SelectedItem = null;
+            RedoListBox.SelectedItems.Clear();
+            UpdateRedoCountLabel(0);
             RedoPopup.IsOpen = true;
         }
 
         /// <summary>
-        /// Handles the selection changed event for the redo listbox.
-        /// Performs redo operations up to and including the selected action.
+        /// Handles mouse movement over the redo listbox to implement VS-style multi-select highlighting.
+        /// Selects all items from the top to the item under the mouse cursor.
         /// </summary>
-        private void RedoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RedoListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (RedoListBox.SelectedItem == null) return;
+            var listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            var element = e.OriginalSource as FrameworkElement;
+            while (element != null && !(element is ListBoxItem))
+            {
+                element = element.Parent as FrameworkElement ?? VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+
+            if (element is ListBoxItem listBoxItem)
+            {
+                int hoveredIndex = listBox.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                if (hoveredIndex >= 0)
+                {
+                    SelectItemsUpToIndex(listBox, hoveredIndex);
+                    UpdateRedoCountLabel(hoveredIndex + 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles mouse leaving the redo listbox to clear selection.
+        /// </summary>
+        private void RedoListBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RedoListBox.SelectedItems.Clear();
+            UpdateRedoCountLabel(0);
+        }
+
+        /// <summary>
+        /// Handles mouse click on a redo listbox item to perform the redo operation.
+        /// </summary>
+        private void RedoListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox == null || listBox.SelectedItems.Count == 0) return;
 
             var undoManager = GetActiveUndoManager();
             if (undoManager == null) return;
 
-            var selectedAction = RedoListBox.SelectedItem as IUndoableAction;
-            if (selectedAction != null)
+            // Get the last selected item (furthest down in the list)
+            var lastItem = listBox.SelectedItems[listBox.SelectedItems.Count - 1] as IUndoableAction;
+            if (lastItem != null)
             {
                 RedoPopup.IsOpen = false;
-                undoManager.RedoTo(selectedAction);
+                undoManager.RedoTo(lastItem);
+            }
+        }
+
+        /// <summary>
+        /// Updates the redo count label with the current selection count.
+        /// </summary>
+        private void UpdateRedoCountLabel(int count)
+        {
+            if (count == 0)
+                RedoCountLabel.Text = "Redo 1 Action";
+            else if (count == 1)
+                RedoCountLabel.Text = "Redo 1 Action";
+            else
+                RedoCountLabel.Text = $"Redo {count} Actions";
+        }
+
+        /// <summary>
+        /// Handles the click event for "Redo All" to redo all actions in the stack.
+        /// </summary>
+        private void RedoAll_Click(object sender, MouseButtonEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            RedoPopup.IsOpen = false;
+            while (undoManager.CanRedo)
+            {
+                undoManager.Redo();
+            }
+        }
+
+        /// <summary>
+        /// Selects all items in a listbox from the first item up to and including the specified index.
+        /// This creates the VS-style multi-select behavior where hovering selects everything above.
+        /// </summary>
+        /// <param name="listBox">The listbox to modify selection on.</param>
+        /// <param name="toIndex">The index to select up to (inclusive).</param>
+        private void SelectItemsUpToIndex(ListBox listBox, int toIndex)
+        {
+            listBox.SelectedItems.Clear();
+            for (int i = 0; i <= toIndex && i < listBox.Items.Count; i++)
+            {
+                listBox.SelectedItems.Add(listBox.Items[i]);
             }
         }
 
