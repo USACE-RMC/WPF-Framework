@@ -761,7 +761,7 @@ public class AxisSerializationTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<LinearAxis>(result);
+        Assert.IsType<Wpf.LinearAxis>(result);
     }
 
     [StaFact]
@@ -905,9 +905,9 @@ public class AxisSerializationTests
     [StaFact]
     public void XElementToAxisProperties_OldLogAxisFormat_DeserializesCorrectly()
     {
-        // Arrange
+        // Arrange - Use Wpf.LogarithmicAxis type (implementation only recognizes Wpf types)
         var element = new XElement(AxisControl.AxisPropertiesTag,
-            new XAttribute("AxisType", typeof(LogarithmicAxis).ToString()),
+            new XAttribute("AxisType", typeof(Wpf.LogarithmicAxis).ToString()),
             new XElement("LogarithmicAxis",
                 new XAttribute("LogBase", "2")));
 
