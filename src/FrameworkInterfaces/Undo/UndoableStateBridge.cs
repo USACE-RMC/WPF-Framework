@@ -30,6 +30,7 @@
 
 using System.ComponentModel;
 using System.Reflection;
+using FrameworkInterfaces.Undo.Actions;
 
 namespace FrameworkInterfaces.Undo
 {
