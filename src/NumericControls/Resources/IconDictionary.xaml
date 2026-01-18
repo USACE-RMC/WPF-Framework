@@ -207,6 +207,19 @@
         </Grid>
     </Viewbox>
 
+    <!-- Edit Icon - Pencil for edit actions (VS-style) -->
+    <Viewbox x:Key="EditIcon" Width="16" Height="16" x:Shared="False" RenderOptions.EdgeMode="Aliased">
+        <Grid Width="16" Height="16">
+            <!-- Pencil body -->
+            <Path Data="M2,14 L3,10 L12,1 L15,4 L6,13 Z"
+                  Stroke="{DynamicResource EnvironmentWindowText}" StrokeThickness="1"
+                  StrokeLineJoin="Round" Fill="#F59E0B"/>
+            <!-- Pencil tip -->
+            <Path Data="M2,14 L3,10 L6,13 Z"
+                  Fill="{DynamicResource EnvironmentWindowText}"/>
+        </Grid>
+    </Viewbox>
+
     <!-- Edit Icon as DrawingBrush (for use in styles and buttons) -->
     <DrawingBrush x:Key="EditIconBrush" Stretch="Uniform">
         <DrawingBrush.Drawing>
