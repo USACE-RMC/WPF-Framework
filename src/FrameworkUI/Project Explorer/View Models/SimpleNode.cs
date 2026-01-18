@@ -54,7 +54,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="name">The name of the node.</param>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public SimpleNode(string name, Node parentNode, ExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public SimpleNode(string name, Node? parentNode, ExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
             AllowDrop = true;
             IsReadOnly = false;

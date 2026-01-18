@@ -52,7 +52,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public ElementNodeCollection(Node parentNode, ProjectExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public ElementNodeCollection(Node? parentNode, ProjectExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
 
         }
@@ -116,9 +116,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// The IElementCollection property that defines the nodes to be added under the tree view item header.
         /// </summary>
-        public IElementCollection ElementCollection
+        public IElementCollection? ElementCollection
         {
-            get { return (IElementCollection)GetValue(ElementCollectionProperty); }
+            get { return (IElementCollection?)GetValue(ElementCollectionProperty); }
             set { SetValue(ElementCollectionProperty, value); }
         }
 
@@ -130,8 +130,8 @@ namespace FrameworkUI.ProjectExplorer
         {
             var node = ElementNode.FindElementNode(element, this);
             if (node == null) return;
-            node.ParentNode.ChildNodes.Remove(node);
-            node.ParentNode.ResetItemsSource();
+            node.ParentNode?.ChildNodes.Remove(node);
+            node.ParentNode?.ResetItemsSource();
         }
 
         /// <summary>

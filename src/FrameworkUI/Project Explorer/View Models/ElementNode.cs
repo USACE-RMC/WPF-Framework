@@ -57,7 +57,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="element">The project IElement.</param>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public ElementNode(IElement element, Node parentNode, ProjectExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public ElementNode(IElement element, Node? parentNode, ProjectExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
             // Set Properties
             Element = element;
@@ -172,21 +172,20 @@ namespace FrameworkUI.ProjectExplorer
         public ElementNodeCollection? GetElementNodeCollection()
         {
             ElementNodeCollection? elementNodeCollection = null;
-            Node parentNode = ParentNode;
-            do
+            Node? parentNode = ParentNode;
+            while (parentNode != null)
             {
-                if (parentNode as ElementNodeCollection != null)
+                if (parentNode is ElementNodeCollection collection)
                 {
-                    elementNodeCollection = (ElementNodeCollection)parentNode;
+                    elementNodeCollection = collection;
                     break;
                 }
-                else if (parentNode as ProjectNode != null)
+                else if (parentNode is ProjectNode)
                 {
                     break;
                 }
                 parentNode = parentNode.ParentNode;
-
-            } while (true);
+            }
             return elementNodeCollection;
         }
 
@@ -197,24 +196,24 @@ namespace FrameworkUI.ProjectExplorer
         private ElementNodeGroup? GetElementNodeGroup()
         {
             ElementNodeGroup? elementNodeGroup = null;
-            Node parentNode = ParentNode;
-            do
+            Node? parentNode = ParentNode;
+            while (parentNode != null)
             {
-                if (parentNode as ElementNodeGroup != null)
+                if (parentNode is ElementNodeGroup group)
                 {
-                    elementNodeGroup = (ElementNodeGroup)parentNode;
+                    elementNodeGroup = group;
                     break;
                 }
-                else if (parentNode as ElementNodeCollection != null)
+                else if (parentNode is ElementNodeCollection)
                 {
                     break;
                 }
-                else if (parentNode as ProjectNode != null)
+                else if (parentNode is ProjectNode)
                 {
                     break;
                 }
                 parentNode = parentNode.ParentNode;
-            } while (true);
+            }
             return elementNodeGroup;
         }
 
