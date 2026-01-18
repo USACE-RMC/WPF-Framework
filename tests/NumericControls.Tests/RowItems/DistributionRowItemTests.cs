@@ -647,7 +647,7 @@ namespace NumericControls.Tests.RowItems
         {
             // Arrange
             var list = CreateParentList();
-            var distribution = new Exponential(0.5);
+            var distribution = new Exponential(0, 0.5);
             double xVal = 25.0;
 
             // Act

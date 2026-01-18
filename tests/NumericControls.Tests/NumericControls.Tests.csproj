@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <Reference Include="Numerics">
-      <HintPath>..\..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
     </Reference>
   </ItemGroup>
 

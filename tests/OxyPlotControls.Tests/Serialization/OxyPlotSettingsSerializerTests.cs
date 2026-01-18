@@ -669,7 +669,7 @@ public class OxyPlotSettingsSerializerTests
 
         // Assert
         Assert.True(result);
-        Assert.Equal(FontWeights.Normal, fontWeight);
+        Assert.Equal(System.Windows.FontWeights.Normal, fontWeight);
     }
 
     [Fact]
@@ -684,7 +684,7 @@ public class OxyPlotSettingsSerializerTests
 
         // Assert
         Assert.True(result);
-        Assert.Equal(FontWeights.Bold, fontWeight);
+        Assert.Equal(System.Windows.FontWeights.Bold, fontWeight);
     }
 
     [Fact]
@@ -699,7 +699,7 @@ public class OxyPlotSettingsSerializerTests
 
         // Assert
         Assert.True(result);
-        Assert.Equal(FontWeights.Light, fontWeight);
+        Assert.Equal(System.Windows.FontWeights.Light, fontWeight);
     }
 
     [Fact]
@@ -913,11 +913,11 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Alignment", "Center"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Alignment", out HorizontalAlignment alignment);
+        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Alignment", out System.Windows.HorizontalAlignment alignment);
 
         // Assert
         Assert.True(result);
-        Assert.Equal(HorizontalAlignment.Center, alignment);
+        Assert.Equal(System.Windows.HorizontalAlignment.Center, alignment);
     }
 
     [Fact]

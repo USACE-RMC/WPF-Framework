@@ -32,7 +32,7 @@ using System.Windows;
 using System.Windows.Media;
 using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Wpf;
+using Wpf = OxyPlot.Wpf;
 using OxyPlotControls;
 using Xunit;
 
@@ -53,7 +53,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_FromLinearAxis_ReturnsLogarithmicAxis()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Original Axis",
             Position = AxisPosition.Left,
@@ -76,7 +76,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_DefaultParameters_SetsBase10AndPowerPaddingTrue()
     {
         // Arrange
-        var linearAxis = new LinearAxis();
+        var linearAxis = new Wpf.LinearAxis();
 
         // Act
         var result = AxisControl.ConvertAxisToLogarithmicAxis(linearAxis);
@@ -90,7 +90,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_CustomParameters_SetsBaseAndPowerPadding()
     {
         // Arrange
-        var linearAxis = new LinearAxis();
+        var linearAxis = new Wpf.LinearAxis();
 
         // Act
         var result = AxisControl.ConvertAxisToLogarithmicAxis(linearAxis, logBase: 2, powerPadding: false);
@@ -104,7 +104,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_NegativeMinimum_SetsMinimumToEpsilon()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = -100,
             Maximum = 1000
@@ -121,7 +121,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_ZeroMinimum_SetsMinimumToEpsilon()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 0,
             Maximum = 1000
@@ -138,7 +138,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_PositiveMinimum_PreservesMinimum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 10,
             Maximum = 1000
@@ -155,7 +155,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_PreservesMaximum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = 500
         };
@@ -171,7 +171,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_PreservesStartAndEndPosition()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             StartPosition = 0.1,
             EndPosition = 0.9
@@ -189,13 +189,13 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_CopiesAxisProperties()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Test Title",
             TitleColor = Colors.Red,
             TitleFont = "Arial",
             TitleFontSize = 14,
-            TitleFontWeight = FontWeights.Bold,
+            TitleFontWeight = System.Windows.FontWeights.Bold,
             MajorGridlineStyle = LineStyle.Solid,
             MajorGridlineColor = Colors.Gray,
             TickStyle = TickStyle.Outside,
@@ -214,7 +214,7 @@ public class AxisTypeConversionTests
         Assert.Equal(Colors.Red, result.TitleColor);
         Assert.Equal("Arial", result.TitleFont);
         Assert.Equal(14, result.TitleFontSize);
-        Assert.Equal(FontWeights.Bold, result.TitleFontWeight);
+        Assert.Equal(System.Windows.FontWeights.Bold, result.TitleFontWeight);
         Assert.Equal(LineStyle.Solid, result.MajorGridlineStyle);
         Assert.Equal(Colors.Gray, result.MajorGridlineColor);
         Assert.Equal(TickStyle.Outside, result.TickStyle);
@@ -233,7 +233,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_FromLogarithmicAxis_ReturnsLinearAxis()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis
+        var logAxis = new Wpf.LogarithmicAxis
         {
             Title = "Log Axis",
             Position = AxisPosition.Left,
@@ -255,7 +255,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_DefaultParameters_SetsDefaultFractionOptions()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis();
+        var logAxis = new Wpf.LogarithmicAxis();
 
         // Act
         var result = AxisControl.ConvertAxisToLinearAxis(logAxis);
@@ -270,7 +270,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_CustomParameters_SetsFractionOptions()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis();
+        var logAxis = new Wpf.LogarithmicAxis();
 
         // Act
         var result = AxisControl.ConvertAxisToLinearAxis(logAxis,
@@ -288,7 +288,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_PreservesMinimumAndMaximum()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis
+        var logAxis = new Wpf.LogarithmicAxis
         {
             Minimum = 10,
             Maximum = 500
@@ -306,7 +306,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_PreservesStartAndEndPosition()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis
+        var logAxis = new Wpf.LogarithmicAxis
         {
             StartPosition = 0.2,
             EndPosition = 0.8
@@ -324,7 +324,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_CopiesAxisProperties()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis
+        var logAxis = new Wpf.LogarithmicAxis
         {
             Title = "Log Title",
             TitleColor = Colors.Blue,
@@ -358,7 +358,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_FromNormalProbabilityAxis_ReturnsLinearAxis()
     {
         // Arrange
-        var normalAxis = new NormalProbabilityAxis
+        var normalAxis = new Wpf.NormalProbabilityAxis
         {
             Title = "Normal Axis",
             Position = AxisPosition.Bottom
@@ -381,7 +381,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_FromLinearAxis_ReturnsNormalProbabilityAxis()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Linear Axis",
             Position = AxisPosition.Bottom,
@@ -403,7 +403,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_MinimumBelowEpsilon_SetsMinimumToDefault()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 0
         };
@@ -419,7 +419,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_MaximumAbove999_SetsMaximumTo999()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = 1.0
         };
@@ -435,7 +435,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_MaximumIsNaN_SetsMaximumTo999()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = double.NaN
         };
@@ -451,7 +451,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_ValidMinimum_PreservesMinimum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 0.001
         };
@@ -467,7 +467,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_ValidMaximum_PreservesMaximum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = 0.95
         };
@@ -483,7 +483,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_PreservesStartAndEndPosition()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             StartPosition = 0.15,
             EndPosition = 0.85
@@ -501,7 +501,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_CopiesAxisProperties()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Source Title",
             TitleColor = Colors.Green,
@@ -531,7 +531,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_FromLinearAxis_ReturnsGumbelProbabilityAxis()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Linear Axis",
             Position = AxisPosition.Bottom,
@@ -553,7 +553,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_MinimumBelowEpsilon_SetsMinimumToDefault()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 0
         };
@@ -569,7 +569,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_MaximumAbove99_SetsMaximumTo99()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = 1.0
         };
@@ -585,7 +585,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_MaximumIsNaN_SetsMaximumTo99()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = double.NaN
         };
@@ -601,7 +601,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_ValidMinimum_PreservesMinimum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 0.001
         };
@@ -617,7 +617,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_ValidMaximum_PreservesMaximum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Maximum = 0.90
         };
@@ -633,7 +633,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_PreservesStartAndEndPosition()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             StartPosition = 0.25,
             EndPosition = 0.75
@@ -651,7 +651,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_CopiesAxisProperties()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Gumbel Source",
             TitleColor = Colors.Orange,
@@ -681,7 +681,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToDateTimeAxis_FromLinearAxis_ReturnsDateTimeAxis()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "Linear Axis",
             Position = AxisPosition.Bottom,
@@ -703,7 +703,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToDateTimeAxis_PreservesMinimumAndMaximum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 100,
             Maximum = 500
@@ -721,7 +721,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToDateTimeAxis_PreservesStartAndEndPosition()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             StartPosition = 0.3,
             EndPosition = 0.7
@@ -739,7 +739,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToDateTimeAxis_CopiesAxisProperties()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = "DateTime Source",
             TitleColor = Colors.Purple,
@@ -769,7 +769,7 @@ public class AxisTypeConversionTests
     public void ConvertLinearToLogAndBack_PreservesCompatibleProperties()
     {
         // Arrange
-        var originalAxis = new LinearAxis
+        var originalAxis = new Wpf.LinearAxis
         {
             Title = "Round Trip",
             TitleColor = Colors.Red,
@@ -797,7 +797,7 @@ public class AxisTypeConversionTests
     public void ConvertLinearToNormalAndBack_PreservesCompatibleProperties()
     {
         // Arrange
-        var originalAxis = new LinearAxis
+        var originalAxis = new Wpf.LinearAxis
         {
             Title = "Normal Round Trip",
             TitleColor = Colors.Blue,
@@ -824,7 +824,7 @@ public class AxisTypeConversionTests
     public void ConvertLinearToGumbelAndBack_PreservesCompatibleProperties()
     {
         // Arrange
-        var originalAxis = new LinearAxis
+        var originalAxis = new Wpf.LinearAxis
         {
             Title = "Gumbel Round Trip",
             TitleColor = Colors.Green,
@@ -851,7 +851,7 @@ public class AxisTypeConversionTests
     public void ConvertLinearToDateTimeAndBack_PreservesCompatibleProperties()
     {
         // Arrange
-        var originalAxis = new LinearAxis
+        var originalAxis = new Wpf.LinearAxis
         {
             Title = "DateTime Round Trip",
             TitleColor = Colors.Orange,
@@ -882,7 +882,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_ReversedAxis_PreservesReversedPosition()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             StartPosition = 1,
             EndPosition = 0
@@ -900,7 +900,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLinearAxis_ReversedAxis_PreservesReversedPosition()
     {
         // Arrange
-        var logAxis = new LogarithmicAxis
+        var logAxis = new Wpf.LogarithmicAxis
         {
             StartPosition = 1,
             EndPosition = 0
@@ -922,7 +922,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToLogarithmicAxis_VerySmallPositiveMinimum_PreservesMinimum()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = 1E-15
         };
@@ -938,7 +938,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToNormalAxis_NegativeMinimum_SetsMinimumToDefault()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = -0.5
         };
@@ -954,7 +954,7 @@ public class AxisTypeConversionTests
     public void ConvertAxisToGumbelAxis_NegativeMinimum_SetsMinimumToDefault()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Minimum = -0.1
         };
@@ -970,7 +970,7 @@ public class AxisTypeConversionTests
     public void AllConversions_NullProperties_HandledGracefully()
     {
         // Arrange
-        var linearAxis = new LinearAxis
+        var linearAxis = new Wpf.LinearAxis
         {
             Title = null,
             Key = null,
