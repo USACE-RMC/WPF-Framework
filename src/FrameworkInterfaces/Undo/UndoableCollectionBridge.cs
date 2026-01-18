@@ -38,16 +38,21 @@ using FrameworkInterfaces.Undo.Actions;
 namespace FrameworkInterfaces.Undo
 {
     /// <summary>
-    /// Bridges an <see cref="ObservableCollection{T}"/> to the undo/redo system by automatically
-    /// recording collection changes as undoable actions.
+    /// Bridges an <see cref="IList{T}"/> that implements <see cref="INotifyCollectionChanged"/>
+    /// to the undo/redo system by automatically recording collection changes as undoable actions.
     /// </summary>
     /// <typeparam name="T">The type of elements in the collection.</typeparam>
     /// <remarks>
     /// <para>
-    /// This class subscribes to the <see cref="ObservableCollection{T}.CollectionChanged"/> event
+    /// This class subscribes to the <see cref="INotifyCollectionChanged.CollectionChanged"/> event
     /// and creates appropriate <see cref="IUndoableAction"/> instances for each change type
     /// (Add, Remove, Replace, Reset, Move). These actions are recorded with the
     /// <see cref="IUndoManager"/> for undo/redo support.
+    /// </para>
+    /// <para>
+    /// The bridge works with any collection that implements both <see cref="IList{T}"/> and
+    /// <see cref="INotifyCollectionChanged"/>, including <see cref="List{T}"/> wrapped with
+    /// collection change notifications, custom collections, or <see cref="ObservableCollection{T}"/>.
     /// </para>
     /// <para>
     /// The bridge maintains a shadow copy of the collection to support Reset (Clear) operations,
@@ -70,15 +75,15 @@ namespace FrameworkInterfaces.Undo
     /// </remarks>
     /// <example>
     /// <code>
-    /// // Create the bridge in your element constructor
+    /// // Create the bridge with any IList that implements INotifyCollectionChanged
     /// public class MyElement : ElementBase, IUndoableElement
     /// {
-    ///     private ObservableCollection&lt;double&gt; _values;
+    ///     private MyObservableList&lt;double&gt; _values;
     ///     private UndoableCollectionBridge&lt;double&gt; _valuesBridge;
     ///
     ///     public MyElement()
     ///     {
-    ///         _values = new ObservableCollection&lt;double&gt;();
+    ///         _values = new MyObservableList&lt;double&gt;();
     ///         _valuesBridge = new UndoableCollectionBridge&lt;double&gt;(
     ///             _values,
     ///             () => IsUndoEnabled ? _undoManager : null,
@@ -95,7 +100,12 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// The collection being monitored for changes.
         /// </summary>
-        private readonly ObservableCollection<T> _collection;
+        private readonly IList<T> _collection;
+
+        /// <summary>
+        /// The collection cast as INotifyCollectionChanged for event subscription.
+        /// </summary>
+        private readonly INotifyCollectionChanged _notifyCollection;
 
         /// <summary>
         /// A function that returns the current undo manager, or null if undo is disabled.
@@ -131,7 +141,8 @@ namespace FrameworkInterfaces.Undo
         /// Initializes a new instance of the <see cref="UndoableCollectionBridge{T}"/> class.
         /// </summary>
         /// <param name="collection">
-        /// The <see cref="ObservableCollection{T}"/> to monitor for changes.
+        /// The <see cref="IList{T}"/> to monitor for changes. Must also implement
+        /// <see cref="INotifyCollectionChanged"/>.
         /// </param>
         /// <param name="getUndoManager">
         /// A function that returns the <see cref="IUndoManager"/> to use for recording actions,
@@ -148,8 +159,11 @@ namespace FrameworkInterfaces.Undo
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="collection"/> or <paramref name="getUndoManager"/> is null.
         /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="collection"/> does not implement <see cref="INotifyCollectionChanged"/>.
+        /// </exception>
         public UndoableCollectionBridge(
-            ObservableCollection<T> collection,
+            IList<T> collection,
             Func<IUndoManager?> getUndoManager,
             string collectionDescription = "collection",
             object? target = null)
@@ -159,11 +173,17 @@ namespace FrameworkInterfaces.Undo
             _collectionDescription = collectionDescription ?? "collection";
             _target = target;
 
+            // Verify the collection implements INotifyCollectionChanged
+            _notifyCollection = collection as INotifyCollectionChanged
+                ?? throw new ArgumentException(
+                    $"Collection must implement {nameof(INotifyCollectionChanged)}.",
+                    nameof(collection));
+
             // Initialize the shadow copy with current collection contents
             _shadowCopy = new List<T>(_collection);
 
             // Subscribe to collection changes
-            _collection.CollectionChanged += OnCollectionChanged;
+            _notifyCollection.CollectionChanged += OnCollectionChanged;
         }
 
         #endregion
@@ -174,16 +194,16 @@ namespace FrameworkInterfaces.Undo
         /// Gets the collection being monitored by this bridge.
         /// </summary>
         /// <value>
-        /// The <see cref="ObservableCollection{T}"/> that this bridge is attached to.
+        /// The <see cref="IList{T}"/> that this bridge is attached to.
         /// </value>
-        public ObservableCollection<T> Collection => _collection;
+        public IList<T> Collection => _collection;
 
         #endregion
 
         #region Event Handlers
 
         /// <summary>
-        /// Handles the <see cref="ObservableCollection{T}.CollectionChanged"/> event
+        /// Handles the <see cref="INotifyCollectionChanged.CollectionChanged"/> event
         /// by creating and recording appropriate undo actions.
         /// </summary>
         /// <param name="sender">The source of the event (the collection).</param>
@@ -407,7 +427,7 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         /// <returns>A <see cref="DelegateAction"/> that restores all items on undo and clears on redo.</returns>
         /// <remarks>
-        /// The Reset action is raised when <see cref="ObservableCollection{T}.Clear"/> is called,
+        /// The Reset action is raised when the collection is cleared,
         /// but the event arguments do not contain the removed items. This is why we maintain
         /// a shadow copy of the collection - to capture the items that were present before the clear.
         /// </remarks>
@@ -446,6 +466,8 @@ namespace FrameworkInterfaces.Undo
         /// <remarks>
         /// The undo operation moves the item back to its original index.
         /// The redo operation moves the item to the new index again.
+        /// For collections that don't have a native Move method, this is implemented
+        /// as a remove followed by an insert.
         /// </remarks>
         private IUndoableAction? CreateMoveAction(NotifyCollectionChangedEventArgs e)
         {
@@ -454,20 +476,49 @@ namespace FrameworkInterfaces.Undo
 
             if (oldIndex == newIndex) return null;
 
+            // Capture the item being moved
+            var movedItems = e.NewItems?.Cast<T>().ToList() ?? new List<T>();
+            if (movedItems.Count == 0) return null;
+
             string description = $"Move item in {_collectionDescription}";
 
             return new DelegateAction(
                 description,
                 execute: () =>
                 {
-                    _collection.Move(oldIndex, newIndex);
+                    MoveItem(oldIndex, newIndex);
                 },
                 undo: () =>
                 {
-                    _collection.Move(newIndex, oldIndex);
+                    MoveItem(newIndex, oldIndex);
                 },
                 target: _target
             );
+        }
+
+        /// <summary>
+        /// Moves an item from one index to another in the collection.
+        /// </summary>
+        /// <param name="fromIndex">The current index of the item.</param>
+        /// <param name="toIndex">The target index for the item.</param>
+        /// <remarks>
+        /// If the collection is an <see cref="ObservableCollection{T}"/>, uses its native
+        /// Move method. Otherwise, performs a remove and insert operation.
+        /// </remarks>
+        private void MoveItem(int fromIndex, int toIndex)
+        {
+            // Use native Move if available (ObservableCollection)
+            if (_collection is ObservableCollection<T> observableCollection)
+            {
+                observableCollection.Move(fromIndex, toIndex);
+            }
+            else
+            {
+                // Manual move: remove and insert
+                T item = _collection[fromIndex];
+                _collection.RemoveAt(fromIndex);
+                _collection.Insert(toIndex, item);
+            }
         }
 
         /// <summary>
@@ -491,7 +542,7 @@ namespace FrameworkInterfaces.Undo
         /// Releases all resources used by the <see cref="UndoableCollectionBridge{T}"/>.
         /// </summary>
         /// <remarks>
-        /// This method unsubscribes from the <see cref="ObservableCollection{T}.CollectionChanged"/>
+        /// This method unsubscribes from the <see cref="INotifyCollectionChanged.CollectionChanged"/>
         /// event to prevent memory leaks. Always call <see cref="Dispose"/> when you are finished
         /// using the bridge, or use a using statement.
         /// </remarks>
@@ -516,7 +567,7 @@ namespace FrameworkInterfaces.Undo
                 if (disposing)
                 {
                     // Unsubscribe from collection events
-                    _collection.CollectionChanged -= OnCollectionChanged;
+                    _notifyCollection.CollectionChanged -= OnCollectionChanged;
 
                     // Clear the shadow copy
                     _shadowCopy?.Clear();
