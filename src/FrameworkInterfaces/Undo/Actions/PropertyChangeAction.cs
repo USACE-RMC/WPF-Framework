@@ -61,6 +61,7 @@ namespace FrameworkInterfaces.Undo.Actions
         private readonly object _oldValue;
         private object _newValue;
         private readonly PropertyInfo _propertyInfo;
+        private readonly object _syncLock = new object();
 
         /// <summary>
         /// Time window in milliseconds for merging rapid changes.
@@ -91,11 +92,12 @@ namespace FrameworkInterfaces.Undo.Actions
             _oldValue = oldValue;
             _newValue = newValue;
 
-            _propertyInfo = target.GetType().GetProperty(propertyName);
-            if (_propertyInfo == null)
+            var propertyInfo = target.GetType().GetProperty(propertyName);
+            if (propertyInfo == null)
             {
                 throw new ArgumentException($"Property '{propertyName}' not found on type '{target.GetType().Name}'", nameof(propertyName));
             }
+            _propertyInfo = propertyInfo;
 
             Timestamp = DateTime.Now;
         }
@@ -110,7 +112,7 @@ namespace FrameworkInterfaces.Undo.Actions
             get
             {
                 // Try to get a meaningful name from the target
-                string targetName = null;
+                string? targetName = null;
                 if (_target is IElement element)
                 {
                     targetName = element.DisplayName;
@@ -157,13 +159,19 @@ namespace FrameworkInterfaces.Undo.Actions
         /// <inheritdoc/>
         public void Execute()
         {
-            _propertyInfo.SetValue(_target, _newValue);
+            lock (_syncLock)
+            {
+                _propertyInfo.SetValue(_target, _newValue);
+            }
         }
 
         /// <inheritdoc/>
         public void Undo()
         {
-            _propertyInfo.SetValue(_target, _oldValue);
+            lock (_syncLock)
+            {
+                _propertyInfo.SetValue(_target, _oldValue);
+            }
         }
 
         /// <inheritdoc/>

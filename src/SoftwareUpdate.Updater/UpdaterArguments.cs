@@ -41,22 +41,26 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Gets or sets the process ID of the main application to wait for.
         /// </summary>
+        /// <value>The process ID. Defaults to 0 if not specified.</value>
         public int ProcessId { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the update zip file.
         /// </summary>
-        public string ZipPath { get; set; }
+        /// <value>The zip file path, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
+        public string? ZipPath { get; set; }
 
         /// <summary>
         /// Gets or sets the target installation directory.
         /// </summary>
-        public string TargetDirectory { get; set; }
+        /// <value>The target directory path, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
+        public string? TargetDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the main executable name to restart.
         /// </summary>
-        public string MainExecutable { get; set; }
+        /// <value>The executable name, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
+        public string? MainExecutable { get; set; }
 
         /// <summary>
         /// Gets or sets whether to create a backup before updating.
@@ -77,7 +81,7 @@ namespace SoftwareUpdate.Updater
             {
                 var arg = args[i];
 
-                if (arg.StartsWith("--"))
+                if (arg.StartsWith("--") && arg.Length > 2)
                 {
                     var key = arg.Substring(2).ToLower();
 
@@ -104,17 +108,17 @@ namespace SoftwareUpdate.Updater
 
             if (argDict.TryGetValue("zip", out var zip))
             {
-                result.ZipPath = zip.Trim('"');
+                result.ZipPath = UnquoteArgument(zip);
             }
 
             if (argDict.TryGetValue("target", out var target))
             {
-                result.TargetDirectory = target.Trim('"');
+                result.TargetDirectory = UnquoteArgument(target);
             }
 
             if (argDict.TryGetValue("exe", out var exe))
             {
-                result.MainExecutable = exe.Trim('"');
+                result.MainExecutable = UnquoteArgument(exe);
             }
 
             return result;
@@ -123,6 +127,11 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Validates the arguments.
         /// </summary>
+        /// <remarks>
+        /// Note: File existence checks are point-in-time validations. The zip file or target directory
+        /// could be modified or deleted between validation and actual use (TOCTOU). Callers should
+        /// handle <see cref="System.IO.FileNotFoundException"/> during installation.
+        /// </remarks>
         public void Validate()
         {
             var errors = new List<string>();
@@ -147,6 +156,25 @@ namespace SoftwareUpdate.Updater
             {
                 throw new ArgumentException(string.Join(Environment.NewLine, errors));
             }
+        }
+
+        /// <summary>
+        /// Properly unquotes an argument value, handling quoted strings safely.
+        /// </summary>
+        /// <param name="value">The argument value to unquote.</param>
+        /// <returns>The unquoted value.</returns>
+        private static string UnquoteArgument(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            // Only strip quotes if they are balanced at start and end
+            if (value.Length >= 2 && value[0] == '"' && value[value.Length - 1] == '"')
+            {
+                return value.Substring(1, value.Length - 2);
+            }
+
+            return value;
         }
     }
 }

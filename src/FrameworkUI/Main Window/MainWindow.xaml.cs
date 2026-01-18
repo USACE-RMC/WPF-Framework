@@ -189,16 +189,16 @@ namespace FrameworkUI
         /// <summary>
         /// Layout anchorable for the project explorer dock.
         /// </summary>
-        private LayoutAnchorable _projectExplorerDock;
+        private LayoutAnchorable? _projectExplorerDock;
         //private LayoutAnchorable _mapExplorerDock;
         /// <summary>
         /// Layout anchorable for the message window dock.
         /// </summary>
-        private LayoutAnchorable _messageWindowDock;
+        private LayoutAnchorable? _messageWindowDock;
         /// <summary>
         /// Layout anchorable for the properties window dock.
         /// </summary>
-        private LayoutAnchorable _propertiesWindowDock;
+        private LayoutAnchorable? _propertiesWindowDock;
         /// <summary>
         /// The project explorer tree view control.
         /// </summary>
@@ -211,7 +211,7 @@ namespace FrameworkUI
         /// <summary>
         /// Reference to the previously active document.
         /// </summary>
-        private LayoutDocument _previousActiveDocument = null;
+        private LayoutDocument? _previousActiveDocument = null;
         /// <summary>
         /// Indicates whether to load the full layout including documents.
         /// </summary>
@@ -236,7 +236,7 @@ namespace FrameworkUI
         /// <summary>
         /// Event raised when the options apply button is clicked.
         /// </summary>
-        public event RoutedEventHandler Options_Apply_Click;
+        public event RoutedEventHandler? Options_Apply_Click;
         /// <summary>
         /// Delegate for handling the preview save as event.
         /// </summary>
@@ -247,7 +247,7 @@ namespace FrameworkUI
         /// <summary>
         /// Event raised before a project is saved with a new file name.
         /// </summary>
-        public event PreviewObjectSavedAsEventHandler PreviewSaveAs;
+        public event PreviewObjectSavedAsEventHandler? PreviewSaveAs;
 
         /// <summary>
         /// Dependency property for the ProjectNode property.
@@ -269,16 +269,15 @@ namespace FrameworkUI
             thisControl.ProjectMenuItems.Clear();
             // 
             // Get the old value
-            FrameworkUIController oldValue = null;
-            oldValue = e.OldValue as FrameworkUIController;
+            FrameworkUIController? oldValue = e.OldValue as FrameworkUIController;
             // clean up any links to old project.
             if (oldValue != null)
             {
                 oldValue.OnClick -= thisControl.Project_Click;
                 oldValue.SetPropertiesControl -= thisControl.SetPropertiesRequested;
                 oldValue.ClosePropertiesControl -= thisControl.ClosePropertiesRequested;
-                oldValue.Project.PropertyChanged -= thisControl.ProjectPropertyChanged;
-                oldValue.ParentTreeView = null;
+                oldValue.Project.PropertyChanged -= thisControl.ProjectPropertyChanged!;
+                oldValue.ParentTreeView = null!;
 
                 for (int i = 0; i < oldValue.ChildNodes.Count; i++)
                 {
@@ -288,23 +287,28 @@ namespace FrameworkUI
                     elementnodeCollection.NodeRemoved -= thisControl.NodeRemoved;
                     elementnodeCollection.NodeSorted -= thisControl.NodeSorted;
 
-                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    if (elementnodeCollection.ElementCollection != null)
                     {
-                        var element = elementnodeCollection.ElementCollection[j];
-                        var elementNode = ElementNode.FindElementNode(element, oldValue.ChildNodes[i]);
-                        if (elementNode != null) thisControl.NodeRemoved(elementNode);
+                        for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                        {
+                            var element = elementnodeCollection.ElementCollection[j];
+                            var elementNode = ElementNode.FindElementNode(element, oldValue.ChildNodes[i]);
+                            if (elementNode != null) thisControl.NodeRemoved(elementNode);
+                        }
                     }
                 }
             }
             // Cancel AutoBackup
             AutoBackup.Cancel();
-            // 
+            //
             // Get the new value
-            FrameworkUIController newValue = null;
-            newValue = e.NewValue as FrameworkUIController;
+            FrameworkUIController? newValue = e.NewValue as FrameworkUIController;
+            if (newValue == null)
+            {
+                thisControl._projectExplorerTreeView.ProjectNode = null!;
+                return;
+            }
             thisControl._projectExplorerTreeView.ProjectNode = newValue;
-            // 
-            if (newValue == null) return;
 
             // Set main window Icon
             thisControl.Icon = GeneralMethods.Bitmap2BitmapSource(newValue.Project.ProjectImage);
@@ -327,7 +331,7 @@ namespace FrameworkUI
             newValue.SetPropertiesControl += thisControl.SetPropertiesRequested;
             newValue.ClosePropertiesControl += thisControl.ClosePropertiesRequested;
             // Add handler to Project property changed
-            newValue.Project.PropertyChanged += thisControl.ProjectPropertyChanged;
+            newValue.Project.PropertyChanged += thisControl.ProjectPropertyChanged!;
 
             for (int i = 0; i < newValue.ChildNodes.Count; i++)
             {
@@ -337,11 +341,14 @@ namespace FrameworkUI
                 elementnodeCollection.NodeRemoved += thisControl.NodeRemoved;
                 elementnodeCollection.NodeSorted += thisControl.NodeSorted;
 
-                for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                if (elementnodeCollection.ElementCollection != null)
                 {
-                    var element = elementnodeCollection.ElementCollection[j];
-                    var elementNode = ElementNode.FindElementNode(element, newValue.ChildNodes[i]);
-                    if (elementNode != null) thisControl.NodeAdded(elementNode);
+                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    {
+                        var element = elementnodeCollection.ElementCollection[j];
+                        var elementNode = ElementNode.FindElementNode(element, newValue.ChildNodes[i]);
+                        if (elementNode != null) thisControl.NodeAdded(elementNode);
+                    }
                 }
             }
 
@@ -366,7 +373,7 @@ namespace FrameworkUI
             ProjectNode.OnClick -= Project_Click;
             ProjectNode.SetPropertiesControl -= SetPropertiesRequested;
             ProjectNode.ClosePropertiesControl -= ClosePropertiesRequested;
-            ProjectNode.Project.PropertyChanged -= ProjectPropertyChanged;
+            ProjectNode.Project.PropertyChanged -= ProjectPropertyChanged!;
 
             for (int i = 0; i < ProjectNode.ChildNodes.Count; i++)
             {
@@ -376,11 +383,14 @@ namespace FrameworkUI
                 elementnodeCollection.NodeRemoved -= NodeRemoved;
                 elementnodeCollection.NodeSorted -= NodeSorted;
 
-                for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                if (elementnodeCollection.ElementCollection != null)
                 {
-                    var element = elementnodeCollection.ElementCollection[j];
-                    var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
-                    if (elementNode != null) NodeRemoved(elementNode);
+                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    {
+                        var element = elementnodeCollection.ElementCollection[j];
+                        var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
+                        if (elementNode != null) NodeRemoved(elementNode);
+                    }
                 }
             }
 
@@ -391,7 +401,7 @@ namespace FrameworkUI
             ProjectNode.OnClick += Project_Click;
             ProjectNode.SetPropertiesControl += SetPropertiesRequested;
             ProjectNode.ClosePropertiesControl += ClosePropertiesRequested;
-            ProjectNode.Project.PropertyChanged += ProjectPropertyChanged;
+            ProjectNode.Project.PropertyChanged += ProjectPropertyChanged!;
 
             for (int i = 0; i < ProjectNode.ChildNodes.Count; i++)
             {
@@ -401,11 +411,14 @@ namespace FrameworkUI
                 elementnodeCollection.NodeRemoved += NodeRemoved;
                 elementnodeCollection.NodeSorted += NodeSorted;
 
-                for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                if (elementnodeCollection.ElementCollection != null)
                 {
-                    var element = elementnodeCollection.ElementCollection[j];
-                    var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
-                    if (elementNode != null) NodeAdded(elementNode);
+                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    {
+                        var element = elementnodeCollection.ElementCollection[j];
+                        var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
+                        if (elementNode != null) NodeAdded(elementNode);
+                    }
                 }
             }
 
@@ -426,13 +439,13 @@ namespace FrameworkUI
         /// <summary>
         /// The update service for checking and downloading software updates.
         /// </summary>
-        private IUpdateService _updateService;
+        private IUpdateService? _updateService;
 
         /// <summary>
         /// Gets or sets the update service for checking software updates.
         /// When set, the "Check for Updates" menu item becomes visible.
         /// </summary>
-        public IUpdateService UpdateService
+        public IUpdateService? UpdateService
         {
             get { return _updateService; }
             set
@@ -508,7 +521,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The property changed event arguments.</param>
-        private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ProjectPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (ProjectNode == null)
             {
@@ -569,7 +582,8 @@ namespace FrameworkUI
                     break;
                 }
             }
-            _projectExplorerDock.IsActive = true;
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsActive = true;
         }
 
         ///// <summary>
@@ -706,7 +720,7 @@ namespace FrameworkUI
         /// <summary>
         /// Support function for loading AvalonDock layout
         /// </summary>
-        private void LayoutSerialization_Callback(object sender, LayoutSerializationCallbackEventArgs e)
+        private void LayoutSerialization_Callback(object? sender, LayoutSerializationCallbackEventArgs e)
         {
             // Always load content the main controls: Project Explorer, Message Window, Properties Window
             if (e.Model.ContentId == ShellPublicVariables.ProjectExplorerContentID || e.Model.ContentId == ShellPublicVariables.MessageWindowContentID || e.Model.ContentId == ShellPublicVariables.PropertiesWindowContentID)
@@ -770,8 +784,9 @@ namespace FrameworkUI
                     }
                 }
 
-                // 
-                OpenWindows.Open((LayoutDocument)e.Model, element);
+                //
+                if (element != null)
+                    OpenWindows.Open((LayoutDocument)e.Model, element);
             }
             else
             {
@@ -855,7 +870,7 @@ namespace FrameworkUI
             elementNode.Copy -= CopyElement_Click;
             elementNode.Delete -= DeleteElement;
             elementNode.NodeMoved -= NodeMoved;
-            elementNode.ParentTreeView = null;
+            elementNode.ParentTreeView = null!;
 
             if (_openingProject == false)
             {
@@ -1007,7 +1022,8 @@ namespace FrameworkUI
         private void SetPropertiesRequested(UIElement propertyControl)
         {
             OpenProperties(propertyControl);
-            _propertiesWindowDock.IsActive = true;
+            if (_propertiesWindowDock != null)
+                _propertiesWindowDock.IsActive = true;
         }
 
         /// <summary>
@@ -1034,7 +1050,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void PropertiesWindow_IsActiveChanged(object sender, EventArgs e)
+        private void PropertiesWindow_IsActiveChanged(object? sender, EventArgs e)
         {
             // Check if a simulation is in progress
             if (ShellPublicVariables.SimulationInProgress == true) return;
@@ -1045,7 +1061,7 @@ namespace FrameworkUI
             if (_previousActiveDocument.IsActive == false && _previousActiveDocument.IsSelected == true && _propertiesPaneClicked == true && _projectExplorerPaneClicked == false)
             {
                 // User did not activate the document from the project explorer, so clear any multi-select
-                if (ProjectNode.ParentTreeView.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
+                if (ProjectNode.ParentTreeView?.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
 
                 // Select node
                 var prevDocumentElement = ProjectNode.GetControlElement((UIElement)_previousActiveDocument.Content);
@@ -1070,7 +1086,7 @@ namespace FrameworkUI
         /// Document factory.
         /// </summary>
         /// <param name="element">Project element.</param>
-        private LayoutDocument DocumentFactory(IElement element)
+        private LayoutDocument? DocumentFactory(IElement element)
         {
             var document = new LayoutDocument() { IconSource = GeneralMethods.Bitmap2BitmapSource(element.ElementImage) };
             var documentControl = ProjectNode.GetDocumentControl(element);
@@ -1082,7 +1098,7 @@ namespace FrameworkUI
             document.Closed += (sender, e) =>
             {
                 if (ProjectNode == null) return;
-                if (sender.GetType() != typeof(LayoutDocument)) return;
+                if (sender == null || sender.GetType() != typeof(LayoutDocument)) return;
                 LayoutDocument doc = (LayoutDocument)sender;
                 doc.IsActiveChanged -= Document_IsActiveChanged;
                 doc.IsSelectedChanged -= Document_IsSelectedChanged;
@@ -1099,7 +1115,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="document">Document to open.</param>
         /// <param name="element">The element associated with the document.</param>
-        public void OpenDocument(LayoutDocument document, IElement element)
+        public void OpenDocument(LayoutDocument? document, IElement element)
         {
             if (ShellPublicVariables.SimulationInProgress == true) return;
             if (document == null) { return; }
@@ -1123,8 +1139,9 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void Document_IsSelectedChanged(object sender, EventArgs e)
+        private void Document_IsSelectedChanged(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
             if (ShellPublicVariables.SimulationInProgress == true)
             {
@@ -1143,8 +1160,9 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void Document_IsActiveChanged(object sender, EventArgs e)
+        private void Document_IsActiveChanged(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
             if (document.Content == null) return;
 
@@ -1168,7 +1186,7 @@ namespace FrameworkUI
                     _openingProject == false && _closingProject == false)
             {
                 // User did not activate the document from the project explorer, so clear any multi-select
-                if (ProjectNode.ParentTreeView.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
+                if (ProjectNode.ParentTreeView?.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
 
                 bool isPreviousDocument = document.Equals(_previousActiveDocument);
                 if (isPreviousDocument == false)
@@ -1242,7 +1260,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The cancel event data.</param>
-        private void Document_Closing(object sender, CancelEventArgs e)
+        private void Document_Closing(object? sender, CancelEventArgs e)
         {
             if (ShellPublicVariables.SimulationInProgress == true)
             {
@@ -1258,10 +1276,11 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void Document_Closed(object sender, EventArgs e)
+        private void Document_Closed(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
-            document.Content = null;
+            document.Content = null!;
             document.IsActiveChanged -= Document_IsActiveChanged;
             document.IsSelectedChanged -= Document_IsSelectedChanged;
             document.Closing -= Document_Closing;
@@ -1296,10 +1315,11 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="dependencyObject">The starting point in the visual tree.</param>
         /// <returns>The LayoutAnchorablePaneControl if found, otherwise null.</returns>
-        private Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl FindPane(DependencyObject dependencyObject)
+        private Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl? FindPane(DependencyObject? dependencyObject)
         {
+            if (dependencyObject == null) return null;
             if (!(dependencyObject is Visual || dependencyObject is Visual3D)) return null;
-            Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl item = dependencyObject as Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl;
+            Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl? item = dependencyObject as Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl;
             if (item != null) return item;
             return FindPane(VisualTreeHelper.GetParent(dependencyObject));
         }
@@ -1391,7 +1411,7 @@ namespace FrameworkUI
             if (Directory.Exists(UserSettings.DefaultLocation)) SaveFileDialog.InitialDirectory = UserSettings.DefaultLocation;
             if (SaveFileDialog.ShowDialog() == true)
             {
-                UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName);
+                UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName) ?? string.Empty;
                 CloseProject();
                 ProjectNode.Project.CreateNew(SaveFileDialog.FileName);
                 OpenProject(SaveFileDialog.FileName);
@@ -1409,7 +1429,7 @@ namespace FrameworkUI
             if (Directory.Exists(UserSettings.DefaultLocation)) OpenFileDialog.InitialDirectory = UserSettings.DefaultLocation;
             if (OpenFileDialog.ShowDialog() == true)
             {
-                UserSettings.DefaultLocation = Path.GetDirectoryName(OpenFileDialog.FileName);
+                UserSettings.DefaultLocation = Path.GetDirectoryName(OpenFileDialog.FileName) ?? string.Empty;
                 OpenRecentProject(OpenFileDialog.FileName);
             }
         }
@@ -1526,12 +1546,13 @@ namespace FrameworkUI
             // Dispose of previous active document
             if (_previousActiveDocument != null && _previousActiveDocument.Content != null)
             {
-                _previousActiveDocument.Content = null;
+                _previousActiveDocument.Content = null!;
                 _previousActiveDocument = null;
             }
 
             // Dispose of properties window document
-            ProjectNode.PropertiesClosed((Control)_propertiesWindowDock.Content);
+            if (_propertiesWindowDock != null)
+                ProjectNode.PropertiesClosed((Control)_propertiesWindowDock.Content);
 
             // Save & close project
             ProjectNode.Project.ProjectExplorerLayout = ProjectNode.SaveToXElement().ToString();
@@ -1616,7 +1637,7 @@ namespace FrameworkUI
                 try
                 {
                     // Save project as
-                    UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName);
+                    UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName) ?? string.Empty;
                     // Delete the backup file
                     AutoBackup.DeleteBackupProjectFile();
                     // Save As and change name
@@ -1672,6 +1693,7 @@ namespace FrameworkUI
 
             // See if there are any unsaved elements. Ask if they want to save.
             var unSavedElementItems = new ObservableCollection<UnsavedElement>();
+            if (ProjectNode?.Project?.ElementCollections != null)
             {
                 for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
                 {
@@ -1712,15 +1734,15 @@ namespace FrameworkUI
             {
                 // Check to see if the Project or Element collections need to be saved
                 bool isDirty = false;
-                if (ProjectNode.Project.IsDirty == true)
+                if (ProjectNode?.Project is not null && ProjectNode.Project.IsDirty == true)
                 {
                     isDirty = true;
                 }
-                else
+                else if (ProjectNode?.Project is { ElementCollections: { } elementCollections })
                 {
-                    for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
+                    for (int i = 0; i < elementCollections.Count; i++)
                     {
-                        if (ProjectNode.Project.ElementCollections[i].IsDirty == true)
+                        if (elementCollections[i].IsDirty == true)
                         {
                             isDirty = true;
                             break;
@@ -1753,7 +1775,7 @@ namespace FrameworkUI
 
 
             // Compact on close
-            if (UserSettings.CompressProjectFileOnClose == true)
+            if (UserSettings.CompressProjectFileOnClose == true && ProjectNode?.Project is not null)
             {
                 // Compact and Optimize
                 FileSizeManager.CompactAndOptimizeFile(ProjectNode.Project);
@@ -1799,7 +1821,7 @@ namespace FrameworkUI
         /// Gets the undo manager for the currently active document or element.
         /// </summary>
         /// <returns>The active undo manager, or null if none is available.</returns>
-        private IUndoManager GetActiveUndoManager()
+        private IUndoManager? GetActiveUndoManager()
         {
             if (ProjectNode == null) return null;
 
@@ -1922,26 +1944,91 @@ namespace FrameworkUI
             }
 
             UndoListBox.ItemsSource = undoManager.UndoStack;
-            UndoListBox.SelectedItem = null;
+            UndoListBox.SelectedItems.Clear();
+            UpdateUndoCountLabel(0);
             UndoPopup.IsOpen = true;
         }
 
         /// <summary>
-        /// Handles the selection changed event for the undo listbox.
-        /// Performs undo operations up to and including the selected action.
+        /// Handles mouse movement over the undo listbox to implement VS-style multi-select highlighting.
+        /// Selects all items from the top to the item under the mouse cursor.
         /// </summary>
-        private void UndoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UndoListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (UndoListBox.SelectedItem == null) return;
+            var listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            var element = e.OriginalSource as FrameworkElement;
+            while (element != null && !(element is ListBoxItem))
+            {
+                element = element.Parent as FrameworkElement ?? VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+
+            if (element is ListBoxItem listBoxItem)
+            {
+                int hoveredIndex = listBox.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                if (hoveredIndex >= 0)
+                {
+                    SelectItemsUpToIndex(listBox, hoveredIndex);
+                    UpdateUndoCountLabel(hoveredIndex + 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles mouse leaving the undo listbox to clear selection.
+        /// </summary>
+        private void UndoListBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            UndoListBox.SelectedItems.Clear();
+            UpdateUndoCountLabel(0);
+        }
+
+        /// <summary>
+        /// Handles mouse click on an undo listbox item to perform the undo operation.
+        /// </summary>
+        private void UndoListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox == null || listBox.SelectedItems.Count == 0) return;
 
             var undoManager = GetActiveUndoManager();
             if (undoManager == null) return;
 
-            var selectedAction = UndoListBox.SelectedItem as IUndoableAction;
-            if (selectedAction != null)
+            // Get the last selected item (furthest down in the list)
+            var lastItem = listBox.SelectedItems[listBox.SelectedItems.Count - 1] as IUndoableAction;
+            if (lastItem != null)
             {
                 UndoPopup.IsOpen = false;
-                undoManager.UndoTo(selectedAction);
+                undoManager.UndoTo(lastItem);
+            }
+        }
+
+        /// <summary>
+        /// Updates the undo count label with the current selection count.
+        /// </summary>
+        private void UpdateUndoCountLabel(int count)
+        {
+            if (count == 0)
+                UndoCountLabel.Text = "Undo 1 Action";
+            else if (count == 1)
+                UndoCountLabel.Text = "Undo 1 Action";
+            else
+                UndoCountLabel.Text = $"Undo {count} Actions";
+        }
+
+        /// <summary>
+        /// Handles the click event for "Undo All" to undo all actions in the stack.
+        /// </summary>
+        private void UndoAll_Click(object sender, MouseButtonEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            UndoPopup.IsOpen = false;
+            while (undoManager.CanUndo)
+            {
+                undoManager.Undo();
             }
         }
 
@@ -1959,26 +2046,106 @@ namespace FrameworkUI
             }
 
             RedoListBox.ItemsSource = undoManager.RedoStack;
-            RedoListBox.SelectedItem = null;
+            RedoListBox.SelectedItems.Clear();
+            UpdateRedoCountLabel(0);
             RedoPopup.IsOpen = true;
         }
 
         /// <summary>
-        /// Handles the selection changed event for the redo listbox.
-        /// Performs redo operations up to and including the selected action.
+        /// Handles mouse movement over the redo listbox to implement VS-style multi-select highlighting.
+        /// Selects all items from the top to the item under the mouse cursor.
         /// </summary>
-        private void RedoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RedoListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (RedoListBox.SelectedItem == null) return;
+            var listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            var element = e.OriginalSource as FrameworkElement;
+            while (element != null && !(element is ListBoxItem))
+            {
+                element = element.Parent as FrameworkElement ?? VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+
+            if (element is ListBoxItem listBoxItem)
+            {
+                int hoveredIndex = listBox.ItemContainerGenerator.IndexFromContainer(listBoxItem);
+                if (hoveredIndex >= 0)
+                {
+                    SelectItemsUpToIndex(listBox, hoveredIndex);
+                    UpdateRedoCountLabel(hoveredIndex + 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles mouse leaving the redo listbox to clear selection.
+        /// </summary>
+        private void RedoListBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            RedoListBox.SelectedItems.Clear();
+            UpdateRedoCountLabel(0);
+        }
+
+        /// <summary>
+        /// Handles mouse click on a redo listbox item to perform the redo operation.
+        /// </summary>
+        private void RedoListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox == null || listBox.SelectedItems.Count == 0) return;
 
             var undoManager = GetActiveUndoManager();
             if (undoManager == null) return;
 
-            var selectedAction = RedoListBox.SelectedItem as IUndoableAction;
-            if (selectedAction != null)
+            // Get the last selected item (furthest down in the list)
+            var lastItem = listBox.SelectedItems[listBox.SelectedItems.Count - 1] as IUndoableAction;
+            if (lastItem != null)
             {
                 RedoPopup.IsOpen = false;
-                undoManager.RedoTo(selectedAction);
+                undoManager.RedoTo(lastItem);
+            }
+        }
+
+        /// <summary>
+        /// Updates the redo count label with the current selection count.
+        /// </summary>
+        private void UpdateRedoCountLabel(int count)
+        {
+            if (count == 0)
+                RedoCountLabel.Text = "Redo 1 Action";
+            else if (count == 1)
+                RedoCountLabel.Text = "Redo 1 Action";
+            else
+                RedoCountLabel.Text = $"Redo {count} Actions";
+        }
+
+        /// <summary>
+        /// Handles the click event for "Redo All" to redo all actions in the stack.
+        /// </summary>
+        private void RedoAll_Click(object sender, MouseButtonEventArgs e)
+        {
+            var undoManager = GetActiveUndoManager();
+            if (undoManager == null) return;
+
+            RedoPopup.IsOpen = false;
+            while (undoManager.CanRedo)
+            {
+                undoManager.Redo();
+            }
+        }
+
+        /// <summary>
+        /// Selects all items in a listbox from the first item up to and including the specified index.
+        /// This creates the VS-style multi-select behavior where hovering selects everything above.
+        /// </summary>
+        /// <param name="listBox">The listbox to modify selection on.</param>
+        /// <param name="toIndex">The index to select up to (inclusive).</param>
+        private void SelectItemsUpToIndex(ListBox listBox, int toIndex)
+        {
+            listBox.SelectedItems.Clear();
+            for (int i = 0; i <= toIndex && i < listBox.Items.Count; i++)
+            {
+                listBox.SelectedItems.Add(listBox.Items[i]);
             }
         }
 
@@ -1993,6 +2160,7 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void ProjectExplorer_Click(object sender, RoutedEventArgs e)
         {
+            if (_projectExplorerDock == null) return;
             _projectExplorerDock.Show();
             _projectExplorerDock.IsActive = true;
         }
@@ -2013,6 +2181,7 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void MessageWindow_Click(object sender, RoutedEventArgs e)
         {
+            if (_messageWindowDock == null) return;
             _messageWindowDock.Show();
             _messageWindowDock.IsActive = true;
         }
@@ -2024,6 +2193,7 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void PropertiesWindow_Click(object sender, RoutedEventArgs e)
         {
+            if (_propertiesWindowDock == null) return;
             _propertiesWindowDock.Show();
             _propertiesWindowDock.IsActive = true;
         }
@@ -2035,11 +2205,12 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void AllWindows_Click(object sender, RoutedEventArgs e)
         {
-            _projectExplorerDock.Show();
-            _projectExplorerDock.IsActive = true;
+            _projectExplorerDock?.Show();
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsActive = true;
             //_mapExplorerDock.Show();
-            _messageWindowDock.Show();
-            _propertiesWindowDock.Show();
+            _messageWindowDock?.Show();
+            _propertiesWindowDock?.Show();
         }
 
         /// <summary>
@@ -2103,8 +2274,8 @@ namespace FrameworkUI
             if (MessageBox.Show("This action can take some time to execute depending on the file size. Are you sure you want to compact and optimize this project file?", "Compact & Optimize Project File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 // Check if there is enough available drive space
-                string projectPathRoot = Path.GetPathRoot(Path.GetDirectoryName(ProjectNode.Project.FullFileName));
-                if (UtilityFunctions.GetAvailableDriveSpace(projectPathRoot) < FileSizeManager.GetFileSize(ProjectNode.Project.FullFileName))
+                string? projectPathRoot = Path.GetPathRoot(Path.GetDirectoryName(ProjectNode.Project.FullFileName));
+                if (!string.IsNullOrEmpty(projectPathRoot) && UtilityFunctions.GetAvailableDriveSpace(projectPathRoot) < FileSizeManager.GetFileSize(ProjectNode.Project.FullFileName))
                 {
                     MessageBox.Show("There is not enough available free space on the " + projectPathRoot + " drive to compact the project file. This action requires " + FileSizeManager.GetFileSizeText(ProjectNode.Project.FullFileName) + " of free space.", "Cannot Compact & Optimize Project!", MessageBoxButton.OK, MessageBoxImage.Stop);
                     return;
@@ -2334,7 +2505,7 @@ namespace FrameworkUI
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
-                    if (confirmResult == MessageBoxResult.Yes)
+                    if (confirmResult == MessageBoxResult.Yes && downloadResult.FilePath != null)
                     {
                         UpdateService.InstallUpdateAndRestart(downloadResult.FilePath);
                     }
@@ -2427,7 +2598,8 @@ namespace FrameworkUI
         /// </summary>
         public void DisableProjectExplorer()
         {
-            _projectExplorerDock.IsEnabled = false;
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsEnabled = false;
         }
 
         /// <summary>
@@ -2435,7 +2607,8 @@ namespace FrameworkUI
         /// </summary>
         public void EnableProjectExplorer()
         {
-            _projectExplorerDock.IsEnabled = true;
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsEnabled = true;
         }
 
         /// <summary>
@@ -2443,7 +2616,8 @@ namespace FrameworkUI
         /// </summary>
         public void DisableMessageWindow()
         {
-            _messageWindowDock.IsEnabled = false;
+            if (_messageWindowDock != null)
+                _messageWindowDock.IsEnabled = false;
         }
 
         /// <summary>
@@ -2451,7 +2625,8 @@ namespace FrameworkUI
         /// </summary>
         public void EnableMessageWindow()
         {
-            _messageWindowDock.IsEnabled = true;
+            if (_messageWindowDock != null)
+                _messageWindowDock.IsEnabled = true;
         }
 
         /// <summary>
@@ -2459,7 +2634,8 @@ namespace FrameworkUI
         /// </summary>
         public void DisablePropertiesWindow()
         {
-            _propertiesWindowDock.IsEnabled = false;
+            if (_propertiesWindowDock != null)
+                _propertiesWindowDock.IsEnabled = false;
         }
 
         /// <summary>
@@ -2467,7 +2643,8 @@ namespace FrameworkUI
         /// </summary>
         public void EnablePropertiesWindow()
         {
-            _propertiesWindowDock.IsEnabled = true;
+            if (_propertiesWindowDock != null)
+                _propertiesWindowDock.IsEnabled = true;
         }
 
         /// <summary>

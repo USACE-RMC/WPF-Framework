@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -511,8 +512,9 @@ namespace GenericControls
                         _pasteCMI.IsEnabled = true;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine(ex);
                     _pasteCMI.IsEnabled = false;
                 }
             }
@@ -571,7 +573,7 @@ namespace GenericControls
         /// <param name="e">The event data.</param>
         private void Me_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 if (e.Key == Key.V)
                     PasteClipboard();
@@ -637,13 +639,17 @@ namespace GenericControls
                             }
                             else
                             {
-                                Binding binding = (Columns[columnIndex + j] as DataGridBoundColumn).Binding as Binding;
+                                var boundColumn = Columns[columnIndex + j] as DataGridBoundColumn;
+                                if (boundColumn?.Binding is not Binding binding || binding.Path is null)
+                                    continue;
                                 var y = rowType.GetProperty(binding.Path.Path);
+                                if (y is null)
+                                    continue;
                                 try
                                 {
                                     if (IsDoubleType(y.PropertyType))
                                     {
-                                        if (string.IsNullOrEmpty(clipboardData[i][j]) || string.IsNullOrEmpty(clipboardData[i][j]) || clipboardData[i][j].Length > 0 && clipboardData[i][j].Substring(0, 1) == " ")
+                                        if (string.IsNullOrEmpty(clipboardData[i][j]) || clipboardData[i][j].Length > 0 && clipboardData[i][j].Substring(0, 1) == " ")
                                         {
                                             y.SetValue(Items[rowIndex + i], Convert.ChangeType(double.NaN, y.PropertyType), null);
                                         }
@@ -665,9 +671,10 @@ namespace GenericControls
                                         y.SetValue(Items[rowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType), null);
                                     }
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
-                                    if (y is not null && IsNumericType(y.PropertyType))
+                                    Debug.WriteLine(ex);
+                                    if (IsNumericType(y.PropertyType))
                                         y.SetValue(Items[rowIndex + i], Convert.ChangeType(IsDoubleType(y.PropertyType) ? double.NaN : 0d, y.PropertyType), null);
                                 }
                             }
@@ -676,29 +683,31 @@ namespace GenericControls
                 }
                 else if (SelectedCells.Count > 1)
                 {
-                    // Test for continuous selection
-                    List<int> Rows = new List<int>(), Columns = new List<int>();
+                    // Test for continuous selection - pre-allocate lists for performance
+                    int cellCount = SelectedCells.Count;
+                    List<int> rows = new List<int>(cellCount);
+                    List<int> columns = new List<int>(cellCount);
                     foreach (DataGridCellInfo cellInfo in SelectedCells)
                     {
                         rowIndex = Items.IndexOf(cellInfo.Item);
                         columnIndex = cellInfo.Column.DisplayIndex;
-                        Rows.Add(rowIndex);
-                        Columns.Add(columnIndex);
+                        rows.Add(rowIndex);
+                        columns.Add(columnIndex);
                     }
-                    // 
-                    Rows.Sort();
-                    int RowMax = Rows[Rows.Count - 1];
-                    rowIndex = Rows[0];
-                    Columns.Sort();
-                    columnIndex = Columns[0];
-                    int ColumnMax = Columns[Columns.Count - 1];
-                    DataGridCell CellCheck;
-                    for (int i = rowIndex, loopTo2 = RowMax; i <= loopTo2; i++)
+                    //
+                    rows.Sort();
+                    int rowMax = rows[rows.Count - 1];
+                    rowIndex = rows[0];
+                    columns.Sort();
+                    columnIndex = columns[0];
+                    int columnMax = columns[columns.Count - 1];
+                    DataGridCell cellCheck;
+                    for (int i = rowIndex, loopTo2 = rowMax; i <= loopTo2; i++)
                     {
-                        for (int j = columnIndex, loopTo3 = ColumnMax; j <= loopTo3; j++)
+                        for (int j = columnIndex, loopTo3 = columnMax; j <= loopTo3; j++)
                         {
-                            CellCheck = GetCell(i, j);
-                            if (CellCheck.IsSelected == false)
+                            cellCheck = GetCell(i, j);
+                            if (cellCheck.IsSelected == false)
                             {
                                 Mouse.OverrideCursor = null;
                                 MessageBox.Show("Invalid selection, selected cells must be continuous.", "Invalid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -709,12 +718,12 @@ namespace GenericControls
                     // set the clipboard data
                     for (int i = 0, loopTo4 = clipboardData.Count() - 1; i <= loopTo4; i++)
                     {
-                        if (rowIndex + i > RowMax)
+                        if (rowIndex + i > rowMax)
                             break;
-                        // 
+                        //
                         for (int j = 0, loopTo5 = clipboardData[i].Count() - 1; j <= loopTo5; j++)
                         {
-                            if (columnIndex + j > ColumnMax)
+                            if (columnIndex + j > columnMax)
                                 continue;
                             if (this.Columns[columnIndex + j].IsReadOnly)
                                 continue;
@@ -726,13 +735,17 @@ namespace GenericControls
                             }
                             else
                             {
-                                Binding binding = (this.Columns[columnIndex + j] as DataGridBoundColumn).Binding as Binding;
+                                var boundColumn = this.Columns[columnIndex + j] as DataGridBoundColumn;
+                                if (boundColumn?.Binding is not Binding binding || binding.Path is null)
+                                    continue;
                                 var y = rowType.GetProperty(binding.Path.Path);
+                                if (y is null)
+                                    continue;
                                 try
                                 {
                                     if (IsDoubleType(y.PropertyType))
                                     {
-                                        if (string.IsNullOrEmpty(clipboardData[i][j]) || string.IsNullOrEmpty(clipboardData[i][j]) || clipboardData[i][j].Length > 0 && clipboardData[i][j].Substring(0, 1) == " ")
+                                        if (string.IsNullOrEmpty(clipboardData[i][j]) || clipboardData[i][j].Length > 0 && clipboardData[i][j].Substring(0, 1) == " ")
                                         {
                                             y.SetValue(Items[rowIndex + i], Convert.ChangeType(double.NaN, y.PropertyType), null);
                                         }
@@ -754,8 +767,9 @@ namespace GenericControls
                                         y.SetValue(Items[rowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType), null);
                                     }
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
+                                    Debug.WriteLine(ex);
                                     if (IsNumericType(y.PropertyType))
                                         y.SetValue(Items[rowIndex + i], Convert.ChangeType(IsDoubleType(y.PropertyType) ? double.NaN : 0d, y.PropertyType), null);
                                 }
@@ -767,9 +781,9 @@ namespace GenericControls
                 Items.Refresh();
                 DataPasted?.Invoke();
             }
-            //
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
                 Mouse.OverrideCursor = null;
                 MessageBox.Show("Error pasting data from clipboard.", "Error in paste from clipboard", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -830,8 +844,9 @@ namespace GenericControls
                         {
                             y.SetValue(obj, Convert.ChangeType(v.Value, y.PropertyType), null);
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            Debug.WriteLine(ex);
                             if (IsNumericType(y.PropertyType))
                                 y.SetValue(obj, Convert.ChangeType("0", y.PropertyType), null);
                         }
@@ -1192,7 +1207,7 @@ namespace GenericControls
                     }
                 case TypeCode.Object:
                     {
-                        if (typeToTest.IsGenericType && typeToTest.GetGenericTypeDefinition() == typeof(object))
+                        if (typeToTest.IsGenericType && typeToTest.GetGenericTypeDefinition() == typeof(Nullable<>))
                         {
                             return IsNumericType(Nullable.GetUnderlyingType(typeToTest));
                         }

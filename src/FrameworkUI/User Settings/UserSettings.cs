@@ -176,7 +176,7 @@ namespace FrameworkUI
         /// <returns></returns>
         public static string ValueStringFormat
         {
-            get { return _valueStringFormat; }
+            get { return _valueStringFormat ?? string.Empty; }
             set
             {
                 if (_valueStringFormat != value)
@@ -188,7 +188,7 @@ namespace FrameworkUI
         }
 
         private static int _defaultValueDigits = 2;
-        private static string _valueStringFormat;
+        private static string? _valueStringFormat;
 
         /// <summary>
         /// Occurs when a property value changes.
@@ -198,9 +198,9 @@ namespace FrameworkUI
         /// are raised through the static <see cref="GlobalPropertyChanged"/> event instead.
         /// </remarks>
 #pragma warning disable CS0067 // Event is never used - declared for API compatibility
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 #pragma warning restore CS0067
-        private static event PropertyChangedEventHandler GlobalPropertyChanged;
+        private static event PropertyChangedEventHandler? GlobalPropertyChanged;
 
         /// <summary>
         /// Raises the global property changed event.
@@ -272,7 +272,7 @@ namespace FrameworkUI
                         if (xmlReader.NodeType != XmlNodeType.Element) continue;
 
                         string elementName = xmlReader.Name;
-                        string innerXml = null;
+                        string? innerXml = null;
 
                         // TCU
                         if (elementName == nameof(UserAgreedToTCU))
@@ -412,9 +412,10 @@ namespace FrameworkUI
         public static void Save(string xmlFilePath)
         {
             // Create the settings directory if it doesn't already exist.
-            if (Directory.Exists(Path.GetDirectoryName(xmlFilePath)) == false)
+            var directoryPath = Path.GetDirectoryName(xmlFilePath);
+            if (directoryPath != null && Directory.Exists(directoryPath) == false)
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(xmlFilePath));
+                Directory.CreateDirectory(directoryPath);
             }
             // Check if the settings file exists. If it does, then delete it. 
             if (File.Exists(xmlFilePath) == true)

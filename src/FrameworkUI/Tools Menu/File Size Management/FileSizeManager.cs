@@ -76,12 +76,12 @@ namespace FrameworkUI
 
         #region Fields
 
-        private static IProject _project;
-        private static string _fileSizeBefore;
-        private static string _fileSizeAfter;
-        private static DispatcherTimer _timer;
-        private static FrameworkUI.CompactProgressControl _progressControl;
-        private static BackgroundWorker _backgroundWorker;
+        private static IProject? _project;
+        private static string? _fileSizeBefore;
+        private static string? _fileSizeAfter;
+        private static DispatcherTimer? _timer;
+        private static FrameworkUI.CompactProgressControl? _progressControl;
+        private static BackgroundWorker? _backgroundWorker;
 
         #endregion
 
@@ -90,7 +90,7 @@ namespace FrameworkUI
         /// <summary>
         /// Occurs when the file size management operation reports progress or completion status.
         /// </summary>
-        public static event ReportProgressEventHandler ReportProgress;
+        public static event ReportProgressEventHandler? ReportProgress;
 
         /// <summary>
         /// Delegate for the <see cref="ReportProgress"/> event.
@@ -162,17 +162,18 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event arguments.</param>
-        private static void BackgroundWorker_Dowork(object sender, DoWorkEventArgs e)
+        private static void BackgroundWorker_Dowork(object? sender, DoWorkEventArgs e)
         {
+            if (sender is not BackgroundWorker worker || _project == null) return;
             // Sleep for 1 second to give appearance that the compaction is doing some work
             Thread.Sleep(1000);
             // Update progress bar to compacting
-            ((BackgroundWorker)sender).ReportProgress(0);
+            worker.ReportProgress(0);
             _project.Compact();
             Thread.Sleep(1000);
-            // 
+            //
             // update progress bar to optimizing
-            ((BackgroundWorker)sender).ReportProgress(100);
+            worker.ReportProgress(100);
             // Sleep for 3 seconds to give appearance that the optimizing is doing some work
             Thread.Sleep(3000);
             _project.Optimize();
@@ -183,8 +184,9 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event arguments.</param>
-        private static void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private static void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
+            if (_progressControl == null) return;
             // This gives the perception that the optimization is taking some time and actually doing something meaningful.
             if (e.ProgressPercentage == 0)
             {
@@ -207,7 +209,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event arguments.</param>
-        private static void BackgroundWorker_WorkerComplete(object sender, RunWorkerCompletedEventArgs e)
+        private static void BackgroundWorker_WorkerComplete(object? sender, RunWorkerCompletedEventArgs e)
         {
             // Stop and clean up timer
             if (_timer != null)
@@ -231,6 +233,8 @@ namespace FrameworkUI
             _progressControl?.Close();
             ShellPublicVariables.CompactionInProgress = false;
 
+            if (_project == null) return;
+
             // Get new file size
             _fileSizeAfter = GetFileSizeText(_project.FullFileName);
 
@@ -253,8 +257,10 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event arguments.</param>
-        private static void Timer_Tick(object sender, EventArgs e)
+        private static void Timer_Tick(object? sender, EventArgs e)
         {
+            if (_project == null || _progressControl == null) return;
+
             // Get the temp journal file name
             string tempFilename = _project.FullFileName + "-journal";
 
@@ -269,7 +275,7 @@ namespace FrameworkUI
 
                 string tempFileSizeText = (tempFileSize < originalFileSize)
                     ? FormatBytes((ulong)tempFileSize)
-                    : _fileSizeBefore;
+                    : _fileSizeBefore ?? string.Empty;
 
                 _progressControl.ProgressBar.IsIndeterminate = false;
                 _progressControl.ProgressText.Text = "Compacting " + tempFileSizeText + " of " + _fileSizeBefore;

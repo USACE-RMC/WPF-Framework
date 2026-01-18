@@ -37,14 +37,12 @@ namespace FrameworkUI
     /// </summary>
     /// <remarks>
     /// <para>
-    ///     Authors:
-/// <para>
-/// <b> Authors: </b>
-/// <list type="bullet">
-///     <item> Woody Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil </item>
-///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
-/// </list>
-/// </para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Woody Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil </item>
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
     /// </remarks>
     public sealed class ApplicationAttributes
     {
@@ -97,35 +95,35 @@ namespace FrameworkUI
         /// <summary>
         /// The assembly title attribute.
         /// </summary>
-        private static readonly AssemblyTitleAttribute _Title = null;
+        private static readonly AssemblyTitleAttribute? _Title = null;
         /// <summary>
         /// The assembly company attribute.
         /// </summary>
-        private static readonly AssemblyCompanyAttribute _Company = null;
+        private static readonly AssemblyCompanyAttribute? _Company = null;
         /// <summary>
         /// The assembly copyright attribute.
         /// </summary>
-        private static readonly AssemblyCopyrightAttribute _Copyright = null;
+        private static readonly AssemblyCopyrightAttribute? _Copyright = null;
         /// <summary>
         /// The assembly product attribute.
         /// </summary>
-        private static readonly AssemblyProductAttribute _Product = null;
+        private static readonly AssemblyProductAttribute? _Product = null;
         /// <summary>
         /// The assembly version.
         /// </summary>
-        private static readonly Version _Version = null;
+        private static readonly Version? _Version = null;
 
         /// <summary>
         /// Gets the application assembly.
         /// </summary>
-        public static readonly Assembly Assembly;
+        public static readonly Assembly? Assembly;
 
         /// <summary>
         /// Gets the assembly title.
         /// </summary>
         public static string Title
         {
-            get { return _Title.Title; }
+            get { return _Title?.Title ?? string.Empty; }
         }
 
         /// <summary>
@@ -133,7 +131,7 @@ namespace FrameworkUI
         /// </summary>
         public static string CompanyName
         {
-            get { return _Company.Company; }
+            get { return _Company?.Company ?? string.Empty; }
         }
 
         /// <summary>
@@ -141,7 +139,7 @@ namespace FrameworkUI
         /// </summary>
         public static string Copyright
         {
-            get { return _Copyright.Copyright; }
+            get { return _Copyright?.Copyright ?? string.Empty; }
         }
 
         /// <summary>
@@ -149,7 +147,7 @@ namespace FrameworkUI
         /// </summary>
         public static string ProductName
         {
-            get { return _Product.Product; }
+            get { return _Product?.Product ?? string.Empty; }
         }
 
         /// <summary>
@@ -157,7 +155,7 @@ namespace FrameworkUI
         /// </summary>
         public static string Version
         {
-            get { return _Version.ToString(); }
+            get { return _Version?.ToString() ?? string.Empty; }
         }
 
     }

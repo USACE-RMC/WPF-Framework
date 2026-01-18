@@ -57,17 +57,21 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Gets the collection of element collections.
         /// </summary>
-        ReadOnlyCollection<IElementCollection> ElementCollections { get; }
+        ReadOnlyCollection<IElementCollection>? ElementCollections { get; }
 
         /// <summary>
-        /// Gets the software version the project was last saved with. If the version, is outdated, convert to new version.
+        /// Gets the software version the project was last saved with.
         /// </summary>
+        /// <remarks>
+        /// Applications should check this version against the current software version
+        /// and handle any necessary data migration when loading older projects.
+        /// </remarks>
         string SoftwareVersion { get; }
 
         /// <summary>
         /// Gets the directory in which the file is located.
         /// </summary>
-        string FileDirectory { get; }
+        string? FileDirectory { get; }
 
         /// <summary>
         /// Gets and sets the AvalonDock layout string.

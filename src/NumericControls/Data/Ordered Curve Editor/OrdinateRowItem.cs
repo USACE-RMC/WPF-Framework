@@ -64,11 +64,6 @@ namespace NumericControls
         private double _y;
 
         /// <summary>
-        /// Relative tolerance for comparing double values.
-        /// </summary>
-        public static double RelativeDoubleTolerance = 0.00000000000001d; // 1E-14
-
-        /// <summary>
         /// Gets or sets the maximum allowed X value.
         /// </summary>
         public double MaxXValue
@@ -220,7 +215,8 @@ namespace NumericControls
             get { return _y; }
             set
             {
-                if (Math.Abs(_y - value) > RelativeDoubleTolerance)
+                // Use Equals for proper NaN handling (NaN - NaN returns NaN, causing comparison to fail)
+                if (!_y.Equals(value))
                 {
                     _y = value;
                     NotifyPropertyChanged(nameof(Y));

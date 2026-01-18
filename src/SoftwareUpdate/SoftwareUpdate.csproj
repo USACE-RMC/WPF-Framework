@@ -4,7 +4,7 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>SoftwareUpdate</RootNamespace>
     <AssemblyName>SoftwareUpdate</AssemblyName>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>

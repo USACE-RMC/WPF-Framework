@@ -59,7 +59,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public NodeCollection(Node parentNode, ExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public NodeCollection(Node? parentNode, ExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
             // Set Properties
             IsExpanded = true;
@@ -107,7 +107,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when a node is added.
         /// </summary>
-        public event NodeAddedEventHandler NodeAdded;
+        public event NodeAddedEventHandler? NodeAdded;
 
         /// <summary>
         /// Event is raised when a node is added.
@@ -118,7 +118,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised with a node is removed.
         /// </summary>
-        public event NodeRemovedEventHandler NodeRemoved;
+        public event NodeRemovedEventHandler? NodeRemoved;
 
         /// <summary>
         /// Event is raised with a node is removed.
@@ -129,7 +129,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when a node group is added.
         /// </summary>
-        public event GroupAddedEventHandler GroupAdded;
+        public event GroupAddedEventHandler? GroupAdded;
 
         /// <summary>
         /// Event is raised when a node group is added.
@@ -140,7 +140,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised with a node group is removed.
         /// </summary>
-        public event GroupRemovedEventHandler GroupRemoved;
+        public event GroupRemovedEventHandler? GroupRemoved;
 
         /// <summary>
         /// Event is raised with a node group is removed.
@@ -270,7 +270,7 @@ namespace FrameworkUI.ProjectExplorer
             if (index >= ChildNodes.Count) index = ChildNodes.Count;
             ChildNodes.Insert(index, node);
             Items.Refresh();
-            ((ExplorerTreeView)ParentTreeView).ClearSelection();
+            (ParentTreeView as ExplorerTreeView)?.ClearSelection();
             node.IsSelected = true;
             NodeAdded?.Invoke(node);
         }

@@ -48,22 +48,22 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets or sets the version of the update.
         /// </summary>
-        public SemanticVersion Version { get; set; }
+        public SemanticVersion? Version { get; set; }
 
         /// <summary>
         /// Gets or sets the display name of the release (e.g., "v2.0.0").
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the URL to download the update package.
         /// </summary>
-        public string DownloadUrl { get; set; }
+        public string? DownloadUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the release notes (typically in Markdown format).
         /// </summary>
-        public string ReleaseNotes { get; set; }
+        public string? ReleaseNotes { get; set; }
 
         /// <summary>
         /// Gets or sets the date and time when the release was published.
@@ -78,7 +78,7 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets or sets the name of the downloadable asset file.
         /// </summary>
-        public string AssetName { get; set; }
+        public string? AssetName { get; set; }
 
         /// <summary>
         /// Gets or sets whether this is a pre-release version.
@@ -88,12 +88,12 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets or sets the URL to the release page on GitHub.
         /// </summary>
-        public string ReleasePageUrl { get; set; }
+        public string? ReleasePageUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the optional SHA256 checksum for verification.
         /// </summary>
-        public string Sha256Checksum { get; set; }
+        public string? Sha256Checksum { get; set; }
 
         /// <summary>
         /// Returns a string representation of the update info.
@@ -101,6 +101,10 @@ namespace SoftwareUpdate
         /// <returns>A formatted string showing name, version, and download size.</returns>
         public override string ToString()
         {
+            if (DownloadSize <= 0)
+            {
+                return $"{Name} ({Version})";
+            }
             return $"{Name} ({Version}) - {DownloadSize / 1024.0 / 1024.0:F1} MB";
         }
     }

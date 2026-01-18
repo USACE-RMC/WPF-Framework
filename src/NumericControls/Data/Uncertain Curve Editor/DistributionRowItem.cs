@@ -30,6 +30,7 @@
 
 using System.Collections.ObjectModel;
 using GenericControls;
+using Numerics;
 using Numerics.Data;
 using Numerics.Distributions;
 
@@ -67,10 +68,6 @@ namespace NumericControls
         private string[] _propertyNames;
         private string[] _propertyDisplayNames;
 
-        /// <summary>
-        /// The relative tolerance used for comparing double values when determining if a property has changed.
-        /// </summary>
-        public static double RelativeDoubleTolerance = double.Epsilon;
 
         /// <summary>
         /// Gets the probability distribution associated with this row.
@@ -222,7 +219,7 @@ namespace NumericControls
             get { return _x; }
             set
             {
-                if (Math.Abs(_x - value) > RelativeDoubleTolerance || double.IsNaN(_x) || double.IsNaN(value))
+                if (!_x.AlmostEquals(value))
                 {
                     _x = value;
                     NotifyPropertyChanged(nameof(X));
@@ -239,7 +236,7 @@ namespace NumericControls
             get { return _p1; }
             set
             {
-                if (Math.Abs(_p1 - value) > RelativeDoubleTolerance || double.IsNaN(_p1) || double.IsNaN(value))
+                if (!_p1.AlmostEquals(value))
                 {
                     _p1 = value;
                     NotifyPropertyChanged(nameof(P1));
@@ -256,7 +253,7 @@ namespace NumericControls
             get { return _p2; }
             set
             {
-                if (Math.Abs(_p2 - value) > RelativeDoubleTolerance || double.IsNaN(_p2) || double.IsNaN(value))
+                if (!_p2.AlmostEquals(value))
                 {
                     _p2 = value;
                     NotifyPropertyChanged(nameof(P2));
@@ -273,7 +270,7 @@ namespace NumericControls
             get { return _p3; }
             set
             {
-                if (Math.Abs(_p3 - value) > RelativeDoubleTolerance || double.IsNaN(_p3) || double.IsNaN(value))
+                if (!_p3.AlmostEquals(value))
                 {
                     _p3 = value;
                     NotifyPropertyChanged(nameof(P3));
@@ -290,7 +287,7 @@ namespace NumericControls
             get { return _p4; }
             set
             {
-                if (Math.Abs(_p4 - value) > RelativeDoubleTolerance || double.IsNaN(_p4) || double.IsNaN(value))
+                if (!_p4.AlmostEquals(value))
                 {
                     _p4 = value;
                     NotifyPropertyChanged(nameof(P4));

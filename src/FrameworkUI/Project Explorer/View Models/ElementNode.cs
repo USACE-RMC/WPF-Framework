@@ -57,7 +57,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="element">The project IElement.</param>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public ElementNode(IElement element, Node parentNode, ProjectExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public ElementNode(IElement element, Node? parentNode, ProjectExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
             // Set Properties
             Element = element;
@@ -115,7 +115,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when the element node is selected.
         /// </summary>
-        public event ActivateEventHandler Activate;
+        public event ActivateEventHandler? Activate;
 
         /// <summary>
         /// Event is raised when the element node is selected.
@@ -126,7 +126,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when the element node is double-clicked, or if edit is clicked in the context menu.
         /// </summary>
-        public event EditEventHandler Edit;
+        public event EditEventHandler? Edit;
 
         /// <summary>
         /// Event is raised when the element node is double-clicked, or if edit is clicked in the context menu.
@@ -137,7 +137,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when copy is clicked in the context menu.
         /// </summary>
-        public event CopyEventHandler Copy;
+        public event CopyEventHandler? Copy;
 
         /// <summary>
         /// Event is raised when copy is clicked in the context menu.
@@ -148,7 +148,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when delete is clicked in the context menu.
         /// </summary>
-        public event DeleteEventHandler Delete;
+        public event DeleteEventHandler? Delete;
 
         /// <summary>
         /// Event is raised when delete is clicked in the context menu.
@@ -169,24 +169,23 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Get the element node collection that contains this node.
         /// </summary>
-        public ElementNodeCollection GetElementNodeCollection()
+        public ElementNodeCollection? GetElementNodeCollection()
         {
-            ElementNodeCollection elementNodeCollection = null;
-            Node parentNode = ParentNode;
-            do
+            ElementNodeCollection? elementNodeCollection = null;
+            Node? parentNode = ParentNode;
+            while (parentNode != null)
             {
-                if (parentNode as ElementNodeCollection != null)
+                if (parentNode is ElementNodeCollection collection)
                 {
-                    elementNodeCollection = (ElementNodeCollection)parentNode;
+                    elementNodeCollection = collection;
                     break;
                 }
-                else if (parentNode as ProjectNode != null)
+                else if (parentNode is ProjectNode)
                 {
                     break;
                 }
                 parentNode = parentNode.ParentNode;
-
-            } while (true);
+            }
             return elementNodeCollection;
         }
 
@@ -194,27 +193,27 @@ namespace FrameworkUI.ProjectExplorer
         /// Get the element node group that contains this node.
         /// </summary>
         /// <returns>The parent ElementNodeGroup, or null if not found.</returns>
-        private ElementNodeGroup GetElementNodeGroup()
+        private ElementNodeGroup? GetElementNodeGroup()
         {
-            ElementNodeGroup elementNodeGroup = null;
-            Node parentNode = ParentNode;
-            do
+            ElementNodeGroup? elementNodeGroup = null;
+            Node? parentNode = ParentNode;
+            while (parentNode != null)
             {
-                if (parentNode as ElementNodeGroup != null)
+                if (parentNode is ElementNodeGroup group)
                 {
-                    elementNodeGroup = (ElementNodeGroup)parentNode;
+                    elementNodeGroup = group;
                     break;
                 }
-                else if (parentNode as ElementNodeCollection != null)
+                else if (parentNode is ElementNodeCollection)
                 {
                     break;
                 }
-                else if (parentNode as ProjectNode != null)
+                else if (parentNode is ProjectNode)
                 {
                     break;
                 }
                 parentNode = parentNode.ParentNode;
-            } while (true);
+            }
             return elementNodeGroup;
         }
 
@@ -242,6 +241,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Me_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (ParentTreeView == null) return;
+
             if (ParentTreeView.SelectedNodes.Count > 1)
             {
                 _editMenuItem.Visibility = Visibility.Visible;
@@ -283,6 +284,7 @@ namespace FrameworkUI.ProjectExplorer
             // Ctrl + E = Edit
             if (e.Key == Key.E && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
+                if (ParentTreeView == null) return;
                 var elements = ParentTreeView.SelectedNodes
                     .OfType<ElementNode>()
                     .Select(n => n.Element)
@@ -327,6 +329,7 @@ namespace FrameworkUI.ProjectExplorer
             // Delete = Delete
             else if (e.Key == Key.Delete)
             {
+                if (ParentTreeView == null) return;
                 var elements = ParentTreeView.SelectedNodes
                     .OfType<ElementNode>()
                     .Select(n => n.Element)
@@ -346,6 +349,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            if (ParentTreeView == null) return;
             var elements = ParentTreeView.SelectedNodes
                 .OfType<ElementNode>()
                 .Select(n => n.Element)
@@ -388,6 +392,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
+            if (ParentTreeView == null) return;
             var elements = ParentTreeView.SelectedNodes
                 .OfType<ElementNode>()
                 .Select(n => n.Element)
@@ -404,13 +409,14 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="element">IElement to find the node for.</param>
         /// <param name="node">Node to search in.</param>
         /// <returns>The ElementNode if found, or null if not found.</returns>
-        public static ElementNode FindElementNode(IElement element, Node node)
+        public static ElementNode? FindElementNode(IElement element, Node node)
         {
             foreach (Node child in node.ChildNodes)
             {
-                if (child as ElementNode != null && ((ElementNode)child).Element !=null && ((ElementNode)child).Element.Equals(element))//.Name == element.Name)
+                var childElementNode = child as ElementNode;
+                if (childElementNode != null && childElementNode.Element != null && childElementNode.Element.Equals(element))
                 {
-                    return (ElementNode)child;
+                    return childElementNode;
                 }
                 else
                 {

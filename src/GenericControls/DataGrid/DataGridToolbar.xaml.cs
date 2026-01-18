@@ -30,6 +30,7 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -168,7 +169,7 @@ namespace GenericControls
             }
             thisControl.PasteButton.IsEnabled = !newGrid.IsReadOnly;
 
-            newGrid.SelectedCellsChanged += (sender, et) => { if (newGrid.SelectedCells.Count <= 0) { thisControl.InsertRowsButton.IsEnabled = false; thisControl.DeleteRowsButton.IsEnabled = false; thisControl.CopyButton.IsEnabled = false; thisControl.CopyWithHeadersButton.IsEnabled = false; thisControl.PasteButton.IsEnabled = false; } else { thisControl.InsertRowsButton.IsEnabled = true; thisControl.DeleteRowsButton.IsEnabled = true; thisControl.CopyButton.IsEnabled = true; thisControl.CopyWithHeadersButton.IsEnabled = true; if (newGrid.IsReadOnly == true) return; try { if (thisControl.IsClipboardEmpty()) { thisControl.PasteButton.IsEnabled = false; } else { thisControl.PasteButton.IsEnabled = true; } } catch (Exception) { thisControl.PasteButton.IsEnabled = false; } } };
+            newGrid.SelectedCellsChanged += (sender, et) => { if (newGrid.SelectedCells.Count <= 0) { thisControl.InsertRowsButton.IsEnabled = false; thisControl.DeleteRowsButton.IsEnabled = false; thisControl.CopyButton.IsEnabled = false; thisControl.CopyWithHeadersButton.IsEnabled = false; thisControl.PasteButton.IsEnabled = false; } else { thisControl.InsertRowsButton.IsEnabled = true; thisControl.DeleteRowsButton.IsEnabled = true; thisControl.CopyButton.IsEnabled = true; thisControl.CopyWithHeadersButton.IsEnabled = true; if (newGrid.IsReadOnly == true) return; try { if (thisControl.IsClipboardEmpty()) { thisControl.PasteButton.IsEnabled = false; } else { thisControl.PasteButton.IsEnabled = true; } } catch (Exception ex) { Debug.WriteLine(ex); thisControl.PasteButton.IsEnabled = false; } } };
 
 
         }
@@ -524,8 +525,9 @@ namespace GenericControls
                 if (clipboardData.Length > 0)
                     DataGrid.PasteClipboard();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
             }
             DataGrid.Focus();
         }

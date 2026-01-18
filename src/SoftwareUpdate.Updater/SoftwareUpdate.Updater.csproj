@@ -5,9 +5,13 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>SoftwareUpdate.Updater</RootNamespace>
     <AssemblyName>SoftwareUpdate.Updater</AssemblyName>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SoftwareUpdate.Updater.Tests" />
+  </ItemGroup>
 
 </Project>

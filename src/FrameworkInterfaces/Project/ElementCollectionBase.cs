@@ -80,12 +80,12 @@ namespace FrameworkInterfaces
         private ReadOnlyCollection<IElementCollection> _readOnlyElementCollections;
         protected bool _savingAll = false;
         protected bool _opening = false;
-        protected string _nameOnDisk;
+        protected string _nameOnDisk = string.Empty;
 
         /// <summary>
         /// The undo manager for collection-level operations. Lazily initialized.
         /// </summary>
-        private IUndoManager _undoManager;
+        private IUndoManager? _undoManager;
 
         /// <summary>
         /// Indicates whether undo recording is enabled for this collection.
@@ -194,28 +194,28 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised when adding an element.
         /// </summary>
-        public event ElementAddedEventHandler ElementAdded;
+        public event ElementAddedEventHandler? ElementAdded;
 
         /// <summary>
         /// Event is raised when removing an element.
         /// </summary>
-        public event ElementRemovedEventHandler ElementRemoved;
+        public event ElementRemovedEventHandler? ElementRemoved;
 
         /// <summary>
         /// Event is raised event before an object has been saved.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Event is raised when the object has been saved.
         /// </summary>
         /// <param name="sender">The object that was saved.</param>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Event is raised whenever a property changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// A property in the element has changed.
         /// </summary>
-        protected void ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected void ElementPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName  == nameof(IElement.Name))
             {

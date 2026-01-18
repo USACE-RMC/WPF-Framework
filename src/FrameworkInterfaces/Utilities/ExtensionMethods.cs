@@ -55,7 +55,7 @@ namespace FrameworkInterfaces
         /// <param name="elementCollection">The element collection to query.</param>
         /// <param name="elementToIgnore">Optional element that will be ignored in the result.</param>
         /// <returns>List of element names.</returns>
-        public static List<string> GetElementNames(this IElementCollection elementCollection, IElement elementToIgnore = null)
+        public static List<string> GetElementNames(this IElementCollection elementCollection, IElement? elementToIgnore = null)
         {
             var elementNames = new List<string>();
             if (elementToIgnore == null)
@@ -79,8 +79,9 @@ namespace FrameworkInterfaces
         /// <typeparam name="T">Type of element collection.</typeparam>
         /// <param name="project">Project to search.</param>
         /// <returns>T or Nothing</returns>
-        public static T ElementCollection<T>(this IProject project)
+        public static T? ElementCollection<T>(this IProject project)
         {
+            if (project.ElementCollections == null) return default;
             foreach (var collection in project.ElementCollections)
             {
                 if (collection.GetType() == typeof(T)) { return (T)collection; }

@@ -39,6 +39,14 @@ namespace FrameworkInterfaces
     /// </summary>
     /// <remarks>
     /// <para>
+    /// This class shares similar structure with <see cref="ElementBase"/> by design.
+    /// While both implement <see cref="IElement"/>, they serve different purposes:
+    /// <see cref="ElementBase"/> includes undo/redo support, while <see cref="ElementBaseBuff"/>
+    /// provides a simpler implementation without undo functionality.
+    /// The duplication is intentional to avoid complex inheritance hierarchies and to allow
+    /// each class to evolve independently based on specific requirements.
+    /// </para>
+    /// <para>
     /// <b> Authors: </b>
     /// <list type="bullet">
     ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
@@ -65,7 +73,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The description of the element.
         /// </summary>
-        protected string _description;
+        protected string _description = string.Empty;
 
         /// <summary>
         /// The date and time when the element was created.
@@ -206,27 +214,27 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised before the element has been deleted.
         /// </summary>
-        public event PreviewDeletedEventHandler PreviewDeleted;
+        public event PreviewDeletedEventHandler? PreviewDeleted;
 
         /// <summary>
         /// Event is raised when the element has been deleted.
         /// </summary>
-        public event DeletedEventHandler Deleted;
+        public event DeletedEventHandler? Deleted;
 
         /// <summary>
         /// Event is raised event before an object has been saved.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Event is raised when the object has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Event is raised whenever a property changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Raise property changed event.
@@ -236,7 +244,7 @@ namespace FrameworkInterfaces
         protected void RaisePropertyChange(string propertyName, bool isDirty = true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            IsDirty = isDirty;//SetIsDirty(isDirty);
+            IsDirty = isDirty;
         }
 
         /// <summary>
@@ -278,82 +286,6 @@ namespace FrameworkInterfaces
         }
 
         /// <summary>
-        /// General validation and error messaging of the elements Name property. This method clears the existing Name error messages and adds any new errors.
-        /// This method will check test for uniqueness of the name against other elements in the parent collection. This method uses error codes 001 - 004.
-        /// </summary>
-        /// <param name="invalidCharacters">Collection of characters that are not allowed in the element name.</param>
-        /// <param name="maxCharacters">The maximum number of characters allowed for the element name.</param>
-        /// <param name="errorCodeSource">The first two characters that make up the error code typically in the format XX-XXX-###</param>
-        /// <returns>True if the name is valid, false otherwise.</returns>
-        private bool ValidateName(char[] invalidCharacters, int maxCharacters, string errorCodeSource)
-        {
-            bool valid = true;
-
-            // Remove all messages for Name
-            List<BasicMessageItem> nameMessages = new List<BasicMessageItem>();
-
-            // Get Parent Name
-            string parentCollectionName = ParentCollection == null ? "Study Element" : ParentCollection.Name;
-
-            // Check if name is nothing.
-            if (string.IsNullOrEmpty(_name) || _name is null)
-            {
-                valid = false;
-                nameMessages.Add(new BasicMessageItem(MessageType.Error, $"The name of the {parentCollectionName} cannot be blank.", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-001"));
-            }
-            else
-            {
-                Messaging.Messenger.GetInstance().Remove(new BasicMessageItem(MessageType.Error, $"The name of the {parentCollectionName} cannot be blank.", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-001"));
-            }
-
-            // Check the length of the name.
-            if (_name.Length > maxCharacters)
-            {
-                valid = false;
-                nameMessages.Add(new BasicMessageItem(MessageType.Error, $"The name of the {parentCollectionName} cannot exceed {maxCharacters} characters.", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-002"));
-            }
-            else
-            {
-                Messaging.Messenger.GetInstance().Remove(new BasicMessageItem(MessageType.Error, $"The name of the {parentCollectionName} cannot exceed {maxCharacters} characters.", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-002"));
-            }
-
-            // Get list of invalid names, can't allow duplicate naming.
-            var invalidNames = new List<string>();
-            if (ParentCollection != null) invalidNames = ParentCollection.GetElementNames(this);
-            if (invalidNames.Contains(_name))
-            {
-                valid = false;
-                nameMessages.Add(new BasicMessageItem(MessageType.Error, $"A {parentCollectionName} with the name '{_name}' already exists and must be unique.", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-003"));
-            }
-            else
-            {
-                Messaging.Messenger.GetInstance().Remove(new BasicMessageItem(MessageType.Error, $"A {parentCollectionName} with the name '{_name}' already exists and must be unique.", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-003"));
-            }
-
-            // Check if there are bad characters.
-            bool containsBadChar = false;
-            foreach (char badChar in invalidCharacters)
-            {
-                if (_name.Contains(badChar.ToString()))
-                {
-                    valid = false;
-                    string badChars = string.Join(" ", invalidCharacters.Where(c => char.IsWhiteSpace(c) == false && char.IsControl(c) == false));
-                    nameMessages.Add(new BasicMessageItem(MessageType.Error, $"Invalid character in {parentCollectionName} name: '{badChar}'. Invalid characters are: {badChars}", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-004"));
-                    containsBadChar = true;
-                    break;
-                }
-            }
-            if (containsBadChar == false)
-            {
-                Messaging.Messenger.GetInstance().Remove(new BasicMessageItem(MessageType.Error, "", this, parentCollectionName, _name, nameof(Name), $"{errorCodeSource}-ERR-004"));
-            }
-
-            if (nameMessages.Count > 0) { Messaging.Messenger.GetInstance().Add(nameMessages); }
-            //
-            return valid;
-        }
-
-        /// <summary>
         /// Loads element data from disk.
         /// </summary>
         public abstract void Open();
@@ -368,7 +300,7 @@ namespace FrameworkInterfaces
         /// </summary>
         /// <param name="newName">Optional. New name of the cloned element.</param>
         /// <returns>A deep copy of the element.</returns>
-        public abstract IElement Copy(string newName = null);
+        public abstract IElement Copy(string? newName = null);
 
         /// <summary>
         /// Copy the object from an external project to disk within the current project.

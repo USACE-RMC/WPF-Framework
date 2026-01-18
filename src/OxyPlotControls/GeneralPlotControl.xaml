@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/IconResources.xaml"/>
+                <ResourceDictionary Source="Resources/ResourceDictionary.xaml"/>
                 <ResourceDictionary>
                     <local:OxyAutomaticColorConverter x:Key="OxyAutoColorConverter"/>
                     <cntrls:ThicknessToDoubleConverter x:Key="ConvertThicknessToDouble"/>

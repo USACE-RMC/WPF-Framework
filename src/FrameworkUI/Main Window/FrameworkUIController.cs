@@ -68,7 +68,7 @@ namespace FrameworkUI
         /// <summary>
         /// Event is raised when the properties control is set.
         /// </summary>
-        public event SetPropertiesControlEventHandler SetPropertiesControl;
+        public event SetPropertiesControlEventHandler? SetPropertiesControl;
         /// <summary>
         /// Delegate for handling the set properties control event.
         /// </summary>
@@ -78,7 +78,7 @@ namespace FrameworkUI
         /// <summary>
         /// Event is raised when the properties control is closed.
         /// </summary>
-        public event ClosePropertiesControlEventHandler ClosePropertiesControl;
+        public event ClosePropertiesControlEventHandler? ClosePropertiesControl;
         /// <summary>
         /// Delegate for handling the close properties control event.
         /// </summary>
@@ -88,12 +88,12 @@ namespace FrameworkUI
         /// <summary>
         /// The project explorer project node.
         /// </summary>
-        public ProjectNode ProjectNode { get; private set; }
+        public ProjectNode? ProjectNode { get; private set; }
 
         /// <summary>
         /// Defines the default Avalon Dock layout.
         /// </summary>
-        public string DefaultAvalonDockLayout { get; private set; }
+        public string? DefaultAvalonDockLayout { get; private set; }
 
         /// <summary>
         /// List of custom project menu items.

@@ -38,16 +38,21 @@ using FrameworkInterfaces.Undo.Actions;
 namespace FrameworkInterfaces.Undo
 {
     /// <summary>
-    /// Bridges an <see cref="ObservableCollection{T}"/> to the undo/redo system by automatically
-    /// recording collection changes as undoable actions.
+    /// Bridges an <see cref="IList{T}"/> that implements <see cref="INotifyCollectionChanged"/>
+    /// to the undo/redo system by automatically recording collection changes as undoable actions.
     /// </summary>
     /// <typeparam name="T">The type of elements in the collection.</typeparam>
     /// <remarks>
     /// <para>
-    /// This class subscribes to the <see cref="ObservableCollection{T}.CollectionChanged"/> event
+    /// This class subscribes to the <see cref="INotifyCollectionChanged.CollectionChanged"/> event
     /// and creates appropriate <see cref="IUndoableAction"/> instances for each change type
     /// (Add, Remove, Replace, Reset, Move). These actions are recorded with the
     /// <see cref="IUndoManager"/> for undo/redo support.
+    /// </para>
+    /// <para>
+    /// The bridge works with any collection that implements both <see cref="IList{T}"/> and
+    /// <see cref="INotifyCollectionChanged"/>, including <see cref="List{T}"/> wrapped with
+    /// collection change notifications, custom collections, or <see cref="ObservableCollection{T}"/>.
     /// </para>
     /// <para>
     /// The bridge maintains a shadow copy of the collection to support Reset (Clear) operations,
@@ -70,15 +75,15 @@ namespace FrameworkInterfaces.Undo
     /// </remarks>
     /// <example>
     /// <code>
-    /// // Create the bridge in your element constructor
+    /// // Create the bridge with any IList that implements INotifyCollectionChanged
     /// public class MyElement : ElementBase, IUndoableElement
     /// {
-    ///     private ObservableCollection&lt;double&gt; _values;
+    ///     private MyObservableList&lt;double&gt; _values;
     ///     private UndoableCollectionBridge&lt;double&gt; _valuesBridge;
     ///
     ///     public MyElement()
     ///     {
-    ///         _values = new ObservableCollection&lt;double&gt;();
+    ///         _values = new MyObservableList&lt;double&gt;();
     ///         _valuesBridge = new UndoableCollectionBridge&lt;double&gt;(
     ///             _values,
     ///             () => IsUndoEnabled ? _undoManager : null,
@@ -95,13 +100,30 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// The collection being monitored for changes.
         /// </summary>
-        private readonly ObservableCollection<T> _collection;
+        private readonly IList<T> _collection;
+
+        /// <summary>
+        /// The collection stored as dynamic to allow proper method dispatch.
+        /// </summary>
+        /// <remarks>
+        /// This is necessary because some collections (like those extending List&lt;T&gt;)
+        /// may hide base class methods with the 'new' keyword instead of overriding them.
+        /// When accessed via IList&lt;T&gt;, C# static dispatch calls the base class methods,
+        /// which don't fire CollectionChanged events. Using dynamic ensures we call the
+        /// actual runtime type's methods.
+        /// </remarks>
+        private readonly dynamic _dynamicCollection;
+
+        /// <summary>
+        /// The collection cast as INotifyCollectionChanged for event subscription.
+        /// </summary>
+        private readonly INotifyCollectionChanged _notifyCollection;
 
         /// <summary>
         /// A function that returns the current undo manager, or null if undo is disabled.
         /// Using a delegate allows dynamic checking of IsUndoEnabled.
         /// </summary>
-        private readonly Func<IUndoManager> _getUndoManager;
+        private readonly Func<IUndoManager?> _getUndoManager;
 
         /// <summary>
         /// A human-readable description of the collection for use in undo action descriptions.
@@ -111,12 +133,12 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// The target object that owns this collection, used for undo action association.
         /// </summary>
-        private readonly object _target;
+        private readonly object? _target;
 
         /// <summary>
         /// A shadow copy of the collection used to capture items during Reset (Clear) operations.
         /// </summary>
-        private List<T> _shadowCopy;
+        private List<T>? _shadowCopy;
 
         /// <summary>
         /// Indicates whether this instance has been disposed.
@@ -131,7 +153,8 @@ namespace FrameworkInterfaces.Undo
         /// Initializes a new instance of the <see cref="UndoableCollectionBridge{T}"/> class.
         /// </summary>
         /// <param name="collection">
-        /// The <see cref="ObservableCollection{T}"/> to monitor for changes.
+        /// The <see cref="IList{T}"/> to monitor for changes. Must also implement
+        /// <see cref="INotifyCollectionChanged"/>.
         /// </param>
         /// <param name="getUndoManager">
         /// A function that returns the <see cref="IUndoManager"/> to use for recording actions,
@@ -148,22 +171,32 @@ namespace FrameworkInterfaces.Undo
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="collection"/> or <paramref name="getUndoManager"/> is null.
         /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="collection"/> does not implement <see cref="INotifyCollectionChanged"/>.
+        /// </exception>
         public UndoableCollectionBridge(
-            ObservableCollection<T> collection,
-            Func<IUndoManager> getUndoManager,
+            IList<T> collection,
+            Func<IUndoManager?> getUndoManager,
             string collectionDescription = "collection",
-            object target = null)
+            object? target = null)
         {
             _collection = collection ?? throw new ArgumentNullException(nameof(collection));
+            _dynamicCollection = collection; // Store as dynamic for proper method dispatch
             _getUndoManager = getUndoManager ?? throw new ArgumentNullException(nameof(getUndoManager));
             _collectionDescription = collectionDescription ?? "collection";
             _target = target;
+
+            // Verify the collection implements INotifyCollectionChanged
+            _notifyCollection = collection as INotifyCollectionChanged
+                ?? throw new ArgumentException(
+                    $"Collection must implement {nameof(INotifyCollectionChanged)}.",
+                    nameof(collection));
 
             // Initialize the shadow copy with current collection contents
             _shadowCopy = new List<T>(_collection);
 
             // Subscribe to collection changes
-            _collection.CollectionChanged += OnCollectionChanged;
+            _notifyCollection.CollectionChanged += OnCollectionChanged;
         }
 
         #endregion
@@ -174,16 +207,16 @@ namespace FrameworkInterfaces.Undo
         /// Gets the collection being monitored by this bridge.
         /// </summary>
         /// <value>
-        /// The <see cref="ObservableCollection{T}"/> that this bridge is attached to.
+        /// The <see cref="IList{T}"/> that this bridge is attached to.
         /// </value>
-        public ObservableCollection<T> Collection => _collection;
+        public IList<T> Collection => _collection;
 
         #endregion
 
         #region Event Handlers
 
         /// <summary>
-        /// Handles the <see cref="ObservableCollection{T}.CollectionChanged"/> event
+        /// Handles the <see cref="INotifyCollectionChanged.CollectionChanged"/> event
         /// by creating and recording appropriate undo actions.
         /// </summary>
         /// <param name="sender">The source of the event (the collection).</param>
@@ -200,7 +233,7 @@ namespace FrameworkInterfaces.Undo
         /// <item>Updates the shadow copy to reflect the current collection state</item>
         /// </list>
         /// </remarks>
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             var undoManager = _getUndoManager();
 
@@ -212,7 +245,7 @@ namespace FrameworkInterfaces.Undo
             }
 
             // Create the appropriate action based on the change type
-            IUndoableAction action = CreateActionForChange(e);
+            IUndoableAction? action = CreateActionForChange(e);
 
             // Record the action if one was created
             if (action != null)
@@ -248,7 +281,7 @@ namespace FrameworkInterfaces.Undo
         /// <item><see cref="NotifyCollectionChangedAction.Move"/>: Item moved within collection</item>
         /// </list>
         /// </remarks>
-        private IUndoableAction CreateActionForChange(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateActionForChange(NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -281,7 +314,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation removes items from the collection at their original indices.
         /// The redo operation re-inserts the items at their original indices.
         /// </remarks>
-        private IUndoableAction CreateAddAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateAddAction(NotifyCollectionChangedEventArgs e)
         {
             // Capture the added items and their starting index
             var addedItems = e.NewItems?.Cast<T>().ToList() ?? new List<T>();
@@ -298,17 +331,19 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Re-add the items at their original positions
+                    // Use _dynamicCollection to ensure the runtime type's Insert method is called
                     for (int i = 0; i < addedItems.Count; i++)
                     {
-                        _collection.Insert(startIndex + i, addedItems[i]);
+                        _dynamicCollection.Insert(startIndex + i, addedItems[i]);
                     }
                 },
                 undo: () =>
                 {
                     // Remove the items (in reverse order to maintain indices)
+                    // Use _dynamicCollection to ensure the runtime type's RemoveAt method is called
                     for (int i = addedItems.Count - 1; i >= 0; i--)
                     {
-                        _collection.RemoveAt(startIndex + i);
+                        _dynamicCollection.RemoveAt(startIndex + i);
                     }
                 },
                 target: _target
@@ -324,7 +359,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation re-inserts items at their original indices.
         /// The redo operation removes the items again.
         /// </remarks>
-        private IUndoableAction CreateRemoveAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateRemoveAction(NotifyCollectionChangedEventArgs e)
         {
             // Capture the removed items and their original index
             var removedItems = e.OldItems?.Cast<T>().ToList() ?? new List<T>();
@@ -341,17 +376,19 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Remove the items (in reverse order to maintain indices)
+                    // Use _dynamicCollection to ensure the runtime type's RemoveAt method is called
                     for (int i = removedItems.Count - 1; i >= 0; i--)
                     {
-                        _collection.RemoveAt(startIndex + i);
+                        _dynamicCollection.RemoveAt(startIndex + i);
                     }
                 },
                 undo: () =>
                 {
                     // Re-insert the items at their original positions
+                    // Use _dynamicCollection to ensure the runtime type's Insert method is called
                     for (int i = 0; i < removedItems.Count; i++)
                     {
-                        _collection.Insert(startIndex + i, removedItems[i]);
+                        _dynamicCollection.Insert(startIndex + i, removedItems[i]);
                     }
                 },
                 target: _target
@@ -367,7 +404,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation replaces the new items with the old items.
         /// The redo operation replaces the old items with the new items.
         /// </remarks>
-        private IUndoableAction CreateReplaceAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateReplaceAction(NotifyCollectionChangedEventArgs e)
         {
             // Capture the old and new items
             var oldItems = e.OldItems?.Cast<T>().ToList() ?? new List<T>();
@@ -385,17 +422,19 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Replace with new items
+                    // Use _dynamicCollection to ensure the runtime type's indexer is called
                     for (int i = 0; i < newItems.Count; i++)
                     {
-                        _collection[startIndex + i] = newItems[i];
+                        _dynamicCollection[startIndex + i] = newItems[i];
                     }
                 },
                 undo: () =>
                 {
                     // Replace with old items
+                    // Use _dynamicCollection to ensure the runtime type's indexer is called
                     for (int i = 0; i < oldItems.Count; i++)
                     {
-                        _collection[startIndex + i] = oldItems[i];
+                        _dynamicCollection[startIndex + i] = oldItems[i];
                     }
                 },
                 target: _target
@@ -403,36 +442,78 @@ namespace FrameworkInterfaces.Undo
         }
 
         /// <summary>
-        /// Creates an action to undo/redo a Reset (Clear) operation.
+        /// Creates an action to undo/redo a Reset operation.
         /// </summary>
-        /// <returns>A <see cref="DelegateAction"/> that restores all items on undo and clears on redo.</returns>
+        /// <returns>A <see cref="DelegateAction"/> that restores the previous state on undo and the new state on redo, or null if nothing changed.</returns>
         /// <remarks>
-        /// The Reset action is raised when <see cref="ObservableCollection{T}.Clear"/> is called,
-        /// but the event arguments do not contain the removed items. This is why we maintain
-        /// a shadow copy of the collection - to capture the items that were present before the clear.
+        /// <para>
+        /// The Reset action is raised by various collection operations including Clear, AddRange,
+        /// and other bulk operations. The event arguments do not contain information about what
+        /// changed, which is why we maintain a shadow copy of the collection to capture the
+        /// state before the change.
+        /// </para>
+        /// <para>
+        /// This method captures both the before state (shadow copy) and after state (current collection)
+        /// to properly support undo/redo for any Reset operation, not just Clear.
+        /// </para>
         /// </remarks>
-        private IUndoableAction CreateResetAction()
+        private IUndoableAction? CreateResetAction()
         {
-            // Capture the shadow copy before it gets updated
-            var clearedItems = new List<T>(_shadowCopy);
+            // Capture the state before the change (from shadow copy)
+            var stateBefore = _shadowCopy != null ? new List<T>(_shadowCopy) : new List<T>();
 
-            if (clearedItems.Count == 0) return null;
+            // Capture the state after the change (current collection)
+            var stateAfter = new List<T>(_collection);
 
-            string description = $"Clear {_collectionDescription}";
+            // If nothing changed, don't create an action
+            if (stateBefore.Count == stateAfter.Count && stateBefore.SequenceEqual(stateAfter))
+            {
+                return null;
+            }
+
+            // Determine the appropriate description based on what changed
+            string description;
+            if (stateAfter.Count == 0)
+            {
+                description = $"Clear {_collectionDescription}";
+            }
+            else if (stateBefore.Count == 0)
+            {
+                description = $"Add {stateAfter.Count} items to {_collectionDescription}";
+            }
+            else if (stateAfter.Count > stateBefore.Count)
+            {
+                description = $"Add {stateAfter.Count - stateBefore.Count} items to {_collectionDescription}";
+            }
+            else if (stateAfter.Count < stateBefore.Count)
+            {
+                description = $"Remove {stateBefore.Count - stateAfter.Count} items from {_collectionDescription}";
+            }
+            else
+            {
+                description = $"Change {_collectionDescription}";
+            }
 
             return new DelegateAction(
                 description,
                 execute: () =>
                 {
-                    // Clear the collection
-                    _collection.Clear();
+                    // Restore the after state
+                    // Use _dynamicCollection to ensure the runtime type's Clear/Add methods are called
+                    _dynamicCollection.Clear();
+                    foreach (var item in stateAfter)
+                    {
+                        _dynamicCollection.Add(item);
+                    }
                 },
                 undo: () =>
                 {
-                    // Restore all cleared items
-                    foreach (var item in clearedItems)
+                    // Restore the before state
+                    // Use _dynamicCollection to ensure the runtime type's Clear/Add methods are called
+                    _dynamicCollection.Clear();
+                    foreach (var item in stateBefore)
                     {
-                        _collection.Add(item);
+                        _dynamicCollection.Add(item);
                     }
                 },
                 target: _target
@@ -447,13 +528,19 @@ namespace FrameworkInterfaces.Undo
         /// <remarks>
         /// The undo operation moves the item back to its original index.
         /// The redo operation moves the item to the new index again.
+        /// For collections that don't have a native Move method, this is implemented
+        /// as a remove followed by an insert.
         /// </remarks>
-        private IUndoableAction CreateMoveAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateMoveAction(NotifyCollectionChangedEventArgs e)
         {
             int oldIndex = e.OldStartingIndex;
             int newIndex = e.NewStartingIndex;
 
             if (oldIndex == newIndex) return null;
+
+            // Capture the item being moved
+            var movedItems = e.NewItems?.Cast<T>().ToList() ?? new List<T>();
+            if (movedItems.Count == 0) return null;
 
             string description = $"Move item in {_collectionDescription}";
 
@@ -461,14 +548,41 @@ namespace FrameworkInterfaces.Undo
                 description,
                 execute: () =>
                 {
-                    _collection.Move(oldIndex, newIndex);
+                    MoveItem(oldIndex, newIndex);
                 },
                 undo: () =>
                 {
-                    _collection.Move(newIndex, oldIndex);
+                    MoveItem(newIndex, oldIndex);
                 },
                 target: _target
             );
+        }
+
+        /// <summary>
+        /// Moves an item from one index to another in the collection.
+        /// </summary>
+        /// <param name="fromIndex">The current index of the item.</param>
+        /// <param name="toIndex">The target index for the item.</param>
+        /// <remarks>
+        /// If the collection is an <see cref="ObservableCollection{T}"/>, uses its native
+        /// Move method. Otherwise, performs a remove and insert operation.
+        /// Uses _dynamicCollection to ensure the runtime type's methods are called.
+        /// </remarks>
+        private void MoveItem(int fromIndex, int toIndex)
+        {
+            // Use native Move if available (ObservableCollection)
+            if (_collection is ObservableCollection<T> observableCollection)
+            {
+                observableCollection.Move(fromIndex, toIndex);
+            }
+            else
+            {
+                // Manual move: remove and insert
+                // Use _dynamicCollection to ensure the runtime type's methods are called
+                T item = _collection[fromIndex]; // Read is safe via interface
+                _dynamicCollection.RemoveAt(fromIndex);
+                _dynamicCollection.Insert(toIndex, item);
+            }
         }
 
         /// <summary>
@@ -492,7 +606,7 @@ namespace FrameworkInterfaces.Undo
         /// Releases all resources used by the <see cref="UndoableCollectionBridge{T}"/>.
         /// </summary>
         /// <remarks>
-        /// This method unsubscribes from the <see cref="ObservableCollection{T}.CollectionChanged"/>
+        /// This method unsubscribes from the <see cref="INotifyCollectionChanged.CollectionChanged"/>
         /// event to prevent memory leaks. Always call <see cref="Dispose"/> when you are finished
         /// using the bridge, or use a using statement.
         /// </remarks>
@@ -517,7 +631,7 @@ namespace FrameworkInterfaces.Undo
                 if (disposing)
                 {
                     // Unsubscribe from collection events
-                    _collection.CollectionChanged -= OnCollectionChanged;
+                    _notifyCollection.CollectionChanged -= OnCollectionChanged;
 
                     // Clear the shadow copy
                     _shadowCopy?.Clear();

@@ -77,9 +77,9 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         private bool _canStartDragDrop = false;
         private Point _startPoint;
-        private InsertionAdorner _insertionAdorner;
-        private Node _startNode;
-        private Node _dragNode = null;
+        private InsertionAdorner? _insertionAdorner;
+        private Node? _startNode;
+        private Node? _dragNode;
         private List<Node> _selectedNodes = new List<Node>();
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace FrameworkUI.ProjectExplorer
             {
                 for (int i = 0; i < itemCollection.Count; i++)
                 {
-                    TreeViewItem tvi = itemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
+                    TreeViewItem? tvi = itemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
                     if (tvi != null)
                     {
                         ClearTreeViewItemsControlSelection(tvi.Items, tvi.ItemContainerGenerator);
@@ -138,7 +138,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Me_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+            TreeViewItem? treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
 
             if (treeViewItem != null)
             {
@@ -157,6 +157,7 @@ namespace FrameworkUI.ProjectExplorer
         private void Me_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var item = FindTreeViewItem(this, e.OriginalSource as DependencyObject);
+            if (item == null) return;
             if (item as ProjectNode != null || item as ElementNodeCollection != null || item as ElementNodeGroup != null)
             {
                 ClearSelection();
@@ -200,7 +201,7 @@ namespace FrameworkUI.ProjectExplorer
                         else
                         {
                             var NodeCollection = FindAncestor<NodeCollection>((DependencyObject)e.OriginalSource);
-                            NodeCollection.Focus();
+                            NodeCollection?.Focus();
                         }
                     }
                 }
@@ -219,17 +220,17 @@ namespace FrameworkUI.ProjectExplorer
                         _startNode = node;
                         _selectedNodes.Add(node);
                     }
-                    else if (_selectedNodes.Count > 0)
+                    else if (_selectedNodes.Count > 0 && _startNode != null)
                     {
                         if (node.ParentNode == _startNode.ParentNode)
                         {
                             var parentNode = FindAncestor<Node>((DependencyObject)e.OriginalSource);
-                            int startIndex = _startNode.ParentNode.ChildNodes.IndexOf(_startNode);
-                            int endIndex = node.ParentNode.ChildNodes.IndexOf(node);
+                            int startIndex = _startNode.ParentNode!.ChildNodes.IndexOf(_startNode);
+                            int endIndex = node.ParentNode!.ChildNodes.IndexOf(node);
                             ClearSelection();
                             for (int i = Math.Min(startIndex, endIndex); i <= Math.Max(startIndex, endIndex); i++)
                             {
-                                Node cNode = (Node)node.ParentNode.ChildNodes[i];
+                                Node cNode = (Node)node.ParentNode!.ChildNodes[i];
                                 cNode.IsNodeSelected = true;
                                 _selectedNodes.Add(cNode);
                             }
@@ -344,7 +345,7 @@ namespace FrameworkUI.ProjectExplorer
             // e.Effects = DragDropEffects.None;
 
             // Get drag elements parent element collection
-            NodeCollection dragParentCollection = null;
+            NodeCollection? dragParentCollection = null;
             if (_dragNode == null)
             {
                 // Get drag data text and see if this is an element node or element node group
@@ -352,7 +353,7 @@ namespace FrameworkUI.ProjectExplorer
                 var data = e.Data.GetData(DataFormats.Text);
                 if (data == null) { e.Handled = true; return; }
 
-                var dataString = data.ToString().Split('>');
+                var dataString = data.ToString()!.Split('>');
                 if (dataString.Count() < 6) { e.Handled = true; return; }
                 string eParentCollectionName = dataString[3];
                 bool canCopyFromExternal = false;
@@ -374,6 +375,7 @@ namespace FrameworkUI.ProjectExplorer
 
             // Get drop target.
             if (e.OriginalSource == null) { e.Handled = true; return; }
+            if (dragParentCollection == null) { e.Handled = true; return; }
             var dropTarget = FindAncestor<Node>((DependencyObject)e.OriginalSource);
 
             //e.Effects = DragDropEffects.Move;
@@ -397,7 +399,7 @@ namespace FrameworkUI.ProjectExplorer
                     e.Effects = DragDropEffects.None;
                 }
             }
-            else if (_dragNode.ContainsNode(dropTarget) || _dragNode.Equals(dropTarget))
+            else if (_dragNode != null && (_dragNode.ContainsNode(dropTarget) || _dragNode.Equals(dropTarget)))
             {
                 if (_insertionAdorner != null)
                 {
@@ -425,7 +427,7 @@ namespace FrameworkUI.ProjectExplorer
             }
             else if (dropTarget as NodeGroup != null)
             {
-                NodeCollection dropParentCollection = dropTarget.GetNodeCollection();
+                NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
                     if (_insertionAdorner != null) { _insertionAdorner.Detach(); }
@@ -449,7 +451,7 @@ namespace FrameworkUI.ProjectExplorer
             }
             else
             {
-                NodeCollection dropParentCollection = dropTarget.GetNodeCollection();
+                NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
                     if (_insertionAdorner != null) { _insertionAdorner.Detach(); }
@@ -528,7 +530,7 @@ namespace FrameworkUI.ProjectExplorer
             var dropTarget = FindAncestor<Node>((DependencyObject)e.OriginalSource);
 
             // Get drag element collection
-            NodeCollection dragParentCollection = null;
+            NodeCollection? dragParentCollection = null;
             string eName = "";
             string elementType = "";
             string eParentProjectName = "";
@@ -539,7 +541,7 @@ namespace FrameworkUI.ProjectExplorer
                 var data = e.Data.GetData(DataFormats.Text);
                 if (data == null) { e.Handled = true; return; }
 
-                var dataString = data.ToString().Split('>');
+                var dataString = data.ToString()!.Split('>');
                 if (dataString.Count() < 6) { e.Handled = true; return; }
                 eName = dataString[1];
                 elementType = dataString[2];
@@ -567,51 +569,54 @@ namespace FrameworkUI.ProjectExplorer
                 dragParentCollection = _dragNode.GetNodeCollection();
             }
 
+            // Null checks for _dragNode and dragParentCollection
+            if (_dragNode == null || dragParentCollection == null) { e.Handled = true; return; }
+
             if (dropTarget == null)
             {
                 var k = e.GetPosition(this);
                 if (k.Y >= Math.Floor(this.DesiredSize.Height))
                 {
-                    _dragNode.Move(_dragNode.ParentNode, dragParentCollection, _dragNode.ParentNode.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
+                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
                 }
             }
             else if (dropTarget as NodeCollection != null)
             {
                 if (dragParentCollection.Equals(dropTarget))
                 {
-                    _dragNode.Move(_dragNode.ParentNode, dragParentCollection, _dragNode.ParentNode.Items.IndexOf(_dragNode), 0); // Insert into the top of the list
+                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), 0); // Insert into the top of the list
                 }
                 else
                 {
-                    _dragNode.Move(_dragNode.ParentNode, dragParentCollection, _dragNode.ParentNode.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
+                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
                 }
             }
             else if (dropTarget as ProjectNode != null)
             {
-                _dragNode.Move(_dragNode.ParentNode, dragParentCollection, _dragNode.ParentNode.Items.IndexOf(_dragNode), 0); // Insert into the top of the list
+                _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), 0); // Insert into the top of the list
             }
             else
             {
-                NodeCollection dropParentCollection = dropTarget.GetNodeCollection();
+                NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
-                    int dragIndex = _dragNode.ParentNode.Items.IndexOf(_dragNode);
+                    int dragIndex = _dragNode.ParentNode!.Items.IndexOf(_dragNode);
                     bool firstHalf = IsInTopHalf(dropTarget, e.GetPosition(dropTarget));
                     if (dropTarget as NodeGroup != null && firstHalf == false)
                     {
-                        _dragNode.Move(_dragNode.ParentNode, dropTarget, dragIndex, 0);
+                        _dragNode.Move(_dragNode.ParentNode!, dropTarget, dragIndex, 0);
                     }
                     else
                     {
-                        int dropIndex = dropTarget.ParentNode.Items.IndexOf(dropTarget);
+                        int dropIndex = dropTarget.ParentNode!.Items.IndexOf(dropTarget);
                         if (firstHalf == false) { dropIndex += 1; }
-                        if (dropTarget.ParentNode.Equals(_dragNode.ParentNode) && dragIndex < dropIndex) { dropIndex -= 1; }
-                        _dragNode.Move(_dragNode.ParentNode, dropTarget.ParentNode, dragIndex, dropIndex);
+                        if (dropTarget.ParentNode!.Equals(_dragNode.ParentNode) && dragIndex < dropIndex) { dropIndex -= 1; }
+                        _dragNode.Move(_dragNode.ParentNode!, dropTarget.ParentNode!, dragIndex, dropIndex);
                     }
                 }
                 else
                 {
-                    _dragNode.Move(_dragNode.ParentNode, dragParentCollection, _dragNode.ParentNode.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
+                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
                 }
             }
 
@@ -640,12 +645,12 @@ namespace FrameworkUI.ProjectExplorer
         /// <typeparam name="T">The type of ancestor to find.</typeparam>
         /// <param name="current">The starting dependency object.</param>
         /// <returns>The ancestor of type T if found, otherwise null.</returns>
-        public T FindAncestor<T>(DependencyObject current) where T : DependencyObject
+        public T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
         {
             do
             {
                 if (current is T) return (T)current;
-                current = VisualTreeHelper.GetParent(current);
+                current = VisualTreeHelper.GetParent(current!);
             }
             while (current != null);
             return null;
@@ -668,12 +673,12 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="tree">The tree view to search in.</param>
         /// <param name="dependencyObject">The dependency object to start searching from.</param>
         /// <returns>The parent TreeViewItem if found, otherwise null.</returns>
-        public static TreeViewItem FindTreeViewItem(TreeView tree, DependencyObject dependencyObject)
+        public static TreeViewItem? FindTreeViewItem(TreeView tree, DependencyObject? dependencyObject)
         {
             if (!(dependencyObject is Visual || dependencyObject is Visual3D)) return null;
-            TreeViewItem treeViewItem = dependencyObject as TreeViewItem;
+            TreeViewItem? treeViewItem = dependencyObject as TreeViewItem;
             if (treeViewItem != null) return treeViewItem;
-            return FindTreeViewItem(tree,VisualTreeHelper.GetParent(dependencyObject));
+            return FindTreeViewItem(tree, VisualTreeHelper.GetParent(dependencyObject));
         }
 
         /// <summary>
@@ -681,7 +686,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="source">The source dependency object.</param>
         /// <returns>The parent TreeViewItem if found, otherwise null.</returns>
-        static TreeViewItem VisualUpwardSearch(DependencyObject source)
+        static TreeViewItem? VisualUpwardSearch(DependencyObject? source)
         {
             while (source != null && !(source is TreeViewItem))
                 source = VisualTreeHelper.GetParent(source);

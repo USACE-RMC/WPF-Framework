@@ -192,7 +192,7 @@ namespace OxyPlotControls
         private static void AnnotationChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
-            if (d.GetType() != typeof(AnnotationControl)) return;
+            if (d is not AnnotationControl) return;
             var thisControl = (AnnotationControl)d;
 
             if (e.NewValue == null) return;
@@ -205,7 +205,7 @@ namespace OxyPlotControls
             thisControl.DisplayOptionsEXP.Visibility = Visibility.Visible;
 
             // Determine whether to show X-Y Controls
-            if (e.NewValue.GetType() == typeof(Wpf.LineAnnotation))
+            if (e.NewValue is Wpf.LineAnnotation)
             {
                 var newAnnotation = (Wpf.LineAnnotation)e.NewValue;
 
@@ -231,7 +231,7 @@ namespace OxyPlotControls
                     thisControl.SlopeControl.Visibility = Visibility.Visible;
                 }
             }
-            else if (e.NewValue.GetType() == typeof(Wpf.PointAnnotation))
+            else if (e.NewValue is Wpf.PointAnnotation)
             {
                 thisControl.XValueControl.Visibility = Visibility.Visible;
                 thisControl.YValueControl.Visibility = Visibility.Visible;
@@ -248,7 +248,7 @@ namespace OxyPlotControls
             }
 
             // Determine whether to show the Text Angle Control
-            if (e.NewValue.GetType() == typeof(Wpf.LineAnnotation) ||
+            if (e.NewValue is Wpf.LineAnnotation ||
                 e.NewValue.GetType() == typeof(Wpf.PolylineAnnotation))
             {
                 thisControl.TextAngleControl.Visibility = Visibility.Collapsed;
@@ -706,7 +706,7 @@ namespace OxyPlotControls
         /// <param name="e">Event args containing selection details.</param>
         private void LineTypeControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Annotation.GetType() != typeof(Wpf.LineAnnotation)) return;
+            if (Annotation is not Wpf.LineAnnotation) return;
 
             var selectedType = (LineAnnotationType)((ComboBox)LineTypeControl.InnerContent).SelectedItem;
 
@@ -745,7 +745,7 @@ namespace OxyPlotControls
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
-            if (value.GetType() != typeof(DataPoint)) return null;
+            if (value is not DataPoint) return null;
             var dp = (DataPoint)value;
             return new System.Windows.Point(dp.X, dp.Y);
         }
@@ -756,7 +756,7 @@ namespace OxyPlotControls
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
-            if (value.GetType() != typeof(System.Windows.Point)) return null;
+            if (value is not System.Windows.Point) return null;
             var p = (System.Windows.Point)value;
             return new DataPoint(p.X, p.Y);
         }
@@ -773,7 +773,7 @@ namespace OxyPlotControls
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
-            if (value.GetType() != typeof(ScreenVector)) return null;
+            if (value is not ScreenVector) return null;
             var sv = (ScreenVector)value;
             return new System.Windows.Point(sv.X, sv.Y);
         }
@@ -784,7 +784,7 @@ namespace OxyPlotControls
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return value;
-            if (value.GetType() != typeof(System.Windows.Point)) return null;
+            if (value is not System.Windows.Point) return null;
             var p = (System.Windows.Point)value;
             return new ScreenVector(p.X, p.Y);
         }
@@ -806,7 +806,7 @@ namespace OxyPlotControls
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return System.Windows.HorizontalAlignment.Center;
-            if (value.GetType() != typeof(OxyPlot.HorizontalAlignment)) return System.Windows.HorizontalAlignment.Center;
+            if (value is not OxyPlot.HorizontalAlignment) return System.Windows.HorizontalAlignment.Center;
 
             var oxyAlignment = (OxyPlot.HorizontalAlignment)value;
             return oxyAlignment switch
@@ -824,7 +824,7 @@ namespace OxyPlotControls
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return OxyPlot.HorizontalAlignment.Center;
-            if (value.GetType() != typeof(System.Windows.HorizontalAlignment)) return OxyPlot.HorizontalAlignment.Center;
+            if (value is not System.Windows.HorizontalAlignment) return OxyPlot.HorizontalAlignment.Center;
 
             var wpfAlignment = (System.Windows.HorizontalAlignment)value;
             return wpfAlignment switch
@@ -854,7 +854,7 @@ namespace OxyPlotControls
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return System.Windows.VerticalAlignment.Center;
-            if (value.GetType() != typeof(OxyPlot.VerticalAlignment)) return System.Windows.VerticalAlignment.Center;
+            if (value is not OxyPlot.VerticalAlignment) return System.Windows.VerticalAlignment.Center;
 
             var oxyAlignment = (OxyPlot.VerticalAlignment)value;
             return oxyAlignment switch
@@ -872,7 +872,7 @@ namespace OxyPlotControls
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value == null) return OxyPlot.VerticalAlignment.Middle;
-            if (value.GetType() != typeof(System.Windows.VerticalAlignment)) return OxyPlot.VerticalAlignment.Middle;
+            if (value is not System.Windows.VerticalAlignment) return OxyPlot.VerticalAlignment.Middle;
 
             var wpfAlignment = (System.Windows.VerticalAlignment)value;
             return wpfAlignment switch

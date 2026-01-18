@@ -49,7 +49,23 @@ namespace SoftwareUpdate.Updater
     /// </remarks>
     internal class Program
     {
-        private static string _logFilePath;
+        /// <summary>
+        /// Time in milliseconds to wait for user input before auto-closing the console window
+        /// after a successful update. This provides users a brief opportunity to review the
+        /// update log while not blocking unattended updates indefinitely.
+        /// </summary>
+        private const int AutoCloseTimeoutMs = 3000;
+
+        /// <summary>
+        /// Polling interval in milliseconds when checking for user key input.
+        /// A small value provides responsive key detection without excessive CPU usage.
+        /// </summary>
+        private const int KeyPollIntervalMs = 100;
+
+        /// <summary>
+        /// The path to the current log file, or <c>null</c> if logging has not been initialized.
+        /// </summary>
+        private static string? _logFilePath;
 
         /// <summary>
         /// Entry point for the updater application.
@@ -69,12 +85,14 @@ namespace SoftwareUpdate.Updater
                 // Parse arguments
                 var arguments = UpdaterArguments.Parse(args);
 
-                // Set up logging
-                SetupLogging(arguments.TargetDirectory);
-
-                // Validate
-                Log("Validating arguments...");
+                // Validate first (ensures TargetDirectory is not null)
                 arguments.Validate();
+
+                // Set up logging (after validation guarantees non-null)
+                SetupLogging(arguments.TargetDirectory!);
+
+                Log("Validating arguments...");
+                Log("Arguments validated.");
                 Log("Arguments validated.");
 
                 // Execute update
@@ -85,8 +103,8 @@ namespace SoftwareUpdate.Updater
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
 
-                // Auto-close after 3 seconds if no input
-                if (!WaitForKeyWithTimeout(3000))
+                // Auto-close after timeout if no input
+                if (!WaitForKeyWithTimeout(AutoCloseTimeoutMs))
                 {
                     Console.WriteLine("Auto-closing...");
                 }
@@ -96,14 +114,21 @@ namespace SoftwareUpdate.Updater
             catch (Exception ex)
             {
                 Log($"FATAL ERROR: {ex.Message}");
-                Log(ex.StackTrace);
+                if (ex.StackTrace != null)
+                    Log(ex.StackTrace);
 
                 Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("========================================");
-                Console.WriteLine("           UPDATE FAILED");
-                Console.WriteLine("========================================");
-                Console.ResetColor();
+                try
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("========================================");
+                    Console.WriteLine("           UPDATE FAILED");
+                    Console.WriteLine("========================================");
+                }
+                finally
+                {
+                    Console.ResetColor();
+                }
                 Console.WriteLine();
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.WriteLine();
@@ -128,13 +153,14 @@ namespace SoftwareUpdate.Updater
                 var logDir = Path.Combine(targetDirectory, "logs");
                 Directory.CreateDirectory(logDir);
 
-                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
                 _logFilePath = Path.Combine(logDir, $"update_{timestamp}.log");
             }
-            catch
+            catch (Exception ex)
             {
                 // Fall back to temp directory
                 _logFilePath = Path.Combine(Path.GetTempPath(), $"update_{Guid.NewGuid():N}.log");
+                Console.WriteLine($"Warning: Could not create log in target directory: {ex.Message}");
             }
         }
 
@@ -144,7 +170,7 @@ namespace SoftwareUpdate.Updater
         /// <param name="message">The message to log.</param>
         private static void Log(string message)
         {
-            var timestamp = DateTime.Now.ToString("HH:mm:ss");
+            var timestamp = DateTime.UtcNow.ToString("HH:mm:ss");
             var logLine = $"[{timestamp}] {message}";
 
             Console.WriteLine(logLine);
@@ -156,9 +182,10 @@ namespace SoftwareUpdate.Updater
                     File.AppendAllText(_logFilePath, logLine + Environment.NewLine);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore logging errors
+                // Log to console if file logging fails
+                Console.WriteLine($"Warning: Could not write to log file: {ex.Message}");
             }
         }
 
@@ -169,15 +196,23 @@ namespace SoftwareUpdate.Updater
         /// <returns>True if a key was pressed, false if timeout occurred.</returns>
         private static bool WaitForKeyWithTimeout(int milliseconds)
         {
-            var startTime = DateTime.Now;
-            while ((DateTime.Now - startTime).TotalMilliseconds < milliseconds)
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            while (stopwatch.ElapsedMilliseconds < milliseconds)
             {
-                if (Console.KeyAvailable)
+                try
                 {
-                    Console.ReadKey(true);
-                    return true;
+                    if (Console.KeyAvailable)
+                    {
+                        Console.ReadKey(true);
+                        return true;
+                    }
                 }
-                Thread.Sleep(100);
+                catch (InvalidOperationException)
+                {
+                    // Console input is not available (e.g., redirected input stream)
+                    return false;
+                }
+                Thread.Sleep(KeyPollIntervalMs);
             }
             return false;
         }

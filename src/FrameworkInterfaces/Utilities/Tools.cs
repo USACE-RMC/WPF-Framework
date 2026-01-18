@@ -53,13 +53,14 @@ namespace FrameworkInterfaces.Utilities
         /// Converts a date string to a DateTime object in local time.
         /// </summary>
         /// <param name="dateString">The date string to parse.</param>
-        /// <returns>The parsed DateTime in local time, or DateTime.Now if parsing fails.</returns>
-        public static DateTime DateFromString(string dateString)
+        /// <returns>The parsed DateTime in local time, or null if parsing fails.</returns>
+        public static DateTime? DateFromString(string dateString)
         {
-            DateTime result;
-            if (DateTime.TryParse(dateString, out result) == false)
-                result = DateTime.Now;
-            return result.ToLocalTime();
+            if (DateTime.TryParse(dateString, out DateTime result))
+            {
+                return result.ToLocalTime();
+            }
+            return null;
         }
 
         /// <summary>

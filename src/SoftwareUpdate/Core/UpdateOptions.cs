@@ -31,6 +31,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SoftwareUpdate
 {
@@ -47,20 +48,25 @@ namespace SoftwareUpdate
     /// </remarks>
     public class UpdateOptions
     {
+        // GitHub username/repo format: alphanumeric, hyphens allowed (not at start/end), max 39 chars for usernames
+        private static readonly Regex GitHubNamePattern = new Regex(
+            @"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$",
+            RegexOptions.Compiled);
+
         /// <summary>
         /// Gets or sets the GitHub repository owner (e.g., "USACE-RMC").
         /// </summary>
-        public string GitHubOwner { get; set; }
+        public string? GitHubOwner { get; set; }
 
         /// <summary>
         /// Gets or sets the GitHub repository name (e.g., "RMC-BestFit").
         /// </summary>
-        public string GitHubRepo { get; set; }
+        public string? GitHubRepo { get; set; }
 
         /// <summary>
         /// Gets or sets the current version of the application.
         /// </summary>
-        public SemanticVersion CurrentVersion { get; set; }
+        public SemanticVersion? CurrentVersion { get; set; }
 
         /// <summary>
         /// Gets or sets a pattern to match the release asset filename.
@@ -81,19 +87,19 @@ namespace SoftwareUpdate
         /// Gets or sets an optional GitHub personal access token for authenticated requests.
         /// Useful for private repositories or to avoid rate limiting.
         /// </summary>
-        public string GitHubToken { get; set; }
+        public string? GitHubToken { get; set; }
 
         /// <summary>
         /// Gets or sets the directory where the application is installed.
         /// If not specified, uses the directory containing the main executable.
         /// </summary>
-        public string InstallDirectory { get; set; }
+        public string? InstallDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the main executable to restart after update.
         /// If not specified, uses the current process executable name.
         /// </summary>
-        public string MainExecutableName { get; set; }
+        public string? MainExecutableName { get; set; }
 
         /// <summary>
         /// Gets or sets whether to create a backup before updating.
@@ -105,7 +111,7 @@ namespace SoftwareUpdate
         /// Gets or sets the path to store skipped version preferences.
         /// Default is in the application's local app data folder.
         /// </summary>
-        public string SkippedVersionsFilePath { get; set; }
+        public string? SkippedVersionsFilePath { get; set; }
 
         /// <summary>
         /// Gets or sets the timeout for HTTP requests in seconds.
@@ -117,7 +123,7 @@ namespace SoftwareUpdate
         /// Gets or sets the path to the external updater executable.
         /// If not specified, looks for "SoftwareUpdate.Updater.exe" in the application directory.
         /// </summary>
-        public string UpdaterExecutablePath { get; set; }
+        public string? UpdaterExecutablePath { get; set; }
 
         /// <summary>
         /// Gets the resolved install directory.
@@ -130,7 +136,7 @@ namespace SoftwareUpdate
                     return InstallDirectory;
 
                 var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-                return Path.GetDirectoryName(assembly.Location);
+                return Path.GetDirectoryName(assembly.Location) ?? string.Empty;
             }
         }
 
@@ -190,8 +196,20 @@ namespace SoftwareUpdate
             if (string.IsNullOrWhiteSpace(GitHubOwner))
                 throw new ArgumentException("GitHubOwner is required.", nameof(GitHubOwner));
 
+            if (!GitHubNamePattern.IsMatch(GitHubOwner))
+                throw new ArgumentException(
+                    "GitHubOwner must contain only alphanumeric characters and hyphens, " +
+                    "cannot start or end with a hyphen, and must be 1-39 characters.",
+                    nameof(GitHubOwner));
+
             if (string.IsNullOrWhiteSpace(GitHubRepo))
                 throw new ArgumentException("GitHubRepo is required.", nameof(GitHubRepo));
+
+            if (!GitHubNamePattern.IsMatch(GitHubRepo))
+                throw new ArgumentException(
+                    "GitHubRepo must contain only alphanumeric characters and hyphens, " +
+                    "cannot start or end with a hyphen, and must be 1-39 characters.",
+                    nameof(GitHubRepo));
 
             if (CurrentVersion == null)
                 throw new ArgumentException("CurrentVersion is required.", nameof(CurrentVersion));

@@ -42,6 +42,14 @@ namespace SoftwareUpdate.Updater
     /// </summary>
     internal class InstallationManager
     {
+        /// <summary>
+        /// The maximum time in milliseconds to wait for the main application process to exit
+        /// before proceeding with the update. This timeout allows sufficient time for the
+        /// application to gracefully shut down while preventing indefinite hangs if the
+        /// process becomes unresponsive.
+        /// </summary>
+        private const int ProcessExitTimeoutMs = 60 * 1000; // 60 seconds
+
         private readonly UpdaterArguments _args;
         private readonly Action<string> _log;
 
@@ -70,7 +78,7 @@ namespace SoftwareUpdate.Updater
             WaitForProcessExit(_args.ProcessId);
 
             // Step 2: Create backup if requested
-            string backupDir = null;
+            string? backupDir = null;
             if (_args.CreateBackup)
             {
                 backupDir = CreateBackup();
@@ -82,7 +90,7 @@ namespace SoftwareUpdate.Updater
                 ExtractUpdate();
 
                 // Step 4: Clean up
-                CleanUp(backupDir, success: true);
+                CleanUp(backupDir!, success: true);
 
                 // Step 5: Restart application
                 RestartApplication();
@@ -121,22 +129,16 @@ namespace SoftwareUpdate.Updater
 
             try
             {
-                var process = Process.GetProcessById(processId);
-                var timeout = TimeSpan.FromSeconds(60);
-                var stopwatch = Stopwatch.StartNew();
-
-                while (!process.HasExited && stopwatch.Elapsed < timeout)
+                using (var process = Process.GetProcessById(processId))
                 {
-                    Thread.Sleep(500);
-                }
-
-                if (!process.HasExited)
-                {
-                    _log("Process did not exit within timeout. Attempting to continue...");
-                }
-                else
-                {
-                    _log("Process has exited.");
+                    if (process.WaitForExit(ProcessExitTimeoutMs))
+                    {
+                        _log("Process has exited.");
+                    }
+                    else
+                    {
+                        _log("Process did not exit within timeout. Attempting to continue...");
+                    }
                 }
             }
             catch (ArgumentException)
@@ -158,24 +160,38 @@ namespace SoftwareUpdate.Updater
             _log("Creating backup...");
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var backupDir = Path.Combine(_args.TargetDirectory, $".backup_{timestamp}");
+            var backupDir = Path.Combine(_args.TargetDirectory!, $".backup_{timestamp}");
+
+            // Handle same-second backup name collisions by adding a suffix counter
+            if (Directory.Exists(backupDir))
+            {
+                int suffix = 1;
+                string backupDirWithSuffix;
+                do
+                {
+                    backupDirWithSuffix = Path.Combine(_args.TargetDirectory!, $".backup_{timestamp}_{suffix}");
+                    suffix++;
+                } while (Directory.Exists(backupDirWithSuffix));
+                backupDir = backupDirWithSuffix;
+            }
 
             Directory.CreateDirectory(backupDir);
 
             // Copy all files except the backup directory itself
-            var sourceDir = new DirectoryInfo(_args.TargetDirectory);
-            foreach (var file in sourceDir.GetFiles())
+            foreach (var file in Directory.GetFiles(_args.TargetDirectory!))
             {
-                var destPath = Path.Combine(backupDir, file.Name);
-                file.CopyTo(destPath, overwrite: true);
+                var fileName = Path.GetFileName(file);
+                var destPath = Path.Combine(backupDir, fileName);
+                File.Copy(file, destPath, overwrite: true);
             }
 
-            foreach (var dir in sourceDir.GetDirectories())
+            foreach (var dir in Directory.GetDirectories(_args.TargetDirectory!))
             {
-                if (dir.Name.StartsWith(".backup_")) continue;
+                var dirName = Path.GetFileName(dir);
+                if (dirName.StartsWith(".backup_")) continue;
 
-                var destPath = Path.Combine(backupDir, dir.Name);
-                CopyDirectory(dir.FullName, destPath);
+                var destPath = Path.Combine(backupDir, dirName);
+                CopyDirectory(dir, destPath);
             }
 
             _log($"Backup created at: {backupDir}");
@@ -189,20 +205,23 @@ namespace SoftwareUpdate.Updater
         {
             _log("Extracting update...");
 
-            using (var archive = ZipFile.OpenRead(_args.ZipPath))
+            using (var archive = ZipFile.OpenRead(_args.ZipPath!))
             {
                 var totalEntries = archive.Entries.Count;
                 var processedEntries = 0;
 
                 // Determine if the zip has a single root folder
+                // ZIP entries may use '/' or '\' as path separators
+                var pathSeparators = new[] { '/', '\\' };
                 var rootFolders = archive.Entries
                     .Where(e => !string.IsNullOrEmpty(e.FullName))
-                    .Select(e => e.FullName.Split('/')[0])
+                    .Select(e => e.FullName.Split(pathSeparators)[0])
                     .Distinct()
                     .ToList();
 
                 var hasSingleRoot = rootFolders.Count == 1 &&
-                    archive.Entries.Any(e => e.FullName.StartsWith(rootFolders[0] + "/"));
+                    archive.Entries.Any(e => e.FullName.StartsWith(rootFolders[0] + "/") ||
+                                             e.FullName.StartsWith(rootFolders[0] + "\\"));
 
                 var stripPrefix = hasSingleRoot ? rootFolders[0] + "/" : "";
 
@@ -224,10 +243,22 @@ namespace SoftwareUpdate.Updater
                     if (string.IsNullOrEmpty(entryPath))
                         continue;
 
-                    var destPath = Path.Combine(_args.TargetDirectory, entryPath);
+                    var destPath = Path.Combine(_args.TargetDirectory!, entryPath);
 
-                    // Skip backup directories
-                    if (destPath.Contains(".backup_"))
+                    // Validate path doesn't escape target directory (prevent path traversal)
+                    var fullDestPath = Path.GetFullPath(destPath);
+                    var fullTargetDir = Path.GetFullPath(_args.TargetDirectory!);
+                    if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar) &&
+                        fullDestPath != fullTargetDir)
+                    {
+                        _log($"Skipping potentially dangerous path: {entryPath}");
+                        continue;
+                    }
+
+                    // Skip backup directories - check if any path segment starts with .backup_
+                    if (entryPath.StartsWith(".backup_") ||
+                        entryPath.Contains("/.backup_") ||
+                        entryPath.Contains("\\.backup_"))
                         continue;
 
                     // Create directory if needed
@@ -282,18 +313,18 @@ namespace SoftwareUpdate.Updater
         /// <param name="backupDir">The backup directory path.</param>
         private void RestoreFromBackup(string backupDir)
         {
-            var sourceDir = new DirectoryInfo(backupDir);
-
-            foreach (var file in sourceDir.GetFiles())
+            foreach (var file in Directory.GetFiles(backupDir))
             {
-                var destPath = Path.Combine(_args.TargetDirectory, file.Name);
-                file.CopyTo(destPath, overwrite: true);
+                var fileName = Path.GetFileName(file);
+                var destPath = Path.Combine(_args.TargetDirectory!, fileName);
+                File.Copy(file, destPath, overwrite: true);
             }
 
-            foreach (var dir in sourceDir.GetDirectories())
+            foreach (var dir in Directory.GetDirectories(backupDir))
             {
-                var destPath = Path.Combine(_args.TargetDirectory, dir.Name);
-                CopyDirectory(dir.FullName, destPath);
+                var dirName = Path.GetFileName(dir);
+                var destPath = Path.Combine(_args.TargetDirectory!, dirName);
+                CopyDirectory(dir, destPath);
             }
         }
 
@@ -325,9 +356,12 @@ namespace SoftwareUpdate.Updater
             {
                 try
                 {
-                    var backupDirs = Directory.GetDirectories(_args.TargetDirectory, ".backup_*")
-                        .OrderByDescending(d => d)
+                    var backupDirs = Directory.GetDirectories(_args.TargetDirectory!, ".backup_*")
+                        .Select(d => new { Path = d, Timestamp = ParseBackupTimestamp(d) })
+                        .Where(b => b.Timestamp.HasValue)
+                        .OrderByDescending(b => b.Timestamp!.Value)
                         .Skip(2) // Keep 2 most recent
+                        .Select(b => b.Path)
                         .ToList();
 
                     foreach (var dir in backupDirs)
@@ -350,7 +384,9 @@ namespace SoftwareUpdate.Updater
         {
             _log("Restarting application...");
 
-            var exePath = Path.Combine(_args.TargetDirectory, _args.MainExecutable);
+            // Sanitize MainExecutable to prevent path traversal
+            var safeExecutable = Path.GetFileName(_args.MainExecutable);
+            var exePath = Path.Combine(_args.TargetDirectory!, safeExecutable!);
 
             if (!File.Exists(exePath))
             {
@@ -366,7 +402,7 @@ namespace SoftwareUpdate.Updater
                 UseShellExecute = true
             };
 
-            Process.Start(startInfo);
+            using (Process.Start(startInfo)) { }
             _log("Application restarted.");
         }
 
@@ -390,6 +426,43 @@ namespace SoftwareUpdate.Updater
                 var destSubDir = Path.Combine(destDir, Path.GetFileName(dir));
                 CopyDirectory(dir, destSubDir);
             }
+        }
+
+        /// <summary>
+        /// Parses the timestamp from a backup directory name.
+        /// </summary>
+        /// <param name="backupPath">The full path to the backup directory.</param>
+        /// <returns>The parsed DateTime, or null if parsing fails.</returns>
+        /// <remarks>
+        /// Expects directory names in the format ".backup_yyyyMMdd_HHmmss" or ".backup_yyyyMMdd_HHmmss_N" (with suffix counter).
+        /// </remarks>
+        private static DateTime? ParseBackupTimestamp(string backupPath)
+        {
+            var dirName = Path.GetFileName(backupPath);
+            if (string.IsNullOrEmpty(dirName) || !dirName.StartsWith(".backup_"))
+            {
+                return null;
+            }
+
+            // Extract timestamp portion after ".backup_"
+            var timestampPart = dirName.Substring(".backup_".Length);
+
+            // Handle suffix counter format: yyyyMMdd_HHmmss_N
+            // Try to parse the first 15 characters as the timestamp
+            if (timestampPart.Length > 15 && timestampPart[15] == '_')
+            {
+                timestampPart = timestampPart.Substring(0, 15);
+            }
+
+            if (DateTime.TryParseExact(timestampPart, "yyyyMMdd_HHmmss",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out var timestamp))
+            {
+                return timestamp;
+            }
+
+            return null;
         }
     }
 }

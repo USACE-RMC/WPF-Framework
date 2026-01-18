@@ -78,7 +78,10 @@ namespace FrameworkUI
         /// </summary>
         private void ActivateButton_Click(object sender, RoutedEventArgs e)
         {
-            ((OpenWindowItem)MyDataGrid.SelectedItem).Document.IsActive = true;
+            if (MyDataGrid.SelectedItem is OpenWindowItem item && item.Document != null)
+            {
+                item.Document.IsActive = true;
+            }
         }
 
         /// <summary>
@@ -87,7 +90,10 @@ namespace FrameworkUI
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             for (int i = 0; i < MyDataGrid.SelectedItems.Count; i++)
-                ((OpenWindowItem)MyDataGrid.SelectedItems[i]).Element.Save();
+            {
+                if (MyDataGrid.SelectedItems[i] is OpenWindowItem item)
+                    item.Element?.Save();
+            }
         }
 
         /// <summary>
@@ -97,8 +103,11 @@ namespace FrameworkUI
         {
             for (int i = MyDataGrid.SelectedItems.Count - 1; i >= 0; i -= 1)
             {
-                int index = Windows.WindowIndexOf(((OpenWindowItem)MyDataGrid.SelectedItems[i]).Document);
-                Windows.Close(index);
+                if (MyDataGrid.SelectedItems[i] is OpenWindowItem item && item.Document != null)
+                {
+                    int index = Windows.WindowIndexOf(item.Document);
+                    Windows.Close(index);
+                }
             }
         }
 
@@ -118,7 +127,7 @@ namespace FrameworkUI
                 ActivateButton.IsEnabled = true;
                 SaveButton.IsEnabled = false;
                 CloseWindwowsButton.IsEnabled = true;
-                if (((OpenWindowItem)MyDataGrid.SelectedItem).Element.IsDirty == true)
+                if (MyDataGrid.SelectedItem is OpenWindowItem selectedItem && selectedItem.Element?.IsDirty == true)
                 {
                     SaveButton.IsEnabled = true;
                 }
@@ -130,7 +139,7 @@ namespace FrameworkUI
                 CloseWindwowsButton.IsEnabled = true;
                 for (int i = 0; i < MyDataGrid.SelectedItems.Count; i++)
                 {
-                    if (((OpenWindowItem)MyDataGrid.SelectedItems[i]).Element.IsDirty == true)
+                    if (MyDataGrid.SelectedItems[i] is OpenWindowItem item && item.Element?.IsDirty == true)
                     {
                         SaveButton.IsEnabled = true;
                         break;

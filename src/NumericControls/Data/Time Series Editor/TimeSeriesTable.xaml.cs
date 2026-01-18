@@ -213,11 +213,11 @@ namespace NumericControls
             TimeSeriesDataGrid.RowType = typeof(SeriesOrdinate<DateTime, double>);
             TimeSeriesDataGrid.PasteAddsRows = true;
 
-            var b = new Binding(nameof(XColumnHeader)) { Source = this, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, FallbackValue = "Date Times", TargetNullValue = "Date Times" };
-            BindingOperations.SetBinding((DateTimeColumn), DataGridTemplateColumn.HeaderProperty, b);
+            var HeaderBinding = new Binding(nameof(XColumnHeader)) { Source = this, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, FallbackValue = "Date Times", TargetNullValue = "Date Times" };
+            BindingOperations.SetBinding((DateTimeColumn), DataGridTemplateColumn.HeaderProperty, HeaderBinding);
 
-            b = new Binding(nameof(YColumnHeader)) { Source = this, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, FallbackValue = "Date Values", TargetNullValue = "Date Values" };
-            BindingOperations.SetBinding((ValueColumn), DataGridTemplateColumn.HeaderProperty, b);
+            HeaderBinding = new Binding(nameof(YColumnHeader)) { Source = this, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, FallbackValue = "Date Values", TargetNullValue = "Date Values" };
+            BindingOperations.SetBinding((ValueColumn), DataGridTemplateColumn.HeaderProperty, HeaderBinding);
 
 
             // context menu
@@ -229,20 +229,20 @@ namespace NumericControls
                 else { nonOperands.Add(fnc); }
             }
 
-            var x = new MenuItem() { Header = "Math Functions", Icon = Application.Current.TryFindResource("MathFunctionIcon") };
+            var MathFunctionsMenu = new MenuItem() { Header = "Math Functions", Icon = Application.Current.TryFindResource("MathFunctionIcon") };
             foreach (MathFunctionType fnc in operands)
             {
-                x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
-                MenuItem h = (MenuItem)x.Items[x.Items.Count - 1];
-                h.Click += MathFunctionButton_Click;
+                MathFunctionsMenu.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
+                MenuItem AddedMenuItem = (MenuItem)MathFunctionsMenu.Items[MathFunctionsMenu.Items.Count - 1];
+                AddedMenuItem.Click += MathFunctionButton_Click;
             }
             foreach (MathFunctionType fnc in nonOperands)
             {
-                x.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
-                ((MenuItem)x.Items[x.Items.Count - 1]).Click += MathFunctionButton_Click;
+                MathFunctionsMenu.Items.Add(new MenuItem() { Header = MathFunctionTypeToNameConverter.GetName(fnc), Icon = FunctionToImage(fnc), ToolTip = MathFunctionTypeToTooltipConverter.GetTooltip(fnc), Tag = fnc });
+                ((MenuItem)MathFunctionsMenu.Items[MathFunctionsMenu.Items.Count - 1]).Click += MathFunctionButton_Click;
             }
 
-            TimeSeriesDataGrid.CustomMenuItems.Add(x);
+            TimeSeriesDataGrid.CustomMenuItems.Add(MathFunctionsMenu);
         }
 
         /// <summary>
@@ -278,62 +278,62 @@ namespace NumericControls
         /// <param name="e">The routed event arguments.</param>
         private void MathFunctionButton_Click(object sender, RoutedEventArgs e)
         {
-            var x = sender as MenuItem;
-            if (x == null) { return; }
-            if (x.Tag == null) { return; }
+            var ClickedMenuItem = sender as MenuItem;
+            if (ClickedMenuItem is null) { return; }
+            if (ClickedMenuItem.Tag is null) { return; }
 
-            var f = (MathFunctionType)x.Tag;
+            var FunctionType = (MathFunctionType)ClickedMenuItem.Tag;
 
-            List<int> ints = new List<int>();
+            List<int> SelectedRowIndices = new List<int>();
             var selectedCells = TimeSeriesDataGrid.SelectedCells.ToArray();
             foreach (DataGridCellInfo cellInfo in selectedCells)
             {
                 if (cellInfo.Column.DisplayIndex <= 1) { continue; }
-                ints.Add(Series.IndexOf(cellInfo.Item));
+                SelectedRowIndices.Add(Series.IndexOf(cellInfo.Item));
             }
 
-            if (HasOperand(f))
+            if (HasOperand(FunctionType))
             {
-                var w = new NumericEntryDialog() { Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner };
-                var c = new MathFunctionTypeToNameConverter();
-                var cToolTip = new MathFunctionTypeToTooltipConverter();
-                w.Title = (string)c.Convert(f, f.GetType(), null, null);
-                w.ToolTip = (string)cToolTip.Convert(f, f.GetType(), null, null);
+                var Dialog = new NumericEntryDialog() { Owner = Window.GetWindow(this), WindowStartupLocation = WindowStartupLocation.CenterOwner };
+                var NameConverter = new MathFunctionTypeToNameConverter();
+                var TooltipConverter = new MathFunctionTypeToTooltipConverter();
+                Dialog.Title = (string)NameConverter.Convert(FunctionType, FunctionType.GetType(), null, null);
+                Dialog.ToolTip = (string)TooltipConverter.Convert(FunctionType, FunctionType.GetType(), null, null);
                 // Label
-                w.ValueTextBox.IsWholeNumber = false;
-                w.ValueTextBox.CanHaveNegative = true;
-                switch (f)
+                Dialog.ValueTextBox.IsWholeNumber = false;
+                Dialog.ValueTextBox.CanHaveNegative = true;
+                switch (FunctionType)
                 {
                     case MathFunctionType.Add:
-                        w.NameLabel.Text = "x + "; break;                
+                        Dialog.NameLabel.Text = "x + "; break;
                     case MathFunctionType.Subtract:
-                        w.NameLabel.Text = "x - "; break;
+                        Dialog.NameLabel.Text = "x - "; break;
                     case MathFunctionType.Multiply:
-                        w.NameLabel.Text = "x * "; break;
+                        Dialog.NameLabel.Text = "x * "; break;
                     case MathFunctionType.Divide:
-                        w.NameLabel.Text = "x / ";
-                        w.ValueTextBox.Value = 1;
+                        Dialog.NameLabel.Text = "x / ";
+                        Dialog.ValueTextBox.Value = 1;
                         break;
                     case MathFunctionType.Logarithm:
-                        w.NameLabel.Text = $"log(x)";
-                        w.ValueTextBox.Value = 10;
-                        w.ValueTextBox.ToolTip = "Base value for the log function.";
-                        w.ValueTextBox.IsWholeNumber = true;
-                        w.ValueTextBox.CanHaveNegative = false;
+                        Dialog.NameLabel.Text = $"log(x)";
+                        Dialog.ValueTextBox.Value = 10;
+                        Dialog.ValueTextBox.ToolTip = "Base value for the log function.";
+                        Dialog.ValueTextBox.IsWholeNumber = true;
+                        Dialog.ValueTextBox.CanHaveNegative = false;
                         break;
                     case MathFunctionType.Exponentiate:
-                        w.NameLabel.Text = "x^"; break;
+                        Dialog.NameLabel.Text = "x^"; break;
                     case MathFunctionType.Replace:
-                        w.NameLabel.Text = "x = "; break;
+                        Dialog.NameLabel.Text = "x = "; break;
                     default:
-                        w.NameLabel.Text = f.ToString(); break;
+                        Dialog.NameLabel.Text = FunctionType.ToString(); break;
                 }
 
-                if (w.ShowDialog() == true) { MathEditorControl.ApplyFunctionToSeries(Series, f, w.ValueTextBox.Value, ints); }
+                if (Dialog.ShowDialog() == true) { MathEditorControl.ApplyFunctionToSeries(Series, FunctionType, Dialog.ValueTextBox.Value, SelectedRowIndices); }
             }
             else
             {
-                MathEditorControl.ApplyFunctionToSeries(Series, f, 0, ints);
+                MathEditorControl.ApplyFunctionToSeries(Series, FunctionType, 0, SelectedRowIndices);
             }
 
             // Reselect cells
@@ -433,7 +433,7 @@ namespace NumericControls
                         { 
                             if(cell.Column.DisplayIndex==1)
                             {
-                                ord.Index = new DateTime(0001, 1, 1, 0, 0, 0);
+                                ord.Index = DateTime.MinValue;
                             }
                             else if(cell.Column.DisplayIndex==2)
                             {

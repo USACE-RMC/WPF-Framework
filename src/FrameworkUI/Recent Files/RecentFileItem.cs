@@ -58,7 +58,7 @@ namespace FrameworkUI
         /// </summary>
         public string DisplayLocation
         {
-            get { return UtilityFunctions.ShortenPathname(System.IO.Path.GetDirectoryName(FilePath), 50); }
+            get { return UtilityFunctions.ShortenPathname(System.IO.Path.GetDirectoryName(FilePath) ?? string.Empty, 50); }
         }
 
         /// <summary>
@@ -69,14 +69,14 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the file menu item.
         /// </summary>
-        public MenuItem MenuItem { get; set; } = null;
+        public MenuItem? MenuItem { get; set; }
 
         /// <summary>
         /// Gets the recent file display path.
         /// </summary>
         public string DisplayPath
         {
-            get { return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), System.IO.Path.GetFileNameWithoutExtension(FilePath)); }
+            get { return System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath) ?? string.Empty, System.IO.Path.GetFileNameWithoutExtension(FilePath)); }
         }
 
         /// <summary>

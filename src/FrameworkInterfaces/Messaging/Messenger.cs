@@ -115,12 +115,12 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Occurs when one or more messages are added to the messenger.
         /// </summary>
-        public event MessageAddedEventHandler MessagesAdded;
+        public event MessageAddedEventHandler? MessagesAdded;
 
         /// <summary>
         /// Delegate for the <see cref="MessagesAdded"/> event.
@@ -131,7 +131,7 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Occurs when one or more messages are removed from the messenger.
         /// </summary>
-        public event MessageRemovedEventHandler MessagesRemoved;
+        public event MessageRemovedEventHandler? MessagesRemoved;
 
         /// <summary>
         /// Delegate for the <see cref="MessagesRemoved"/> event.
@@ -162,6 +162,10 @@ namespace FrameworkInterfaces.Messaging
         /// Gets or sets a value indicating whether messages should be written to disk.
         /// </summary>
         /// <value><c>true</c> if messages should be written to disk; otherwise, <c>false</c>.</value>
+        /// <remarks>
+        /// This property is currently not used but is reserved for future implementation
+        /// of automatic message logging to the file specified by <see cref="TextFileName"/>.
+        /// </remarks>
         public bool WriteToFile
         {
             get => _writeToFile;
@@ -390,8 +394,15 @@ namespace FrameworkInterfaces.Messaging
         /// </summary>
         /// <param name="item">The message item to add.</param>
         /// <remarks>
+        /// <para>
         /// For event messages, the code is automatically made unique by appending a counter if necessary.
         /// For other message types, duplicate messages (same source and code) are ignored.
+        /// </para>
+        /// <para>
+        /// <b>Warning:</b> For event messages, this method may modify the <paramref name="item"/>'s
+        /// <see cref="IMessageItem.Code"/> property to ensure uniqueness. If you need to preserve
+        /// the original code value, make a copy before calling this method.
+        /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
         public void Add(IMessageItem item)
@@ -401,6 +412,7 @@ namespace FrameworkInterfaces.Messaging
             // If it's an event then need to ensure the item code is unique
             if (item.Type == MessageType.Event)
             {
+                if (item.Source == null) return;
                 if (!_messagesBySource.ContainsKey(item.Source))
                 {
                     _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
@@ -424,6 +436,7 @@ namespace FrameworkInterfaces.Messaging
             }
             else
             {
+                if (item.Source == null) return;
                 // For non-event messages, ignore duplicates
                 if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
                 {
@@ -456,7 +469,7 @@ namespace FrameworkInterfaces.Messaging
             var newMessages = new List<IMessageItem>();
             foreach (IMessageItem item in items)
             {
-                if (item == null) continue;
+                if (item == null || item.Source == null) continue;
 
                 if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
                 {
@@ -487,6 +500,7 @@ namespace FrameworkInterfaces.Messaging
         public bool Remove(IMessageItem message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            if (message.Source == null) return false;
 
             if (!_messagesBySource.ContainsKey(message.Source)) { return false; }
             if (!_messagesBySource[message.Source].ContainsKey(message.Code)) { return false; }
@@ -545,16 +559,26 @@ namespace FrameworkInterfaces.Messaging
         /// <param name="fileName">The full path of the file to export to.</param>
         /// <remarks>
         /// If the file already exists, it will be overwritten with the current messages.
+        /// The directory will be created if it does not exist.
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="fileName"/> is null or empty.</exception>
         /// <exception cref="IOException">Thrown when an I/O error occurs during file operations.</exception>
+        /// <exception cref="UnauthorizedAccessException">
+        /// Thrown when the caller does not have the required permission to access the file or directory.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// Thrown when the specified path exceeds the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// Thrown when the specified path is invalid (for example, it is on an unmapped drive).
+        /// </exception>
         public void ExportToTextFile(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentNullException(nameof(fileName));
 
             // Ensure directory exists
-            string directory = Path.GetDirectoryName(fileName);
+            string? directory = Path.GetDirectoryName(fileName);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);

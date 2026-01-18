@@ -52,10 +52,23 @@ namespace GenericControls
     /// </remarks>
     public class DragAdorner : Adorner
     {
+        /// <summary>
+        /// Vertical offset to position the adorner relative to the cursor.
+        /// </summary>
+        private const double VerticalCursorOffset = 17.5d;
+
+        /// <summary>
+        /// Maximum width for the rendered adorner to prevent oversized ghost images.
+        /// </summary>
+        private const double MaxRenderWidth = 500d;
+
+        /// <summary>
+        /// Maximum height for the rendered adorner to prevent oversized ghost images.
+        /// </summary>
+        private const double MaxRenderHeight = 400d;
 
         private Brush _vBrush;
         private Point _location;
-        // Private _offset As Double
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DragAdorner"/> class.
@@ -76,7 +89,7 @@ namespace GenericControls
         /// <param name="location">The new top-left location of the ghost element.</param>
         public void UpdatePosition(Point location)
         {
-            _location = new Point(location.X, location.Y - 17.5d);
+            _location = new Point(location.X, location.Y - VerticalCursorOffset);
             InvalidateVisual();
         }
 
@@ -87,7 +100,7 @@ namespace GenericControls
         protected override void OnRender(DrawingContext dc)
         {
             dc.PushOpacityMask(new LinearGradientBrush(Colors.White, Colors.Transparent, 45d));
-            dc.DrawRectangle(_vBrush, null, new Rect(_location.X, _location.Y, Math.Min(RenderSize.Width, 500d), Math.Min(RenderSize.Height, 400d)));
+            dc.DrawRectangle(_vBrush, null, new Rect(_location.X, _location.Y, Math.Min(RenderSize.Width, MaxRenderWidth), Math.Min(RenderSize.Height, MaxRenderHeight)));
         }
     }
 }

@@ -50,8 +50,9 @@ namespace OxyPlotControls
     /// <summary>
     /// OxyPlot toolbar control providing pan, zoom, annotation, and export functionality.
     /// </summary>
-    public partial class OxyPlotToolbar : UserControl
+    public partial class OxyPlotToolbar : UserControl, IDisposable
     {
+        private bool _disposed = false;
         #region PlotChanged Event
 
         /// <summary>
@@ -131,11 +132,12 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Handles the Unloaded event. Disables PlotChanged notifications.
+        /// Handles the Unloaded event. Disables PlotChanged notifications and disposes resources.
         /// </summary>
         private void OxyPlotToolbar_Unloaded(object sender, RoutedEventArgs e)
         {
             _suppressPlotChanged = true;
+            Dispose();
         }
 
         #endregion
@@ -163,12 +165,12 @@ namespace OxyPlotControls
         private static void InitializePlot(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
-            if (d.GetType() != typeof(OxyPlotToolbar)) return;
+            if (d is not OxyPlotToolbar) return;
 
             var oxyToolBar = (OxyPlotToolbar)d;
 
             // Remove handlers from old plot
-            if (e.OldValue != null && e.OldValue.GetType() == typeof(Wpf.Plot))
+            if (e.OldValue is Wpf.Plot)
             {
                 var oldPlot = (Wpf.Plot)e.OldValue;
                 oldPlot.ActualModel.MouseDown -= oxyToolBar.PlotModelMouseDown;
@@ -184,7 +186,7 @@ namespace OxyPlotControls
             }
 
             // Add handlers to new plot
-            if (e.NewValue != null && e.NewValue.GetType() == typeof(Wpf.Plot))
+            if (e.NewValue is Wpf.Plot)
             {
                 var newPlot = (Wpf.Plot)e.NewValue;
 
@@ -659,7 +661,7 @@ namespace OxyPlotControls
 
             foreach (var item in e.NewItems)
             {
-                if (item.GetType() == typeof(Wpf.ArrowAnnotation))
+                if (item is Wpf.ArrowAnnotation)
                 {
                     var newArrow = (Wpf.ArrowAnnotation)item;
 
@@ -708,7 +710,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.TextAnnotation))
+                else if (item is Wpf.TextAnnotation)
                 {
                     var newText = (Wpf.TextAnnotation)item;
 
@@ -752,7 +754,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.RectangleAnnotation))
+                else if (item is Wpf.RectangleAnnotation)
                 {
                     var newRect = (Wpf.RectangleAnnotation)item;
 
@@ -824,7 +826,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.EllipseAnnotation))
+                else if (item is Wpf.EllipseAnnotation)
                 {
                     var newEllipse = (Wpf.EllipseAnnotation)item;
 
@@ -896,7 +898,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.PointAnnotation))
+                else if (item is Wpf.PointAnnotation)
                 {
                     var newPoint = (Wpf.PointAnnotation)item;
 
@@ -944,7 +946,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.PolygonAnnotation))
+                else if (item is Wpf.PolygonAnnotation)
                 {
                     var newPolygon = (Wpf.PolygonAnnotation)item;
 
@@ -1046,7 +1048,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.PolylineAnnotation))
+                else if (item is Wpf.PolylineAnnotation)
                 {
                     var newPolyline = (Wpf.PolylineAnnotation)item;
 
@@ -1134,7 +1136,7 @@ namespace OxyPlotControls
                         OnPlotChanged();
                     };
                 }
-                else if (item.GetType() == typeof(Wpf.LineAnnotation))
+                else if (item is Wpf.LineAnnotation)
                 {
                     var newLine = (Wpf.LineAnnotation)item;
 
@@ -1992,7 +1994,7 @@ namespace OxyPlotControls
             var textResult = Plot.canvas.InputHitTest(new Point(e.Position.X, e.Position.Y));
             if (textResult != null)
             {
-                if (textResult.GetType() == typeof(TextBlock))
+                if (textResult is TextBlock)
                 {
                     var txtblock = (TextBlock)textResult;
 
@@ -2874,7 +2876,7 @@ namespace OxyPlotControls
         /// Uses TryFindResource to search the control's local resources first (for Format, EditTextbox),
         /// then application resources (for Delete which is in GenericControls).
         /// </remarks>
-        private object CreateMenuIcon(string iconName)
+        private object? CreateMenuIcon(string iconName)
         {
             return iconName switch
             {
@@ -2906,7 +2908,7 @@ namespace OxyPlotControls
                 string seriesName = "";
                 tableCount++;
 
-                if (series.GetType() == typeof(Wpf.LineSeries))
+                if (series is Wpf.LineSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "LineSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -2951,7 +2953,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.ScatterPointSeries))
+                else if (series is Wpf.ScatterPointSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "ScatterSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -2996,7 +2998,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.AreaSeries))
+                else if (series is Wpf.AreaSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "AreaSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3065,7 +3067,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.BoxPlotSeries))
+                else if (series is Wpf.BoxPlotSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "BoxPlotSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3097,7 +3099,7 @@ namespace OxyPlotControls
                                 // Check if a X Axis Label is specified
                                 if (oxySeries.XAxis != null)
                                 {
-                                    if (oxySeries.XAxis.GetType() == typeof(OxyPlot.Axes.CategoryAxis))
+                                    if (oxySeries.XAxis is OxyPlot.Axes.CategoryAxis)
                                     {
                                         if (((OxyPlot.Axes.CategoryAxis)oxySeries.XAxis).LabelField != null)
                                         {
@@ -3128,7 +3130,7 @@ namespace OxyPlotControls
                             // Check if a X Axis Label is specified
                             if (oxySeries.XAxis != null)
                             {
-                                if (oxySeries.XAxis.GetType() == typeof(OxyPlot.Axes.CategoryAxis))
+                                if (oxySeries.XAxis is OxyPlot.Axes.CategoryAxis)
                                 {
                                     if (((OxyPlot.Axes.CategoryAxis)oxySeries.XAxis).LabelField != null)
                                     {
@@ -3150,7 +3152,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.BarSeries))
+                else if (series is Wpf.BarSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "BarSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3208,7 +3210,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.ColumnSeries))
+                else if (series is Wpf.ColumnSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "ColumnSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3266,7 +3268,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.HistogramSeries))
+                else if (series is Wpf.HistogramSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "HistogramSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3301,7 +3303,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.HeatMapSeries))
+                else if (series is Wpf.HeatMapSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "HeatMapSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3401,7 +3403,7 @@ namespace OxyPlotControls
                         }
                     }
                 }
-                else if (series.GetType() == typeof(Wpf.ScatterErrorSeries))
+                else if (series is Wpf.ScatterErrorSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "ScatterErrorSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3545,7 +3547,7 @@ namespace OxyPlotControls
                 }
 
                 // Skip contour series for now
-                if (series.GetType() == typeof(Wpf.ContourSeries)) continue;
+                if (series is Wpf.ContourSeries) continue;
 
                 tableList.Add(dataTable);
             }
@@ -3768,19 +3770,19 @@ namespace OxyPlotControls
                 {
                     SwapDataPointSeries((Wpf.DataPointSeries)s);
                 }
-                else if (s.GetType() == typeof(Wpf.ScatterPointSeries))
+                else if (s is Wpf.ScatterPointSeries)
                 {
                     SwapScatterSeries((Wpf.ScatterPointSeries)s);
                 }
-                else if (s.GetType() == typeof(Wpf.ScatterErrorSeries))
+                else if (s is Wpf.ScatterErrorSeries)
                 {
                     SwapScatterErrorSeries((Wpf.ScatterErrorSeries)s);
                 }
-                else if (s.GetType() == typeof(Wpf.BoxPlotSeries))
+                else if (s is Wpf.BoxPlotSeries)
                 {
                     foreach (var axis in Plot.Axes)
                     {
-                        if (axis.GetType() == typeof(Wpf.CategoryAxis))
+                        if (axis is Wpf.CategoryAxis)
                         {
                             ((Wpf.BoxPlotSeries)s).IsVertical = axis.Position == OxyPlot.Axes.AxisPosition.Bottom;
                         }
@@ -3816,7 +3818,7 @@ namespace OxyPlotControls
                     dps.DataFieldY = dfx;
                 }
 
-                if (dps.GetType() == typeof(Wpf.AreaSeries))
+                if (dps is Wpf.AreaSeries)
                 {
                     var areaSeries = (Wpf.AreaSeries)dps;
                     string dfx2 = areaSeries.DataFieldX2;
@@ -3915,6 +3917,40 @@ namespace OxyPlotControls
             {
                 dps.Points.Add(new OxyPlot.Series.ScatterErrorPoint(p.Y, p.X, p.LowerErrorX, p.UpperErrorX, p.LowerErrorY, p.UpperErrorY, p.Size, p.Value, p.Tag));
             }
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="OxyPlotToolbar"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources (cursors)
+                    _movePointsCursor?.Dispose();
+                    _addPointCursor?.Dispose();
+                    _panHandCursor?.Dispose();
+                    _panHandClosedCursor?.Dispose();
+                    _zoomCursor?.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="OxyPlotToolbar"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

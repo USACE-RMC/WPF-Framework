@@ -68,11 +68,6 @@ namespace NumericControls
         private SortOrder _yOrder;
 
         /// <summary>
-        /// The relative tolerance used for double value comparisons.
-        /// </summary>
-        public static double RelativeDoubleTolerance = double.Epsilon;
-
-        /// <summary>
         /// Gets or sets the maximum allowed X value for validation.
         /// </summary>
         public double MaxXValue
@@ -209,22 +204,12 @@ namespace NumericControls
             set
             {
                 if (_data == null && value == null) return;
-                if (_data == null || value == null)
-                {
-                    if (_data != null) _data.CollectionChanged -= DataCollectionChanged;
-                    _data = value;
-                    Refresh();
-                    if (_data != null) _data.CollectionChanged += DataCollectionChanged;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Data)));
-                }
-                if (_data != value)
-                {
-                    _data.CollectionChanged -= DataCollectionChanged;
-                    _data = value;
-                    Refresh();
-                    _data.CollectionChanged += DataCollectionChanged;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Data)));
-                }
+                if (_data == value) return;
+                if (_data != null) _data.CollectionChanged -= DataCollectionChanged;
+                _data = value;
+                Refresh();
+                if (_data != null) _data.CollectionChanged += DataCollectionChanged;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Data)));
             }
         }
 

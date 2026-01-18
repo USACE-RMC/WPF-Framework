@@ -77,12 +77,12 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets the pre-release identifier (e.g., "alpha", "beta.1").
         /// </summary>
-        public string PreRelease { get; }
+        public string? PreRelease { get; }
 
         /// <summary>
         /// Gets the build metadata.
         /// </summary>
-        public string BuildMetadata { get; }
+        public string? BuildMetadata { get; }
 
         /// <summary>
         /// Gets whether this is a pre-release version.
@@ -97,7 +97,7 @@ namespace SoftwareUpdate
         /// <param name="patch">The patch version number.</param>
         /// <param name="preRelease">The pre-release identifier.</param>
         /// <param name="buildMetadata">The build metadata.</param>
-        public SemanticVersion(int major, int minor, int patch = 0, string preRelease = null, string buildMetadata = null)
+        public SemanticVersion(int major, int minor, int patch = 0, string? preRelease = null, string? buildMetadata = null)
         {
             if (major < 0) throw new ArgumentOutOfRangeException(nameof(major));
             if (minor < 0) throw new ArgumentOutOfRangeException(nameof(minor));
@@ -122,7 +122,7 @@ namespace SoftwareUpdate
                 throw new ArgumentNullException(nameof(versionString));
 
             if (TryParse(versionString, out var version))
-                return version;
+                return version!;
 
             throw new FormatException($"'{versionString}' is not a valid semantic version.");
         }
@@ -133,7 +133,7 @@ namespace SoftwareUpdate
         /// <param name="versionString">The version string to parse.</param>
         /// <param name="version">The parsed version, or null if parsing failed.</param>
         /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
-        public static bool TryParse(string versionString, out SemanticVersion version)
+        public static bool TryParse(string versionString, out SemanticVersion? version)
         {
             version = null;
 
@@ -173,7 +173,7 @@ namespace SoftwareUpdate
         /// </summary>
         /// <param name="other">The version to compare to.</param>
         /// <returns>A value indicating the relative order of the versions.</returns>
-        public int CompareTo(SemanticVersion other)
+        public int CompareTo(SemanticVersion? other)
         {
             if (other == null) return 1;
 
@@ -194,7 +194,7 @@ namespace SoftwareUpdate
             // Compare pre-release identifiers
             if (IsPreRelease && other.IsPreRelease)
             {
-                return ComparePreRelease(PreRelease, other.PreRelease);
+                return ComparePreRelease(PreRelease!, other.PreRelease!);
             }
 
             return 0;
@@ -248,14 +248,14 @@ namespace SoftwareUpdate
         }
 
         /// <inheritdoc/>
-        public bool Equals(SemanticVersion other)
+        public bool Equals(SemanticVersion? other)
         {
             if (other == null) return false;
             return CompareTo(other) == 0;
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as SemanticVersion);
         }
@@ -296,7 +296,7 @@ namespace SoftwareUpdate
         /// <param name="left">The first version to compare.</param>
         /// <param name="right">The second version to compare.</param>
         /// <returns><c>true</c> if the versions are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(SemanticVersion left, SemanticVersion right)
+        public static bool operator ==(SemanticVersion? left, SemanticVersion? right)
         {
             if (ReferenceEquals(left, null)) return ReferenceEquals(right, null);
             return left.Equals(right);
@@ -308,7 +308,7 @@ namespace SoftwareUpdate
         /// <param name="left">The first version to compare.</param>
         /// <param name="right">The second version to compare.</param>
         /// <returns><c>true</c> if the versions are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(SemanticVersion left, SemanticVersion right) => !(left == right);
+        public static bool operator !=(SemanticVersion? left, SemanticVersion? right) => !(left == right);
 
         /// <summary>
         /// Determines whether the left <see cref="SemanticVersion"/> is less than the right.
@@ -316,7 +316,7 @@ namespace SoftwareUpdate
         /// <param name="left">The first version to compare.</param>
         /// <param name="right">The second version to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-        public static bool operator <(SemanticVersion left, SemanticVersion right)
+        public static bool operator <(SemanticVersion? left, SemanticVersion? right)
         {
             if (left == null) return right != null;
             return left.CompareTo(right) < 0;
@@ -328,7 +328,7 @@ namespace SoftwareUpdate
         /// <param name="left">The first version to compare.</param>
         /// <param name="right">The second version to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-        public static bool operator >(SemanticVersion left, SemanticVersion right)
+        public static bool operator >(SemanticVersion? left, SemanticVersion? right)
         {
             if (left == null) return false;
             return left.CompareTo(right) > 0;
@@ -340,7 +340,7 @@ namespace SoftwareUpdate
         /// <param name="left">The first version to compare.</param>
         /// <param name="right">The second version to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> is less than or equal to <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-        public static bool operator <=(SemanticVersion left, SemanticVersion right) => !(left > right);
+        public static bool operator <=(SemanticVersion? left, SemanticVersion? right) => !(left > right);
 
         /// <summary>
         /// Determines whether the left <see cref="SemanticVersion"/> is greater than or equal to the right.
@@ -348,6 +348,6 @@ namespace SoftwareUpdate
         /// <param name="left">The first version to compare.</param>
         /// <param name="right">The second version to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-        public static bool operator >=(SemanticVersion left, SemanticVersion right) => !(left < right);
+        public static bool operator >=(SemanticVersion? left, SemanticVersion? right) => !(left < right);
     }
 }

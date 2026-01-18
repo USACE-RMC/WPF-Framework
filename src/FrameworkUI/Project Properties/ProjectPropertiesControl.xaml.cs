@@ -60,7 +60,7 @@ namespace FrameworkUI
         /// <summary>
         /// Stores the previous name value before editing begins.
         /// </summary>
-        private string _previousName;
+        private string? _previousName;
 
         /// <summary>
         /// Dependency property for the IProject property.
@@ -88,7 +88,7 @@ namespace FrameworkUI
             ProjectPropertiesControl thisControl = (ProjectPropertiesControl)d;
 
             if (e.NewValue == null) return;
-            IProject newProject = e.NewValue as IProject;
+            IProject? newProject = e.NewValue as IProject;
             if (newProject == null) return;
             thisControl.PropertyAttributes.GetClassAttributes(newProject);
         }
@@ -161,6 +161,7 @@ namespace FrameworkUI
         private void NameTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             _previousName = Project.Name;
+            if (string.IsNullOrEmpty(Project.FileDirectory)) return;
             var fullfilepaths = Directory.GetFiles(Project.FileDirectory, "*" + ShellPublicVariables.SoftwareExtension);
             var files = new List<string>();
             for (int i = 0; i < fullfilepaths.Count(); i++)
@@ -179,7 +180,7 @@ namespace FrameworkUI
         private void NameTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             if (NameTextBox.NameTextBox.IsValid == true) return;
-            Project.Name = _previousName;
+            Project.Name = _previousName ?? string.Empty;
         }
 
     }

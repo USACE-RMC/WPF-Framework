@@ -33,9 +33,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -57,11 +60,21 @@ namespace SoftwareUpdate.GitHub
     /// </remarks>
     public class GitHubUpdateService : IUpdateService, IDisposable
     {
+        /// <summary>
+        /// Maximum number of retry attempts for transient network failures.
+        /// </summary>
+        private const int MaxRetryAttempts = 3;
+
+        /// <summary>
+        /// Base delay in milliseconds between retry attempts.
+        /// </summary>
+        private const int RetryDelayMs = 500;
+
         private readonly HttpClient _httpClient;
         private readonly object _lock = new object();
         private UpdateState _state = UpdateState.Idle;
-        private UpdateInfo _availableUpdate;
-        private HashSet<string> _skippedVersions;
+        private UpdateInfo? _availableUpdate;
+        private HashSet<string> _skippedVersions = new HashSet<string>();
         private bool _disposed;
 
         /// <summary>
@@ -75,7 +88,7 @@ namespace SoftwareUpdate.GitHub
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(options.GitHubRepo, options.CurrentVersion?.ToString() ?? "1.0.0"));
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(options.GitHubRepo ?? "", options.CurrentVersion?.ToString() ?? "1.0.0"));
             _httpClient.Timeout = TimeSpan.FromSeconds(options.RequestTimeoutSeconds);
 
             if (!string.IsNullOrEmpty(options.GitHubToken))
@@ -97,17 +110,17 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <inheritdoc/>
-        public UpdateInfo AvailableUpdate
+        public UpdateInfo? AvailableUpdate
         {
             get { lock (_lock) return _availableUpdate; }
             private set { lock (_lock) _availableUpdate = value; }
         }
 
         /// <inheritdoc/>
-        public event EventHandler<UpdateCheckResult> UpdateCheckCompleted;
+        public event EventHandler<UpdateCheckResult>? UpdateCheckCompleted;
 
         /// <inheritdoc/>
-        public event EventHandler<Exception> UpdateError;
+        public event EventHandler<Exception>? UpdateError;
 
         /// <inheritdoc/>
         public async Task<UpdateCheckResult> CheckForUpdateAsync(CancellationToken cancellationToken = default)
@@ -117,7 +130,23 @@ namespace SoftwareUpdate.GitHub
             try
             {
                 var apiUrl = $"https://api.github.com/repos/{Options.GitHubOwner}/{Options.GitHubRepo}/releases";
-                var response = await _httpClient.GetAsync(apiUrl, cancellationToken).ConfigureAwait(false);
+                var response = await GetWithRetryAsync(apiUrl, cancellationToken).ConfigureAwait(false);
+
+                // Check for rate limiting before calling EnsureSuccessStatusCode
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    var message = "GitHub API rate limit exceeded. ";
+                    if (string.IsNullOrEmpty(Options.GitHubToken))
+                    {
+                        message += "Consider providing a GitHubToken to increase the rate limit.";
+                    }
+                    else
+                    {
+                        message += "Please wait before making additional requests.";
+                    }
+                    throw new HttpRequestException(message);
+                }
+
                 response.EnsureSuccessStatusCode();
 
                 var jsonStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
@@ -127,24 +156,24 @@ namespace SoftwareUpdate.GitHub
                 var validReleases = releases
                     .Where(r => !r.Draft)
                     .Where(r => Options.IncludePreReleases || !r.PreRelease)
-                    .Where(r => SemanticVersion.TryParse(r.TagName, out _))
+                    .Where(r => r.TagName != null && SemanticVersion.TryParse(r.TagName, out _))
                     .ToList();
 
                 if (!validReleases.Any())
                 {
                     State = UpdateState.UpToDate;
-                    var result = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
-                    UpdateCheckCompleted?.Invoke(this, result);
+                    var result = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion!);
+                    RaiseEvent(UpdateCheckCompleted, result);
                     return result;
                 }
 
                 // Find matching asset in latest release
-                foreach (var release in validReleases.OrderByDescending(r => SemanticVersion.Parse(r.TagName)))
+                foreach (var release in validReleases.OrderByDescending(r => SemanticVersion.Parse(r.TagName!)))
                 {
                     var asset = FindMatchingAsset(release);
                     if (asset == null) continue;
 
-                    var releaseVersion = SemanticVersion.Parse(release.TagName);
+                    var releaseVersion = SemanticVersion.Parse(release.TagName!);
 
                     if (releaseVersion > Options.CurrentVersion)
                     {
@@ -165,23 +194,45 @@ namespace SoftwareUpdate.GitHub
                         var isSkipped = IsVersionSkipped(releaseVersion);
                         State = UpdateState.UpdateAvailable;
 
-                        var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion, updateInfo, isSkipped);
-                        UpdateCheckCompleted?.Invoke(this, result);
+                        var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion!, updateInfo, isSkipped);
+                        RaiseEvent(UpdateCheckCompleted, result);
                         return result;
                     }
                 }
 
                 State = UpdateState.UpToDate;
-                var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
-                UpdateCheckCompleted?.Invoke(this, noUpdateResult);
+                var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion!);
+                RaiseEvent(UpdateCheckCompleted, noUpdateResult);
                 return noUpdateResult;
+            }
+            catch (HttpRequestException ex)
+            {
+                State = UpdateState.Error;
+                RaiseEvent(UpdateError, ex);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion!, ex);
+                RaiseEvent(UpdateCheckCompleted, result);
+                return result;
+            }
+            catch (SerializationException ex)
+            {
+                State = UpdateState.Error;
+                var wrappedException = new InvalidOperationException("Failed to parse GitHub API response.", ex);
+                RaiseEvent(UpdateError, wrappedException);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion!, wrappedException);
+                RaiseEvent(UpdateCheckCompleted, result);
+                return result;
+            }
+            catch (OperationCanceledException)
+            {
+                State = UpdateState.Idle;
+                throw;
             }
             catch (Exception ex)
             {
                 State = UpdateState.Error;
-                UpdateError?.Invoke(this, ex);
-                var result = UpdateCheckResult.Failed(Options.CurrentVersion, ex);
-                UpdateCheckCompleted?.Invoke(this, result);
+                RaiseEvent(UpdateError, ex);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion!, ex);
+                RaiseEvent(UpdateCheckCompleted, result);
                 return result;
             }
         }
@@ -189,7 +240,7 @@ namespace SoftwareUpdate.GitHub
         /// <inheritdoc/>
         public async Task<UpdateDownloadResult> DownloadUpdateAsync(
             UpdateInfo update,
-            IProgress<UpdateDownloadProgress> progress = null,
+            IProgress<UpdateDownloadProgress>? progress = null,
             CancellationToken cancellationToken = default)
         {
             if (update == null)
@@ -200,10 +251,19 @@ namespace SoftwareUpdate.GitHub
             try
             {
                 // Create temp directory for download
-                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo);
+                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo ?? "");
                 Directory.CreateDirectory(tempDir);
 
-                var tempFilePath = Path.Combine(tempDir, update.AssetName);
+                // Validate asset name to prevent path traversal attacks
+                var safeAssetName = Path.GetFileName(update.AssetName);
+                if (string.IsNullOrEmpty(safeAssetName) ||
+                    safeAssetName.Contains("..") ||
+                    safeAssetName != update.AssetName)
+                {
+                    throw new ArgumentException($"Invalid asset name: {update.AssetName}", nameof(update));
+                }
+
+                var tempFilePath = Path.Combine(tempDir, safeAssetName);
 
                 // Delete existing file if present
                 if (File.Exists(tempFilePath))
@@ -257,6 +317,18 @@ namespace SoftwareUpdate.GitHub
                     }
                 }
 
+                // Validate SHA256 checksum if provided
+                if (!string.IsNullOrEmpty(update.Sha256Checksum))
+                {
+                    var actualChecksum = ComputeSha256Checksum(tempFilePath);
+                    if (!string.Equals(actualChecksum, update.Sha256Checksum, StringComparison.OrdinalIgnoreCase))
+                    {
+                        File.Delete(tempFilePath);
+                        throw new InvalidOperationException(
+                            $"Checksum validation failed. Expected: {update.Sha256Checksum}, Actual: {actualChecksum}");
+                    }
+                }
+
                 State = UpdateState.ReadyToInstall;
                 return UpdateDownloadResult.Successful(tempFilePath, update, update.DownloadSize);
             }
@@ -268,7 +340,7 @@ namespace SoftwareUpdate.GitHub
             catch (Exception ex)
             {
                 State = UpdateState.Error;
-                UpdateError?.Invoke(this, ex);
+                RaiseEvent(UpdateError, ex);
                 return UpdateDownloadResult.Failed(ex);
             }
         }
@@ -316,12 +388,13 @@ namespace SoftwareUpdate.GitHub
 
             Process.Start(startInfo);
 
-            // Exit the current application
+            // Dispose resources before exiting the current application
+            Dispose();
             Environment.Exit(0);
         }
 
         /// <inheritdoc/>
-        public void SkipVersion(SemanticVersion version)
+        public void SkipVersion(SemanticVersion? version)
         {
             if (version == null) return;
 
@@ -333,7 +406,7 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <inheritdoc/>
-        public bool IsVersionSkipped(SemanticVersion version)
+        public bool IsVersionSkipped(SemanticVersion? version)
         {
             if (version == null) return false;
 
@@ -358,7 +431,7 @@ namespace SoftwareUpdate.GitHub
         /// </summary>
         /// <param name="release">The GitHub release to search.</param>
         /// <returns>The matching asset, or null if no match found.</returns>
-        private GitHubReleaseAsset FindMatchingAsset(GitHubRelease release)
+        private GitHubReleaseAsset? FindMatchingAsset(GitHubRelease release)
         {
             if (release.Assets == null || !release.Assets.Any())
                 return null;
@@ -374,7 +447,7 @@ namespace SoftwareUpdate.GitHub
 
             var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
 
-            return release.Assets.FirstOrDefault(a => regex.IsMatch(a.Name));
+            return release.Assets.FirstOrDefault(a => a.Name != null && regex.IsMatch(a.Name));
         }
 
         /// <summary>
@@ -385,7 +458,22 @@ namespace SoftwareUpdate.GitHub
         private List<GitHubRelease> DeserializeReleases(Stream jsonStream)
         {
             var serializer = new DataContractJsonSerializer(typeof(List<GitHubRelease>));
-            return (List<GitHubRelease>)serializer.ReadObject(jsonStream);
+            return (List<GitHubRelease>?)serializer.ReadObject(jsonStream) ?? new List<GitHubRelease>();
+        }
+
+        /// <summary>
+        /// Computes the SHA256 checksum of a file.
+        /// </summary>
+        /// <param name="filePath">The path to the file.</param>
+        /// <returns>The SHA256 checksum as a lowercase hexadecimal string.</returns>
+        private static string ComputeSha256Checksum(string filePath)
+        {
+            using (var sha256 = SHA256.Create())
+            using (var stream = File.OpenRead(filePath))
+            {
+                var hashBytes = sha256.ComputeHash(stream);
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            }
         }
 
         /// <summary>
@@ -408,9 +496,10 @@ namespace SoftwareUpdate.GitHub
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore errors loading preferences
+                // Log errors loading preferences for debugging
+                Debug.WriteLine($"[GitHubUpdateService] Failed to load skipped versions: {ex.Message}");
             }
         }
 
@@ -431,22 +520,90 @@ namespace SoftwareUpdate.GitHub
                     File.WriteAllLines(filePath, _skippedVersions);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore errors saving preferences
+                // Log errors saving preferences for debugging
+                Debug.WriteLine($"[GitHubUpdateService] Failed to save skipped versions: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Disposes of the HTTP client.
+        /// Disposes of the HTTP client and releases managed resources.
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="GitHubUpdateService"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
             if (!_disposed)
             {
-                _httpClient?.Dispose();
+                if (disposing)
+                {
+                    _httpClient?.Dispose();
+                }
                 _disposed = true;
             }
+        }
+
+        /// <summary>
+        /// Safely raises an event, catching any exceptions from subscribers.
+        /// </summary>
+        /// <typeparam name="T">The event argument type.</typeparam>
+        /// <param name="handler">The event handler to invoke.</param>
+        /// <param name="args">The event arguments.</param>
+        private void RaiseEvent<T>(EventHandler<T>? handler, T args)
+        {
+            if (handler == null) return;
+
+            try
+            {
+                handler(this, args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[GitHubUpdateService] Event handler threw exception: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Performs an HTTP GET request with retry logic for transient failures.
+        /// </summary>
+        /// <param name="url">The URL to fetch.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The HTTP response message.</returns>
+        private async Task<HttpResponseMessage> GetWithRetryAsync(string url, CancellationToken cancellationToken)
+        {
+            HttpRequestException? lastException = null;
+
+            for (int attempt = 1; attempt <= MaxRetryAttempts; attempt++)
+            {
+                try
+                {
+                    return await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                }
+                catch (HttpRequestException ex)
+                {
+                    lastException = ex;
+                    Debug.WriteLine($"[GitHubUpdateService] HTTP request failed (attempt {attempt}/{MaxRetryAttempts}): {ex.Message}");
+
+                    if (attempt < MaxRetryAttempts)
+                    {
+                        // Exponential backoff: 500ms, 1000ms, etc.
+                        var delay = RetryDelayMs * attempt;
+                        await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+            }
+
+            // All retries exhausted, throw the last exception
+            throw lastException!;
         }
     }
 }

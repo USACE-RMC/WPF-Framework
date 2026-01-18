@@ -78,12 +78,12 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The name of the element as stored on disk.
         /// </summary>
-        protected string _nameOnDisk;
+        protected string _nameOnDisk = string.Empty;
 
         /// <summary>
         /// The description of the element.
         /// </summary>
-        protected string _description;
+        protected string _description = string.Empty;
 
         /// <summary>
         /// The date when the element was created.
@@ -103,7 +103,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The undo manager for this element. Lazily initialized when first accessed.
         /// </summary>
-        protected IUndoManager _undoManager;
+        protected IUndoManager? _undoManager;
 
         /// <summary>
         /// Indicates whether undo recording is enabled for this element.
@@ -253,27 +253,27 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Occurs before the element is deleted, allowing cancellation.
         /// </summary>
-        public event PreviewDeletedEventHandler PreviewDeleted;
+        public event PreviewDeletedEventHandler? PreviewDeleted;
 
         /// <summary>
         /// Occurs after the element has been deleted.
         /// </summary>
-        public event DeletedEventHandler Deleted;
+        public event DeletedEventHandler? Deleted;
 
         /// <summary>
         /// Occurs before the element is saved, allowing cancellation.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Occurs after the element has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         #endregion
 
@@ -597,7 +597,7 @@ namespace FrameworkInterfaces
         /// Optional new name for the cloned element. If <c>null</c>, a unique name is generated.
         /// </param>
         /// <returns>A new <see cref="IElement"/> that is a deep copy of this element.</returns>
-        public abstract IElement Copy(string newName = null);
+        public abstract IElement Copy(string? newName = null);
 
         /// <summary>
         /// Copies an element from an external project file.

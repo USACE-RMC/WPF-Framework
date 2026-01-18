@@ -52,7 +52,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public ElementNodeCollection(Node parentNode, ProjectExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public ElementNodeCollection(Node? parentNode, ProjectExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
 
         }
@@ -74,7 +74,7 @@ namespace FrameworkUI.ProjectExplorer
             ElementNodeCollection thisControl = (ElementNodeCollection)d;
 
             // Get the old value and remove any handlers
-            IElementCollection oldValue = null;
+            IElementCollection? oldValue = null;
             oldValue = e.OldValue as IElementCollection;
             // Remove handlers
             if (oldValue != null)
@@ -88,7 +88,7 @@ namespace FrameworkUI.ProjectExplorer
             BindingOperations.ClearBinding(thisControl.NodeHeader, NodeHeader.HeaderTextProperty);
 
             // Get the new value
-            IElementCollection newElementCollection = null;
+            IElementCollection? newElementCollection = null;
             newElementCollection = e.NewValue as IElementCollection;
             if (newElementCollection == null) return;
 
@@ -98,13 +98,13 @@ namespace FrameworkUI.ProjectExplorer
 
             // Create Element Nodes
             foreach (var element in newElementCollection)
-                thisControl.Add(new ElementNode(element, thisControl, (ProjectExplorerTreeView)thisControl.ParentTreeView), false);
+                thisControl.Add(new ElementNode(element, thisControl, thisControl.ParentTreeView as ProjectExplorerTreeView), false);
 
             // Child element collections.
             if (newElementCollection.ElementCollections != null)
             {
                 for (int i = 0; i < newElementCollection.ElementCollections.Count; i++)
-                    thisControl.ChildNodes.Add(new ElementNodeCollection(thisControl, (ProjectExplorerTreeView)thisControl.ParentTreeView) { ElementCollection = newElementCollection.ElementCollections[i], ParentTreeView = thisControl.ParentTreeView });
+                    thisControl.ChildNodes.Add(new ElementNodeCollection(thisControl, thisControl.ParentTreeView as ProjectExplorerTreeView) { ElementCollection = newElementCollection.ElementCollections[i], ParentTreeView = thisControl.ParentTreeView });
             }
 
             // Add handlers
@@ -116,9 +116,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// The IElementCollection property that defines the nodes to be added under the tree view item header.
         /// </summary>
-        public IElementCollection ElementCollection
+        public IElementCollection? ElementCollection
         {
-            get { return (IElementCollection)GetValue(ElementCollectionProperty); }
+            get { return (IElementCollection?)GetValue(ElementCollectionProperty); }
             set { SetValue(ElementCollectionProperty, value); }
         }
 
@@ -130,8 +130,8 @@ namespace FrameworkUI.ProjectExplorer
         {
             var node = ElementNode.FindElementNode(element, this);
             if (node == null) return;
-            node.ParentNode.ChildNodes.Remove(node);
-            node.ParentNode.ResetItemsSource();
+            node.ParentNode?.ChildNodes.Remove(node);
+            node.ParentNode?.ResetItemsSource();
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace FrameworkUI.ProjectExplorer
             //Insert(newIndex, new ElementNode(element, this, ParentTreeView));
             if (ElementNode.FindElementNode(element, this)==null)
             {
-                Add(new ElementNode(element, this, (ProjectExplorerTreeView)ParentTreeView));
+                Add(new ElementNode(element, this, ParentTreeView as ProjectExplorerTreeView));
             }
             //else if (ElementNodeAddedParentNode as ElementNodeGroup != null)
             //{

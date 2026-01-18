@@ -342,17 +342,24 @@ namespace NumericControls
         /// </summary>
         private void UpdateSource()
         {
-            if (_settingSource) { return; } else { _settingSource = true; }
+            if (_settingSource) { return; }
             if (_pastingData) { return; }
-            List<StratificationOptions> optionsToSet = new List<StratificationOptions>();
-
-            foreach (object option in StratificationOptionsRows)
+            _settingSource = true;
+            try
             {
-                optionsToSet.Add(((StratificationOptionsRowItem)option).GetStratificationOptions());
-            }
+                List<StratificationOptions> optionsToSet = new List<StratificationOptions>();
 
-            StratificationOptionsCollection = optionsToSet;
-            _settingSource = false;
+                foreach (object option in StratificationOptionsRows)
+                {
+                    optionsToSet.Add(((StratificationOptionsRowItem)option).GetStratificationOptions());
+                }
+
+                StratificationOptionsCollection = optionsToSet;
+            }
+            finally
+            {
+                _settingSource = false;
+            }
         }
 
         /// <summary>
