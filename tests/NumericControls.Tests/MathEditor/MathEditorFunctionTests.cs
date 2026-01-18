@@ -39,7 +39,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Add Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Add_AllRows_AddsValueToAll()
         {
             // Arrange
@@ -57,7 +57,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(55.0, series[4].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Add_SpecificIndices_AddsValueToSelected()
         {
             // Arrange
@@ -76,7 +76,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);  // Unchanged
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Add_NegativeValue_SubtractsEffectively()
         {
             // Arrange
@@ -92,7 +92,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(25.0, series[2].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Add_PreservesNaN()
         {
             // Arrange
@@ -110,7 +110,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(55.0, series[4].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Add_Zero_NoChange()
         {
             // Arrange
@@ -129,7 +129,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Subtract Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Subtract_AllRows_SubtractsValueFromAll()
         {
             // Arrange
@@ -147,7 +147,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(45.0, series[4].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Subtract_SpecificIndices_SubtractsValueFromSelected()
         {
             // Arrange
@@ -166,7 +166,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(45.0, series[4].Value);  // Changed
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Subtract_PreservesNaN()
         {
             // Arrange
@@ -186,7 +186,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Multiply Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Multiply_AllRows_MultipliesAllByValue()
         {
             // Arrange
@@ -204,7 +204,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(100.0, series[4].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Multiply_SpecificIndices_MultipliesSelected()
         {
             // Arrange
@@ -223,7 +223,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);  // Unchanged
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Multiply_ByZero_SetsToZero()
         {
             // Arrange
@@ -238,7 +238,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(0.0, series[1].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Multiply_ByNegative_ReversesSign()
         {
             // Arrange
@@ -253,7 +253,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(-20.0, series[1].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Multiply_PreservesNaN()
         {
             // Arrange
@@ -273,7 +273,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Divide Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Divide_AllRows_DividesAllByValue()
         {
             // Arrange
@@ -291,7 +291,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(25.0, series[4].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Divide_SpecificIndices_DividesSelected()
         {
             // Arrange
@@ -310,7 +310,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(10.0, series[4].Value);  // Changed
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Divide_PreservesNaN()
         {
             // Arrange
@@ -330,7 +330,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Exponentiate Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_AllRows_RaisesToPower()
         {
             // Arrange
@@ -350,7 +350,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(16.0, series[2].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_PowerOfZero_ReturnsOne()
         {
             // Arrange
@@ -365,7 +365,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(1.0, series[1].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_SquareRoot()
         {
             // Arrange
@@ -385,7 +385,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(4.0, series[2].Value, 5);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_SpecificIndices_RaisesSelected()
         {
             // Arrange
@@ -410,7 +410,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Logarithm Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Logarithm_Base10_AllRows()
         {
             // Arrange
@@ -430,7 +430,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(3.0, series[2].Value, 5);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Logarithm_NaturalLog()
         {
             // Arrange
@@ -448,7 +448,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(2.0, series[1].Value, 5);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Logarithm_SpecificIndices()
         {
             // Arrange
@@ -473,7 +473,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Inverse Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Inverse_AllRows_TakesInverse()
         {
             // Arrange
@@ -492,7 +492,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(0.2, series[2].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Inverse_SpecificIndices()
         {
             // Arrange
@@ -516,7 +516,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Replace Function Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Replace_AllRows_ReplacesMissingWithValue()
         {
             // Arrange
@@ -534,7 +534,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);  // Unchanged (not NaN)
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Replace_SpecificIndices_ReplacesMissingInSelected()
         {
             // Arrange
@@ -553,7 +553,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_Replace_NoMissingData_NoChange()
         {
             // Arrange
@@ -575,7 +575,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Null Series Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_NullSeries_DoesNotThrow()
         {
             // Act & Assert - should not throw
@@ -588,7 +588,7 @@ namespace NumericControls.Tests.MathEditor
 
         #region Empty Indices Tests
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_EmptyIndices_AppliesToAll()
         {
             // Arrange
@@ -603,7 +603,7 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(25.0, series[1].Value);
         }
 
-        [Fact]
+        [StaFact]
         public void ApplyFunctionToSeries_AllIndices_AppliesLikeNull()
         {
             // Arrange
