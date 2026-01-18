@@ -1,6 +1,32 @@
 /*
- * Unit tests for AxisControl converters
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System.Globalization;
 using System.Windows.Media;
@@ -11,13 +37,20 @@ namespace OxyPlotControls.Tests.Converters;
 
 /// <summary>
 /// Tests for ReverseAxisConverter (IMultiValueConverter).
+/// Verifies proper conversion between axis position values and reversed axis orientation.
 /// </summary>
 public class ReverseAxisConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly ReverseAxisConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns false when given normal axis orientation (start position less than end position).
+    /// </summary>
     [Fact]
     public void Convert_NormalOrientation_ReturnsFalse()
     {
@@ -31,6 +64,9 @@ public class ReverseAxisConverterTests
         Assert.False((bool)result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns false when given reversed orientation positions but a null axis object.
+    /// </summary>
     [Fact]
     public void Convert_ReversedOrientation_WithNullAxis_ReturnsFalse()
     {
@@ -45,6 +81,9 @@ public class ReverseAxisConverterTests
         Assert.False((bool)result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns false when start and end positions are equal.
+    /// </summary>
     [Fact]
     public void Convert_EqualPositions_ReturnsFalse()
     {
@@ -58,6 +97,9 @@ public class ReverseAxisConverterTests
         Assert.False((bool)result);
     }
 
+    /// <summary>
+    /// Tests that Convert handles null start position gracefully by parsing it as 0.
+    /// </summary>
     [Fact]
     public void Convert_NullStartPosition_HandlesParsing()
     {
@@ -71,6 +113,9 @@ public class ReverseAxisConverterTests
         Assert.False((bool)result);
     }
 
+    /// <summary>
+    /// Tests that Convert correctly handles negative position values.
+    /// </summary>
     [Fact]
     public void Convert_NegativePositions_ReturnsCorrectly()
     {
@@ -84,6 +129,9 @@ public class ReverseAxisConverterTests
         Assert.False((bool)result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns false for partial reversal when axis is null.
+    /// </summary>
     [Fact]
     public void Convert_PartialReversal_WithNullAxis_ReturnsFalse()
     {
@@ -102,6 +150,9 @@ public class ReverseAxisConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns default axis position values when axis is null.
+    /// </summary>
     [Fact]
     public void ConvertBack_NullAxis_ReturnsDefaults()
     {
@@ -126,13 +177,20 @@ public class ReverseAxisConverterTests
 
 /// <summary>
 /// Tests for OxyLineStyleToDashArrayConverter.
+/// Verifies proper conversion between OxyPlot LineStyle values and WPF DoubleCollection dash arrays.
 /// </summary>
 public class OxyLineStyleToDashArrayConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly OxyLineStyleToDashArrayConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns a default dash array when given a null value.
+    /// </summary>
     [Fact]
     public void Convert_NullValue_ReturnsDefaultDashArray()
     {
@@ -147,6 +205,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.IsType<DoubleCollection>(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a default dash array when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongType_ReturnsDefaultDashArray()
     {
@@ -161,6 +222,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.IsType<DoubleCollection>(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an empty dash array for Solid line style.
+    /// </summary>
     [Fact]
     public void Convert_SolidLineStyle_ReturnsEmptyDashArray()
     {
@@ -177,6 +241,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Empty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an empty dash array for Automatic line style.
+    /// </summary>
     [Fact]
     public void Convert_AutomaticLineStyle_ReturnsEmptyDashArray()
     {
@@ -193,6 +260,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Empty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an empty dash array for None line style.
+    /// </summary>
     [Fact]
     public void Convert_NoneLineStyle_ReturnsEmptyDashArray()
     {
@@ -210,6 +280,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Empty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for Dash line style.
+    /// </summary>
     [Fact]
     public void Convert_DashLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -226,6 +299,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for Dot line style.
+    /// </summary>
     [Fact]
     public void Convert_DotLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -242,6 +318,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for DashDot line style.
+    /// </summary>
     [Fact]
     public void Convert_DashDotLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -258,6 +337,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for DashDashDot line style.
+    /// </summary>
     [Fact]
     public void Convert_DashDashDotLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -274,6 +356,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for DashDotDot line style.
+    /// </summary>
     [Fact]
     public void Convert_DashDotDotLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -290,6 +375,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for LongDash line style.
+    /// </summary>
     [Fact]
     public void Convert_LongDashLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -306,6 +394,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for LongDashDot line style.
+    /// </summary>
     [Fact]
     public void Convert_LongDashDotLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -322,6 +413,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.NotEmpty(dashArray);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a non-empty dash array for LongDashDotDot line style.
+    /// </summary>
     [Fact]
     public void Convert_LongDashDotDotLineStyle_ReturnsNonEmptyDashArray()
     {
@@ -342,6 +436,9 @@ public class OxyLineStyleToDashArrayConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns None line style when given a null value.
+    /// </summary>
     [Fact]
     public void ConvertBack_NullValue_ReturnsNone()
     {
@@ -355,6 +452,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Equal(OxyPlot.LineStyle.None, result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns None line style when given an incorrect type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongType_ReturnsNone()
     {
@@ -368,6 +468,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Equal(OxyPlot.LineStyle.None, result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns Solid line style when given an empty dash array.
+    /// </summary>
     [Fact]
     public void ConvertBack_EmptyDashArray_ReturnsSolid()
     {
@@ -381,6 +484,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Equal(OxyPlot.LineStyle.Solid, result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns Dash line style when given a dash pattern (4, 1).
+    /// </summary>
     [Fact]
     public void ConvertBack_DashPattern_ReturnsDash()
     {
@@ -394,6 +500,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Equal(OxyPlot.LineStyle.Dash, result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns Dot line style when given a dot pattern (1, 1).
+    /// </summary>
     [Fact]
     public void ConvertBack_DotPattern_ReturnsDot()
     {
@@ -407,6 +516,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Equal(OxyPlot.LineStyle.Dot, result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns DashDot line style when given a dash-dot pattern (4, 1, 1, 1).
+    /// </summary>
     [Fact]
     public void ConvertBack_DashDotPattern_ReturnsDashDot()
     {
@@ -420,6 +532,9 @@ public class OxyLineStyleToDashArrayConverterTests
         Assert.Equal(OxyPlot.LineStyle.DashDot, result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns None line style when given an unrecognized dash pattern.
+    /// </summary>
     [Fact]
     public void ConvertBack_UnrecognizedPattern_ReturnsNone()
     {
@@ -437,6 +552,10 @@ public class OxyLineStyleToDashArrayConverterTests
 
     #region Round Trip Tests
 
+    /// <summary>
+    /// Tests that Convert and ConvertBack operations round-trip correctly for various line styles.
+    /// </summary>
+    /// <param name="lineStyle">The line style to test.</param>
     [Theory]
     [InlineData(LineStyle.Solid)]
     [InlineData(LineStyle.Dash)]
@@ -461,13 +580,20 @@ public class OxyLineStyleToDashArrayConverterTests
 
 /// <summary>
 /// Tests for EmptyStringToNullConverter.
+/// Verifies proper conversion between empty strings and null values for WPF binding scenarios.
 /// </summary>
 public class EmptyStringToNullConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly EmptyStringToNullConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null value.
+    /// </summary>
     [Fact]
     public void Convert_NullValue_ReturnsNull()
     {
@@ -481,6 +607,9 @@ public class EmptyStringToNullConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the string value unchanged when given a non-empty string.
+    /// </summary>
     [Fact]
     public void Convert_StringValue_ReturnsString()
     {
@@ -494,6 +623,9 @@ public class EmptyStringToNullConverterTests
         Assert.Equal("test string", result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an empty string when given an empty string.
+    /// </summary>
     [Fact]
     public void Convert_EmptyString_ReturnsEmptyString()
     {
@@ -507,6 +639,9 @@ public class EmptyStringToNullConverterTests
         Assert.Equal("", result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the string representation when given an integer value.
+    /// </summary>
     [Fact]
     public void Convert_IntValue_ReturnsStringRepresentation()
     {
@@ -520,6 +655,9 @@ public class EmptyStringToNullConverterTests
         Assert.Equal("42", result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the string representation when given a double value.
+    /// </summary>
     [Fact]
     public void Convert_DoubleValue_ReturnsStringRepresentation()
     {
@@ -537,6 +675,9 @@ public class EmptyStringToNullConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns null when given a null value.
+    /// </summary>
     [Fact]
     public void ConvertBack_NullValue_ReturnsNull()
     {
@@ -550,6 +691,9 @@ public class EmptyStringToNullConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns null when given an empty string.
+    /// </summary>
     [Fact]
     public void ConvertBack_EmptyString_ReturnsNull()
     {
@@ -563,6 +707,9 @@ public class EmptyStringToNullConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns the value unchanged when given a non-empty string.
+    /// </summary>
     [Fact]
     public void ConvertBack_NonEmptyString_ReturnsValue()
     {
@@ -576,6 +723,9 @@ public class EmptyStringToNullConverterTests
         Assert.Equal("test string", result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns the value unchanged when given a whitespace string (whitespace is not considered empty).
+    /// </summary>
     [Fact]
     public void ConvertBack_WhitespaceString_ReturnsValue()
     {
@@ -589,6 +739,9 @@ public class EmptyStringToNullConverterTests
         Assert.Equal("   ", result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns the value unchanged when given a non-string value.
+    /// </summary>
     [Fact]
     public void ConvertBack_IntValue_ReturnsValue()
     {
@@ -607,13 +760,20 @@ public class EmptyStringToNullConverterTests
 
 /// <summary>
 /// Tests for DateToNumberConverter.
+/// Verifies proper conversion between DateTime values and OxyPlot numeric date representations.
 /// </summary>
 public class DateToNumberConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly DateToNumberConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null value.
+    /// </summary>
     [Fact]
     public void Convert_NullValue_ReturnsNull()
     {
@@ -627,6 +787,9 @@ public class DateToNumberConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the value unchanged when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongType_ReturnsValue()
     {
@@ -640,6 +803,9 @@ public class DateToNumberConverterTests
         Assert.Equal("not a double", result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a DateTime when given a valid double value (OxyPlot uses days since year 1900).
+    /// </summary>
     [Fact]
     public void Convert_ValidDouble_ReturnsDateTime()
     {
@@ -653,6 +819,9 @@ public class DateToNumberConverterTests
         Assert.IsType<DateTime>(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an early date when given a zero value.
+    /// </summary>
     [Fact]
     public void Convert_ZeroValue_ReturnsEarlyDate()
     {
@@ -666,6 +835,9 @@ public class DateToNumberConverterTests
         Assert.IsType<DateTime>(result);
     }
 
+    /// <summary>
+    /// Tests that Convert handles negative values gracefully by converting them to DateTime.
+    /// </summary>
     [Fact]
     public void Convert_NegativeValue_HandlesGracefully()
     {
@@ -683,6 +855,9 @@ public class DateToNumberConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns null when given a null value.
+    /// </summary>
     [Fact]
     public void ConvertBack_NullValue_ReturnsNull()
     {
@@ -696,6 +871,9 @@ public class DateToNumberConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns the value unchanged when given an incorrect type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongType_ReturnsValue()
     {
@@ -709,6 +887,9 @@ public class DateToNumberConverterTests
         Assert.Equal("not a DateTime", result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns a double when given a valid DateTime.
+    /// </summary>
     [Fact]
     public void ConvertBack_ValidDateTime_ReturnsDouble()
     {
@@ -722,6 +903,9 @@ public class DateToNumberConverterTests
         Assert.IsType<double>(result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns NaN when given DateTime.MinValue.
+    /// </summary>
     [Fact]
     public void ConvertBack_MinValue_ReturnsNaN()
     {
@@ -735,6 +919,9 @@ public class DateToNumberConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns a valid double when given DateTime.Now.
+    /// </summary>
     [Fact]
     public void ConvertBack_NowDate_ReturnsDouble()
     {
@@ -753,6 +940,9 @@ public class DateToNumberConverterTests
 
     #region Round Trip Tests
 
+    /// <summary>
+    /// Tests that Convert and ConvertBack operations round-trip correctly for DateTime values.
+    /// </summary>
     [Fact]
     public void Convert_ConvertBack_RoundTrip()
     {
@@ -768,6 +958,9 @@ public class DateToNumberConverterTests
         Assert.Equal(doubleValue, (double)roundTripped!, 6);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack and Convert operations round-trip correctly for DateTime values.
+    /// </summary>
     [Fact]
     public void ConvertBack_Convert_RoundTrip()
     {

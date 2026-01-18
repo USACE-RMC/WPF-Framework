@@ -1,12 +1,49 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate;
 
 namespace SoftwareUpdate.Tests.Core
 {
+    /// <summary>
+    /// Provides unit tests for the <see cref="UpdateDownloadResult"/> class, verifying properties,
+    /// factory methods, and result states for download operations.
+    /// </summary>
     public class UpdateDownloadResultTests
     {
         #region Property Tests
 
+        /// <summary>
+        /// Verifies that the Success property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void Success_CanBeSetAndRetrieved()
         {
@@ -15,6 +52,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.True(result.Success);
         }
 
+        /// <summary>
+        /// Verifies that the FilePath property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void FilePath_CanBeSetAndRetrieved()
         {
@@ -24,6 +64,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(path, result.FilePath);
         }
 
+        /// <summary>
+        /// Verifies that the Error property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void Error_CanBeSetAndRetrieved()
         {
@@ -33,6 +76,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Same(exception, result.Error);
         }
 
+        /// <summary>
+        /// Verifies that the WasCancelled property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void WasCancelled_CanBeSetAndRetrieved()
         {
@@ -41,6 +87,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.True(result.WasCancelled);
         }
 
+        /// <summary>
+        /// Verifies that the BytesDownloaded property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void BytesDownloaded_CanBeSetAndRetrieved()
         {
@@ -49,6 +98,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(1024 * 1024, result.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that the Update property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void Update_CanBeSetAndRetrieved()
         {
@@ -62,6 +114,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Successful Factory Method Tests
 
+        /// <summary>
+        /// Verifies that the Successful factory method sets Success to true.
+        /// </summary>
         [Fact]
         public void Successful_SetsSuccessToTrue()
         {
@@ -71,6 +126,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.True(result.Success);
         }
 
+        /// <summary>
+        /// Verifies that the Successful factory method sets the FilePath property.
+        /// </summary>
         [Fact]
         public void Successful_SetsFilePath()
         {
@@ -80,6 +138,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("/tmp/update.zip", result.FilePath);
         }
 
+        /// <summary>
+        /// Verifies that the Successful factory method sets the Update property.
+        /// </summary>
         [Fact]
         public void Successful_SetsUpdate()
         {
@@ -89,6 +150,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Same(update, result.Update);
         }
 
+        /// <summary>
+        /// Verifies that the Successful factory method sets the BytesDownloaded property.
+        /// </summary>
         [Fact]
         public void Successful_SetsBytesDownloaded()
         {
@@ -98,6 +162,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(1024 * 1024, result.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that the Successful factory method does not set the Error property.
+        /// </summary>
         [Fact]
         public void Successful_DoesNotSetError()
         {
@@ -107,6 +174,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.Error);
         }
 
+        /// <summary>
+        /// Verifies that the Successful factory method does not set WasCancelled.
+        /// </summary>
         [Fact]
         public void Successful_DoesNotSetWasCancelled()
         {
@@ -120,6 +190,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Failed Factory Method Tests
 
+        /// <summary>
+        /// Verifies that the Failed factory method sets Success to false.
+        /// </summary>
         [Fact]
         public void Failed_SetsSuccessToFalse()
         {
@@ -129,6 +202,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(result.Success);
         }
 
+        /// <summary>
+        /// Verifies that the Failed factory method sets the Error property.
+        /// </summary>
         [Fact]
         public void Failed_SetsError()
         {
@@ -138,6 +214,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Same(error, result.Error);
         }
 
+        /// <summary>
+        /// Verifies that the Failed factory method does not set the FilePath property.
+        /// </summary>
         [Fact]
         public void Failed_DoesNotSetFilePath()
         {
@@ -147,6 +226,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.FilePath);
         }
 
+        /// <summary>
+        /// Verifies that the Failed factory method does not set WasCancelled.
+        /// </summary>
         [Fact]
         public void Failed_DoesNotSetWasCancelled()
         {
@@ -156,6 +238,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(result.WasCancelled);
         }
 
+        /// <summary>
+        /// Verifies that the Failed factory method does not set the Update property.
+        /// </summary>
         [Fact]
         public void Failed_DoesNotSetUpdate()
         {
@@ -165,6 +250,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.Update);
         }
 
+        /// <summary>
+        /// Verifies that the Failed factory method preserves the exception type when using HttpRequestException.
+        /// </summary>
         [Fact]
         public void Failed_WithHttpRequestException_PreservesExceptionType()
         {
@@ -178,6 +266,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Cancelled Factory Method Tests
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method sets Success to false.
+        /// </summary>
         [Fact]
         public void Cancelled_SetsSuccessToFalse()
         {
@@ -186,6 +277,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(result.Success);
         }
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method sets WasCancelled to true.
+        /// </summary>
         [Fact]
         public void Cancelled_SetsWasCancelledToTrue()
         {
@@ -194,6 +288,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.True(result.WasCancelled);
         }
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method defaults BytesDownloaded to zero when not specified.
+        /// </summary>
         [Fact]
         public void Cancelled_WithZeroBytesDownloaded_DefaultsToZero()
         {
@@ -202,6 +299,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(0, result.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method sets BytesDownloaded when specified.
+        /// </summary>
         [Fact]
         public void Cancelled_WithBytesDownloaded_SetsBytesDownloaded()
         {
@@ -210,6 +310,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(5000, result.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method does not set the Error property.
+        /// </summary>
         [Fact]
         public void Cancelled_DoesNotSetError()
         {
@@ -218,6 +321,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.Error);
         }
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method does not set the FilePath property.
+        /// </summary>
         [Fact]
         public void Cancelled_DoesNotSetFilePath()
         {
@@ -226,6 +332,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.FilePath);
         }
 
+        /// <summary>
+        /// Verifies that the Cancelled factory method does not set the Update property.
+        /// </summary>
         [Fact]
         public void Cancelled_DoesNotSetUpdate()
         {
@@ -238,6 +347,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Default Values Tests
 
+        /// <summary>
+        /// Verifies that a new instance has Success initialized to false.
+        /// </summary>
         [Fact]
         public void NewInstance_HasFalseSuccess()
         {
@@ -246,6 +358,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(result.Success);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has FilePath initialized to null.
+        /// </summary>
         [Fact]
         public void NewInstance_HasNullFilePath()
         {
@@ -254,6 +369,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.FilePath);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has Error initialized to null.
+        /// </summary>
         [Fact]
         public void NewInstance_HasNullError()
         {
@@ -262,6 +380,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.Error);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has WasCancelled initialized to false.
+        /// </summary>
         [Fact]
         public void NewInstance_HasFalseWasCancelled()
         {
@@ -270,6 +391,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(result.WasCancelled);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has BytesDownloaded initialized to zero.
+        /// </summary>
         [Fact]
         public void NewInstance_HasZeroBytesDownloaded()
         {
@@ -278,6 +402,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(0, result.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has Update initialized to null.
+        /// </summary>
         [Fact]
         public void NewInstance_HasNullUpdate()
         {
@@ -290,6 +417,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Combination Tests
 
+        /// <summary>
+        /// Verifies that a successful result is not cancelled and has no error.
+        /// </summary>
         [Fact]
         public void SuccessfulResult_IsNotCancelledOrFailed()
         {
@@ -301,6 +431,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(result.Error);
         }
 
+        /// <summary>
+        /// Verifies that a failed result is not successful or cancelled.
+        /// </summary>
         [Fact]
         public void FailedResult_IsNotSuccessfulOrCancelled()
         {
@@ -311,6 +444,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.NotNull(result.Error);
         }
 
+        /// <summary>
+        /// Verifies that a cancelled result is not successful but has no error.
+        /// </summary>
         [Fact]
         public void CancelledResult_IsNotSuccessfulButHasNoError()
         {

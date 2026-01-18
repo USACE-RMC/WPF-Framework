@@ -1,7 +1,32 @@
 /*
- * Unit tests for ProbabilityOrdinateRowItem in the NumericControls library.
- * Tests 0-1 probability range validation and ascending order enforcement.
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System.Collections.ObjectModel;
 using NumericControls;
@@ -14,6 +39,10 @@ namespace NumericControls.Tests.RowItems
     /// </summary>
     public class ProbabilityOrdinateRowItemTests
     {
+        /// <summary>
+        /// Creates a parent ObservableCollection for testing row items.
+        /// </summary>
+        /// <returns>An empty ObservableCollection of objects.</returns>
         private ObservableCollection<object> CreateParentList()
         {
             return new ObservableCollection<object>();
@@ -21,6 +50,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Constructor Tests
 
+        /// <summary>
+        /// Tests that the default constructor initializes with default values.
+        /// </summary>
         [Fact]
         public void DefaultConstructor_InitializesWithDefaults()
         {
@@ -31,6 +63,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(0.0, item.Probability);
         }
 
+        /// <summary>
+        /// Tests that the constructor with probability parameter sets it correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithProbability_SetsProbabilityCorrectly()
         {
@@ -46,6 +81,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(probability, item.Probability);
         }
 
+        /// <summary>
+        /// Tests that the constructor with zero probability sets it correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithZeroProbability_SetsProbabilityCorrectly()
         {
@@ -60,6 +98,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(0.0, item.Probability);
         }
 
+        /// <summary>
+        /// Tests that the constructor with probability of 1.0 sets it correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithOneProbability_SetsProbabilityCorrectly()
         {
@@ -78,6 +119,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Probability Property Tests
 
+        /// <summary>
+        /// Tests that setting Probability raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Probability_SetValue_NotifiesPropertyChanged()
         {
@@ -96,6 +140,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(0.75, item.Probability);
         }
 
+        /// <summary>
+        /// Tests that setting Probability to the same value does not raise PropertyChanged.
+        /// </summary>
         [Fact]
         public void Probability_SetSameValue_DoesNotNotifyPropertyChanged()
         {
@@ -117,6 +164,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Range Validation Tests (0 to 1)
 
+        /// <summary>
+        /// Tests that a valid probability value within range has no validation error.
+        /// </summary>
         [Fact]
         public void Probability_ValidValue_NoValidationError()
         {
@@ -132,6 +182,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a probability value of zero has no validation error.
+        /// </summary>
         [Fact]
         public void Probability_ZeroValue_NoValidationError()
         {
@@ -147,6 +200,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a probability value of one has no validation error.
+        /// </summary>
         [Fact]
         public void Probability_OneValue_NoValidationError()
         {
@@ -162,6 +218,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a negative probability value triggers a validation error.
+        /// </summary>
         [Fact]
         public void Probability_NegativeValue_HasValidationError()
         {
@@ -177,6 +236,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a probability value greater than one triggers a validation error.
+        /// </summary>
         [Fact]
         public void Probability_GreaterThanOne_HasValidationError()
         {
@@ -192,6 +254,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a very small positive probability has no validation error.
+        /// </summary>
         [Fact]
         public void Probability_VerySmallPositive_NoValidationError()
         {
@@ -207,6 +272,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a probability close to one has no validation error.
+        /// </summary>
         [Fact]
         public void Probability_CloseToOne_NoValidationError()
         {
@@ -226,6 +294,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Ascending Order Validation Tests
 
+        /// <summary>
+        /// Tests that ascending order with values in correct order has no validation error.
+        /// </summary>
         [Fact]
         public void AscendingOrder_ValuesInOrder_NoValidationError()
         {
@@ -249,6 +320,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item3.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that ascending order with values out of order triggers a validation error.
+        /// </summary>
         [Fact]
         public void AscendingOrder_ValuesOutOfOrder_HasValidationError()
         {
@@ -266,6 +340,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item2.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that ascending order with equal values triggers a validation error (strict ordering).
+        /// </summary>
         [Fact]
         public void AscendingOrder_EqualValues_HasValidationError()
         {
@@ -283,6 +360,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item2.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that multiple items in ascending order are all valid.
+        /// </summary>
         [Fact]
         public void AscendingOrder_MultipleItems_AllValidInOrder()
         {
@@ -314,6 +394,9 @@ namespace NumericControls.Tests.RowItems
             }
         }
 
+        /// <summary>
+        /// Tests that a single item has no order validation error.
+        /// </summary>
         [Fact]
         public void SingleItem_NoOrderValidationError()
         {
@@ -333,6 +416,9 @@ namespace NumericControls.Tests.RowItems
 
         #region PropertyDisplayName Tests
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for Probability returns "Probability Ordinates".
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_Probability_ReturnsProbabilityOrdinates()
         {
@@ -348,6 +434,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal("Probability Ordinates", displayName);
         }
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for other properties returns null.
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_OtherProperty_ReturnsNull()
         {
@@ -367,6 +456,9 @@ namespace NumericControls.Tests.RowItems
 
         #region IsGridDisplayable Tests
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for Probability property.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_Probability_ReturnsTrue()
         {
@@ -382,6 +474,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(isDisplayable);
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for any property.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_AnyProperty_ReturnsTrue()
         {
@@ -399,6 +494,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Boundary Value Tests
 
+        /// <summary>
+        /// Tests that a probability just below zero triggers a validation error.
+        /// </summary>
         [Fact]
         public void Probability_JustBelowZero_HasValidationError()
         {
@@ -414,6 +512,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a probability just above one triggers a validation error.
+        /// </summary>
         [Fact]
         public void Probability_JustAboveOne_HasValidationError()
         {
@@ -429,6 +530,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that a middle probability value has no validation error.
+        /// </summary>
         [Fact]
         public void Probability_MiddleValue_NoValidationError()
         {
@@ -448,6 +552,10 @@ namespace NumericControls.Tests.RowItems
 
         #region Common Probability Values Tests
 
+        /// <summary>
+        /// Tests that common probability values are all valid.
+        /// </summary>
+        /// <param name="probability">The probability value to test.</param>
         [Theory]
         [InlineData(0.01)]
         [InlineData(0.05)]
@@ -472,6 +580,10 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item.RuleMap["Probability"].HasError);
         }
 
+        /// <summary>
+        /// Tests that invalid probability values trigger validation errors.
+        /// </summary>
+        /// <param name="probability">The invalid probability value to test.</param>
         [Theory]
         [InlineData(-0.5)]
         [InlineData(-1.0)]

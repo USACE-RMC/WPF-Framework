@@ -1,12 +1,49 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces.Undo.Actions;
 
 namespace FrameworkInterfaces.Tests.Undo
 {
+    /// <summary>
+    /// Test class for the DelegateAction implementation, providing comprehensive tests for delegate-based
+    /// undo/redo actions, description management, target tracking, and action merging behavior.
+    /// </summary>
     public class DelegateActionTests
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the Description property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsDescription()
         {
@@ -15,6 +52,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Test Description", action.Description);
         }
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the Target property when provided.
+        /// </summary>
         [Fact]
         public void Constructor_SetsTarget()
         {
@@ -24,6 +64,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Same(target, action.Target);
         }
 
+        /// <summary>
+        /// Verifies that the Target property is null when no target is provided to the constructor.
+        /// </summary>
         [Fact]
         public void Constructor_WithNullTarget_TargetIsNull()
         {
@@ -32,6 +75,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Null(action.Target);
         }
 
+        /// <summary>
+        /// Verifies that the constructor sets a timestamp within the expected time range.
+        /// </summary>
         [Fact]
         public void Constructor_SetsTimestamp()
         {
@@ -47,6 +93,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Execute Tests
 
+        /// <summary>
+        /// Verifies that executing the action invokes the execute delegate.
+        /// </summary>
         [Fact]
         public void Execute_CallsExecuteDelegate()
         {
@@ -58,6 +107,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(executed);
         }
 
+        /// <summary>
+        /// Verifies that the execute delegate can access and modify captured variables.
+        /// </summary>
         [Fact]
         public void Execute_WithParameters_PassesParameters()
         {
@@ -75,6 +127,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Undo Tests
 
+        /// <summary>
+        /// Verifies that undoing the action invokes the undo delegate.
+        /// </summary>
         [Fact]
         public void Undo_CallsUndoDelegate()
         {
@@ -86,6 +141,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(undone);
         }
 
+        /// <summary>
+        /// Verifies that executing and then undoing the action correctly applies both delegates.
+        /// </summary>
         [Fact]
         public void Execute_ThenUndo_WorksCorrectly()
         {
@@ -105,6 +163,10 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region CanMergeWith Tests
 
+        /// <summary>
+        /// Verifies that DelegateAction does not support merging with other actions by default.
+        /// </summary>
+        /// <returns>False, indicating the action cannot be merged.</returns>
         [Fact]
         public void CanMergeWith_ByDefault_ReturnsFalse()
         {
@@ -114,6 +176,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(action1.CanMergeWith(action2));
         }
 
+        /// <summary>
+        /// Verifies that CanMergeWith returns false when passed a null action.
+        /// </summary>
+        /// <returns>False when action is null.</returns>
         [Fact]
         public void CanMergeWith_Null_ReturnsFalse()
         {
@@ -126,6 +192,10 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region MergeWith Tests
 
+        /// <summary>
+        /// Verifies that attempting to merge returns the original action unchanged by default.
+        /// </summary>
+        /// <returns>The original action instance.</returns>
         [Fact]
         public void MergeWith_ByDefault_ReturnsSelf()
         {

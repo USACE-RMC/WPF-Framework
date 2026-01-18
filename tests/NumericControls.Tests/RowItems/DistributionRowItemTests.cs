@@ -1,7 +1,32 @@
 /*
- * Unit tests for DistributionRowItem in the NumericControls library.
- * Tests parameter validation, ordering constraints, and distribution handling.
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System.Collections.ObjectModel;
 using Numerics.Data;
@@ -16,6 +41,10 @@ namespace NumericControls.Tests.RowItems
     /// </summary>
     public class DistributionRowItemTests
     {
+        /// <summary>
+        /// Creates a parent ObservableCollection for testing row items.
+        /// </summary>
+        /// <returns>An empty ObservableCollection of objects.</returns>
         private ObservableCollection<object> CreateParentList()
         {
             return new ObservableCollection<object>();
@@ -23,6 +52,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Constructor Tests
 
+        /// <summary>
+        /// Tests that the constructor with a normal distribution sets properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithNormalDistribution_SetsPropertiesCorrectly()
         {
@@ -42,6 +74,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(15, item.P2);  // StdDev
         }
 
+        /// <summary>
+        /// Tests that the constructor with a triangular distribution sets three parameters.
+        /// </summary>
         [Fact]
         public void Constructor_WithTriangularDistribution_SetsThreeParameters()
         {
@@ -61,6 +96,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(90, item.P3); // Max
         }
 
+        /// <summary>
+        /// Tests that the constructor sets min and max values correctly.
+        /// </summary>
         [Fact]
         public void Constructor_SetsMinMaxValues()
         {
@@ -79,6 +117,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(300, item.MaxYValue);
         }
 
+        /// <summary>
+        /// Tests that the constructor sets sort order properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_SetsSortOrder()
         {
@@ -97,6 +138,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(SortOrder.Descending, item.YOrder);
         }
 
+        /// <summary>
+        /// Tests that the constructor clones the distribution instead of using the same reference.
+        /// </summary>
         [Fact]
         public void Constructor_ClonesDistribution()
         {
@@ -120,6 +164,9 @@ namespace NumericControls.Tests.RowItems
 
         #region X Property Tests
 
+        /// <summary>
+        /// Tests that setting X property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void X_SetValue_NotifiesPropertyChanged()
         {
@@ -143,6 +190,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Parameter Property Tests
 
+        /// <summary>
+        /// Tests that setting P1 raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void P1_SetValue_NotifiesPropertyChanged()
         {
@@ -162,6 +212,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(120.0, item.P1);
         }
 
+        /// <summary>
+        /// Tests that setting P2 raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void P2_SetValue_NotifiesPropertyChanged()
         {
@@ -181,6 +234,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(20.0, item.P2);
         }
 
+        /// <summary>
+        /// Tests that setting P3 raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void P3_SetValue_NotifiesPropertyChanged()
         {
@@ -204,6 +260,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Distribution Computed Properties Tests
 
+        /// <summary>
+        /// Tests that Mean property returns the correct value for valid parameters.
+        /// </summary>
         [Fact]
         public void Mean_WithValidParameters_ReturnsCorrectValue()
         {
@@ -217,6 +276,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(100, item.Mean, 5);
         }
 
+        /// <summary>
+        /// Tests that Minimum property returns a value less than the mean for a normal distribution.
+        /// </summary>
         [Fact]
         public void Minimum_WithValidParameters_ReturnsValue()
         {
@@ -230,6 +292,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.Minimum < item.Mean);
         }
 
+        /// <summary>
+        /// Tests that Maximum property returns a value greater than the mean for a normal distribution.
+        /// </summary>
         [Fact]
         public void Maximum_WithValidParameters_ReturnsValue()
         {
@@ -247,6 +312,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Validation Tests
 
+        /// <summary>
+        /// Tests that X value below minimum triggers a validation error.
+        /// </summary>
         [Fact]
         public void X_BelowMinimum_HasValidationError()
         {
@@ -263,6 +331,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that X value above maximum triggers a validation error.
+        /// </summary>
         [Fact]
         public void X_AboveMaximum_HasValidationError()
         {
@@ -279,6 +350,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that valid X value within bounds has no validation error.
+        /// </summary>
         [Fact]
         public void ValidXValue_NoValidationError()
         {
@@ -299,6 +373,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Min/Max Bounds Property Tests
 
+        /// <summary>
+        /// Tests that setting MinXValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MinXValue_SetValue_NotifiesPropertyChanged()
         {
@@ -317,6 +394,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(propertyChanged);
         }
 
+        /// <summary>
+        /// Tests that setting MaxXValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MaxXValue_SetValue_NotifiesPropertyChanged()
         {
@@ -335,6 +415,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(propertyChanged);
         }
 
+        /// <summary>
+        /// Tests that setting MinYValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MinYValue_SetValue_NotifiesPropertyChanged()
         {
@@ -353,6 +436,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(propertyChanged);
         }
 
+        /// <summary>
+        /// Tests that setting MaxYValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MaxYValue_SetValue_NotifiesPropertyChanged()
         {
@@ -375,6 +461,9 @@ namespace NumericControls.Tests.RowItems
 
         #region IsStrict and SortOrder Property Tests
 
+        /// <summary>
+        /// Tests that setting IsStrictX raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void IsStrictX_SetValue_NotifiesPropertyChanged()
         {
@@ -394,6 +483,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsStrictX);
         }
 
+        /// <summary>
+        /// Tests that setting IsStrictY raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void IsStrictY_SetValue_NotifiesPropertyChanged()
         {
@@ -413,6 +505,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsStrictY);
         }
 
+        /// <summary>
+        /// Tests that setting XOrder raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void XOrder_SetValue_NotifiesPropertyChanged()
         {
@@ -432,6 +527,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(SortOrder.Ascending, item.XOrder);
         }
 
+        /// <summary>
+        /// Tests that setting YOrder raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void YOrder_SetValue_NotifiesPropertyChanged()
         {
@@ -455,6 +553,9 @@ namespace NumericControls.Tests.RowItems
 
         #region PropertyDisplayName Tests
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for P1 returns the distribution parameter name.
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_P1_ReturnsDistributionParameterName()
         {
@@ -472,6 +573,9 @@ namespace NumericControls.Tests.RowItems
             Assert.NotEmpty(displayName);
         }
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for unknown property returns the property name.
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_UnknownProperty_ReturnsPropertyName()
         {
@@ -492,6 +596,9 @@ namespace NumericControls.Tests.RowItems
 
         #region IsGridDisplayable Tests
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for X property.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_X_ReturnsTrue()
         {
@@ -505,6 +612,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsGridDisplayable("X"));
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for P1 property.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_P1_ReturnsTrue()
         {
@@ -518,6 +628,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsGridDisplayable("P1"));
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for P2 for normal distribution.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_P2_ReturnsTrueForNormal()
         {
@@ -531,6 +644,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsGridDisplayable("P2"));
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for P3 for triangular distribution.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_P3_ReturnsTrueForTriangular()
         {
@@ -544,6 +660,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsGridDisplayable("P3"));
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns false for unknown properties.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_Unknown_ReturnsFalse()
         {
@@ -561,6 +680,9 @@ namespace NumericControls.Tests.RowItems
 
         #region RaisePropertyChanged Tests
 
+        /// <summary>
+        /// Tests that RaisePropertyChanged raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void RaisePropertyChanged_NotifiesPropertyChanged()
         {
@@ -583,6 +705,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Ordering Tests
 
+        /// <summary>
+        /// Tests that ascending X order with values in correct order has no validation error.
+        /// </summary>
         [Fact]
         public void AscendingXOrder_ValuesInOrder_NoValidationError()
         {
@@ -603,6 +728,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item2.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that ascending X order with values out of order triggers a validation error.
+        /// </summary>
         [Fact]
         public void AscendingXOrder_ValuesOutOfOrder_HasValidationError()
         {
@@ -625,6 +753,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Different Distribution Types Tests
 
+        /// <summary>
+        /// Tests that constructor with uniform distribution sets parameters correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithUniformDistribution_SetsParametersCorrectly()
         {
@@ -642,6 +773,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(100, item.P2); // Max
         }
 
+        /// <summary>
+        /// Tests that constructor with exponential distribution sets parameters correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithExponentialDistribution_SetsParametersCorrectly()
         {

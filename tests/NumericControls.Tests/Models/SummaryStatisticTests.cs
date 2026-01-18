@@ -1,7 +1,32 @@
 /*
- * Unit tests for SummaryStatistic in the NumericControls library.
- * Tests statistic comparison between distribution and data values.
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using NumericControls.Distributions.Univariate;
 using Xunit;
@@ -15,6 +40,9 @@ namespace NumericControls.Tests.Models
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Tests that the constructor correctly sets the StatName property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsStatName()
         {
@@ -25,6 +53,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Mean", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly sets the DistStat property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsDistStat()
         {
@@ -35,6 +66,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("100.0000", stat.DistStat);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly sets the DataStat property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsDataStat()
         {
@@ -45,6 +79,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("98.5432", stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly handles null values for all parameters.
+        /// </summary>
         [Fact]
         public void Constructor_WithNullValues_SetsCorrectly()
         {
@@ -57,6 +94,9 @@ namespace NumericControls.Tests.Models
             Assert.Null(stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly handles empty strings for all parameters.
+        /// </summary>
         [Fact]
         public void Constructor_WithEmptyStrings_SetsCorrectly()
         {
@@ -73,6 +113,9 @@ namespace NumericControls.Tests.Models
 
         #region DistStat Property Tests
 
+        /// <summary>
+        /// Tests that setting the DistStat property updates its value correctly.
+        /// </summary>
         [Fact]
         public void DistStat_SetValue_UpdatesCorrectly()
         {
@@ -86,6 +129,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("105.0000", stat.DistStat);
         }
 
+        /// <summary>
+        /// Tests that the DistStat property can be set to null.
+        /// </summary>
         [Fact]
         public void DistStat_SetToNull_UpdatesCorrectly()
         {
@@ -103,6 +149,9 @@ namespace NumericControls.Tests.Models
 
         #region DataStat Property Tests
 
+        /// <summary>
+        /// Tests that setting the DataStat property updates its value correctly.
+        /// </summary>
         [Fact]
         public void DataStat_SetValue_UpdatesCorrectly()
         {
@@ -116,6 +165,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("99.1234", stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that the DataStat property can be set to null.
+        /// </summary>
         [Fact]
         public void DataStat_SetToNull_UpdatesCorrectly()
         {
@@ -129,6 +181,9 @@ namespace NumericControls.Tests.Models
             Assert.Null(stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that the DataStat property can be set to a dash to represent no data.
+        /// </summary>
         [Fact]
         public void DataStat_SetToDash_RepresentsNoData()
         {
@@ -146,6 +201,9 @@ namespace NumericControls.Tests.Models
 
         #region Common Statistics Tests
 
+        /// <summary>
+        /// Tests that a minimum statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void MinimumStatistic_CreatedCorrectly()
         {
@@ -156,6 +214,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Minimum", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a maximum statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void MaximumStatistic_CreatedCorrectly()
         {
@@ -166,6 +227,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Maximum", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a mean statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void MeanStatistic_CreatedCorrectly()
         {
@@ -176,6 +240,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Mean", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a mode statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void ModeStatistic_CreatedCorrectly()
         {
@@ -186,6 +253,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Mode", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a standard deviation statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void StdDevStatistic_CreatedCorrectly()
         {
@@ -196,6 +266,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Std Dev", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a skewness statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void SkewnessStatistic_CreatedCorrectly()
         {
@@ -206,6 +279,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Skewness", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a kurtosis statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void KurtosisStatistic_CreatedCorrectly()
         {
@@ -220,6 +296,12 @@ namespace NumericControls.Tests.Models
 
         #region Percentile Statistics Tests
 
+        /// <summary>
+        /// Tests that percentile statistics are created correctly with proper values.
+        /// </summary>
+        /// <param name="statName">The name of the percentile statistic.</param>
+        /// <param name="distValue">The distribution statistic value.</param>
+        /// <param name="dataValue">The data statistic value.</param>
         [Theory]
         [InlineData("5%", "75.3288", "76.1234")]
         [InlineData("25%", "89.8765", "88.5432")]
@@ -241,6 +323,9 @@ namespace NumericControls.Tests.Models
 
         #region Goodness of Fit Statistics Tests
 
+        /// <summary>
+        /// Tests that an RMSE statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void RMSEStatistic_CreatedCorrectly()
         {
@@ -251,6 +336,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("RMSE", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a Chi-Squared statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void ChiSquaredStatistic_CreatedCorrectly()
         {
@@ -261,6 +349,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Chi-Squared", stat.StatName);
         }
 
+        /// <summary>
+        /// Tests that a Kolmogorov-Smirnov statistic is created correctly with proper stat name.
+        /// </summary>
         [Fact]
         public void KSStatistic_CreatedCorrectly()
         {
@@ -275,6 +366,9 @@ namespace NumericControls.Tests.Models
 
         #region No Data Scenarios Tests
 
+        /// <summary>
+        /// Tests that a dash in DataStat indicates no data is available.
+        /// </summary>
         [Fact]
         public void DataStatWithDash_IndicatesNoData()
         {
@@ -285,6 +379,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(" - ", stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that all statistics can have a no-data indicator (dash).
+        /// </summary>
         [Fact]
         public void AllStatisticsCanHaveNoDataIndicator()
         {
@@ -308,6 +405,9 @@ namespace NumericControls.Tests.Models
 
         #region Multiple Statistics Collection Tests
 
+        /// <summary>
+        /// Tests creating a collection of statistics for a normal distribution comparison.
+        /// </summary>
         [Fact]
         public void CreateStatisticsCollection_ForNormalDistribution()
         {
@@ -339,6 +439,9 @@ namespace NumericControls.Tests.Models
 
         #region Edge Cases Tests
 
+        /// <summary>
+        /// Tests that a statistic with very long numeric values is handled correctly.
+        /// </summary>
         [Fact]
         public void StatWithVeryLongValue_HandledCorrectly()
         {
@@ -353,6 +456,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(longValue, stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that a statistic with scientific notation values is handled correctly.
+        /// </summary>
         [Fact]
         public void StatWithScientificNotation_HandledCorrectly()
         {
@@ -367,6 +473,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(sciNotation, stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that a statistic with negative values is handled correctly.
+        /// </summary>
         [Fact]
         public void StatWithNegativeValues_HandledCorrectly()
         {
@@ -378,6 +487,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("-0.4321", stat.DataStat);
         }
 
+        /// <summary>
+        /// Tests that a statistic with zero values is handled correctly.
+        /// </summary>
         [Fact]
         public void StatWithZeroValues_HandledCorrectly()
         {

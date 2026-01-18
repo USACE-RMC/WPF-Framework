@@ -1,7 +1,32 @@
 /*
- * Unit tests for OrdinateRowItem in the NumericControls library.
- * Tests X/Y validation, ordering constraints, and min/max bounds.
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System.Collections.ObjectModel;
 using Numerics.Data;
@@ -15,6 +40,10 @@ namespace NumericControls.Tests.RowItems
     /// </summary>
     public class OrdinateRowItemTests
     {
+        /// <summary>
+        /// Creates a parent ObservableCollection for testing row items.
+        /// </summary>
+        /// <returns>An empty ObservableCollection of objects.</returns>
         private ObservableCollection<object> CreateParentList()
         {
             return new ObservableCollection<object>();
@@ -22,6 +51,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Constructor Tests
 
+        /// <summary>
+        /// Tests that the constructor correctly sets all properties with valid parameters.
+        /// </summary>
         [Fact]
         public void Constructor_WithValidParameters_SetsPropertiesCorrectly()
         {
@@ -43,6 +75,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(100, item.MaxYValue);
         }
 
+        /// <summary>
+        /// Tests that the constructor sets the IsStrictX and IsStrictY flags correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithStrictOrdering_SetsIsStrictFlags()
         {
@@ -58,6 +93,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsStrictY);
         }
 
+        /// <summary>
+        /// Tests that the constructor sets the sort order properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_WithSortOrder_SetsSortOrderProperties()
         {
@@ -77,6 +115,9 @@ namespace NumericControls.Tests.RowItems
 
         #region X Property Tests
 
+        /// <summary>
+        /// Tests that setting X property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void X_SetValue_NotifiesPropertyChanged()
         {
@@ -95,6 +136,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(15.0, item.X);
         }
 
+        /// <summary>
+        /// Tests that setting X to the same value does not raise PropertyChanged.
+        /// </summary>
         [Fact]
         public void X_SetSameValue_DoesNotNotifyPropertyChanged()
         {
@@ -116,6 +160,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Y Property Tests
 
+        /// <summary>
+        /// Tests that setting Y property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Y_SetValue_NotifiesPropertyChanged()
         {
@@ -134,6 +181,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(25.0, item.Y);
         }
 
+        /// <summary>
+        /// Tests that setting Y to NaN raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Y_SetNaN_NotifiesPropertyChanged()
         {
@@ -152,6 +202,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(double.IsNaN(item.Y));
         }
 
+        /// <summary>
+        /// Tests that setting Y to the same value does not raise PropertyChanged.
+        /// </summary>
         [Fact]
         public void Y_SetSameValue_DoesNotNotifyPropertyChanged()
         {
@@ -173,6 +226,9 @@ namespace NumericControls.Tests.RowItems
 
         #region MinMax Bounds Tests
 
+        /// <summary>
+        /// Tests that setting MinXValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MinXValue_SetValue_NotifiesPropertyChanged()
         {
@@ -191,6 +247,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(-10.0, item.MinXValue);
         }
 
+        /// <summary>
+        /// Tests that setting MaxXValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MaxXValue_SetValue_NotifiesPropertyChanged()
         {
@@ -209,6 +268,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(200.0, item.MaxXValue);
         }
 
+        /// <summary>
+        /// Tests that setting MinYValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MinYValue_SetValue_NotifiesPropertyChanged()
         {
@@ -227,6 +289,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(-50.0, item.MinYValue);
         }
 
+        /// <summary>
+        /// Tests that setting MaxYValue raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void MaxYValue_SetValue_NotifiesPropertyChanged()
         {
@@ -249,6 +314,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Validation Tests
 
+        /// <summary>
+        /// Tests that X value below minimum triggers a validation error.
+        /// </summary>
         [Fact]
         public void XValue_BelowMinimum_HasValidationError()
         {
@@ -264,6 +332,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that X value above maximum triggers a validation error.
+        /// </summary>
         [Fact]
         public void XValue_AboveMaximum_HasValidationError()
         {
@@ -279,6 +350,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that Y value below minimum triggers a validation error.
+        /// </summary>
         [Fact]
         public void YValue_BelowMinimum_HasValidationError()
         {
@@ -294,6 +368,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["Y"].HasError);
         }
 
+        /// <summary>
+        /// Tests that Y value above maximum triggers a validation error.
+        /// </summary>
         [Fact]
         public void YValue_AboveMaximum_HasValidationError()
         {
@@ -309,6 +386,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.RuleMap["Y"].HasError);
         }
 
+        /// <summary>
+        /// Tests that valid values within bounds do not trigger validation errors.
+        /// </summary>
         [Fact]
         public void ValidValues_NoValidationError()
         {
@@ -329,6 +409,9 @@ namespace NumericControls.Tests.RowItems
 
         #region Ordering Tests
 
+        /// <summary>
+        /// Tests that ascending X order with values in correct order has no validation error.
+        /// </summary>
         [Fact]
         public void AscendingXOrder_ValuesInOrder_NoValidationError()
         {
@@ -352,6 +435,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item3.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that ascending X order with values out of order triggers a validation error.
+        /// </summary>
         [Fact]
         public void AscendingXOrder_ValuesOutOfOrder_HasValidationError()
         {
@@ -369,6 +455,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item2.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that descending X order with values in correct order has no validation error.
+        /// </summary>
         [Fact]
         public void DescendingXOrder_ValuesInOrder_NoValidationError()
         {
@@ -392,6 +481,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item3.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that ascending Y order with values in correct order has no validation error.
+        /// </summary>
         [Fact]
         public void AscendingYOrder_ValuesInOrder_NoValidationError()
         {
@@ -411,6 +503,9 @@ namespace NumericControls.Tests.RowItems
             Assert.False(item2.RuleMap["Y"].HasError);
         }
 
+        /// <summary>
+        /// Tests that strict ascending X order with equal values triggers a validation error.
+        /// </summary>
         [Fact]
         public void StrictAscendingX_EqualValues_HasValidationError()
         {
@@ -428,6 +523,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item2.RuleMap["X"].HasError);
         }
 
+        /// <summary>
+        /// Tests that non-strict ascending X order with equal values has no validation error.
+        /// </summary>
         [Fact]
         public void NonStrictAscendingX_EqualValues_NoValidationError()
         {
@@ -449,6 +547,9 @@ namespace NumericControls.Tests.RowItems
 
         #region GetOrdinate Tests
 
+        /// <summary>
+        /// Tests that GetOrdinate returns an ordinate with correct X and Y values.
+        /// </summary>
         [Fact]
         public void GetOrdinate_ReturnsOrdinateWithCorrectValues()
         {
@@ -469,6 +570,9 @@ namespace NumericControls.Tests.RowItems
 
         #region PropertyDisplayName Tests
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for X returns the X column header.
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_X_ReturnsXColumnHeader()
         {
@@ -484,6 +588,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal("CustomX", displayName);
         }
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for Y returns the Y column header.
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_Y_ReturnsYColumnHeader()
         {
@@ -499,6 +606,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal("CustomY", displayName);
         }
 
+        /// <summary>
+        /// Tests that PropertyDisplayName for other properties returns the property name itself.
+        /// </summary>
         [Fact]
         public void PropertyDisplayName_OtherProperty_ReturnsPropertyName()
         {
@@ -518,6 +628,9 @@ namespace NumericControls.Tests.RowItems
 
         #region IsGridDisplayable Tests
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for the X property.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_X_ReturnsTrue()
         {
@@ -533,6 +646,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(isDisplayable);
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns true for the Y property.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_Y_ReturnsTrue()
         {
@@ -548,6 +664,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(isDisplayable);
         }
 
+        /// <summary>
+        /// Tests that IsGridDisplayable returns false for non-displayable properties.
+        /// </summary>
         [Fact]
         public void IsGridDisplayable_OtherProperty_ReturnsFalse()
         {
@@ -567,6 +686,9 @@ namespace NumericControls.Tests.RowItems
 
         #region RaisePropertyChanged Tests
 
+        /// <summary>
+        /// Tests that RaisePropertyChanged notifies all properties.
+        /// </summary>
         [Fact]
         public void RaisePropertyChanged_NotifiesAllProperties()
         {
@@ -588,6 +710,9 @@ namespace NumericControls.Tests.RowItems
 
         #region IsStrict Property Tests
 
+        /// <summary>
+        /// Tests that setting IsStrictX raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void IsStrictX_SetValue_NotifiesPropertyChanged()
         {
@@ -606,6 +731,9 @@ namespace NumericControls.Tests.RowItems
             Assert.True(item.IsStrictX);
         }
 
+        /// <summary>
+        /// Tests that setting IsStrictY raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void IsStrictY_SetValue_NotifiesPropertyChanged()
         {
@@ -628,6 +756,9 @@ namespace NumericControls.Tests.RowItems
 
         #region SortOrder Property Tests
 
+        /// <summary>
+        /// Tests that setting XOrder raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void XOrder_SetValue_NotifiesPropertyChanged()
         {
@@ -646,6 +777,9 @@ namespace NumericControls.Tests.RowItems
             Assert.Equal(SortOrder.Ascending, item.XOrder);
         }
 
+        /// <summary>
+        /// Tests that setting YOrder raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void YOrder_SetValue_NotifiesPropertyChanged()
         {

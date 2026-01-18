@@ -1,12 +1,49 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces.Undo.Actions;
 
 namespace FrameworkInterfaces.Tests.Undo
 {
+    /// <summary>
+    /// Test class for the CompositeAction implementation, providing comprehensive tests for grouping multiple
+    /// actions, batch execution, undo/redo functionality, and action merging behavior.
+    /// </summary>
     public class CompositeActionTests
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the Description property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsDescription()
         {
@@ -15,6 +52,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Composite Test", action.Description);
         }
 
+        /// <summary>
+        /// Verifies that the constructor initializes an empty Actions list.
+        /// </summary>
         [Fact]
         public void Constructor_InitializesEmptyActionsList()
         {
@@ -24,6 +64,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Empty(action.Actions);
         }
 
+        /// <summary>
+        /// Verifies that the constructor sets a timestamp within the expected time range.
+        /// </summary>
         [Fact]
         public void Constructor_SetsTimestamp()
         {
@@ -39,6 +82,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region AddAction Tests
 
+        /// <summary>
+        /// Verifies that AddAction adds the action to the Actions list.
+        /// </summary>
         [Fact]
         public void AddAction_AddsToActionsList()
         {
@@ -51,6 +97,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Same(childAction, composite.Actions[0]);
         }
 
+        /// <summary>
+        /// Verifies that AddAction preserves the order of multiple added actions.
+        /// </summary>
         [Fact]
         public void AddAction_MultipleActions_AddsInOrder()
         {
@@ -73,6 +122,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Execute Tests
 
+        /// <summary>
+        /// Verifies that Execute executes all child actions in the order they were added.
+        /// </summary>
         [Fact]
         public void Execute_ExecutesAllActionsInOrder()
         {
@@ -88,6 +140,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal(new[] { 1, 2, 3 }, executionOrder);
         }
 
+        /// <summary>
+        /// Verifies that Execute does not throw an exception when the Actions list is empty.
+        /// </summary>
         [Fact]
         public void Execute_WithNoActions_DoesNotThrow()
         {
@@ -102,6 +157,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Undo Tests
 
+        /// <summary>
+        /// Verifies that Undo undoes all child actions in reverse order.
+        /// </summary>
         [Fact]
         public void Undo_UndoesAllActionsInReverseOrder()
         {
@@ -117,6 +175,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal(new[] { 3, 2, 1 }, undoOrder);
         }
 
+        /// <summary>
+        /// Verifies that Undo does not throw an exception when the Actions list is empty.
+        /// </summary>
         [Fact]
         public void Undo_WithNoActions_DoesNotThrow()
         {
@@ -131,6 +192,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Execute and Undo Integration Tests
 
+        /// <summary>
+        /// Verifies that executing and then undoing the composite action correctly applies and reverses all changes.
+        /// </summary>
         [Fact]
         public void ExecuteThenUndo_RestoresState()
         {
@@ -154,6 +218,10 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region CanMergeWith Tests
 
+        /// <summary>
+        /// Verifies that CompositeAction does not support merging with other composite actions.
+        /// </summary>
+        /// <returns>False, indicating the action cannot be merged.</returns>
         [Fact]
         public void CanMergeWith_ReturnsFalse()
         {
@@ -163,6 +231,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(composite1.CanMergeWith(composite2));
         }
 
+        /// <summary>
+        /// Verifies that CanMergeWith returns false when passed a non-CompositeAction.
+        /// </summary>
+        /// <returns>False when action is not a CompositeAction.</returns>
         [Fact]
         public void CanMergeWith_NonCompositeAction_ReturnsFalse()
         {
@@ -176,6 +248,10 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region MergeWith Tests
 
+        /// <summary>
+        /// Verifies that attempting to merge returns the original action unchanged.
+        /// </summary>
+        /// <returns>The original action instance.</returns>
         [Fact]
         public void MergeWith_ReturnsSelf()
         {
@@ -191,6 +267,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Target Property Tests
 
+        /// <summary>
+        /// Verifies that the Target property defaults to null.
+        /// </summary>
         [Fact]
         public void Target_DefaultIsNull()
         {

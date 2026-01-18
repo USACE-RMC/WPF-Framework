@@ -1,17 +1,60 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate.Updater;
 
 namespace SoftwareUpdate.Updater.Tests
 {
+    /// <summary>
+    /// Test suite for the UpdaterArguments class, validating command-line argument parsing and validation functionality.
+    /// </summary>
     public class UpdaterArgumentsTests
     {
         #region Test Helpers
 
+        /// <summary>
+        /// Helper method to parse command-line arguments into an UpdaterArguments object.
+        /// </summary>
+        /// <param name="args">The array of command-line arguments to parse.</param>
+        /// <returns>A parsed UpdaterArguments instance.</returns>
         private static UpdaterArguments Parse(string[] args)
         {
             return UpdaterArguments.Parse(args);
         }
 
+        /// <summary>
+        /// Helper method to validate an UpdaterArguments object.
+        /// </summary>
+        /// <param name="args">The UpdaterArguments instance to validate.</param>
+        /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
         private static void Validate(UpdaterArguments args)
         {
             args.Validate();
@@ -21,6 +64,9 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region Parse Tests
 
+        /// <summary>
+        /// Verifies that the --pid argument is correctly parsed and assigned to ProcessId.
+        /// </summary>
         [Fact]
         public void Parse_ProcessId()
         {
@@ -29,6 +75,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(1234, args.ProcessId);
         }
 
+        /// <summary>
+        /// Verifies that the --zip argument is correctly parsed and assigned to ZipPath.
+        /// </summary>
         [Fact]
         public void Parse_ZipPath()
         {
@@ -37,6 +86,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(@"C:\path\to\update.zip", args.ZipPath);
         }
 
+        /// <summary>
+        /// Verifies that quoted path arguments are correctly unquoted during parsing.
+        /// </summary>
         [Fact]
         public void Parse_QuotedZipPath()
         {
@@ -45,6 +97,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(@"C:\path with spaces\update.zip", args.ZipPath);
         }
 
+        /// <summary>
+        /// Verifies that the --target argument is correctly parsed and assigned to TargetDirectory.
+        /// </summary>
         [Fact]
         public void Parse_TargetDirectory()
         {
@@ -53,6 +108,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(@"C:\Program Files\MyApp", args.TargetDirectory);
         }
 
+        /// <summary>
+        /// Verifies that the --exe argument is correctly parsed and assigned to MainExecutable.
+        /// </summary>
         [Fact]
         public void Parse_MainExecutable()
         {
@@ -61,6 +119,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal("MyApp.exe", args.MainExecutable);
         }
 
+        /// <summary>
+        /// Verifies that the --backup flag sets CreateBackup to true when present.
+        /// </summary>
         [Fact]
         public void Parse_BackupFlag()
         {
@@ -69,6 +130,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.True(args.CreateBackup);
         }
 
+        /// <summary>
+        /// Verifies that CreateBackup defaults to false when --backup flag is not present.
+        /// </summary>
         [Fact]
         public void Parse_BackupFlagNotPresent()
         {
@@ -77,6 +141,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.False(args.CreateBackup);
         }
 
+        /// <summary>
+        /// Verifies that all command-line arguments can be parsed together correctly.
+        /// </summary>
         [Fact]
         public void Parse_AllArguments()
         {
@@ -96,6 +163,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.True(args.CreateBackup);
         }
 
+        /// <summary>
+        /// Verifies that argument parsing is case-insensitive.
+        /// </summary>
         [Fact]
         public void Parse_CaseInsensitive()
         {
@@ -113,6 +183,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal("test.exe", args.MainExecutable);
         }
 
+        /// <summary>
+        /// Verifies that an invalid process ID value defaults to zero.
+        /// </summary>
         [Fact]
         public void Parse_InvalidPid_DefaultsToZero()
         {
@@ -121,6 +194,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(0, args.ProcessId);
         }
 
+        /// <summary>
+        /// Verifies that an argument without a value is ignored during parsing.
+        /// </summary>
         [Fact]
         public void Parse_MissingValue_IgnoresArgument()
         {
@@ -129,6 +205,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(0, args.ProcessId);
         }
 
+        /// <summary>
+        /// Verifies that parsing empty arguments returns an object with default values.
+        /// </summary>
         [Fact]
         public void Parse_EmptyArgs_ReturnsDefaults()
         {
@@ -141,6 +220,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.False(args.CreateBackup);
         }
 
+        /// <summary>
+        /// Verifies that unknown or unrecognized arguments are ignored during parsing.
+        /// </summary>
         [Fact]
         public void Parse_UnknownArguments_Ignored()
         {
@@ -157,6 +239,10 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region Validate Tests
 
+        /// <summary>
+        /// Verifies that validation throws ArgumentException when ProcessId is missing or zero.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception when ProcessId is invalid.</exception>
         [Fact]
         public void Validate_MissingProcessId_ThrowsArgumentException()
         {
@@ -181,6 +267,10 @@ namespace SoftwareUpdate.Updater.Tests
             }
         }
 
+        /// <summary>
+        /// Verifies that validation throws ArgumentException when ZipPath is null or empty.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception when ZipPath is missing.</exception>
         [Fact]
         public void Validate_MissingZipPath_ThrowsArgumentException()
         {
@@ -197,6 +287,10 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Contains("--zip", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that validation throws ArgumentException when the specified zip file does not exist.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception when zip file is not found.</exception>
         [Fact]
         public void Validate_NonExistentZipFile_ThrowsArgumentException()
         {
@@ -213,6 +307,10 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Contains("Zip file not found", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that validation throws ArgumentException when TargetDirectory is null or empty.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception when TargetDirectory is missing.</exception>
         [Fact]
         public void Validate_MissingTargetDirectory_ThrowsArgumentException()
         {
@@ -236,6 +334,10 @@ namespace SoftwareUpdate.Updater.Tests
             }
         }
 
+        /// <summary>
+        /// Verifies that validation throws ArgumentException when the target directory does not exist.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception when target directory is not found.</exception>
         [Fact]
         public void Validate_NonExistentTargetDirectory_ThrowsArgumentException()
         {
@@ -259,6 +361,10 @@ namespace SoftwareUpdate.Updater.Tests
             }
         }
 
+        /// <summary>
+        /// Verifies that validation throws ArgumentException when MainExecutable is null or empty.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception when MainExecutable is missing.</exception>
         [Fact]
         public void Validate_MissingMainExecutable_ThrowsArgumentException()
         {
@@ -283,6 +389,10 @@ namespace SoftwareUpdate.Updater.Tests
             }
         }
 
+        /// <summary>
+        /// Verifies that validation concatenates multiple error messages when multiple arguments are invalid.
+        /// </summary>
+        /// <exception cref="ArgumentException">Expected exception containing all validation errors.</exception>
         [Fact]
         public void Validate_MultipleErrors_ConcatenatesMessages()
         {
@@ -301,6 +411,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Contains("--exe", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that validation succeeds without throwing when all arguments are valid.
+        /// </summary>
         [Fact]
         public void Validate_ValidArguments_DoesNotThrow()
         {
@@ -330,6 +443,11 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region UnquoteArgument Tests (Via Parse)
 
+        /// <summary>
+        /// Verifies that the argument unquoting functionality correctly handles various input formats.
+        /// </summary>
+        /// <param name="input">The input string that may contain quotes.</param>
+        /// <param name="expected">The expected unquoted result.</param>
         [Theory]
         [InlineData("simple", "simple")]
         [InlineData("\"quoted\"", "quoted")]

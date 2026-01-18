@@ -40,10 +40,16 @@ namespace GenericControls.Tests.Converters
     /// </summary>
     public class ConverterTests1
     {
+        /// <summary>
+        /// Culture info used for converter testing.
+        /// </summary>
         private readonly CultureInfo _culture = CultureInfo.InvariantCulture;
 
         #region ReverseBooleanConverter Tests
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.Convert returns false when converting true.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_Convert_TrueReturnsFalse()
         {
@@ -52,6 +58,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.Convert returns true when converting false.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_Convert_FalseReturnsTrue()
         {
@@ -60,6 +69,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.Convert returns null when converting null.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_Convert_NullReturnsNull()
         {
@@ -68,6 +80,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.Convert returns null when converting an invalid type.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -76,6 +91,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.Convert returns null when converting an integer.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_Convert_IntReturnsNull()
         {
@@ -84,6 +102,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.ConvertBack returns false when converting true.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_ConvertBack_TrueReturnsFalse()
         {
@@ -92,6 +113,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.ConvertBack returns true when converting false.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_ConvertBack_FalseReturnsTrue()
         {
@@ -100,6 +124,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.ConvertBack returns null when converting null.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_ConvertBack_NullReturnsNull()
         {
@@ -108,6 +135,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ReverseBooleanConverter.ConvertBack returns null when converting an invalid type.
+        /// </summary>
         [Fact]
         public void ReverseBooleanConverter_ConvertBack_InvalidTypeReturnsNull()
         {
@@ -120,6 +150,9 @@ namespace GenericControls.Tests.Converters
 
         #region BooleanToVisibilityConverter Tests
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter has correct default values for TrueValue and FalseValue.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_DefaultValues()
         {
@@ -128,6 +161,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Collapsed, converter.FalseValue);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.Convert returns Visible when converting true.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_Convert_TrueReturnsVisible()
         {
@@ -136,6 +172,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Visible, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.Convert returns Collapsed when converting false.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_Convert_FalseReturnsCollapsed()
         {
@@ -144,6 +183,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Collapsed, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.Convert returns the FalseValue when converting null.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_Convert_NullReturnsFalseValue()
         {
@@ -152,6 +194,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Collapsed, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.Convert returns the FalseValue when converting an invalid type.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_Convert_InvalidTypeReturnsFalseValue()
         {
@@ -160,6 +205,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Collapsed, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.Convert works with custom TrueValue and FalseValue settings.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_Convert_CustomValues()
         {
@@ -172,6 +220,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Visible, converter.Convert(false, typeof(Visibility), null, _culture));
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.ConvertBack returns true when converting Visible.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_ConvertBack_VisibleReturnsTrue()
         {
@@ -180,6 +231,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.ConvertBack returns false when converting Collapsed.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_ConvertBack_CollapsedReturnsFalse()
         {
@@ -188,6 +242,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.ConvertBack returns false when converting Hidden.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_ConvertBack_HiddenReturnsFalse()
         {
@@ -196,6 +253,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.ConvertBack returns false when converting null.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_ConvertBack_NullReturnsFalse()
         {
@@ -204,6 +264,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.ConvertBack returns false when converting an invalid type.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_ConvertBack_InvalidTypeReturnsFalse()
         {
@@ -212,6 +275,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToVisibilityConverter.ConvertBack works with custom TrueValue setting.
+        /// </summary>
         [Fact]
         public void BooleanToVisibilityConverter_ConvertBack_CustomTrueValue()
         {
@@ -227,6 +293,9 @@ namespace GenericControls.Tests.Converters
 
         #region BooleanToColorConverter Tests
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter has correct default values for TrueValue and FalseValue.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_DefaultValues()
         {
@@ -235,6 +304,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Colors.Transparent, converter.FalseValue);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.Convert returns the TrueValue color when converting true.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_Convert_TrueReturnsTrueColor()
         {
@@ -243,6 +315,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Colors.Black, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.Convert returns the FalseValue color when converting false.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_Convert_FalseReturnsFalseColor()
         {
@@ -251,6 +326,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Colors.Transparent, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.Convert returns null when converting null.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_Convert_NullReturnsNull()
         {
@@ -259,6 +337,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.Convert returns null when converting an invalid type.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -267,6 +348,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.Convert works with custom color values.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_Convert_CustomColors()
         {
@@ -279,6 +363,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Colors.Blue, converter.Convert(false, typeof(Color), null, _culture));
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.ConvertBack returns true when converting the TrueValue color.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_ConvertBack_TrueColorReturnsTrue()
         {
@@ -287,6 +374,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.ConvertBack returns false when converting the FalseValue color.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_ConvertBack_FalseColorReturnsFalse()
         {
@@ -295,6 +385,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.ConvertBack returns null when converting null.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_ConvertBack_NullReturnsNull()
         {
@@ -303,6 +396,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.ConvertBack returns null when converting an unknown color.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_ConvertBack_UnknownColorReturnsNull()
         {
@@ -311,6 +407,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToColorConverter.ConvertBack returns null when converting an invalid type.
+        /// </summary>
         [Fact]
         public void BooleanToColorConverter_ConvertBack_InvalidTypeReturnsNull()
         {
@@ -323,6 +422,9 @@ namespace GenericControls.Tests.Converters
 
         #region BooleanToBrushConverter Tests
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter has correct default values for TrueValue and FalseValue.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_DefaultValues()
         {
@@ -331,6 +433,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Brushes.Transparent, converter.FalseValue);
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.Convert returns the TrueValue brush when converting true.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_Convert_TrueReturnsTrueBrush()
         {
@@ -339,6 +444,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Brushes.Black, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.Convert returns the FalseValue brush when converting false.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_Convert_FalseReturnsFalseBrush()
         {
@@ -347,6 +455,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Brushes.Transparent, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.Convert returns null when converting null.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_Convert_NullReturnsNull()
         {
@@ -355,6 +466,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.Convert returns null when converting an invalid type.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -363,6 +477,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.Convert works with custom brush values.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_Convert_CustomBrushes()
         {
@@ -375,6 +492,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Brushes.Blue, converter.Convert(false, typeof(Brush), null, _culture));
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.ConvertBack returns null when converting null.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_ConvertBack_NullReturnsNull()
         {
@@ -383,6 +503,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToBrushConverter.ConvertBack returns null when converting an invalid type.
+        /// </summary>
         [Fact]
         public void BooleanToBrushConverter_ConvertBack_InvalidTypeReturnsNull()
         {
@@ -395,6 +518,9 @@ namespace GenericControls.Tests.Converters
 
         #region BooleanToTextConverter Tests
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter default values.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_DefaultValues()
         {
@@ -403,6 +529,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("", converter.FalseValue);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.Convert true returns true text.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_Convert_TrueReturnsTrueText()
         {
@@ -415,6 +544,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("Yes", result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.Convert false returns false text.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_Convert_FalseReturnsFalseText()
         {
@@ -427,6 +559,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("No", result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_Convert_NullReturnsNull()
         {
@@ -435,6 +570,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.Convert invalid type returns null.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -443,6 +581,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.ConvertBack true text returns true.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_ConvertBack_TrueTextReturnsTrue()
         {
@@ -455,6 +596,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.ConvertBack false text returns false.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_ConvertBack_FalseTextReturnsFalse()
         {
@@ -467,6 +611,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_ConvertBack_NullReturnsNull()
         {
@@ -475,6 +622,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.ConvertBack unknown text returns null.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_ConvertBack_UnknownTextReturnsNull()
         {
@@ -487,6 +637,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.ConvertBack non string value uses to string.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_ConvertBack_NonStringValueUsesToString()
         {
@@ -499,6 +652,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToTextConverter.ConvertBack empty string matches default true.
+        /// </summary>
         [Fact]
         public void BooleanToTextConverter_ConvertBack_EmptyStringMatchesDefaultTrue()
         {
@@ -512,6 +668,9 @@ namespace GenericControls.Tests.Converters
 
         #region BooleanToDoubleConverter Tests
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter default values.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_DefaultValues()
         {
@@ -520,6 +679,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0d, converter.FalseValue);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.Convert true returns true value.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_Convert_TrueReturnsTrueValue()
         {
@@ -532,6 +694,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(1.0, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.Convert false returns false value.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_Convert_FalseReturnsFalseValue()
         {
@@ -544,6 +709,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0.0, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_Convert_NullReturnsNull()
         {
@@ -552,6 +720,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.Convert invalid type returns null.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -560,6 +731,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.Convert custom values.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_Convert_CustomValues()
         {
@@ -572,6 +746,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(-50.25, converter.Convert(false, typeof(double), null, _culture));
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.ConvertBack true value returns true.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_ConvertBack_TrueValueReturnsTrue()
         {
@@ -584,6 +761,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.ConvertBack false value returns false.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_ConvertBack_FalseValueReturnsFalse()
         {
@@ -596,6 +776,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_ConvertBack_NullReturnsNull()
         {
@@ -604,6 +787,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.ConvertBack unknown value returns null.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_ConvertBack_UnknownValueReturnsNull()
         {
@@ -616,6 +802,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.ConvertBack string value parsed.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_ConvertBack_StringValueParsed()
         {
@@ -628,6 +817,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that BooleanToDoubleConverter.ConvertBack invalid string returns null.
+        /// </summary>
         [Fact]
         public void BooleanToDoubleConverter_ConvertBack_InvalidStringReturnsNull()
         {
@@ -640,6 +832,9 @@ namespace GenericControls.Tests.Converters
 
         #region VisibilityToBooleanConverter Tests
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter default values.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_DefaultValues()
         {
@@ -649,6 +844,9 @@ namespace GenericControls.Tests.Converters
             Assert.False(converter.HiddenValue);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.Convert visible returns true.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_Convert_VisibleReturnsTrue()
         {
@@ -657,6 +855,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.Convert collapsed returns false.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_Convert_CollapsedReturnsFalse()
         {
@@ -665,6 +866,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.Convert hidden returns false.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_Convert_HiddenReturnsFalse()
         {
@@ -673,6 +877,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(false, result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_Convert_NullReturnsNull()
         {
@@ -681,6 +888,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.Convert invalid type returns null.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -689,6 +899,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.Convert custom values.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_Convert_CustomValues()
         {
@@ -703,6 +916,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(true, converter.Convert(Visibility.Hidden, typeof(bool), null, _culture));
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.ConvertBack true returns visible.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_ConvertBack_TrueReturnsVisible()
         {
@@ -711,6 +927,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Visible, result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.ConvertBack false returns collapsed.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_ConvertBack_FalseReturnsCollapsed()
         {
@@ -720,6 +939,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Visibility.Collapsed, result);
         }
 
+        /// <summary>
+        /// Tests that VisibilityToBooleanConverter.ConvertBack custom config.
+        /// </summary>
         [Fact]
         public void VisibilityToBooleanConverter_ConvertBack_CustomConfig()
         {
@@ -737,6 +959,9 @@ namespace GenericControls.Tests.Converters
 
         #region ColorToByteConverter Tests
 
+        /// <summary>
+        /// Tests that ColorToByteConverter default component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_DefaultComponent()
         {
@@ -744,6 +969,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(ColorComponent.R, converter.Component);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert extracts red component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_ExtractsRedComponent()
         {
@@ -753,6 +981,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal((byte)128, result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert extracts green component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_ExtractsGreenComponent()
         {
@@ -762,6 +993,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal((byte)64, result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert extracts blue component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_ExtractsBlueComponent()
         {
@@ -771,6 +1005,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal((byte)32, result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert extracts alpha component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_ExtractsAlphaComponent()
         {
@@ -780,6 +1017,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal((byte)200, result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_NullReturnsNull()
         {
@@ -788,6 +1028,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert invalid type returns null.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -796,6 +1039,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.Convert color object returns null.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_Convert_ColorObjectReturnsNull()
         {
@@ -804,6 +1050,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack updates red component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_UpdatesRedComponent()
         {
@@ -817,6 +1066,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(32, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack updates green component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_UpdatesGreenComponent()
         {
@@ -830,6 +1082,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(32, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack updates blue component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_UpdatesBlueComponent()
         {
@@ -843,6 +1098,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(200, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack updates alpha component.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_UpdatesAlphaComponent()
         {
@@ -857,6 +1115,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(32, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_NullReturnsNull()
         {
@@ -865,6 +1126,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack no color set returns transparent.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_NoColorSetReturnsTransparent()
         {
@@ -874,6 +1138,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0, result.Color.A);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack string value parsed.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_StringValueParsed()
         {
@@ -885,6 +1152,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(200, result.Color.R);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack value clamped to byte range.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_ValueClampedToByteRange()
         {
@@ -898,6 +1168,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0, result.Color.R);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack negative value results in zero.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_NegativeValueResultsInZero()
         {
@@ -909,6 +1182,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0, result.Color.R);
         }
 
+        /// <summary>
+        /// Tests that ColorToByteConverter.ConvertBack double value rounded.
+        /// </summary>
         [Fact]
         public void ColorToByteConverter_ConvertBack_DoubleValueRounded()
         {
@@ -924,6 +1200,9 @@ namespace GenericControls.Tests.Converters
 
         #region ColorToSolidBrushConverter Tests
 
+        /// <summary>
+        /// Tests that ColorToSolidBrushConverter.Convert color to brush.
+        /// </summary>
         [Fact]
         public void ColorToSolidBrushConverter_Convert_ColorToBrush()
         {
@@ -933,6 +1212,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Colors.Red, result.Color);
         }
 
+        /// <summary>
+        /// Tests that ColorToSolidBrushConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void ColorToSolidBrushConverter_Convert_NullReturnsNull()
         {
@@ -941,6 +1223,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ColorToSolidBrushConverter.Convert custom color.
+        /// </summary>
         [Fact]
         public void ColorToSolidBrushConverter_Convert_CustomColor()
         {
@@ -954,6 +1239,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(150, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that ColorToSolidBrushConverter.ConvertBack brush to color.
+        /// </summary>
         [Fact]
         public void ColorToSolidBrushConverter_ConvertBack_BrushToColor()
         {
@@ -963,6 +1251,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(Colors.Blue, result);
         }
 
+        /// <summary>
+        /// Tests that ColorToSolidBrushConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void ColorToSolidBrushConverter_ConvertBack_NullReturnsNull()
         {
@@ -971,6 +1262,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that ColorToSolidBrushConverter round trip.
+        /// </summary>
         [Fact]
         public void ColorToSolidBrushConverter_RoundTrip()
         {
@@ -985,6 +1279,9 @@ namespace GenericControls.Tests.Converters
 
         #region DrawingColorToSolidColorBrushConverter Tests
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.Convert drawing color to brush.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_Convert_DrawingColorToBrush()
         {
@@ -997,6 +1294,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(200, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_Convert_NullReturnsNull()
         {
@@ -1005,6 +1305,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.Convert invalid type returns null.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_Convert_InvalidTypeReturnsNull()
         {
@@ -1013,6 +1316,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.Convert wpf color returns null.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_Convert_WpfColorReturnsNull()
         {
@@ -1021,6 +1327,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.Convert preserves alpha.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_Convert_PreservesAlpha()
         {
@@ -1031,6 +1340,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(128, result.Color.A);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.ConvertBack brush to drawing color.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_ConvertBack_BrushToDrawingColor()
         {
@@ -1044,6 +1356,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(150, drawingColor.B);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_ConvertBack_NullReturnsNull()
         {
@@ -1052,6 +1367,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter.ConvertBack invalid type returns null.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_ConvertBack_InvalidTypeReturnsNull()
         {
@@ -1060,6 +1378,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DrawingColorToSolidColorBrushConverter round trip.
+        /// </summary>
         [Fact]
         public void DrawingColorToSolidColorBrushConverter_RoundTrip()
         {
@@ -1077,6 +1398,9 @@ namespace GenericControls.Tests.Converters
 
         #region GridlineColorLightConverter Tests
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert null returns default brush.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_NullReturnsDefaultBrush()
         {
@@ -1089,6 +1413,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert invalid type returns default brush.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_InvalidTypeReturnsDefaultBrush()
         {
@@ -1098,6 +1425,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(51, result.Color.A);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert fully opaque brush gets alpha51.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_FullyOpaqueBrushGetsAlpha51()
         {
@@ -1111,6 +1441,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(200, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert semi transparent brush gets alpha51.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_SemiTransparentBrushGetsAlpha51()
         {
@@ -1121,6 +1454,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(51, result.Color.A);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert very transparent brush gets reduced alpha.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_VeryTransparentBrushGetsReducedAlpha()
         {
@@ -1135,6 +1471,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(200, result.Color.B);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert alpha exactly51 gets alpha51.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_AlphaExactly51GetsAlpha51()
         {
@@ -1145,6 +1484,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(51, result.Color.A);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.Convert alpha zero stays zero.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_Convert_AlphaZeroStaysZero()
         {
@@ -1155,6 +1497,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0, result.Color.A);
         }
 
+        /// <summary>
+        /// Tests that GridlineColorLightConverter.ConvertBack throws not implemented exception.
+        /// </summary>
         [Fact]
         public void GridlineColorLightConverter_ConvertBack_ThrowsNotImplementedException()
         {
@@ -1167,6 +1512,9 @@ namespace GenericControls.Tests.Converters
 
         #region FontToFontFamilyConverter Tests
 
+        /// <summary>
+        /// Tests that FontToFontFamilyConverter.Convert string to font family.
+        /// </summary>
         [Fact]
         public void FontToFontFamilyConverter_Convert_StringToFontFamily()
         {
@@ -1176,6 +1524,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("Arial", result.Source);
         }
 
+        /// <summary>
+        /// Tests that FontToFontFamilyConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void FontToFontFamilyConverter_Convert_NullReturnsNull()
         {
@@ -1184,6 +1535,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that FontToFontFamilyConverter.Convert int uses to string.
+        /// </summary>
         [Fact]
         public void FontToFontFamilyConverter_Convert_IntUsesToString()
         {
@@ -1193,6 +1547,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("123", result.Source);
         }
 
+        /// <summary>
+        /// Tests that FontToFontFamilyConverter.ConvertBack font family to string.
+        /// </summary>
         [Fact]
         public void FontToFontFamilyConverter_ConvertBack_FontFamilyToString()
         {
@@ -1202,6 +1559,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("Times New Roman", result);
         }
 
+        /// <summary>
+        /// Tests that FontToFontFamilyConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void FontToFontFamilyConverter_ConvertBack_NullReturnsNull()
         {
@@ -1210,6 +1570,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that FontToFontFamilyConverter round trip.
+        /// </summary>
         [Fact]
         public void FontToFontFamilyConverter_RoundTrip()
         {
@@ -1224,6 +1587,9 @@ namespace GenericControls.Tests.Converters
 
         #region FontFamilyToFontStringConverter Tests
 
+        /// <summary>
+        /// Tests that FontFamilyToFontStringConverter.Convert font family to string.
+        /// </summary>
         [Fact]
         public void FontFamilyToFontStringConverter_Convert_FontFamilyToString()
         {
@@ -1233,6 +1599,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("Verdana", result);
         }
 
+        /// <summary>
+        /// Tests that FontFamilyToFontStringConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void FontFamilyToFontStringConverter_Convert_NullReturnsNull()
         {
@@ -1241,6 +1610,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that FontFamilyToFontStringConverter.ConvertBack string to font family.
+        /// </summary>
         [Fact]
         public void FontFamilyToFontStringConverter_ConvertBack_StringToFontFamily()
         {
@@ -1250,6 +1622,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("Georgia", result.Source);
         }
 
+        /// <summary>
+        /// Tests that FontFamilyToFontStringConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void FontFamilyToFontStringConverter_ConvertBack_NullReturnsNull()
         {
@@ -1258,6 +1633,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that FontFamilyToFontStringConverter.ConvertBack int uses to string.
+        /// </summary>
         [Fact]
         public void FontFamilyToFontStringConverter_ConvertBack_IntUsesToString()
         {
@@ -1267,6 +1645,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("456", result.Source);
         }
 
+        /// <summary>
+        /// Tests that FontFamilyToFontStringConverter round trip.
+        /// </summary>
         [Fact]
         public void FontFamilyToFontStringConverter_RoundTrip()
         {
@@ -1281,6 +1662,9 @@ namespace GenericControls.Tests.Converters
 
         #region IntToDoubleConverter Tests
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.Convert int to double.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_Convert_IntToDouble()
         {
@@ -1289,6 +1673,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(42.0, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_Convert_NullReturnsNull()
         {
@@ -1297,6 +1684,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.Convert zero returns zero double.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_Convert_ZeroReturnsZeroDouble()
         {
@@ -1305,6 +1695,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0.0, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.Convert negative int.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_Convert_NegativeInt()
         {
@@ -1313,6 +1706,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(-100.0, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.Convert max int.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_Convert_MaxInt()
         {
@@ -1321,6 +1717,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal((double)int.MaxValue, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.Convert min int.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_Convert_MinInt()
         {
@@ -1329,6 +1728,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal((double)int.MinValue, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.ConvertBack double to int.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_ConvertBack_DoubleToInt()
         {
@@ -1337,6 +1739,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(42, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_ConvertBack_NullReturnsNull()
         {
@@ -1345,6 +1750,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.ConvertBack double rounded to int.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_ConvertBack_DoubleRoundedToInt()
         {
@@ -1353,6 +1761,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(43, result); // Convert.ToInt32 uses banker's rounding
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.ConvertBack zero double.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_ConvertBack_ZeroDouble()
         {
@@ -1361,6 +1772,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0, result);
         }
 
+        /// <summary>
+        /// Tests that IntToDoubleConverter.ConvertBack negative double.
+        /// </summary>
         [Fact]
         public void IntToDoubleConverter_ConvertBack_NegativeDouble()
         {
@@ -1373,6 +1787,9 @@ namespace GenericControls.Tests.Converters
 
         #region DoubleToStringConverter Tests
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert string to double.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_StringToDouble()
         {
@@ -1381,6 +1798,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(42.5, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert null returns null.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_NullReturnsNull()
         {
@@ -1389,6 +1809,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert integer string.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_IntegerString()
         {
@@ -1397,6 +1820,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(100.0, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert negative string.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_NegativeString()
         {
@@ -1405,6 +1831,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(-75.25, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert scientific notation.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_ScientificNotation()
         {
@@ -1413,6 +1842,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(150.0, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert invalid string returns zero.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_InvalidStringReturnsZero()
         {
@@ -1421,6 +1853,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0.0, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert empty string returns zero.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_EmptyStringReturnsZero()
         {
@@ -1429,6 +1864,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(0.0, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.Convert double value.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_Convert_DoubleValue()
         {
@@ -1437,6 +1875,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal(123.456, result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.ConvertBack double to string.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_ConvertBack_DoubleToString()
         {
@@ -1445,6 +1886,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("42.5", result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.ConvertBack null returns null.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_ConvertBack_NullReturnsNull()
         {
@@ -1453,6 +1897,9 @@ namespace GenericControls.Tests.Converters
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.ConvertBack integer double.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_ConvertBack_IntegerDouble()
         {
@@ -1461,6 +1908,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("100", result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.ConvertBack negative value.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_ConvertBack_NegativeValue()
         {
@@ -1469,6 +1919,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("-75.25", result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter.ConvertBack zero.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_ConvertBack_Zero()
         {
@@ -1477,6 +1930,9 @@ namespace GenericControls.Tests.Converters
             Assert.Equal("0", result);
         }
 
+        /// <summary>
+        /// Tests that DoubleToStringConverter round trip.
+        /// </summary>
         [Fact]
         public void DoubleToStringConverter_RoundTrip()
         {

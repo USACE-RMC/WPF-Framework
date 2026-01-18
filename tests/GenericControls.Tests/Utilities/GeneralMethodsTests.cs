@@ -1,5 +1,31 @@
 /*
-* Unit tests for GeneralMethods from GenericControls
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using Xunit;
@@ -13,6 +39,11 @@ public class GeneralMethodsTests
 {
     #region IsNumericType Tests - Primitive Types
 
+    /// <summary>
+    /// Tests that IsNumericType returns true for all primitive numeric types.
+    /// </summary>
+    /// <param name="type">The type to test.</param>
+    /// <param name="expected">The expected result.</param>
     [Theory]
     [InlineData(typeof(byte), true)]
     [InlineData(typeof(sbyte), true)]
@@ -34,6 +65,10 @@ public class GeneralMethodsTests
         Assert.Equal(expected, result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for non-numeric types.
+    /// </summary>
+    /// <param name="type">The non-numeric type to test.</param>
     [Theory]
     [InlineData(typeof(bool))]
     [InlineData(typeof(char))]
@@ -54,6 +89,11 @@ public class GeneralMethodsTests
 
     #region IsNumericType Tests - Nullable Types
 
+    /// <summary>
+    /// Tests that IsNumericType returns true for nullable numeric types.
+    /// </summary>
+    /// <param name="type">The nullable numeric type to test.</param>
+    /// <param name="expected">The expected result.</param>
     [Theory]
     [InlineData(typeof(byte?), true)]
     [InlineData(typeof(sbyte?), true)]
@@ -75,6 +115,10 @@ public class GeneralMethodsTests
         Assert.Equal(expected, result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for nullable non-numeric types.
+    /// </summary>
+    /// <param name="type">The nullable non-numeric type to test.</param>
     [Theory]
     [InlineData(typeof(bool?))]
     [InlineData(typeof(char?))]
@@ -93,6 +137,9 @@ public class GeneralMethodsTests
 
     #region IsNumericType Tests - Null
 
+    /// <summary>
+    /// Tests that IsNumericType returns false when given a null type.
+    /// </summary>
     [Fact]
     public void IsNumericType_NullType_ReturnsFalse()
     {
@@ -107,6 +154,9 @@ public class GeneralMethodsTests
 
     #region IsNumericType Tests - Complex Types
 
+    /// <summary>
+    /// Tests that IsNumericType returns true for enum types since they have numeric underlying types.
+    /// </summary>
     [Fact]
     public void IsNumericType_EnumType_ReturnsTrue()
     {
@@ -119,6 +169,9 @@ public class GeneralMethodsTests
         Assert.True(result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for array types.
+    /// </summary>
     [Fact]
     public void IsNumericType_ArrayType_ReturnsFalse()
     {
@@ -129,6 +182,9 @@ public class GeneralMethodsTests
         Assert.False(result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for generic list types.
+    /// </summary>
     [Fact]
     public void IsNumericType_ListType_ReturnsFalse()
     {
@@ -139,6 +195,9 @@ public class GeneralMethodsTests
         Assert.False(result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for custom class types.
+    /// </summary>
     [Fact]
     public void IsNumericType_CustomClass_ReturnsFalse()
     {
@@ -149,6 +208,9 @@ public class GeneralMethodsTests
         Assert.False(result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for custom struct types.
+    /// </summary>
     [Fact]
     public void IsNumericType_CustomStruct_ReturnsFalse()
     {
@@ -159,8 +221,14 @@ public class GeneralMethodsTests
         Assert.False(result);
     }
 
+    /// <summary>
+    /// Custom test struct for testing type checking methods.
+    /// </summary>
     private struct CustomStruct
     {
+        /// <summary>
+        /// Test integer value field.
+        /// </summary>
         public int Value;
     }
 
@@ -168,6 +236,9 @@ public class GeneralMethodsTests
 
     #region IsNumericType Tests - Edge Cases
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for IntPtr type.
+    /// </summary>
     [Fact]
     public void IsNumericType_IntPtr_ReturnsFalse()
     {
@@ -178,6 +249,9 @@ public class GeneralMethodsTests
         Assert.False(result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for UIntPtr type.
+    /// </summary>
     [Fact]
     public void IsNumericType_UIntPtr_ReturnsFalse()
     {
@@ -188,6 +262,9 @@ public class GeneralMethodsTests
         Assert.False(result);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns false for TimeSpan type.
+    /// </summary>
     [Fact]
     public void IsNumericType_TimeSpan_ReturnsFalse()
     {
@@ -202,6 +279,9 @@ public class GeneralMethodsTests
 
     #region Random Color Lists Tests
 
+    /// <summary>
+    /// Tests that RandomColorsShortList has the expected number of colors.
+    /// </summary>
     [Fact]
     public void RandomColorsShortList_HasExpectedLength()
     {
@@ -209,6 +289,9 @@ public class GeneralMethodsTests
         Assert.Equal(63, GeneralMethods.RandomColorsShortList.Length);
     }
 
+    /// <summary>
+    /// Tests that RandomColorsLongList has the expected number of colors.
+    /// </summary>
     [Fact]
     public void RandomColorsLongList_HasExpectedLength()
     {
@@ -216,6 +299,9 @@ public class GeneralMethodsTests
         Assert.Equal(1024, GeneralMethods.RandomColorsLongList.Length);
     }
 
+    /// <summary>
+    /// Tests that all colors in RandomColorsShortList are valid hex color strings.
+    /// </summary>
     [Fact]
     public void RandomColorsShortList_ContainsValidHexColors()
     {
@@ -227,6 +313,9 @@ public class GeneralMethodsTests
         }
     }
 
+    /// <summary>
+    /// Tests that all colors in RandomColorsLongList are valid hex color strings.
+    /// </summary>
     [Fact]
     public void RandomColorsLongList_ContainsValidHexColors()
     {
@@ -238,6 +327,9 @@ public class GeneralMethodsTests
         }
     }
 
+    /// <summary>
+    /// Tests that the first color in RandomColorsShortList is black.
+    /// </summary>
     [Fact]
     public void RandomColorsShortList_FirstColorIsBlack()
     {
@@ -245,6 +337,9 @@ public class GeneralMethodsTests
         Assert.Equal("#000000", GeneralMethods.RandomColorsShortList[0]);
     }
 
+    /// <summary>
+    /// Tests that the first color in RandomColorsLongList is black.
+    /// </summary>
     [Fact]
     public void RandomColorsLongList_FirstColorIsBlack()
     {
@@ -252,6 +347,9 @@ public class GeneralMethodsTests
         Assert.Equal("#000000", GeneralMethods.RandomColorsLongList[0]);
     }
 
+    /// <summary>
+    /// Tests that all colors in RandomColorsShortList are unique.
+    /// </summary>
     [Fact]
     public void RandomColorsShortList_AllColorsAreUnique()
     {
@@ -266,6 +364,9 @@ public class GeneralMethodsTests
 
     #region Type Verification Tests
 
+    /// <summary>
+    /// Tests that IsNumericType returns true for all integer types.
+    /// </summary>
     [Fact]
     public void IsNumericType_AllIntegerTypes_ReturnsTrue()
     {
@@ -285,6 +386,9 @@ public class GeneralMethodsTests
         }
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns true for all floating-point types.
+    /// </summary>
     [Fact]
     public void IsNumericType_AllFloatingPointTypes_ReturnsTrue()
     {
@@ -302,6 +406,9 @@ public class GeneralMethodsTests
 
     #region Consistency Tests
 
+    /// <summary>
+    /// Tests that IsNumericType returns consistent results when called multiple times.
+    /// </summary>
     [Fact]
     public void IsNumericType_CalledMultipleTimes_ReturnsSameResult()
     {
@@ -319,6 +426,9 @@ public class GeneralMethodsTests
         Assert.Equal(result2, result3);
     }
 
+    /// <summary>
+    /// Tests that IsNumericType returns true for both nullable and non-nullable integer types.
+    /// </summary>
     [Fact]
     public void IsNumericType_NullableIntAndInt_BothReturnTrue()
     {

@@ -1,12 +1,49 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate;
 
 namespace SoftwareUpdate.Tests.Core
 {
+    /// <summary>
+    /// Provides unit tests for the <see cref="UpdateOptions"/> class, verifying default values, property setters,
+    /// validation logic, and resolved properties for software update configuration.
+    /// </summary>
     public class UpdateOptionsTests
     {
         #region Default Values Tests
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has GitHubOwner set to null.
+        /// </summary>
         [Fact]
         public void DefaultInstance_GitHubOwner_IsNull()
         {
@@ -15,6 +52,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(options.GitHubOwner);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has GitHubRepo set to null.
+        /// </summary>
         [Fact]
         public void DefaultInstance_GitHubRepo_IsNull()
         {
@@ -23,6 +63,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(options.GitHubRepo);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has CurrentVersion set to null.
+        /// </summary>
         [Fact]
         public void DefaultInstance_CurrentVersion_IsNull()
         {
@@ -31,6 +74,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(options.CurrentVersion);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has AssetNamePattern set to "*.zip".
+        /// </summary>
         [Fact]
         public void DefaultInstance_AssetNamePattern_IsDefaultZip()
         {
@@ -39,6 +85,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("*.zip", options.AssetNamePattern);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has IncludePreReleases set to false.
+        /// </summary>
         [Fact]
         public void DefaultInstance_IncludePreReleases_IsFalse()
         {
@@ -47,6 +96,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(options.IncludePreReleases);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has CreateBackup set to true.
+        /// </summary>
         [Fact]
         public void DefaultInstance_CreateBackup_IsTrue()
         {
@@ -55,6 +107,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.True(options.CreateBackup);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has RequestTimeoutSeconds set to 30.
+        /// </summary>
         [Fact]
         public void DefaultInstance_RequestTimeoutSeconds_Is30()
         {
@@ -63,6 +118,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(30, options.RequestTimeoutSeconds);
         }
 
+        /// <summary>
+        /// Verifies that a default instance of <see cref="UpdateOptions"/> has GitHubToken set to null.
+        /// </summary>
         [Fact]
         public void DefaultInstance_GitHubToken_IsNull()
         {
@@ -75,6 +133,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Property Set Tests
 
+        /// <summary>
+        /// Verifies that the GitHubOwner property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void GitHubOwner_SetAndGet()
         {
@@ -83,6 +144,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("USACE-RMC", options.GitHubOwner);
         }
 
+        /// <summary>
+        /// Verifies that the GitHubRepo property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void GitHubRepo_SetAndGet()
         {
@@ -91,6 +155,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("RMC-BestFit", options.GitHubRepo);
         }
 
+        /// <summary>
+        /// Verifies that the CurrentVersion property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void CurrentVersion_SetAndGet()
         {
@@ -100,6 +167,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Same(version, options.CurrentVersion);
         }
 
+        /// <summary>
+        /// Verifies that the AssetNamePattern property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void AssetNamePattern_SetAndGet()
         {
@@ -108,6 +178,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("MyApp-*.zip", options.AssetNamePattern);
         }
 
+        /// <summary>
+        /// Verifies that the IncludePreReleases property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void IncludePreReleases_SetAndGet()
         {
@@ -116,6 +189,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.True(options.IncludePreReleases);
         }
 
+        /// <summary>
+        /// Verifies that the GitHubToken property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void GitHubToken_SetAndGet()
         {
@@ -124,6 +200,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("ghp_token123", options.GitHubToken);
         }
 
+        /// <summary>
+        /// Verifies that the CreateBackup property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void CreateBackup_SetAndGet()
         {
@@ -132,6 +211,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(options.CreateBackup);
         }
 
+        /// <summary>
+        /// Verifies that the RequestTimeoutSeconds property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void RequestTimeoutSeconds_SetAndGet()
         {
@@ -144,6 +226,10 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Validate Tests
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> when GitHubOwner is null.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when GitHubOwner is null.</exception>
         [Fact]
         public void Validate_NullGitHubOwner_ThrowsArgumentException()
         {
@@ -158,6 +244,10 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("GitHubOwner", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> when GitHubOwner is empty.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when GitHubOwner is empty.</exception>
         [Fact]
         public void Validate_EmptyGitHubOwner_ThrowsArgumentException()
         {
@@ -172,6 +262,10 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("GitHubOwner", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> when GitHubOwner contains invalid characters.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when GitHubOwner contains invalid characters.</exception>
         [Fact]
         public void Validate_InvalidGitHubOwner_ThrowsArgumentException()
         {
@@ -186,6 +280,10 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("alphanumeric", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> when GitHubRepo is null.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when GitHubRepo is null.</exception>
         [Fact]
         public void Validate_NullGitHubRepo_ThrowsArgumentException()
         {
@@ -200,6 +298,10 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("GitHubRepo", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> when GitHubRepo contains invalid characters.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when GitHubRepo contains invalid characters.</exception>
         [Fact]
         public void Validate_InvalidGitHubRepo_ThrowsArgumentException()
         {
@@ -214,6 +316,10 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("alphanumeric", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> when CurrentVersion is null.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when CurrentVersion is null.</exception>
         [Fact]
         public void Validate_NullCurrentVersion_ThrowsArgumentException()
         {
@@ -228,6 +334,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("CurrentVersion", ex.Message);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method does not throw an exception when all required properties are valid.
+        /// </summary>
         [Fact]
         public void Validate_ValidOptions_DoesNotThrow()
         {
@@ -243,6 +352,10 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method accepts various valid GitHub owner name formats.
+        /// </summary>
+        /// <param name="owner">The GitHub owner name to validate.</param>
         [Theory]
         [InlineData("a")]
         [InlineData("ValidOwner")]
@@ -263,6 +376,11 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that the Validate method throws <see cref="ArgumentException"/> for invalid GitHub owner name formats.
+        /// </summary>
+        /// <param name="owner">The invalid GitHub owner name.</param>
+        /// <exception cref="ArgumentException">Thrown when the owner name format is invalid.</exception>
         [Theory]
         [InlineData("-invalid")]
         [InlineData("invalid-")]
@@ -285,6 +403,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Resolved Properties Tests
 
+        /// <summary>
+        /// Verifies that ResolvedInstallDirectory returns the set value when InstallDirectory is explicitly set.
+        /// </summary>
         [Fact]
         public void ResolvedInstallDirectory_WhenSet_ReturnsSetValue()
         {
@@ -293,6 +414,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(@"C:\MyApp", options.ResolvedInstallDirectory);
         }
 
+        /// <summary>
+        /// Verifies that ResolvedInstallDirectory returns the executing assembly directory when InstallDirectory is null.
+        /// </summary>
         [Fact]
         public void ResolvedInstallDirectory_WhenNull_ReturnsExecutingAssemblyDirectory()
         {
@@ -301,6 +425,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(string.IsNullOrEmpty(options.ResolvedInstallDirectory));
         }
 
+        /// <summary>
+        /// Verifies that ResolvedMainExecutableName returns the set value when MainExecutableName is explicitly set.
+        /// </summary>
         [Fact]
         public void ResolvedMainExecutableName_WhenSet_ReturnsSetValue()
         {
@@ -309,6 +436,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("MyApp.exe", options.ResolvedMainExecutableName);
         }
 
+        /// <summary>
+        /// Verifies that ResolvedMainExecutableName returns a non-empty value when MainExecutableName is null.
+        /// </summary>
         [Fact]
         public void ResolvedMainExecutableName_WhenNull_ReturnsSomething()
         {
@@ -317,6 +447,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.False(string.IsNullOrEmpty(options.ResolvedMainExecutableName));
         }
 
+        /// <summary>
+        /// Verifies that ResolvedUpdaterPath returns the set value when UpdaterExecutablePath is explicitly set.
+        /// </summary>
         [Fact]
         public void ResolvedUpdaterPath_WhenSet_ReturnsSetValue()
         {
@@ -325,6 +458,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(@"C:\Updater\Updater.exe", options.ResolvedUpdaterPath);
         }
 
+        /// <summary>
+        /// Verifies that ResolvedUpdaterPath combines with install directory when UpdaterExecutablePath is null.
+        /// </summary>
         [Fact]
         public void ResolvedUpdaterPath_WhenNull_CombinesWithInstallDirectory()
         {
@@ -333,6 +469,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("SoftwareUpdate.Updater.exe", options.ResolvedUpdaterPath);
         }
 
+        /// <summary>
+        /// Verifies that ResolvedSkippedVersionsPath returns the set value when SkippedVersionsFilePath is explicitly set.
+        /// </summary>
         [Fact]
         public void ResolvedSkippedVersionsPath_WhenSet_ReturnsSetValue()
         {
@@ -341,6 +480,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(@"C:\Custom\skipped.txt", options.ResolvedSkippedVersionsPath);
         }
 
+        /// <summary>
+        /// Verifies that ResolvedSkippedVersionsPath uses AppData and repo name when SkippedVersionsFilePath is null.
+        /// </summary>
         [Fact]
         public void ResolvedSkippedVersionsPath_WhenNull_UsesAppDataAndRepo()
         {
@@ -354,6 +496,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("skipped_versions.txt", options.ResolvedSkippedVersionsPath);
         }
 
+        /// <summary>
+        /// Verifies that ResolvedSkippedVersionsPath uses "SoftwareUpdate" as default when repo name is null.
+        /// </summary>
         [Fact]
         public void ResolvedSkippedVersionsPath_WhenRepoNull_UsesSoftwareUpdate()
         {

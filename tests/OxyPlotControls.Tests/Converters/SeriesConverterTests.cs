@@ -1,6 +1,32 @@
 /*
- * Unit tests for Series control converters
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System.Globalization;
 using System.Windows.Media;
@@ -11,13 +37,20 @@ namespace OxyPlotControls.Tests.Converters;
 
 /// <summary>
 /// Tests for LineSeriesColorConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for line series.
 /// </summary>
 public class LineSeriesColorConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly LineSeriesColorConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -31,6 +64,9 @@ public class LineSeriesColorConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -44,6 +80,9 @@ public class LineSeriesColorConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -60,6 +99,9 @@ public class LineSeriesColorConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a red brush when given the Red color.
+    /// </summary>
     [Fact]
     public void Convert_RedColor_ReturnsRedBrush()
     {
@@ -76,6 +118,9 @@ public class LineSeriesColorConverterTests
         Assert.Equal(Colors.Red, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a blue brush when given the Blue color.
+    /// </summary>
     [Fact]
     public void Convert_BlueColor_ReturnsBlueBrush()
     {
@@ -92,6 +137,9 @@ public class LineSeriesColorConverterTests
         Assert.Equal(Colors.Blue, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a brush with the correct transparency when given a transparent color.
+    /// </summary>
     [Fact]
     public void Convert_TransparentColor_ReturnsTransparentBrush()
     {
@@ -112,6 +160,9 @@ public class LineSeriesColorConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -130,6 +181,9 @@ public class LineSeriesColorConverterTests
         Assert.Equal(Color.FromArgb(255, 0, 0, 0), result[0]);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns a color array when given a valid brush.
+    /// </summary>
     [Fact]
     public void ConvertBack_ValidBrush_ReturnsColorArray()
     {
@@ -152,13 +206,20 @@ public class LineSeriesColorConverterTests
 
 /// <summary>
 /// Tests for AreaSeriesColor2Converter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for area series secondary color.
 /// </summary>
 public class AreaSeriesColor2ConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly AreaSeriesColor2Converter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -172,6 +233,9 @@ public class AreaSeriesColor2ConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -185,6 +249,9 @@ public class AreaSeriesColor2ConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -201,6 +268,9 @@ public class AreaSeriesColor2ConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a green brush when given the Green color.
+    /// </summary>
     [Fact]
     public void Convert_GreenColor_ReturnsGreenBrush()
     {
@@ -221,6 +291,9 @@ public class AreaSeriesColor2ConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -244,13 +317,20 @@ public class AreaSeriesColor2ConverterTests
 
 /// <summary>
 /// Tests for AreaSeriesFillConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for area series fill color.
 /// </summary>
 public class AreaSeriesFillConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly AreaSeriesFillConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -264,6 +344,9 @@ public class AreaSeriesFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -277,6 +360,9 @@ public class AreaSeriesFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -293,6 +379,9 @@ public class AreaSeriesFillConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an orange brush when given the Orange color.
+    /// </summary>
     [Fact]
     public void Convert_OrangeColor_ReturnsOrangeBrush()
     {
@@ -313,6 +402,9 @@ public class AreaSeriesFillConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -336,13 +428,20 @@ public class AreaSeriesFillConverterTests
 
 /// <summary>
 /// Tests for LineSeriesMarkerFillConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for line series marker fill.
 /// </summary>
 public class LineSeriesMarkerFillConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly LineSeriesMarkerFillConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -356,6 +455,9 @@ public class LineSeriesMarkerFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -369,6 +471,9 @@ public class LineSeriesMarkerFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -385,6 +490,9 @@ public class LineSeriesMarkerFillConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a yellow brush when given the Yellow color.
+    /// </summary>
     [Fact]
     public void Convert_YellowColor_ReturnsYellowBrush()
     {
@@ -405,6 +513,9 @@ public class LineSeriesMarkerFillConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -428,13 +539,20 @@ public class LineSeriesMarkerFillConverterTests
 
 /// <summary>
 /// Tests for LineSeriesMarkerStrokeConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for line series marker stroke.
 /// </summary>
 public class LineSeriesMarkerStrokeConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly LineSeriesMarkerStrokeConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -448,6 +566,9 @@ public class LineSeriesMarkerStrokeConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -461,6 +582,9 @@ public class LineSeriesMarkerStrokeConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -477,6 +601,9 @@ public class LineSeriesMarkerStrokeConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a magenta brush when given the Magenta color.
+    /// </summary>
     [Fact]
     public void Convert_MagentaColor_ReturnsMagentaBrush()
     {
@@ -497,6 +624,9 @@ public class LineSeriesMarkerStrokeConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -520,13 +650,20 @@ public class LineSeriesMarkerStrokeConverterTests
 
 /// <summary>
 /// Tests for BarSeriesFillConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for bar series fill.
 /// </summary>
 public class BarSeriesFillConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly BarSeriesFillConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -540,6 +677,9 @@ public class BarSeriesFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -553,6 +693,9 @@ public class BarSeriesFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -569,6 +712,9 @@ public class BarSeriesFillConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a cornflower blue brush when given the CornflowerBlue color.
+    /// </summary>
     [Fact]
     public void Convert_CornflowerBlueColor_ReturnsCornflowerBlueBrush()
     {
@@ -589,6 +735,9 @@ public class BarSeriesFillConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -612,13 +761,20 @@ public class BarSeriesFillConverterTests
 
 /// <summary>
 /// Tests for BoxPlotSeriesFillConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for box plot series fill.
 /// </summary>
 public class BoxPlotSeriesFillConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly BoxPlotSeriesFillConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -632,6 +788,9 @@ public class BoxPlotSeriesFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -645,6 +804,9 @@ public class BoxPlotSeriesFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -661,6 +823,9 @@ public class BoxPlotSeriesFillConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a teal brush when given the Teal color.
+    /// </summary>
     [Fact]
     public void Convert_TealColor_ReturnsTealBrush()
     {
@@ -681,6 +846,9 @@ public class BoxPlotSeriesFillConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -704,13 +872,20 @@ public class BoxPlotSeriesFillConverterTests
 
 /// <summary>
 /// Tests for ScatterSeriesMarkerFillConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for scatter series marker fill.
 /// </summary>
 public class ScatterSeriesMarkerFillConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly ScatterSeriesMarkerFillConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -724,6 +899,9 @@ public class ScatterSeriesMarkerFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -737,6 +915,9 @@ public class ScatterSeriesMarkerFillConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -753,6 +934,9 @@ public class ScatterSeriesMarkerFillConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a gold brush when given the Gold color.
+    /// </summary>
     [Fact]
     public void Convert_GoldColor_ReturnsGoldBrush()
     {
@@ -773,6 +957,9 @@ public class ScatterSeriesMarkerFillConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -796,13 +983,20 @@ public class ScatterSeriesMarkerFillConverterTests
 
 /// <summary>
 /// Tests for ScatterSeriesMarkerStrokeConverter (IMultiValueConverter).
+/// Verifies proper conversion between Color values and WPF SolidColorBrush objects for scatter series marker stroke.
 /// </summary>
 public class ScatterSeriesMarkerStrokeConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly ScatterSeriesMarkerStrokeConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null color value.
+    /// </summary>
     [Fact]
     public void Convert_NullColor_ReturnsNull()
     {
@@ -816,6 +1010,9 @@ public class ScatterSeriesMarkerStrokeConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongColorType_ReturnsNull()
     {
@@ -829,6 +1026,9 @@ public class ScatterSeriesMarkerStrokeConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color when given a valid color with no series object.
+    /// </summary>
     [Fact]
     public void Convert_ValidColorNoSeries_ReturnsBrush()
     {
@@ -845,6 +1045,9 @@ public class ScatterSeriesMarkerStrokeConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns an Indian red brush when given the IndianRed color.
+    /// </summary>
     [Fact]
     public void Convert_IndianRedColor_ReturnsIndianRedBrush()
     {
@@ -865,6 +1068,9 @@ public class ScatterSeriesMarkerStrokeConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns black color when given an incorrect brush type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongBrushType_ReturnsBlackColor()
     {
@@ -888,9 +1094,13 @@ public class ScatterSeriesMarkerStrokeConverterTests
 
 /// <summary>
 /// Common tests for all color converters to ensure consistent behavior.
+/// Validates that all converters handle automatic colors and error conditions consistently.
 /// </summary>
 public class ColorConverterCommonBehaviorTests
 {
+    /// <summary>
+    /// Tests that all converters handle OxyPlot's automatic color (ARGB 0,0,0,1) consistently.
+    /// </summary>
     [Fact]
     public void AllConverters_HandleAutomaticColor_Consistently()
     {
@@ -934,6 +1144,9 @@ public class ColorConverterCommonBehaviorTests
         Assert.IsType<SolidColorBrush>(scatterFillResult);
     }
 
+    /// <summary>
+    /// Tests that all converters return null when given a null color value.
+    /// </summary>
     [Fact]
     public void AllConverters_ReturnNull_ForNullColor()
     {
@@ -952,6 +1165,9 @@ public class ColorConverterCommonBehaviorTests
         Assert.Null(new ScatterSeriesMarkerStrokeConverter().Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture));
     }
 
+    /// <summary>
+    /// Tests that all converters return null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void AllConverters_ReturnNull_ForWrongType()
     {

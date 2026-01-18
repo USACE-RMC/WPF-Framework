@@ -1,3 +1,33 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate.Updater;
 using System.IO.Compression;
@@ -5,17 +35,36 @@ using System.Reflection;
 
 namespace SoftwareUpdate.Updater.Tests
 {
+    /// <summary>
+    /// Test suite for the InstallationManager class, validating update installation, backup, and restore functionality.
+    /// Implements IDisposable to ensure proper cleanup of test directories.
+    /// </summary>
     public class InstallationManagerTests : IDisposable
     {
+        /// <summary>
+        /// The temporary directory path used for all test file operations. Created uniquely for each test instance.
+        /// </summary>
         private readonly string _testDir;
+
+        /// <summary>
+        /// Collection of log messages captured during test execution for verification purposes.
+        /// </summary>
         private readonly List<string> _logs = new();
 
+        /// <summary>
+        /// Initializes a new instance of the InstallationManagerTests class.
+        /// Creates a unique temporary directory for test isolation.
+        /// </summary>
         public InstallationManagerTests()
         {
             _testDir = Path.Combine(Path.GetTempPath(), "InstallManagerTests_" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(_testDir);
         }
 
+        /// <summary>
+        /// Performs cleanup operations after test execution.
+        /// Deletes the temporary test directory and all its contents.
+        /// </summary>
         public void Dispose()
         {
             // Clean up test directory
@@ -32,10 +81,18 @@ namespace SoftwareUpdate.Updater.Tests
             }
         }
 
+        /// <summary>
+        /// Logs a message to the internal log collection for test verification.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         private void Log(string message) => _logs.Add(message);
 
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the InstallationManager constructor throws ArgumentNullException when args parameter is null.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Expected exception when args is null.</exception>
         [Fact]
         public void Constructor_NullArgs_ThrowsArgumentNullException()
         {
@@ -43,6 +100,9 @@ namespace SoftwareUpdate.Updater.Tests
                 new InstallationManager(null!, Log));
         }
 
+        /// <summary>
+        /// Verifies that the InstallationManager constructor accepts a null log action without throwing.
+        /// </summary>
         [Fact]
         public void Constructor_NullLog_DoesNotThrow()
         {
@@ -59,6 +119,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that the InstallationManager constructor successfully creates an instance with valid arguments.
+        /// </summary>
         [Fact]
         public void Constructor_ValidArgs_CreatesInstance()
         {
@@ -79,6 +142,16 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region ParseBackupTimestamp Tests (via Reflection)
 
+        /// <summary>
+        /// Verifies that ParseBackupTimestamp correctly parses backup directory names with valid timestamp format.
+        /// </summary>
+        /// <param name="dirName">The backup directory name to parse.</param>
+        /// <param name="year">Expected year value.</param>
+        /// <param name="month">Expected month value.</param>
+        /// <param name="day">Expected day value.</param>
+        /// <param name="hour">Expected hour value.</param>
+        /// <param name="minute">Expected minute value.</param>
+        /// <param name="second">Expected second value.</param>
         [Theory]
         [InlineData(".backup_20240115_120000", 2024, 1, 15, 12, 0, 0)]
         [InlineData(".backup_20231225_235959", 2023, 12, 25, 23, 59, 59)]
@@ -92,6 +165,16 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(new DateTime(year, month, day, hour, minute, second), result.Value);
         }
 
+        /// <summary>
+        /// Verifies that ParseBackupTimestamp correctly handles backup directories with numeric suffixes.
+        /// </summary>
+        /// <param name="dirName">The backup directory name to parse.</param>
+        /// <param name="year">Expected year value.</param>
+        /// <param name="month">Expected month value.</param>
+        /// <param name="day">Expected day value.</param>
+        /// <param name="hour">Expected hour value.</param>
+        /// <param name="minute">Expected minute value.</param>
+        /// <param name="second">Expected second value.</param>
         [Theory]
         [InlineData(".backup_20240115_120000_1", 2024, 1, 15, 12, 0, 0)]
         [InlineData(".backup_20240115_120000_99", 2024, 1, 15, 12, 0, 0)]
@@ -104,6 +187,10 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal(new DateTime(year, month, day, hour, minute, second), result.Value);
         }
 
+        /// <summary>
+        /// Verifies that ParseBackupTimestamp returns null for invalid or malformed backup directory names.
+        /// </summary>
+        /// <param name="dirName">The invalid backup directory name to parse.</param>
         [Theory]
         [InlineData("")]
         [InlineData("backup_20240115_120000")]
@@ -118,6 +205,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Verifies that ParseBackupTimestamp returns null when given a null path.
+        /// </summary>
         [Fact]
         public void ParseBackupTimestamp_NullPath_ReturnsNull()
         {
@@ -126,6 +216,11 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Helper method to invoke the private static ParseBackupTimestamp method via reflection.
+        /// </summary>
+        /// <param name="backupPath">The backup directory path to parse.</param>
+        /// <returns>The parsed DateTime if successful; otherwise, null.</returns>
         private static DateTime? InvokeParseBackupTimestamp(string backupPath)
         {
             var method = typeof(InstallationManager)
@@ -137,6 +232,9 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region CreateBackup Tests (Integration)
 
+        /// <summary>
+        /// Verifies that the CreateBackup functionality creates a backup directory with all target files.
+        /// </summary>
         [Fact]
         public void CreateBackup_CreatesBackupDirectory()
         {
@@ -173,6 +271,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.True(File.Exists(Path.Combine(backupDir, "subdir", "nested.txt")));
         }
 
+        /// <summary>
+        /// Verifies that CreateBackup skips existing backup directories and does not include them in new backups.
+        /// </summary>
         [Fact]
         public void CreateBackup_SkipsExistingBackupDirectories()
         {
@@ -216,6 +317,9 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region ExtractUpdate Path Traversal Tests
 
+        /// <summary>
+        /// Verifies that ExtractUpdate protects against path traversal attacks by skipping malicious entries.
+        /// </summary>
         [Fact]
         public void ExtractUpdate_PathTraversalAttempt_SkipsEntry()
         {
@@ -244,6 +348,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Contains(_logs, l => l.Contains("potentially dangerous path"));
         }
 
+        /// <summary>
+        /// Verifies that ExtractUpdate correctly extracts files with normal, safe paths.
+        /// </summary>
         [Fact]
         public void ExtractUpdate_NormalPaths_ExtractsCorrectly()
         {
@@ -273,6 +380,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.True(File.Exists(Path.Combine(targetDir, "subdir", "deep", "file.txt")));
         }
 
+        /// <summary>
+        /// Verifies that ExtractUpdate strips a single root folder from archive entries (common in GitHub releases).
+        /// </summary>
         [Fact]
         public void ExtractUpdate_SingleRootFolder_StripsRoot()
         {
@@ -303,6 +413,9 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.False(Directory.Exists(Path.Combine(targetDir, "MyApp-v1.0.0")));
         }
 
+        /// <summary>
+        /// Verifies that ExtractUpdate skips backup directories found within update archives.
+        /// </summary>
         [Fact]
         public void ExtractUpdate_SkipsBackupDirectories()
         {
@@ -340,6 +453,9 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region RestoreFromBackup Tests
 
+        /// <summary>
+        /// Verifies that RestoreFromBackup successfully restores files from a backup directory to the target.
+        /// </summary>
         [Fact]
         public void RestoreFromBackup_RestoresFiles()
         {
@@ -370,6 +486,11 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.True(File.Exists(Path.Combine(targetDir, "subdir", "nested.txt")));
         }
 
+        /// <summary>
+        /// Helper method to invoke the private RestoreFromBackup method via reflection.
+        /// </summary>
+        /// <param name="manager">The InstallationManager instance.</param>
+        /// <param name="backupDir">The backup directory path to restore from.</param>
         private static void InvokeRestoreFromBackup(InstallationManager manager, string backupDir)
         {
             var method = typeof(InstallationManager)
@@ -381,6 +502,9 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region CopyDirectory Tests
 
+        /// <summary>
+        /// Verifies that CopyDirectory recursively copies all files and subdirectories.
+        /// </summary>
         [Fact]
         public void CopyDirectory_CopiesAllContents()
         {
@@ -420,6 +544,12 @@ namespace SoftwareUpdate.Updater.Tests
             Assert.Equal("deep content", File.ReadAllText(Path.Combine(destDir, "sub", "deep", "deep.txt")));
         }
 
+        /// <summary>
+        /// Helper method to invoke the private CopyDirectory method via reflection.
+        /// </summary>
+        /// <param name="manager">The InstallationManager instance.</param>
+        /// <param name="source">The source directory path to copy from.</param>
+        /// <param name="dest">The destination directory path to copy to.</param>
         private static void InvokeCopyDirectory(InstallationManager manager, string source, string dest)
         {
             var method = typeof(InstallationManager)
@@ -431,6 +561,9 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region Logging Tests
 
+        /// <summary>
+        /// Verifies that Execute method logs appropriate progress messages during execution.
+        /// </summary>
         [Fact]
         public void Execute_LogsProgressMessages()
         {
@@ -458,6 +591,11 @@ namespace SoftwareUpdate.Updater.Tests
 
         #region Helper Methods
 
+        /// <summary>
+        /// Creates a subdirectory within the test directory.
+        /// </summary>
+        /// <param name="name">The name of the subdirectory to create.</param>
+        /// <returns>The full path to the created subdirectory.</returns>
         private string CreateSubDir(string name)
         {
             var path = Path.Combine(_testDir, name);
@@ -465,6 +603,12 @@ namespace SoftwareUpdate.Updater.Tests
             return path;
         }
 
+        /// <summary>
+        /// Creates a test ZIP archive with the specified entries.
+        /// </summary>
+        /// <param name="name">The name of the ZIP file to create.</param>
+        /// <param name="entries">An array of tuples containing entry paths and their content.</param>
+        /// <returns>The full path to the created ZIP file.</returns>
         private string CreateTestZip(string name, (string path, string content)[] entries)
         {
             var zipPath = Path.Combine(_testDir, name);
@@ -482,6 +626,11 @@ namespace SoftwareUpdate.Updater.Tests
             return zipPath;
         }
 
+        /// <summary>
+        /// Creates a malicious ZIP archive containing path traversal attempts for security testing.
+        /// </summary>
+        /// <param name="name">The name of the ZIP file to create.</param>
+        /// <returns>The full path to the created ZIP file.</returns>
         private string CreatePathTraversalZip(string name)
         {
             var zipPath = Path.Combine(_testDir, name);

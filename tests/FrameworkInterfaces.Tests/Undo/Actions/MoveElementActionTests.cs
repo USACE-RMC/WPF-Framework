@@ -1,13 +1,51 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces;
 using FrameworkInterfaces.Undo.Actions;
 
 namespace FrameworkInterfaces.Tests.Undo.Actions
 {
+    /// <summary>
+    /// Test class for the MoveElementAction implementation, providing comprehensive tests for element movement
+    /// within collections, undo/redo functionality, index management, and action merging behavior.
+    /// </summary>
     public class MoveElementActionTests
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that attempting to create a MoveElementAction with a null collection throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when collection parameter is null.</exception>
         [Fact]
         public void Constructor_NullCollection_ThrowsArgumentNullException()
         {
@@ -17,6 +55,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
                 new MoveElementAction(null!, element, 0, 1));
         }
 
+        /// <summary>
+        /// Verifies that attempting to create a MoveElementAction with a null element throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when element parameter is null.</exception>
         [Fact]
         public void Constructor_NullElement_ThrowsArgumentNullException()
         {
@@ -26,6 +68,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
                 new MoveElementAction(collection, null!, 0, 1));
         }
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the Collection, Element, Target, OldIndex, and NewIndex properties.
+        /// </summary>
         [Fact]
         public void Constructor_ValidArgs_SetsProperties()
         {
@@ -41,6 +86,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(2, action.NewIndex);
         }
 
+        /// <summary>
+        /// Verifies that the constructor sets a timestamp within the expected time range.
+        /// </summary>
         [Fact]
         public void Constructor_SetsTimestamp()
         {
@@ -59,6 +107,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Description Tests
 
+        /// <summary>
+        /// Verifies that the Description property uses the element's DisplayName when available.
+        /// </summary>
         [Fact]
         public void Description_UsesDisplayName()
         {
@@ -70,6 +121,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal("Move My Element", action.Description);
         }
 
+        /// <summary>
+        /// Verifies that the Description property falls back to the element's Name when DisplayName is null.
+        /// </summary>
         [Fact]
         public void Description_FallsBackToName()
         {
@@ -81,6 +135,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal("Move ElementName", action.Description);
         }
 
+        /// <summary>
+        /// Verifies that the Description property uses a generic fallback when both DisplayName and Name are null.
+        /// </summary>
         [Fact]
         public void Description_FallsBackToGeneric()
         {
@@ -96,6 +153,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Execute Tests
 
+        /// <summary>
+        /// Verifies that executing the action moves the element to the new position in the collection.
+        /// </summary>
         [Fact]
         public void Execute_MovesElementToNewPosition()
         {
@@ -115,6 +175,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(2, collection.IndexOf(element1));
         }
 
+        /// <summary>
+        /// Verifies that moving an element forward shifts other elements down in the collection.
+        /// </summary>
         [Fact]
         public void Execute_MoveForward_ShiftsOthersDown()
         {
@@ -137,6 +200,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(2, collection.IndexOf(element1));
         }
 
+        /// <summary>
+        /// Verifies that moving an element backward shifts other elements up in the collection.
+        /// </summary>
         [Fact]
         public void Execute_MoveBackward_ShiftsOthersUp()
         {
@@ -159,6 +225,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Undo Tests
 
+        /// <summary>
+        /// Verifies that undoing the action moves the element back to its original position.
+        /// </summary>
         [Fact]
         public void Undo_MovesElementBackToOriginalPosition()
         {
@@ -181,6 +250,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(0, collection.IndexOf(element1));
         }
 
+        /// <summary>
+        /// Verifies that executing and undoing the action multiple times correctly restores collection state.
+        /// </summary>
         [Fact]
         public void Undo_ExecuteRoundTrip_RestoresState()
         {
@@ -218,6 +290,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region CanMergeWith Tests
 
+        /// <summary>
+        /// Verifies that MoveElementAction does not support merging with other actions.
+        /// </summary>
+        /// <returns>False, indicating the action cannot be merged.</returns>
         [Fact]
         public void CanMergeWith_ReturnsFalse()
         {
@@ -234,6 +310,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region MergeWith Tests
 
+        /// <summary>
+        /// Verifies that attempting to merge returns the original action unchanged.
+        /// </summary>
+        /// <returns>The original action instance.</returns>
         [Fact]
         public void MergeWith_ReturnsSelf()
         {
@@ -252,6 +332,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Edge Cases
 
+        /// <summary>
+        /// Verifies that moving an element to the same position leaves the collection unchanged.
+        /// </summary>
         [Fact]
         public void MoveToSamePosition_CollectionUnchanged()
         {
@@ -269,6 +352,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(1, collection.IndexOf(element2));
         }
 
+        /// <summary>
+        /// Verifies that moving the last element to the first position shifts all other elements.
+        /// </summary>
         [Fact]
         public void MoveLastToFirst_AllElementsShift()
         {

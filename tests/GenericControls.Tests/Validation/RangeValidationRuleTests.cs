@@ -1,5 +1,31 @@
 /*
-* Unit tests for RangeValidationRule from GenericControls
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System.Globalization;
@@ -15,6 +41,13 @@ public class RangeValidationRuleTests
 {
     #region Constructor and Setup
 
+    /// <summary>
+    /// Creates a RangeValidationRule instance with the specified min and max values.
+    /// </summary>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
+    /// <param name="boundsAreExclusive">Whether the bounds are exclusive.</param>
+    /// <returns>A configured RangeValidationRule instance.</returns>
     private static RangeValidationRule CreateRule(double min, double max, bool boundsAreExclusive = false)
     {
         return new RangeValidationRule
@@ -32,6 +65,12 @@ public class RangeValidationRuleTests
 
     #region Validate with values in range (inclusive bounds)
 
+    /// <summary>
+    /// Tests that Validate returns valid result for values within range.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("5", 0, 10)]
     [InlineData("0", 0, 100)]
@@ -52,6 +91,12 @@ public class RangeValidationRuleTests
         Assert.Equal(ValidationResult.ValidResult, result);
     }
 
+    /// <summary>
+    /// Tests that Validate returns valid result for values at boundary with inclusive bounds.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("0", 0, 10)]
     [InlineData("10", 0, 10)]
@@ -73,6 +118,12 @@ public class RangeValidationRuleTests
 
     #region Validate with values outside range
 
+    /// <summary>
+    /// Tests that Validate returns invalid result for values outside range.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("-1", 0, 10)]
     [InlineData("11", 0, 10)]
@@ -92,6 +143,9 @@ public class RangeValidationRuleTests
         Assert.NotNull(result.ErrorContent);
     }
 
+    /// <summary>
+    /// Tests that Validate returns appropriate error message for values below minimum.
+    /// </summary>
     [Fact]
     public void Validate_ValueBelowMinimum_ReturnsErrorMessage()
     {
@@ -106,6 +160,9 @@ public class RangeValidationRuleTests
         Assert.Contains("greater than or equal to", result.ErrorContent?.ToString());
     }
 
+    /// <summary>
+    /// Tests that Validate returns appropriate error message for values above maximum.
+    /// </summary>
     [Fact]
     public void Validate_ValueAboveMaximum_ReturnsErrorMessage()
     {
@@ -124,6 +181,12 @@ public class RangeValidationRuleTests
 
     #region Validate with exclusive bounds
 
+    /// <summary>
+    /// Tests that Validate returns valid result for values strictly within range with exclusive bounds.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("5", 0, 10)]
     [InlineData("1", 0, 10)]
@@ -141,6 +204,12 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate returns invalid result for values at boundary with exclusive bounds.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("0", 0, 10)]
     [InlineData("10", 0, 10)]
@@ -158,6 +227,9 @@ public class RangeValidationRuleTests
         Assert.False(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate returns correct error message for value at min boundary with exclusive bounds.
+    /// </summary>
     [Fact]
     public void Validate_ValueAtMinBoundary_WithExclusiveBounds_ReturnsCorrectErrorMessage()
     {
@@ -173,6 +245,9 @@ public class RangeValidationRuleTests
         Assert.Contains("less than", result.ErrorContent?.ToString());
     }
 
+    /// <summary>
+    /// Tests that Validate returns correct error message for value at max boundary with exclusive bounds.
+    /// </summary>
     [Fact]
     public void Validate_ValueAtMaxBoundary_WithExclusiveBounds_ReturnsCorrectErrorMessage()
     {
@@ -192,6 +267,10 @@ public class RangeValidationRuleTests
 
     #region Validate with different numeric types
 
+    /// <summary>
+    /// Tests that Validate handles integer and double values correctly.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
     [Theory]
     [InlineData("5")]
     [InlineData("5.0")]
@@ -209,6 +288,12 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate handles scientific notation correctly.
+    /// </summary>
+    /// <param name="value">The value in scientific notation.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("1e2", 0, 200)]     // 100 in scientific notation
     [InlineData("1.5e1", 0, 20)]    // 15 in scientific notation
@@ -225,6 +310,12 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate handles small double values correctly.
+    /// </summary>
+    /// <param name="value">The small double value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("0.001", 0, 1)]
     [InlineData("0.999", 0, 1)]
@@ -241,6 +332,12 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate handles negative double values correctly.
+    /// </summary>
+    /// <param name="value">The negative double value to validate.</param>
+    /// <param name="min">The minimum allowed value.</param>
+    /// <param name="max">The maximum allowed value.</param>
     [Theory]
     [InlineData("-0.5", -1, 0)]
     [InlineData("-0.001", -1, 0)]
@@ -261,6 +358,9 @@ public class RangeValidationRuleTests
 
     #region Validate with null and empty values
 
+    /// <summary>
+    /// Tests that Validate returns valid result for null value.
+    /// </summary>
     [Fact]
     public void Validate_NullValue_ReturnsValidResult()
     {
@@ -274,6 +374,9 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate returns valid result for empty string.
+    /// </summary>
     [Fact]
     public void Validate_EmptyString_ReturnsValidResult()
     {
@@ -287,6 +390,9 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate treats whitespace string as invalid number format.
+    /// </summary>
     [Fact]
     public void Validate_WhitespaceString_ReturnsValidResult()
     {
@@ -304,6 +410,10 @@ public class RangeValidationRuleTests
 
     #region Validate with invalid input
 
+    /// <summary>
+    /// Tests that Validate returns invalid result for invalid number format.
+    /// </summary>
+    /// <param name="value">The invalid value to validate.</param>
     [Theory]
     [InlineData("abc")]
     [InlineData("12abc")]
@@ -326,6 +436,9 @@ public class RangeValidationRuleTests
 
     #region RangeWrapper Tests
 
+    /// <summary>
+    /// Tests that RangeWrapper has correct default values.
+    /// </summary>
     [Fact]
     public void RangeWrapper_DefaultValues_AreCorrect()
     {
@@ -338,6 +451,9 @@ public class RangeValidationRuleTests
         Assert.False(wrapper.BoundsAreExclusive);
     }
 
+    /// <summary>
+    /// Tests that RangeWrapper Minimum property can be set.
+    /// </summary>
     [Fact]
     public void RangeWrapper_SetMinimum_UpdatesProperty()
     {
@@ -351,6 +467,9 @@ public class RangeValidationRuleTests
         Assert.Equal(10, wrapper.Minimum);
     }
 
+    /// <summary>
+    /// Tests that RangeWrapper Maximum property can be set.
+    /// </summary>
     [Fact]
     public void RangeWrapper_SetMaximum_UpdatesProperty()
     {
@@ -364,6 +483,9 @@ public class RangeValidationRuleTests
         Assert.Equal(100, wrapper.Maximum);
     }
 
+    /// <summary>
+    /// Tests that RangeWrapper BoundsAreExclusive property can be set.
+    /// </summary>
     [Fact]
     public void RangeWrapper_SetBoundsAreExclusive_UpdatesProperty()
     {
@@ -381,6 +503,9 @@ public class RangeValidationRuleTests
 
     #region Edge Cases
 
+    /// <summary>
+    /// Tests that Validate handles very large numbers within range correctly.
+    /// </summary>
     [Fact]
     public void Validate_VeryLargeNumber_InRange_ReturnsValidResult()
     {
@@ -394,6 +519,9 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate handles very small numbers within range correctly.
+    /// </summary>
     [Fact]
     public void Validate_VerySmallNumber_InRange_ReturnsValidResult()
     {
@@ -407,6 +535,9 @@ public class RangeValidationRuleTests
         Assert.True(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate returns invalid result for zero in negative range.
+    /// </summary>
     [Fact]
     public void Validate_ZeroInNegativeRange_ReturnsInvalidResult()
     {
@@ -420,6 +551,9 @@ public class RangeValidationRuleTests
         Assert.False(result.IsValid);
     }
 
+    /// <summary>
+    /// Tests that Validate returns invalid result for zero in positive range.
+    /// </summary>
     [Fact]
     public void Validate_ZeroInPositiveRange_ReturnsInvalidResult()
     {

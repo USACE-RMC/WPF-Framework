@@ -40,8 +40,14 @@ namespace GenericControls.Tests.Converters;
 /// </summary>
 public class StringToDoubleConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly StringToDoubleConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withdouble returnsstring.
+    /// </summary>
     [Fact]
     public void Convert_WithDouble_ReturnsString()
     {
@@ -49,6 +55,9 @@ public class StringToDoubleConverterTests
         Assert.Equal("123.45", result);
     }
 
+    /// <summary>
+    /// Tests convert withinteger returnsstring.
+    /// </summary>
     [Fact]
     public void Convert_WithInteger_ReturnsString()
     {
@@ -56,6 +65,9 @@ public class StringToDoubleConverterTests
         Assert.Equal("42", result);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsNull()
     {
@@ -63,6 +75,9 @@ public class StringToDoubleConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convert withzero returnszerostring.
+    /// </summary>
     [Fact]
     public void Convert_WithZero_ReturnsZeroString()
     {
@@ -70,6 +85,9 @@ public class StringToDoubleConverterTests
         Assert.Equal("0", result);
     }
 
+    /// <summary>
+    /// Tests convert withnegativenumber returnsnegativestring.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeNumber_ReturnsNegativeString()
     {
@@ -77,6 +95,9 @@ public class StringToDoubleConverterTests
         Assert.Equal("-99.5", result);
     }
 
+    /// <summary>
+    /// Tests convertback withvalidstring returnsdouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithValidString_ReturnsDouble()
     {
@@ -84,6 +105,9 @@ public class StringToDoubleConverterTests
         Assert.Equal(123.45, result);
     }
 
+    /// <summary>
+    /// Tests convertback withnull returnsnull.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNull_ReturnsNull()
     {
@@ -91,6 +115,9 @@ public class StringToDoubleConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback withinvalidstring returnszero.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithInvalidString_ReturnsZero()
     {
@@ -98,6 +125,9 @@ public class StringToDoubleConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withemptystring returnszero.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithEmptyString_ReturnsZero()
     {
@@ -105,6 +135,9 @@ public class StringToDoubleConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withscientificnotation returnsdouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithScientificNotation_ReturnsDouble()
     {
@@ -112,6 +145,9 @@ public class StringToDoubleConverterTests
         Assert.Equal(150.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withnegativenumber returnsnegativedouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNegativeNumber_ReturnsNegativeDouble()
     {
@@ -133,6 +169,9 @@ public class InRangeConverterTests
         Assert.Equal(true, result);
     }
 
+    /// <summary>
+    /// Tests convert withvalueatlowerbound returnstrue.
+    /// </summary>
     [Fact]
     public void Convert_WithValueAtLowerBound_ReturnsTrue()
     {
@@ -141,6 +180,9 @@ public class InRangeConverterTests
         Assert.Equal(true, result);
     }
 
+    /// <summary>
+    /// Tests convert withvalueatupperbound returnstrue.
+    /// </summary>
     [Fact]
     public void Convert_WithValueAtUpperBound_ReturnsTrue()
     {
@@ -149,6 +191,9 @@ public class InRangeConverterTests
         Assert.Equal(true, result);
     }
 
+    /// <summary>
+    /// Tests convert withvaluebelowrange returnsfalse.
+    /// </summary>
     [Fact]
     public void Convert_WithValueBelowRange_ReturnsFalse()
     {
@@ -157,6 +202,9 @@ public class InRangeConverterTests
         Assert.Equal(false, result);
     }
 
+    /// <summary>
+    /// Tests convert withvalueaboverange returnsfalse.
+    /// </summary>
     [Fact]
     public void Convert_WithValueAboveRange_ReturnsFalse()
     {
@@ -165,6 +213,9 @@ public class InRangeConverterTests
         Assert.Equal(false, result);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsfalse.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsFalse()
     {
@@ -173,6 +224,9 @@ public class InRangeConverterTests
         Assert.Equal(false, result);
     }
 
+    /// <summary>
+    /// Tests convert withinvalidtype returnsfalse.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidType_ReturnsFalse()
     {
@@ -181,6 +235,9 @@ public class InRangeConverterTests
         Assert.Equal(false, result);
     }
 
+    /// <summary>
+    /// Tests convert withdefaultbounds valueinrange returnstrue.
+    /// </summary>
     [Fact]
     public void Convert_WithDefaultBounds_ValueInRange_ReturnsTrue()
     {
@@ -189,6 +246,9 @@ public class InRangeConverterTests
         Assert.Equal(true, result);
     }
 
+    /// <summary>
+    /// Tests convert withnegativebounds returnscorrectresult.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeBounds_ReturnsCorrectResult()
     {
@@ -197,6 +257,9 @@ public class InRangeConverterTests
         Assert.Equal(true, result);
     }
 
+    /// <summary>
+    /// Tests convert withstringnumber returnstrue.
+    /// </summary>
     [Fact]
     public void Convert_WithStringNumber_ReturnsTrue()
     {
@@ -205,6 +268,9 @@ public class InRangeConverterTests
         Assert.Equal(true, result);
     }
 
+    /// <summary>
+    /// Tests convertback throwsnotimplementedexception.
+    /// </summary>
     [Fact]
     public void ConvertBack_ThrowsNotImplementedException()
     {
@@ -233,6 +299,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(new Thickness(10, 10, 10, 10), result);
     }
 
+    /// <summary>
+    /// Tests convert withdouble onlyleftenabled returnsleftonlythickness.
+    /// </summary>
     [Fact]
     public void Convert_WithDouble_OnlyLeftEnabled_ReturnsLeftOnlyThickness()
     {
@@ -253,6 +322,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(5, result.Bottom);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsNull()
     {
@@ -261,6 +333,9 @@ public class DoubleToThicknessConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convert withinvalidstring returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidString_ReturnsNull()
     {
@@ -269,6 +344,9 @@ public class DoubleToThicknessConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convert withstringnumber returnsthickness.
+    /// </summary>
     [Fact]
     public void Convert_WithStringNumber_ReturnsThickness()
     {
@@ -277,6 +355,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(new Thickness(15, 15, 15, 15), result);
     }
 
+    /// <summary>
+    /// Tests convertback withthickness leftenabled returnsleft.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithThickness_LeftEnabled_ReturnsLeft()
     {
@@ -286,6 +367,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(10.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withthickness rightenabled returnsright.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithThickness_RightEnabled_ReturnsRight()
     {
@@ -299,6 +383,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(30.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withthickness topenabled returnstop.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithThickness_TopEnabled_ReturnsTop()
     {
@@ -313,6 +400,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(20.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withthickness bottomenabled returnsbottom.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithThickness_BottomEnabled_ReturnsBottom()
     {
@@ -328,6 +418,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(40.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withthickness nosidesenabled returnsaverage.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithThickness_NoSidesEnabled_ReturnsAverage()
     {
@@ -343,6 +436,9 @@ public class DoubleToThicknessConverterTests
         Assert.Equal(25.0, result); // (10 + 20 + 30 + 40) / 4
     }
 
+    /// <summary>
+    /// Tests convertback withnull returnsnull.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNull_ReturnsNull()
     {
@@ -357,8 +453,14 @@ public class DoubleToThicknessConverterTests
 /// </summary>
 public class ThicknessToDoubleConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly ThicknessToDoubleConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withuniformthickness returnsvalue.
+    /// </summary>
     [Fact]
     public void Convert_WithUniformThickness_ReturnsValue()
     {
@@ -367,6 +469,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Equal(10.0, result);
     }
 
+    /// <summary>
+    /// Tests convert withnonuniformthickness returnsaverage.
+    /// </summary>
     [Fact]
     public void Convert_WithNonUniformThickness_ReturnsAverage()
     {
@@ -375,6 +480,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Equal(25.0, result); // (10 + 20 + 30 + 40) / 4
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsNull()
     {
@@ -382,6 +490,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convert withzerothickness returnszero.
+    /// </summary>
     [Fact]
     public void Convert_WithZeroThickness_ReturnsZero()
     {
@@ -390,6 +501,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests convertback withdouble returnsuniformthickness.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithDouble_ReturnsUniformThickness()
     {
@@ -397,6 +511,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Equal(new Thickness(15), result);
     }
 
+    /// <summary>
+    /// Tests convertback withnull returnsnull.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNull_ReturnsNull()
     {
@@ -404,6 +521,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback withinvalidstring returnsnull.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithInvalidString_ReturnsNull()
     {
@@ -411,6 +531,9 @@ public class ThicknessToDoubleConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback withstringnumber returnsthickness.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithStringNumber_ReturnsThickness()
     {
@@ -424,8 +547,14 @@ public class ThicknessToDoubleConverterTests
 /// </summary>
 public class DoubleToDataGridLengthConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly DoubleToDataGridLengthConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert doubletodatagridlength returnsdatagridlength.
+    /// </summary>
     [Fact]
     public void Convert_DoubleToDataGridLength_ReturnsDataGridLength()
     {
@@ -434,6 +563,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Equal(100.0, ((DataGridLength)result).Value);
     }
 
+    /// <summary>
+    /// Tests convert datagridlengthtodouble returnsdouble.
+    /// </summary>
     [Fact]
     public void Convert_DataGridLengthToDouble_ReturnsDouble()
     {
@@ -442,6 +574,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Equal(150.0, result);
     }
 
+    /// <summary>
+    /// Tests convert nulltodatagridlength returnsauto.
+    /// </summary>
     [Fact]
     public void Convert_NullToDataGridLength_ReturnsAuto()
     {
@@ -449,6 +584,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Equal(DataGridLength.Auto, result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtypetodatagridlength returnsauto.
+    /// </summary>
     [Fact]
     public void Convert_InvalidTypeToDataGridLength_ReturnsAuto()
     {
@@ -456,6 +594,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Equal(DataGridLength.Auto, result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtypetodouble returnsnan.
+    /// </summary>
     [Fact]
     public void Convert_InvalidTypeToDouble_ReturnsNaN()
     {
@@ -463,6 +604,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convert withothertargettype returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithOtherTargetType_ReturnsNull()
     {
@@ -470,6 +614,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback doubletodatagridlength returnsdatagridlength.
+    /// </summary>
     [Fact]
     public void ConvertBack_DoubleToDataGridLength_ReturnsDataGridLength()
     {
@@ -478,6 +625,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Equal(75.0, ((DataGridLength)result).Value);
     }
 
+    /// <summary>
+    /// Tests convertback datagridlengthtodouble returnsdouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_DataGridLengthToDouble_ReturnsDouble()
     {
@@ -486,6 +636,9 @@ public class DoubleToDataGridLengthConverterTests
         Assert.Equal(200.0, result);
     }
 
+    /// <summary>
+    /// Tests convert zerodouble returnsdatagridlengthwithzero.
+    /// </summary>
     [Fact]
     public void Convert_ZeroDouble_ReturnsDataGridLengthWithZero()
     {
@@ -500,8 +653,14 @@ public class DoubleToDataGridLengthConverterTests
 /// </summary>
 public class DoubleToGridLengthConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly DoubleToGridLengthConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert doubletogridlength returnsgridlength.
+    /// </summary>
     [Fact]
     public void Convert_DoubleToGridLength_ReturnsGridLength()
     {
@@ -510,6 +669,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Equal(100.0, ((GridLength)result).Value);
     }
 
+    /// <summary>
+    /// Tests convert gridlengthtodouble returnsdouble.
+    /// </summary>
     [Fact]
     public void Convert_GridLengthToDouble_ReturnsDouble()
     {
@@ -518,6 +680,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Equal(150.0, result);
     }
 
+    /// <summary>
+    /// Tests convert nulltogridlength returnsauto.
+    /// </summary>
     [Fact]
     public void Convert_NullToGridLength_ReturnsAuto()
     {
@@ -525,6 +690,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Equal(GridLength.Auto, result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtypetogridlength returnsauto.
+    /// </summary>
     [Fact]
     public void Convert_InvalidTypeToGridLength_ReturnsAuto()
     {
@@ -532,6 +700,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Equal(GridLength.Auto, result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtypetodouble returnsnan.
+    /// </summary>
     [Fact]
     public void Convert_InvalidTypeToDouble_ReturnsNaN()
     {
@@ -539,6 +710,9 @@ public class DoubleToGridLengthConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convert withothertargettype returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithOtherTargetType_ReturnsNull()
     {
@@ -546,6 +720,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback doubletogridlength returnsgridlength.
+    /// </summary>
     [Fact]
     public void ConvertBack_DoubleToGridLength_ReturnsGridLength()
     {
@@ -554,6 +731,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Equal(75.0, ((GridLength)result).Value);
     }
 
+    /// <summary>
+    /// Tests convertback gridlengthtodouble returnsdouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_GridLengthToDouble_ReturnsDouble()
     {
@@ -562,6 +742,9 @@ public class DoubleToGridLengthConverterTests
         Assert.Equal(200.0, result);
     }
 
+    /// <summary>
+    /// Tests convert zerodouble returnsgridlengthwithzero.
+    /// </summary>
     [Fact]
     public void Convert_ZeroDouble_ReturnsGridLengthWithZero()
     {
@@ -576,8 +759,14 @@ public class DoubleToGridLengthConverterTests
 /// </summary>
 public class DoubleToCornerRadiusConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly DoubleToCornerRadiusConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert doubletocornerradius returnsuniformcornerradius.
+    /// </summary>
     [Fact]
     public void Convert_DoubleToCornerRadius_ReturnsUniformCornerRadius()
     {
@@ -590,6 +779,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Equal(10.0, cr.BottomLeft);
     }
 
+    /// <summary>
+    /// Tests convert cornerradiustodouble returnsbottomleft.
+    /// </summary>
     [Fact]
     public void Convert_CornerRadiusToDouble_ReturnsBottomLeft()
     {
@@ -598,6 +790,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Equal(20.0, result); // BottomLeft
     }
 
+    /// <summary>
+    /// Tests convert nulltocornerradius returnsemptycornerradius.
+    /// </summary>
     [Fact]
     public void Convert_NullToCornerRadius_ReturnsEmptyCornerRadius()
     {
@@ -605,6 +800,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Equal(new CornerRadius(), result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtypetocornerradius returnsemptycornerradius.
+    /// </summary>
     [Fact]
     public void Convert_InvalidTypeToCornerRadius_ReturnsEmptyCornerRadius()
     {
@@ -612,6 +810,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Equal(new CornerRadius(), result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtypetodouble returnsnan.
+    /// </summary>
     [Fact]
     public void Convert_InvalidTypeToDouble_ReturnsNaN()
     {
@@ -619,6 +820,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convert withothertargettype returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithOtherTargetType_ReturnsNull()
     {
@@ -626,6 +830,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback doubletocornerradius returnscornerradius.
+    /// </summary>
     [Fact]
     public void ConvertBack_DoubleToCornerRadius_ReturnsCornerRadius()
     {
@@ -635,6 +842,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Equal(15.0, cr.TopLeft);
     }
 
+    /// <summary>
+    /// Tests convertback cornerradiustodouble returnsdouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_CornerRadiusToDouble_ReturnsDouble()
     {
@@ -643,6 +853,9 @@ public class DoubleToCornerRadiusConverterTests
         Assert.Equal(25.0, result);
     }
 
+    /// <summary>
+    /// Tests convert zerodouble returnszerocornerradius.
+    /// </summary>
     [Fact]
     public void Convert_ZeroDouble_ReturnsZeroCornerRadius()
     {
@@ -658,8 +871,14 @@ public class DoubleToCornerRadiusConverterTests
 /// </summary>
 public class DataGridWidthConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly DataGridWidthConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withvalidwidth returnsadjustedwidth.
+    /// </summary>
     [Fact]
     public void Convert_WithValidWidth_ReturnsAdjustedWidth()
     {
@@ -668,6 +887,9 @@ public class DataGridWidthConverterTests
         Assert.Equal(500.0 - scrollBarWidth, result);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnszero.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsZero()
     {
@@ -675,6 +897,9 @@ public class DataGridWidthConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests convert withinvalidstring returnszero.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidString_ReturnsZero()
     {
@@ -682,6 +907,9 @@ public class DataGridWidthConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests convert withstringnumber returnsadjustedwidth.
+    /// </summary>
     [Fact]
     public void Convert_WithStringNumber_ReturnsAdjustedWidth()
     {
@@ -690,6 +918,9 @@ public class DataGridWidthConverterTests
         Assert.Equal(300.0 - scrollBarWidth, result);
     }
 
+    /// <summary>
+    /// Tests convert withzero returnsnegativescrollbarwidth.
+    /// </summary>
     [Fact]
     public void Convert_WithZero_ReturnsNegativeScrollBarWidth()
     {
@@ -698,6 +929,9 @@ public class DataGridWidthConverterTests
         Assert.Equal(-scrollBarWidth, result);
     }
 
+    /// <summary>
+    /// Tests convertback throwsnotsupportedexception.
+    /// </summary>
     [Fact]
     public void ConvertBack_ThrowsNotSupportedException()
     {
@@ -711,8 +945,14 @@ public class DataGridWidthConverterTests
 /// </summary>
 public class VectorToPointConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly VectorToPointConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withvector returnspoint.
+    /// </summary>
     [Fact]
     public void Convert_WithVector_ReturnsPoint()
     {
@@ -724,6 +964,9 @@ public class VectorToPointConverterTests
         Assert.Equal(20, point.Y);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsNull()
     {
@@ -731,6 +974,9 @@ public class VectorToPointConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convert withinvalidtype returnsnull.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidType_ReturnsNull()
     {
@@ -738,6 +984,9 @@ public class VectorToPointConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convert withzerovector returnszeropoint.
+    /// </summary>
     [Fact]
     public void Convert_WithZeroVector_ReturnsZeroPoint()
     {
@@ -749,6 +998,9 @@ public class VectorToPointConverterTests
         Assert.Equal(0, point.Y);
     }
 
+    /// <summary>
+    /// Tests convert withnegativevector returnsnegativepoint.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeVector_ReturnsNegativePoint()
     {
@@ -760,6 +1012,9 @@ public class VectorToPointConverterTests
         Assert.Equal(-15, point.Y);
     }
 
+    /// <summary>
+    /// Tests convertback withpoint returnsvector.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithPoint_ReturnsVector()
     {
@@ -771,6 +1026,9 @@ public class VectorToPointConverterTests
         Assert.Equal(40, vector.Y);
     }
 
+    /// <summary>
+    /// Tests convertback withnull returnsnull.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNull_ReturnsNull()
     {
@@ -778,6 +1036,9 @@ public class VectorToPointConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests convertback withinvalidtype returnsnull.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithInvalidType_ReturnsNull()
     {
@@ -800,6 +1061,9 @@ public class TimeTextConverterTests
         Assert.Equal("02", result);
     }
 
+    /// <summary>
+    /// Tests convert hour24hour returnsformattedhour.
+    /// </summary>
     [Fact]
     public void Convert_Hour24Hour_ReturnsFormattedHour()
     {
@@ -809,6 +1073,9 @@ public class TimeTextConverterTests
         Assert.Equal("14", result);
     }
 
+    /// <summary>
+    /// Tests convert minute returnsformattedminute.
+    /// </summary>
     [Fact]
     public void Convert_Minute_ReturnsFormattedMinute()
     {
@@ -818,6 +1085,9 @@ public class TimeTextConverterTests
         Assert.Equal("05", result);
     }
 
+    /// <summary>
+    /// Tests convert second returnsformattedsecond.
+    /// </summary>
     [Fact]
     public void Convert_Second_ReturnsFormattedSecond()
     {
@@ -827,6 +1097,9 @@ public class TimeTextConverterTests
         Assert.Equal("09", result);
     }
 
+    /// <summary>
+    /// Tests convert meridian12hour returnsmeridian.
+    /// </summary>
     [Fact]
     public void Convert_Meridian12Hour_ReturnsMeridian()
     {
@@ -836,6 +1109,9 @@ public class TimeTextConverterTests
         Assert.Equal("PM", result);
     }
 
+    /// <summary>
+    /// Tests convert meridian24hour returnsempty.
+    /// </summary>
     [Fact]
     public void Convert_Meridian24Hour_ReturnsEmpty()
     {
@@ -845,6 +1121,9 @@ public class TimeTextConverterTests
         Assert.Equal("", result);
     }
 
+    /// <summary>
+    /// Tests convert withinvalidtype returnsemptystring.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidType_ReturnsEmptyString()
     {
@@ -853,6 +1132,9 @@ public class TimeTextConverterTests
         Assert.Equal("", result);
     }
 
+    /// <summary>
+    /// Tests convert morningmeridian returnsam.
+    /// </summary>
     [Fact]
     public void Convert_MorningMeridian_ReturnsAM()
     {
@@ -862,6 +1144,9 @@ public class TimeTextConverterTests
         Assert.Equal("AM", result);
     }
 
+    /// <summary>
+    /// Tests convert midnight returnscorrecthour12hour.
+    /// </summary>
     [Fact]
     public void Convert_Midnight_ReturnsCorrectHour12Hour()
     {
@@ -871,6 +1156,9 @@ public class TimeTextConverterTests
         Assert.Equal("12", result);
     }
 
+    /// <summary>
+    /// Tests convert midnight returnscorrecthour24hour.
+    /// </summary>
     [Fact]
     public void Convert_Midnight_ReturnsCorrectHour24Hour()
     {
@@ -880,6 +1168,9 @@ public class TimeTextConverterTests
         Assert.Equal("00", result);
     }
 
+    /// <summary>
+    /// Tests convertback throwsnotimplementedexception.
+    /// </summary>
     [Fact]
     public void ConvertBack_ThrowsNotImplementedException()
     {
@@ -914,8 +1205,14 @@ public class TabSizeConverterTests
 /// </summary>
 public class DoubleToNAConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly DoubleToNAConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withvaliddouble returnsdouble.
+    /// </summary>
     [Fact]
     public void Convert_WithValidDouble_ReturnsDouble()
     {
@@ -923,6 +1220,9 @@ public class DoubleToNAConverterTests
         Assert.Equal(123.45, result);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsNA()
     {
@@ -930,6 +1230,9 @@ public class DoubleToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withnan returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithNaN_ReturnsNA()
     {
@@ -937,6 +1240,9 @@ public class DoubleToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withpositiveinfinity returnsplusinfinity.
+    /// </summary>
     [Fact]
     public void Convert_WithPositiveInfinity_ReturnsPlusInfinity()
     {
@@ -944,6 +1250,9 @@ public class DoubleToNAConverterTests
         Assert.Equal("+\u221E", result); // +infinity symbol
     }
 
+    /// <summary>
+    /// Tests convert withnegativeinfinity returnsminusinfinity.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeInfinity_ReturnsMinusInfinity()
     {
@@ -951,6 +1260,9 @@ public class DoubleToNAConverterTests
         Assert.Equal("-\u221E", result); // -infinity symbol
     }
 
+    /// <summary>
+    /// Tests convert withinvalidtype returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidType_ReturnsNA()
     {
@@ -958,6 +1270,9 @@ public class DoubleToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withzero returnszero.
+    /// </summary>
     [Fact]
     public void Convert_WithZero_ReturnsZero()
     {
@@ -965,6 +1280,9 @@ public class DoubleToNAConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests convert withnegativenumber returnsnumber.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeNumber_ReturnsNumber()
     {
@@ -972,6 +1290,9 @@ public class DoubleToNAConverterTests
         Assert.Equal(-50.5, result);
     }
 
+    /// <summary>
+    /// Tests convertback withnull returnsnan.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNull_ReturnsNaN()
     {
@@ -979,6 +1300,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withna returnsnan.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNA_ReturnsNaN()
     {
@@ -986,6 +1310,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withnanoslash returnsnan.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNANoSlash_ReturnsNaN()
     {
@@ -993,6 +1320,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withinfinitysymbol returnspositiveinfinity.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithInfinitySymbol_ReturnsPositiveInfinity()
     {
@@ -1000,6 +1330,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsPositiveInfinity((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withnegativeinfinitysymbol returnsnegativeinfinity.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNegativeInfinitySymbol_ReturnsNegativeInfinity()
     {
@@ -1007,6 +1340,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsNegativeInfinity((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withvalidnumber returnsdouble.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithValidNumber_ReturnsDouble()
     {
@@ -1014,6 +1350,9 @@ public class DoubleToNAConverterTests
         Assert.Equal(42.5, result);
     }
 
+    /// <summary>
+    /// Tests convertback withinvalidstring returnsnan.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithInvalidString_ReturnsNaN()
     {
@@ -1021,6 +1360,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsNaN((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withnonstringtype returnsvalue.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNonStringType_ReturnsValue()
     {
@@ -1028,6 +1370,9 @@ public class DoubleToNAConverterTests
         Assert.Equal(123, result);
     }
 
+    /// <summary>
+    /// Tests convertback withinftext returnspositiveinfinity.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithInfText_ReturnsPositiveInfinity()
     {
@@ -1035,6 +1380,9 @@ public class DoubleToNAConverterTests
         Assert.True(double.IsPositiveInfinity((double)result!));
     }
 
+    /// <summary>
+    /// Tests convertback withnegativeinftext returnsnegativeinfinity.
+    /// </summary>
     [Fact]
     public void ConvertBack_WithNegativeInfText_ReturnsNegativeInfinity()
     {
@@ -1048,8 +1396,14 @@ public class DoubleToNAConverterTests
 /// </summary>
 public class StringToNAConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly StringToNAConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withvalidnumericstring returnsstring.
+    /// </summary>
     [Fact]
     public void Convert_WithValidNumericString_ReturnsString()
     {
@@ -1057,6 +1411,9 @@ public class StringToNAConverterTests
         Assert.Equal("123.45", result);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsNA()
     {
@@ -1064,6 +1421,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withnonstring returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithNonString_ReturnsNA()
     {
@@ -1071,6 +1431,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withnanstring returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithNaNString_ReturnsNA()
     {
@@ -1078,6 +1441,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withinfinitystring returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithInfinityString_ReturnsNA()
     {
@@ -1085,6 +1451,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withnegativeinfinitystring returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeInfinityString_ReturnsNA()
     {
@@ -1092,6 +1461,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withinvalidnumericstring returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithInvalidNumericString_ReturnsNA()
     {
@@ -1099,6 +1471,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withemptystring returnsna.
+    /// </summary>
     [Fact]
     public void Convert_WithEmptyString_ReturnsNA()
     {
@@ -1106,6 +1481,9 @@ public class StringToNAConverterTests
         Assert.Equal("N/A", result);
     }
 
+    /// <summary>
+    /// Tests convert withzerostring returnszerostring.
+    /// </summary>
     [Fact]
     public void Convert_WithZeroString_ReturnsZeroString()
     {
@@ -1113,6 +1491,9 @@ public class StringToNAConverterTests
         Assert.Equal("0", result);
     }
 
+    /// <summary>
+    /// Tests convert withnegativenumberstring returnsstring.
+    /// </summary>
     [Fact]
     public void Convert_WithNegativeNumberString_ReturnsString()
     {
@@ -1120,6 +1501,9 @@ public class StringToNAConverterTests
         Assert.Equal("-42.5", result);
     }
 
+    /// <summary>
+    /// Tests convertback throwsnotimplementedexception.
+    /// </summary>
     [Fact]
     public void ConvertBack_ThrowsNotImplementedException()
     {
@@ -1133,8 +1517,14 @@ public class StringToNAConverterTests
 /// </summary>
 public class HorizontalAlignmentToTextAlignmentConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly HorizontalAlignmentToTextAlignmentConverter _converter = HorizontalAlignmentToTextAlignmentConverter.Instance;
 
+    /// <summary>
+    /// Tests convert left returnstextalignmentleft.
+    /// </summary>
     [Fact]
     public void Convert_Left_ReturnsTextAlignmentLeft()
     {
@@ -1142,6 +1532,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(TextAlignment.Left, result);
     }
 
+    /// <summary>
+    /// Tests convert right returnstextalignmentright.
+    /// </summary>
     [Fact]
     public void Convert_Right_ReturnsTextAlignmentRight()
     {
@@ -1149,6 +1542,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(TextAlignment.Right, result);
     }
 
+    /// <summary>
+    /// Tests convert center returnstextalignmentcenter.
+    /// </summary>
     [Fact]
     public void Convert_Center_ReturnsTextAlignmentCenter()
     {
@@ -1156,6 +1552,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(TextAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convert stretch returnstextalignmentcenter.
+    /// </summary>
     [Fact]
     public void Convert_Stretch_ReturnsTextAlignmentCenter()
     {
@@ -1163,6 +1562,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(TextAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convert invalidtype returnstextalignmentcenter.
+    /// </summary>
     [Fact]
     public void Convert_InvalidType_ReturnsTextAlignmentCenter()
     {
@@ -1170,6 +1572,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(TextAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convert null returnstextalignmentcenter.
+    /// </summary>
     [Fact]
     public void Convert_Null_ReturnsTextAlignmentCenter()
     {
@@ -1177,6 +1582,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(TextAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convertback left returnshorizontalalignmentleft.
+    /// </summary>
     [Fact]
     public void ConvertBack_Left_ReturnsHorizontalAlignmentLeft()
     {
@@ -1184,6 +1592,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(HorizontalAlignment.Left, result);
     }
 
+    /// <summary>
+    /// Tests convertback right returnshorizontalalignmentright.
+    /// </summary>
     [Fact]
     public void ConvertBack_Right_ReturnsHorizontalAlignmentRight()
     {
@@ -1191,6 +1602,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(HorizontalAlignment.Right, result);
     }
 
+    /// <summary>
+    /// Tests convertback center returnshorizontalalignmentcenter.
+    /// </summary>
     [Fact]
     public void ConvertBack_Center_ReturnsHorizontalAlignmentCenter()
     {
@@ -1198,6 +1612,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(HorizontalAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convertback justify returnshorizontalalignmentcenter.
+    /// </summary>
     [Fact]
     public void ConvertBack_Justify_ReturnsHorizontalAlignmentCenter()
     {
@@ -1205,6 +1622,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(HorizontalAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convertback invalidtype returnshorizontalalignmentcenter.
+    /// </summary>
     [Fact]
     public void ConvertBack_InvalidType_ReturnsHorizontalAlignmentCenter()
     {
@@ -1212,6 +1632,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(HorizontalAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests convertback null returnshorizontalalignmentcenter.
+    /// </summary>
     [Fact]
     public void ConvertBack_Null_ReturnsHorizontalAlignmentCenter()
     {
@@ -1219,6 +1642,9 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
         Assert.Equal(HorizontalAlignment.Center, result);
     }
 
+    /// <summary>
+    /// Tests instance issingleton.
+    /// </summary>
     [Fact]
     public void Instance_IsSingleton()
     {
@@ -1231,8 +1657,14 @@ public class HorizontalAlignmentToTextAlignmentConverterTests
 /// </summary>
 public class AlwaysVisibleConverterTests
 {
+    /// <summary>
+    /// Converter instance used for testing.
+    /// </summary>
     private readonly AlwaysVisibleConverter _converter = new();
 
+    /// <summary>
+    /// Tests convert withanyvalue returnsvisible.
+    /// </summary>
     [Fact]
     public void Convert_WithAnyValue_ReturnsVisible()
     {
@@ -1240,6 +1672,9 @@ public class AlwaysVisibleConverterTests
         Assert.Equal(Visibility.Visible, result);
     }
 
+    /// <summary>
+    /// Tests convert withnull returnsvisible.
+    /// </summary>
     [Fact]
     public void Convert_WithNull_ReturnsVisible()
     {
@@ -1247,6 +1682,9 @@ public class AlwaysVisibleConverterTests
         Assert.Equal(Visibility.Visible, result);
     }
 
+    /// <summary>
+    /// Tests convert withstring returnsvisible.
+    /// </summary>
     [Fact]
     public void Convert_WithString_ReturnsVisible()
     {
@@ -1254,6 +1692,9 @@ public class AlwaysVisibleConverterTests
         Assert.Equal(Visibility.Visible, result);
     }
 
+    /// <summary>
+    /// Tests convert withboolean returnsvisible.
+    /// </summary>
     [Fact]
     public void Convert_WithBoolean_ReturnsVisible()
     {
@@ -1261,6 +1702,9 @@ public class AlwaysVisibleConverterTests
         Assert.Equal(Visibility.Visible, result);
     }
 
+    /// <summary>
+    /// Tests convert withobject returnsvisible.
+    /// </summary>
     [Fact]
     public void Convert_WithObject_ReturnsVisible()
     {
@@ -1268,6 +1712,9 @@ public class AlwaysVisibleConverterTests
         Assert.Equal(Visibility.Visible, result);
     }
 
+    /// <summary>
+    /// Tests convertback throwsnotimplementedexception.
+    /// </summary>
     [Fact]
     public void ConvertBack_ThrowsNotImplementedException()
     {

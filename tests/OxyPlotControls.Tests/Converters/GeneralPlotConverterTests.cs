@@ -1,6 +1,32 @@
 /*
- * Unit tests for GeneralPlotControl converters
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using System.Globalization;
 using System.Windows.Media;
@@ -10,13 +36,20 @@ namespace OxyPlotControls.Tests.Converters;
 
 /// <summary>
 /// Tests for OxyAutomaticColorConverter.
+/// Verifies proper conversion between OxyPlot color values and WPF SolidColorBrush objects.
 /// </summary>
 public class OxyAutomaticColorConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly OxyAutomaticColorConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns null when given a null value.
+    /// </summary>
     [Fact]
     public void Convert_NullValue_ReturnsNull()
     {
@@ -30,6 +63,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns null when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongType_ReturnsNull()
     {
@@ -43,6 +79,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Null(result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a SolidColorBrush with the correct color for a normal Color value.
+    /// </summary>
     [Fact]
     public void Convert_NormalColor_ReturnsSolidColorBrush()
     {
@@ -58,6 +97,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Equal(color, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a black brush when given OxyPlot's automatic color (ARGB 0,0,0,1).
+    /// </summary>
     [Fact]
     public void Convert_AutomaticColor_ReturnsBlackBrush()
     {
@@ -73,6 +115,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Equal(Color.FromArgb(255, 0, 0, 0), brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a red brush when given the Red color.
+    /// </summary>
     [Fact]
     public void Convert_RedColor_ReturnsRedBrush()
     {
@@ -88,6 +133,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Equal(Colors.Red, brush.Color);
     }
 
+    /// <summary>
+    /// Tests that Convert returns a brush with the correct color including transparency.
+    /// </summary>
     [Fact]
     public void Convert_TransparentColor_ReturnsSolidColorBrush()
     {
@@ -107,6 +155,9 @@ public class OxyAutomaticColorConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns the correct Color from a SolidColorBrush.
+    /// </summary>
     [Fact]
     public void ConvertBack_SolidColorBrush_ReturnsColor()
     {
@@ -121,6 +172,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Equal(Colors.Blue, (Color)result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns Red color from a red brush.
+    /// </summary>
     [Fact]
     public void ConvertBack_RedBrush_ReturnsRedColor()
     {
@@ -134,6 +188,9 @@ public class OxyAutomaticColorConverterTests
         Assert.Equal(Colors.Red, (Color)result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack correctly preserves custom color values including alpha channel.
+    /// </summary>
     [Fact]
     public void ConvertBack_CustomColor_ReturnsCorrectColor()
     {
@@ -153,13 +210,20 @@ public class OxyAutomaticColorConverterTests
 
 /// <summary>
 /// Tests for OxyDefaultFontSizeConverter.
+/// Verifies proper conversion of font size values, with NaN/Infinity handling and default value (12.0) support.
 /// </summary>
 public class OxyDefaultFontSizeConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly OxyDefaultFontSizeConverter _converter = new();
 
     #region Convert Tests
 
+    /// <summary>
+    /// Tests that Convert returns the default font size (12.0) when given a null value.
+    /// </summary>
     [Fact]
     public void Convert_NullValue_ReturnsDefault12()
     {
@@ -173,6 +237,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(12.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the default font size (12.0) when given an incorrect type.
+    /// </summary>
     [Fact]
     public void Convert_WrongType_ReturnsDefault12()
     {
@@ -186,6 +253,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(12.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the default font size (12.0) when given NaN.
+    /// </summary>
     [Fact]
     public void Convert_NaNValue_ReturnsDefault12()
     {
@@ -199,6 +269,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(12.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the default font size (12.0) when given positive infinity.
+    /// </summary>
     [Fact]
     public void Convert_PositiveInfinity_ReturnsDefault12()
     {
@@ -212,6 +285,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(12.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the default font size (12.0) when given negative infinity.
+    /// </summary>
     [Fact]
     public void Convert_NegativeInfinity_ReturnsDefault12()
     {
@@ -225,6 +301,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(12.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the font size value when given a valid font size.
+    /// </summary>
     [Fact]
     public void Convert_ValidFontSize_ReturnsValue()
     {
@@ -238,6 +317,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(14.5, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns zero when given a zero font size.
+    /// </summary>
     [Fact]
     public void Convert_ZeroValue_ReturnsZero()
     {
@@ -251,6 +333,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(0.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the font size value when given a large font size.
+    /// </summary>
     [Fact]
     public void Convert_LargeFontSize_ReturnsValue()
     {
@@ -264,6 +349,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(72.0, result);
     }
 
+    /// <summary>
+    /// Tests that Convert returns the font size value when given a small font size.
+    /// </summary>
     [Fact]
     public void Convert_SmallFontSize_ReturnsValue()
     {
@@ -281,6 +369,9 @@ public class OxyDefaultFontSizeConverterTests
 
     #region ConvertBack Tests
 
+    /// <summary>
+    /// Tests that ConvertBack returns NaN when given a null value.
+    /// </summary>
     [Fact]
     public void ConvertBack_NullValue_ReturnsNaN()
     {
@@ -294,6 +385,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.True(double.IsNaN((double)result));
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns NaN when given an incorrect type.
+    /// </summary>
     [Fact]
     public void ConvertBack_WrongType_ReturnsNaN()
     {
@@ -307,6 +401,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.True(double.IsNaN((double)result));
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns NaN when given the default value (12.0).
+    /// </summary>
     [Fact]
     public void ConvertBack_DefaultValue12_ReturnsNaN()
     {
@@ -320,6 +417,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.True(double.IsNaN((double)result));
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns the value when given a non-default font size.
+    /// </summary>
     [Fact]
     public void ConvertBack_NonDefaultValue_ReturnsValue()
     {
@@ -333,6 +433,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(14.0, (double)result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns zero when given a zero value.
+    /// </summary>
     [Fact]
     public void ConvertBack_ZeroValue_ReturnsZero()
     {
@@ -346,6 +449,9 @@ public class OxyDefaultFontSizeConverterTests
         Assert.Equal(0.0, (double)result);
     }
 
+    /// <summary>
+    /// Tests that ConvertBack returns the value when given a large font size.
+    /// </summary>
     [Fact]
     public void ConvertBack_LargeValue_ReturnsValue()
     {
@@ -364,9 +470,13 @@ public class OxyDefaultFontSizeConverterTests
 
 /// <summary>
 /// Tests for SolidColorBrushConverter.
+/// Verifies proper bidirectional conversion between SolidColorBrush and Brush types.
 /// </summary>
 public class SolidColorBrushConverterTests
 {
+    /// <summary>
+    /// The converter instance being tested.
+    /// </summary>
     private readonly SolidColorBrushConverter _converter = new();
 
     #region Convert Tests

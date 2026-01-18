@@ -1,12 +1,49 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate;
 
 namespace SoftwareUpdate.Tests.Core
 {
+    /// <summary>
+    /// Provides unit tests for the <see cref="UpdateDownloadProgress"/> class, verifying progress tracking,
+    /// percentage calculations, and text formatting for download progress and speed.
+    /// </summary>
     public class UpdateDownloadProgressTests
     {
         #region Property Tests
 
+        /// <summary>
+        /// Verifies that the BytesDownloaded property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void BytesDownloaded_CanBeSetAndRetrieved()
         {
@@ -15,6 +52,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(1024, progress.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that the TotalBytes property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void TotalBytes_CanBeSetAndRetrieved()
         {
@@ -23,6 +63,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(2048, progress.TotalBytes);
         }
 
+        /// <summary>
+        /// Verifies that the BytesPerSecond property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void BytesPerSecond_CanBeSetAndRetrieved()
         {
@@ -35,6 +78,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region ProgressPercentage Tests
 
+        /// <summary>
+        /// Verifies that ProgressPercentage returns -1 when TotalBytes is zero.
+        /// </summary>
         [Fact]
         public void ProgressPercentage_WhenTotalBytesZero_ReturnsNegativeOne()
         {
@@ -47,6 +93,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(-1, progress.ProgressPercentage);
         }
 
+        /// <summary>
+        /// Verifies that ProgressPercentage returns -1 when TotalBytes is negative.
+        /// </summary>
         [Fact]
         public void ProgressPercentage_WhenTotalBytesNegative_ReturnsNegativeOne()
         {
@@ -59,6 +108,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(-1, progress.ProgressPercentage);
         }
 
+        /// <summary>
+        /// Verifies that ProgressPercentage returns 50.0 when the download is half complete.
+        /// </summary>
         [Fact]
         public void ProgressPercentage_WhenHalfComplete_ReturnsFifty()
         {
@@ -71,6 +123,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(50.0, progress.ProgressPercentage);
         }
 
+        /// <summary>
+        /// Verifies that ProgressPercentage returns 100.0 when the download is complete.
+        /// </summary>
         [Fact]
         public void ProgressPercentage_WhenComplete_ReturnsHundred()
         {
@@ -83,6 +138,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(100.0, progress.ProgressPercentage);
         }
 
+        /// <summary>
+        /// Verifies that ProgressPercentage returns 0.0 when the download has not started.
+        /// </summary>
         [Fact]
         public void ProgressPercentage_WhenNotStarted_ReturnsZero()
         {
@@ -95,6 +153,12 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(0.0, progress.ProgressPercentage);
         }
 
+        /// <summary>
+        /// Verifies that ProgressPercentage calculates correctly for various download and total byte combinations.
+        /// </summary>
+        /// <param name="downloaded">The number of bytes downloaded.</param>
+        /// <param name="total">The total number of bytes.</param>
+        /// <param name="expected">The expected progress percentage.</param>
         [Theory]
         [InlineData(250, 1000, 25.0)]
         [InlineData(750, 1000, 75.0)]
@@ -115,6 +179,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region ProgressText Tests
 
+        /// <summary>
+        /// Verifies that ProgressText includes all relevant information when the total size is known.
+        /// </summary>
         [Fact]
         public void ProgressText_WhenTotalKnown_IncludesAllInfo()
         {
@@ -133,6 +200,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("50%", text);
         }
 
+        /// <summary>
+        /// Verifies that ProgressText only shows downloaded bytes when total size is unknown.
+        /// </summary>
         [Fact]
         public void ProgressText_WhenTotalUnknown_ShowsOnlyDownloaded()
         {
@@ -150,6 +220,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.DoesNotContain("%", text);
         }
 
+        /// <summary>
+        /// Verifies that ProgressText formats small byte values correctly as bytes.
+        /// </summary>
         [Fact]
         public void ProgressText_SmallBytes_FormatsAsBytes()
         {
@@ -164,6 +237,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("500 B", text);
         }
 
+        /// <summary>
+        /// Verifies that ProgressText formats kilobyte values correctly.
+        /// </summary>
         [Fact]
         public void ProgressText_Kilobytes_FormatsAsKB()
         {
@@ -178,6 +254,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("KB", text);
         }
 
+        /// <summary>
+        /// Verifies that ProgressText formats megabyte values correctly.
+        /// </summary>
         [Fact]
         public void ProgressText_Megabytes_FormatsAsMB()
         {
@@ -192,6 +271,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("5.0 MB", text);
         }
 
+        /// <summary>
+        /// Verifies that ProgressText formats gigabyte values correctly.
+        /// </summary>
         [Fact]
         public void ProgressText_Gigabytes_FormatsAsGB()
         {
@@ -210,6 +292,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region SpeedText Tests
 
+        /// <summary>
+        /// Verifies that SpeedText returns an empty string when BytesPerSecond is zero.
+        /// </summary>
         [Fact]
         public void SpeedText_WhenZero_ReturnsEmpty()
         {
@@ -218,6 +303,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("", progress.SpeedText);
         }
 
+        /// <summary>
+        /// Verifies that SpeedText returns an empty string when BytesPerSecond is negative.
+        /// </summary>
         [Fact]
         public void SpeedText_WhenNegative_ReturnsEmpty()
         {
@@ -226,6 +314,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal("", progress.SpeedText);
         }
 
+        /// <summary>
+        /// Verifies that SpeedText includes "/s" suffix when BytesPerSecond is positive.
+        /// </summary>
         [Fact]
         public void SpeedText_WhenPositive_IncludesPerSecond()
         {
@@ -236,6 +327,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("/s", text);
         }
 
+        /// <summary>
+        /// Verifies that SpeedText formats low speeds as bytes per second.
+        /// </summary>
         [Fact]
         public void SpeedText_LowSpeed_FormatsAsBytes()
         {
@@ -246,6 +340,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("B/s", text);
         }
 
+        /// <summary>
+        /// Verifies that SpeedText formats medium speeds as kilobytes per second.
+        /// </summary>
         [Fact]
         public void SpeedText_MediumSpeed_FormatsAsKB()
         {
@@ -256,6 +353,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("KB/s", text);
         }
 
+        /// <summary>
+        /// Verifies that SpeedText formats high speeds as megabytes per second.
+        /// </summary>
         [Fact]
         public void SpeedText_HighSpeed_FormatsAsMB()
         {
@@ -266,6 +366,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Contains("MB/s", text);
         }
 
+        /// <summary>
+        /// Verifies that SpeedText formats very high speeds as gigabytes per second.
+        /// </summary>
         [Fact]
         public void SpeedText_VeryHighSpeed_FormatsAsGB()
         {
@@ -280,6 +383,9 @@ namespace SoftwareUpdate.Tests.Core
 
         #region Default Values Tests
 
+        /// <summary>
+        /// Verifies that a new instance has BytesDownloaded initialized to zero.
+        /// </summary>
         [Fact]
         public void NewInstance_HasZeroBytesDownloaded()
         {
@@ -288,6 +394,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(0, progress.BytesDownloaded);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has TotalBytes initialized to zero.
+        /// </summary>
         [Fact]
         public void NewInstance_HasZeroTotalBytes()
         {
@@ -296,6 +405,9 @@ namespace SoftwareUpdate.Tests.Core
             Assert.Equal(0, progress.TotalBytes);
         }
 
+        /// <summary>
+        /// Verifies that a new instance has BytesPerSecond initialized to zero.
+        /// </summary>
         [Fact]
         public void NewInstance_HasZeroBytesPerSecond()
         {
