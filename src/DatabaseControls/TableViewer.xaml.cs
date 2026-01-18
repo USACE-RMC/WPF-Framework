@@ -614,20 +614,33 @@ namespace DatabaseControls
         #region Events
 
         /// <summary>
+        /// Event handler delegate for selected row indices changed event.
+        /// </summary>
+        /// <param name="selectedRowIndices">The list of selected row indices.</param>
+        public delegate void SelectedRowIndicesChangedEventHandler(List<int> selectedRowIndices);
+
+        /// <summary>
+        /// Event handler delegate for row right button up event.
+        /// </summary>
+        /// <param name="rowUpMenu">The context menu for the row.</param>
+        /// <param name="dataRowIndex">The data row index.</param>
+        public delegate void RowRightButtonUpEventHandler(ContextMenu rowUpMenu, int dataRowIndex);
+
+        /// <summary>
         /// Occurs when the set of selected row indices changes.
         /// </summary>
-        public event Action<List<int>>? SelectedRowIndicesChanged;
+        public event SelectedRowIndicesChangedEventHandler? SelectedRowIndicesChanged;
 
         /// <summary>
         /// Occurs when the active cell location changes.
         /// </summary>
-        public event Action? ActiveCellLocationChanged;
+        public event EventHandler? ActiveCellLocationChanged;
 
         /// <summary>
         /// Occurs when the right mouse button is released on a row header.
         /// Provides the context menu and row index for custom menu handling.
         /// </summary>
-        public event Action<ContextMenu, int>? RowRightButtonUp;
+        public event RowRightButtonUpEventHandler? RowRightButtonUp;
 
         #endregion
 
@@ -1230,6 +1243,7 @@ namespace DatabaseControls
 
         /// <summary>
         /// Updates the row header labels to display the correct row numbers.
+        /// Displays 0-based row indices for backwards compatibility with VB version.
         /// </summary>
         private void UpdateRowHeaders()
         {
@@ -1238,7 +1252,7 @@ namespace DatabaseControls
             {
                 int dataRowIndex = GetDataRowIndex(i);
                 if (i < RowHeadersGrid.Children.Count)
-                    ((RowHeader)RowHeadersGrid.Children[i]).Text = (dataRowIndex + 1).ToString();
+                    ((RowHeader)RowHeadersGrid.Children[i]).Text = dataRowIndex.ToString();
             }
         }
 
@@ -1416,24 +1430,24 @@ namespace DatabaseControls
         /// <summary>
         /// Sets the active cell to the specified row and column, optionally scrolling to make it visible.
         /// </summary>
-        /// <param name="rowIndex">The zero-based row index of the cell to activate.</param>
-        /// <param name="columnIndex">The zero-based column index of the cell to activate.</param>
-        /// <param name="scroll">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
-        public void SetActiveCell(int rowIndex, int columnIndex, bool scroll)
+        /// <param name="newDataRowIndex">The zero-based row index of the cell to activate.</param>
+        /// <param name="newDataColumnIndex">The zero-based column index of the cell to activate.</param>
+        /// <param name="scrollToRow">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
+        public void SetActiveCell(int newDataRowIndex, int newDataColumnIndex, bool scrollToRow = false)
         {
-            _activeCellVirtualRowIndex = rowIndex;
-            _activeCellDataColumnIndex = columnIndex;
-            if (scroll)
+            _activeCellVirtualRowIndex = newDataRowIndex;
+            _activeCellDataColumnIndex = newDataColumnIndex;
+            if (scrollToRow)
             {
                 int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
                 int lastRowIndex = firstRowIndex + _visibleRowCount - 1;
-                if (rowIndex < firstRowIndex) VerticalScrollbar.Value = rowIndex;
-                if (rowIndex > lastRowIndex) VerticalScrollbar.Value = rowIndex - _visibleRowCount + 1;
+                if (newDataRowIndex < firstRowIndex) VerticalScrollbar.Value = newDataRowIndex;
+                if (newDataRowIndex > lastRowIndex) VerticalScrollbar.Value = newDataRowIndex - _visibleRowCount + 1;
             }
             DeSelectAllCells();
             SetSelectedCells();
             SetActiveCell();
-            ActiveCellLocationChanged?.Invoke();
+            ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -2440,7 +2454,7 @@ namespace DatabaseControls
                 _mouseDownVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value) + GetTableRowIndex(gridPosition);
                 _activeCellDataColumnIndex = _mouseDownColumnIndex;
                 _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
-                ActiveCellLocationChanged?.Invoke();
+                ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
                 SetActiveCell();
 
                 if (e.ClickCount == 2 && Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
@@ -2481,7 +2495,7 @@ namespace DatabaseControls
                 _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
                 _activeCellDataColumnIndex = _mouseDownColumnIndex;
                 _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
-                ActiveCellLocationChanged?.Invoke();
+                ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
             }
 
             if (CellSelectable)
@@ -3116,7 +3130,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderTextblockStyleProperty = DependencyProperty.Register(
-                nameof(HeaderTextblockStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(null));
+                nameof(HeaderTextblockStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(GetDefaultColumnHeaderTextblockStyle()));
 
             public Style HeaderTextblockStyle
             {
@@ -3125,7 +3139,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderBorderStyleProperty = DependencyProperty.Register(
-                nameof(HeaderBorderStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(null));
+                nameof(HeaderBorderStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(GetDefaultColumnHeaderBorderStyle()));
 
             public Style HeaderBorderStyle
             {
@@ -3196,7 +3210,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty CellStyleProperty = DependencyProperty.Register(
-                nameof(CellStyle), typeof(Style), typeof(Cell), new PropertyMetadata(null));
+                nameof(CellStyle), typeof(Style), typeof(Cell), new PropertyMetadata(GetDefaultCellTextblockStyle()));
 
             public Style CellStyle
             {
@@ -3240,7 +3254,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderTextblockStyleProperty = DependencyProperty.Register(
-                nameof(HeaderTextblockStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(null));
+                nameof(HeaderTextblockStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(GetDefaultRowHeaderTextblockStyle()));
 
             public Style HeaderTextblockStyle
             {
@@ -3249,7 +3263,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderBorderStyleProperty = DependencyProperty.Register(
-                nameof(HeaderBorderStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(null));
+                nameof(HeaderBorderStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(GetDefaultRowHeaderBorderStyle()));
 
             public Style HeaderBorderStyle
             {
