@@ -141,7 +141,8 @@ namespace FrameworkUI
                 return pathname;
             }
 
-            string root = Path.GetPathRoot(pathname);
+            string? root = Path.GetPathRoot(pathname);
+            if (root == null || root.Length == 0) return pathname;
             if (root.Length > 3)
             {
                 root += Path.DirectorySeparatorChar.ToString();
@@ -258,7 +259,7 @@ namespace FrameworkUI
 
             var propInfoList = from p in typeof(MenuItem).GetProperties()
                                let attributes = p.GetCustomAttributes(true)
-                               let notBrowseable = (from a in attributes where a.GetType() == typeof(BrowsableAttribute) select !(a as BrowsableAttribute).Browsable).FirstOrDefault()
+                               let notBrowseable = (from a in attributes where a.GetType() == typeof(BrowsableAttribute) select !((BrowsableAttribute)a).Browsable).FirstOrDefault()
                                where !notBrowseable && p.CanRead && p.CanWrite && p.Name != "Icon"
                                orderby p.Name
                                select p;
@@ -266,7 +267,7 @@ namespace FrameworkUI
             // Copy over using reflections
             foreach (var propertyInfo in propInfoList)
             {
-                object propertyInfoValue = propertyInfo.GetValue(sourceItem, null);
+                object? propertyInfoValue = propertyInfo.GetValue(sourceItem, null);
                 propertyInfo.SetValue(copyItem, propertyInfoValue, null);
             }
 
@@ -316,7 +317,7 @@ namespace FrameworkUI
             foreach (var theEvent in events)
             {
                 var fieldInfo = sourceComponent.GetType().GetField($"{theEvent.Name}Event");
-                RoutedEvent eventKind = (RoutedEvent)fieldInfo?.GetValue(sourceComponent);
+                RoutedEvent? eventKind = fieldInfo?.GetValue(sourceComponent) as RoutedEvent;
                 if (eventKind is null) { continue; }
 
                 var reh = GetRoutedEventHandlers(sourceComponent, eventKind);
@@ -333,7 +334,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="element">The UI element to get handlers from.</param>
         /// <param name="routedEvent">The routed event to get handlers for.</param>
-        /// <returns>An array of delegates representing the event handlers, or null if none exist.</returns>
+        /// <returns>An array of delegates representing the event handlers, or an empty array if none exist.</returns>
         public static Delegate[] GetRoutedEventHandlers(UIElement element, RoutedEvent routedEvent)
         {
             if (element == null || routedEvent == null) { throw new ArgumentNullException(); }
@@ -342,13 +343,13 @@ namespace FrameworkUI
             var eventHandlersStoreProperty = typeof(UIElement).GetProperty("EventHandlersStore", BindingFlags.Instance | BindingFlags.NonPublic);
             var eventHandlersStore = eventHandlersStoreProperty?.GetValue(element);
 
-            if (eventHandlersStore == null) { return null; }
+            if (eventHandlersStore == null) { return Array.Empty<Delegate>(); }
 
             // Get the GetRoutedEventHandlers method
             var getRoutedEventHandlersMethod = eventHandlersStore.GetType().GetMethod("GetRoutedEventHandlers", BindingFlags.Instance | BindingFlags.Public);
-            var handlers = (RoutedEventHandlerInfo[])getRoutedEventHandlersMethod?.Invoke(eventHandlersStore, new object[] { routedEvent });
+            var handlers = getRoutedEventHandlersMethod?.Invoke(eventHandlersStore, new object[] { routedEvent }) as RoutedEventHandlerInfo[];
 
-            if (handlers == null) { return null; }
+            if (handlers == null) { return Array.Empty<Delegate>(); }
 
             // Extract the delegates
             var delegates = new Delegate[handlers.Length];
