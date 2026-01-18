@@ -206,22 +206,22 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised before the element has been deleted.
         /// </summary>
-        public event PreviewDeletedEventHandler PreviewDeleted;
+        public event PreviewDeletedEventHandler? PreviewDeleted;
 
         /// <summary>
         /// Event is raised when the element has been deleted.
         /// </summary>
-        public event DeletedEventHandler Deleted;
+        public event DeletedEventHandler? Deleted;
 
         /// <summary>
         /// Event is raised event before an object has been saved.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Event is raised when the object has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Event is raised whenever a property changes.

@@ -50,19 +50,19 @@ namespace SoftwareUpdate.GitHub
         /// Gets or sets the Git tag name for this release (e.g., "v1.0.0").
         /// </summary>
         [DataMember(Name = "tag_name")]
-        public string TagName { get; set; }
+        public string? TagName { get; set; }
 
         /// <summary>
         /// Gets or sets the display name of the release.
         /// </summary>
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the release notes body in Markdown format.
         /// </summary>
         [DataMember(Name = "body")]
-        public string Body { get; set; }
+        public string? Body { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this is a draft release.
@@ -80,19 +80,19 @@ namespace SoftwareUpdate.GitHub
         /// Gets or sets the ISO 8601 timestamp when the release was published.
         /// </summary>
         [DataMember(Name = "published_at")]
-        public string PublishedAt { get; set; }
+        public string? PublishedAt { get; set; }
 
         /// <summary>
         /// Gets or sets the URL to the release page on GitHub.
         /// </summary>
         [DataMember(Name = "html_url")]
-        public string HtmlUrl { get; set; }
+        public string? HtmlUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the list of downloadable assets attached to this release.
         /// </summary>
         [DataMember(Name = "assets")]
-        public List<GitHubReleaseAsset> Assets { get; set; }
+        public List<GitHubReleaseAsset> Assets { get; set; } = new List<GitHubReleaseAsset>();
 
         /// <summary>
         /// Gets the published date as a DateTime.

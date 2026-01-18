@@ -54,17 +54,17 @@ namespace SoftwareUpdate
         /// Gets or sets the available update information.
         /// Null if no update is available or if an error occurred.
         /// </summary>
-        public UpdateInfo Update { get; set; }
+        public UpdateInfo? Update { get; set; }
 
         /// <summary>
         /// Gets or sets the current version of the application.
         /// </summary>
-        public SemanticVersion CurrentVersion { get; set; }
+        public SemanticVersion? CurrentVersion { get; set; }
 
         /// <summary>
         /// Gets or sets any error that occurred during the check.
         /// </summary>
-        public Exception Error { get; set; }
+        public Exception? Error { get; set; }
 
         /// <summary>
         /// Gets whether the update check completed successfully (no errors).

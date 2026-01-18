@@ -53,12 +53,12 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets or sets the path to the downloaded file.
         /// </summary>
-        public string FilePath { get; set; }
+        public string? FilePath { get; set; }
 
         /// <summary>
         /// Gets or sets any error that occurred during download.
         /// </summary>
-        public Exception Error { get; set; }
+        public Exception? Error { get; set; }
 
         /// <summary>
         /// Gets or sets whether the download was cancelled by the user.
@@ -73,7 +73,7 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets or sets the update information that was downloaded.
         /// </summary>
-        public UpdateInfo Update { get; set; }
+        public UpdateInfo? Update { get; set; }
 
         /// <summary>
         /// Creates a successful download result.

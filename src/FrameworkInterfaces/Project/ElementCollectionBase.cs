@@ -85,7 +85,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The undo manager for collection-level operations. Lazily initialized.
         /// </summary>
-        private IUndoManager _undoManager;
+        private IUndoManager? _undoManager;
 
         /// <summary>
         /// Indicates whether undo recording is enabled for this collection.
@@ -194,23 +194,23 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised when adding an element.
         /// </summary>
-        public event ElementAddedEventHandler ElementAdded;
+        public event ElementAddedEventHandler? ElementAdded;
 
         /// <summary>
         /// Event is raised when removing an element.
         /// </summary>
-        public event ElementRemovedEventHandler ElementRemoved;
+        public event ElementRemovedEventHandler? ElementRemoved;
 
         /// <summary>
         /// Event is raised event before an object has been saved.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Event is raised when the object has been saved.
         /// </summary>
         /// <param name="sender">The object that was saved.</param>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Event is raised whenever a property changes.

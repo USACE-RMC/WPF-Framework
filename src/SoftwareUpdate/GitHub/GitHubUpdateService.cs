@@ -63,8 +63,8 @@ namespace SoftwareUpdate.GitHub
         private readonly HttpClient _httpClient;
         private readonly object _lock = new object();
         private UpdateState _state = UpdateState.Idle;
-        private UpdateInfo _availableUpdate;
-        private HashSet<string> _skippedVersions;
+        private UpdateInfo? _availableUpdate;
+        private HashSet<string> _skippedVersions = new HashSet<string>();
         private bool _disposed;
 
         /// <summary>
@@ -100,17 +100,17 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <inheritdoc/>
-        public UpdateInfo AvailableUpdate
+        public UpdateInfo? AvailableUpdate
         {
             get { lock (_lock) return _availableUpdate; }
             private set { lock (_lock) _availableUpdate = value; }
         }
 
         /// <inheritdoc/>
-        public event EventHandler<UpdateCheckResult> UpdateCheckCompleted;
+        public event EventHandler<UpdateCheckResult>? UpdateCheckCompleted;
 
         /// <inheritdoc/>
-        public event EventHandler<Exception> UpdateError;
+        public event EventHandler<Exception>? UpdateError;
 
         /// <inheritdoc/>
         public async Task<UpdateCheckResult> CheckForUpdateAsync(CancellationToken cancellationToken = default)
@@ -230,7 +230,7 @@ namespace SoftwareUpdate.GitHub
         /// <inheritdoc/>
         public async Task<UpdateDownloadResult> DownloadUpdateAsync(
             UpdateInfo update,
-            IProgress<UpdateDownloadProgress> progress = null,
+            IProgress<UpdateDownloadProgress>? progress = null,
             CancellationToken cancellationToken = default)
         {
             if (update == null)
@@ -384,7 +384,7 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <inheritdoc/>
-        public void SkipVersion(SemanticVersion version)
+        public void SkipVersion(SemanticVersion? version)
         {
             if (version == null) return;
 
@@ -396,7 +396,7 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <inheritdoc/>
-        public bool IsVersionSkipped(SemanticVersion version)
+        public bool IsVersionSkipped(SemanticVersion? version)
         {
             if (version == null) return false;
 
@@ -421,7 +421,7 @@ namespace SoftwareUpdate.GitHub
         /// </summary>
         /// <param name="release">The GitHub release to search.</param>
         /// <returns>The matching asset, or null if no match found.</returns>
-        private GitHubReleaseAsset FindMatchingAsset(GitHubRelease release)
+        private GitHubReleaseAsset? FindMatchingAsset(GitHubRelease release)
         {
             if (release.Assets == null || !release.Assets.Any())
                 return null;
@@ -437,7 +437,7 @@ namespace SoftwareUpdate.GitHub
 
             var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
 
-            return release.Assets.FirstOrDefault(a => regex.IsMatch(a.Name));
+            return release.Assets.FirstOrDefault(a => a.Name != null && regex.IsMatch(a.Name));
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace SoftwareUpdate.GitHub
         private List<GitHubRelease> DeserializeReleases(Stream jsonStream)
         {
             var serializer = new DataContractJsonSerializer(typeof(List<GitHubRelease>));
-            return (List<GitHubRelease>)serializer.ReadObject(jsonStream);
+            return (List<GitHubRelease>?)serializer.ReadObject(jsonStream) ?? new List<GitHubRelease>();
         }
 
         /// <summary>

@@ -74,7 +74,7 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets the most recently checked update information, if any.
         /// </summary>
-        UpdateInfo AvailableUpdate { get; }
+        UpdateInfo? AvailableUpdate { get; }
 
         /// <summary>
         /// Checks for available updates asynchronously.
@@ -98,7 +98,7 @@ namespace SoftwareUpdate
         /// </returns>
         Task<UpdateDownloadResult> DownloadUpdateAsync(
             UpdateInfo update,
-            IProgress<UpdateDownloadProgress> progress = null,
+            IProgress<UpdateDownloadProgress>? progress = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -123,14 +123,14 @@ namespace SoftwareUpdate
         /// Marks a specific version as skipped so the user won't be prompted again.
         /// </summary>
         /// <param name="version">The version to skip.</param>
-        void SkipVersion(SemanticVersion version);
+        void SkipVersion(SemanticVersion? version);
 
         /// <summary>
         /// Checks if a specific version has been marked as skipped.
         /// </summary>
         /// <param name="version">The version to check.</param>
         /// <returns><c>true</c> if the version is skipped; otherwise, <c>false</c>.</returns>
-        bool IsVersionSkipped(SemanticVersion version);
+        bool IsVersionSkipped(SemanticVersion? version);
 
         /// <summary>
         /// Clears all skipped versions.
@@ -140,11 +140,11 @@ namespace SoftwareUpdate
         /// <summary>
         /// Occurs when an update check completes.
         /// </summary>
-        event EventHandler<UpdateCheckResult> UpdateCheckCompleted;
+        event EventHandler<UpdateCheckResult>? UpdateCheckCompleted;
 
         /// <summary>
         /// Occurs when an error occurs during update operations.
         /// </summary>
-        event EventHandler<Exception> UpdateError;
+        event EventHandler<Exception>? UpdateError;
     }
 }
