@@ -1235,7 +1235,7 @@ namespace DatabaseControls
                 for (int j = 0; j < DataView.ColumnNames.Count(); j++)
                 {
                     var cell = (Cell)GridPanel.Children[i * DataView.ColumnNames.Count() + j];
-                    var value = DataView.GetCell(dataRowIndex, j);
+                    var value = DataView.GetCell(j, dataRowIndex);
                     cell.Text = value?.ToString() ?? "";
                 }
             }
@@ -1291,7 +1291,7 @@ namespace DatabaseControls
         {
             int dataRowIndex = GetDataRowIndex(tableRowIndex);
             if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) return "";
-            var value = DataView.GetCell(dataRowIndex, columnIndex);
+            var value = DataView.GetCell(columnIndex, dataRowIndex);
             return value?.ToString() ?? "";
         }
 
@@ -2888,7 +2888,7 @@ namespace DatabaseControls
                 {
                     for (int j = 0; j < DataView.ColumnNames.Count(); j++)
                     {
-                        sb.Append(DataView.GetCell(i, j)?.ToString() ?? "");
+                        sb.Append(DataView.GetCell(j, i)?.ToString() ?? "");
                         if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
                     }
                     sb.AppendLine();
