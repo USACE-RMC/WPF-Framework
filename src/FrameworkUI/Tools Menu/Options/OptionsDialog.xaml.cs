@@ -51,7 +51,7 @@ namespace FrameworkUI
         /// <summary>
         /// Occurs when the Apply button is clicked.
         /// </summary>
-        public event RoutedEventHandler Apply_Click;
+        public event RoutedEventHandler? Apply_Click;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OptionsDialog"/> class.

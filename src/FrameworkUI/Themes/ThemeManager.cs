@@ -89,7 +89,7 @@ namespace FrameworkUI
         /// <summary>
         /// Occurs when the theme has been changed.
         /// </summary>
-        public static event ThemeChangedEventHandler ThemeChanged;
+        public static event ThemeChangedEventHandler? ThemeChanged;
 
         #endregion
 

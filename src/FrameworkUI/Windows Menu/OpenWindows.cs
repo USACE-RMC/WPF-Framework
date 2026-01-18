@@ -88,7 +88,9 @@ namespace FrameworkUI
         public int WindowIndexOf(LayoutDocument document)
         {
             for (int i = 0; i < Collection.Count; i++)
-                if (Collection[i].Document.Equals(document) == true) return i;
+            {
+                if (Collection[i].Document != null && Collection[i].Document.Equals(document)) return i;
+            }
             return -1;
         }
 
@@ -100,8 +102,9 @@ namespace FrameworkUI
         {
             for (int i = 0; i < Collection.Count; i++)
             {
-                if (Collection[i].Element == null) continue;
-                if (Collection[i].Element.ParentCollection.Name == element.ParentCollection.Name && Collection[i].Element.Name == element.Name)
+                var collectionElement = Collection[i].Element;
+                if (collectionElement == null) continue;
+                if (collectionElement.ParentCollection.Name == element.ParentCollection.Name && collectionElement.Name == element.Name)
                 {
                     return i;
                 }
@@ -130,13 +133,15 @@ namespace FrameworkUI
             CancelClosing = false;
             if (ClosingAllWindows == false && ShellPublicVariables.SimulationInProgress == false)
             {
-                int index = WindowIndexOf((LayoutDocument)sender);
+                if (sender is not LayoutDocument senderDocument) return;
+                int index = WindowIndexOf(senderDocument);
                 // Check if the document needs to be saved
-                if (index >= 0 && Collection[index].Element.IsDirty == true)
+                var element = index >= 0 ? Collection[index].Element : null;
+                if (index >= 0 && element != null && element.IsDirty == true)
                 {
                     // Open the Save Window Dialog
                     var unSavedElementItems = new ObservableCollection<UnsavedElement>();
-                    unSavedElementItems.Add(new UnsavedElement(Collection[index].Element));
+                    unSavedElementItems.Add(new UnsavedElement(element));
                     var saveElementsDialog = new SaveElementsDialog() { ElementItems = unSavedElementItems };
                     saveElementsDialog.ShowDialog();
                     if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.Cancel)
@@ -154,13 +159,19 @@ namespace FrameworkUI
         /// </summary>
         private void Document_Closed(object? sender, EventArgs e)
         {
-            int index = WindowIndexOf((LayoutDocument)sender);
+            if (sender is not LayoutDocument senderDocument) return;
+            int index = WindowIndexOf(senderDocument);
+            if (index < 0) return;
             if (index <= NumberOfWindowsToDisplay - 1)
             {
-                WindowMenu.Items.Remove(Collection[index].MenuItem);
+                WindowMenu?.Items.Remove(Collection[index].MenuItem);
             }
-            Collection[index].Document.Closing -= Document_Closing;
-            Collection[index].Document.Closed -= Document_Closed;
+            var document = Collection[index].Document;
+            if (document != null)
+            {
+                document.Closing -= Document_Closing;
+                document.Closed -= Document_Closed;
+            }
             Collection.RemoveAt(index);
         }
 
@@ -172,7 +183,8 @@ namespace FrameworkUI
         {
             if (index < 0) return;
             if (index > Collection.Count - 1) return;
-            Collection[index].Document.IsActive = true;
+            var document = Collection[index].Document;
+            if (document != null) document.IsActive = true;
         }
 
         /// <summary>
@@ -181,7 +193,7 @@ namespace FrameworkUI
         /// <param name="index">Zero-based index of the element to close.</param>
         public void Close(int index)
         {
-            Collection[index].Document.Close();
+            Collection[index].Document?.Close();
         }
 
         /// <summary>
@@ -206,9 +218,16 @@ namespace FrameworkUI
         {
             for (int i = 0; i < Collection.Count; i++)
             {
-                Collection[i].Document.IsEnabled = true;
-                ((Control)Collection[i].Document.Content).IsEnabled = true;
-            }             
+                var document = Collection[i].Document;
+                if (document != null)
+                {
+                    document.IsEnabled = true;
+                    if (document.Content is Control control)
+                    {
+                        control.IsEnabled = true;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -218,9 +237,16 @@ namespace FrameworkUI
         {
             for (int i = 0; i < Collection.Count; i++)
             {
-                Collection[i].Document.IsEnabled = false;
-                ((Control)Collection[i].Document.Content).IsEnabled = false;
-            }           
+                var document = Collection[i].Document;
+                if (document != null)
+                {
+                    document.IsEnabled = false;
+                    if (document.Content is Control control)
+                    {
+                        control.IsEnabled = false;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -234,9 +260,10 @@ namespace FrameworkUI
             var unSavedElementItems = new ObservableCollection<UnsavedElement>();
             for (int i = 0; i < Collection.Count; i++)
             {
-                if (Collection[i].Element == null) continue;
-                if (Collection[i].Element.IsDirty == true)
-                    unSavedElementItems.Add(new UnsavedElement(Collection[i].Element));
+                var element = Collection[i].Element;
+                if (element == null) continue;
+                if (element.IsDirty == true)
+                    unSavedElementItems.Add(new UnsavedElement(element));
             }
             // If there is, open the Save Window Dialog
             if (unSavedElementItems.Count > 0)
@@ -278,6 +305,7 @@ namespace FrameworkUI
         /// </summary>
         private void RemoveMenuItems()
         {
+            if (WindowMenu == null) return;
             // clear the list of menu items
             for (int i = Collection.Count - 1; i >= 0; i -= 1)
             {
@@ -293,19 +321,25 @@ namespace FrameworkUI
         /// </summary>
         private void LoadMenuItems()
         {
+            if (WindowMenu == null) return;
             int iMenuItem = WindowMenu.Items.IndexOf(this);
             for (int i = 0; i < Collection.Count; i++)
             {
                 if (i <= NumberOfWindowsToDisplay - 1)
                 {
                     string header = i + 1 + " " + Collection[i].Name;
-                    Collection[i].MenuItem = new MenuItem() { Header = header };
-                    Collection[i].MenuItem.Icon = new Image() { Source = Collection[i].Document.IconSource };
-                    if (Collection[i].Document.IsSelected == true) Collection[i].MenuItem.IsChecked = true;
-                    Collection[i].MenuItem.Click += MenuItem_Click;
+                    var menuItem = new MenuItem() { Header = header };
+                    Collection[i].MenuItem = menuItem;
+                    var document = Collection[i].Document;
+                    if (document != null)
+                    {
+                        menuItem.Icon = new Image() { Source = document.IconSource };
+                        if (document.IsSelected == true) menuItem.IsChecked = true;
+                    }
+                    menuItem.Click += MenuItem_Click;
                     // add menu item
                     iMenuItem += 1;
-                    WindowMenu.Items.Insert(iMenuItem, Collection[i].MenuItem);
+                    WindowMenu.Items.Insert(iMenuItem, menuItem);
                 }
             }
         }
@@ -315,10 +349,15 @@ namespace FrameworkUI
         /// </summary>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (WindowMenu == null) return;
             int iMenuItem = WindowMenu.Items.IndexOf(this);
             int iSender = WindowMenu.Items.IndexOf((MenuItem)sender);
             int iItem = iSender - iMenuItem - 1;
-            Collection[iItem].Document.IsSelected = true;
+            if (iItem >= 0 && iItem < Collection.Count)
+            {
+                var document = Collection[iItem].Document;
+                if (document != null) document.IsSelected = true;
+            }
         }
 
     }

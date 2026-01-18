@@ -64,7 +64,7 @@ namespace FrameworkUI
         /// </summary>
         public string Name
         {
-            get { return Document.Title; }
+            get { return Document?.Title ?? string.Empty; }
         }
 
         /// <summary>
@@ -85,9 +85,9 @@ namespace FrameworkUI
         /// <summary>
         /// Gets the element image source.
         /// </summary>
-        public ImageSource ImageSource
+        public ImageSource? ImageSource
         {
-            get { return GeneralMethods.Bitmap2BitmapSource(Element.ElementImage); }
+            get { return Element != null ? GeneralMethods.Bitmap2BitmapSource(Element.ElementImage) : null; }
         }
 
 

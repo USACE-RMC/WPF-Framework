@@ -59,7 +59,7 @@ namespace FrameworkUI
         /// <summary>
         /// Gets Element that is bound to the document.
         /// </summary>
-        public IElement Element { get; private set; } = null;
+        public IElement Element { get; private set; }
 
         /// <summary>
         /// Gets the element image source.
