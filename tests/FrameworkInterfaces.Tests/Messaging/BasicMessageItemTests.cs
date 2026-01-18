@@ -83,7 +83,8 @@ namespace FrameworkInterfaces.Tests.Messaging
                     propertyChanged = true;
             };
 
-            item.Type = MessageType.Error;
+            // Use Warning since default is Error (enum value 0)
+            item.Type = MessageType.Warning;
 
             Assert.True(propertyChanged);
         }
