@@ -78,7 +78,7 @@ namespace FrameworkUI.Demo
 
             // Create the undo bridge for collection changes
             _ordinatesBridge = new UndoableCollectionBridge<double>(
-                    _probabilityOrdinates,
+                    ProbabilityOrdinates,
                 () => IsUndoEnabled ? _undoManager : null,
                 "probability ordinates",
                 this

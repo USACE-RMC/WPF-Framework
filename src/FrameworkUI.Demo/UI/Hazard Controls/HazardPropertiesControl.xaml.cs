@@ -43,34 +43,34 @@ namespace FrameworkUI.Demo.UI
             // Add any initialization after the InitializeComponent() call.
             PropertyAttributes.SetDefaultAttributes("Parametric Hazard Function Properties", _defaultDescription);
 
-            FrequencyDataGrid.RowType = typeof(ProbabilityOrdinateRowItem);
+            //FrequencyDataGrid.RowType = typeof(ProbabilityOrdinateRowItem);
             _combobox.ItemsSource = DistributionOptions;
             _combobox.DisplayMemberPath = "DisplayName";
             _combobox.HorizontalAlignment = HorizontalAlignment.Stretch;
             _combobox.HorizontalContentAlignment = HorizontalAlignment.Stretch;
             Distribution.InnerContent = _combobox;
 
-            _probabilityRowItems.CollectionChanged += (sender, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        ((ProbabilityOrdinateRowItem)item).PropertyChanged += ProbabilityOrdinateRowItem_PropertyChanged;
-                    }
-                }
-                else if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    foreach (var item in e.OldItems)
-                    {
-                        ((ProbabilityOrdinateRowItem)item).PropertyChanged -= ProbabilityOrdinateRowItem_PropertyChanged;
-                    }
-                }
-                else if (e.Action == NotifyCollectionChangedAction.Reset)
-                {
-                    // No action needed for reset
-                }
-            };
+            //_probabilityRowItems.CollectionChanged += (sender, e) =>
+            //{
+            //    if (e.Action == NotifyCollectionChangedAction.Add)
+            //    {
+            //        foreach (var item in e.NewItems)
+            //        {
+            //            ((ProbabilityOrdinateRowItem)item).PropertyChanged += ProbabilityOrdinateRowItem_PropertyChanged;
+            //        }
+            //    }
+            //    else if (e.Action == NotifyCollectionChangedAction.Remove)
+            //    {
+            //        foreach (var item in e.OldItems)
+            //        {
+            //            ((ProbabilityOrdinateRowItem)item).PropertyChanged -= ProbabilityOrdinateRowItem_PropertyChanged;
+            //        }
+            //    }
+            //    else if (e.Action == NotifyCollectionChangedAction.Reset)
+            //    {
+            //        // No action needed for reset
+            //    }
+            //};
         }
 
         #endregion
@@ -112,13 +112,13 @@ namespace FrameworkUI.Demo.UI
             {
                 thisControl._probabilityRowItems.RemoveAt(i);
             }
-            thisControl.FrequencyDataGrid.ItemsSource = null;
+            //thisControl.FrequencyDataGrid.ItemsSource = null;
 
             // Remove any handlers from the old element
             var oldElement = e.OldValue as HazardElement;
             if (oldElement != null)
             {
-                oldElement.ProbabilityOrdinates.CollectionChanged -= thisControl.ProbabilityOrdinates_CollectionChanged;
+                //oldElement.ProbabilityOrdinates.CollectionChanged -= thisControl.ProbabilityOrdinates_CollectionChanged;
                 oldElement.PropertyChanged -= thisControl.Element_PropertyChanged;
                 thisControl._combobox.SelectionChanged -= thisControl.DistributionCombobox_SelectionChanged;
             }
@@ -126,13 +126,13 @@ namespace FrameworkUI.Demo.UI
             var newElement = e.NewValue as HazardElement;
             if (newElement != null)
             {
-                newElement.ProbabilityOrdinates.CollectionChanged += thisControl.ProbabilityOrdinates_CollectionChanged;
+                //newElement.ProbabilityOrdinates.CollectionChanged += thisControl.ProbabilityOrdinates_CollectionChanged;
 
                 foreach (var prob in newElement.ProbabilityOrdinates)
                 {
                     thisControl._probabilityRowItems.Add(new ProbabilityOrdinateRowItem(thisControl._probabilityRowItems, prob));
                 }
-                thisControl.FrequencyDataGrid.ItemsSource = thisControl._probabilityRowItems;
+                //thisControl.FrequencyDataGrid.ItemsSource = thisControl._probabilityRowItems;
 
                 for (int i = 0; i < thisControl.DistributionOptions.Length; i++)
                 {
@@ -539,134 +539,134 @@ namespace FrameworkUI.Demo.UI
 
         #region Probability Ordinates
 
-        /// <summary>
-        /// Handles property changes in probability ordinate row items to synchronize with the model.
-        /// </summary>
-        /// <param name="s">The source of the event.</param>
-        /// <param name="ea">The <see cref="PropertyChangedEventArgs"/> instance containing the property name.</param>
-        private void ProbabilityOrdinateRowItem_PropertyChanged(object s, PropertyChangedEventArgs ea)
-        {
-            if (ea.PropertyName != nameof(ProbabilityOrdinateRowItem.Ordinate)) return;
-            if (_supressModelUpdate) return;
+        ///// <summary>
+        ///// Handles property changes in probability ordinate row items to synchronize with the model.
+        ///// </summary>
+        ///// <param name="s">The source of the event.</param>
+        ///// <param name="ea">The <see cref="PropertyChangedEventArgs"/> instance containing the property name.</param>
+        //private void ProbabilityOrdinateRowItem_PropertyChanged(object s, PropertyChangedEventArgs ea)
+        //{
+        //    if (ea.PropertyName != nameof(ProbabilityOrdinateRowItem.Ordinate)) return;
+        //    if (_supressModelUpdate) return;
 
-            int rowIndex = _probabilityRowItems.IndexOf((ProbabilityOrdinateRowItem)s);
-            if (rowIndex >= 0 && rowIndex < Element.ProbabilityOrdinates.Count)
-            {
-                _supressUIUpdate = true;
-                Element.ProbabilityOrdinates[rowIndex] = ((ProbabilityOrdinateRowItem)s).Ordinate;
-                _supressUIUpdate = false;
-            }
-        }
+        //    int rowIndex = _probabilityRowItems.IndexOf((ProbabilityOrdinateRowItem)s);
+        //    if (rowIndex >= 0 && rowIndex < Element.ProbabilityOrdinates.Count)
+        //    {
+        //        _supressUIUpdate = true;
+        //        Element.ProbabilityOrdinates[rowIndex] = ((ProbabilityOrdinateRowItem)s).Ordinate;
+        //        _supressUIUpdate = false;
+        //    }
+        //}
 
-        /// <summary>
-        /// Handles collection changes in the probability ordinates to synchronize the UI.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the change details.</param>
-        private void ProbabilityOrdinates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (!_supressUIUpdate)
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        int addCounter = e.NewStartingIndex;
-                        foreach (var item in e.NewItems)
-                        {
-                            _probabilityRowItems.Insert(addCounter, new ProbabilityOrdinateRowItem(_probabilityRowItems, (double)item));
-                            addCounter++;
-                        }
-                        break;
+        ///// <summary>
+        ///// Handles collection changes in the probability ordinates to synchronize the UI.
+        ///// </summary>
+        ///// <param name="sender">The source of the event.</param>
+        ///// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the change details.</param>
+        //private void ProbabilityOrdinates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (!_supressUIUpdate)
+        //    {
+        //        switch (e.Action)
+        //        {
+        //            case NotifyCollectionChangedAction.Add:
+        //                int addCounter = e.NewStartingIndex;
+        //                foreach (var item in e.NewItems)
+        //                {
+        //                    _probabilityRowItems.Insert(addCounter, new ProbabilityOrdinateRowItem(_probabilityRowItems, (double)item));
+        //                    addCounter++;
+        //                }
+        //                break;
 
-                    case NotifyCollectionChangedAction.Remove:
-                        if (e.OldItems.Count == 1)
-                        {
-                            _probabilityRowItems.RemoveAt(e.OldStartingIndex);
-                        }
-                        else
-                        {
-                            int removeCounter = e.OldStartingIndex + e.OldItems.Count;
-                            foreach (var item in e.OldItems)
-                            {
-                                _probabilityRowItems.RemoveAt(removeCounter);
-                                removeCounter--;
-                            }
-                        }
-                        break;
+        //            case NotifyCollectionChangedAction.Remove:
+        //                if (e.OldItems.Count == 1)
+        //                {
+        //                    _probabilityRowItems.RemoveAt(e.OldStartingIndex);
+        //                }
+        //                else
+        //                {
+        //                    int removeCounter = e.OldStartingIndex + e.OldItems.Count;
+        //                    foreach (var item in e.OldItems)
+        //                    {
+        //                        _probabilityRowItems.RemoveAt(removeCounter);
+        //                        removeCounter--;
+        //                    }
+        //                }
+        //                break;
 
-                    case NotifyCollectionChangedAction.Replace:
-                        int replaceCounter = e.NewStartingIndex;
-                        foreach (var item in e.NewItems)
-                        {
-                            _supressModelUpdate = true;
-                            ((ProbabilityOrdinateRowItem)_probabilityRowItems[replaceCounter]).Ordinate = (double)item;
-                            replaceCounter++;
-                            _supressModelUpdate = false;
-                        }
-                        break;
-                }
-            }
-        }
+        //            case NotifyCollectionChangedAction.Replace:
+        //                int replaceCounter = e.NewStartingIndex;
+        //                foreach (var item in e.NewItems)
+        //                {
+        //                    _supressModelUpdate = true;
+        //                    ((ProbabilityOrdinateRowItem)_probabilityRowItems[replaceCounter]).Ordinate = (double)item;
+        //                    replaceCounter++;
+        //                    _supressModelUpdate = false;
+        //                }
+        //                break;
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Handles the AutoGeneratingColumn event of the DataGrid to configure column properties.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="DataGridAutoGeneratingColumnEventArgs"/> instance containing the column data.</param>
-        private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(ProbabilityOrdinateRowItem.Ordinate):
-                    e.Column.MinWidth = 20;
-                    e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
-                    ((DataGridTextColumn)e.Column).CellStyle = (Style)FindResource("Right_CellStyle");
+        ///// <summary>
+        ///// Handles the AutoGeneratingColumn event of the DataGrid to configure column properties.
+        ///// </summary>
+        ///// <param name="sender">The source of the event.</param>
+        ///// <param name="e">The <see cref="DataGridAutoGeneratingColumnEventArgs"/> instance containing the column data.</param>
+        //private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        //{
+        //    switch (e.PropertyName)
+        //    {
+        //        case nameof(ProbabilityOrdinateRowItem.Ordinate):
+        //            e.Column.MinWidth = 20;
+        //            e.Column.Width = new DataGridLength(1, DataGridLengthUnitType.Star);
+        //            ((DataGridTextColumn)e.Column).CellStyle = (Style)FindResource("Right_CellStyle");
 
-                    // Create header style based on Center_ColumnHeaderStyle with tooltip
-                    var baseHeaderStyle = (Style)FindResource("Center_ColumnHeaderStyle");
-                    var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
+        //            // Create header style based on Center_ColumnHeaderStyle with tooltip
+        //            var baseHeaderStyle = (Style)FindResource("Center_ColumnHeaderStyle");
+        //            var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
 
-                    headerStyle.Setters.Add(new Setter(ToolTipProperty, new TextBlock
-                    {
-                        Text = "Enter the desired values as exceedance probabilities.",
-                        FontWeight = FontWeights.Normal,
-                        TextAlignment = TextAlignment.Left,
-                        TextWrapping = TextWrapping.Wrap
-                    }));
+        //            headerStyle.Setters.Add(new Setter(ToolTipProperty, new TextBlock
+        //            {
+        //                Text = "Enter the desired values as exceedance probabilities.",
+        //                FontWeight = FontWeights.Normal,
+        //                TextAlignment = TextAlignment.Left,
+        //                TextWrapping = TextWrapping.Wrap
+        //            }));
 
-                    ((DataGridTextColumn)e.Column).HeaderStyle = headerStyle;
-                    break;
-            }
-        }
+        //            ((DataGridTextColumn)e.Column).HeaderStyle = headerStyle;
+        //            break;
+        //    }
+        //}
 
-        /// <summary>
-        /// Handles rows being added to the data grid to synchronize with the model.
-        /// </summary>
-        /// <param name="startRowIndex">The starting index of the added rows.</param>
-        /// <param name="nRows">The number of rows added.</param>
-        private void DataGrid_RowsAdded(int startRowIndex, int nRows)
-        {
-            _supressUIUpdate = true;
-            for (int i = 0; i < nRows; i++)
-            {
-                Element.ProbabilityOrdinates.Insert(startRowIndex + i, ((ProbabilityOrdinateRowItem)_probabilityRowItems[startRowIndex + i]).Ordinate);
-            }
-            _supressUIUpdate = false;
-        }
+        ///// <summary>
+        ///// Handles rows being added to the data grid to synchronize with the model.
+        ///// </summary>
+        ///// <param name="startRowIndex">The starting index of the added rows.</param>
+        ///// <param name="nRows">The number of rows added.</param>
+        //private void DataGrid_RowsAdded(int startRowIndex, int nRows)
+        //{
+        //    _supressUIUpdate = true;
+        //    for (int i = 0; i < nRows; i++)
+        //    {
+        //        Element.ProbabilityOrdinates.Insert(startRowIndex + i, ((ProbabilityOrdinateRowItem)_probabilityRowItems[startRowIndex + i]).Ordinate);
+        //    }
+        //    _supressUIUpdate = false;
+        //}
 
-        /// <summary>
-        /// Handles rows being deleted from the data grid to synchronize with the model.
-        /// </summary>
-        /// <param name="rowIndices">The list of row indices that were deleted.</param>
-        private void DataGrid_RowsDeleted(List<int> rowIndices)
-        {
-            _supressUIUpdate = true;
-            for (int i = rowIndices.Count - 1; i >= 0; i--)
-            {
-                Element.ProbabilityOrdinates.RemoveAt(rowIndices[i]);
-            }
-            _supressUIUpdate = false;
-        }
+        ///// <summary>
+        ///// Handles rows being deleted from the data grid to synchronize with the model.
+        ///// </summary>
+        ///// <param name="rowIndices">The list of row indices that were deleted.</param>
+        //private void DataGrid_RowsDeleted(List<int> rowIndices)
+        //{
+        //    _supressUIUpdate = true;
+        //    for (int i = rowIndices.Count - 1; i >= 0; i--)
+        //    {
+        //        Element.ProbabilityOrdinates.RemoveAt(rowIndices[i]);
+        //    }
+        //    _supressUIUpdate = false;
+        //}
 
         #endregion
 

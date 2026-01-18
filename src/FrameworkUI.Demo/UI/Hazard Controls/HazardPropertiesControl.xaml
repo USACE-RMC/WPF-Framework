@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FrameworkUI.Demo.UI"
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
+             xmlns:numCntrls="clr-namespace:NumericControls;assembly=NumericControls"
              mc:Ignorable="d" 
              MinWidth="100"
              MinHeight="100"
@@ -218,16 +219,7 @@
                             Grid.ColumnSpan="2"
                             Style="{DynamicResource PropertyExpanderStyle}">
                                 <DockPanel >
-                                    <!--Probability Ordinates-->
-                                    <cntrls:DataGridToolbar DockPanel.Dock="Top" Name="FrequencyToolBar" DataGrid="{Binding ElementName=FrequencyDataGrid, Mode=OneTime}" ToolOrientation="Horizontal"
-                                                        PreviewMouseLeftButtonDown="DataGrid_PreviewMouseLeftButtonDown"/>
-                                    <cntrls:ValidationDataGrid DockPanel.Dock="Top" Name="FrequencyDataGrid" AutoGenerateColumns="True" SelectionMode="Extended" SelectionUnit="CellOrRowHeader" IsReadOnly="False"
-                                                       CanUserAddInsertDeleteRows="True" CanUserDeleteRows="True" CanUserAddRows="False" CanUserResizeRows="False" 
-                                                       CanUserResizeColumns="True" CanUserSortColumns="False" CanUserReorderColumns="False" PasteAddsRows="True" 
-                                                       AutoGeneratingColumn="DataGrid_AutoGeneratingColumn" RowsAdded="DataGrid_RowsAdded" RowsDeleted="DataGrid_RowsDeleted"   
-                                                       PreviewMouseLeftButtonDown="DataGrid_PreviewMouseLeftButtonDown" 
-                                                       ColumnHeaderStyle="{DynamicResource Center_ColumnHeaderStyle}">
-                                    </cntrls:ValidationDataGrid>
+                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding ElementName=Element, Path=ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                 </DockPanel>
                             </Expander>
                         </Grid>
