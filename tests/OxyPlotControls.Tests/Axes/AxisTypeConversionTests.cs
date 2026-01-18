@@ -67,7 +67,7 @@ public class AxisTypeConversionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<LogarithmicAxis>(result);
+        Assert.IsType<Wpf.LogarithmicAxis>(result);
         Assert.Equal("Original Axis", result.Title);
         Assert.Equal(AxisPosition.Left, result.Position);
     }
@@ -246,7 +246,7 @@ public class AxisTypeConversionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<LinearAxis>(result);
+        Assert.IsType<Wpf.LinearAxis>(result);
         Assert.Equal("Log Axis", result.Title);
         Assert.Equal(AxisPosition.Left, result.Position);
     }
@@ -369,7 +369,7 @@ public class AxisTypeConversionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<LinearAxis>(result);
+        Assert.IsType<Wpf.LinearAxis>(result);
         Assert.Equal("Normal Axis", result.Title);
     }
 
@@ -394,7 +394,7 @@ public class AxisTypeConversionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<NormalProbabilityAxis>(result);
+        Assert.IsType<Wpf.NormalProbabilityAxis>(result);
         Assert.Equal("Linear Axis", result.Title);
         Assert.Equal(AxisPosition.Bottom, result.Position);
     }
@@ -544,7 +544,7 @@ public class AxisTypeConversionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<GumbelProbabilityAxis>(result);
+        Assert.IsType<Wpf.GumbelProbabilityAxis>(result);
         Assert.Equal("Linear Axis", result.Title);
         Assert.Equal(AxisPosition.Bottom, result.Position);
     }
@@ -694,7 +694,7 @@ public class AxisTypeConversionTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<DateTimeAxis>(result);
+        Assert.IsType<Wpf.DateTimeAxis>(result);
         Assert.Equal("Linear Axis", result.Title);
         Assert.Equal(AxisPosition.Bottom, result.Position);
     }
