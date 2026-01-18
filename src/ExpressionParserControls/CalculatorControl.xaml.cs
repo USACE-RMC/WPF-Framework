@@ -248,4 +248,41 @@ namespace ExpressionParserControls
         }
     }
 
+    /// <summary>
+    /// Converts a boolean value to a Visibility enumeration. True becomes Visible, false becomes collapsed.
+    /// </summary>
+    public class BoolToVisibilityConverter : IValueConverter
+    {
+        /// <summary>
+        /// Converts a boolean value to Visibility
+        /// </summary>
+        /// <param name="value">The source boolean value.</param>
+        /// <param name="targetType">The target type.</param>
+        /// <param name="parameter">Optional parameter (unused).</param>
+        /// <param name="culture">Culture information.</param>
+        /// <returns>Visibility.Visible if the value is true, otherwise Visibility.Collapsed.</returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return Visibility.Collapsed;
+            if (value is bool b && b)
+                return Visibility.Visible;
+            else
+                return Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Not implemented. Converts back from Visibility to boolean
+        /// </summary>
+        /// <param name="value">The source value.</param>
+        /// <param name="targetType">The target type.</param>
+        /// <param name="parameter">Optional parameter.</param>
+        /// <param name="culture">Culture information.</param>
+        /// <returns>Not applicable - this method always throws NotImplementedException.</returns>
+        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
