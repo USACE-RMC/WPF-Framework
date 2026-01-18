@@ -44,6 +44,8 @@ using System.Windows.Threading;
 using Xceed.Wpf.AvalonDock.Layout;
 using FrameworkUI.Demo.UI;
 
+#nullable enable
+
 namespace FrameworkUI.Demo
 {
     /// <summary>

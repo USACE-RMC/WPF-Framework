@@ -40,7 +40,7 @@
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                         </Style>
                     </TabControl.Resources>
-                    <TabItem x:Name="General_TabItem" Header="General" Style="{StaticResource PropertiesTabItemStyle}" PreviewMouseLeftButtonDown="TabItem_PreviewMouseLeftButtonDown">
+                    <TabItem x:Name="General_TabItem" Header="General" Style="{DynamicResource PropertiesTabItemStyle}" PreviewMouseLeftButtonDown="TabItem_PreviewMouseLeftButtonDown">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -55,7 +55,7 @@
                                 Style="{DynamicResource PropertyExpanderStyle}">
                                 <DockPanel>
 
-                                    <cntrls:NameTextPropertyControl x:Name="Name" Margin="0 2" CharacterLimit="50" DockPanel.Dock="Top" Title="Name" MaxPropertyWidth="200"
+                                    <cntrls:NameTextPropertyControl x:Name="NameControl" Margin="0 2" CharacterLimit="50" DockPanel.Dock="Top" Title="Name" MaxPropertyWidth="200"
                                                 Text="{Binding Element.Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" PreviewMouseLeftButtonDown="Name_PreviewMouseLeftButtonDown"
                                                 ExistingNames="{Binding ExistingNames, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
                                                 PropertyWidth="{Binding ElementName=EffectiveRecordLength, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
@@ -152,7 +152,7 @@
                         </Grid>
 
                     </TabItem>
-                    <TabItem x:Name="Options_TabItem" Header="Options" Style="{StaticResource PropertiesTabItemStyle}" PreviewMouseLeftButtonDown="TabItem_PreviewMouseLeftButtonDown">
+                    <TabItem x:Name="Options_TabItem" Header="Options" Style="{DynamicResource PropertiesTabItemStyle}" PreviewMouseLeftButtonDown="TabItem_PreviewMouseLeftButtonDown">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -219,7 +219,7 @@
                             Grid.ColumnSpan="2"
                             Style="{DynamicResource PropertyExpanderStyle}">
                                 <DockPanel >
-                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding ElementName=Element, Path=ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding Element.ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                 </DockPanel>
                             </Expander>
                         </Grid>

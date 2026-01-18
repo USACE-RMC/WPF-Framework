@@ -77,12 +77,9 @@ namespace FrameworkUI.Demo.UI
 
         #region Members
 
-        private bool _isLoaded = false;
         private static readonly string _defaultDescription = "A parametric hazard function can be created using user-defined parameters, with or without uncertainty. When uncertainty is included, the parametric bootstrap method is used to quantify it.";
         private ComboBox _combobox = new ComboBox();
-        private string _previousName;
-        private bool _supressUIUpdate = false;
-        private bool _supressModelUpdate = false;
+        private string _previousName = string.Empty;
         private ObservableCollection<object> _probabilityRowItems = new ObservableCollection<object>();
         private ObservableCollection<Parameter> _parameterList = new ObservableCollection<Parameter>();
 
@@ -413,7 +410,7 @@ namespace FrameworkUI.Demo.UI
         /// </remarks>
         private void Name_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (Name.NameTextBox.IsValid) return;
+            if (NameControl.NameTextBox.IsValid) return;
             if (Element != null) Element.Name = _previousName;
         }
 
