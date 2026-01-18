@@ -15,10 +15,8 @@
                 <!-- GenericControls Theme Resources (for CopyPasteDataGrid, cell/header styles, etc.) -->
                 <ResourceDictionary Source="pack://application:,,,/GenericControls;component/Themes/GenericControlsTheme.xaml"/>
 
-                <!-- Add any custom styles or dictionaries here -->
-                <ResourceDictionary>
-
-                </ResourceDictionary>
+                <!-- OxyPlotControls Theme Resources (for PropertyExpanderStyle, PropertiesTabItemStyle, etc.) -->
+                <ResourceDictionary Source="pack://application:,,,/OxyPlotControls;component/Themes/OxyPlotControlsTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
