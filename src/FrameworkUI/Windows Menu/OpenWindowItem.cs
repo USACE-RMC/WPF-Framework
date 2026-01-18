@@ -70,17 +70,17 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the window menu item.
         /// </summary>
-        public MenuItem MenuItem { get; set; } = null;
+        public MenuItem? MenuItem { get; set; }
 
         /// <summary>
         /// Gets AvalonDock layout document that is displayed in the window.
         /// </summary>
-        public LayoutDocument Document { get; private set; } = null;
+        public LayoutDocument? Document { get; private set; }
 
         /// <summary>
         /// Gets Element that is bound to the document.
         /// </summary>
-        public IElement Element { get; private set; } = null;
+        public IElement? Element { get; private set; }
 
         /// <summary>
         /// Gets the element image source.

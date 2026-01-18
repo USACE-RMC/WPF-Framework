@@ -64,7 +64,7 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the parent window menu.
         /// </summary>
-        public MenuItem WindowMenu { get; set; }
+        public MenuItem? WindowMenu { get; set; }
 
         /// <summary>
         /// Gets or sets the number of open windows to show in the menu.
@@ -125,7 +125,7 @@ namespace FrameworkUI
         /// <summary>
         /// On closing, determine if the document needs to be saved.
         /// </summary>
-        private void Document_Closing(object sender, CancelEventArgs e)
+        private void Document_Closing(object? sender, CancelEventArgs e)
         {
             CancelClosing = false;
             if (ClosingAllWindows == false && ShellPublicVariables.SimulationInProgress == false)
@@ -152,7 +152,7 @@ namespace FrameworkUI
         /// <summary>
         /// After the document is closed, remove document from Window menu and observable collection.
         /// </summary>
-        private void Document_Closed(object sender, EventArgs e)
+        private void Document_Closed(object? sender, EventArgs e)
         {
             int index = WindowIndexOf((LayoutDocument)sender);
             if (index <= NumberOfWindowsToDisplay - 1)
@@ -256,7 +256,7 @@ namespace FrameworkUI
         /// </summary>
         private void ConnectToMenu(object sender, RoutedEventArgs e)
         {
-            MenuItem parentItem = Parent as MenuItem;
+            MenuItem? parentItem = Parent as MenuItem;
             if (parentItem == null) throw new ApplicationException("Parent must be a MenuItem");
             if (WindowMenu != null && WindowMenu.Equals(parentItem)) return;
             if (WindowMenu != null) WindowMenu.SubmenuOpened -= WindowMenu_SubMenuOpened;
