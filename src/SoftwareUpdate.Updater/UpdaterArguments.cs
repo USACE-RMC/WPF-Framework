@@ -41,21 +41,25 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Gets or sets the process ID of the main application to wait for.
         /// </summary>
+        /// <value>The process ID. Defaults to 0 if not specified.</value>
         public int ProcessId { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the update zip file.
         /// </summary>
+        /// <value>The zip file path, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
         public string ZipPath { get; set; }
 
         /// <summary>
         /// Gets or sets the target installation directory.
         /// </summary>
+        /// <value>The target directory path, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
         public string TargetDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the main executable name to restart.
         /// </summary>
+        /// <value>The executable name, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
         public string MainExecutable { get; set; }
 
         /// <summary>
@@ -123,6 +127,11 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// Validates the arguments.
         /// </summary>
+        /// <remarks>
+        /// Note: File existence checks are point-in-time validations. The zip file or target directory
+        /// could be modified or deleted between validation and actual use (TOCTOU). Callers should
+        /// handle <see cref="System.IO.FileNotFoundException"/> during installation.
+        /// </remarks>
         public void Validate()
         {
             var errors = new List<string>();

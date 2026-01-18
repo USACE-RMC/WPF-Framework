@@ -87,8 +87,9 @@ namespace FrameworkUI.MessageWindow
         private IMessageItem _message;
 
         /// <summary>
-        /// Click event. On errors or warnings we can add a handler to this.
+        /// Gets the underlying message item interface that this wrapper represents.
         /// </summary>
+        /// <value>The wrapped <see cref="IMessageItem"/> containing the message details.</value>
         public IMessageItem Message
         {
             get { return _message; }

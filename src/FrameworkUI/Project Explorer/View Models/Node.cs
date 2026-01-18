@@ -158,6 +158,7 @@ namespace FrameworkUI.ProjectExplorer
             PreviewMouseRightButtonDown += Me_PreviewMouseRightButtonDown;
             MouseRightButtonUp += Me_MouseRightButtonUp;
             MouseLeftButtonUp += Me_MouseLeftButtonUp;
+            Unloaded += Me_Unloaded;
 
             // Context Menu Items
             _groupMenuItem.Click += Group_Click;
@@ -827,7 +828,7 @@ namespace FrameworkUI.ProjectExplorer
         }
 
         /// <summary>
-        /// Stops and cleans up the timer.
+        /// Stops and cleans up the timer, removing event handlers to prevent memory leaks.
         /// </summary>
         private void StopTimer()
         {
@@ -835,7 +836,19 @@ namespace FrameworkUI.ProjectExplorer
             {
                 _timer.Stop();
                 _timer.IsEnabled = false;
+                _timer.Tick -= Timer_Tick;
+                _timer = null;
             }
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event to clean up resources and prevent memory leaks.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
+        private void Me_Unloaded(object sender, RoutedEventArgs e)
+        {
+            StopTimer();
         }
 
         /// <summary>

@@ -31,6 +31,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SoftwareUpdate
 {
@@ -47,6 +48,11 @@ namespace SoftwareUpdate
     /// </remarks>
     public class UpdateOptions
     {
+        // GitHub username/repo format: alphanumeric, hyphens allowed (not at start/end), max 39 chars for usernames
+        private static readonly Regex GitHubNamePattern = new Regex(
+            @"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$",
+            RegexOptions.Compiled);
+
         /// <summary>
         /// Gets or sets the GitHub repository owner (e.g., "USACE-RMC").
         /// </summary>
@@ -190,8 +196,20 @@ namespace SoftwareUpdate
             if (string.IsNullOrWhiteSpace(GitHubOwner))
                 throw new ArgumentException("GitHubOwner is required.", nameof(GitHubOwner));
 
+            if (!GitHubNamePattern.IsMatch(GitHubOwner))
+                throw new ArgumentException(
+                    "GitHubOwner must contain only alphanumeric characters and hyphens, " +
+                    "cannot start or end with a hyphen, and must be 1-39 characters.",
+                    nameof(GitHubOwner));
+
             if (string.IsNullOrWhiteSpace(GitHubRepo))
                 throw new ArgumentException("GitHubRepo is required.", nameof(GitHubRepo));
+
+            if (!GitHubNamePattern.IsMatch(GitHubRepo))
+                throw new ArgumentException(
+                    "GitHubRepo must contain only alphanumeric characters and hyphens, " +
+                    "cannot start or end with a hyphen, and must be 1-39 characters.",
+                    nameof(GitHubRepo));
 
             if (CurrentVersion == null)
                 throw new ArgumentException("CurrentVersion is required.", nameof(CurrentVersion));

@@ -42,6 +42,14 @@ namespace SoftwareUpdate.Updater
     /// </summary>
     internal class InstallationManager
     {
+        /// <summary>
+        /// The maximum time in milliseconds to wait for the main application process to exit
+        /// before proceeding with the update. This timeout allows sufficient time for the
+        /// application to gracefully shut down while preventing indefinite hangs if the
+        /// process becomes unresponsive.
+        /// </summary>
+        private const int ProcessExitTimeoutMs = 60 * 1000; // 60 seconds
+
         private readonly UpdaterArguments _args;
         private readonly Action<string> _log;
 
@@ -123,9 +131,7 @@ namespace SoftwareUpdate.Updater
             {
                 using (var process = Process.GetProcessById(processId))
                 {
-                    var timeoutMs = 60 * 1000; // 60 seconds
-
-                    if (process.WaitForExit(timeoutMs))
+                    if (process.WaitForExit(ProcessExitTimeoutMs))
                     {
                         _log("Process has exited.");
                     }
@@ -191,14 +197,17 @@ namespace SoftwareUpdate.Updater
                 var processedEntries = 0;
 
                 // Determine if the zip has a single root folder
+                // ZIP entries may use '/' or '\' as path separators
+                var pathSeparators = new[] { '/', '\\' };
                 var rootFolders = archive.Entries
                     .Where(e => !string.IsNullOrEmpty(e.FullName))
-                    .Select(e => e.FullName.Split('/')[0])
+                    .Select(e => e.FullName.Split(pathSeparators)[0])
                     .Distinct()
                     .ToList();
 
                 var hasSingleRoot = rootFolders.Count == 1 &&
-                    archive.Entries.Any(e => e.FullName.StartsWith(rootFolders[0] + "/"));
+                    archive.Entries.Any(e => e.FullName.StartsWith(rootFolders[0] + "/") ||
+                                             e.FullName.StartsWith(rootFolders[0] + "\\"));
 
                 var stripPrefix = hasSingleRoot ? rootFolders[0] + "/" : "";
 
@@ -232,8 +241,10 @@ namespace SoftwareUpdate.Updater
                         continue;
                     }
 
-                    // Skip backup directories
-                    if (destPath.Contains(".backup_"))
+                    // Skip backup directories - check if any path segment starts with .backup_
+                    if (entryPath.StartsWith(".backup_") ||
+                        entryPath.Contains("/.backup_") ||
+                        entryPath.Contains("\\.backup_"))
                         continue;
 
                     // Create directory if needed
