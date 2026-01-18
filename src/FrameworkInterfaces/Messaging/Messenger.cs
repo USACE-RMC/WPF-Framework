@@ -162,6 +162,10 @@ namespace FrameworkInterfaces.Messaging
         /// Gets or sets a value indicating whether messages should be written to disk.
         /// </summary>
         /// <value><c>true</c> if messages should be written to disk; otherwise, <c>false</c>.</value>
+        /// <remarks>
+        /// This property is currently not used but is reserved for future implementation
+        /// of automatic message logging to the file specified by <see cref="TextFileName"/>.
+        /// </remarks>
         public bool WriteToFile
         {
             get => _writeToFile;

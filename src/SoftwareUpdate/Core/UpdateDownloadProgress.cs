@@ -44,6 +44,21 @@ namespace SoftwareUpdate
     public class UpdateDownloadProgress
     {
         /// <summary>
+        /// Number of bytes in a kilobyte (1024 bytes).
+        /// </summary>
+        private const long BytesPerKB = 1024;
+
+        /// <summary>
+        /// Number of bytes in a megabyte (1024 KB).
+        /// </summary>
+        private const long BytesPerMB = BytesPerKB * 1024;
+
+        /// <summary>
+        /// Number of bytes in a gigabyte (1024 MB).
+        /// </summary>
+        private const long BytesPerGB = BytesPerMB * 1024;
+
+        /// <summary>
         /// Gets or sets the number of bytes downloaded so far.
         /// </summary>
         public long BytesDownloaded { get; set; }
@@ -108,10 +123,10 @@ namespace SoftwareUpdate
         /// <returns>A human-readable string representation (e.g., "1.5 MB").</returns>
         private static string FormatBytes(long bytes)
         {
-            if (bytes < 1024) return $"{bytes} B";
-            if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
-            if (bytes < 1024 * 1024 * 1024) return $"{bytes / 1024.0 / 1024.0:F1} MB";
-            return $"{bytes / 1024.0 / 1024.0 / 1024.0:F2} GB";
+            if (bytes < BytesPerKB) return $"{bytes} B";
+            if (bytes < BytesPerMB) return $"{bytes / (double)BytesPerKB:F1} KB";
+            if (bytes < BytesPerGB) return $"{bytes / (double)BytesPerMB:F1} MB";
+            return $"{bytes / (double)BytesPerGB:F2} GB";
         }
     }
 }

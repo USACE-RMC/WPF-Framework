@@ -50,6 +50,19 @@ namespace SoftwareUpdate.Updater
     internal class Program
     {
         /// <summary>
+        /// Time in milliseconds to wait for user input before auto-closing the console window
+        /// after a successful update. This provides users a brief opportunity to review the
+        /// update log while not blocking unattended updates indefinitely.
+        /// </summary>
+        private const int AutoCloseTimeoutMs = 3000;
+
+        /// <summary>
+        /// Polling interval in milliseconds when checking for user key input.
+        /// A small value provides responsive key detection without excessive CPU usage.
+        /// </summary>
+        private const int KeyPollIntervalMs = 100;
+
+        /// <summary>
         /// The path to the current log file, or <c>null</c> if logging has not been initialized.
         /// </summary>
         private static string _logFilePath;
@@ -88,8 +101,8 @@ namespace SoftwareUpdate.Updater
                 Console.WriteLine();
                 Console.WriteLine("Press any key to exit...");
 
-                // Auto-close after 3 seconds if no input
-                if (!WaitForKeyWithTimeout(3000))
+                // Auto-close after timeout if no input
+                if (!WaitForKeyWithTimeout(AutoCloseTimeoutMs))
                 {
                     Console.WriteLine("Auto-closing...");
                 }
@@ -102,11 +115,17 @@ namespace SoftwareUpdate.Updater
                 Log(ex.StackTrace);
 
                 Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("========================================");
-                Console.WriteLine("           UPDATE FAILED");
-                Console.WriteLine("========================================");
-                Console.ResetColor();
+                try
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("========================================");
+                    Console.WriteLine("           UPDATE FAILED");
+                    Console.WriteLine("========================================");
+                }
+                finally
+                {
+                    Console.ResetColor();
+                }
                 Console.WriteLine();
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.WriteLine();
@@ -190,7 +209,7 @@ namespace SoftwareUpdate.Updater
                     // Console input is not available (e.g., redirected input stream)
                     return false;
                 }
-                Thread.Sleep(100);
+                Thread.Sleep(KeyPollIntervalMs);
             }
             return false;
         }

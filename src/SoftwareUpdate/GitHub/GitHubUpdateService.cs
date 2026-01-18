@@ -60,6 +60,16 @@ namespace SoftwareUpdate.GitHub
     /// </remarks>
     public class GitHubUpdateService : IUpdateService, IDisposable
     {
+        /// <summary>
+        /// Maximum number of retry attempts for transient network failures.
+        /// </summary>
+        private const int MaxRetryAttempts = 3;
+
+        /// <summary>
+        /// Base delay in milliseconds between retry attempts.
+        /// </summary>
+        private const int RetryDelayMs = 500;
+
         private readonly HttpClient _httpClient;
         private readonly object _lock = new object();
         private UpdateState _state = UpdateState.Idle;
@@ -120,7 +130,7 @@ namespace SoftwareUpdate.GitHub
             try
             {
                 var apiUrl = $"https://api.github.com/repos/{Options.GitHubOwner}/{Options.GitHubRepo}/releases";
-                var response = await _httpClient.GetAsync(apiUrl, cancellationToken).ConfigureAwait(false);
+                var response = await GetWithRetryAsync(apiUrl, cancellationToken).ConfigureAwait(false);
 
                 // Check for rate limiting before calling EnsureSuccessStatusCode
                 if (response.StatusCode == HttpStatusCode.Forbidden)
@@ -518,13 +528,26 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <summary>
-        /// Disposes of the HTTP client.
+        /// Disposes of the HTTP client and releases managed resources.
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="GitHubUpdateService"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
             if (!_disposed)
             {
-                _httpClient?.Dispose();
+                if (disposing)
+                {
+                    _httpClient?.Dispose();
+                }
                 _disposed = true;
             }
         }
@@ -547,6 +570,40 @@ namespace SoftwareUpdate.GitHub
             {
                 Debug.WriteLine($"[GitHubUpdateService] Event handler threw exception: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Performs an HTTP GET request with retry logic for transient failures.
+        /// </summary>
+        /// <param name="url">The URL to fetch.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The HTTP response message.</returns>
+        private async Task<HttpResponseMessage> GetWithRetryAsync(string url, CancellationToken cancellationToken)
+        {
+            HttpRequestException lastException = null;
+
+            for (int attempt = 1; attempt <= MaxRetryAttempts; attempt++)
+            {
+                try
+                {
+                    return await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                }
+                catch (HttpRequestException ex)
+                {
+                    lastException = ex;
+                    Debug.WriteLine($"[GitHubUpdateService] HTTP request failed (attempt {attempt}/{MaxRetryAttempts}): {ex.Message}");
+
+                    if (attempt < MaxRetryAttempts)
+                    {
+                        // Exponential backoff: 500ms, 1000ms, etc.
+                        var delay = RetryDelayMs * attempt;
+                        await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+            }
+
+            // All retries exhausted, throw the last exception
+            throw lastException;
         }
     }
 }
