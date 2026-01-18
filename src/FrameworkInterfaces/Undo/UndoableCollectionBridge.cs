@@ -423,33 +423,74 @@ namespace FrameworkInterfaces.Undo
         }
 
         /// <summary>
-        /// Creates an action to undo/redo a Reset (Clear) operation.
+        /// Creates an action to undo/redo a Reset operation.
         /// </summary>
-        /// <returns>A <see cref="DelegateAction"/> that restores all items on undo and clears on redo.</returns>
+        /// <returns>A <see cref="DelegateAction"/> that restores the previous state on undo and the new state on redo, or null if nothing changed.</returns>
         /// <remarks>
-        /// The Reset action is raised when the collection is cleared,
-        /// but the event arguments do not contain the removed items. This is why we maintain
-        /// a shadow copy of the collection - to capture the items that were present before the clear.
+        /// <para>
+        /// The Reset action is raised by various collection operations including Clear, AddRange,
+        /// and other bulk operations. The event arguments do not contain information about what
+        /// changed, which is why we maintain a shadow copy of the collection to capture the
+        /// state before the change.
+        /// </para>
+        /// <para>
+        /// This method captures both the before state (shadow copy) and after state (current collection)
+        /// to properly support undo/redo for any Reset operation, not just Clear.
+        /// </para>
         /// </remarks>
         private IUndoableAction? CreateResetAction()
         {
-            // Capture the shadow copy before it gets updated
-            if (_shadowCopy == null || _shadowCopy.Count == 0) return null;
-            var clearedItems = new List<T>(_shadowCopy);
+            // Capture the state before the change (from shadow copy)
+            var stateBefore = _shadowCopy != null ? new List<T>(_shadowCopy) : new List<T>();
 
-            string description = $"Clear {_collectionDescription}";
+            // Capture the state after the change (current collection)
+            var stateAfter = new List<T>(_collection);
+
+            // If nothing changed, don't create an action
+            if (stateBefore.Count == stateAfter.Count && stateBefore.SequenceEqual(stateAfter))
+            {
+                return null;
+            }
+
+            // Determine the appropriate description based on what changed
+            string description;
+            if (stateAfter.Count == 0)
+            {
+                description = $"Clear {_collectionDescription}";
+            }
+            else if (stateBefore.Count == 0)
+            {
+                description = $"Add {stateAfter.Count} items to {_collectionDescription}";
+            }
+            else if (stateAfter.Count > stateBefore.Count)
+            {
+                description = $"Add {stateAfter.Count - stateBefore.Count} items to {_collectionDescription}";
+            }
+            else if (stateAfter.Count < stateBefore.Count)
+            {
+                description = $"Remove {stateBefore.Count - stateAfter.Count} items from {_collectionDescription}";
+            }
+            else
+            {
+                description = $"Change {_collectionDescription}";
+            }
 
             return new DelegateAction(
                 description,
                 execute: () =>
                 {
-                    // Clear the collection
+                    // Restore the after state
                     _collection.Clear();
+                    foreach (var item in stateAfter)
+                    {
+                        _collection.Add(item);
+                    }
                 },
                 undo: () =>
                 {
-                    // Restore all cleared items
-                    foreach (var item in clearedItems)
+                    // Restore the before state
+                    _collection.Clear();
+                    foreach (var item in stateBefore)
                     {
                         _collection.Add(item);
                     }
