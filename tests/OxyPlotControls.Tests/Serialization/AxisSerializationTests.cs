@@ -48,7 +48,7 @@ public class AxisSerializationTests
 {
     #region AxisPropertiesTag Tests
 
-    [Fact]
+    [StaFact]
     public void AxisPropertiesTag_HasExpectedValue()
     {
         // Assert
@@ -59,7 +59,7 @@ public class AxisSerializationTests
 
     #region Linear Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_GeneralProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.IsZoomEnabled, deserializedAxis.IsZoomEnabled);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_NumericProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -117,7 +117,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.FilterMaxValue, deserializedAxis.FilterMaxValue);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_StyleProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -139,7 +139,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.AxislineThickness, deserializedAxis.AxislineThickness);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_PositionProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -165,7 +165,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.PositionTier, deserializedAxis.PositionTier);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_TitleProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -195,7 +195,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.Unit, deserializedAxis.Unit);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_LabelProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -227,7 +227,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.UseSuperExponentialFormat, deserializedAxis.UseSuperExponentialFormat);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_GridlineProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -263,7 +263,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.MinorTickSize, deserializedAxis.MinorTickSize);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_TickProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -283,7 +283,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.TicklineColor, deserializedAxis.TicklineColor);
     }
 
-    [Fact]
+    [StaFact]
     public void LinearAxis_SpecificProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -305,7 +305,7 @@ public class AxisSerializationTests
 
     #region Logarithmic Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LogarithmicAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -333,7 +333,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.Position, deserializedAxis.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void LogarithmicAxis_Base2_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -353,7 +353,7 @@ public class AxisSerializationTests
         Assert.Equal(2, deserializedAxis.Base);
     }
 
-    [Fact]
+    [StaFact]
     public void LogarithmicAxis_NoPowerPadding_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -375,7 +375,7 @@ public class AxisSerializationTests
 
     #region DateTime Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void DateTimeAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -397,7 +397,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.CalendarWeekRule, deserializedAxis.CalendarWeekRule);
     }
 
-    [Theory]
+    [StaTheory]
     [InlineData(CalendarWeekRule.FirstDay)]
     [InlineData(CalendarWeekRule.FirstFourDayWeek)]
     [InlineData(CalendarWeekRule.FirstFullWeek)]
@@ -419,7 +419,7 @@ public class AxisSerializationTests
 
     #region Normal Probability Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void NormalProbabilityAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -443,7 +443,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.Position, deserializedAxis.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void NormalProbabilityAxis_GeneralProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -473,7 +473,7 @@ public class AxisSerializationTests
 
     #region Gumbel Probability Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void GumbelProbabilityAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -497,7 +497,7 @@ public class AxisSerializationTests
         Assert.Equal(originalAxis.Position, deserializedAxis.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void GumbelProbabilityAxis_GeneralProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -527,7 +527,7 @@ public class AxisSerializationTests
 
     #region Category Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void CategoryAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -555,7 +555,7 @@ public class AxisSerializationTests
 
     #region Angle Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void AngleAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -581,7 +581,7 @@ public class AxisSerializationTests
 
     #region Linear Color Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LinearColorAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -611,7 +611,7 @@ public class AxisSerializationTests
 
     #region Magnitude Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void MagnitudeAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -635,7 +635,7 @@ public class AxisSerializationTests
 
     #region TimeSpan Axis Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void TimeSpanAxis_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -659,7 +659,7 @@ public class AxisSerializationTests
 
     #region Axis Position Tests
 
-    [Theory]
+    [StaTheory]
     [InlineData(AxisPosition.Left)]
     [InlineData(AxisPosition.Right)]
     [InlineData(AxisPosition.Top)]
@@ -683,7 +683,7 @@ public class AxisSerializationTests
 
     #region Tick Style Tests
 
-    [Theory]
+    [StaTheory]
     [InlineData(TickStyle.Crossing)]
     [InlineData(TickStyle.Inside)]
     [InlineData(TickStyle.Outside)]
@@ -706,7 +706,7 @@ public class AxisSerializationTests
 
     #region LineStyle Tests
 
-    [Theory]
+    [StaTheory]
     [InlineData(LineStyle.Solid)]
     [InlineData(LineStyle.Dash)]
     [InlineData(LineStyle.Dot)]
@@ -736,7 +736,7 @@ public class AxisSerializationTests
 
     #region Edge Case Tests
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_WrongElementName_ReturnsNull()
     {
         // Arrange
@@ -749,7 +749,7 @@ public class AxisSerializationTests
         Assert.Null(result);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_UnknownAxisType_ReturnsLinearAxis()
     {
         // Arrange
@@ -764,7 +764,7 @@ public class AxisSerializationTests
         Assert.IsType<LinearAxis>(result);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_WithTargetAxis_AppliesPropertiesToTarget()
     {
         // Arrange
@@ -782,7 +782,7 @@ public class AxisSerializationTests
         Assert.Equal("Updated Title", targetAxis.Title);
     }
 
-    [Fact]
+    [StaFact]
     public void Axis_NaNValues_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -802,7 +802,7 @@ public class AxisSerializationTests
         Assert.True(double.IsNaN(deserializedAxis.Maximum));
     }
 
-    [Fact]
+    [StaFact]
     public void Axis_EmptyTitle_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -820,7 +820,7 @@ public class AxisSerializationTests
 
     #region Backward Compatibility Tests
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_OldGeneralFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -841,7 +841,7 @@ public class AxisSerializationTests
         Assert.True(result.IsZoomEnabled);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_OldStyleFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -862,7 +862,7 @@ public class AxisSerializationTests
         Assert.Equal(2, result.AxislineThickness);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_OldPositionFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -885,7 +885,7 @@ public class AxisSerializationTests
         Assert.Equal(1, result.PositionTier);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_OldLinearAxisFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -902,7 +902,7 @@ public class AxisSerializationTests
         Assert.True(result.FormatAsFractions);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToAxisProperties_OldLogAxisFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -923,7 +923,7 @@ public class AxisSerializationTests
 
     #region Complete Round-Trip Test
 
-    [Fact]
+    [StaFact]
     public void AllAxisProperties_CompleteRoundTrip_PreservesValues()
     {
         // Arrange

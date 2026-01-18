@@ -655,7 +655,9 @@ namespace NumericControls.Tests.RowItems
             list.Add(item);
 
             // Assert
-            Assert.Equal(0.5, item.P1, 5); // Rate parameter
+            // Exponential(Xi, Lambda) - P1 = Xi (location), P2 = Lambda (rate)
+            Assert.Equal(0, item.P1, 5);   // Xi (location parameter)
+            Assert.Equal(0.5, item.P2, 5); // Lambda (rate parameter)
         }
 
         #endregion

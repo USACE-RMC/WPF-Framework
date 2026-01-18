@@ -49,7 +49,7 @@ public class AxisTypeConversionTests
 
     #region ConvertAxisToLogarithmicAxis Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_FromLinearAxis_ReturnsLogarithmicAxis()
     {
         // Arrange
@@ -72,7 +72,7 @@ public class AxisTypeConversionTests
         Assert.Equal(AxisPosition.Left, result.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_DefaultParameters_SetsBase10AndPowerPaddingTrue()
     {
         // Arrange
@@ -86,7 +86,7 @@ public class AxisTypeConversionTests
         Assert.True(result.PowerPadding);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_CustomParameters_SetsBaseAndPowerPadding()
     {
         // Arrange
@@ -100,7 +100,7 @@ public class AxisTypeConversionTests
         Assert.False(result.PowerPadding);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_NegativeMinimum_SetsMinimumToEpsilon()
     {
         // Arrange
@@ -117,7 +117,7 @@ public class AxisTypeConversionTests
         Assert.Equal(Epsilon, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_ZeroMinimum_SetsMinimumToEpsilon()
     {
         // Arrange
@@ -134,7 +134,7 @@ public class AxisTypeConversionTests
         Assert.Equal(Epsilon, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_PositiveMinimum_PreservesMinimum()
     {
         // Arrange
@@ -151,7 +151,7 @@ public class AxisTypeConversionTests
         Assert.Equal(10, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_PreservesMaximum()
     {
         // Arrange
@@ -167,7 +167,7 @@ public class AxisTypeConversionTests
         Assert.Equal(500, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_PreservesStartAndEndPosition()
     {
         // Arrange
@@ -185,7 +185,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.9, result.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_CopiesAxisProperties()
     {
         // Arrange
@@ -229,7 +229,7 @@ public class AxisTypeConversionTests
 
     #region ConvertAxisToLinearAxis Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_FromLogarithmicAxis_ReturnsLinearAxis()
     {
         // Arrange
@@ -251,7 +251,7 @@ public class AxisTypeConversionTests
         Assert.Equal(AxisPosition.Left, result.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_DefaultParameters_SetsDefaultFractionOptions()
     {
         // Arrange
@@ -266,7 +266,7 @@ public class AxisTypeConversionTests
         Assert.Null(result.FractionUnitSymbol);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_CustomParameters_SetsFractionOptions()
     {
         // Arrange
@@ -284,7 +284,7 @@ public class AxisTypeConversionTests
         Assert.Equal("pi", result.FractionUnitSymbol);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_PreservesMinimumAndMaximum()
     {
         // Arrange
@@ -302,7 +302,7 @@ public class AxisTypeConversionTests
         Assert.Equal(500, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_PreservesStartAndEndPosition()
     {
         // Arrange
@@ -320,7 +320,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.8, result.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_CopiesAxisProperties()
     {
         // Arrange
@@ -354,7 +354,7 @@ public class AxisTypeConversionTests
         Assert.Equal("LogKey", result.Key);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_FromNormalProbabilityAxis_ReturnsLinearAxis()
     {
         // Arrange
@@ -377,7 +377,7 @@ public class AxisTypeConversionTests
 
     #region ConvertAxisToNormalAxis Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_FromLinearAxis_ReturnsNormalProbabilityAxis()
     {
         // Arrange
@@ -399,7 +399,7 @@ public class AxisTypeConversionTests
         Assert.Equal(AxisPosition.Bottom, result.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_MinimumBelowEpsilon_SetsMinimumToDefault()
     {
         // Arrange
@@ -415,7 +415,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.0000001, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_MaximumAbove999_SetsMaximumTo999()
     {
         // Arrange
@@ -431,7 +431,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.999, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_MaximumIsNaN_SetsMaximumTo999()
     {
         // Arrange
@@ -447,7 +447,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.999, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_ValidMinimum_PreservesMinimum()
     {
         // Arrange
@@ -463,7 +463,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.001, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_ValidMaximum_PreservesMaximum()
     {
         // Arrange
@@ -479,7 +479,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.95, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_PreservesStartAndEndPosition()
     {
         // Arrange
@@ -497,7 +497,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.85, result.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_CopiesAxisProperties()
     {
         // Arrange
@@ -527,7 +527,7 @@ public class AxisTypeConversionTests
 
     #region ConvertAxisToGumbelAxis Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_FromLinearAxis_ReturnsGumbelProbabilityAxis()
     {
         // Arrange
@@ -549,7 +549,7 @@ public class AxisTypeConversionTests
         Assert.Equal(AxisPosition.Bottom, result.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_MinimumBelowEpsilon_SetsMinimumToDefault()
     {
         // Arrange
@@ -565,7 +565,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.0000001, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_MaximumAbove99_SetsMaximumTo99()
     {
         // Arrange
@@ -581,7 +581,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.99, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_MaximumIsNaN_SetsMaximumTo99()
     {
         // Arrange
@@ -597,7 +597,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.99, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_ValidMinimum_PreservesMinimum()
     {
         // Arrange
@@ -613,7 +613,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.001, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_ValidMaximum_PreservesMaximum()
     {
         // Arrange
@@ -629,7 +629,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.90, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_PreservesStartAndEndPosition()
     {
         // Arrange
@@ -647,7 +647,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.75, result.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_CopiesAxisProperties()
     {
         // Arrange
@@ -677,7 +677,7 @@ public class AxisTypeConversionTests
 
     #region ConvertAxisToDateTimeAxis Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToDateTimeAxis_FromLinearAxis_ReturnsDateTimeAxis()
     {
         // Arrange
@@ -699,7 +699,7 @@ public class AxisTypeConversionTests
         Assert.Equal(AxisPosition.Bottom, result.Position);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToDateTimeAxis_PreservesMinimumAndMaximum()
     {
         // Arrange
@@ -717,7 +717,7 @@ public class AxisTypeConversionTests
         Assert.Equal(500, result.Maximum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToDateTimeAxis_PreservesStartAndEndPosition()
     {
         // Arrange
@@ -735,7 +735,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.7, result.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToDateTimeAxis_CopiesAxisProperties()
     {
         // Arrange
@@ -765,7 +765,7 @@ public class AxisTypeConversionTests
 
     #region Cross-Conversion Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertLinearToLogAndBack_PreservesCompatibleProperties()
     {
         // Arrange
@@ -793,7 +793,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.9, linearAxis.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertLinearToNormalAndBack_PreservesCompatibleProperties()
     {
         // Arrange
@@ -820,7 +820,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.8, linearAxis.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertLinearToGumbelAndBack_PreservesCompatibleProperties()
     {
         // Arrange
@@ -847,7 +847,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.85, linearAxis.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertLinearToDateTimeAndBack_PreservesCompatibleProperties()
     {
         // Arrange
@@ -878,7 +878,7 @@ public class AxisTypeConversionTests
 
     #region Reversed Axis Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_ReversedAxis_PreservesReversedPosition()
     {
         // Arrange
@@ -896,7 +896,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0, result.EndPosition);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLinearAxis_ReversedAxis_PreservesReversedPosition()
     {
         // Arrange
@@ -918,7 +918,7 @@ public class AxisTypeConversionTests
 
     #region Edge Case Tests
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToLogarithmicAxis_VerySmallPositiveMinimum_PreservesMinimum()
     {
         // Arrange
@@ -934,7 +934,7 @@ public class AxisTypeConversionTests
         Assert.Equal(1E-15, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToNormalAxis_NegativeMinimum_SetsMinimumToDefault()
     {
         // Arrange
@@ -950,7 +950,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.0000001, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void ConvertAxisToGumbelAxis_NegativeMinimum_SetsMinimumToDefault()
     {
         // Arrange
@@ -966,7 +966,7 @@ public class AxisTypeConversionTests
         Assert.Equal(0.0000001, result.Minimum);
     }
 
-    [Fact]
+    [StaFact]
     public void AllConversions_NullProperties_HandledGracefully()
     {
         // Arrange
