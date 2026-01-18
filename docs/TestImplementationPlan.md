@@ -470,3 +470,207 @@ WPF controls present unique testing challenges since they are tightly coupled to
    - AreaPointTests
    - AnnotationPropertiesSerializationTests
    - SeriesPropertiesSerializationTests
+
+---
+
+# Phase 2: 90%+ Coverage Plan
+
+This section outlines additional tests needed to achieve 90%+ coverage across all test projects.
+
+## Current Coverage Analysis
+
+| Library | Source Files | Test Files | Estimated Coverage | Target |
+|---------|--------------|------------|-------------------|--------|
+| FrameworkInterfaces | 29 | 7 | ~24% | 90%+ |
+| SoftwareUpdate | 12 | 3 | ~25% | 90%+ |
+| SoftwareUpdate.Updater | 3 | 1 | ~33% | 90%+ |
+| Themes | 9 | 2 | ~22% | 90%+ |
+| GenericControls | 59 | 8 | ~13% | 90%+ |
+| NumericControls | 32 | 7 | ~22% | 90%+ |
+| OxyPlotControls | 20 | 10 | ~50% | 90%+ |
+
+## Implementation Priority Tiers
+
+### Tier 1: Critical (Must Have for 90%+)
+
+These are core functionality files with no test coverage:
+
+#### SoftwareUpdate.Updater
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 1 | `InstallationManagerTests` | InstallationManager.cs | HIGH | PENDING |
+| 2 | `ProgramTests` | Program.cs | MEDIUM | PENDING |
+
+**InstallationManager** handles:
+- ZIP extraction with path traversal protection
+- Backup/restore operations
+- Directory operations with error handling
+- Critical security code that needs thorough testing
+
+#### SoftwareUpdate
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 3 | `GitHubUpdateServiceTests` | GitHub/GitHubUpdateService.cs | HIGH | PENDING |
+| 4 | `UpdateInfoTests` | Core/UpdateInfo.cs | MEDIUM | PENDING |
+| 5 | `UpdateDownloadProgressTests` | Core/UpdateDownloadProgress.cs | LOW | PENDING |
+| 6 | `UpdateDownloadResultTests` | Core/UpdateDownloadResult.cs | LOW | PENDING |
+| 7 | `RegistryHelperTests` | Utilities/RegistryHelper.cs | LOW | PENDING |
+
+**GitHubUpdateService** handles:
+- Async API calls to GitHub releases
+- Version comparison logic
+- Download progress tracking
+- Error handling for network failures
+
+#### FrameworkInterfaces
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 8 | `ElementBaseTests` | Project/ElementBase.cs | HIGH | PENDING |
+| 9 | `ElementCollectionBaseTests` | Project/ElementCollectionBase.cs | HIGH | PENDING |
+| 10 | `AddElementActionTests` | Undo/Actions/AddElementAction.cs | HIGH | PENDING |
+| 11 | `MoveElementActionTests` | Undo/Actions/MoveElementAction.cs | HIGH | PENDING |
+| 12 | `RemoveElementActionTests` | Undo/Actions/RemoveElementAction.cs | HIGH | PENDING |
+| 13 | `ExtensionMethodsTests` | Utilities/ExtensionMethods.cs | MEDIUM | PENDING |
+| 14 | `MethodsTests` | Utilities/Methods.cs | MEDIUM | PENDING |
+| 15 | `ToolsTests` | Utilities/Tools.cs | MEDIUM | PENDING |
+
+#### Themes
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 16 | `ThemeServiceTests` | Core/ThemeService.cs | HIGH | PENDING |
+| 17 | `ThemeResourceHelperTests` | Core/ThemeResourceHelper.cs | MEDIUM | PENDING |
+
+### Tier 2: Important (Adds Significant Coverage)
+
+#### GenericControls
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 18 | `ResourceBindingExtensionTests` | Controls/ResourceBindingExtension.cs | MEDIUM | PENDING |
+| 19 | `SettingsBindingExtensionTests` | Controls/SettingsBinding.cs | MEDIUM | PENDING |
+| 20 | `StaticResourceAlternativeTests` | Controls/StaticResourceAlternative.cs | LOW | PENDING |
+| 21 | `ToolBarExtensionsTests` | Controls/ToolBarExtensions.cs | LOW | PENDING |
+| 22 | `TreeHelperTests` | Controls/TreeHelper.cs | MEDIUM | PENDING |
+| 23 | `DataGridRowItemTests` | Controls/DataGridRowItem.cs | MEDIUM | PENDING |
+
+#### NumericControls
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 24 | `StratificationOptionsRowItemTests` | RowItems/StratificationOptionsRowItem.cs | MEDIUM | PENDING |
+| 25 | `DistributionDataItemTests` | RowItems/DistributionDataItem.cs | MEDIUM | PENDING |
+| 26 | `AreaPointTests` | Controls/AreaPoint.cs | LOW | PENDING |
+
+#### OxyPlotControls
+| # | Test Class | Source File | Priority | Status |
+|---|------------|-------------|----------|--------|
+| 27 | `AnnotationPropertiesSerializationTests` | Annotation serialization | MEDIUM | PENDING |
+| 28 | `SeriesPropertiesSerializationTests` | Series serialization | MEDIUM | PENDING |
+| 29 | `PlotModelExtensionsTests` | Extensions/PlotModelExtensions.cs | MEDIUM | PENDING |
+
+### Tier 3: Nice to Have (Full Coverage)
+
+Additional files that could be tested for comprehensive coverage:
+- More specialized converters in GenericControls
+- Additional control logic that can be tested without WPF context
+- Edge cases in existing test files
+
+---
+
+## Phase 2 Implementation Checklist
+
+### SoftwareUpdate.Updater (Target: 90%+)
+- [ ] 1. InstallationManagerTests
+  - [ ] Constructor tests
+  - [ ] ExtractZip tests (success, failure, path traversal protection)
+  - [ ] CreateBackup tests
+  - [ ] RestoreBackup tests
+  - [ ] DeleteDirectory tests
+  - [ ] CopyDirectory tests
+- [ ] 2. ProgramTests (if feasible)
+
+### SoftwareUpdate (Target: 90%+)
+- [ ] 3. GitHubUpdateServiceTests
+  - [ ] CheckForUpdateAsync tests (with mocked HttpClient)
+  - [ ] DownloadUpdateAsync tests
+  - [ ] GetLatestReleaseAsync tests
+  - [ ] Error handling tests
+- [ ] 4. UpdateInfoTests
+- [ ] 5. UpdateDownloadProgressTests
+- [ ] 6. UpdateDownloadResultTests
+- [ ] 7. RegistryHelperTests
+
+### FrameworkInterfaces (Target: 90%+)
+- [ ] 8. ElementBaseTests
+  - [ ] Property change notifications
+  - [ ] Validation logic
+  - [ ] Serialization
+- [ ] 9. ElementCollectionBaseTests
+  - [ ] Add/Remove/Move operations
+  - [ ] Collection change notifications
+- [ ] 10. AddElementActionTests
+- [ ] 11. MoveElementActionTests
+- [ ] 12. RemoveElementActionTests
+- [ ] 13. ExtensionMethodsTests
+- [ ] 14. MethodsTests
+- [ ] 15. ToolsTests
+
+### Themes (Target: 90%+)
+- [ ] 16. ThemeServiceTests
+  - [ ] Singleton pattern tests
+  - [ ] Theme switching
+  - [ ] Resource loading
+- [ ] 17. ThemeResourceHelperTests
+
+### GenericControls (Target: 90%+)
+- [ ] 18. ResourceBindingExtensionTests
+- [ ] 19. SettingsBindingExtensionTests
+- [ ] 20. TreeHelperTests
+- [ ] 21. DataGridRowItemTests
+
+### NumericControls (Target: 90%+)
+- [ ] 22. StratificationOptionsRowItemTests
+- [ ] 23. DistributionDataItemTests
+
+### OxyPlotControls (Target: 90%+)
+- [ ] 24. AnnotationPropertiesSerializationTests
+- [ ] 25. SeriesPropertiesSerializationTests
+- [ ] 26. PlotModelExtensionsTests
+
+---
+
+## Estimated Test Additions
+
+| Library | New Test Files | Estimated Tests | Status |
+|---------|---------------|-----------------|--------|
+| SoftwareUpdate.Updater | 2 | ~40 | PENDING |
+| SoftwareUpdate | 5 | ~80 | PENDING |
+| FrameworkInterfaces | 8 | ~150 | PENDING |
+| Themes | 2 | ~50 | PENDING |
+| GenericControls | 4 | ~60 | PENDING |
+| NumericControls | 2 | ~30 | PENDING |
+| OxyPlotControls | 3 | ~45 | PENDING |
+| **Total** | **26** | **~455** | **PENDING** |
+
+## Testing Strategies for Complex Components
+
+### GitHubUpdateService Testing
+Since this involves HTTP calls, we need to:
+1. Use `IHttpClientFactory` pattern or inject `HttpMessageHandler`
+2. Create mock responses for GitHub API
+3. Test parsing of release JSON
+4. Test version comparison logic separately
+
+### InstallationManager Testing
+1. Use temporary directories for file operations
+2. Test ZIP extraction with crafted test archives
+3. Verify path traversal protection with malicious paths
+4. Test backup/restore cycle
+
+### ThemeService Testing
+1. Test singleton behavior
+2. Mock resource dictionary operations where possible
+3. Test theme enumeration and switching logic
+
+### Element Actions Testing
+1. Create mock IElement and IElementCollection implementations
+2. Test undo/redo cycles
+3. Verify proper event raising
