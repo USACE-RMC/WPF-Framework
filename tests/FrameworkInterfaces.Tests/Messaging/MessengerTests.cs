@@ -2,6 +2,7 @@ using Xunit;
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
 using System.Windows.Media;
+using System.IO;
 
 namespace FrameworkInterfaces.Tests.Messaging
 {
