@@ -173,6 +173,7 @@ namespace NumericControls
                 {
                     //update text notification
                     NotificationText.Text = "*Operand is not valid for this operation.";
+                    return;
                 }
 
                 double value = ValueTextBox.Value;

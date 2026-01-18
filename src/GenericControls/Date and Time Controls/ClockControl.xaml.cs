@@ -549,7 +549,7 @@ namespace GenericControls
         private ClockToggle GetBorder(int t, double angleDegree, double transformRadius, ClockToggle.State borderState)
         {
             var b = new ClockToggle() { TimeValue = t, TimeState = borderState };
-            if (borderState == ClockToggle.State.MinuteMinor | borderState == ClockToggle.State.SecondMinor | borderState == ClockToggle.State.HourMinor)
+            if (borderState == ClockToggle.State.MinuteMinor || borderState == ClockToggle.State.SecondMinor || borderState == ClockToggle.State.HourMinor)
             {
                 b.Style = _clockMinorNumberStyle;
             }
@@ -1117,7 +1117,7 @@ namespace GenericControls
             if (e.NewValue.GetType() != typeof(State))
                 return;
             State newState = (State)e.NewValue;
-            if (newState == State.MinuteMinor | newState == State.SecondMinor | newState == State.HourMinor)
+            if (newState == State.MinuteMinor || newState == State.SecondMinor || newState == State.HourMinor)
             {
                 thisControl.Child = null;
             }

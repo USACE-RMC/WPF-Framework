@@ -147,11 +147,11 @@ namespace GenericControls
         }
 
         /// <summary>
-        /// Validates whether the input value is within the range specified by the <see cref="Wrapper"/>
+        /// Validates whether the input value is within the range specified by the <see cref="Wrapper"/>.
         /// </summary>
         /// <param name="value">The value from the binding target to validate.</param>
         /// <param name="cultureInfo">The culture to use in this rule.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="ValidationResult"/> indicating whether the value is valid and within range.</returns>
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             double numericValue = 0d;
@@ -202,9 +202,9 @@ namespace GenericControls
     public class BindingProxy : Freezable
     {
         /// <summary>
-        /// Creates a new instance of <see cref="BindingProxy"/>
+        /// Creates a new instance of <see cref="BindingProxy"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A new <see cref="BindingProxy"/> instance.</returns>
         protected override Freezable CreateInstanceCore()
         {
             return new BindingProxy();

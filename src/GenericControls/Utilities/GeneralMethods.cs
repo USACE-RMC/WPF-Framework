@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -62,10 +63,10 @@ namespace GenericControls
         /// <summary>
         /// Find the first child element in a framework element with the given name for the specified type T.
         /// </summary>
-        /// <typeparam name="T">Framework element type to be returned</typeparam>
+        /// <typeparam name="T">Framework element type to be returned.</typeparam>
         /// <param name="element">Element to search.</param>
         /// <param name="childName">Name of the child element to be returned.</param>
-        /// <returns></returns>
+        /// <returns>The first child element of type T with the specified name, or null if not found.</returns>
         public static T FindElementByName<T>(FrameworkElement element, string childName) where T : FrameworkElement
         {
             T childElement = null;
@@ -103,7 +104,7 @@ namespace GenericControls
         /// </summary>
         /// <param name="element">Element to search.</param>
         /// <param name="t">Type of child elements to search for and return.</param>
-        /// <returns></returns>
+        /// <returns>A list of all visual elements of the specified type found in the element tree.</returns>
         public static List<Visual> GetAllElementsOfType(Visual element, Type t)
         {
             var r = new List<Visual>();
@@ -161,8 +162,8 @@ namespace GenericControls
         /// File save dialog that returns the full path of the file to be saved. Returns blank string if nothing selected.
         /// </summary>
         /// <param name="filters">Filters for the file open dialog selector. (e.g. "Text File (*.txt) |*.txt|Word File (*.docx) |*.docx|All files (*.*) |*.*"</param>
-        /// <param name="overwritePrompt"></param>
-        /// <returns></returns>
+        /// <param name="overwritePrompt">Whether to prompt the user before overwriting an existing file.</param>
+        /// <returns>The full path of the selected file, or an empty string if the dialog was cancelled.</returns>
         public static string FileSaveDialog(string filters, bool overwritePrompt = true)
         {
             string FileSaveDialogRet = default;
@@ -295,8 +296,8 @@ namespace GenericControls
         /// <summary>
         /// Attempts to delete a directory and all contents.
         /// </summary>
-        /// <param name="dir"></param>
-        /// <returns></returns>
+        /// <param name="dir">The path of the directory to delete.</param>
+        /// <returns><c>true</c> if the directory was successfully deleted or didn't exist; <c>false</c> if an error occurred.</returns>
         public static bool DeleteDirectory(string dir)
         {
             try
@@ -308,8 +309,9 @@ namespace GenericControls
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
                 return false;
             }
         }
@@ -346,7 +348,7 @@ namespace GenericControls
                     }
                 case TypeCode.Object:
                     {
-                        if (typeToTest.IsGenericType && typeToTest.GetGenericTypeDefinition() == typeof(object))
+                        if (typeToTest.IsGenericType && typeToTest.GetGenericTypeDefinition() == typeof(Nullable<>))
                         {
                             return IsNumericType(Nullable.GetUnderlyingType(typeToTest));
                         }

@@ -68,7 +68,7 @@ namespace GenericControls
             System.Reflection.PropertyInfo[] pinfo = GetType().GetProperties();
             foreach (System.Reflection.PropertyInfo p in pinfo)
             {
-                if (p.Name == "RuleMap")
+                if (p.Name == nameof(RuleMap))
                     continue;
                 if (_ruleMap.ContainsKey(p.Name) == false)
                     AddRule(p.Name, () => false, "");
