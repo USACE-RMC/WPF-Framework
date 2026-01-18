@@ -180,7 +180,7 @@ namespace FrameworkUI
         private void NameTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             if (NameTextBox.NameTextBox.IsValid == true) return;
-            Project.Name = _previousName;
+            Project.Name = _previousName ?? string.Empty;
         }
 
     }

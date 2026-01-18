@@ -176,7 +176,7 @@ namespace FrameworkUI
         /// <returns></returns>
         public static string ValueStringFormat
         {
-            get { return _valueStringFormat; }
+            get { return _valueStringFormat ?? string.Empty; }
             set
             {
                 if (_valueStringFormat != value)
