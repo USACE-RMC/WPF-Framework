@@ -152,7 +152,7 @@ namespace OxyPlotControls.Demo
         /// because they use a custom rendering pipeline that doesn't automatically
         /// respond to resource dictionary changes.
         /// </remarks>
-        private void OnThemeChanged(object sender, ThemeChangedEventArgs e)
+        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
         {
             // Dispatch the plot invalidation to ensure the visual tree has updated
             Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
