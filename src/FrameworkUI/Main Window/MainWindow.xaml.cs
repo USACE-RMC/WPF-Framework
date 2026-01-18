@@ -189,16 +189,16 @@ namespace FrameworkUI
         /// <summary>
         /// Layout anchorable for the project explorer dock.
         /// </summary>
-        private LayoutAnchorable _projectExplorerDock;
+        private LayoutAnchorable? _projectExplorerDock;
         //private LayoutAnchorable _mapExplorerDock;
         /// <summary>
         /// Layout anchorable for the message window dock.
         /// </summary>
-        private LayoutAnchorable _messageWindowDock;
+        private LayoutAnchorable? _messageWindowDock;
         /// <summary>
         /// Layout anchorable for the properties window dock.
         /// </summary>
-        private LayoutAnchorable _propertiesWindowDock;
+        private LayoutAnchorable? _propertiesWindowDock;
         /// <summary>
         /// The project explorer tree view control.
         /// </summary>
@@ -211,7 +211,7 @@ namespace FrameworkUI
         /// <summary>
         /// Reference to the previously active document.
         /// </summary>
-        private LayoutDocument _previousActiveDocument = null;
+        private LayoutDocument? _previousActiveDocument = null;
         /// <summary>
         /// Indicates whether to load the full layout including documents.
         /// </summary>
@@ -236,7 +236,7 @@ namespace FrameworkUI
         /// <summary>
         /// Event raised when the options apply button is clicked.
         /// </summary>
-        public event RoutedEventHandler Options_Apply_Click;
+        public event RoutedEventHandler? Options_Apply_Click;
         /// <summary>
         /// Delegate for handling the preview save as event.
         /// </summary>
@@ -247,7 +247,7 @@ namespace FrameworkUI
         /// <summary>
         /// Event raised before a project is saved with a new file name.
         /// </summary>
-        public event PreviewObjectSavedAsEventHandler PreviewSaveAs;
+        public event PreviewObjectSavedAsEventHandler? PreviewSaveAs;
 
         /// <summary>
         /// Dependency property for the ProjectNode property.
@@ -269,15 +269,14 @@ namespace FrameworkUI
             thisControl.ProjectMenuItems.Clear();
             // 
             // Get the old value
-            FrameworkUIController oldValue = null;
-            oldValue = e.OldValue as FrameworkUIController;
+            FrameworkUIController? oldValue = e.OldValue as FrameworkUIController;
             // clean up any links to old project.
             if (oldValue != null)
             {
                 oldValue.OnClick -= thisControl.Project_Click;
                 oldValue.SetPropertiesControl -= thisControl.SetPropertiesRequested;
                 oldValue.ClosePropertiesControl -= thisControl.ClosePropertiesRequested;
-                oldValue.Project.PropertyChanged -= thisControl.ProjectPropertyChanged;
+                oldValue.Project.PropertyChanged -= thisControl.ProjectPropertyChanged!;
                 oldValue.ParentTreeView = null;
 
                 for (int i = 0; i < oldValue.ChildNodes.Count; i++)
@@ -300,8 +299,7 @@ namespace FrameworkUI
             AutoBackup.Cancel();
             // 
             // Get the new value
-            FrameworkUIController newValue = null;
-            newValue = e.NewValue as FrameworkUIController;
+            FrameworkUIController? newValue = e.NewValue as FrameworkUIController;
             thisControl._projectExplorerTreeView.ProjectNode = newValue;
             // 
             if (newValue == null) return;
@@ -327,7 +325,7 @@ namespace FrameworkUI
             newValue.SetPropertiesControl += thisControl.SetPropertiesRequested;
             newValue.ClosePropertiesControl += thisControl.ClosePropertiesRequested;
             // Add handler to Project property changed
-            newValue.Project.PropertyChanged += thisControl.ProjectPropertyChanged;
+            newValue.Project.PropertyChanged += thisControl.ProjectPropertyChanged!;
 
             for (int i = 0; i < newValue.ChildNodes.Count; i++)
             {
@@ -366,7 +364,7 @@ namespace FrameworkUI
             ProjectNode.OnClick -= Project_Click;
             ProjectNode.SetPropertiesControl -= SetPropertiesRequested;
             ProjectNode.ClosePropertiesControl -= ClosePropertiesRequested;
-            ProjectNode.Project.PropertyChanged -= ProjectPropertyChanged;
+            ProjectNode.Project.PropertyChanged -= ProjectPropertyChanged!;
 
             for (int i = 0; i < ProjectNode.ChildNodes.Count; i++)
             {
@@ -391,7 +389,7 @@ namespace FrameworkUI
             ProjectNode.OnClick += Project_Click;
             ProjectNode.SetPropertiesControl += SetPropertiesRequested;
             ProjectNode.ClosePropertiesControl += ClosePropertiesRequested;
-            ProjectNode.Project.PropertyChanged += ProjectPropertyChanged;
+            ProjectNode.Project.PropertyChanged += ProjectPropertyChanged!;
 
             for (int i = 0; i < ProjectNode.ChildNodes.Count; i++)
             {
@@ -426,13 +424,13 @@ namespace FrameworkUI
         /// <summary>
         /// The update service for checking and downloading software updates.
         /// </summary>
-        private IUpdateService _updateService;
+        private IUpdateService? _updateService;
 
         /// <summary>
         /// Gets or sets the update service for checking software updates.
         /// When set, the "Check for Updates" menu item becomes visible.
         /// </summary>
-        public IUpdateService UpdateService
+        public IUpdateService? UpdateService
         {
             get { return _updateService; }
             set
@@ -508,7 +506,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The property changed event arguments.</param>
-        private void ProjectPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ProjectPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (ProjectNode == null)
             {
@@ -706,7 +704,7 @@ namespace FrameworkUI
         /// <summary>
         /// Support function for loading AvalonDock layout
         /// </summary>
-        private void LayoutSerialization_Callback(object sender, LayoutSerializationCallbackEventArgs e)
+        private void LayoutSerialization_Callback(object? sender, LayoutSerializationCallbackEventArgs e)
         {
             // Always load content the main controls: Project Explorer, Message Window, Properties Window
             if (e.Model.ContentId == ShellPublicVariables.ProjectExplorerContentID || e.Model.ContentId == ShellPublicVariables.MessageWindowContentID || e.Model.ContentId == ShellPublicVariables.PropertiesWindowContentID)
@@ -855,7 +853,7 @@ namespace FrameworkUI
             elementNode.Copy -= CopyElement_Click;
             elementNode.Delete -= DeleteElement;
             elementNode.NodeMoved -= NodeMoved;
-            elementNode.ParentTreeView = null;
+            elementNode.ParentTreeView = null!;
 
             if (_openingProject == false)
             {
@@ -1034,7 +1032,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void PropertiesWindow_IsActiveChanged(object sender, EventArgs e)
+        private void PropertiesWindow_IsActiveChanged(object? sender, EventArgs e)
         {
             // Check if a simulation is in progress
             if (ShellPublicVariables.SimulationInProgress == true) return;
@@ -1070,7 +1068,7 @@ namespace FrameworkUI
         /// Document factory.
         /// </summary>
         /// <param name="element">Project element.</param>
-        private LayoutDocument DocumentFactory(IElement element)
+        private LayoutDocument? DocumentFactory(IElement element)
         {
             var document = new LayoutDocument() { IconSource = GeneralMethods.Bitmap2BitmapSource(element.ElementImage) };
             var documentControl = ProjectNode.GetDocumentControl(element);
@@ -1082,7 +1080,7 @@ namespace FrameworkUI
             document.Closed += (sender, e) =>
             {
                 if (ProjectNode == null) return;
-                if (sender.GetType() != typeof(LayoutDocument)) return;
+                if (sender == null || sender.GetType() != typeof(LayoutDocument)) return;
                 LayoutDocument doc = (LayoutDocument)sender;
                 doc.IsActiveChanged -= Document_IsActiveChanged;
                 doc.IsSelectedChanged -= Document_IsSelectedChanged;
@@ -1099,7 +1097,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="document">Document to open.</param>
         /// <param name="element">The element associated with the document.</param>
-        public void OpenDocument(LayoutDocument document, IElement element)
+        public void OpenDocument(LayoutDocument? document, IElement element)
         {
             if (ShellPublicVariables.SimulationInProgress == true) return;
             if (document == null) { return; }
@@ -1123,8 +1121,9 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void Document_IsSelectedChanged(object sender, EventArgs e)
+        private void Document_IsSelectedChanged(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
             if (ShellPublicVariables.SimulationInProgress == true)
             {
@@ -1143,8 +1142,9 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void Document_IsActiveChanged(object sender, EventArgs e)
+        private void Document_IsActiveChanged(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
             if (document.Content == null) return;
 
@@ -1242,7 +1242,7 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The cancel event data.</param>
-        private void Document_Closing(object sender, CancelEventArgs e)
+        private void Document_Closing(object? sender, CancelEventArgs e)
         {
             if (ShellPublicVariables.SimulationInProgress == true)
             {
@@ -1258,8 +1258,9 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void Document_Closed(object sender, EventArgs e)
+        private void Document_Closed(object? sender, EventArgs e)
         {
+            if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
             document.Content = null;
             document.IsActiveChanged -= Document_IsActiveChanged;
@@ -1296,10 +1297,11 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="dependencyObject">The starting point in the visual tree.</param>
         /// <returns>The LayoutAnchorablePaneControl if found, otherwise null.</returns>
-        private Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl FindPane(DependencyObject dependencyObject)
+        private Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl? FindPane(DependencyObject? dependencyObject)
         {
+            if (dependencyObject == null) return null;
             if (!(dependencyObject is Visual || dependencyObject is Visual3D)) return null;
-            Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl item = dependencyObject as Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl;
+            Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl? item = dependencyObject as Xceed.Wpf.AvalonDock.Controls.LayoutAnchorablePaneControl;
             if (item != null) return item;
             return FindPane(VisualTreeHelper.GetParent(dependencyObject));
         }
@@ -1391,7 +1393,7 @@ namespace FrameworkUI
             if (Directory.Exists(UserSettings.DefaultLocation)) SaveFileDialog.InitialDirectory = UserSettings.DefaultLocation;
             if (SaveFileDialog.ShowDialog() == true)
             {
-                UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName);
+                UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName) ?? string.Empty;
                 CloseProject();
                 ProjectNode.Project.CreateNew(SaveFileDialog.FileName);
                 OpenProject(SaveFileDialog.FileName);
@@ -1409,7 +1411,7 @@ namespace FrameworkUI
             if (Directory.Exists(UserSettings.DefaultLocation)) OpenFileDialog.InitialDirectory = UserSettings.DefaultLocation;
             if (OpenFileDialog.ShowDialog() == true)
             {
-                UserSettings.DefaultLocation = Path.GetDirectoryName(OpenFileDialog.FileName);
+                UserSettings.DefaultLocation = Path.GetDirectoryName(OpenFileDialog.FileName) ?? string.Empty;
                 OpenRecentProject(OpenFileDialog.FileName);
             }
         }
@@ -1526,7 +1528,7 @@ namespace FrameworkUI
             // Dispose of previous active document
             if (_previousActiveDocument != null && _previousActiveDocument.Content != null)
             {
-                _previousActiveDocument.Content = null;
+                _previousActiveDocument.Content = null!;
                 _previousActiveDocument = null;
             }
 
@@ -1616,7 +1618,7 @@ namespace FrameworkUI
                 try
                 {
                     // Save project as
-                    UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName);
+                    UserSettings.DefaultLocation = Path.GetDirectoryName(SaveFileDialog.FileName) ?? string.Empty;
                     // Delete the backup file
                     AutoBackup.DeleteBackupProjectFile();
                     // Save As and change name
@@ -1799,7 +1801,7 @@ namespace FrameworkUI
         /// Gets the undo manager for the currently active document or element.
         /// </summary>
         /// <returns>The active undo manager, or null if none is available.</returns>
-        private IUndoManager GetActiveUndoManager()
+        private IUndoManager? GetActiveUndoManager()
         {
             if (ProjectNode == null) return null;
 
@@ -2103,8 +2105,8 @@ namespace FrameworkUI
             if (MessageBox.Show("This action can take some time to execute depending on the file size. Are you sure you want to compact and optimize this project file?", "Compact & Optimize Project File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 // Check if there is enough available drive space
-                string projectPathRoot = Path.GetPathRoot(Path.GetDirectoryName(ProjectNode.Project.FullFileName));
-                if (UtilityFunctions.GetAvailableDriveSpace(projectPathRoot) < FileSizeManager.GetFileSize(ProjectNode.Project.FullFileName))
+                string? projectPathRoot = Path.GetPathRoot(Path.GetDirectoryName(ProjectNode.Project.FullFileName));
+                if (!string.IsNullOrEmpty(projectPathRoot) && UtilityFunctions.GetAvailableDriveSpace(projectPathRoot) < FileSizeManager.GetFileSize(ProjectNode.Project.FullFileName))
                 {
                     MessageBox.Show("There is not enough available free space on the " + projectPathRoot + " drive to compact the project file. This action requires " + FileSizeManager.GetFileSizeText(ProjectNode.Project.FullFileName) + " of free space.", "Cannot Compact & Optimize Project!", MessageBoxButton.OK, MessageBoxImage.Stop);
                     return;
@@ -2334,7 +2336,7 @@ namespace FrameworkUI
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
-                    if (confirmResult == MessageBoxResult.Yes)
+                    if (confirmResult == MessageBoxResult.Yes && downloadResult.FilePath != null)
                     {
                         UpdateService.InstallUpdateAndRestart(downloadResult.FilePath);
                     }
