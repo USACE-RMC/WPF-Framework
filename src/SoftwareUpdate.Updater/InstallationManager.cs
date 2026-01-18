@@ -162,22 +162,36 @@ namespace SoftwareUpdate.Updater
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             var backupDir = Path.Combine(_args.TargetDirectory, $".backup_{timestamp}");
 
+            // Handle same-second backup name collisions by adding a suffix counter
+            if (Directory.Exists(backupDir))
+            {
+                int suffix = 1;
+                string backupDirWithSuffix;
+                do
+                {
+                    backupDirWithSuffix = Path.Combine(_args.TargetDirectory, $".backup_{timestamp}_{suffix}");
+                    suffix++;
+                } while (Directory.Exists(backupDirWithSuffix));
+                backupDir = backupDirWithSuffix;
+            }
+
             Directory.CreateDirectory(backupDir);
 
             // Copy all files except the backup directory itself
-            var sourceDir = new DirectoryInfo(_args.TargetDirectory);
-            foreach (var file in sourceDir.GetFiles())
+            foreach (var file in Directory.GetFiles(_args.TargetDirectory))
             {
-                var destPath = Path.Combine(backupDir, file.Name);
-                file.CopyTo(destPath, overwrite: true);
+                var fileName = Path.GetFileName(file);
+                var destPath = Path.Combine(backupDir, fileName);
+                File.Copy(file, destPath, overwrite: true);
             }
 
-            foreach (var dir in sourceDir.GetDirectories())
+            foreach (var dir in Directory.GetDirectories(_args.TargetDirectory))
             {
-                if (dir.Name.StartsWith(".backup_")) continue;
+                var dirName = Path.GetFileName(dir);
+                if (dirName.StartsWith(".backup_")) continue;
 
-                var destPath = Path.Combine(backupDir, dir.Name);
-                CopyDirectory(dir.FullName, destPath);
+                var destPath = Path.Combine(backupDir, dirName);
+                CopyDirectory(dir, destPath);
             }
 
             _log($"Backup created at: {backupDir}");
@@ -299,18 +313,18 @@ namespace SoftwareUpdate.Updater
         /// <param name="backupDir">The backup directory path.</param>
         private void RestoreFromBackup(string backupDir)
         {
-            var sourceDir = new DirectoryInfo(backupDir);
-
-            foreach (var file in sourceDir.GetFiles())
+            foreach (var file in Directory.GetFiles(backupDir))
             {
-                var destPath = Path.Combine(_args.TargetDirectory, file.Name);
-                file.CopyTo(destPath, overwrite: true);
+                var fileName = Path.GetFileName(file);
+                var destPath = Path.Combine(_args.TargetDirectory, fileName);
+                File.Copy(file, destPath, overwrite: true);
             }
 
-            foreach (var dir in sourceDir.GetDirectories())
+            foreach (var dir in Directory.GetDirectories(backupDir))
             {
-                var destPath = Path.Combine(_args.TargetDirectory, dir.Name);
-                CopyDirectory(dir.FullName, destPath);
+                var dirName = Path.GetFileName(dir);
+                var destPath = Path.Combine(_args.TargetDirectory, dirName);
+                CopyDirectory(dir, destPath);
             }
         }
 
@@ -343,8 +357,11 @@ namespace SoftwareUpdate.Updater
                 try
                 {
                     var backupDirs = Directory.GetDirectories(_args.TargetDirectory, ".backup_*")
-                        .OrderByDescending(d => d)
+                        .Select(d => new { Path = d, Timestamp = ParseBackupTimestamp(d) })
+                        .Where(b => b.Timestamp.HasValue)
+                        .OrderByDescending(b => b.Timestamp.Value)
                         .Skip(2) // Keep 2 most recent
+                        .Select(b => b.Path)
                         .ToList();
 
                     foreach (var dir in backupDirs)
@@ -409,6 +426,43 @@ namespace SoftwareUpdate.Updater
                 var destSubDir = Path.Combine(destDir, Path.GetFileName(dir));
                 CopyDirectory(dir, destSubDir);
             }
+        }
+
+        /// <summary>
+        /// Parses the timestamp from a backup directory name.
+        /// </summary>
+        /// <param name="backupPath">The full path to the backup directory.</param>
+        /// <returns>The parsed DateTime, or null if parsing fails.</returns>
+        /// <remarks>
+        /// Expects directory names in the format ".backup_yyyyMMdd_HHmmss" or ".backup_yyyyMMdd_HHmmss_N" (with suffix counter).
+        /// </remarks>
+        private static DateTime? ParseBackupTimestamp(string backupPath)
+        {
+            var dirName = Path.GetFileName(backupPath);
+            if (string.IsNullOrEmpty(dirName) || !dirName.StartsWith(".backup_"))
+            {
+                return null;
+            }
+
+            // Extract timestamp portion after ".backup_"
+            var timestampPart = dirName.Substring(".backup_".Length);
+
+            // Handle suffix counter format: yyyyMMdd_HHmmss_N
+            // Try to parse the first 15 characters as the timestamp
+            if (timestampPart.Length > 15 && timestampPart[15] == '_')
+            {
+                timestampPart = timestampPart.Substring(0, 15);
+            }
+
+            if (DateTime.TryParseExact(timestampPart, "yyyyMMdd_HHmmss",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out var timestamp))
+            {
+                return timestamp;
+            }
+
+            return null;
         }
     }
 }

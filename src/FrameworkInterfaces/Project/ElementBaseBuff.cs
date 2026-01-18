@@ -39,6 +39,14 @@ namespace FrameworkInterfaces
     /// </summary>
     /// <remarks>
     /// <para>
+    /// This class shares similar structure with <see cref="ElementBase"/> by design.
+    /// While both implement <see cref="IElement"/>, they serve different purposes:
+    /// <see cref="ElementBase"/> includes undo/redo support, while <see cref="ElementBaseBuff"/>
+    /// provides a simpler implementation without undo functionality.
+    /// The duplication is intentional to avoid complex inheritance hierarchies and to allow
+    /// each class to evolve independently based on specific requirements.
+    /// </para>
+    /// <para>
     /// <b> Authors: </b>
     /// <list type="bullet">
     ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
@@ -236,7 +244,7 @@ namespace FrameworkInterfaces
         protected void RaisePropertyChange(string propertyName, bool isDirty = true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            IsDirty = isDirty;//SetIsDirty(isDirty);
+            IsDirty = isDirty;
         }
 
         /// <summary>
