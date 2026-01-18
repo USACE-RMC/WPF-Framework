@@ -51,22 +51,22 @@ namespace FrameworkUI.MessageWindow.Converters
         /// <summary>
         /// Gets or sets the error message image source.
         /// </summary>
-        public ImageSource ErrorImageSource { get; set; }
+        public ImageSource? ErrorImageSource { get; set; }
 
         /// <summary>
         /// Gets or sets the message image source.
         /// </summary>
-        public ImageSource MessageImageSource { get; set; }
+        public ImageSource? MessageImageSource { get; set; }
 
         /// <summary>
         /// Gets or sets the warning message image source.
         /// </summary>
-        public ImageSource WarningImageSource { get; set; }
+        public ImageSource? WarningImageSource { get; set; }
 
         /// <summary>
         /// Gets or sets the event message image source.
         /// </summary>
-        public ImageSource EventImageSource { get; set; }
+        public ImageSource? EventImageSource { get; set; }
 
         /// <summary>
         /// Converts a MessageType value to the corresponding ImageSource.
@@ -75,8 +75,8 @@ namespace FrameworkUI.MessageWindow.Converters
         /// <param name="targetType">The target type.</param>
         /// <param name="parameter">Optional parameter.</param>
         /// <param name="culture">The culture info.</param>
-        /// <returns>The ImageSource corresponding to the message type.</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        /// <returns>The ImageSource corresponding to the message type, or null if value is null.</returns>
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
                 return null;
