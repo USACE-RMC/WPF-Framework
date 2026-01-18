@@ -683,29 +683,31 @@ namespace GenericControls
                 }
                 else if (SelectedCells.Count > 1)
                 {
-                    // Test for continuous selection
-                    List<int> Rows = new List<int>(), Columns = new List<int>();
+                    // Test for continuous selection - pre-allocate lists for performance
+                    int cellCount = SelectedCells.Count;
+                    List<int> rows = new List<int>(cellCount);
+                    List<int> columns = new List<int>(cellCount);
                     foreach (DataGridCellInfo cellInfo in SelectedCells)
                     {
                         rowIndex = Items.IndexOf(cellInfo.Item);
                         columnIndex = cellInfo.Column.DisplayIndex;
-                        Rows.Add(rowIndex);
-                        Columns.Add(columnIndex);
+                        rows.Add(rowIndex);
+                        columns.Add(columnIndex);
                     }
-                    // 
-                    Rows.Sort();
-                    int RowMax = Rows[Rows.Count - 1];
-                    rowIndex = Rows[0];
-                    Columns.Sort();
-                    columnIndex = Columns[0];
-                    int ColumnMax = Columns[Columns.Count - 1];
-                    DataGridCell CellCheck;
-                    for (int i = rowIndex, loopTo2 = RowMax; i <= loopTo2; i++)
+                    //
+                    rows.Sort();
+                    int rowMax = rows[rows.Count - 1];
+                    rowIndex = rows[0];
+                    columns.Sort();
+                    columnIndex = columns[0];
+                    int columnMax = columns[columns.Count - 1];
+                    DataGridCell cellCheck;
+                    for (int i = rowIndex, loopTo2 = rowMax; i <= loopTo2; i++)
                     {
-                        for (int j = columnIndex, loopTo3 = ColumnMax; j <= loopTo3; j++)
+                        for (int j = columnIndex, loopTo3 = columnMax; j <= loopTo3; j++)
                         {
-                            CellCheck = GetCell(i, j);
-                            if (CellCheck.IsSelected == false)
+                            cellCheck = GetCell(i, j);
+                            if (cellCheck.IsSelected == false)
                             {
                                 Mouse.OverrideCursor = null;
                                 MessageBox.Show("Invalid selection, selected cells must be continuous.", "Invalid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -716,12 +718,12 @@ namespace GenericControls
                     // set the clipboard data
                     for (int i = 0, loopTo4 = clipboardData.Count() - 1; i <= loopTo4; i++)
                     {
-                        if (rowIndex + i > RowMax)
+                        if (rowIndex + i > rowMax)
                             break;
-                        // 
+                        //
                         for (int j = 0, loopTo5 = clipboardData[i].Count() - 1; j <= loopTo5; j++)
                         {
-                            if (columnIndex + j > ColumnMax)
+                            if (columnIndex + j > columnMax)
                                 continue;
                             if (this.Columns[columnIndex + j].IsReadOnly)
                                 continue;

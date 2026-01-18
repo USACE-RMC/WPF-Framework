@@ -50,8 +50,9 @@ namespace OxyPlotControls
     /// <summary>
     /// OxyPlot toolbar control providing pan, zoom, annotation, and export functionality.
     /// </summary>
-    public partial class OxyPlotToolbar : UserControl
+    public partial class OxyPlotToolbar : UserControl, IDisposable
     {
+        private bool _disposed = false;
         #region PlotChanged Event
 
         /// <summary>
@@ -131,11 +132,12 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Handles the Unloaded event. Disables PlotChanged notifications.
+        /// Handles the Unloaded event. Disables PlotChanged notifications and disposes resources.
         /// </summary>
         private void OxyPlotToolbar_Unloaded(object sender, RoutedEventArgs e)
         {
             _suppressPlotChanged = true;
+            Dispose();
         }
 
         #endregion
@@ -3915,6 +3917,40 @@ namespace OxyPlotControls
             {
                 dps.Points.Add(new OxyPlot.Series.ScatterErrorPoint(p.Y, p.X, p.LowerErrorX, p.UpperErrorX, p.LowerErrorY, p.UpperErrorY, p.Size, p.Value, p.Tag));
             }
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="OxyPlotToolbar"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources (cursors)
+                    _movePointsCursor?.Dispose();
+                    _addPointCursor?.Dispose();
+                    _panHandCursor?.Dispose();
+                    _panHandClosedCursor?.Dispose();
+                    _zoomCursor?.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="OxyPlotToolbar"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion
