@@ -2953,14 +2953,8 @@ namespace DatabaseManager
                     {
                         if (value.GetType() != typeof(byte[]))
                         {
-                            //value = JsonSerializer.SerializeToUtf8Bytes(value, value.GetType());
-                           
-                            //var bf = new BinaryFormatter();
-                            //using (var ms = new MemoryStream())
-                            //{
-                            //    bf.Serialize(ms, value);
-                            //    value = ms.ToArray();
-                            //}
+                            // Use System.Text.Json for modern, secure serialization (backwards compatible with VB BinaryFormatter behavior)
+                            value = JsonSerializer.SerializeToUtf8Bytes(value, value.GetType());
                         }
                         return true;
                     }

@@ -96,7 +96,7 @@ namespace DatabaseManager
                 return result;
             for (int i = 0; i < _cellEdits.Count(); i++)
             {
-                if (_cellEdits[i].ColumnIndex == indexOfColumn & _cellEdits[i].RowIndex >= 0)
+                if (_cellEdits[i].ColumnIndex == indexOfColumn && _cellEdits[i].RowIndex >= 0)
                     result.Add(_cellEdits[i]);
             }
             return result;
@@ -116,7 +116,7 @@ namespace DatabaseManager
                 return result;
             for (int i = 0; i < _cellEdits.Count(); i++)
             {
-                if (_cellEdits[i].RowIndex == indexOfRow & _cellEdits[i].ColumnIndex >= 0)
+                if (_cellEdits[i].RowIndex == indexOfRow && _cellEdits[i].ColumnIndex >= 0)
                     result.Add(_cellEdits[i]);
             }
             return result;
