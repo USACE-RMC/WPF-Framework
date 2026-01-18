@@ -248,7 +248,7 @@ namespace SoftwareUpdate.Updater.Tests
 
             var args = new UpdaterArguments
             {
-                ProcessId = Environment.ProcessId, // Use current process (already running)
+                ProcessId = -1, // Invalid PID - process won't be found (fast)
                 ZipPath = zipPath,
                 TargetDirectory = targetDir,
                 MainExecutable = "test.exe",
@@ -257,8 +257,7 @@ namespace SoftwareUpdate.Updater.Tests
 
             var manager = new InstallationManager(args, Log);
 
-            // Execute will fail because ProcessId points to current running process,
-            // but backup should still be created
+            // Execute will fail after backup is created (process not found)
             try { manager.Execute(); } catch { }
 
             // Check backup was created
@@ -290,7 +289,7 @@ namespace SoftwareUpdate.Updater.Tests
 
             var args = new UpdaterArguments
             {
-                ProcessId = Environment.ProcessId,
+                ProcessId = -1, // Invalid PID - process won't be found (fast)
                 ZipPath = zipPath,
                 TargetDirectory = targetDir,
                 MainExecutable = "test.exe",
