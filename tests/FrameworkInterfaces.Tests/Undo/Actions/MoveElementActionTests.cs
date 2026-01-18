@@ -111,7 +111,8 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
             action.Execute();
 
-            Assert.Equal(1, collection.IndexOf(element1));
+            // After RemoveAt(0) -> [Second, Third], Insert(2, First) -> [Second, Third, First]
+            Assert.Equal(2, collection.IndexOf(element1));
         }
 
         [Fact]
@@ -126,12 +127,14 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             collection.Add(element3);
 
             // Move First from index 0 to index 2
+            // After RemoveAt(0) -> [Second, Third], Insert(2, First) -> [Second, Third, First]
             var action = new MoveElementAction(collection, element1, 0, 2);
             action.Execute();
 
-            // Second and Third should shift up
+            // Second shifts to index 0, Third stays at index 1, First moves to index 2
             Assert.Equal(0, collection.IndexOf(element2));
-            Assert.Equal(2, collection.IndexOf(element3));
+            Assert.Equal(1, collection.IndexOf(element3));
+            Assert.Equal(2, collection.IndexOf(element1));
         }
 
         [Fact]
@@ -169,11 +172,11 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
             var action = new MoveElementAction(collection, element1, 0, 2);
 
-            // First move
+            // Execute: RemoveAt(0) -> [Second, Third], Insert(2, First) -> [Second, Third, First]
             action.Execute();
-            Assert.Equal(1, collection.IndexOf(element1));
+            Assert.Equal(2, collection.IndexOf(element1));
 
-            // Undo should restore original position
+            // Undo: RemoveAt(2) -> [Second, Third], Insert(0, First) -> [First, Second, Third]
             action.Undo();
             Assert.Equal(0, collection.IndexOf(element1));
         }

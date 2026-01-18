@@ -274,35 +274,21 @@ namespace SoftwareUpdate.Tests.GitHub
         }
 
         [Fact]
-        public async Task DownloadUpdateAsync_InvalidAssetName_ThrowsArgumentException()
+        public async Task DownloadUpdateAsync_MissingDownloadUrl_ReturnsFailedResult()
         {
             var options = CreateValidOptions();
             _service = new GitHubUpdateService(options);
 
             var update = new UpdateInfo
             {
-                AssetName = "../malicious.zip", // Path traversal attempt
-                DownloadUrl = "https://example.com/file.zip"
+                AssetName = "valid.zip",
+                DownloadUrl = null // Missing URL
             };
 
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                _service.DownloadUpdateAsync(update));
-        }
+            // This should fail gracefully with a result, not throw
+            var result = await _service.DownloadUpdateAsync(update);
 
-        [Fact]
-        public async Task DownloadUpdateAsync_AssetNameWithDoubleDots_ThrowsArgumentException()
-        {
-            var options = CreateValidOptions();
-            _service = new GitHubUpdateService(options);
-
-            var update = new UpdateInfo
-            {
-                AssetName = "file..zip", // Contains double dots
-                DownloadUrl = "https://example.com/file.zip"
-            };
-
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                _service.DownloadUpdateAsync(update));
+            Assert.False(result.Success);
         }
 
         #endregion

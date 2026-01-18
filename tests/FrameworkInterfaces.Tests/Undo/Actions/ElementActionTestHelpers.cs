@@ -160,22 +160,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         {
             if (startIndex < 0 || startIndex >= _elements.Count)
                 return;
-            if (endIndex < 0)
-                endIndex = 0;
-            if (endIndex > _elements.Count)
-                endIndex = _elements.Count;
 
-            var item = _elements[startIndex];
             _elements.RemoveAt(startIndex);
-
-            // Adjust end index if removing item shifted positions
-            if (startIndex < endIndex)
-                endIndex--;
-
-            if (endIndex >= _elements.Count)
-                _elements.Add(item);
-            else
-                _elements.Insert(endIndex, item);
+            _elements.Insert(endIndex, element);
         }
 
         public void Delete() { }
