@@ -302,7 +302,7 @@
                                                    VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="1"
                                                    Text="Undo All"
-                                                   Foreground="{DynamicResource HyperlinkForeground}"
+                                                   Foreground="{DynamicResource AccentBrush}"
                                                    Cursor="Hand"
                                                    VerticalAlignment="Center"
                                                    MouseLeftButtonUp="UndoAll_Click"
@@ -374,7 +374,7 @@
                                                    VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="1"
                                                    Text="Redo All"
-                                                   Foreground="{DynamicResource HyperlinkForeground}"
+                                                   Foreground="{DynamicResource AccentBrush}"
                                                    Cursor="Hand"
                                                    VerticalAlignment="Center"
                                                    MouseLeftButtonUp="RedoAll_Click"
