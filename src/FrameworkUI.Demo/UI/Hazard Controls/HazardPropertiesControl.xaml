@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="FrameworkUI.Demo.UI.HazardPropertiesControl"
+﻿<UserControl x:Class="FrameworkUI.Demo.UI.HazardPropertiesControl" x:Name="HazardProperties"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -219,7 +219,7 @@
                             Grid.ColumnSpan="2"
                             Style="{DynamicResource PropertyExpanderStyle}">
                                 <DockPanel >
-                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding Element.ProbabilityOrdinates, RelativeSource={RelativeSource AncestorType={x:Type local:HazardPropertiesControl}}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding ElementName=HazardProperties, Path=Element.ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                 </DockPanel>
                             </Expander>
                         </Grid>

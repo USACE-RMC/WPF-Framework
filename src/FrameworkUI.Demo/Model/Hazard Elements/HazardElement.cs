@@ -520,7 +520,7 @@ namespace FrameworkUI.Demo
         public ProbabilityOrdinates ProbabilityOrdinates
         {
             get => _probabilityOrdinates;
-            private set
+            set
             {
                 if (_probabilityOrdinates != null)
                     _probabilityOrdinates.CollectionChanged -= ProbabilityOrdinates_CollectionChanged;
