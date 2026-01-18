@@ -73,8 +73,8 @@ namespace FrameworkUI
     {
         #region Fields
 
-        private static DispatcherTimer _timer;
-        private static BackgroundWorker _backgroundWorker;
+        private static DispatcherTimer? _timer;
+        private static BackgroundWorker? _backgroundWorker;
         private static readonly object _lockObject = new object();
 
         #endregion
@@ -84,7 +84,7 @@ namespace FrameworkUI
         /// <summary>
         /// Occurs when the backup operation reports progress or completion status.
         /// </summary>
-        public static event ReportProgressEventHandler ReportProgress;
+        public static event ReportProgressEventHandler? ReportProgress;
 
         /// <summary>
         /// Delegate for the <see cref="ReportProgress"/> event.
@@ -100,7 +100,7 @@ namespace FrameworkUI
         /// Gets or sets the project to be backed up.
         /// </summary>
         /// <value>The <see cref="IProject"/> instance to back up.</value>
-        public static IProject Project { get; set; }
+        public static IProject? Project { get; set; }
 
         #endregion
 
@@ -251,7 +251,7 @@ namespace FrameworkUI
         /// <summary>
         /// Handles the timer tick event by initiating an asynchronous backup operation.
         /// </summary>
-        private static void Timer_Tick(object sender, EventArgs e)
+        private static void Timer_Tick(object? sender, EventArgs e)
         {
             lock (_lockObject)
             {
@@ -283,7 +283,7 @@ namespace FrameworkUI
         /// <summary>
         /// Performs the backup operation in the background thread.
         /// </summary>
-        private static void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private static void BackgroundWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
             CreateBackupProjectFile();
         }
@@ -291,7 +291,7 @@ namespace FrameworkUI
         /// <summary>
         /// Handles completion of the backup operation.
         /// </summary>
-        private static void BackgroundWorker_WorkerComplete(object sender, RunWorkerCompletedEventArgs e)
+        private static void BackgroundWorker_WorkerComplete(object? sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled) return;
 

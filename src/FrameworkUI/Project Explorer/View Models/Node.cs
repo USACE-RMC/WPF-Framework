@@ -475,7 +475,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Group_Click(object sender, RoutedEventArgs e)
         {
-            ExplorerTreeView parentTree = ParentTreeView;
+            ExplorerTreeView? parentTree = ParentTreeView;
             if (parentTree == null || parentTree.SelectedNodes == null || parentTree.SelectedNodes.Count == 0)
             {
                 e.Handled = true;
@@ -912,7 +912,7 @@ namespace FrameworkUI.ProjectExplorer
                 // Please help if you know of a better way!
 
                 // First, Update Layout of TreeView.
-                ParentTreeView.UpdateLayout();
+                ParentTreeView?.UpdateLayout();
 
                 // Next, simulate a key stroke to bring text box into focus. 
                 var src = PresentationSource.FromVisual(_nodeHeader);

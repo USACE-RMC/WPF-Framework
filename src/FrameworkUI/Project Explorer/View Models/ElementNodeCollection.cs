@@ -98,13 +98,13 @@ namespace FrameworkUI.ProjectExplorer
 
             // Create Element Nodes
             foreach (var element in newElementCollection)
-                thisControl.Add(new ElementNode(element, thisControl, (ProjectExplorerTreeView)thisControl.ParentTreeView), false);
+                thisControl.Add(new ElementNode(element, thisControl, thisControl.ParentTreeView as ProjectExplorerTreeView), false);
 
             // Child element collections.
             if (newElementCollection.ElementCollections != null)
             {
                 for (int i = 0; i < newElementCollection.ElementCollections.Count; i++)
-                    thisControl.ChildNodes.Add(new ElementNodeCollection(thisControl, (ProjectExplorerTreeView)thisControl.ParentTreeView) { ElementCollection = newElementCollection.ElementCollections[i], ParentTreeView = thisControl.ParentTreeView });
+                    thisControl.ChildNodes.Add(new ElementNodeCollection(thisControl, thisControl.ParentTreeView as ProjectExplorerTreeView) { ElementCollection = newElementCollection.ElementCollections[i], ParentTreeView = thisControl.ParentTreeView });
             }
 
             // Add handlers
@@ -144,7 +144,7 @@ namespace FrameworkUI.ProjectExplorer
             //Insert(newIndex, new ElementNode(element, this, ParentTreeView));
             if (ElementNode.FindElementNode(element, this)==null)
             {
-                Add(new ElementNode(element, this, (ProjectExplorerTreeView)ParentTreeView));
+                Add(new ElementNode(element, this, ParentTreeView as ProjectExplorerTreeView));
             }
             //else if (ElementNodeAddedParentNode as ElementNodeGroup != null)
             //{

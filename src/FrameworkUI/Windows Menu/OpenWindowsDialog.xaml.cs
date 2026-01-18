@@ -78,7 +78,10 @@ namespace FrameworkUI
         /// </summary>
         private void ActivateButton_Click(object sender, RoutedEventArgs e)
         {
-            ((OpenWindowItem)MyDataGrid.SelectedItem).Document.IsActive = true;
+            if (MyDataGrid.SelectedItem is OpenWindowItem item && item.Document != null)
+            {
+                item.Document.IsActive = true;
+            }
         }
 
         /// <summary>

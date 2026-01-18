@@ -270,7 +270,7 @@ namespace FrameworkUI.ProjectExplorer
             if (index >= ChildNodes.Count) index = ChildNodes.Count;
             ChildNodes.Insert(index, node);
             Items.Refresh();
-            ((ExplorerTreeView)ParentTreeView).ClearSelection();
+            (ParentTreeView as ExplorerTreeView)?.ClearSelection();
             node.IsSelected = true;
             NodeAdded?.Invoke(node);
         }

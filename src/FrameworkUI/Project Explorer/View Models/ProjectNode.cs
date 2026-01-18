@@ -215,7 +215,7 @@ namespace FrameworkUI.ProjectExplorer
                     {
                         if (child is ElementNodeCollection enc && enc.ElementCollection != null)
                         {
-                            for (int i = 0; i < Project.ElementCollections.Count; i++)
+                            for (int i = 0; i < (Project.ElementCollections?.Count ?? 0); i++)
                             {
                                 if (enc.ElementCollection.Name == Project.ElementCollections[i].Name)
                                 {
@@ -235,7 +235,7 @@ namespace FrameworkUI.ProjectExplorer
                         }
                     }
 
-                    if (ChildNodes.Count != Project.ElementCollections.Count)
+                    if (ChildNodes.Count != (Project.ElementCollections?.Count ?? 0))
                         loadStandard = true;
 
                 }
@@ -260,9 +260,9 @@ namespace FrameworkUI.ProjectExplorer
                 {
                     ChildNodes.RemoveAt(i);
                 }
-                for (int i = 0; i < Project.ElementCollections.Count; i++)
+                for (int i = 0; i < (Project.ElementCollections?.Count ?? 0); i++)
                 {
-                    var elementNodeCollection = new ElementNodeCollection(this, (ProjectExplorerTreeView?)ParentTreeView) { ElementCollection = Project.ElementCollections[i] };
+                    var elementNodeCollection = new ElementNodeCollection(this, (ProjectExplorerTreeView?)ParentTreeView) { ElementCollection = Project.ElementCollections![i] };
                     ChildNodes.Add(elementNodeCollection);
                 }
             }
@@ -350,9 +350,9 @@ namespace FrameworkUI.ProjectExplorer
                 {
                     // Set dummy node a placeholder, then look for element node collection
                     node = new SimpleNode("", parentNode, ParentTreeView);
-                    for (int i = 0; i < Project.ElementCollections.Count; i++)
+                    for (int i = 0; i < (Project.ElementCollections?.Count ?? 0); i++)
                     {
-                        if (Project.ElementCollections[i].Name == nameAttr.Value)
+                        if (Project.ElementCollections![i].Name == nameAttr.Value)
                         {
                             node = new ElementNodeCollection(this, treeView) { ElementCollection = Project.ElementCollections[i] };
                             bool expand = true;
@@ -398,9 +398,9 @@ namespace FrameworkUI.ProjectExplorer
                         if (tempParent is ElementNodeCollection elementNodeCollection)
                         {
                             // Now search for the IElementCollection with the same name
-                            for (int i = 0; i < Project.ElementCollections.Count; i++)
+                            for (int i = 0; i < (Project.ElementCollections?.Count ?? 0); i++)
                             {
-                                if (Project.ElementCollections[i].Name == elementNodeCollection.NodeHeader.HeaderText)
+                                if (Project.ElementCollections![i].Name == elementNodeCollection.NodeHeader.HeaderText)
                                 {
                                     // Now find the IElement with the same name
                                     for (int j = 0; j < Project.ElementCollections[i].Count; j++)

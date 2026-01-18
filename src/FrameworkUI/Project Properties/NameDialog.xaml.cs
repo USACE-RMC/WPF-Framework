@@ -68,7 +68,7 @@ namespace FrameworkUI
         /// <param name="canBeBlank">Whether the text can be blank.</param>
         /// <param name="existingNames">Array of existing names that are not allowed.</param>
         /// <param name="invalidCharacters">Optional array of characters that are not allowed.</param>
-        public NameDialog(int charLimit, string initialText, bool canBeBlank, string[] existingNames, char[] invalidCharacters = null)
+        public NameDialog(int charLimit, string initialText, bool canBeBlank, string[] existingNames, char[]? invalidCharacters = null)
         {
             InitializeComponent();
             // Required window functionality

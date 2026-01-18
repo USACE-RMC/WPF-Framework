@@ -241,6 +241,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Me_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (ParentTreeView == null) return;
+
             if (ParentTreeView.SelectedNodes.Count > 1)
             {
                 _editMenuItem.Visibility = Visibility.Visible;
@@ -282,6 +284,7 @@ namespace FrameworkUI.ProjectExplorer
             // Ctrl + E = Edit
             if (e.Key == Key.E && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
+                if (ParentTreeView == null) return;
                 var elements = ParentTreeView.SelectedNodes
                     .OfType<ElementNode>()
                     .Select(n => n.Element)
@@ -326,6 +329,7 @@ namespace FrameworkUI.ProjectExplorer
             // Delete = Delete
             else if (e.Key == Key.Delete)
             {
+                if (ParentTreeView == null) return;
                 var elements = ParentTreeView.SelectedNodes
                     .OfType<ElementNode>()
                     .Select(n => n.Element)
@@ -345,6 +349,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            if (ParentTreeView == null) return;
             var elements = ParentTreeView.SelectedNodes
                 .OfType<ElementNode>()
                 .Select(n => n.Element)
@@ -387,6 +392,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
+            if (ParentTreeView == null) return;
             var elements = ParentTreeView.SelectedNodes
                 .OfType<ElementNode>()
                 .Select(n => n.Element)

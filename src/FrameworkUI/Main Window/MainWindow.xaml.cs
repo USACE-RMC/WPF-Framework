@@ -287,11 +287,14 @@ namespace FrameworkUI
                     elementnodeCollection.NodeRemoved -= thisControl.NodeRemoved;
                     elementnodeCollection.NodeSorted -= thisControl.NodeSorted;
 
-                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    if (elementnodeCollection.ElementCollection != null)
                     {
-                        var element = elementnodeCollection.ElementCollection[j];
-                        var elementNode = ElementNode.FindElementNode(element, oldValue.ChildNodes[i]);
-                        if (elementNode != null) thisControl.NodeRemoved(elementNode);
+                        for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                        {
+                            var element = elementnodeCollection.ElementCollection[j];
+                            var elementNode = ElementNode.FindElementNode(element, oldValue.ChildNodes[i]);
+                            if (elementNode != null) thisControl.NodeRemoved(elementNode);
+                        }
                     }
                 }
             }
@@ -338,11 +341,14 @@ namespace FrameworkUI
                 elementnodeCollection.NodeRemoved += thisControl.NodeRemoved;
                 elementnodeCollection.NodeSorted += thisControl.NodeSorted;
 
-                for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                if (elementnodeCollection.ElementCollection != null)
                 {
-                    var element = elementnodeCollection.ElementCollection[j];
-                    var elementNode = ElementNode.FindElementNode(element, newValue.ChildNodes[i]);
-                    if (elementNode != null) thisControl.NodeAdded(elementNode);
+                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    {
+                        var element = elementnodeCollection.ElementCollection[j];
+                        var elementNode = ElementNode.FindElementNode(element, newValue.ChildNodes[i]);
+                        if (elementNode != null) thisControl.NodeAdded(elementNode);
+                    }
                 }
             }
 
@@ -377,11 +383,14 @@ namespace FrameworkUI
                 elementnodeCollection.NodeRemoved -= NodeRemoved;
                 elementnodeCollection.NodeSorted -= NodeSorted;
 
-                for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                if (elementnodeCollection.ElementCollection != null)
                 {
-                    var element = elementnodeCollection.ElementCollection[j];
-                    var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
-                    if (elementNode != null) NodeRemoved(elementNode);
+                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    {
+                        var element = elementnodeCollection.ElementCollection[j];
+                        var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
+                        if (elementNode != null) NodeRemoved(elementNode);
+                    }
                 }
             }
 
@@ -402,11 +411,14 @@ namespace FrameworkUI
                 elementnodeCollection.NodeRemoved += NodeRemoved;
                 elementnodeCollection.NodeSorted += NodeSorted;
 
-                for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                if (elementnodeCollection.ElementCollection != null)
                 {
-                    var element = elementnodeCollection.ElementCollection[j];
-                    var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
-                    if (elementNode != null) NodeAdded(elementNode);
+                    for (int j = 0; j < elementnodeCollection.ElementCollection.Count; j++)
+                    {
+                        var element = elementnodeCollection.ElementCollection[j];
+                        var elementNode = ElementNode.FindElementNode(element, ProjectNode.ChildNodes[i]);
+                        if (elementNode != null) NodeAdded(elementNode);
+                    }
                 }
             }
 
@@ -1049,7 +1061,7 @@ namespace FrameworkUI
             if (_previousActiveDocument.IsActive == false && _previousActiveDocument.IsSelected == true && _propertiesPaneClicked == true && _projectExplorerPaneClicked == false)
             {
                 // User did not activate the document from the project explorer, so clear any multi-select
-                if (ProjectNode.ParentTreeView.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
+                if (ProjectNode.ParentTreeView?.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
 
                 // Select node
                 var prevDocumentElement = ProjectNode.GetControlElement((UIElement)_previousActiveDocument.Content);
@@ -1174,7 +1186,7 @@ namespace FrameworkUI
                     _openingProject == false && _closingProject == false)
             {
                 // User did not activate the document from the project explorer, so clear any multi-select
-                if (ProjectNode.ParentTreeView.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
+                if (ProjectNode.ParentTreeView?.SelectedNodes.Count > 0) { ProjectNode.ParentTreeView.ClearSelection(); }
 
                 bool isPreviousDocument = document.Equals(_previousActiveDocument);
                 if (isPreviousDocument == false)
@@ -1726,11 +1738,11 @@ namespace FrameworkUI
                 {
                     isDirty = true;
                 }
-                else if (ProjectNode?.Project is not null)
+                else if (ProjectNode?.Project is { } project)
                 {
-                    for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
+                    for (int i = 0; i < project.ElementCollections.Count; i++)
                     {
-                        if (ProjectNode.Project.ElementCollections[i].IsDirty == true)
+                        if (project.ElementCollections[i].IsDirty == true)
                         {
                             isDirty = true;
                             break;

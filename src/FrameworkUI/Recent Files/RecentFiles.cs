@@ -73,12 +73,12 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the parent file menu.
         /// </summary>
-        public MenuItem FileMenu { get; set; }
+        public MenuItem? FileMenu { get; set; }
 
         /// <summary>
         /// Event raised when a recent file menu item is clicked.
         /// </summary>
-        public event MenuClickEventHandler MenuClick;
+        public event MenuClickEventHandler? MenuClick;
 
         /// <summary>
         /// Delegate for the <see cref="MenuClick"/> event.
@@ -100,7 +100,7 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the XML file path for storing the recent file list.
         /// </summary>
-        public string FilePath { get; set; }
+        public string? FilePath { get; set; }
 
         /// <summary>
         /// Used in: String.Format( MenuItemFormat, index, file path, displayPath );
@@ -117,12 +117,12 @@ namespace FrameworkUI
         /// <summary>
         /// Separator used at bottom of recent file list.
         /// </summary>
-        private Separator MenuSeparator;
+        private Separator? MenuSeparator;
 
         /// <summary>
         /// A menu item to display more recent files.
         /// </summary>
-        private MenuItem MoreFilesMenuItem;
+        private MenuItem? MoreFilesMenuItem;
 
         /// <summary>
         /// Gets the index of the recent file item containing the specified file path.
@@ -193,7 +193,7 @@ namespace FrameworkUI
         {
             var task = new JumpTask
             {
-                ApplicationPath = Assembly.GetEntryAssembly().Location,
+                ApplicationPath = Assembly.GetEntryAssembly()?.Location ?? string.Empty,
                 Title = Path.GetFileNameWithoutExtension(filePath),
                 Arguments = filePath,
                 Description = filePath,
@@ -240,7 +240,7 @@ namespace FrameworkUI
                 {
                     var task = new JumpTask
                     {
-                        ApplicationPath = Assembly.GetEntryAssembly().Location,
+                        ApplicationPath = Assembly.GetEntryAssembly()?.Location ?? string.Empty,
                         Title = Path.GetFileNameWithoutExtension(Collection[i].FilePath),
                         Arguments = Collection[i].FilePath,
                         Description = Collection[i].FilePath,
@@ -292,10 +292,13 @@ namespace FrameworkUI
         /// </summary>
         public void SaveToXML()
         {
+            if (string.IsNullOrEmpty(FilePath)) return;
+
             // Create the recent files directory if it doesn't already exist.
-            if (Directory.Exists(Path.GetDirectoryName(FilePath)) == false)
+            var directoryName = Path.GetDirectoryName(FilePath);
+            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+                Directory.CreateDirectory(directoryName);
             }
             // 
             var xml = new XmlDocument();
@@ -320,8 +323,7 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private void ConnectToMenu(object sender, RoutedEventArgs e)
         {
-            MenuItem parentItem = Parent as MenuItem;
-            if (parentItem == null) throw new ApplicationException("Parent must be a MenuItem");
+            if (Parent is not MenuItem parentItem) throw new ApplicationException("Parent must be a MenuItem");
             if (FileMenu != null && FileMenu.Equals(parentItem)) return;
             if (FileMenu != null) FileMenu.SubmenuOpened -= FileMenu_SubMenuOpened;
             FileMenu = parentItem;
@@ -344,6 +346,8 @@ namespace FrameworkUI
         /// </summary>
         private void RemoveMenuItems()
         {
+            if (FileMenu == null) return;
+
             if (MenuSeparator != null) FileMenu.Items.Remove(MenuSeparator);
             // clear the list of menu items
             for (int i = Collection.Count - 1; i >= 0; i -= 1)
@@ -363,6 +367,8 @@ namespace FrameworkUI
         /// </summary>
         private void LoadMenuItems()
         {
+            if (FileMenu == null) return;
+
             int iMenuItem = FileMenu.Items.IndexOf(this);
             if (Collection.Count == 0) return;
             
@@ -413,6 +419,8 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (FileMenu == null) return;
+
             int iMenuItem = FileMenu.Items.IndexOf(this);
             int iSender = FileMenu.Items.IndexOf((MenuItem)sender);
             int iItem = iSender - iMenuItem - 1;
@@ -426,7 +434,7 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private void MoreFilesMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ImageSource image = null;
+            ImageSource? image = null;
             if (Collection.Count > 0)
             {
                 try

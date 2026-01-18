@@ -109,7 +109,7 @@ namespace FrameworkUI.ProjectExplorer
             // Event Handlers
             _unGroupMenuItem.Click += Ungroup_Click;
             _renameMenuItem.Click += Rename_Click;
-            _groupMenuItem.Click += (sender, e) => AddGroup(new NodeGroup(this, (ExplorerTreeView)ParentTreeView));
+            _groupMenuItem.Click += (sender, e) => AddGroup(new NodeGroup(this, ParentTreeView as ExplorerTreeView));
             _sortASCMenuItem.Click += Sort_Click;
             _sortDSCMenuItem.Click += Sort_Click;
 
