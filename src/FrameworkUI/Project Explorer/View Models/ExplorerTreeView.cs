@@ -427,7 +427,7 @@ namespace FrameworkUI.ProjectExplorer
             }
             else if (dropTarget as NodeGroup != null)
             {
-                NodeCollection dropParentCollection = dropTarget.GetNodeCollection();
+                NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
                     if (_insertionAdorner != null) { _insertionAdorner.Detach(); }
@@ -451,7 +451,7 @@ namespace FrameworkUI.ProjectExplorer
             }
             else
             {
-                NodeCollection dropParentCollection = dropTarget.GetNodeCollection();
+                NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
                     if (_insertionAdorner != null) { _insertionAdorner.Detach(); }
@@ -597,7 +597,7 @@ namespace FrameworkUI.ProjectExplorer
             }
             else
             {
-                NodeCollection dropParentCollection = dropTarget.GetNodeCollection();
+                NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
                     int dragIndex = _dragNode.ParentNode!.Items.IndexOf(_dragNode);

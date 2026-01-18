@@ -60,7 +60,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public NodeGroup(Node parentNode, ExplorerTreeView parentTreeView) : base(parentNode, parentTreeView)
+        public NodeGroup(Node? parentNode, ExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
             // Set Properties
             IsExpanded = true;
@@ -93,7 +93,7 @@ namespace FrameworkUI.ProjectExplorer
                 groupCount += 1;
                 name = "New Group " + groupCount;
                 bool unique = true;
-                foreach (var child in ParentNode.ChildNodes)
+                foreach (var child in ParentNode!.ChildNodes)
                 {
                     if (child as NodeGroup != null && child.NodeHeader.HeaderText == name) { unique = false; break; }
                 }
@@ -162,9 +162,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <returns>A list of names that are already in use by sibling node groups.</returns>
         protected override List<string> GetInvalidNodeNames()
         {
-            // group names need to be unique within each parent node. 
+            // group names need to be unique within each parent node.
             var invalidNames = new List<string>();
-            for (int i = 0; i < ParentNode.ChildNodes.Count; i++)
+            for (int i = 0; i < ParentNode!.ChildNodes.Count; i++)
             {
                 if (ParentNode.ChildNodes[i] as NodeGroup != null)
                 {
@@ -210,6 +210,7 @@ namespace FrameworkUI.ProjectExplorer
         private void Ungroup_Click(object sender, RoutedEventArgs e)
         {
             // Remove items from the group, and add items to the parent
+            if (ParentNode == null) return;
             int index = ParentNode.ChildNodes.IndexOf(this);
             for (int i = 0; i < ChildNodes.Count; i++) { ParentNode.ChildNodes.Insert(index + i, ChildNodes[i]); }
             ChildNodes.Clear();

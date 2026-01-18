@@ -118,8 +118,7 @@ namespace FrameworkUI.ProjectExplorer
             ProjectExplorerTreeView thisControl = (ProjectExplorerTreeView)d;
 
             // Get the new value
-            ProjectNode newValue = null;
-            newValue = e.NewValue as ProjectNode;
+            ProjectNode? newValue = e.NewValue as ProjectNode;
             if (newValue == null) return;
 
             newValue.ParentTreeView = thisControl;

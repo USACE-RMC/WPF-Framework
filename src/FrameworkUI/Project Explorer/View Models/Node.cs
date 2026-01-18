@@ -119,11 +119,11 @@ namespace FrameworkUI.ProjectExplorer
         protected readonly ObservableCollection<MenuItem> _collectionContextItems = new ObservableCollection<MenuItem>();
 
         /// <summary>
-        /// Construct a new project explorer tree view node. 
+        /// Construct a new project explorer tree view node.
         /// </summary>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
-        public Node(Node parentNode, ExplorerTreeView parentTreeView)
+        public Node(Node? parentNode, ExplorerTreeView? parentTreeView)
         {
             // Set Properties
             Header = _nodeHeader;
@@ -235,9 +235,9 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// The parent tree view.
         /// </summary>
-        public ExplorerTreeView ParentTreeView
+        public ExplorerTreeView? ParentTreeView
         {
-            get { return (ExplorerTreeView)GetValue(ParentTreeViewProperty); }
+            get { return (ExplorerTreeView?)GetValue(ParentTreeViewProperty); }
             set { SetValue(ParentTreeViewProperty, value); }
         }
 
@@ -499,7 +499,7 @@ namespace FrameworkUI.ProjectExplorer
             // Add items to new group, and remove items from parent
             foreach (var node in parentTree.SelectedNodes)
             {
-                node.ParentNode.ChildNodes.RemoveAt(node.ParentNode.ChildNodes.IndexOf(node));
+                node.ParentNode?.ChildNodes.RemoveAt(node.ParentNode.ChildNodes.IndexOf(node));
                 group.ChildNodes.Add(node);
             }
 
@@ -507,7 +507,7 @@ namespace FrameworkUI.ProjectExplorer
             parentTree.ClearSelection();
 
             // update group nodes
-            foreach (var node in parentTree.SelectedNodes) { node.ParentNode.ResetItemsSource(); }
+            foreach (var node in parentTree.SelectedNodes) { node.ParentNode?.ResetItemsSource(); }
             group.ResetItemsSource();
             group.IsSelected = true;
             group.IsInEditMode = true;

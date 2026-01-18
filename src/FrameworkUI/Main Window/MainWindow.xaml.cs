@@ -1722,11 +1722,11 @@ namespace FrameworkUI
             {
                 // Check to see if the Project or Element collections need to be saved
                 bool isDirty = false;
-                if (ProjectNode.Project is not null && ProjectNode.Project.IsDirty == true)
+                if (ProjectNode?.Project is not null && ProjectNode.Project.IsDirty == true)
                 {
                     isDirty = true;
                 }
-                else if (ProjectNode.Project is not null)
+                else if (ProjectNode?.Project is not null)
                 {
                     for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
                     {
@@ -1763,7 +1763,7 @@ namespace FrameworkUI
 
 
             // Compact on close
-            if (UserSettings.CompressProjectFileOnClose == true && ProjectNode.Project is not null)
+            if (UserSettings.CompressProjectFileOnClose == true && ProjectNode?.Project is not null)
             {
                 // Compact and Optimize
                 FileSizeManager.CompactAndOptimizeFile(ProjectNode.Project);

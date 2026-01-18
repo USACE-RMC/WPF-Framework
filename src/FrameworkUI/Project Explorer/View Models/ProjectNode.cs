@@ -80,7 +80,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event raised when the node is clicked.
         /// </summary>
-        public event OnClickEventHandler OnClick;
+        public event OnClickEventHandler? OnClick;
 
         /// <summary>
         /// Delegate for the OnClick event.
@@ -107,12 +107,12 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="elementCollectionName">Name of the element collection to search.</param>
         /// <param name="element">The element to find.</param>
         /// <returns>The ElementNode if found, or null if not found.</returns>
-        public ElementNode GetElementNode(string elementCollectionName, IElement element)
+        public ElementNode? GetElementNode(string elementCollectionName, IElement element)
         {
             foreach (var nodeCollection in ChildNodes)
             {
-                if (nodeCollection as ElementNodeCollection == null) continue;
-                if (((ElementNodeCollection)nodeCollection).ElementCollection.Name == elementCollectionName)
+                if (nodeCollection is not ElementNodeCollection enc) continue;
+                if (enc.ElementCollection?.Name == elementCollectionName)
                     return ElementNode.FindElementNode(element, nodeCollection);
             }
             return null;
@@ -125,14 +125,14 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="elementCollectionName">Name of the element collection that contains the element.</param>
         /// <param name="elementName">Name of the element to get.</param>
-        public IElement GetElement(string elementCollectionName, string elementName)
+        public IElement? GetElement(string elementCollectionName, string elementName)
         {
             foreach (var nodeCollection in ChildNodes)
             {
-                if (nodeCollection as ElementNodeCollection == null) continue;
-                if (((ElementNodeCollection)nodeCollection).ElementCollection.Name == elementCollectionName)
+                if (nodeCollection is not ElementNodeCollection enc) continue;
+                if (enc.ElementCollection?.Name == elementCollectionName)
                 {
-                    foreach (var element in ((ElementNodeCollection)nodeCollection).ElementCollection)
+                    foreach (var element in enc.ElementCollection)
                     {
                         if (element.Name == elementName) return element;
                     }
@@ -210,14 +210,14 @@ namespace FrameworkUI.ProjectExplorer
                         }
                     }
 
-                    // Now check if the disk has items the XML does not. 
+                    // Now check if the disk has items the XML does not.
                     foreach (var child in ChildNodes)
                     {
-                        if (child as ElementNodeCollection != null)
+                        if (child is ElementNodeCollection enc && enc.ElementCollection != null)
                         {
                             for (int i = 0; i < Project.ElementCollections.Count; i++)
                             {
-                                if (((ElementNodeCollection)child).ElementCollection.Name == Project.ElementCollections[i].Name)
+                                if (enc.ElementCollection.Name == Project.ElementCollections[i].Name)
                                 {
                                     for (int j = 0; j < Project.ElementCollections[i].Count; j++)
                                     {
@@ -227,7 +227,7 @@ namespace FrameworkUI.ProjectExplorer
                                         if (itMatches == false)
                                         {
                                             // the XML doesn't match the disk, so add correct node from disk to the end of the collection
-                                            ((ElementNodeCollection)child).Add(new ElementNode(Project.ElementCollections[i][j], child, (ProjectExplorerTreeView)ParentTreeView));
+                                            enc.Add(new ElementNode(Project.ElementCollections[i][j], child, (ProjectExplorerTreeView?)ParentTreeView));
                                         }
                                     }
                                 }
@@ -253,8 +253,8 @@ namespace FrameworkUI.ProjectExplorer
                 // Add child element collections
                 foreach (var nodeCollection in ChildNodes)
                 {
-                    if (nodeCollection as ElementNodeCollection == null) continue;
-                    ((ElementNodeCollection)nodeCollection).ElementCollection = null;
+                    if (nodeCollection is not ElementNodeCollection enc) continue;
+                    enc.ElementCollection = null;
                 }
                 for (int i = ChildNodes.Count - 1; i >= 0; i--)
                 {
@@ -262,7 +262,7 @@ namespace FrameworkUI.ProjectExplorer
                 }
                 for (int i = 0; i < Project.ElementCollections.Count; i++)
                 {
-                    var elementNodeCollection = new ElementNodeCollection(this, (ProjectExplorerTreeView)ParentTreeView) { ElementCollection = Project.ElementCollections[i] };
+                    var elementNodeCollection = new ElementNodeCollection(this, (ProjectExplorerTreeView?)ParentTreeView) { ElementCollection = Project.ElementCollections[i] };
                     ChildNodes.Add(elementNodeCollection);
                 }
             }
@@ -336,55 +336,61 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="xElement">The XElement to read.</param>
         /// <param name="parentNode">The parent node to add to.</param>
         /// <returns>A Node created from the XElement, or null if the element cannot be parsed.</returns>
-        protected Node NodeFromXElement(XElement xElement, Node parentNode)
+        protected Node? NodeFromXElement(XElement xElement, Node parentNode)
         {
-            if (xElement.Attribute("NodeType") != null && xElement.Attribute("Name") != null)
+            var nodeTypeAttr = xElement.Attribute("NodeType");
+            var nameAttr = xElement.Attribute("Name");
+            if (nodeTypeAttr != null && nameAttr != null)
             {
                 Node node;
+                var treeView = ParentTreeView as ProjectExplorerTreeView;
 
                 // Element Node Collection
-                if (xElement.Attribute("NodeType").Value == nameof(ElementNodeCollection))
+                if (nodeTypeAttr.Value == nameof(ElementNodeCollection))
                 {
                     // Set dummy node a placeholder, then look for element node collection
                     node = new SimpleNode("", parentNode, ParentTreeView);
                     for (int i = 0; i < Project.ElementCollections.Count; i++)
                     {
-                        if (Project.ElementCollections[i].Name == xElement.Attribute("Name").Value)
+                        if (Project.ElementCollections[i].Name == nameAttr.Value)
                         {
-                            node = new ElementNodeCollection(this, (ProjectExplorerTreeView)ParentTreeView) { ElementCollection = Project.ElementCollections[i] };
+                            node = new ElementNodeCollection(this, treeView) { ElementCollection = Project.ElementCollections[i] };
                             bool expand = true;
-                            bool.TryParse(xElement.Attribute(nameof(node.IsExpanded)).Value, out expand);
+                            var expandAttr = xElement.Attribute(nameof(node.IsExpanded));
+                            if (expandAttr != null) bool.TryParse(expandAttr.Value, out expand);
                             node.IsExpanded = expand;
                             node.ChildNodes.Clear();
                             break;
                         }
                     }
-                    if (node as ElementNodeCollection == null) return null;
+                    if (node is not ElementNodeCollection) return null;
                 }
                 // Element Node Group
-                else if (xElement.Attribute("NodeType").Value == nameof(ElementNodeGroup))
+                else if (nodeTypeAttr.Value == nameof(ElementNodeGroup))
                 {
-                    node = new ElementNodeGroup(parentNode, (ProjectExplorerTreeView)ParentTreeView);
-                    node.NodeHeader.HeaderText = xElement.Attribute("Name").Value;
+                    node = new ElementNodeGroup(parentNode, treeView);
+                    node.NodeHeader.HeaderText = nameAttr.Value;
                     bool expand = true;
-                    bool.TryParse(xElement.Attribute(nameof(node.IsExpanded)).Value, out expand);
+                    var expandAttr = xElement.Attribute(nameof(node.IsExpanded));
+                    if (expandAttr != null) bool.TryParse(expandAttr.Value, out expand);
                     node.IsExpanded = expand;
                 }
                 // Node Group
-                else if (xElement.Attribute("NodeType").Value == nameof(NodeGroup))
+                else if (nodeTypeAttr.Value == nameof(NodeGroup))
                 {
-                    node = new NodeGroup(parentNode, (ProjectExplorerTreeView)ParentTreeView);
-                    node.NodeHeader.HeaderText = xElement.Attribute("Name").Value;
+                    node = new NodeGroup(parentNode, treeView);
+                    node.NodeHeader.HeaderText = nameAttr.Value;
                     bool expand = true;
-                    bool.TryParse(xElement.Attribute(nameof(node.IsExpanded)).Value, out expand);
+                    var expandAttr = xElement.Attribute(nameof(node.IsExpanded));
+                    if (expandAttr != null) bool.TryParse(expandAttr.Value, out expand);
                     node.IsExpanded = expand;
                 }
                 // Element Node
-                else if (xElement.Attribute("NodeType").Value == nameof(ElementNode))
+                else if (nodeTypeAttr.Value == nameof(ElementNode))
                 {
                     // Set dummy node a placeholder, then look for element
                     node = new SimpleNode("", parentNode, ParentTreeView);
-                    Node tempParent = parentNode;
+                    Node? tempParent = parentNode;
 
                     // Find the parent element node collection (with null check to prevent infinite loop)
                     while (tempParent != null)
@@ -399,9 +405,9 @@ namespace FrameworkUI.ProjectExplorer
                                     // Now find the IElement with the same name
                                     for (int j = 0; j < Project.ElementCollections[i].Count; j++)
                                     {
-                                        if (Project.ElementCollections[i][j].Name == xElement.Attribute("Name").Value)
+                                        if (Project.ElementCollections[i][j].Name == nameAttr.Value)
                                         {
-                                            node = new ElementNode(Project.ElementCollections[i][j], parentNode, (ProjectExplorerTreeView)ParentTreeView);
+                                            node = new ElementNode(Project.ElementCollections[i][j], parentNode, treeView);
                                             break;
                                         }
                                     }
@@ -413,7 +419,7 @@ namespace FrameworkUI.ProjectExplorer
                         tempParent = tempParent.ParentNode;
                     }
 
-                    if (!(node is ElementNode)) return null;
+                    if (node is not ElementNode) return null;
                 }
                 // Basic Node
                 else
@@ -427,27 +433,19 @@ namespace FrameworkUI.ProjectExplorer
                     var newNode = NodeFromXElement(child, node);
                     if (newNode == null) return null;
 
-                    if (newNode as ElementNode != null && newNode.ParentNode as ElementNodeCollection != null)
+                    if (newNode is ElementNode elementNode && newNode.ParentNode is ElementNodeCollection parentCollection)
                     {
-                        ((ElementNodeCollection)newNode.ParentNode).Add((ElementNode)newNode);
+                        parentCollection.Add(elementNode);
                     }
-                    else if (newNode as ElementNodeGroup != null && newNode.ParentNode as ElementNodeCollection != null)
+                    else if (newNode is ElementNodeGroup elementNodeGroup && newNode.ParentNode is ElementNodeCollection)
                     {
-                        var elementNodeCollection = ((ElementNodeGroup)newNode).GetNodeCollection();
-                        var group = (ElementNodeGroup)newNode;
-                        elementNodeCollection.AddGroup(group);
-                        //elementNodeCollection.ChildNodes.Add(group);
-                        //elementNodeCollection.RecursiveAddElementNode(group);
-                        //elementNodeCollection.AddGroup((ElementNodeGroup)newNode);
+                        var elementNodeCollection = elementNodeGroup.GetNodeCollection();
+                        elementNodeCollection?.AddGroup(elementNodeGroup);
                     }
-                    else if (newNode as NodeGroup != null && newNode.ParentNode as ElementNodeCollection != null)
+                    else if (newNode is NodeGroup nodeGroup && newNode.ParentNode is ElementNodeCollection)
                     {
-                        var elementNodeCollection = ((NodeGroup)newNode).GetNodeCollection();
-                        var group = (NodeGroup)newNode;
-                        elementNodeCollection.AddGroup(group);
-                        //elementNodeCollection.ChildNodes.Add(group);
-                        //elementNodeCollection.RecursiveAddElementNode(group);
-                        //elementNodeCollection.AddGroup((ElementNodeGroup)newNode);
+                        var elementNodeCollection = nodeGroup.GetNodeCollection();
+                        elementNodeCollection?.AddGroup(nodeGroup);
                     }
                     else
                     {
