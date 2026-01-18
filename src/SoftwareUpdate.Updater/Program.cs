@@ -85,12 +85,14 @@ namespace SoftwareUpdate.Updater
                 // Parse arguments
                 var arguments = UpdaterArguments.Parse(args);
 
-                // Set up logging
-                SetupLogging(arguments.TargetDirectory);
-
-                // Validate
-                Log("Validating arguments...");
+                // Validate first (ensures TargetDirectory is not null)
                 arguments.Validate();
+
+                // Set up logging (after validation guarantees non-null)
+                SetupLogging(arguments.TargetDirectory!);
+
+                Log("Validating arguments...");
+                Log("Arguments validated.");
                 Log("Arguments validated.");
 
                 // Execute update

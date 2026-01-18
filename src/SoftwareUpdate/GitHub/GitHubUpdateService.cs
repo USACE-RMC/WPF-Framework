@@ -156,7 +156,7 @@ namespace SoftwareUpdate.GitHub
                 var validReleases = releases
                     .Where(r => !r.Draft)
                     .Where(r => Options.IncludePreReleases || !r.PreRelease)
-                    .Where(r => SemanticVersion.TryParse(r.TagName, out _))
+                    .Where(r => r.TagName != null && SemanticVersion.TryParse(r.TagName, out _))
                     .ToList();
 
                 if (!validReleases.Any())
