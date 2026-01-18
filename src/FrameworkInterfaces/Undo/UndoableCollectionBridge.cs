@@ -103,6 +103,18 @@ namespace FrameworkInterfaces.Undo
         private readonly IList<T> _collection;
 
         /// <summary>
+        /// The collection stored as dynamic to allow proper method dispatch.
+        /// </summary>
+        /// <remarks>
+        /// This is necessary because some collections (like those extending List&lt;T&gt;)
+        /// may hide base class methods with the 'new' keyword instead of overriding them.
+        /// When accessed via IList&lt;T&gt;, C# static dispatch calls the base class methods,
+        /// which don't fire CollectionChanged events. Using dynamic ensures we call the
+        /// actual runtime type's methods.
+        /// </remarks>
+        private readonly dynamic _dynamicCollection;
+
+        /// <summary>
         /// The collection cast as INotifyCollectionChanged for event subscription.
         /// </summary>
         private readonly INotifyCollectionChanged _notifyCollection;
@@ -169,6 +181,7 @@ namespace FrameworkInterfaces.Undo
             object? target = null)
         {
             _collection = collection ?? throw new ArgumentNullException(nameof(collection));
+            _dynamicCollection = collection; // Store as dynamic for proper method dispatch
             _getUndoManager = getUndoManager ?? throw new ArgumentNullException(nameof(getUndoManager));
             _collectionDescription = collectionDescription ?? "collection";
             _target = target;
@@ -318,17 +331,19 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Re-add the items at their original positions
+                    // Use _dynamicCollection to ensure the runtime type's Insert method is called
                     for (int i = 0; i < addedItems.Count; i++)
                     {
-                        _collection.Insert(startIndex + i, addedItems[i]);
+                        _dynamicCollection.Insert(startIndex + i, addedItems[i]);
                     }
                 },
                 undo: () =>
                 {
                     // Remove the items (in reverse order to maintain indices)
+                    // Use _dynamicCollection to ensure the runtime type's RemoveAt method is called
                     for (int i = addedItems.Count - 1; i >= 0; i--)
                     {
-                        _collection.RemoveAt(startIndex + i);
+                        _dynamicCollection.RemoveAt(startIndex + i);
                     }
                 },
                 target: _target
@@ -361,17 +376,19 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Remove the items (in reverse order to maintain indices)
+                    // Use _dynamicCollection to ensure the runtime type's RemoveAt method is called
                     for (int i = removedItems.Count - 1; i >= 0; i--)
                     {
-                        _collection.RemoveAt(startIndex + i);
+                        _dynamicCollection.RemoveAt(startIndex + i);
                     }
                 },
                 undo: () =>
                 {
                     // Re-insert the items at their original positions
+                    // Use _dynamicCollection to ensure the runtime type's Insert method is called
                     for (int i = 0; i < removedItems.Count; i++)
                     {
-                        _collection.Insert(startIndex + i, removedItems[i]);
+                        _dynamicCollection.Insert(startIndex + i, removedItems[i]);
                     }
                 },
                 target: _target
@@ -405,17 +422,19 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Replace with new items
+                    // Use _dynamicCollection to ensure the runtime type's indexer is called
                     for (int i = 0; i < newItems.Count; i++)
                     {
-                        _collection[startIndex + i] = newItems[i];
+                        _dynamicCollection[startIndex + i] = newItems[i];
                     }
                 },
                 undo: () =>
                 {
                     // Replace with old items
+                    // Use _dynamicCollection to ensure the runtime type's indexer is called
                     for (int i = 0; i < oldItems.Count; i++)
                     {
-                        _collection[startIndex + i] = oldItems[i];
+                        _dynamicCollection[startIndex + i] = oldItems[i];
                     }
                 },
                 target: _target
@@ -480,19 +499,21 @@ namespace FrameworkInterfaces.Undo
                 execute: () =>
                 {
                     // Restore the after state
-                    _collection.Clear();
+                    // Use _dynamicCollection to ensure the runtime type's Clear/Add methods are called
+                    _dynamicCollection.Clear();
                     foreach (var item in stateAfter)
                     {
-                        _collection.Add(item);
+                        _dynamicCollection.Add(item);
                     }
                 },
                 undo: () =>
                 {
                     // Restore the before state
-                    _collection.Clear();
+                    // Use _dynamicCollection to ensure the runtime type's Clear/Add methods are called
+                    _dynamicCollection.Clear();
                     foreach (var item in stateBefore)
                     {
-                        _collection.Add(item);
+                        _dynamicCollection.Add(item);
                     }
                 },
                 target: _target
@@ -545,6 +566,7 @@ namespace FrameworkInterfaces.Undo
         /// <remarks>
         /// If the collection is an <see cref="ObservableCollection{T}"/>, uses its native
         /// Move method. Otherwise, performs a remove and insert operation.
+        /// Uses _dynamicCollection to ensure the runtime type's methods are called.
         /// </remarks>
         private void MoveItem(int fromIndex, int toIndex)
         {
@@ -556,9 +578,10 @@ namespace FrameworkInterfaces.Undo
             else
             {
                 // Manual move: remove and insert
-                T item = _collection[fromIndex];
-                _collection.RemoveAt(fromIndex);
-                _collection.Insert(toIndex, item);
+                // Use _dynamicCollection to ensure the runtime type's methods are called
+                T item = _collection[fromIndex]; // Read is safe via interface
+                _dynamicCollection.RemoveAt(fromIndex);
+                _dynamicCollection.Insert(toIndex, item);
             }
         }
 
