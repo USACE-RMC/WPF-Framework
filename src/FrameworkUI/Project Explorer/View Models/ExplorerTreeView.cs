@@ -156,7 +156,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         private void Me_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var item = FindTreeViewItem(this, e.OriginalSource as DependencyObject!);
+            var item = FindTreeViewItem(this, e.OriginalSource as DependencyObject);
             if (item == null) return;
             if (item as ProjectNode != null || item as ElementNodeCollection != null || item as ElementNodeGroup != null)
             {
@@ -295,7 +295,7 @@ namespace FrameworkUI.ProjectExplorer
             _dragNode = null;
 
             // First check if we are pressing over a node, and if that node can be drag-dropped.
-            var node = FindTreeViewItem(this, e.OriginalSource as DependencyObject!) as Node;
+            var node = FindTreeViewItem(this, e.OriginalSource as DependencyObject) as Node;
 
             // If node is valid and left-button is pressed, then initiate drag-drop
             if (node != null && node.AllowDrop && e.LeftButton == MouseButtonState.Pressed)
@@ -314,7 +314,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         private void Me_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            var node = FindTreeViewItem(this, e.OriginalSource as DependencyObject!) as Node;
+            var node = FindTreeViewItem(this, e.OriginalSource as DependencyObject) as Node;
             if (node == null) return;
 
             // First, check if left button is pressed and if drag drop is allowed. 
