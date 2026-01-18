@@ -46,7 +46,7 @@ public class LegendSerializationTests
 {
     #region LegendPropertiesTag Tests
 
-    [Fact]
+    [StaFact]
     public void LegendPropertiesTag_HasExpectedValue()
     {
         // Assert
@@ -57,7 +57,7 @@ public class LegendSerializationTests
 
     #region Legend Area Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LegendPropertiesToXElement_AreaProperties_SerializesCorrectly()
     {
         // Arrange
@@ -84,7 +84,7 @@ public class LegendSerializationTests
         Assert.Equal("8", areaElement.Attribute("LegendPadding")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_AreaProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -108,7 +108,7 @@ public class LegendSerializationTests
         Assert.Equal(10, plot.LegendPadding);
     }
 
-    [Fact]
+    [StaFact]
     public void AreaProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -138,7 +138,7 @@ public class LegendSerializationTests
 
     #region Legend Position Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LegendPropertiesToXElement_PositionProperties_SerializesCorrectly()
     {
         // Arrange
@@ -160,7 +160,7 @@ public class LegendSerializationTests
         Assert.Equal("Vertical", positionElement.Attribute("LegendOrientation")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_PositionProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -180,7 +180,7 @@ public class LegendSerializationTests
         Assert.Equal(LegendOrientation.Horizontal, plot.LegendOrientation);
     }
 
-    [Fact]
+    [StaFact]
     public void PositionProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -202,7 +202,7 @@ public class LegendSerializationTests
         Assert.Equal(originalPlot.LegendOrientation, deserializedPlot.LegendOrientation);
     }
 
-    [Theory]
+    [StaTheory]
     [InlineData(LegendPosition.TopLeft)]
     [InlineData(LegendPosition.TopCenter)]
     [InlineData(LegendPosition.TopRight)]
@@ -233,7 +233,7 @@ public class LegendSerializationTests
 
     #region Legend Title Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LegendPropertiesToXElement_TitleProperties_SerializesCorrectly()
     {
         // Arrange
@@ -257,7 +257,7 @@ public class LegendSerializationTests
         Assert.Equal("14", titleElement.Attribute("LegendTitleFontSize")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_TitleProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -281,7 +281,7 @@ public class LegendSerializationTests
         Assert.Equal(FontWeights.Bold, plot.LegendTitleFontWeight);
     }
 
-    [Fact]
+    [StaFact]
     public void TitleProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -311,7 +311,7 @@ public class LegendSerializationTests
 
     #region Legend Item Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void LegendPropertiesToXElement_ItemProperties_SerializesCorrectly()
     {
         // Arrange
@@ -344,7 +344,7 @@ public class LegendSerializationTests
         Assert.Equal("4", itemsElement.Attribute("LegendLineSpacing")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_ItemProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -376,7 +376,7 @@ public class LegendSerializationTests
         Assert.Equal(5, plot.LegendLineSpacing);
     }
 
-    [Fact]
+    [StaFact]
     public void ItemProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -414,7 +414,7 @@ public class LegendSerializationTests
 
     #region Null and Edge Case Tests
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_NullPlot_DoesNotThrow()
     {
         // Arrange
@@ -426,7 +426,7 @@ public class LegendSerializationTests
         Assert.Null(exception);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_WrongElementName_DoesNotDeserialize()
     {
         // Arrange
@@ -442,7 +442,7 @@ public class LegendSerializationTests
         Assert.Equal("Original Legend", plot.LegendTitle);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_MissingSubElements_HandlesGracefully()
     {
         // Arrange
@@ -463,7 +463,7 @@ public class LegendSerializationTests
         Assert.True(plot.IsLegendVisible);
     }
 
-    [Fact]
+    [StaFact]
     public void LegendPropertiesToXElement_NullTitle_SerializesCorrectly()
     {
         // Arrange
@@ -485,7 +485,7 @@ public class LegendSerializationTests
 
     #region Backward Compatibility Tests
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_OldAreaFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -509,7 +509,7 @@ public class LegendSerializationTests
         Assert.Equal(5, plot.LegendPadding);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_OldPositionFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -529,7 +529,7 @@ public class LegendSerializationTests
         Assert.Equal(LegendOrientation.Vertical, plot.LegendOrientation);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_OldTitleFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -553,7 +553,7 @@ public class LegendSerializationTests
         Assert.Equal(FontWeights.Normal, plot.LegendTitleFontWeight);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToLegendProperties_OldItemsFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -589,7 +589,7 @@ public class LegendSerializationTests
 
     #region Complete Round-Trip Test
 
-    [Fact]
+    [StaFact]
     public void AllLegendProperties_CompleteRoundTrip_PreservesValues()
     {
         // Arrange

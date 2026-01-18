@@ -45,7 +45,7 @@ public class GeneralPropertiesSerializationTests
 {
     #region GeneralPropertiesTag Tests
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesTag_HasExpectedValue()
     {
         // Assert
@@ -56,7 +56,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Title Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesToXElement_TitleProperties_SerializesCorrectly()
     {
         // Arrange
@@ -85,7 +85,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal("10", titleElement.Attribute("TitlePadding")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_TitleProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -112,7 +112,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal(15, plot.TitlePadding);
     }
 
-    [Fact]
+    [StaFact]
     public void TitleProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -144,7 +144,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Subtitle Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesToXElement_SubtitleProperties_SerializesCorrectly()
     {
         // Arrange
@@ -168,7 +168,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal("12", subtitleElement.Attribute("SubtitleFontSize")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_SubtitleProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -193,7 +193,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal(FontWeights.Normal, plot.SubtitleFontWeight);
     }
 
-    [Fact]
+    [StaFact]
     public void SubtitleProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -223,7 +223,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Chart Area Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesToXElement_ChartAreaProperties_SerializesCorrectly()
     {
         // Arrange
@@ -245,7 +245,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal("2,2,2,2", chartElement.Attribute("BorderThickness")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_ChartAreaProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -267,7 +267,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal(new Thickness(3), plot.BorderThickness);
     }
 
-    [Fact]
+    [StaFact]
     public void ChartAreaProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -295,7 +295,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Plot Area Properties Round-Trip Tests
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesToXElement_PlotAreaProperties_SerializesCorrectly()
     {
         // Arrange
@@ -316,7 +316,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Contains("000080", plotAreaElement.Attribute("PlotAreaBorderColor")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_PlotAreaProperties_DeserializesCorrectly()
     {
         // Arrange
@@ -337,7 +337,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal(new Thickness(2), plot.PlotAreaBorderThickness);
     }
 
-    [Fact]
+    [StaFact]
     public void PlotAreaProperties_RoundTrip_PreservesValues()
     {
         // Arrange
@@ -366,7 +366,7 @@ public class GeneralPropertiesSerializationTests
 
     #region IsEnabled Property Tests
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesToXElement_IsEnabled_SerializesCorrectly()
     {
         // Arrange
@@ -382,7 +382,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal("False", elementDisabled.Attribute("IsEnabled")?.Value);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_IsEnabled_DeserializesCorrectly()
     {
         // Arrange
@@ -406,7 +406,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Null and Edge Case Tests
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_NullPlot_DoesNotThrow()
     {
         // Arrange
@@ -418,7 +418,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Null(exception);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_WrongElementName_DoesNotDeserialize()
     {
         // Arrange
@@ -434,7 +434,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal("Original Title", plot.Title);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_MissingSubElements_HandlesGracefully()
     {
         // Arrange
@@ -456,7 +456,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal("Original Subtitle", plot.Subtitle);
     }
 
-    [Fact]
+    [StaFact]
     public void GeneralPropertiesToXElement_EmptyTitle_SerializesCorrectly()
     {
         // Arrange
@@ -479,7 +479,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Backward Compatibility Tests
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_OldTitleFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -506,7 +506,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal(8, plot.TitlePadding);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_OldSubtitleFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -531,7 +531,7 @@ public class GeneralPropertiesSerializationTests
         Assert.Equal(FontWeights.Normal, plot.SubtitleFontWeight);
     }
 
-    [Fact]
+    [StaFact]
     public void XElementToGeneralProperties_OldPlotAreaFormat_DeserializesCorrectly()
     {
         // Arrange
@@ -554,7 +554,7 @@ public class GeneralPropertiesSerializationTests
 
     #region Complete Round-Trip Test
 
-    [Fact]
+    [StaFact]
     public void AllGeneralProperties_CompleteRoundTrip_PreservesValues()
     {
         // Arrange
