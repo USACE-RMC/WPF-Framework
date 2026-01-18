@@ -189,10 +189,17 @@ namespace FrameworkUI.MessageWindow
 
         /// <summary>
         /// Handles the removal of messages from the message window.
+        /// Dispatches to the UI thread if called from a background thread.
         /// </summary>
         /// <param name="oldMessages">The messages that were removed.</param>
         private void MessageWindowControl_MessagesRemoved(IMessageItem[] oldMessages)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => MessageWindowControl_MessagesRemoved(oldMessages));
+                return;
+            }
+
             foreach (IMessageItem oldMessage in oldMessages)
             {
                 DecrementCountAndRemoveFromFiltered(oldMessage);
@@ -246,10 +253,17 @@ namespace FrameworkUI.MessageWindow
 
         /// <summary>
         /// Handles the addition of new messages to the message window.
+        /// Dispatches to the UI thread if called from a background thread.
         /// </summary>
         /// <param name="newMessages">The messages that were added.</param>
         private void MessageWindowControl_MessagesAdded(IMessageItem[] newMessages)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => MessageWindowControl_MessagesAdded(newMessages));
+                return;
+            }
+
             foreach (IMessageItem newMessage in newMessages)
             {
                 if (newMessage.Type == MessageType.Error)
