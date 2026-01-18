@@ -160,7 +160,7 @@ namespace SoftwareUpdate.Updater
             _log("Creating backup...");
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var backupDir = Path.Combine(_args.TargetDirectory, $".backup_{timestamp}");
+            var backupDir = Path.Combine(_args.TargetDirectory!, $".backup_{timestamp}");
 
             // Handle same-second backup name collisions by adding a suffix counter
             if (Directory.Exists(backupDir))
@@ -205,7 +205,7 @@ namespace SoftwareUpdate.Updater
         {
             _log("Extracting update...");
 
-            using (var archive = ZipFile.OpenRead(_args.ZipPath))
+            using (var archive = ZipFile.OpenRead(_args.ZipPath!))
             {
                 var totalEntries = archive.Entries.Count;
                 var processedEntries = 0;
@@ -243,11 +243,11 @@ namespace SoftwareUpdate.Updater
                     if (string.IsNullOrEmpty(entryPath))
                         continue;
 
-                    var destPath = Path.Combine(_args.TargetDirectory, entryPath);
+                    var destPath = Path.Combine(_args.TargetDirectory!, entryPath);
 
                     // Validate path doesn't escape target directory (prevent path traversal)
                     var fullDestPath = Path.GetFullPath(destPath);
-                    var fullTargetDir = Path.GetFullPath(_args.TargetDirectory);
+                    var fullTargetDir = Path.GetFullPath(_args.TargetDirectory!);
                     if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar) &&
                         fullDestPath != fullTargetDir)
                     {
@@ -316,14 +316,14 @@ namespace SoftwareUpdate.Updater
             foreach (var file in Directory.GetFiles(backupDir))
             {
                 var fileName = Path.GetFileName(file);
-                var destPath = Path.Combine(_args.TargetDirectory, fileName);
+                var destPath = Path.Combine(_args.TargetDirectory!, fileName);
                 File.Copy(file, destPath, overwrite: true);
             }
 
             foreach (var dir in Directory.GetDirectories(backupDir))
             {
                 var dirName = Path.GetFileName(dir);
-                var destPath = Path.Combine(_args.TargetDirectory, dirName);
+                var destPath = Path.Combine(_args.TargetDirectory!, dirName);
                 CopyDirectory(dir, destPath);
             }
         }
@@ -356,7 +356,7 @@ namespace SoftwareUpdate.Updater
             {
                 try
                 {
-                    var backupDirs = Directory.GetDirectories(_args.TargetDirectory, ".backup_*")
+                    var backupDirs = Directory.GetDirectories(_args.TargetDirectory!, ".backup_*")
                         .Select(d => new { Path = d, Timestamp = ParseBackupTimestamp(d) })
                         .Where(b => b.Timestamp.HasValue)
                         .OrderByDescending(b => b.Timestamp!.Value)
@@ -386,7 +386,7 @@ namespace SoftwareUpdate.Updater
 
             // Sanitize MainExecutable to prevent path traversal
             var safeExecutable = Path.GetFileName(_args.MainExecutable);
-            var exePath = Path.Combine(_args.TargetDirectory, safeExecutable);
+            var exePath = Path.Combine(_args.TargetDirectory!, safeExecutable!);
 
             if (!File.Exists(exePath))
             {
