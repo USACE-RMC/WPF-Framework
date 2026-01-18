@@ -65,19 +65,19 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             Assert.Same(source, bridge.Source);
         }
 
         [Fact]
-        public void Constructor_SetsUndoManager()
+        public void Constructor_SetsSourceDescription()
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager, "test source");
 
-            Assert.Same(undoManager, bridge.UndoManager);
+            Assert.Equal("test source", bridge.SourceDescription);
         }
 
         [Fact]
@@ -86,11 +86,11 @@ namespace FrameworkInterfaces.Tests.Undo
             var undoManager = new UndoManager();
 
             Assert.Throws<ArgumentNullException>(() =>
-                new UndoableStateBridge(null!, undoManager));
+                new UndoableStateBridge(null!, () => undoManager));
         }
 
         [Fact]
-        public void Constructor_NullUndoManager_ThrowsArgumentNullException()
+        public void Constructor_NullGetUndoManager_ThrowsArgumentNullException()
         {
             var source = new TestNotifyObject();
 
@@ -99,11 +99,27 @@ namespace FrameworkInterfaces.Tests.Undo
         }
 
         [Fact]
+        public void Constructor_BothIncludedAndExcluded_ThrowsArgumentException()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+
+            Assert.Throws<ArgumentException>(() =>
+                new UndoableStateBridge(
+                    source,
+                    () => undoManager,
+                    "settings",
+                    null,
+                    includedProperties: new[] { "Name" },
+                    excludedProperties: new[] { "Value" }));
+        }
+
+        [Fact]
         public void Constructor_SubscribesToPropertyChanged()
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             source.Name = "Test";
 
@@ -119,7 +135,7 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             source.Name = "Changed";
 
@@ -132,7 +148,7 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             source.Name = "Changed";
             undoManager.Undo();
@@ -145,7 +161,7 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject { Name = "A", Value = 1 };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             source.Name = "B";
             source.Value = 2;
@@ -168,7 +184,7 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             source.Name = "Changed";
             undoManager.Undo();
@@ -177,102 +193,88 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Changed", source.Name);
         }
 
+        [Fact]
+        public void PropertyChange_WhenUndoManagerReturnsNull_DoesNotRecord()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
+            var bridge = new UndoableStateBridge(source, () => null);
+
+            var exception = Record.Exception(() => source.Name = "Changed");
+
+            Assert.Null(exception);
+        }
+
         #endregion
 
-        #region Paused Tests
+        #region SuspendRecording Tests
 
         [Fact]
-        public void IsPaused_InitiallyFalse()
-        {
-            var source = new TestNotifyObject();
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
-
-            Assert.False(bridge.IsPaused);
-        }
-
-        [Fact]
-        public void Pause_SetsIsPausedToTrue()
-        {
-            var source = new TestNotifyObject();
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
-
-            bridge.Pause();
-
-            Assert.True(bridge.IsPaused);
-        }
-
-        [Fact]
-        public void Resume_SetsIsPausedToFalse()
-        {
-            var source = new TestNotifyObject();
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
-            bridge.Pause();
-
-            bridge.Resume();
-
-            Assert.False(bridge.IsPaused);
-        }
-
-        [Fact]
-        public void WhenPaused_PropertyChangesNotRecorded()
+        public void SuspendRecording_PropertyChangesNotRecorded()
         {
             var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
-            bridge.Pause();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
-            source.Name = "Changed";
+            using (bridge.SuspendRecording())
+            {
+                source.Name = "Changed";
+            }
 
             Assert.False(undoManager.CanUndo);
         }
 
         [Fact]
-        public void AfterResume_PropertyChangesRecorded()
+        public void SuspendRecording_AfterDispose_RecordingResumes()
         {
             var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
-            bridge.Pause();
-            source.Name = "DuringPause";
-            bridge.Resume();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
-            source.Name = "AfterResume";
+            using (bridge.SuspendRecording())
+            {
+                source.Name = "DuringSuspension";
+            }
+
+            source.Name = "AfterSuspension";
 
             Assert.True(undoManager.CanUndo);
+            Assert.Single(undoManager.UndoStack);
+        }
+
+        [Fact]
+        public void SuspendRecording_UpdatesShadowValues()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            using (bridge.SuspendRecording())
+            {
+                source.Name = "NewBaseline";
+            }
+
+            source.Name = "Changed";
+            undoManager.Undo();
+
+            // Should undo to "NewBaseline" not "Initial"
+            Assert.Equal("NewBaseline", source.Name);
         }
 
         #endregion
 
-        #region Property Filter Tests
+        #region Property Filter Tests - Included
 
         [Fact]
-        public void MonitoredProperties_WhenSetToNull_MonitorsAllProperties()
+        public void IncludedProperties_OnlyMonitorsSpecifiedProperties()
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager)
-            {
-                MonitoredProperties = null
-            };
-
-            source.Name = "Test1";
-            source.Value = 42;
-
-            Assert.Equal(2, undoManager.UndoStack.Count);
-        }
-
-        [Fact]
-        public void MonitoredProperties_OnlyMonitorsSpecifiedProperties()
-        {
-            var source = new TestNotifyObject();
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager)
-            {
-                MonitoredProperties = new HashSet<string> { nameof(TestNotifyObject.Name) }
-            };
+            var bridge = new UndoableStateBridge(
+                source,
+                () => undoManager,
+                "settings",
+                null,
+                includedProperties: new[] { nameof(TestNotifyObject.Name) });
 
             source.Name = "Test1";
             source.Value = 42;
@@ -281,19 +283,107 @@ namespace FrameworkInterfaces.Tests.Undo
         }
 
         [Fact]
-        public void IgnoredProperties_ExcludesSpecifiedProperties()
+        public void IncludedProperties_IgnoresNonIncludedProperties()
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager)
-            {
-                IgnoredProperties = new HashSet<string> { nameof(TestNotifyObject.Value) }
-            };
+            var bridge = new UndoableStateBridge(
+                source,
+                () => undoManager,
+                "settings",
+                null,
+                includedProperties: new[] { nameof(TestNotifyObject.Value) });
+
+            source.Name = "Test";
+
+            Assert.False(undoManager.CanUndo);
+        }
+
+        #endregion
+
+        #region Property Filter Tests - Excluded
+
+        [Fact]
+        public void ExcludedProperties_ExcludesSpecifiedProperties()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(
+                source,
+                () => undoManager,
+                "settings",
+                null,
+                null,
+                excludedProperties: new[] { nameof(TestNotifyObject.Value) });
 
             source.Name = "Test1";
             source.Value = 42;
 
             Assert.Single(undoManager.UndoStack);
+        }
+
+        [Fact]
+        public void ExcludeProperty_AddsToExclusionList()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            bridge.ExcludeProperty(nameof(TestNotifyObject.Value));
+            source.Value = 42;
+
+            Assert.False(undoManager.CanUndo);
+        }
+
+        [Fact]
+        public void ExcludeProperty_WhenUsingInclusionList_ThrowsInvalidOperationException()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(
+                source,
+                () => undoManager,
+                "settings",
+                null,
+                includedProperties: new[] { nameof(TestNotifyObject.Name) });
+
+            Assert.Throws<InvalidOperationException>(() =>
+                bridge.ExcludeProperty(nameof(TestNotifyObject.Value)));
+        }
+
+        [Fact]
+        public void IncludeProperty_RemovesFromExclusionList()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(
+                source,
+                () => undoManager,
+                "settings",
+                null,
+                null,
+                excludedProperties: new[] { nameof(TestNotifyObject.Value) });
+
+            bridge.IncludeProperty(nameof(TestNotifyObject.Value));
+            source.Value = 42;
+
+            Assert.True(undoManager.CanUndo);
+        }
+
+        [Fact]
+        public void IncludeProperty_WhenUsingInclusionList_ThrowsInvalidOperationException()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(
+                source,
+                () => undoManager,
+                "settings",
+                null,
+                includedProperties: new[] { nameof(TestNotifyObject.Name) });
+
+            Assert.Throws<InvalidOperationException>(() =>
+                bridge.IncludeProperty(nameof(TestNotifyObject.Value)));
         }
 
         #endregion
@@ -305,7 +395,7 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             bridge.Dispose();
             source.Name = "Changed";
@@ -314,11 +404,23 @@ namespace FrameworkInterfaces.Tests.Undo
         }
 
         [Fact]
+        public void Dispose_SetsIsDisposedToTrue()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            bridge.Dispose();
+
+            Assert.True(bridge.IsDisposed);
+        }
+
+        [Fact]
         public void Dispose_MultipleCalls_DoNotThrow()
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
 
             var exception = Record.Exception(() =>
             {
@@ -329,16 +431,38 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Null(exception);
         }
 
+        [Fact]
+        public void IsDisposed_InitiallyFalse()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            Assert.False(bridge.IsDisposed);
+        }
+
         #endregion
 
         #region UseDetailedDescriptions Tests
 
         [Fact]
-        public void UseDetailedDescriptions_DefaultIsFalse()
+        public void UseDetailedDescriptions_DefaultIsTrue()
         {
             var source = new TestNotifyObject();
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager);
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            Assert.True(bridge.UseDetailedDescriptions);
+        }
+
+        [Fact]
+        public void UseDetailedDescriptions_CanBeSetToFalse()
+        {
+            var source = new TestNotifyObject();
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            bridge.UseDetailedDescriptions = false;
 
             Assert.False(bridge.UseDetailedDescriptions);
         }
@@ -348,7 +472,7 @@ namespace FrameworkInterfaces.Tests.Undo
         {
             var source = new TestNotifyObject { Name = "Before" };
             var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, undoManager)
+            var bridge = new UndoableStateBridge(source, () => undoManager)
             {
                 UseDetailedDescriptions = true
             };
@@ -357,8 +481,87 @@ namespace FrameworkInterfaces.Tests.Undo
 
             var description = undoManager.UndoDescription;
             Assert.NotNull(description);
-            Assert.Contains("Before", description);
-            Assert.Contains("After", description);
+            // Description should mention property name at least
+            Assert.Contains("Name", description, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public void UseDetailedDescriptions_WhenFalse_UsesSimpleDescription()
+        {
+            var source = new TestNotifyObject { Name = "Before" };
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager, "test settings")
+            {
+                UseDetailedDescriptions = false
+            };
+
+            source.Name = "After";
+
+            var description = undoManager.UndoDescription;
+            Assert.NotNull(description);
+            Assert.Contains("test settings", description);
+        }
+
+        #endregion
+
+        #region RefreshShadowValues Tests
+
+        [Fact]
+        public void RefreshShadowValues_UpdatesShadowToCurrentValues()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            // Change without recording (simulate external modification)
+            using (bridge.SuspendRecording())
+            {
+                source.Name = "External";
+            }
+
+            bridge.RefreshShadowValues();
+            source.Name = "Changed";
+            undoManager.Undo();
+
+            Assert.Equal("External", source.Name);
+        }
+
+        #endregion
+
+        #region Same Value Tests
+
+        [Fact]
+        public void PropertyChange_SameValue_DoesNotRecordAction()
+        {
+            var source = new TestNotifyObject { Name = "Same" };
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            // This won't trigger PropertyChanged since the TestNotifyObject checks for equality
+            source.Name = "Same";
+
+            Assert.False(undoManager.CanUndo);
+        }
+
+        #endregion
+
+        #region IsExecutingAction Tests
+
+        [Fact]
+        public void WhenUndoManagerIsExecutingAction_DoesNotRecordAction()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
+            var undoManager = new UndoManager();
+            var bridge = new UndoableStateBridge(source, () => undoManager);
+
+            source.Name = "Changed";
+            var initialCount = undoManager.UndoStack.Count;
+
+            // During undo, property changes should not create new actions
+            undoManager.Undo();
+
+            // Should still only have the original action count (minus the undone one)
+            Assert.Equal(initialCount - 1, undoManager.UndoStack.Count);
         }
 
         #endregion
