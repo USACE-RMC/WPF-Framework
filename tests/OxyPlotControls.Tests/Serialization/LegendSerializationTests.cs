@@ -79,7 +79,7 @@ public class LegendSerializationTests
 
         var areaElement = element.Element("Area");
         Assert.NotNull(areaElement);
-        Assert.Equal("True", areaElement.Attribute("IsLegendVisible")?.Value);
+        Assert.Equal("true", areaElement.Attribute("IsLegendVisible")?.Value);
         Assert.Equal("1.5", areaElement.Attribute("LegendBorderThickness")?.Value);
         Assert.Equal("8", areaElement.Attribute("LegendPadding")?.Value);
     }

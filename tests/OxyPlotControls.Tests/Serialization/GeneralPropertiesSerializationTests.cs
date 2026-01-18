@@ -177,7 +177,7 @@ public class GeneralPropertiesSerializationTests
             new XAttribute("IsEnabled", "True"),
             new XElement("Subtitle",
                 new XAttribute("Subtitle", "Deserialized Subtitle"),
-                new XAttribute("SubtitleColor", "#FF00FF00"),
+                new XAttribute("SubtitleColor", "#FF008000"),
                 new XAttribute("SubtitleFont", "Georgia"),
                 new XAttribute("SubtitleFontSize", "14"),
                 new XAttribute("SubtitleFontWeight", "Normal")));
@@ -515,7 +515,7 @@ public class GeneralPropertiesSerializationTests
             new XAttribute("IsEnabled", "True"),
             new XElement("Subtitle",
                 new XAttribute("Title", "Test Subtitle"),
-                new XAttribute("Color", "#FF00FF00"),
+                new XAttribute("Color", "#FF008000"),
                 new XAttribute("Font", "Verdana"),
                 new XAttribute("Size", "10"),
                 new XAttribute("Weight", "Normal")));
