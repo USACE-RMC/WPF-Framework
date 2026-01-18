@@ -78,6 +78,9 @@ namespace FrameworkUI.MessageWindow.Converters
         /// <returns>The ImageSource corresponding to the message type.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null)
+                return null;
+
             switch ((MessageType) value)
             {
                 case MessageType.Error: return ErrorImageSource;

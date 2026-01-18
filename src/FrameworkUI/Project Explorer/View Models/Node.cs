@@ -978,6 +978,7 @@ namespace FrameworkUI.ProjectExplorer
         protected virtual void MoveNodeUp(object sender, RoutedEventArgs e)
         {
             if (IsReadOnly) return;
+            if (ParentNode == null) return;
             int startIndex = ParentNode.Items.IndexOf(this);
             if (startIndex == 0) return;
             Move(ParentNode, ParentNode, startIndex, startIndex - 1);
@@ -989,6 +990,7 @@ namespace FrameworkUI.ProjectExplorer
         protected virtual void MoveNodeDown(object sender, RoutedEventArgs e)
         {
             if (IsReadOnly) return;
+            if (ParentNode == null) return;
             int startIndex = ParentNode.Items.IndexOf(this);
             if (startIndex == ParentNode.Items.Count - 1) return;
             Move(ParentNode, ParentNode, startIndex, startIndex + 1);

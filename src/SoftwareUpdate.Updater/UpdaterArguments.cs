@@ -77,7 +77,7 @@ namespace SoftwareUpdate.Updater
             {
                 var arg = args[i];
 
-                if (arg.StartsWith("--"))
+                if (arg.StartsWith("--") && arg.Length > 2)
                 {
                     var key = arg.Substring(2).ToLower();
 
@@ -104,17 +104,17 @@ namespace SoftwareUpdate.Updater
 
             if (argDict.TryGetValue("zip", out var zip))
             {
-                result.ZipPath = zip.Trim('"');
+                result.ZipPath = UnquoteArgument(zip);
             }
 
             if (argDict.TryGetValue("target", out var target))
             {
-                result.TargetDirectory = target.Trim('"');
+                result.TargetDirectory = UnquoteArgument(target);
             }
 
             if (argDict.TryGetValue("exe", out var exe))
             {
-                result.MainExecutable = exe.Trim('"');
+                result.MainExecutable = UnquoteArgument(exe);
             }
 
             return result;
@@ -147,6 +147,25 @@ namespace SoftwareUpdate.Updater
             {
                 throw new ArgumentException(string.Join(Environment.NewLine, errors));
             }
+        }
+
+        /// <summary>
+        /// Properly unquotes an argument value, handling quoted strings safely.
+        /// </summary>
+        /// <param name="value">The argument value to unquote.</param>
+        /// <returns>The unquoted value.</returns>
+        private static string UnquoteArgument(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            // Only strip quotes if they are balanced at start and end
+            if (value.Length >= 2 && value[0] == '"' && value[value.Length - 1] == '"')
+            {
+                return value.Substring(1, value.Length - 2);
+            }
+
+            return value;
         }
     }
 }

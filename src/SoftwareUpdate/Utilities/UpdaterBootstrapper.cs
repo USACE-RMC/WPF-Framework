@@ -49,14 +49,52 @@ namespace SoftwareUpdate.Utilities
     public static class UpdaterBootstrapper
     {
         /// <summary>
-        /// Launches the updater process with the specified parameters.
+        /// Launches the external updater process to perform an application update.
         /// </summary>
-        /// <param name="updaterPath">Path to the updater executable.</param>
-        /// <param name="zipPath">Path to the downloaded update zip file.</param>
-        /// <param name="targetDirectory">Target installation directory.</param>
-        /// <param name="mainExecutable">Name of the main executable to restart.</param>
-        /// <param name="createBackup">Whether to create a backup before updating.</param>
-        /// <param name="exitApplication">Whether to exit the current application after launching.</param>
+        /// <remarks>
+        /// <para>
+        /// This method spawns the SoftwareUpdate.Updater.exe process which handles the actual file replacement.
+        /// The updater will wait for the current process to exit before extracting files, then optionally
+        /// restart the main application.
+        /// </para>
+        /// <para>
+        /// If <paramref name="exitApplication"/> is true (the default), this method will call
+        /// <see cref="Environment.Exit(int)"/> after launching the updater. Callers should ensure
+        /// all resources are properly disposed before calling this method, or set
+        /// <paramref name="exitApplication"/> to false and handle application shutdown manually.
+        /// </para>
+        /// </remarks>
+        /// <param name="updaterPath">
+        /// The full path to the updater executable (SoftwareUpdate.Updater.exe).
+        /// Must be an existing file.
+        /// </param>
+        /// <param name="zipPath">
+        /// The full path to the downloaded update zip file containing the new application files.
+        /// Must be an existing file.
+        /// </param>
+        /// <param name="targetDirectory">
+        /// The target installation directory where the update will be extracted.
+        /// This is typically the application's installation folder.
+        /// </param>
+        /// <param name="mainExecutable">
+        /// The name of the main executable file to restart after the update completes.
+        /// This should be just the filename, not a full path (e.g., "MyApp.exe").
+        /// </param>
+        /// <param name="createBackup">
+        /// If true, the updater will create a backup of the current installation before applying the update.
+        /// Defaults to true.
+        /// </param>
+        /// <param name="exitApplication">
+        /// If true, this method will call <see cref="Environment.Exit(int)"/> after launching the updater.
+        /// If false, the caller is responsible for terminating the application. Defaults to true.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="updaterPath"/>, <paramref name="zipPath"/>,
+        /// <paramref name="targetDirectory"/>, or <paramref name="mainExecutable"/> is null or empty.
+        /// </exception>
+        /// <exception cref="FileNotFoundException">
+        /// Thrown when the updater executable or update zip file does not exist.
+        /// </exception>
         public static void LaunchUpdater(
             string updaterPath,
             string zipPath,

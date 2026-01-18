@@ -101,6 +101,10 @@ namespace SoftwareUpdate
         /// <returns>A formatted string showing name, version, and download size.</returns>
         public override string ToString()
         {
+            if (DownloadSize <= 0)
+            {
+                return $"{Name} ({Version})";
+            }
             return $"{Name} ({Version}) - {DownloadSize / 1024.0 / 1024.0:F1} MB";
         }
     }

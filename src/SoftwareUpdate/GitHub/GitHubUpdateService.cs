@@ -134,7 +134,7 @@ namespace SoftwareUpdate.GitHub
                 {
                     State = UpdateState.UpToDate;
                     var result = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
-                    UpdateCheckCompleted?.Invoke(this, result);
+                    RaiseEvent(UpdateCheckCompleted, result);
                     return result;
                 }
 
@@ -166,22 +166,22 @@ namespace SoftwareUpdate.GitHub
                         State = UpdateState.UpdateAvailable;
 
                         var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion, updateInfo, isSkipped);
-                        UpdateCheckCompleted?.Invoke(this, result);
+                        RaiseEvent(UpdateCheckCompleted, result);
                         return result;
                     }
                 }
 
                 State = UpdateState.UpToDate;
                 var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
-                UpdateCheckCompleted?.Invoke(this, noUpdateResult);
+                RaiseEvent(UpdateCheckCompleted, noUpdateResult);
                 return noUpdateResult;
             }
             catch (Exception ex)
             {
                 State = UpdateState.Error;
-                UpdateError?.Invoke(this, ex);
+                RaiseEvent(UpdateError, ex);
                 var result = UpdateCheckResult.Failed(Options.CurrentVersion, ex);
-                UpdateCheckCompleted?.Invoke(this, result);
+                RaiseEvent(UpdateCheckCompleted, result);
                 return result;
             }
         }
@@ -203,7 +203,16 @@ namespace SoftwareUpdate.GitHub
                 var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo);
                 Directory.CreateDirectory(tempDir);
 
-                var tempFilePath = Path.Combine(tempDir, update.AssetName);
+                // Validate asset name to prevent path traversal attacks
+                var safeAssetName = Path.GetFileName(update.AssetName);
+                if (string.IsNullOrEmpty(safeAssetName) ||
+                    safeAssetName.Contains("..") ||
+                    safeAssetName != update.AssetName)
+                {
+                    throw new ArgumentException($"Invalid asset name: {update.AssetName}", nameof(update));
+                }
+
+                var tempFilePath = Path.Combine(tempDir, safeAssetName);
 
                 // Delete existing file if present
                 if (File.Exists(tempFilePath))
@@ -268,7 +277,7 @@ namespace SoftwareUpdate.GitHub
             catch (Exception ex)
             {
                 State = UpdateState.Error;
-                UpdateError?.Invoke(this, ex);
+                RaiseEvent(UpdateError, ex);
                 return UpdateDownloadResult.Failed(ex);
             }
         }
@@ -316,7 +325,8 @@ namespace SoftwareUpdate.GitHub
 
             Process.Start(startInfo);
 
-            // Exit the current application
+            // Dispose resources before exiting the current application
+            Dispose();
             Environment.Exit(0);
         }
 
@@ -408,9 +418,10 @@ namespace SoftwareUpdate.GitHub
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore errors loading preferences
+                // Log errors loading preferences for debugging
+                Debug.WriteLine($"[GitHubUpdateService] Failed to load skipped versions: {ex.Message}");
             }
         }
 
@@ -431,9 +442,10 @@ namespace SoftwareUpdate.GitHub
                     File.WriteAllLines(filePath, _skippedVersions);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore errors saving preferences
+                // Log errors saving preferences for debugging
+                Debug.WriteLine($"[GitHubUpdateService] Failed to save skipped versions: {ex.Message}");
             }
         }
 
@@ -446,6 +458,26 @@ namespace SoftwareUpdate.GitHub
             {
                 _httpClient?.Dispose();
                 _disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Safely raises an event, catching any exceptions from subscribers.
+        /// </summary>
+        /// <typeparam name="T">The event argument type.</typeparam>
+        /// <param name="handler">The event handler to invoke.</param>
+        /// <param name="args">The event arguments.</param>
+        private void RaiseEvent<T>(EventHandler<T> handler, T args)
+        {
+            if (handler == null) return;
+
+            try
+            {
+                handler(this, args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[GitHubUpdateService] Event handler threw exception: {ex.Message}");
             }
         }
     }

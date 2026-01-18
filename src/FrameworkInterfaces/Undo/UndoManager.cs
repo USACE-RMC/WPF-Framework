@@ -318,6 +318,26 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// Commits the current transaction, adding it to the undo stack.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method is typically called automatically when using the <see cref="BeginTransaction"/>
+        /// pattern with a using statement. When the <see cref="IDisposable"/> returned by
+        /// <see cref="BeginTransaction"/> is disposed, <see cref="CommitTransaction"/> is called automatically.
+        /// </para>
+        /// <para>
+        /// <b>Recommended usage:</b>
+        /// <code>
+        /// using (undoManager.BeginTransaction("My Operation"))
+        /// {
+        ///     // Perform multiple changes...
+        /// } // CommitTransaction is called automatically here
+        /// </code>
+        /// </para>
+        /// <para>
+        /// Direct calls to this method are supported for advanced scenarios where explicit
+        /// control over transaction completion is needed outside of a using block.
+        /// </para>
+        /// </remarks>
         public void CommitTransaction()
         {
             CompositeAction composite;
@@ -338,6 +358,34 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// Rolls back the current transaction, undoing all its actions.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Call this method to cancel a transaction and undo all changes made within it.
+        /// This is useful for error handling scenarios where you want to revert all changes
+        /// if an operation fails partway through.
+        /// </para>
+        /// <para>
+        /// <b>Example usage:</b>
+        /// <code>
+        /// var transaction = undoManager.BeginTransaction("My Operation");
+        /// try
+        /// {
+        ///     // Perform multiple changes...
+        ///     // If all succeeds, commit explicitly or let the using statement handle it
+        /// }
+        /// catch
+        /// {
+        ///     undoManager.RollbackTransaction();
+        ///     throw;
+        /// }
+        /// </code>
+        /// </para>
+        /// <para>
+        /// Note: If using a using statement with <see cref="BeginTransaction"/>, the transaction
+        /// will be committed on dispose. Call <see cref="RollbackTransaction"/> before the dispose
+        /// to prevent the commit if you need to cancel the transaction.
+        /// </para>
+        /// </remarks>
         public void RollbackTransaction()
         {
             CompositeAction composite;

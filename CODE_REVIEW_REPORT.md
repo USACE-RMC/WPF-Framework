@@ -3,7 +3,7 @@
 
 **Review Date:** 2026-01-18
 **Branch:** `claude/cleanup-genericcontrols-resources-z4Qk2`
-**Status:** Pending Implementation
+**Status:** In Progress (Items 1-11, 13-27 implemented)
 
 ---
 
@@ -25,14 +25,14 @@
 
 | # | Status | Issue | Library | File:Line | Description |
 |---|--------|-------|---------|-----------|-------------|
-| **1** | ⬜ | Path Traversal Vulnerability | SoftwareUpdate | GitHubUpdateService.cs:206 | Downloaded asset names not validated - malicious release could write files outside temp directory |
-| **2** | ⬜ | Path Traversal in Zip Extraction | SoftwareUpdate.Updater | InstallationManager.cs:227 | Zip entries can extract to arbitrary locations via `../` paths |
-| **3** | ⬜ | Unsafe Executable Path | SoftwareUpdate.Updater | InstallationManager.cs:353 | MainExecutable parameter allows path traversal to launch arbitrary executables |
-| **4** | ⬜ | Weak Argument Parsing | SoftwareUpdate.Updater | UpdaterArguments.cs:107 | Quote trimming insufficient, allows command injection |
-| **5** | ⬜ | Environment.Exit Without Cleanup | SoftwareUpdate | GitHubUpdateService.cs:320 | Abrupt termination without disposing HttpClient/resources |
-| **6** | ⬜ | Process Resource Leak | SoftwareUpdate.Updater | InstallationManager.cs:124,369 | Process handles never disposed, causes handle exhaustion |
-| **7** | ⬜ | Null Reference in FileDirectory | FrameworkInterfaces | ProjectBase.cs:214 | `Path.GetDirectoryName(FullFileName)` crashes when FullFileName is null |
-| **8** | ⬜ | ApplicationAttributes Null Crashes | FrameworkUI | ApplicationAttributes.cs:128-160 | Properties throw NullReferenceException if assembly attributes missing |
+| **1** | ✅ | Path Traversal Vulnerability | SoftwareUpdate | GitHubUpdateService.cs:206 | Downloaded asset names not validated - malicious release could write files outside temp directory |
+| **2** | ✅ | Path Traversal in Zip Extraction | SoftwareUpdate.Updater | InstallationManager.cs:227 | Zip entries can extract to arbitrary locations via `../` paths |
+| **3** | ✅ | Unsafe Executable Path | SoftwareUpdate.Updater | InstallationManager.cs:353 | MainExecutable parameter allows path traversal to launch arbitrary executables |
+| **4** | ✅ | Weak Argument Parsing | SoftwareUpdate.Updater | UpdaterArguments.cs:107 | Quote trimming insufficient, allows command injection |
+| **5** | ✅ | Environment.Exit Without Cleanup | SoftwareUpdate | GitHubUpdateService.cs:320 | Abrupt termination without disposing HttpClient/resources |
+| **6** | ✅ | Process Resource Leak | SoftwareUpdate.Updater | InstallationManager.cs:124,369 | Process handles never disposed, causes handle exhaustion |
+| **7** | ✅ | Null Reference in FileDirectory | FrameworkInterfaces | ProjectBase.cs:214 | `Path.GetDirectoryName(FullFileName)` crashes when FullFileName is null |
+| **8** | ✅ | ApplicationAttributes Null Crashes | FrameworkUI | ApplicationAttributes.cs:128-160 | Properties throw NullReferenceException if assembly attributes missing |
 
 ---
 
@@ -40,14 +40,14 @@
 
 | # | Status | Issue | Library | File:Line | Description |
 |---|--------|-------|---------|-----------|-------------|
-| **9** | ⬜ | Silent Exception Swallowing | SoftwareUpdate | GitHubUpdateService.cs:411 | Load/SaveSkippedVersions silently fail with no recovery path |
-| **10** | ⬜ | Uncaught Event Handler Exceptions | SoftwareUpdate | GitHubUpdateService.cs:169 | Event invocations can crash entire update flow |
-| **11** | ⬜ | Null Check Missing - invalidCharacters | FrameworkInterfaces | ElementBaseBuff.cs:335 | Foreach loop crashes if invalidCharacters is null |
-| **12** | ⬜ | Duplicate MoreFilesMenuItem | FrameworkUI | RecentFiles.cs:389-395 | Menu item created twice when collection exceeds display limit |
-| **13** | ⬜ | MessageTypeToImageConverter Null | FrameworkUI | MessageTypeToImageConverter.cs:79 | Casting null value to MessageType throws |
-| **14** | ⬜ | IndexOutOfRangeException | SoftwareUpdate.Updater | UpdaterArguments.cs:82 | `arg.Substring(2)` crashes if arg is exactly `"--"` |
-| **15** | ⬜ | Unhandled Exception Catch Blocks | SoftwareUpdate.Updater | Program.cs:134,159 | Bare catch blocks swallow critical exceptions |
-| **16** | ⬜ | Backup Race Condition | SoftwareUpdate.Updater | InstallationManager.cs:73-110 | Partial extraction creates inconsistent state during failure |
+| **9** | ✅ | Silent Exception Swallowing | SoftwareUpdate | GitHubUpdateService.cs:411 | Load/SaveSkippedVersions silently fail with no recovery path |
+| **10** | ✅ | Uncaught Event Handler Exceptions | SoftwareUpdate | GitHubUpdateService.cs:169 | Event invocations can crash entire update flow |
+| **11** | ✅ | Null Check Missing - invalidCharacters | FrameworkInterfaces | ElementBaseBuff.cs:335 | Foreach loop crashes if invalidCharacters is null |
+| **12** | ⏭️ | Duplicate MoreFilesMenuItem | FrameworkUI | RecentFiles.cs:389-395 | Menu item created twice when collection exceeds display limit |
+| **13** | ✅ | MessageTypeToImageConverter Null | FrameworkUI | MessageTypeToImageConverter.cs:79 | Casting null value to MessageType throws |
+| **14** | ✅ | IndexOutOfRangeException | SoftwareUpdate.Updater | UpdaterArguments.cs:82 | `arg.Substring(2)` crashes if arg is exactly `"--"` |
+| **15** | ✅ | Unhandled Exception Catch Blocks | SoftwareUpdate.Updater | Program.cs:134,159 | Bare catch blocks swallow critical exceptions |
+| **16** | ✅ | Backup Race Condition | SoftwareUpdate.Updater | InstallationManager.cs:73-110 | Partial extraction creates inconsistent state during failure |
 
 ---
 
@@ -55,17 +55,17 @@
 
 | # | Status | Issue | Library | File:Line | Description |
 |---|--------|-------|---------|-----------|-------------|
-| **17** | ⬜ | Thread Safety - PropertyChangeAction | FrameworkInterfaces | PropertyChangeAction.cs:94-98 | PropertyInfo reflection not thread-safe for concurrent Execute/Undo |
-| **18** | ⬜ | Dead Code - ValidateName() | FrameworkInterfaces | ElementBaseBuff.cs:288 | Unused private method should be removed |
-| **19** | ⬜ | API Inconsistency - Transaction | FrameworkInterfaces | UndoManager.cs:321-366 | Public Commit/Rollback methods conflict with IDisposable pattern |
-| **20** | ⬜ | Silent Failure in DateFromString | FrameworkInterfaces | Tools.cs:57 | Returns DateTime.Now on parse failure without indication |
-| **21** | ⬜ | Process Resource Leak | SoftwareUpdate | InstallationManager.cs:124 | Process.GetProcessById result never disposed |
-| **22** | ⬜ | Missing XML Documentation | SoftwareUpdate | UpdaterBootstrapper.cs:60 | Public LaunchUpdater method undocumented |
-| **23** | ⬜ | Inefficient Process Waiting | SoftwareUpdate | InstallationManager.cs:128 | Polling instead of WaitForExit |
-| **24** | ⬜ | Console Input Race Condition | SoftwareUpdate | Program.cs:175 | Race between KeyAvailable check and ReadKey |
-| **25** | ⬜ | Unchecked Arithmetic | SoftwareUpdate | UpdateInfo.cs:104 | Negative DownloadSize causes bad ToString output |
-| **26** | ⬜ | Node ParentNode Null Access | FrameworkUI | Node.cs:491 | ParentNode.ChildNodes.IndexOf crashes if ParentNode null |
-| **27** | ⬜ | Unsafe Cast in ElementNode | FrameworkUI | ElementNode.cs:411 | Direct cast to ElementNode throws instead of returning null |
+| **17** | ✅ | Thread Safety - PropertyChangeAction | FrameworkInterfaces | PropertyChangeAction.cs:94-98 | PropertyInfo reflection not thread-safe for concurrent Execute/Undo |
+| **18** | ✅ | Dead Code - ValidateName() | FrameworkInterfaces | ElementBaseBuff.cs:288 | Unused private method should be removed |
+| **19** | ✅ | API Inconsistency - Transaction | FrameworkInterfaces | UndoManager.cs:321-366 | Public Commit/Rollback methods conflict with IDisposable pattern |
+| **20** | ✅ | Silent Failure in DateFromString | FrameworkInterfaces | Tools.cs:57 | Returns DateTime.Now on parse failure without indication |
+| **21** | ✅ | Process Resource Leak | SoftwareUpdate | InstallationManager.cs:124 | Process.GetProcessById result never disposed |
+| **22** | ✅ | Missing XML Documentation | SoftwareUpdate | UpdaterBootstrapper.cs:60 | Public LaunchUpdater method undocumented |
+| **23** | ✅ | Inefficient Process Waiting | SoftwareUpdate | InstallationManager.cs:128 | Polling instead of WaitForExit |
+| **24** | ✅ | Console Input Race Condition | SoftwareUpdate | Program.cs:175 | Race between KeyAvailable check and ReadKey |
+| **25** | ✅ | Unchecked Arithmetic | SoftwareUpdate | UpdateInfo.cs:104 | Negative DownloadSize causes bad ToString output |
+| **26** | ✅ | Node ParentNode Null Access | FrameworkUI | Node.cs:491 | ParentNode.ChildNodes.IndexOf crashes if ParentNode null |
+| **27** | ✅ | Unsafe Cast in ElementNode | FrameworkUI | ElementNode.cs:411 | Direct cast to ElementNode throws instead of returning null |
 | **28** | ⬜ | Enable Nullable Reference Types | All Projects | *.csproj | All projects have `<Nullable>disable</Nullable>` |
 
 ---
@@ -166,4 +166,6 @@
 | Date | Items | Action | Notes |
 |------|-------|--------|-------|
 | 2026-01-18 | - | Initial Review | Report created |
+| 2026-01-18 | 1-11, 13-27 | Implemented | Security fixes, bug fixes, high priority items |
+| 2026-01-18 | 12 | Skipped | Per user request |
 

@@ -131,10 +131,11 @@ namespace SoftwareUpdate.Updater
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 _logFilePath = Path.Combine(logDir, $"update_{timestamp}.log");
             }
-            catch
+            catch (Exception ex)
             {
                 // Fall back to temp directory
                 _logFilePath = Path.Combine(Path.GetTempPath(), $"update_{Guid.NewGuid():N}.log");
+                Console.WriteLine($"Warning: Could not create log in target directory: {ex.Message}");
             }
         }
 
@@ -156,9 +157,10 @@ namespace SoftwareUpdate.Updater
                     File.AppendAllText(_logFilePath, logLine + Environment.NewLine);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore logging errors
+                // Log to console if file logging fails
+                Console.WriteLine($"Warning: Could not write to log file: {ex.Message}");
             }
         }
 
@@ -172,10 +174,18 @@ namespace SoftwareUpdate.Updater
             var startTime = DateTime.Now;
             while ((DateTime.Now - startTime).TotalMilliseconds < milliseconds)
             {
-                if (Console.KeyAvailable)
+                try
                 {
-                    Console.ReadKey(true);
-                    return true;
+                    if (Console.KeyAvailable)
+                    {
+                        Console.ReadKey(true);
+                        return true;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // Console input is not available (e.g., redirected input stream)
+                    return false;
                 }
                 Thread.Sleep(100);
             }

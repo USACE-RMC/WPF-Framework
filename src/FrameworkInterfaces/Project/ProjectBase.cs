@@ -211,7 +211,7 @@ namespace FrameworkInterfaces
 
         /// <inheritdoc/>
         [Category("Meta Data"), DisplayName("File Directory"), Description("The directory where the project file is located."), Browsable(true)]
-        public string FileDirectory => Path.GetDirectoryName(FullFileName);
+        public string FileDirectory => FullFileName != null ? Path.GetDirectoryName(FullFileName) : null;
 
         /// <inheritdoc/>
         public string AvalonDockLayout

@@ -121,22 +121,18 @@ namespace SoftwareUpdate.Updater
 
             try
             {
-                var process = Process.GetProcessById(processId);
-                var timeout = TimeSpan.FromSeconds(60);
-                var stopwatch = Stopwatch.StartNew();
+                using (var process = Process.GetProcessById(processId))
+                {
+                    var timeoutMs = 60 * 1000; // 60 seconds
 
-                while (!process.HasExited && stopwatch.Elapsed < timeout)
-                {
-                    Thread.Sleep(500);
-                }
-
-                if (!process.HasExited)
-                {
-                    _log("Process did not exit within timeout. Attempting to continue...");
-                }
-                else
-                {
-                    _log("Process has exited.");
+                    if (process.WaitForExit(timeoutMs))
+                    {
+                        _log("Process has exited.");
+                    }
+                    else
+                    {
+                        _log("Process did not exit within timeout. Attempting to continue...");
+                    }
                 }
             }
             catch (ArgumentException)
@@ -225,6 +221,16 @@ namespace SoftwareUpdate.Updater
                         continue;
 
                     var destPath = Path.Combine(_args.TargetDirectory, entryPath);
+
+                    // Validate path doesn't escape target directory (prevent path traversal)
+                    var fullDestPath = Path.GetFullPath(destPath);
+                    var fullTargetDir = Path.GetFullPath(_args.TargetDirectory);
+                    if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar) &&
+                        fullDestPath != fullTargetDir)
+                    {
+                        _log($"Skipping potentially dangerous path: {entryPath}");
+                        continue;
+                    }
 
                     // Skip backup directories
                     if (destPath.Contains(".backup_"))
@@ -350,7 +356,9 @@ namespace SoftwareUpdate.Updater
         {
             _log("Restarting application...");
 
-            var exePath = Path.Combine(_args.TargetDirectory, _args.MainExecutable);
+            // Sanitize MainExecutable to prevent path traversal
+            var safeExecutable = Path.GetFileName(_args.MainExecutable);
+            var exePath = Path.Combine(_args.TargetDirectory, safeExecutable);
 
             if (!File.Exists(exePath))
             {
@@ -366,7 +374,7 @@ namespace SoftwareUpdate.Updater
                 UseShellExecute = true
             };
 
-            Process.Start(startInfo);
+            using (Process.Start(startInfo)) { }
             _log("Application restarted.");
         }
 

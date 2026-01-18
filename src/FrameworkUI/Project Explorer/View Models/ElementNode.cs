@@ -408,9 +408,10 @@ namespace FrameworkUI.ProjectExplorer
         {
             foreach (Node child in node.ChildNodes)
             {
-                if (child as ElementNode != null && ((ElementNode)child).Element !=null && ((ElementNode)child).Element.Equals(element))//.Name == element.Name)
+                var childElementNode = child as ElementNode;
+                if (childElementNode != null && childElementNode.Element != null && childElementNode.Element.Equals(element))
                 {
-                    return (ElementNode)child;
+                    return childElementNode;
                 }
                 else
                 {

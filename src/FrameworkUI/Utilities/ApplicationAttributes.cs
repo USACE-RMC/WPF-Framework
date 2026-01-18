@@ -125,7 +125,7 @@ namespace FrameworkUI
         /// </summary>
         public static string Title
         {
-            get { return _Title.Title; }
+            get { return _Title?.Title ?? string.Empty; }
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace FrameworkUI
         /// </summary>
         public static string CompanyName
         {
-            get { return _Company.Company; }
+            get { return _Company?.Company ?? string.Empty; }
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace FrameworkUI
         /// </summary>
         public static string Copyright
         {
-            get { return _Copyright.Copyright; }
+            get { return _Copyright?.Copyright ?? string.Empty; }
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace FrameworkUI
         /// </summary>
         public static string ProductName
         {
-            get { return _Product.Product; }
+            get { return _Product?.Product ?? string.Empty; }
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace FrameworkUI
         /// </summary>
         public static string Version
         {
-            get { return _Version.ToString(); }
+            get { return _Version?.ToString() ?? string.Empty; }
         }
 
     }
