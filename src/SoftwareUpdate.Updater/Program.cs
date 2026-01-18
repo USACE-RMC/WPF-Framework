@@ -65,7 +65,7 @@ namespace SoftwareUpdate.Updater
         /// <summary>
         /// The path to the current log file, or <c>null</c> if logging has not been initialized.
         /// </summary>
-        private static string _logFilePath;
+        private static string? _logFilePath;
 
         /// <summary>
         /// Entry point for the updater application.
@@ -112,7 +112,8 @@ namespace SoftwareUpdate.Updater
             catch (Exception ex)
             {
                 Log($"FATAL ERROR: {ex.Message}");
-                Log(ex.StackTrace);
+                if (ex.StackTrace != null)
+                    Log(ex.StackTrace);
 
                 Console.WriteLine();
                 try

@@ -88,7 +88,7 @@ namespace SoftwareUpdate.GitHub
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(options.GitHubRepo, options.CurrentVersion?.ToString() ?? "1.0.0"));
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(options.GitHubRepo ?? "", options.CurrentVersion?.ToString() ?? "1.0.0"));
             _httpClient.Timeout = TimeSpan.FromSeconds(options.RequestTimeoutSeconds);
 
             if (!string.IsNullOrEmpty(options.GitHubToken))
@@ -162,18 +162,18 @@ namespace SoftwareUpdate.GitHub
                 if (!validReleases.Any())
                 {
                     State = UpdateState.UpToDate;
-                    var result = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
+                    var result = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion!);
                     RaiseEvent(UpdateCheckCompleted, result);
                     return result;
                 }
 
                 // Find matching asset in latest release
-                foreach (var release in validReleases.OrderByDescending(r => SemanticVersion.Parse(r.TagName)))
+                foreach (var release in validReleases.OrderByDescending(r => SemanticVersion.Parse(r.TagName!)))
                 {
                     var asset = FindMatchingAsset(release);
                     if (asset == null) continue;
 
-                    var releaseVersion = SemanticVersion.Parse(release.TagName);
+                    var releaseVersion = SemanticVersion.Parse(release.TagName!);
 
                     if (releaseVersion > Options.CurrentVersion)
                     {
@@ -194,14 +194,14 @@ namespace SoftwareUpdate.GitHub
                         var isSkipped = IsVersionSkipped(releaseVersion);
                         State = UpdateState.UpdateAvailable;
 
-                        var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion, updateInfo, isSkipped);
+                        var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion!, updateInfo, isSkipped);
                         RaiseEvent(UpdateCheckCompleted, result);
                         return result;
                     }
                 }
 
                 State = UpdateState.UpToDate;
-                var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
+                var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion!);
                 RaiseEvent(UpdateCheckCompleted, noUpdateResult);
                 return noUpdateResult;
             }
@@ -209,7 +209,7 @@ namespace SoftwareUpdate.GitHub
             {
                 State = UpdateState.Error;
                 RaiseEvent(UpdateError, ex);
-                var result = UpdateCheckResult.Failed(Options.CurrentVersion, ex);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion!, ex);
                 RaiseEvent(UpdateCheckCompleted, result);
                 return result;
             }
@@ -218,7 +218,7 @@ namespace SoftwareUpdate.GitHub
                 State = UpdateState.Error;
                 var wrappedException = new InvalidOperationException("Failed to parse GitHub API response.", ex);
                 RaiseEvent(UpdateError, wrappedException);
-                var result = UpdateCheckResult.Failed(Options.CurrentVersion, wrappedException);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion!, wrappedException);
                 RaiseEvent(UpdateCheckCompleted, result);
                 return result;
             }
@@ -231,7 +231,7 @@ namespace SoftwareUpdate.GitHub
             {
                 State = UpdateState.Error;
                 RaiseEvent(UpdateError, ex);
-                var result = UpdateCheckResult.Failed(Options.CurrentVersion, ex);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion!, ex);
                 RaiseEvent(UpdateCheckCompleted, result);
                 return result;
             }
@@ -251,7 +251,7 @@ namespace SoftwareUpdate.GitHub
             try
             {
                 // Create temp directory for download
-                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo);
+                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo ?? "");
                 Directory.CreateDirectory(tempDir);
 
                 // Validate asset name to prevent path traversal attacks
@@ -558,7 +558,7 @@ namespace SoftwareUpdate.GitHub
         /// <typeparam name="T">The event argument type.</typeparam>
         /// <param name="handler">The event handler to invoke.</param>
         /// <param name="args">The event arguments.</param>
-        private void RaiseEvent<T>(EventHandler<T> handler, T args)
+        private void RaiseEvent<T>(EventHandler<T>? handler, T args)
         {
             if (handler == null) return;
 
@@ -580,7 +580,7 @@ namespace SoftwareUpdate.GitHub
         /// <returns>The HTTP response message.</returns>
         private async Task<HttpResponseMessage> GetWithRetryAsync(string url, CancellationToken cancellationToken)
         {
-            HttpRequestException lastException = null;
+            HttpRequestException? lastException = null;
 
             for (int attempt = 1; attempt <= MaxRetryAttempts; attempt++)
             {
@@ -603,7 +603,7 @@ namespace SoftwareUpdate.GitHub
             }
 
             // All retries exhausted, throw the last exception
-            throw lastException;
+            throw lastException!;
         }
     }
 }

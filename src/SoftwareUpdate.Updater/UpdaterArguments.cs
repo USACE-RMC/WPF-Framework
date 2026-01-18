@@ -48,19 +48,19 @@ namespace SoftwareUpdate.Updater
         /// Gets or sets the path to the update zip file.
         /// </summary>
         /// <value>The zip file path, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
-        public string ZipPath { get; set; }
+        public string? ZipPath { get; set; }
 
         /// <summary>
         /// Gets or sets the target installation directory.
         /// </summary>
         /// <value>The target directory path, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
-        public string TargetDirectory { get; set; }
+        public string? TargetDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the main executable name to restart.
         /// </summary>
         /// <value>The executable name, or <c>null</c> if not specified. Required by <see cref="Validate"/>.</value>
-        public string MainExecutable { get; set; }
+        public string? MainExecutable { get; set; }
 
         /// <summary>
         /// Gets or sets whether to create a backup before updating.

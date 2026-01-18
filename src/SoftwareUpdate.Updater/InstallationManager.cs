@@ -78,7 +78,7 @@ namespace SoftwareUpdate.Updater
             WaitForProcessExit(_args.ProcessId);
 
             // Step 2: Create backup if requested
-            string backupDir = null;
+            string? backupDir = null;
             if (_args.CreateBackup)
             {
                 backupDir = CreateBackup();
@@ -90,7 +90,7 @@ namespace SoftwareUpdate.Updater
                 ExtractUpdate();
 
                 // Step 4: Clean up
-                CleanUp(backupDir, success: true);
+                CleanUp(backupDir!, success: true);
 
                 // Step 5: Restart application
                 RestartApplication();
@@ -359,7 +359,7 @@ namespace SoftwareUpdate.Updater
                     var backupDirs = Directory.GetDirectories(_args.TargetDirectory, ".backup_*")
                         .Select(d => new { Path = d, Timestamp = ParseBackupTimestamp(d) })
                         .Where(b => b.Timestamp.HasValue)
-                        .OrderByDescending(b => b.Timestamp.Value)
+                        .OrderByDescending(b => b.Timestamp!.Value)
                         .Skip(2) // Keep 2 most recent
                         .Select(b => b.Path)
                         .ToList();

@@ -122,7 +122,7 @@ namespace SoftwareUpdate
                 throw new ArgumentNullException(nameof(versionString));
 
             if (TryParse(versionString, out var version))
-                return version;
+                return version!;
 
             throw new FormatException($"'{versionString}' is not a valid semantic version.");
         }
@@ -194,7 +194,7 @@ namespace SoftwareUpdate
             // Compare pre-release identifiers
             if (IsPreRelease && other.IsPreRelease)
             {
-                return ComparePreRelease(PreRelease, other.PreRelease);
+                return ComparePreRelease(PreRelease!, other.PreRelease!);
             }
 
             return 0;
