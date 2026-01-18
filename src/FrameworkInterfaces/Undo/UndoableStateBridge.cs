@@ -161,6 +161,11 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         private bool _disposed;
 
+        /// <summary>
+        /// Indicates whether detailed property descriptions should be used.
+        /// </summary>
+        private bool _useDetailedDescriptions = true;
+
         #endregion
 
         #region Constructor
@@ -273,6 +278,25 @@ namespace FrameworkInterfaces.Undo
         /// <c>true</c> if this instance has been disposed; otherwise, <c>false</c>.
         /// </value>
         public bool IsDisposed => _disposed;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether detailed property descriptions should be used
+        /// in undo action descriptions.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to include property names and values in descriptions (e.g., "Change maximum Value from 100 to 200");
+        /// <c>false</c> to use simple descriptions based on the source description (e.g., "Change plot settings").
+        /// The default is <c>true</c>.
+        /// </value>
+        /// <remarks>
+        /// Set this to <c>false</c> when monitoring objects where individual property changes
+        /// are less important than knowing which object changed, such as chart/plot settings.
+        /// </remarks>
+        public bool UseDetailedDescriptions
+        {
+            get => _useDetailedDescriptions;
+            set => _useDetailedDescriptions = value;
+        }
 
         #endregion
 
@@ -423,6 +447,12 @@ namespace FrameworkInterfaces.Undo
         /// <returns>A description string for the undo action.</returns>
         private string CreateDescription(string propertyName, object? oldValue, object? newValue)
         {
+            // Use simple description if detailed descriptions are disabled
+            if (!_useDetailedDescriptions)
+            {
+                return $"Change {_sourceDescription}";
+            }
+
             // For simple types, include the value in the description
             if (newValue is bool boolValue)
             {
