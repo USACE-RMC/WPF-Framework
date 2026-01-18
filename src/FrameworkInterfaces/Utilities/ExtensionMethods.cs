@@ -81,6 +81,7 @@ namespace FrameworkInterfaces
         /// <returns>T or Nothing</returns>
         public static T? ElementCollection<T>(this IProject project)
         {
+            if (project.ElementCollections == null) return default;
             foreach (var collection in project.ElementCollections)
             {
                 if (collection.GetType() == typeof(T)) { return (T)collection; }
