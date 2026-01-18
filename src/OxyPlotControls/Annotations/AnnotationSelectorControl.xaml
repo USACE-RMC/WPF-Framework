@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/IconResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ResourceDictionary.xaml"/>
                 <ResourceDictionary>
                     <DataTemplate x:Key="ComboItemWithButtonTemplate">
                         <Grid>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumericControls.Demo"
         xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
-        xmlns:ds="clr-namespace:NumericControls;assembly=NumericControls"
+        xmlns:numCntrls="clr-namespace:NumericControls;assembly=NumericControls"
         xmlns:uni="clr-namespace:NumericControls.Distributions.Univariate;assembly=NumericControls"
         ContentRendered="MainWindow_ContentRendered"
         mc:Ignorable="d"
@@ -192,7 +192,7 @@
                                    Text="Edit ordered paired data with uncertainty quantification for each ordinate. Supports various probability distributions for uncertainty modeling."/>
                     </StackPanel>
 
-                    <ds:UncertainOrderedDataSelectorControl
+                    <numCntrls:UncertainOrderedDataSelectorControl
                         Grid.Row="1"
                         SelectedUncertainOrderedData="{Binding ElementName=MyWindow, Path=SelectedUncertainCurve, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         OrderY="Descending"
@@ -223,7 +223,7 @@
                             Margin="0,0,0,10"
                             Click="TestButton_Click"/>
 
-                    <ds:UncertainOrderedDataTableEditor
+                    <numCntrls:UncertainOrderedDataTableEditor
                         Name="UncertainTable"
                         Grid.Row="2"
                         AddRemoveRows="True"
@@ -250,7 +250,7 @@
                                    Text="Standard curve editor for ordered X-Y coordinate pairs with automatic sorting and validation."/>
                     </StackPanel>
 
-                    <ds:OrderedDataSelectorControl
+                    <numCntrls:OrderedDataSelectorControl
                         Grid.Row="1"
                         SelectedOrderedData="{Binding ElementName=MyWindow, Path=SelectedCurve, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         OrderY="Descending"
@@ -259,7 +259,12 @@
                 </Grid>
             </TabItem>
 
-            <!-- ==================== TAB 5: Time Series ==================== -->
+            <!-- ==================== TAB 5: Probability Ordinates ==================== -->
+            <TabItem Header="Probability Ordinates">
+                <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding ElementName=MyWindow, Path=ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            </TabItem>
+
+            <!-- ==================== TAB 6: Time Series ==================== -->
             <TabItem Header="Time Series">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -286,7 +291,7 @@
                         </ComboBox>
                     </StackPanel>
 
-                    <ds:TimeSeriesTable
+                    <numCntrls:TimeSeriesTable
                         Name="TimeSeriesTableControl"
                         Grid.Row="2"
                         IsReadOnly="False"
@@ -295,7 +300,7 @@
                 </Grid>
             </TabItem>
 
-            <!-- ==================== TAB 6: Bin Definitions ==================== -->
+            <!-- ==================== TAB 7: Bin Definitions ==================== -->
             <TabItem Header="Bin Definitions">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -309,13 +314,13 @@
                                    Text="Define stratification bins with configurable boundaries and sample counts for data segmentation and analysis."/>
                     </StackPanel>
 
-                    <ds:BinDefinitionControl
+                    <numCntrls:BinDefinitionControl
                         Grid.Row="1"
                         StratificationOptionsCollection="{Binding ElementName=MyWindow, Path=StratificationOptionsCollection, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </Grid>
             </TabItem>
 
-            <!-- ==================== TAB 7: Bivariate CDF ==================== -->
+            <!-- ==================== TAB 8: Bivariate CDF ==================== -->
             <TabItem Header="Bivariate CDF">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -329,7 +334,7 @@
                                    Text="Two-dimensional empirical cumulative distribution function editor for bivariate hazard analysis."/>
                     </StackPanel>
 
-                    <ds:BivariateEmpiricalControl
+                    <numCntrls:BivariateEmpiricalControl
                         Grid.Row="1"
                         VerticalAlignment="Top"
                         X1Header="Primary Hazard"

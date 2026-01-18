@@ -2,36 +2,55 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:NumericControls">
 
+    <!--
+    ╔═══════════════════════════════════════════════════════════════════════════════╗
+    ║  NumericControls Theme Resource Dictionary                                    ║
+    ╠═══════════════════════════════════════════════════════════════════════════════╣
+    ║  Contains theme-aware styles and brushes for NumericControls components       ║
+    ║  that use DynamicResource bindings to respond to runtime theme changes.       ║
+    ║                                                                               ║
+    ║  CONTENTS:                                                                    ║
+    ║  • Common Brushes         - Read-only, validation, alternating backgrounds   ║
+    ║  • PropertyExpanderStyle  - Collapsible expander for property sections        ║
+    ║  • Column Header Styles   - Left, Right, Wrapped alignment styles             ║
+    ║  • Cell Styles            - Read-only, right-aligned, validation styles       ║
+    ║                                                                               ║
+    ║  THEME SUPPORT:                                                               ║
+    ║  All colors use DynamicResource bindings to the Themes library.               ║
+    ║  Common theme resources referenced:                                           ║
+    ║  • EnvironmentWindowText/Background - Window colors                           ║
+    ║  • Button.MouseOver/Pressed.*       - Interactive button states               ║
+    ║  • DataGrid.*                       - DataGrid-specific theming               ║
+    ║  • SystemColors.*                   - System color integration                ║
+    ║                                                                               ║
+    ║  USAGE:                                                                       ║
+    ║  <Expander Style="{DynamicResource PropertyExpanderStyle}"/>                  ║
+    ║  <DataGridTextColumn CellStyle="{StaticResource Right_CellStyle}"/>           ║
+    ╚═══════════════════════════════════════════════════════════════════════════════╝
+    -->
+
+    <!-- Merge Icon Dictionary for vector icons -->
     <ResourceDictionary.MergedDictionaries>
-        <!-- Vector Icon Resources -->
         <ResourceDictionary Source="/NumericControls;component/Resources/IconDictionary.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <!--
-    NumericControls Theme Resource Dictionary
-
-    This dictionary contains theme-aware styles and brushes for NumericControls that use
-    DynamicResource bindings to respond to runtime theme changes.
-
-    All colors are referenced from the Themes library using DynamicResource
-    so they automatically update when the theme is changed.
-    -->
-
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- COMMON BRUSHES                                                               -->
+    <!-- COMMON BRUSHES                                                              -->
+    <!-- Background colors for special cell states                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Read-Only Cell Backgrounds -->
+    <!-- Read-only cell background (system control color) -->
     <SolidColorBrush x:Key="NumericControls.ReadOnlyBackground" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
 
-    <!-- Validation Error Background -->
+    <!-- Validation error background (light red) -->
     <SolidColorBrush x:Key="NumericControls.ValidationError.Background" Color="#FFF7B6AF"/>
 
-    <!-- Alternating Row Background -->
+    <!-- Alternating row background (light teal) -->
     <SolidColorBrush x:Key="NumericControls.AlternatingRow.Background" Color="#FFF3F9F7"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- EXPANDER STYLE                                                               -->
+    <!-- EXPANDER STYLE                                                              -->
+    <!-- Collapsible expander for grouping properties with animated arrow            -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
     <Style x:Key="PropertyExpanderStyle" TargetType="{x:Type Expander}">
@@ -177,24 +196,11 @@
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- DATAGRID STYLES                                                              -->
+    <!-- COLUMN HEADER STYLES                                                        -->
+    <!-- DataGrid column header styles with different alignments                     -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Base DataGrid Style with theme-aware colors -->
-    <Style x:Key="NumericControlsDataGridStyle" TargetType="{x:Type DataGrid}">
-        <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
-        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
-        <Setter Property="RowBackground" Value="{DynamicResource DataGrid.Row.Background}"/>
-        <Setter Property="AlternatingRowBackground" Value="{StaticResource NumericControls.AlternatingRow.Background}"/>
-        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
-        <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource DataGrid.GridLines}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="RowHeight" Value="22"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-    </Style>
-
-    <!-- Left-Aligned Column Header Style -->
+    <!-- Left-aligned column header -->
     <Style x:Key="Left_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
         <Setter Property="ContentTemplate">
@@ -210,7 +216,7 @@
         </Setter>
     </Style>
 
-    <!-- Right-Aligned Column Header Style -->
+    <!-- Right-aligned column header -->
     <Style x:Key="Right_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Right"/>
@@ -227,7 +233,7 @@
         </Setter>
     </Style>
 
-    <!-- Wrapped Column Header Style -->
+    <!-- Center-aligned wrapped column header -->
     <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="Foreground" Value="{DynamicResource DataGrid.Header.Foreground}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -244,10 +250,11 @@
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- CELL STYLES                                                                  -->
+    <!-- CELL STYLES                                                                 -->
+    <!-- DataGrid cell styles for different data types and states                    -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
-    <!-- Read-Only Text Cell Style -->
+    <!-- Read-only text cell (left-aligned) -->
     <Style x:Key="ReadOnlyTextBackgroundCellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="Background" Value="{StaticResource NumericControls.ReadOnlyBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
@@ -260,7 +267,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Read-Only Value Cell Style (Right-Aligned) -->
+    <!-- Read-only value cell (right-aligned) -->
     <Style x:Key="ReadOnlyValueBackgroundCellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="Background" Value="{StaticResource NumericControls.ReadOnlyBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
@@ -273,7 +280,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Right-Aligned Cell Style -->
+    <!-- Standard right-aligned cell -->
     <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
@@ -297,7 +304,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Right-Aligned Disabled Cell Style -->
+    <!-- Right-aligned disabled cell -->
     <Style x:Key="Right_CellStyleDisabled" TargetType="{x:Type DataGridCell}">
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
@@ -308,7 +315,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Parameter Value Cell Style (with validation) -->
+    <!-- Parameter value cell with validation highlighting -->
     <Style x:Key="ParameterValueCellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
@@ -327,40 +334,6 @@
                 <Setter Property="ToolTip" Value="{x:Null}"/>
             </DataTrigger>
         </Style.Triggers>
-    </Style>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- USERCONTROL STYLES                                                           -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <!-- Base UserControl Style for NumericControls -->
-    <Style x:Key="NumericControlsUserControlStyle" TargetType="{x:Type UserControl}">
-        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
-        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
-    </Style>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- BORDER STYLES                                                                -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <SolidColorBrush x:Key="BorderLightColor" Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}"/>
-    <SolidColorBrush x:Key="BorderMediumColor" Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
-    <SolidColorBrush x:Key="BorderDarkColor" Color="{DynamicResource {x:Static SystemColors.ControlDarkDarkColorKey}}"/>
-
-    <!-- Control accent colors -->
-    <SolidColorBrush x:Key="ControlMediumColor" Color="#FF7381F9"/>
-    <SolidColorBrush x:Key="ControlDarkColor" Color="#FF211AA9"/>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!-- TEXTBLOCK STYLES                                                             -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-
-    <Style x:Key="NumericControlsTextBlockStyle" TargetType="{x:Type TextBlock}">
-        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
-    </Style>
-
-    <Style x:Key="NumericControlsLabelStyle" TargetType="{x:Type Label}">
-        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
     </Style>
 
 </ResourceDictionary>
