@@ -217,7 +217,7 @@ namespace FrameworkUI.ProjectExplorer
                         {
                             for (int i = 0; i < (Project.ElementCollections?.Count ?? 0); i++)
                             {
-                                if (enc.ElementCollection.Name == Project.ElementCollections[i].Name)
+                                if (enc.ElementCollection.Name == Project.ElementCollections![i].Name)
                                 {
                                     for (int j = 0; j < Project.ElementCollections[i].Count; j++)
                                     {

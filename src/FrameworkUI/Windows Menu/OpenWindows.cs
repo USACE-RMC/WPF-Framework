@@ -89,7 +89,8 @@ namespace FrameworkUI
         {
             for (int i = 0; i < Collection.Count; i++)
             {
-                if (Collection[i].Document != null && Collection[i].Document.Equals(document)) return i;
+                var doc = Collection[i].Document;
+                if (doc != null && doc.Equals(document)) return i;
             }
             return -1;
         }

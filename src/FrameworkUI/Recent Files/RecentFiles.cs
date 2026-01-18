@@ -377,8 +377,9 @@ namespace FrameworkUI
                 if (i <= NumberOfFilesToDisplay - 1)
                 {
                     string header = GetMenuItemText(i + 1, Collection[i].DisplayPath);
-                    Collection[i].MenuItem = new MenuItem() { Header = header, ToolTip = new TextBlock() { Text = Collection[i].FilePath, TextWrapping = TextWrapping.Wrap } };
-                    Collection[i].MenuItem.Click += MenuItem_Click;
+                    var menuItem = new MenuItem() { Header = header, ToolTip = new TextBlock() { Text = Collection[i].FilePath, TextWrapping = TextWrapping.Wrap } };
+                    menuItem.Click += MenuItem_Click;
+                    Collection[i].MenuItem = menuItem;
                     // add menu item
                     iMenuItem += 1;
                     FileMenu.Items.Insert(iMenuItem, Collection[i].MenuItem);

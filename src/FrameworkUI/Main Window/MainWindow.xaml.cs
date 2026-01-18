@@ -1738,11 +1738,11 @@ namespace FrameworkUI
                 {
                     isDirty = true;
                 }
-                else if (ProjectNode?.Project is { } project)
+                else if (ProjectNode?.Project is { ElementCollections: { } elementCollections })
                 {
-                    for (int i = 0; i < project.ElementCollections.Count; i++)
+                    for (int i = 0; i < elementCollections.Count; i++)
                     {
-                        if (project.ElementCollections[i].IsDirty == true)
+                        if (elementCollections[i].IsDirty == true)
                         {
                             isDirty = true;
                             break;
