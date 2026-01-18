@@ -115,12 +115,12 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Occurs when one or more messages are added to the messenger.
         /// </summary>
-        public event MessageAddedEventHandler MessagesAdded;
+        public event MessageAddedEventHandler? MessagesAdded;
 
         /// <summary>
         /// Delegate for the <see cref="MessagesAdded"/> event.
@@ -131,7 +131,7 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Occurs when one or more messages are removed from the messenger.
         /// </summary>
-        public event MessageRemovedEventHandler MessagesRemoved;
+        public event MessageRemovedEventHandler? MessagesRemoved;
 
         /// <summary>
         /// Delegate for the <see cref="MessagesRemoved"/> event.

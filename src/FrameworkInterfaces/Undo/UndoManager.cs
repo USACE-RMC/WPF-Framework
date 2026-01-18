@@ -62,7 +62,7 @@ namespace FrameworkInterfaces.Undo
         private int _currentIndex = 0;
         private int _maxUndoLevels = 100;
         private bool _isExecutingAction = false;
-        private CompositeAction _currentTransaction = null;
+        private CompositeAction? _currentTransaction = null;
         private readonly object _lockObject = new object();
 
         #endregion
@@ -70,10 +70,10 @@ namespace FrameworkInterfaces.Undo
         #region Events
 
         /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <inheritdoc/>
-        public event EventHandler StateChanged;
+        public event EventHandler? StateChanged;
 
         #endregion
 
@@ -92,13 +92,13 @@ namespace FrameworkInterfaces.Undo
         }
 
         /// <inheritdoc/>
-        public string UndoDescription
+        public string? UndoDescription
         {
             get { lock (_lockObject) { return CanUndo ? _undoStack.Peek().Description : null; } }
         }
 
         /// <inheritdoc/>
-        public string RedoDescription
+        public string? RedoDescription
         {
             get { lock (_lockObject) { return CanRedo ? _redoStack.Peek().Description : null; } }
         }

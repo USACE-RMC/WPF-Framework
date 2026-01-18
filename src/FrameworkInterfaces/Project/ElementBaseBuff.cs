@@ -65,7 +65,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The description of the element.
         /// </summary>
-        protected string _description;
+        protected string _description = string.Empty;
 
         /// <summary>
         /// The date and time when the element was created.
@@ -226,7 +226,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised whenever a property changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Raise property changed event.
@@ -292,7 +292,7 @@ namespace FrameworkInterfaces
         /// </summary>
         /// <param name="newName">Optional. New name of the cloned element.</param>
         /// <returns>A deep copy of the element.</returns>
-        public abstract IElement Copy(string newName = null);
+        public abstract IElement Copy(string? newName = null);
 
         /// <summary>
         /// Copy the object from an external project to disk within the current project.

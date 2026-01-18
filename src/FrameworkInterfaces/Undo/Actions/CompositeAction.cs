@@ -96,7 +96,7 @@ namespace FrameworkInterfaces.Undo.Actions
         public DateTime Timestamp { get; }
 
         /// <inheritdoc/>
-        public object Target => _actions.FirstOrDefault()?.Target;
+        public object? Target => _actions.FirstOrDefault()?.Target;
 
         /// <summary>
         /// Gets the list of actions in this composite.

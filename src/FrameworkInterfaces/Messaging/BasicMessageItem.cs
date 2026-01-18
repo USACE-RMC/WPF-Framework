@@ -67,14 +67,14 @@ namespace FrameworkInterfaces
     {
         #region Fields
 
-        private Action<IMessageItem> _messageAction;
+        private Action<IMessageItem>? _messageAction;
         private MessageType _type;
         private string _code = "MI-EVT-000";
-        private string _description;
-        private object _source;
-        private string _sourceCollectionName;
-        private string _sourceName;
-        private string _parameterName;
+        private string? _description;
+        private object? _source;
+        private string? _sourceCollectionName;
+        private string? _sourceName;
+        private string? _parameterName;
 
         #endregion
 
@@ -112,7 +112,7 @@ namespace FrameworkInterfaces
             object source,
             string sourceCollectionName,
             string sourceName,
-            string parameterName = null,
+            string? parameterName = null,
             string code = "MI-EVT-000")
         {
             Type = type;
@@ -132,7 +132,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         #endregion
 
@@ -142,7 +142,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the action to be invoked when the message is clicked.
         /// </summary>
         /// <value>An action that receives the message item when invoked.</value>
-        public Action<IMessageItem> MessageAction
+        public Action<IMessageItem>? MessageAction
         {
             get { return _messageAction; }
             set
@@ -196,7 +196,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the description text of the message.
         /// </summary>
         /// <value>A human-readable description of the message.</value>
-        public string Description
+        public string? Description
         {
             get { return _description; }
             set
@@ -213,7 +213,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the source object that generated this message.
         /// </summary>
         /// <value>The object that is the source of the message, or <c>null</c>.</value>
-        public object Source
+        public object? Source
         {
             get { return _source; }
             set
@@ -230,7 +230,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the name of the collection containing the source element.
         /// </summary>
         /// <value>The collection name, used for navigation to the source.</value>
-        public string SourceCollectionName
+        public string? SourceCollectionName
         {
             get { return _sourceCollectionName; }
             set
@@ -247,7 +247,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the name of the source element.
         /// </summary>
         /// <value>The element name, used for navigation to the source.</value>
-        public string SourceName
+        public string? SourceName
         {
             get { return _sourceName; }
             set
@@ -264,7 +264,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the name of the parameter associated with the message.
         /// </summary>
         /// <value>The parameter name, or <c>null</c> if not applicable.</value>
-        public string ParameterName
+        public string? ParameterName
         {
             get { return _parameterName; }
             set
@@ -327,7 +327,7 @@ namespace FrameworkInterfaces
         /// <c>true</c> if the specified object is an <see cref="IMessageItem"/> and is equal
         /// to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null) return false;
 
@@ -356,7 +356,7 @@ namespace FrameworkInterfaces
         /// <item><description>For <see cref="IProject"/> sources: project names must match</description></item>
         /// </list>
         /// </remarks>
-        public bool Equals(IMessageItem other)
+        public bool Equals(IMessageItem? other)
         {
             if (other == null) return false;
 

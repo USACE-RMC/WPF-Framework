@@ -66,12 +66,12 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The name of the project.
         /// </summary>
-        protected string _name;
+        protected string _name = string.Empty;
 
         /// <summary>
         /// The description of the project.
         /// </summary>
-        protected string _description;
+        protected string _description = string.Empty;
 
         /// <summary>
         /// The date when the project was created.
@@ -91,22 +91,22 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The full project file name, including the directory path.
         /// </summary>
-        protected string _fullFileName;
+        protected string _fullFileName = string.Empty;
 
         /// <summary>
         /// The AvalonDock layout string.
         /// </summary>
-        protected string _avalonDockLayout;
+        protected string _avalonDockLayout = string.Empty;
 
         /// <summary>
         /// The Project Explorer layout string.
         /// </summary>
-        protected string _projectExplorerLayout;
+        protected string _projectExplorerLayout = string.Empty;
 
         /// <summary>
         /// The undo manager for this project. Lazily initialized when first accessed.
         /// </summary>
-        protected IUndoManager _undoManager;
+        protected IUndoManager? _undoManager;
 
         /// <summary>
         /// Indicates whether undo recording is enabled for this project.
@@ -121,7 +121,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The read-only collection of element collections.
         /// </summary>
-        protected ReadOnlyCollection<IElementCollection> _readOnlyElementCollections;
+        protected ReadOnlyCollection<IElementCollection>? _readOnlyElementCollections;
 
         #endregion
 
@@ -161,7 +161,7 @@ namespace FrameworkInterfaces
         /// Gets the name of the project as stored on disk.
         /// </summary>
         /// <value>The on-disk name of the project.</value>
-        public string NameOnDisk { get; protected set; }
+        public string NameOnDisk { get; protected set; } = string.Empty;
 
         /// <inheritdoc/>
         public bool IsDirty { get; protected set; }
@@ -211,7 +211,7 @@ namespace FrameworkInterfaces
 
         /// <inheritdoc/>
         [Category("Meta Data"), DisplayName("File Directory"), Description("The directory where the project file is located."), Browsable(true)]
-        public string FileDirectory => FullFileName != null ? Path.GetDirectoryName(FullFileName) : null;
+        public string? FileDirectory => FullFileName != null ? Path.GetDirectoryName(FullFileName) : null;
 
         /// <inheritdoc/>
         public string AvalonDockLayout
@@ -248,7 +248,7 @@ namespace FrameworkInterfaces
         /// <value>
         /// A read-only collection containing all element collections in the project.
         /// </value>
-        public ReadOnlyCollection<IElementCollection> ElementCollections
+        public ReadOnlyCollection<IElementCollection>? ElementCollections
         {
             get => _readOnlyElementCollections;
             set => _readOnlyElementCollections = value;
@@ -298,17 +298,17 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Occurs before the project is saved, allowing cancellation.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Occurs after the project has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         #endregion
 
