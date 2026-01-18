@@ -1,6 +1,7 @@
 using Xunit;
 using SoftwareUpdate;
 using SoftwareUpdate.GitHub;
+using System.IO;
 
 namespace SoftwareUpdate.Tests.GitHub
 {
@@ -369,7 +370,7 @@ namespace SoftwareUpdate.Tests.GitHub
 
             // Simple test - just verify reading state from multiple threads doesn't throw
             var tasks = Enumerable.Range(0, 10)
-                .Select(_ => Task.Run(() => _ = _service.State))
+                .Select(_ => Task.Run(() => _ = (int)_service.State))
                 .ToArray();
 
             var exception = Record.Exception(() => Task.WaitAll(tasks));

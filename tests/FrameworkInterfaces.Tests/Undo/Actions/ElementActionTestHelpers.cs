@@ -1,6 +1,7 @@
 using FrameworkInterfaces;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace FrameworkInterfaces.Tests.Undo.Actions
@@ -20,8 +21,17 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         public string FileName { get; set; } = "test.xml";
         public bool IsDirty { get; set; }
 
+        public string NameOnDisk => throw new NotImplementedException();
+
+        public DateTime CreationDate => throw new NotImplementedException();
+
+        public DateTime LastModified => throw new NotImplementedException();
+
         public event PreviewDeletedEventHandler? PreviewDeleted;
         public event DeletedEventHandler? Deleted;
+        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event ObjectSavedEventHandler ObjectSaved;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public IElement Copy(string? newName = null)
         {
@@ -43,6 +53,11 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             }
         }
 
+        public void Open()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Save() { }
     }
 
@@ -62,9 +77,14 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         public event ElementAddedEventHandler? ElementAdded;
         public event ElementRemovedEventHandler? ElementRemoved;
+        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event ObjectSavedEventHandler ObjectSaved;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public int Count => _elements.Count;
         public bool IsReadOnly => false;
+
+        public string NameOnDisk => throw new NotImplementedException();
 
         public IElement this[int index]
         {
@@ -167,5 +187,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         }
 
         public void Save() { }
+
+        public void Open()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
