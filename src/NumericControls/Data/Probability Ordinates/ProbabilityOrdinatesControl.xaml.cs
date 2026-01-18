@@ -267,24 +267,24 @@ namespace NumericControls
             {
                 if (e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    for (int i = e.NewStartingIndex; i < e.NewItems.Count; i++)
+                    for (int i = 0; i < e.NewItems.Count; i++)
                     {
-                        _probabilityRowItems.Insert(i, new ProbabilityOrdinateRowItem(_probabilityRowItems, (double)e.NewItems[i]));
+                        _probabilityRowItems.Insert(e.NewStartingIndex + i, new ProbabilityOrdinateRowItem(_probabilityRowItems, (double)e.NewItems[i]));
                     }
                 }
                 else if (e.Action == NotifyCollectionChangedAction.Remove)
                 {
-                    for (int i = e.OldItems.Count - 1; i >= e.OldStartingIndex; i--)
+                    for (int i = e.OldItems.Count - 1; i >= 0; i--)
                     {
-                        _probabilityRowItems.RemoveAt(i);
+                        _probabilityRowItems.RemoveAt(e.OldStartingIndex + i);
                     }
                 }
                 else if (e.Action == NotifyCollectionChangedAction.Replace)
                 {
                     _suppressModelUpdate = true;
-                    for (int i = e.NewStartingIndex; i < e.NewItems.Count; i++)
+                    for (int i = 0; i < e.NewItems.Count; i++)
                     {
-                        ((ProbabilityOrdinateRowItem)_probabilityRowItems[i]).Probability = (double)e.NewItems[i];
+                        ((ProbabilityOrdinateRowItem)_probabilityRowItems[e.NewStartingIndex + i]).Probability = (double)e.NewItems[i];
                     }
                     _suppressModelUpdate = false;
                 }
