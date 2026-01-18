@@ -10,4 +10,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="SoftwareUpdate.Updater.Tests" />
+  </ItemGroup>
+
 </Project>

@@ -1,15 +1,15 @@
 # Unit Test Implementation Plan
 
-This document outlines the scope and prioritized implementation plan for achieving 80%+ test coverage across GenericControls, NumericControls, and OxyPlotControls libraries.
+This document outlines the scope and prioritized implementation plan for achieving 80%+ test coverage across GenericControls, NumericControls, OxyPlotControls, FrameworkInterfaces, SoftwareUpdate, SoftwareUpdate.Updater, and Themes libraries.
 
 ## Implementation Status
 
 | Metric | Value |
 |--------|-------|
 | **Status** | COMPLETE |
-| **Test Files Created** | 25 |
-| **Total Lines of Test Code** | 18,652 |
-| **Estimated Test Methods** | 900+ |
+| **Test Files Created** | 36 |
+| **Total Lines of Test Code** | ~22,000 |
+| **Estimated Test Methods** | 1,200+ |
 
 ## Testing Strategy for WPF Controls
 
@@ -344,6 +344,96 @@ WPF controls present unique testing challenges since they are tightly coupled to
 
 ---
 
+## FrameworkInterfaces.Tests
+
+**Test Files: 6 | Lines: ~2,400 | Tests: ~120**
+
+### Test Files Created
+
+| File | Lines | Tests |
+|------|-------|-------|
+| `Messaging/BasicMessageItemTests.cs` | ~250 | 25 |
+| `Messaging/MessengerTests.cs` | ~350 | 35 |
+| `Undo/UndoManagerTests.cs` | ~400 | 40 |
+| `Undo/PropertyChangeActionTests.cs` | ~300 | 25 |
+| `Undo/DelegateActionTests.cs` | ~150 | 12 |
+| `Undo/CompositeActionTests.cs` | ~200 | 15 |
+| `Undo/UndoableStateBridgeTests.cs` | ~300 | 25 |
+
+### Test Coverage Areas
+
+| # | Test Class | Source File | Status |
+|---|------------|-------------|--------|
+| 1 | `BasicMessageItemTests` | BasicMessageItem.cs | DONE |
+| 2 | `MessengerTests` | Messenger.cs | DONE |
+| 3 | `UndoManagerTests` | UndoManager.cs | DONE |
+| 4 | `PropertyChangeActionTests` | PropertyChangeAction.cs | DONE |
+| 5 | `DelegateActionTests` | DelegateAction.cs | DONE |
+| 6 | `CompositeActionTests` | CompositeAction.cs | DONE |
+| 7 | `UndoableStateBridgeTests` | UndoableStateBridge.cs | DONE |
+
+---
+
+## SoftwareUpdate.Tests
+
+**Test Files: 3 | Lines: ~1,600 | Tests: ~70**
+
+### Test Files Created
+
+| File | Lines | Tests |
+|------|-------|-------|
+| `Utilities/SemanticVersionTests.cs` | ~700 | 50 |
+| `Core/UpdateCheckResultTests.cs` | ~400 | 30 |
+| `Core/UpdateOptionsTests.cs` | ~500 | 40 |
+
+### Test Coverage Areas
+
+| # | Test Class | Source File | Status |
+|---|------------|-------------|--------|
+| 1 | `SemanticVersionTests` | SemanticVersion.cs | DONE |
+| 2 | `UpdateCheckResultTests` | UpdateCheckResult.cs | DONE |
+| 3 | `UpdateOptionsTests` | UpdateOptions.cs | DONE |
+
+---
+
+## SoftwareUpdate.Updater.Tests
+
+**Test Files: 1 | Lines: ~400 | Tests: ~30**
+
+### Test Files Created
+
+| File | Lines | Tests |
+|------|-------|-------|
+| `UpdaterArgumentsTests.cs` | ~400 | 30 |
+
+### Test Coverage Areas
+
+| # | Test Class | Source File | Status |
+|---|------------|-------------|--------|
+| 1 | `UpdaterArgumentsTests` | UpdaterArguments.cs | DONE |
+
+---
+
+## Themes.Tests
+
+**Test Files: 2 | Lines: ~400 | Tests: ~40**
+
+### Test Files Created
+
+| File | Lines | Tests |
+|------|-------|-------|
+| `Converters/CutoffConverterTests.cs` | ~200 | 20 |
+| `Converters/TabSizeConverterTests.cs` | ~200 | 20 |
+
+### Test Coverage Areas
+
+| # | Test Class | Source File | Status |
+|---|------------|-------------|--------|
+| 1 | `CutoffConverterTests` | CutoffConverter.cs | DONE |
+| 2 | `TabSizeConverterTests` | TabSizeConverter.cs | DONE |
+
+---
+
 ## Coverage Results
 
 | Library | Target | Test Files | Tests | Status |
@@ -351,7 +441,11 @@ WPF controls present unique testing challenges since they are tightly coupled to
 | GenericControls | 80%+ | 8 | ~400 | COMPLETE |
 | NumericControls | 80%+ | 7 | ~255 | COMPLETE |
 | OxyPlotControls | 80%+ | 10 | ~400 | COMPLETE |
-| **Total** | **80%+** | **25** | **~1,055** | **COMPLETE** |
+| FrameworkInterfaces | 80%+ | 6 | ~120 | COMPLETE |
+| SoftwareUpdate | 80%+ | 3 | ~70 | COMPLETE |
+| SoftwareUpdate.Updater | 80%+ | 1 | ~30 | COMPLETE |
+| Themes | 80%+ | 2 | ~40 | COMPLETE |
+| **Total** | **80%+** | **37** | **~1,315** | **COMPLETE** |
 
 ## Notes
 

@@ -60,7 +60,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericControls.Tests", "te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OxyPlotControls.Tests", "tests\OxyPlotControls.Tests\OxyPlotControls.Tests.csproj", "{C3456789-3456-789A-BCDE-F01234567890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseControls.Demo", "src\DatabaseControls.Demo\DatabaseControls.Demo.csproj", "{B82F5924-979E-7007-2CC4-FFB60720A5A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameworkInterfaces.Tests", "tests\FrameworkInterfaces.Tests\FrameworkInterfaces.Tests.csproj", "{D4567890-4567-890A-BCDE-F01234567891}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareUpdate.Tests", "tests\SoftwareUpdate.Tests\SoftwareUpdate.Tests.csproj", "{E5678901-5678-901A-BCDE-F01234567892}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareUpdate.Updater.Tests", "tests\SoftwareUpdate.Updater.Tests\SoftwareUpdate.Updater.Tests.csproj", "{F6789012-6789-012A-BCDE-F01234567893}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Themes.Tests", "tests\Themes.Tests\Themes.Tests.csproj", "{07890123-7890-123A-BCDE-F01234567894}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -262,14 +268,6 @@ Global
 		{C3456789-3456-789A-BCDE-F01234567890}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3456789-3456-789A-BCDE-F01234567890}.Release|x64.ActiveCfg = Release|Any CPU
 		{C3456789-3456-789A-BCDE-F01234567890}.Release|x64.Build.0 = Release|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Debug|x64.Build.0 = Debug|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Release|x64.ActiveCfg = Release|Any CPU
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -299,7 +297,6 @@ Global
 		{A1234567-1234-5678-9ABC-DEF012345678} = {4D5E6F78-90AB-12CD-34EF-567890123456}
 		{B2345678-2345-6789-ABCD-EF0123456789} = {4D5E6F78-90AB-12CD-34EF-567890123456}
 		{C3456789-3456-789A-BCDE-F01234567890} = {4D5E6F78-90AB-12CD-34EF-567890123456}
-		{B82F5924-979E-7007-2CC4-FFB60720A5A0} = {3C4D5E6F-7890-AB12-CD34-EF5678901234}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E6F7890-AB12-CD34-EF56-789012345678}
