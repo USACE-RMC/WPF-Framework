@@ -169,7 +169,7 @@ namespace SoftwareUpdate.Updater
                 string backupDirWithSuffix;
                 do
                 {
-                    backupDirWithSuffix = Path.Combine(_args.TargetDirectory, $".backup_{timestamp}_{suffix}");
+                    backupDirWithSuffix = Path.Combine(_args.TargetDirectory!, $".backup_{timestamp}_{suffix}");
                     suffix++;
                 } while (Directory.Exists(backupDirWithSuffix));
                 backupDir = backupDirWithSuffix;
@@ -178,14 +178,14 @@ namespace SoftwareUpdate.Updater
             Directory.CreateDirectory(backupDir);
 
             // Copy all files except the backup directory itself
-            foreach (var file in Directory.GetFiles(_args.TargetDirectory))
+            foreach (var file in Directory.GetFiles(_args.TargetDirectory!))
             {
                 var fileName = Path.GetFileName(file);
                 var destPath = Path.Combine(backupDir, fileName);
                 File.Copy(file, destPath, overwrite: true);
             }
 
-            foreach (var dir in Directory.GetDirectories(_args.TargetDirectory))
+            foreach (var dir in Directory.GetDirectories(_args.TargetDirectory!))
             {
                 var dirName = Path.GetFileName(dir);
                 if (dirName.StartsWith(".backup_")) continue;
