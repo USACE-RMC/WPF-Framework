@@ -376,8 +376,8 @@ namespace FrameworkInterfaces
             if (Source is IElement element && other.Source is IElement otherElement)
             {
                 // Null-safe comparison of parent collection names
-                string elementCollectionName = element.ParentCollection?.Name;
-                string otherElementCollectionName = otherElement.ParentCollection?.Name;
+                string? elementCollectionName = element.ParentCollection?.Name;
+                string? otherElementCollectionName = otherElement.ParentCollection?.Name;
 
                 return string.Equals(elementCollectionName, otherElementCollectionName, StringComparison.Ordinal) &&
                        string.Equals(element.Name, otherElement.Name, StringComparison.Ordinal);

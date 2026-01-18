@@ -408,6 +408,7 @@ namespace FrameworkInterfaces.Messaging
             // If it's an event then need to ensure the item code is unique
             if (item.Type == MessageType.Event)
             {
+                if (item.Source == null) return;
                 if (!_messagesBySource.ContainsKey(item.Source))
                 {
                     _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
@@ -431,6 +432,7 @@ namespace FrameworkInterfaces.Messaging
             }
             else
             {
+                if (item.Source == null) return;
                 // For non-event messages, ignore duplicates
                 if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
                 {
@@ -463,7 +465,7 @@ namespace FrameworkInterfaces.Messaging
             var newMessages = new List<IMessageItem>();
             foreach (IMessageItem item in items)
             {
-                if (item == null) continue;
+                if (item == null || item.Source == null) continue;
 
                 if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
                 {
@@ -494,6 +496,7 @@ namespace FrameworkInterfaces.Messaging
         public bool Remove(IMessageItem message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            if (message.Source == null) return false;
 
             if (!_messagesBySource.ContainsKey(message.Source)) { return false; }
             if (!_messagesBySource[message.Source].ContainsKey(message.Code)) { return false; }
@@ -571,7 +574,7 @@ namespace FrameworkInterfaces.Messaging
                 throw new ArgumentNullException(nameof(fileName));
 
             // Ensure directory exists
-            string directory = Path.GetDirectoryName(fileName);
+            string? directory = Path.GetDirectoryName(fileName);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
