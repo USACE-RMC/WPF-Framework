@@ -1783,19 +1783,26 @@ namespace DatabaseManager
         public object GetCell(int columnIndex, int rowIndex)
         {
             if (_editIndex < 0)
-            { 
-                return GetStoredCell(columnIndex, rowIndex); 
+            {
+                return GetStoredCell(columnIndex, rowIndex);
             }
             object result = null;
             for (int i = _editIndex; i >= 0; i -= 1)
             {
                 if (_edits[i].ContainsCell(columnIndex, rowIndex, ref result))
-                { 
-                    return result; 
+                {
+                    return result;
                 }
             }
-            // 
-            return GetStoredCell(_viewToStoredColumnIndex[columnIndex], _viewToStoredRowIndex[rowIndex]);
+            //
+            // Check if column and row exist in stored data (newly added columns/rows have index -1)
+            if (_viewToStoredColumnIndex[columnIndex] >= 0 && _viewToStoredColumnIndex[columnIndex] < _storedColumnNames.Count() &&
+                _viewToStoredRowIndex[rowIndex] >= 0 && _viewToStoredRowIndex[rowIndex] < _storedNumberOfRows)
+            {
+                return GetStoredCell(_viewToStoredColumnIndex[columnIndex], _viewToStoredRowIndex[rowIndex]);
+            }
+            // Column or row doesn't exist in stored data (newly added with no edits)
+            return null;
         }
 
         /// <summary>
