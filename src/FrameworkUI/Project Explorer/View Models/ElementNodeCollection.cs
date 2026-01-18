@@ -74,7 +74,7 @@ namespace FrameworkUI.ProjectExplorer
             ElementNodeCollection thisControl = (ElementNodeCollection)d;
 
             // Get the old value and remove any handlers
-            IElementCollection oldValue = null;
+            IElementCollection? oldValue = null;
             oldValue = e.OldValue as IElementCollection;
             // Remove handlers
             if (oldValue != null)
@@ -88,7 +88,7 @@ namespace FrameworkUI.ProjectExplorer
             BindingOperations.ClearBinding(thisControl.NodeHeader, NodeHeader.HeaderTextProperty);
 
             // Get the new value
-            IElementCollection newElementCollection = null;
+            IElementCollection? newElementCollection = null;
             newElementCollection = e.NewValue as IElementCollection;
             if (newElementCollection == null) return;
 

@@ -277,7 +277,7 @@ namespace FrameworkUI
                 oldValue.SetPropertiesControl -= thisControl.SetPropertiesRequested;
                 oldValue.ClosePropertiesControl -= thisControl.ClosePropertiesRequested;
                 oldValue.Project.PropertyChanged -= thisControl.ProjectPropertyChanged!;
-                oldValue.ParentTreeView = null;
+                oldValue.ParentTreeView = null!;
 
                 for (int i = 0; i < oldValue.ChildNodes.Count; i++)
                 {
@@ -297,12 +297,15 @@ namespace FrameworkUI
             }
             // Cancel AutoBackup
             AutoBackup.Cancel();
-            // 
+            //
             // Get the new value
             FrameworkUIController? newValue = e.NewValue as FrameworkUIController;
+            if (newValue == null)
+            {
+                thisControl._projectExplorerTreeView.ProjectNode = null!;
+                return;
+            }
             thisControl._projectExplorerTreeView.ProjectNode = newValue;
-            // 
-            if (newValue == null) return;
 
             // Set main window Icon
             thisControl.Icon = GeneralMethods.Bitmap2BitmapSource(newValue.Project.ProjectImage);
@@ -567,7 +570,8 @@ namespace FrameworkUI
                     break;
                 }
             }
-            _projectExplorerDock.IsActive = true;
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsActive = true;
         }
 
         ///// <summary>
@@ -768,8 +772,9 @@ namespace FrameworkUI
                     }
                 }
 
-                // 
-                OpenWindows.Open((LayoutDocument)e.Model, element);
+                //
+                if (element != null)
+                    OpenWindows.Open((LayoutDocument)e.Model, element);
             }
             else
             {
@@ -1005,7 +1010,8 @@ namespace FrameworkUI
         private void SetPropertiesRequested(UIElement propertyControl)
         {
             OpenProperties(propertyControl);
-            _propertiesWindowDock.IsActive = true;
+            if (_propertiesWindowDock != null)
+                _propertiesWindowDock.IsActive = true;
         }
 
         /// <summary>
@@ -1262,7 +1268,7 @@ namespace FrameworkUI
         {
             if (sender == null) return;
             LayoutDocument document = (LayoutDocument)sender;
-            document.Content = null;
+            document.Content = null!;
             document.IsActiveChanged -= Document_IsActiveChanged;
             document.IsSelectedChanged -= Document_IsSelectedChanged;
             document.Closing -= Document_Closing;
@@ -1533,7 +1539,8 @@ namespace FrameworkUI
             }
 
             // Dispose of properties window document
-            ProjectNode.PropertiesClosed((Control)_propertiesWindowDock.Content);
+            if (_propertiesWindowDock != null)
+                ProjectNode.PropertiesClosed((Control)_propertiesWindowDock.Content);
 
             // Save & close project
             ProjectNode.Project.ProjectExplorerLayout = ProjectNode.SaveToXElement().ToString();
@@ -1674,6 +1681,7 @@ namespace FrameworkUI
 
             // See if there are any unsaved elements. Ask if they want to save.
             var unSavedElementItems = new ObservableCollection<UnsavedElement>();
+            if (ProjectNode?.Project?.ElementCollections != null)
             {
                 for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
                 {
@@ -1995,6 +2003,7 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void ProjectExplorer_Click(object sender, RoutedEventArgs e)
         {
+            if (_projectExplorerDock == null) return;
             _projectExplorerDock.Show();
             _projectExplorerDock.IsActive = true;
         }
@@ -2015,6 +2024,7 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void MessageWindow_Click(object sender, RoutedEventArgs e)
         {
+            if (_messageWindowDock == null) return;
             _messageWindowDock.Show();
             _messageWindowDock.IsActive = true;
         }
@@ -2026,6 +2036,7 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void PropertiesWindow_Click(object sender, RoutedEventArgs e)
         {
+            if (_propertiesWindowDock == null) return;
             _propertiesWindowDock.Show();
             _propertiesWindowDock.IsActive = true;
         }
@@ -2037,11 +2048,12 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void AllWindows_Click(object sender, RoutedEventArgs e)
         {
-            _projectExplorerDock.Show();
-            _projectExplorerDock.IsActive = true;
+            _projectExplorerDock?.Show();
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsActive = true;
             //_mapExplorerDock.Show();
-            _messageWindowDock.Show();
-            _propertiesWindowDock.Show();
+            _messageWindowDock?.Show();
+            _propertiesWindowDock?.Show();
         }
 
         /// <summary>
@@ -2429,7 +2441,8 @@ namespace FrameworkUI
         /// </summary>
         public void DisableProjectExplorer()
         {
-            _projectExplorerDock.IsEnabled = false;
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsEnabled = false;
         }
 
         /// <summary>
@@ -2437,7 +2450,8 @@ namespace FrameworkUI
         /// </summary>
         public void EnableProjectExplorer()
         {
-            _projectExplorerDock.IsEnabled = true;
+            if (_projectExplorerDock != null)
+                _projectExplorerDock.IsEnabled = true;
         }
 
         /// <summary>
@@ -2445,7 +2459,8 @@ namespace FrameworkUI
         /// </summary>
         public void DisableMessageWindow()
         {
-            _messageWindowDock.IsEnabled = false;
+            if (_messageWindowDock != null)
+                _messageWindowDock.IsEnabled = false;
         }
 
         /// <summary>
@@ -2453,7 +2468,8 @@ namespace FrameworkUI
         /// </summary>
         public void EnableMessageWindow()
         {
-            _messageWindowDock.IsEnabled = true;
+            if (_messageWindowDock != null)
+                _messageWindowDock.IsEnabled = true;
         }
 
         /// <summary>
@@ -2461,7 +2477,8 @@ namespace FrameworkUI
         /// </summary>
         public void DisablePropertiesWindow()
         {
-            _propertiesWindowDock.IsEnabled = false;
+            if (_propertiesWindowDock != null)
+                _propertiesWindowDock.IsEnabled = false;
         }
 
         /// <summary>
@@ -2469,7 +2486,8 @@ namespace FrameworkUI
         /// </summary>
         public void EnablePropertiesWindow()
         {
-            _propertiesWindowDock.IsEnabled = true;
+            if (_propertiesWindowDock != null)
+                _propertiesWindowDock.IsEnabled = true;
         }
 
         /// <summary>
