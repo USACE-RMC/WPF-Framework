@@ -1220,24 +1220,44 @@ namespace DatabaseControls
         #region Update Methods
 
         /// <summary>
+        /// Fills a visible row with data from a row array.
+        /// </summary>
+        /// <param name="rowIndex">The visible row index to fill.</param>
+        /// <param name="row">The row data array, or null to clear the row.</param>
+        private void FillRow(int rowIndex, object[]? row)
+        {
+            if (row == null)
+            {
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                {
+                    SetCellText(rowIndex, i, "");
+                }
+            }
+            else
+            {
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                {
+                    if (row[i] == null)
+                    {
+                        SetCellText(rowIndex, i, "");
+                    }
+                    else
+                    {
+                        SetCellText(rowIndex, i, row[i].ToString() ?? "");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Updates the text content of all visible cells from the DataView.
         /// </summary>
         public void UpdateVisibleRows()
         {
-            if (DataView == null || _rowId == null) return;
-            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
-
-            for (int i = 0; i < _visibleRowCount; i++)
+            var dataRowIndices = GetDataRowIndexes(0, _visibleRowCount - 1);
+            for (int i = 0; i < dataRowIndices.Count; i++)
             {
-                int dataRowIndex = GetDataRowIndex(i);
-                if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) continue;
-
-                for (int j = 0; j < DataView.ColumnNames.Count(); j++)
-                {
-                    var cell = (Cell)GridPanel.Children[i * DataView.ColumnNames.Count() + j];
-                    var value = DataView.GetCell(j, dataRowIndex);
-                    cell.Text = value?.ToString() ?? "";
-                }
+                FillRow(i, DataView.GetRow(dataRowIndices[i]));
             }
         }
 
@@ -1254,6 +1274,47 @@ namespace DatabaseControls
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = dataRowIndex.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets a list of data row indices for a range of visible table rows.
+        /// Accounts for scrolling, row selection mode, and sorting.
+        /// </summary>
+        /// <param name="viewRowStartIndex">The starting visible row index.</param>
+        /// <param name="viewRowEndIndex">The ending visible row index.</param>
+        /// <returns>A list of data row indices corresponding to the visible range.</returns>
+        private List<int> GetDataRowIndexes(int viewRowStartIndex, int viewRowEndIndex)
+        {
+            if (viewRowEndIndex == -1) return new List<int>();
+            var dataRowIndexes = new List<int>(viewRowEndIndex - viewRowStartIndex);
+            int firstRowVirtualIndex = (int)Math.Floor(VerticalScrollbar.Value);
+
+            if (_selectedRowsOnly)
+            {
+                if (_columnSortOrder == SortOrder.None)
+                {
+                    for (int i = viewRowStartIndex; i <= viewRowEndIndex; i++)
+                    {
+                        dataRowIndexes.Add(_rowId![_selectedDataRowIndices[firstRowVirtualIndex + i]]);
+                    }
+                }
+                else
+                {
+                    for (int i = viewRowStartIndex; i <= viewRowEndIndex; i++)
+                    {
+                        dataRowIndexes.Add(_rowId![_sortedSelectedRowOffsets![firstRowVirtualIndex + i]]);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = viewRowStartIndex; i <= viewRowEndIndex; i++)
+                {
+                    dataRowIndexes.Add(_rowId![firstRowVirtualIndex + i]);
+                }
+            }
+
+            return dataRowIndexes;
         }
 
         /// <summary>
