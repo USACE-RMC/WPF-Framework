@@ -276,6 +276,7 @@ namespace FrameworkUI.Demo
         private bool _recordLengthValid = true;
         private bool _confidenceIntervalValid = true;
         private bool _realizationsValid = true;
+        private bool _prngSeedValid = true;
         private bool _ordinatesValid = true;
         private bool _estimationMethodValid = true;
 
