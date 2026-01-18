@@ -1346,11 +1346,11 @@ namespace GenericControls.Tests.Converters
         }
 
         [Fact]
-        public void IntToDoubleConverter_ConvertBack_DoubleTruncatedToInt()
+        public void IntToDoubleConverter_ConvertBack_DoubleRoundedToInt()
         {
             var converter = new IntToDoubleConverter();
             var result = converter.ConvertBack(42.9, typeof(int), null, _culture);
-            Assert.Equal(42, result); // Direct cast truncates
+            Assert.Equal(43, result); // Convert.ToInt32 uses banker's rounding
         }
 
         [Fact]

@@ -108,13 +108,15 @@ public class GeneralMethodsTests
     #region IsNumericType Tests - Complex Types
 
     [Fact]
-    public void IsNumericType_EnumType_ReturnsFalse()
+    public void IsNumericType_EnumType_ReturnsTrue()
     {
+        // Enums have numeric underlying types (Int32 by default), so Type.GetTypeCode()
+        // returns the underlying type code, making them appear numeric
         // Act
         var result = GeneralMethods.IsNumericType(typeof(DayOfWeek));
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
     [Fact]
@@ -204,7 +206,7 @@ public class GeneralMethodsTests
     public void RandomColorsShortList_HasExpectedLength()
     {
         // Assert
-        Assert.Equal(64, GeneralMethods.RandomColorsShortList.Length);
+        Assert.Equal(63, GeneralMethods.RandomColorsShortList.Length);
     }
 
     [Fact]

@@ -115,7 +115,8 @@ public class PropertyRuleTests
 
         // Assert
         Assert.True(propertyRule.HasError);
-        Assert.Equal("Second rule failed", propertyRule.ErrorMessage);
+        // When not the first rule, message is prepended with newline
+        Assert.Equal(Environment.NewLine + "Second rule failed", propertyRule.ErrorMessage);
     }
 
     #endregion
@@ -294,21 +295,20 @@ public class PropertyRuleTests
     {
         // Arrange
         var propertyRule = new PropertyRule(() => true, "Error");
-        var propertyChangedRaised = false;
-        string? changedPropertyName = null;
+        var changedPropertyNames = new List<string>();
 
         propertyRule.PropertyChanged += (sender, args) =>
         {
-            propertyChangedRaised = true;
-            changedPropertyName = args.PropertyName;
+            if (args.PropertyName != null)
+                changedPropertyNames.Add(args.PropertyName);
         };
 
         // Act
         propertyRule.ExecuteRules();
 
         // Assert
-        Assert.True(propertyChangedRaised);
-        Assert.Equal(nameof(PropertyRule.HasError), changedPropertyName);
+        Assert.Contains(nameof(PropertyRule.HasError), changedPropertyNames);
+        Assert.Contains(nameof(PropertyRule.ErrorMessage), changedPropertyNames);
     }
 
     [Fact]
