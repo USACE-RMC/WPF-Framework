@@ -60,8 +60,12 @@ namespace FrameworkInterfaces
         ReadOnlyCollection<IElementCollection> ElementCollections { get; }
 
         /// <summary>
-        /// Gets the software version the project was last saved with. If the version, is outdated, convert to new version.
+        /// Gets the software version the project was last saved with.
         /// </summary>
+        /// <remarks>
+        /// Applications should check this version against the current software version
+        /// and handle any necessary data migration when loading older projects.
+        /// </remarks>
         string SoftwareVersion { get; }
 
         /// <summary>

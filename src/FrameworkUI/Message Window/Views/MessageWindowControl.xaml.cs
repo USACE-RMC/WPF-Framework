@@ -64,6 +64,18 @@ namespace FrameworkUI.MessageWindow
             UpdateButtonText();
             UpdateClearAllFilterButtonStyle();
             SetColumnHeaderStyles();
+            Unloaded += MessageWindowControl_Unloaded;
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event to detach event handlers and prevent memory leaks.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void MessageWindowControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            FrameworkInterfaces.Messaging.Messenger.GetInstance().MessagesAdded -= MessageWindowControl_MessagesAdded;
+            FrameworkInterfaces.Messaging.Messenger.GetInstance().MessagesRemoved -= MessageWindowControl_MessagesRemoved;
         }
 
         /// <summary>
@@ -183,56 +195,53 @@ namespace FrameworkUI.MessageWindow
         {
             foreach (IMessageItem oldMessage in oldMessages)
             {
-                if (oldMessage.Type == MessageType.Error)
-                {
-                    _errorItemCount -= 1;
-                    if (_showErrors)
-                    {
-                        for (int i = _filteredMessages.Count() - 1; i >= 0; i--)
-                        {
-                            if (_filteredMessages[i].Message.Code == oldMessage.Code && _filteredMessages[i].Message.Source == oldMessage.Source) { _filteredMessages.RemoveAt(i); }
-                        }
-                    }
-                }
-                else if (oldMessage.Type == MessageType.Warning)
-                {
-                    _warningItemCount -= 1;
-                    if (_showWarnings)
-                    {
-                        for (int i = _filteredMessages.Count() - 1; i >= 0; i--)
-                        {
-                            if (_filteredMessages[i].Message.Code == oldMessage.Code && _filteredMessages[i].Message.Source == oldMessage.Source) { _filteredMessages.RemoveAt(i); }
-                        }
-                    }
-                }
-                else if (oldMessage.Type == MessageType.Message)
-                {
-                    _messageItemCount -= 1;
-                    if (_showMessages)
-                    {
-                        for (int i = _filteredMessages.Count() - 1; i >= 0; i--)
-                        {
-                            if (_filteredMessages[i].Message.Code == oldMessage.Code && _filteredMessages[i].Message.Source == oldMessage.Source) { _filteredMessages.RemoveAt(i); }
-                        }
-                    }
-                }
-                else if (oldMessage.Type == MessageType.Event)
-                {
-                    _eventItemCount -= 1;
-                    if (_showEvents)
-                    {
-                        for (int i = _filteredMessages.Count() - 1; i >= 0; i--)
-                        {
-                            if (_filteredMessages[i].Message.Code == oldMessage.Code && _filteredMessages[i].Message.Source == oldMessage.Source) { _filteredMessages.RemoveAt(i); }
-                        }
-                    }
-                }
-                //
+                DecrementCountAndRemoveFromFiltered(oldMessage);
                 _messages.Remove(oldMessage);
             }
-            //
             UpdateButtonText();
             MyDataGrid.Items.Refresh();
+        }
+
+        /// <summary>
+        /// Decrements the appropriate message type counter and removes matching messages from the filtered list if visible.
+        /// </summary>
+        /// <param name="message">The message to process.</param>
+        private void DecrementCountAndRemoveFromFiltered(IMessageItem message)
+        {
+            bool shouldRemoveFromFiltered;
+            switch (message.Type)
+            {
+                case MessageType.Error:
+                    _errorItemCount -= 1;
+                    shouldRemoveFromFiltered = _showErrors;
+                    break;
+                case MessageType.Warning:
+                    _warningItemCount -= 1;
+                    shouldRemoveFromFiltered = _showWarnings;
+                    break;
+                case MessageType.Message:
+                    _messageItemCount -= 1;
+                    shouldRemoveFromFiltered = _showMessages;
+                    break;
+                case MessageType.Event:
+                    _eventItemCount -= 1;
+                    shouldRemoveFromFiltered = _showEvents;
+                    break;
+                default:
+                    return;
+            }
+
+            if (shouldRemoveFromFiltered)
+            {
+                for (int i = _filteredMessages.Count - 1; i >= 0; i--)
+                {
+                    if (_filteredMessages[i].Message.Code == message.Code &&
+                        _filteredMessages[i].Message.Source == message.Source)
+                    {
+                        _filteredMessages.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         /// <summary>

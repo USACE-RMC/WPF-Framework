@@ -37,14 +37,12 @@ namespace FrameworkUI
     /// </summary>
     /// <remarks>
     /// <para>
-    ///     Authors:
-/// <para>
-/// <b> Authors: </b>
-/// <list type="bullet">
-///     <item> Woody Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil </item>
-///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
-/// </list>
-/// </para>
+    /// <b> Authors: </b>
+    /// <list type="bullet">
+    ///     <item> Woody Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil </item>
+    ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
+    /// </list>
+    /// </para>
     /// </remarks>
     public sealed class ApplicationAttributes
     {

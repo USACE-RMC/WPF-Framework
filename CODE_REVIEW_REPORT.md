@@ -3,7 +3,7 @@
 
 **Review Date:** 2026-01-18
 **Branch:** `claude/cleanup-genericcontrols-resources-z4Qk2`
-**Status:** In Progress (Items 1-11, 13-27 implemented)
+**Status:** In Progress (Items 1-11, 13-50 implemented)
 
 ---
 
@@ -66,7 +66,7 @@
 | **25** | ✅ | Unchecked Arithmetic | SoftwareUpdate | UpdateInfo.cs:104 | Negative DownloadSize causes bad ToString output |
 | **26** | ✅ | Node ParentNode Null Access | FrameworkUI | Node.cs:491 | ParentNode.ChildNodes.IndexOf crashes if ParentNode null |
 | **27** | ✅ | Unsafe Cast in ElementNode | FrameworkUI | ElementNode.cs:411 | Direct cast to ElementNode throws instead of returning null |
-| **28** | ⬜ | Enable Nullable Reference Types | All Projects | *.csproj | All projects have `<Nullable>disable</Nullable>` |
+| **28** | ✅ | Enable Nullable Reference Types | All Projects | *.csproj | All projects have `<Nullable>disable</Nullable>` |
 
 ---
 
@@ -74,13 +74,13 @@
 
 | # | Status | Issue | Library | File:Line | Description |
 |---|--------|-------|---------|-----------|-------------|
-| **29** | ⬜ | Missing XML Documentation | FrameworkInterfaces | Multiple files | Many public types/methods lack XML documentation |
-| **30** | ⬜ | Missing XML Documentation | FrameworkUI | Multiple files | MessageItem, Node properties undocumented |
-| **31** | ⬜ | Malformed XML Comments | FrameworkUI | ApplicationAttributes.cs:35-48 | Unclosed `<para>` tags break documentation |
-| **32** | ⬜ | Missing Property Documentation | SoftwareUpdate.Updater | UpdaterArguments.cs:44-59 | Properties don't document nullability |
-| **33** | ⬜ | Missing Static Field Documentation | SoftwareUpdate.Updater | Program.cs:52 | `_logFilePath` undocumented |
-| **34** | ⬜ | Missing Exception Documentation | FrameworkInterfaces | UndoableCollectionBridge.cs:151 | ArgumentNullException not documented |
-| **35** | ⬜ | Documentation Inconsistency | FrameworkInterfaces | IProject.cs:63 | States conversion but no conversion method |
+| **29** | ✅ | Missing XML Documentation | FrameworkInterfaces | Multiple files | Many public types/methods lack XML documentation |
+| **30** | ✅ | Missing XML Documentation | FrameworkUI | Multiple files | MessageItem, Node properties undocumented |
+| **31** | ✅ | Malformed XML Comments | FrameworkUI | ApplicationAttributes.cs:35-48 | Unclosed `<para>` tags break documentation |
+| **32** | ✅ | Missing Property Documentation | SoftwareUpdate.Updater | UpdaterArguments.cs:44-59 | Properties don't document nullability |
+| **33** | ✅ | Missing Static Field Documentation | SoftwareUpdate.Updater | Program.cs:52 | `_logFilePath` undocumented |
+| **34** | ✅ | Missing Exception Documentation | FrameworkInterfaces | UndoableCollectionBridge.cs:151 | ArgumentNullException not documented |
+| **35** | ✅ | Documentation Inconsistency | FrameworkInterfaces | IProject.cs:63 | States conversion but no conversion method |
 
 ---
 
@@ -88,21 +88,21 @@
 
 | # | Status | Issue | Library | File:Line | Description |
 |---|--------|-------|---------|-----------|-------------|
-| **36** | ⬜ | No SHA256 Checksum Validation | SoftwareUpdate | UpdateInfo.cs:96 | Property exists but never validated |
-| **37** | ⬜ | GitHub Rate Limiting Not Handled | SoftwareUpdate | GitHubUpdateService.cs:121 | 403 errors not handled gracefully |
-| **38** | ⬜ | GitHub Repo Name Injection | SoftwareUpdate | UpdateOptions.cs:190 | No format validation on owner/repo |
-| **39** | ⬜ | DateTime.Now vs UtcNow | SoftwareUpdate | Program.cs:131 | Inconsistent timezone handling in logs |
-| **40** | ⬜ | Hard-coded Timeout Values | SoftwareUpdate | InstallationManager.cs:125 | 60s timeout not configurable |
-| **41** | ⬜ | Generic Exception Catching | SoftwareUpdate | GitHubUpdateService.cs:179 | Catches all exceptions instead of specific |
-| **42** | ⬜ | Zip Path Separator | SoftwareUpdate.Updater | InstallationManager.cs:198 | Hardcoded `/` assumes Unix paths |
-| **43** | ⬜ | DateTime.Now vs Stopwatch | SoftwareUpdate.Updater | Program.cs:172 | Vulnerable to system clock changes |
-| **44** | ⬜ | TOCTOU Bug | SoftwareUpdate.Updater | UpdaterArguments.cs:135 | Zip validated then could be deleted |
-| **45** | ⬜ | Weak Backup Check | SoftwareUpdate.Updater | InstallationManager.cs:230 | `.backup_` contains check easily bypassed |
-| **46** | ⬜ | State Mutation in Add() | FrameworkInterfaces | Messenger.cs:420 | Modifies caller's IMessageItem object |
-| **47** | ⬜ | Missing Error Logging | FrameworkInterfaces | Messenger.cs:564 | ExportToTextFile exceptions undocumented |
-| **48** | ⬜ | DispatcherTimer Leak | FrameworkUI | Node.cs:806 | Timer not properly disposed |
-| **49** | ⬜ | Event Handler Leaks | FrameworkUI | MessageWindowControl.xaml.cs:60 | Handlers attached but never detached |
-| **50** | ⬜ | Code Duplication | FrameworkUI | MessageWindowControl.xaml.cs:183-236 | 4 identical if-else blocks for message types |
+| **36** | ✅ | No SHA256 Checksum Validation | SoftwareUpdate | UpdateInfo.cs:96 | Property exists but never validated |
+| **37** | ✅ | GitHub Rate Limiting Not Handled | SoftwareUpdate | GitHubUpdateService.cs:121 | 403 errors not handled gracefully |
+| **38** | ✅ | GitHub Repo Name Injection | SoftwareUpdate | UpdateOptions.cs:190 | No format validation on owner/repo |
+| **39** | ✅ | DateTime.Now vs UtcNow | SoftwareUpdate | Program.cs:131 | Inconsistent timezone handling in logs |
+| **40** | ✅ | Hard-coded Timeout Values | SoftwareUpdate | InstallationManager.cs:125 | 60s timeout not configurable |
+| **41** | ✅ | Generic Exception Catching | SoftwareUpdate | GitHubUpdateService.cs:179 | Catches all exceptions instead of specific |
+| **42** | ✅ | Zip Path Separator | SoftwareUpdate.Updater | InstallationManager.cs:198 | Hardcoded `/` assumes Unix paths |
+| **43** | ✅ | DateTime.Now vs Stopwatch | SoftwareUpdate.Updater | Program.cs:172 | Vulnerable to system clock changes |
+| **44** | ✅ | TOCTOU Bug | SoftwareUpdate.Updater | UpdaterArguments.cs:135 | Zip validated then could be deleted |
+| **45** | ✅ | Weak Backup Check | SoftwareUpdate.Updater | InstallationManager.cs:230 | `.backup_` contains check easily bypassed |
+| **46** | ✅ | State Mutation in Add() | FrameworkInterfaces | Messenger.cs:420 | Modifies caller's IMessageItem object |
+| **47** | ✅ | Missing Error Logging | FrameworkInterfaces | Messenger.cs:564 | ExportToTextFile exceptions undocumented |
+| **48** | ✅ | DispatcherTimer Leak | FrameworkUI | Node.cs:806 | Timer not properly disposed |
+| **49** | ✅ | Event Handler Leaks | FrameworkUI | MessageWindowControl.xaml.cs:60 | Handlers attached but never detached |
+| **50** | ✅ | Code Duplication | FrameworkUI | MessageWindowControl.xaml.cs:183-236 | 4 identical if-else blocks for message types |
 
 ---
 
@@ -168,4 +168,5 @@
 | 2026-01-18 | - | Initial Review | Report created |
 | 2026-01-18 | 1-11, 13-27 | Implemented | Security fixes, bug fixes, high priority items |
 | 2026-01-18 | 12 | Skipped | Per user request |
+| 2026-01-18 | 28-50 | Implemented | Nullable types, documentation, medium priority fixes |
 

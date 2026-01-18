@@ -33,9 +33,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -118,6 +121,22 @@ namespace SoftwareUpdate.GitHub
             {
                 var apiUrl = $"https://api.github.com/repos/{Options.GitHubOwner}/{Options.GitHubRepo}/releases";
                 var response = await _httpClient.GetAsync(apiUrl, cancellationToken).ConfigureAwait(false);
+
+                // Check for rate limiting before calling EnsureSuccessStatusCode
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    var message = "GitHub API rate limit exceeded. ";
+                    if (string.IsNullOrEmpty(Options.GitHubToken))
+                    {
+                        message += "Consider providing a GitHubToken to increase the rate limit.";
+                    }
+                    else
+                    {
+                        message += "Please wait before making additional requests.";
+                    }
+                    throw new HttpRequestException(message);
+                }
+
                 response.EnsureSuccessStatusCode();
 
                 var jsonStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
@@ -175,6 +194,28 @@ namespace SoftwareUpdate.GitHub
                 var noUpdateResult = UpdateCheckResult.NoUpdateAvailable(Options.CurrentVersion);
                 RaiseEvent(UpdateCheckCompleted, noUpdateResult);
                 return noUpdateResult;
+            }
+            catch (HttpRequestException ex)
+            {
+                State = UpdateState.Error;
+                RaiseEvent(UpdateError, ex);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion, ex);
+                RaiseEvent(UpdateCheckCompleted, result);
+                return result;
+            }
+            catch (SerializationException ex)
+            {
+                State = UpdateState.Error;
+                var wrappedException = new InvalidOperationException("Failed to parse GitHub API response.", ex);
+                RaiseEvent(UpdateError, wrappedException);
+                var result = UpdateCheckResult.Failed(Options.CurrentVersion, wrappedException);
+                RaiseEvent(UpdateCheckCompleted, result);
+                return result;
+            }
+            catch (OperationCanceledException)
+            {
+                State = UpdateState.Idle;
+                throw;
             }
             catch (Exception ex)
             {
@@ -263,6 +304,18 @@ namespace SoftwareUpdate.GitHub
                             downloadProgress.BytesDownloaded = totalRead;
                             progress.Report(downloadProgress);
                         }
+                    }
+                }
+
+                // Validate SHA256 checksum if provided
+                if (!string.IsNullOrEmpty(update.Sha256Checksum))
+                {
+                    var actualChecksum = ComputeSha256Checksum(tempFilePath);
+                    if (!string.Equals(actualChecksum, update.Sha256Checksum, StringComparison.OrdinalIgnoreCase))
+                    {
+                        File.Delete(tempFilePath);
+                        throw new InvalidOperationException(
+                            $"Checksum validation failed. Expected: {update.Sha256Checksum}, Actual: {actualChecksum}");
                     }
                 }
 
@@ -396,6 +449,21 @@ namespace SoftwareUpdate.GitHub
         {
             var serializer = new DataContractJsonSerializer(typeof(List<GitHubRelease>));
             return (List<GitHubRelease>)serializer.ReadObject(jsonStream);
+        }
+
+        /// <summary>
+        /// Computes the SHA256 checksum of a file.
+        /// </summary>
+        /// <param name="filePath">The path to the file.</param>
+        /// <returns>The SHA256 checksum as a lowercase hexadecimal string.</returns>
+        private static string ComputeSha256Checksum(string filePath)
+        {
+            using (var sha256 = SHA256.Create())
+            using (var stream = File.OpenRead(filePath))
+            {
+                var hashBytes = sha256.ComputeHash(stream);
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            }
         }
 
         /// <summary>

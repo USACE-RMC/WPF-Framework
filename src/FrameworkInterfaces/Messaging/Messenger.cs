@@ -390,8 +390,15 @@ namespace FrameworkInterfaces.Messaging
         /// </summary>
         /// <param name="item">The message item to add.</param>
         /// <remarks>
+        /// <para>
         /// For event messages, the code is automatically made unique by appending a counter if necessary.
         /// For other message types, duplicate messages (same source and code) are ignored.
+        /// </para>
+        /// <para>
+        /// <b>Warning:</b> For event messages, this method may modify the <paramref name="item"/>'s
+        /// <see cref="IMessageItem.Code"/> property to ensure uniqueness. If you need to preserve
+        /// the original code value, make a copy before calling this method.
+        /// </para>
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
         public void Add(IMessageItem item)
@@ -545,9 +552,19 @@ namespace FrameworkInterfaces.Messaging
         /// <param name="fileName">The full path of the file to export to.</param>
         /// <remarks>
         /// If the file already exists, it will be overwritten with the current messages.
+        /// The directory will be created if it does not exist.
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="fileName"/> is null or empty.</exception>
         /// <exception cref="IOException">Thrown when an I/O error occurs during file operations.</exception>
+        /// <exception cref="UnauthorizedAccessException">
+        /// Thrown when the caller does not have the required permission to access the file or directory.
+        /// </exception>
+        /// <exception cref="PathTooLongException">
+        /// Thrown when the specified path exceeds the system-defined maximum length.
+        /// </exception>
+        /// <exception cref="DirectoryNotFoundException">
+        /// Thrown when the specified path is invalid (for example, it is on an unmapped drive).
+        /// </exception>
         public void ExportToTextFile(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))

@@ -49,6 +49,9 @@ namespace SoftwareUpdate.Updater
     /// </remarks>
     internal class Program
     {
+        /// <summary>
+        /// The path to the current log file, or <c>null</c> if logging has not been initialized.
+        /// </summary>
         private static string _logFilePath;
 
         /// <summary>
@@ -128,7 +131,7 @@ namespace SoftwareUpdate.Updater
                 var logDir = Path.Combine(targetDirectory, "logs");
                 Directory.CreateDirectory(logDir);
 
-                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
                 _logFilePath = Path.Combine(logDir, $"update_{timestamp}.log");
             }
             catch (Exception ex)
@@ -145,7 +148,7 @@ namespace SoftwareUpdate.Updater
         /// <param name="message">The message to log.</param>
         private static void Log(string message)
         {
-            var timestamp = DateTime.Now.ToString("HH:mm:ss");
+            var timestamp = DateTime.UtcNow.ToString("HH:mm:ss");
             var logLine = $"[{timestamp}] {message}";
 
             Console.WriteLine(logLine);
@@ -171,8 +174,8 @@ namespace SoftwareUpdate.Updater
         /// <returns>True if a key was pressed, false if timeout occurred.</returns>
         private static bool WaitForKeyWithTimeout(int milliseconds)
         {
-            var startTime = DateTime.Now;
-            while ((DateTime.Now - startTime).TotalMilliseconds < milliseconds)
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            while (stopwatch.ElapsedMilliseconds < milliseconds)
             {
                 try
                 {
