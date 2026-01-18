@@ -1188,7 +1188,7 @@ namespace GenericControls
         {
             if (value == null)
                 return null;
-            return (double)value;
+            return System.Convert.ToDouble(value);
         }
 
         /// <summary>
@@ -1203,7 +1203,7 @@ namespace GenericControls
         {
             if (value == null)
                 return null;
-            return (int)value;
+            return System.Convert.ToInt32(value);
         }
 
     }
