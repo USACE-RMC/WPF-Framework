@@ -249,8 +249,13 @@ namespace ExpressionParserControls
     }
 
     /// <summary>
-    /// Converts a boolean value to a Visibility enumeration. True becomes Visible, false becomes collapsed. 
+    /// Converts a boolean value to a Visibility enumeration. True becomes Visible, false becomes collapsed.
     /// </summary>
+    /// <remarks>
+    /// This converter is maintained for backwards compatibility. For new code, consider using
+    /// <see cref="GenericControls.BooleanToVisibilityConverter"/> which provides additional configuration options.
+    /// </remarks>
+    [Obsolete("Use GenericControls.BooleanToVisibilityConverter for new code. This converter is maintained for backwards compatibility.")]
     public class BoolToVisibilityConverter : IValueConverter
     {
         /// <summary>
