@@ -67,7 +67,7 @@ namespace FrameworkInterfaces.Undo
         /// This is typically an IElement, IElementCollection, or IProject.
         /// Used to determine which undo stack the action belongs to.
         /// </remarks>
-        object Target { get; }
+        object? Target { get; }
 
         /// <summary>
         /// Executes the action. Called for initial execution and redo.

@@ -101,7 +101,7 @@ namespace FrameworkInterfaces.Undo
         /// A function that returns the current undo manager, or null if undo is disabled.
         /// Using a delegate allows dynamic checking of IsUndoEnabled.
         /// </summary>
-        private readonly Func<IUndoManager> _getUndoManager;
+        private readonly Func<IUndoManager?> _getUndoManager;
 
         /// <summary>
         /// A human-readable description of the collection for use in undo action descriptions.
@@ -111,12 +111,12 @@ namespace FrameworkInterfaces.Undo
         /// <summary>
         /// The target object that owns this collection, used for undo action association.
         /// </summary>
-        private readonly object _target;
+        private readonly object? _target;
 
         /// <summary>
         /// A shadow copy of the collection used to capture items during Reset (Clear) operations.
         /// </summary>
-        private List<T> _shadowCopy;
+        private List<T>? _shadowCopy;
 
         /// <summary>
         /// Indicates whether this instance has been disposed.
@@ -150,9 +150,9 @@ namespace FrameworkInterfaces.Undo
         /// </exception>
         public UndoableCollectionBridge(
             ObservableCollection<T> collection,
-            Func<IUndoManager> getUndoManager,
+            Func<IUndoManager?> getUndoManager,
             string collectionDescription = "collection",
-            object target = null)
+            object? target = null)
         {
             _collection = collection ?? throw new ArgumentNullException(nameof(collection));
             _getUndoManager = getUndoManager ?? throw new ArgumentNullException(nameof(getUndoManager));
@@ -200,7 +200,7 @@ namespace FrameworkInterfaces.Undo
         /// <item>Updates the shadow copy to reflect the current collection state</item>
         /// </list>
         /// </remarks>
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             var undoManager = _getUndoManager();
 
@@ -212,7 +212,7 @@ namespace FrameworkInterfaces.Undo
             }
 
             // Create the appropriate action based on the change type
-            IUndoableAction action = CreateActionForChange(e);
+            IUndoableAction? action = CreateActionForChange(e);
 
             // Record the action if one was created
             if (action != null)
@@ -248,7 +248,7 @@ namespace FrameworkInterfaces.Undo
         /// <item><see cref="NotifyCollectionChangedAction.Move"/>: Item moved within collection</item>
         /// </list>
         /// </remarks>
-        private IUndoableAction CreateActionForChange(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateActionForChange(NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -281,7 +281,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation removes items from the collection at their original indices.
         /// The redo operation re-inserts the items at their original indices.
         /// </remarks>
-        private IUndoableAction CreateAddAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateAddAction(NotifyCollectionChangedEventArgs e)
         {
             // Capture the added items and their starting index
             var addedItems = e.NewItems?.Cast<T>().ToList() ?? new List<T>();
@@ -324,7 +324,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation re-inserts items at their original indices.
         /// The redo operation removes the items again.
         /// </remarks>
-        private IUndoableAction CreateRemoveAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateRemoveAction(NotifyCollectionChangedEventArgs e)
         {
             // Capture the removed items and their original index
             var removedItems = e.OldItems?.Cast<T>().ToList() ?? new List<T>();
@@ -367,7 +367,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation replaces the new items with the old items.
         /// The redo operation replaces the old items with the new items.
         /// </remarks>
-        private IUndoableAction CreateReplaceAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateReplaceAction(NotifyCollectionChangedEventArgs e)
         {
             // Capture the old and new items
             var oldItems = e.OldItems?.Cast<T>().ToList() ?? new List<T>();
@@ -411,12 +411,11 @@ namespace FrameworkInterfaces.Undo
         /// but the event arguments do not contain the removed items. This is why we maintain
         /// a shadow copy of the collection - to capture the items that were present before the clear.
         /// </remarks>
-        private IUndoableAction CreateResetAction()
+        private IUndoableAction? CreateResetAction()
         {
             // Capture the shadow copy before it gets updated
+            if (_shadowCopy == null || _shadowCopy.Count == 0) return null;
             var clearedItems = new List<T>(_shadowCopy);
-
-            if (clearedItems.Count == 0) return null;
 
             string description = $"Clear {_collectionDescription}";
 
@@ -448,7 +447,7 @@ namespace FrameworkInterfaces.Undo
         /// The undo operation moves the item back to its original index.
         /// The redo operation moves the item to the new index again.
         /// </remarks>
-        private IUndoableAction CreateMoveAction(NotifyCollectionChangedEventArgs e)
+        private IUndoableAction? CreateMoveAction(NotifyCollectionChangedEventArgs e)
         {
             int oldIndex = e.OldStartingIndex;
             int newIndex = e.NewStartingIndex;

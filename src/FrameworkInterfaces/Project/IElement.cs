@@ -104,7 +104,7 @@ namespace FrameworkInterfaces
         /// </summary>
         /// <param name="newName">Optional. New name of the copied element.</param>
         /// <returns>A deep copy of the element.</returns>
-        IElement Copy(string newName = null);
+        IElement Copy(string? newName = null);
 
         /// <summary>
         /// Copy the element from an external project to disk within the current project.

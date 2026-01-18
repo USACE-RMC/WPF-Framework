@@ -89,7 +89,7 @@ namespace FrameworkInterfaces.Undo.Actions
         /// <summary>
         /// The target object this action applies to.
         /// </summary>
-        private readonly object _target;
+        private readonly object? _target;
 
         #endregion
 
@@ -119,7 +119,7 @@ namespace FrameworkInterfaces.Undo.Actions
         /// <exception cref="ArgumentException">
         /// Thrown when <paramref name="description"/> is null or empty.
         /// </exception>
-        public DelegateAction(string description, Action execute, Action undo, object target = null)
+        public DelegateAction(string description, Action execute, Action undo, object? target = null)
         {
             if (string.IsNullOrEmpty(description))
             {
@@ -154,7 +154,7 @@ namespace FrameworkInterfaces.Undo.Actions
         /// <value>
         /// The target object provided during construction, or null if not specified.
         /// </value>
-        public object Target => _target;
+        public object? Target => _target;
 
         #endregion
 

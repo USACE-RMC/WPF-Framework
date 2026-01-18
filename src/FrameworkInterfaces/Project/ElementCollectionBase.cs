@@ -80,7 +80,7 @@ namespace FrameworkInterfaces
         private ReadOnlyCollection<IElementCollection> _readOnlyElementCollections;
         protected bool _savingAll = false;
         protected bool _opening = false;
-        protected string _nameOnDisk;
+        protected string _nameOnDisk = string.Empty;
 
         /// <summary>
         /// The undo manager for collection-level operations. Lazily initialized.
@@ -215,7 +215,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised whenever a property changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         
 
         /// <summary>
@@ -413,7 +413,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// A property in the element has changed.
         /// </summary>
-        protected void ElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected void ElementPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName  == nameof(IElement.Name))
             {

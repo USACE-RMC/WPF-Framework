@@ -2876,7 +2876,7 @@ namespace OxyPlotControls
         /// Uses TryFindResource to search the control's local resources first (for Format, EditTextbox),
         /// then application resources (for Delete which is in GenericControls).
         /// </remarks>
-        private object CreateMenuIcon(string iconName)
+        private object? CreateMenuIcon(string iconName)
         {
             return iconName switch
             {
