@@ -79,7 +79,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Result of the last hit test operation.
         /// </summary>
-        protected HitTestResult _hitTestResult;
+        protected HitTestResult? _hitTestResult;
 
         /// <summary>
         /// Indicates whether the node is currently in edit (rename) mode.
@@ -89,7 +89,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Timer used for slow double-click rename detection.
         /// </summary>
-        protected DispatcherTimer _timer;
+        protected DispatcherTimer? _timer;
 
         /// <summary>
         /// Counter for timer ticks.
@@ -186,9 +186,9 @@ namespace FrameworkUI.ProjectExplorer
         public NodeHeader NodeHeader { get => _nodeHeader; }
 
         /// <summary>
-        /// The parent node of this node. 
+        /// The parent node of this node.
         /// </summary>
-        public Node ParentNode { get; set; }
+        public Node? ParentNode { get; set; }
 
         /// <summary>
         /// The parent tree view dependency property.
@@ -207,11 +207,11 @@ namespace FrameworkUI.ProjectExplorer
             Node thisControl = (Node)d;
 
             // Get the old value and remove any handlers
-            ExplorerTreeView oldTreeView = null;
+            ExplorerTreeView? oldTreeView = null;
             oldTreeView = e.OldValue as ExplorerTreeView;
 
             // Get the new value
-            ExplorerTreeView newTreeView = null;
+            ExplorerTreeView? newTreeView = null;
             newTreeView = e.NewValue as ExplorerTreeView;
 
             // Set parent tree view for each child node
@@ -222,7 +222,7 @@ namespace FrameworkUI.ProjectExplorer
         /// Recursively sets the parent tree view for this node and all child nodes.
         /// </summary>
         /// <param name="newTreeView">The tree view to set as parent.</param>
-        private void SetParentTreeView(ExplorerTreeView newTreeView)
+        private void SetParentTreeView(ExplorerTreeView? newTreeView)
         {
             // Set parent tree view for each child node
             foreach (var child in ChildNodes)
@@ -359,9 +359,9 @@ namespace FrameworkUI.ProjectExplorer
         public abstract bool CanMultiSelect { get; }
 
         /// <summary>
-        /// Event is raised when the node is checked. 
+        /// Event is raised when the node is checked.
         /// </summary>
-        public event NodeCheckedEventHandler NodeChecked;
+        public event NodeCheckedEventHandler? NodeChecked;
 
         /// <summary>
         /// Event is raised when the node is checked. 
@@ -370,9 +370,9 @@ namespace FrameworkUI.ProjectExplorer
         public delegate void NodeCheckedEventHandler(Node node);
 
         /// <summary>
-        /// Event is raised when the node is unchecked. 
+        /// Event is raised when the node is unchecked.
         /// </summary>
-        public event NodeUncheckedEventHandler NodeUnchecked;
+        public event NodeUncheckedEventHandler? NodeUnchecked;
 
         /// <summary>
         /// Event is raised when the node is unchecked. 
@@ -383,7 +383,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised before the node is moved.
         /// </summary>
-        public event PreviewNodeMovedEventHandler PreviewNodeMoved;
+        public event PreviewNodeMovedEventHandler? PreviewNodeMoved;
 
         /// <summary>
         /// Event is raised before the node is moved.
@@ -394,7 +394,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when the node is moved.
         /// </summary>
-        public event NodeMovedEventHandler NodeMoved;
+        public event NodeMovedEventHandler? NodeMoved;
 
         /// <summary>
         /// Event is raised when the node is moved.
@@ -405,7 +405,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Event is raised when the node is sorted.
         /// </summary>
-        public event NodeSortedEventHandler NodeSorted;
+        public event NodeSortedEventHandler? NodeSorted;
 
         /// <summary>
         /// Event is raised when the node is sorted.
@@ -414,9 +414,9 @@ namespace FrameworkUI.ProjectExplorer
         public delegate void NodeSortedEventHandler(Node node);
 
         /// <summary>
-        /// Raise event when a property changes. 
+        /// Raise event when a property changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Raise property changed event.
@@ -455,7 +455,7 @@ namespace FrameworkUI.ProjectExplorer
             //
             if (_collectionContextItems != null && _collectionContextItems.Count > 0)
             {
-                if (_customContextItems.Count > 0) { ContextMenu.Items.Add(_collectionContentSeparator); }
+                if (_customContextItems != null && _customContextItems.Count > 0) { ContextMenu.Items.Add(_collectionContentSeparator); }
                 foreach (var item in _collectionContextItems) { ContextMenu.Items.Add(item); }
             }
             // 
@@ -483,7 +483,7 @@ namespace FrameworkUI.ProjectExplorer
             }
 
             // Get location of new group
-            Node parentNode = parentTree.SelectedNodes.FirstOrDefault()?.ParentNode;
+            Node? parentNode = parentTree.SelectedNodes.FirstOrDefault()?.ParentNode;
             if (parentNode == null)
             {
                 e.Handled = true;
@@ -569,10 +569,10 @@ namespace FrameworkUI.ProjectExplorer
         /// Get the node collection that contains this node.
         /// </summary>
         /// <returns>The parent NodeCollection, or null if not found.</returns>
-        public NodeCollection GetNodeCollection()
+        public NodeCollection? GetNodeCollection()
         {
-            NodeCollection nodeCollection = null;
-            Node parentNode = ParentNode;
+            NodeCollection? nodeCollection = null;
+            Node? parentNode = ParentNode;
             do
             {
                 if (parentNode == null) { break; }
@@ -650,8 +650,10 @@ namespace FrameworkUI.ProjectExplorer
         {
             // ExplorerTreeView pTree = ParentTreeView as ExplorerTreeView;
 
-
-            var tItem = ExplorerTreeView.FindTreeViewItem(ParentTreeView, e.OriginalSource as DependencyObject);
+            if (ParentTreeView == null) return;
+            var originalSource = e.OriginalSource as DependencyObject;
+            if (originalSource == null) return;
+            var tItem = ExplorerTreeView.FindTreeViewItem(ParentTreeView, originalSource);
             if (tItem != null && tItem.Equals(this) == false) { return; }
             int selectedCount = ParentTreeView.SelectedNodes.Count;
 
@@ -790,7 +792,9 @@ namespace FrameworkUI.ProjectExplorer
             if (IsReadOnly) return;
             if (ParentTreeView == null) return;
 
-            var tItem = ExplorerTreeView.FindTreeViewItem(ParentTreeView, e.OriginalSource as DependencyObject);
+            var originalSource = e.OriginalSource as DependencyObject;
+            if (originalSource == null) return;
+            var tItem = ExplorerTreeView.FindTreeViewItem(ParentTreeView, originalSource);
             if (tItem != null && !tItem.Equals(this)) { return; }
 
             bool timerEnabled = _timer?.IsEnabled ?? false;
@@ -857,7 +861,7 @@ namespace FrameworkUI.ProjectExplorer
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        protected virtual void Timer_Tick(object sender, EventArgs e)
+        protected virtual void Timer_Tick(object? sender, EventArgs e)
         {
             _tickCount++;
             if (_tickCount >= 2)
@@ -963,7 +967,7 @@ namespace FrameworkUI.ProjectExplorer
             {
                 foreach (var item in treeViewItems)
                 {
-                    Node node = item as Node;
+                    Node? node = item as Node;
                     if (node != null)
                     {
                         if (!node.Equals(originalNode)) node.UpdateRenameTextBox();
