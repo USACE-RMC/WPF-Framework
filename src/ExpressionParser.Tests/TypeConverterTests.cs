@@ -29,7 +29,7 @@
 */
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ExpressionParser.Tests.Evaluation
+namespace ExpressionParser.Tests
 {
     /// <summary>
     /// Contains comprehensive unit tests for type conversion functions.

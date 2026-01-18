@@ -30,7 +30,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ExpressionParser.Tests.Operations
+namespace ExpressionParser.Tests
 {
     /// <summary>
     /// Contains comprehensive unit tests for comparison and logical operators including

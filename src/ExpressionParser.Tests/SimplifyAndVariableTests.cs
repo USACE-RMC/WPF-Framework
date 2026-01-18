@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using ExpressionParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ExpressionParser.Tests.Evaluation
+namespace ExpressionParser.Tests
 {
     /// <summary>
     /// Contains comprehensive unit tests for the Simplify() method and variable handling functionality

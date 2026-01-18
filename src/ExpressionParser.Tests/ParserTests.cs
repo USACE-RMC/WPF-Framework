@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExpressionParser.Tests.Parser
+namespace ExpressionParser.Tests
 {
     /// <summary>
     /// Contains unit tests that validate expression parsing, evaluation,

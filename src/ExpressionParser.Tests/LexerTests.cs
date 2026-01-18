@@ -33,7 +33,7 @@ using System.Linq;
 using ExpressionParser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ExpressionParser.Tests.Lexer
+namespace ExpressionParser.Tests
 {
     /// <summary>
     /// Contains comprehensive unit tests for the Lexer class to validate tokenization
