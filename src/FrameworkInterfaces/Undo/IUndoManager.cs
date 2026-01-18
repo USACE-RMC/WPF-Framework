@@ -70,13 +70,13 @@ namespace FrameworkInterfaces.Undo
         /// Gets the description of the next undo action (for tooltip/menu display).
         /// </summary>
         /// <value>The description, or null if no undo is available.</value>
-        string UndoDescription { get; }
+        string? UndoDescription { get; }
 
         /// <summary>
         /// Gets the description of the next redo action (for tooltip/menu display).
         /// </summary>
         /// <value>The description, or null if no redo is available.</value>
-        string RedoDescription { get; }
+        string? RedoDescription { get; }
 
         /// <summary>
         /// Gets the list of actions that can be undone (most recent first).

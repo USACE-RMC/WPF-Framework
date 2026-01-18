@@ -253,22 +253,22 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Occurs before the element is deleted, allowing cancellation.
         /// </summary>
-        public event PreviewDeletedEventHandler PreviewDeleted;
+        public event PreviewDeletedEventHandler? PreviewDeleted;
 
         /// <summary>
         /// Occurs after the element has been deleted.
         /// </summary>
-        public event DeletedEventHandler Deleted;
+        public event DeletedEventHandler? Deleted;
 
         /// <summary>
         /// Occurs before the element is saved, allowing cancellation.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Occurs after the element has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Occurs when a property value changes.

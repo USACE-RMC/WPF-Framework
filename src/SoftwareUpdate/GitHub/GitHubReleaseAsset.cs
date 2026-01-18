@@ -48,13 +48,13 @@ namespace SoftwareUpdate.GitHub
         /// Gets or sets the file name of the asset.
         /// </summary>
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the MIME type of the asset (e.g., "application/zip").
         /// </summary>
         [DataMember(Name = "content_type")]
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
         /// <summary>
         /// Gets or sets the file size in bytes.
@@ -72,6 +72,6 @@ namespace SoftwareUpdate.GitHub
         /// Gets or sets the direct download URL for this asset.
         /// </summary>
         [DataMember(Name = "browser_download_url")]
-        public string BrowserDownloadUrl { get; set; }
+        public string? BrowserDownloadUrl { get; set; }
     }
 }

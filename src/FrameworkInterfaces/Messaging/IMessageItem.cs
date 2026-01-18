@@ -62,7 +62,7 @@ namespace FrameworkInterfaces
         /// An <see cref="Action{T}"/> delegate that receives the message item,
         /// typically used to navigate to the message source in the UI.
         /// </value>
-        Action<IMessageItem> MessageAction { get; set; }
+        Action<IMessageItem>? MessageAction { get; set; }
 
         /// <summary>
         /// Gets or sets the unique code identifying this message.
@@ -86,7 +86,7 @@ namespace FrameworkInterfaces
         /// Gets or sets the description text of the message.
         /// </summary>
         /// <value>A human-readable description explaining the message.</value>
-        string Description { get; set; }
+        string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the source object that generated this message.
@@ -95,7 +95,7 @@ namespace FrameworkInterfaces
         /// The object (typically an <see cref="IElement"/> or <see cref="IProject"/>)
         /// that is the origin of this message.
         /// </value>
-        object Source { get; set; }
+        object? Source { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the collection containing the source element.
@@ -103,7 +103,7 @@ namespace FrameworkInterfaces
         /// <value>
         /// The name of the parent collection, used for navigating to the source.
         /// </value>
-        string SourceCollectionName { get; set; }
+        string? SourceCollectionName { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the source element.
@@ -111,7 +111,7 @@ namespace FrameworkInterfaces
         /// <value>
         /// The name of the element that generated this message.
         /// </value>
-        string SourceName { get; set; }
+        string? SourceName { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the parameter associated with this message.
@@ -120,7 +120,7 @@ namespace FrameworkInterfaces
         /// The parameter name, or <c>null</c> if the message is not associated
         /// with a specific parameter.
         /// </value>
-        string ParameterName { get; set; }
+        string? ParameterName { get; set; }
 
         /// <summary>
         /// Gets the timestamp when the message was created.
