@@ -370,12 +370,10 @@ namespace SoftwareUpdate.Tests.GitHub
 
             // Simple test - just verify reading state from multiple threads doesn't throw
             var tasks = Enumerable.Range(0, 10)
-                .Select(_ => Task.Run(() => _ = (int)_service.State))
+                .Select(i => Task.Run(() => { var state = _service.State; }))
                 .ToArray();
 
-            var exception = Record.Exception(() => Task.WaitAll(tasks));
-
-            Assert.Null(exception);
+            Task.WaitAll(tasks);
         }
 
         #endregion
@@ -390,12 +388,10 @@ namespace SoftwareUpdate.Tests.GitHub
 
             // Simple test - just verify reading from multiple threads doesn't throw
             var tasks = Enumerable.Range(0, 10)
-                .Select(_ => Task.Run(() => _ = _service.AvailableUpdate))
+                .Select(i => Task.Run(() => { var update = _service.AvailableUpdate; }))
                 .ToArray();
 
-            var exception = Record.Exception(() => Task.WaitAll(tasks));
-
-            Assert.Null(exception);
+            Task.WaitAll(tasks);
         }
 
         #endregion
