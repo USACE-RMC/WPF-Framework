@@ -29,7 +29,7 @@
 */
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ExpressionParser.Tests
+namespace ExpressionParser.Tests.Operations
 {
     /// <summary>
     /// Contains comprehensive unit tests for string manipulation functions including edge cases

@@ -30,7 +30,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ExpressionParser.Tests
+namespace ExpressionParser.Tests.Operations
 {
     /// <summary>
     /// Contains comprehensive unit tests for arithmetic operations including multiplication,
