@@ -1030,9 +1030,6 @@ namespace DatabaseControls
                 UpdateRowHeaders();
                 UpdateGridLineColors();
                 UpdateCellForegrounds();
-                // Force WPF to re-render after binding updates
-                RowColorGrid.InvalidateVisual();
-                GridLinesCanvas.InvalidateVisual();
                 UpdateLayout();
             }
             RefreshColumnWidths();
@@ -1095,9 +1092,6 @@ namespace DatabaseControls
             UpdateRowHeaders();
             UpdateGridLineColors();
             UpdateCellForegrounds();
-            // Force WPF to re-render after binding updates
-            RowColorGrid.InvalidateVisual();
-            GridLinesCanvas.InvalidateVisual();
             UpdateLayout();
             SetSelectedCells();
             if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
@@ -1920,9 +1914,19 @@ namespace DatabaseControls
             UpdateGridLineColors();
             UpdateCellForegrounds();
 
-            // Force WPF to re-render the visual elements after binding updates
-            RowColorGrid.InvalidateVisual();
-            GridLinesCanvas.InvalidateVisual();
+            // Force WPF to re-render by invalidating each child element
+            foreach (UIElement child in RowColorGrid.Children)
+                child.InvalidateVisual();
+            foreach (UIElement child in GridLinesCanvas.Children)
+                child.InvalidateVisual();
+
+            // Also invalidate measure/arrange to trigger layout pass
+            RowColorGrid.InvalidateMeasure();
+            RowColorGrid.InvalidateArrange();
+            GridLinesCanvas.InvalidateMeasure();
+            GridLinesCanvas.InvalidateArrange();
+            HorizontalViewerGrid.InvalidateMeasure();
+            HorizontalViewerGrid.InvalidateArrange();
             UpdateLayout();
         }
 
