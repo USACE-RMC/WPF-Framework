@@ -23,6 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="FieldCalculator\ExpressionTextBox.cs" />
+    <Compile Remove="FieldCalculator\SelectByAttribute.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="FieldCalculator\SelectByAttribute.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
     <ProjectReference Include="..\ExpressionParserControls\ExpressionParserControls.csproj" />
     <ProjectReference Include="..\ExpressionParser\ExpressionParser.csproj" />

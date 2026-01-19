@@ -38,7 +38,7 @@ namespace GenericControls.Tests.Converters
     /// <summary>
     /// Tests for converter classes in the GenericControls library.
     /// </summary>
-    public class ConverterTests1
+    public class ConverterTests
     {
         /// <summary>
         /// Culture info used for converter testing.
