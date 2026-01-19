@@ -1282,7 +1282,7 @@ namespace DatabaseControls
             for (int i = 0; i < _visibleRowCount; i++)
             {
                 if (i < RowColorGrid.Children.Count)
-                    ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
+                    ((Border)RowColorGrid.Children[i]).Background = alternate ? AlternateRowColor : RowColor;
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
                 alternate = !alternate;
