@@ -253,8 +253,8 @@ namespace DatabaseControls.Demo
         {
             if (TestViewer.DataView != null)
             {
-                int rowCount = TestViewer.DataView.RowCount;
-                int colCount = TestViewer.DataView.ColumnCount;
+                int rowCount = TestViewer.DataView.NumberOfRows;
+                int colCount = TestViewer.DataView.ColumnNames.Length;
                 RowCountText.Text = $"Rows: {rowCount:N0} | Columns: {colCount:N0}";
                 StatusText.Text = $"Loaded: {TestViewer.DataView.TableName}";
             }
