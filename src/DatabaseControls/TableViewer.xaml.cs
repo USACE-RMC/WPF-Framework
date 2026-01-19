@@ -1289,44 +1289,82 @@ namespace DatabaseControls
         /// </summary>
         private void AddRow()
         {
-            int rowIndex = GridPanel.RowDefinitions.Count;
+            if (GridPanel == null || DataView == null || VerticalScrollbar == null) return;
+
+            // Create new row definition
             GridPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
-            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
-            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            // WORKING: Use hardcoded brushes - reading from properties causes scroll render issues
-            var rect = new Rectangle
-            {
-                Stroke = Brushes.Transparent,
-                StrokeThickness = 0,
-                Fill = (rowIndex % 2 == 0) ? Brushes.White : Brushes.LightGray
-            };
-            Grid.SetRow(rect, rowIndex);
-            RowColorGrid.Children.Add(rect);
-
-            var rowHeader = new RowHeader { HeaderTextblockStyle = RowHeaderTextblockStyle, HeaderBorderStyle = RowHeaderBorderStyle };
-            Grid.SetRow(rowHeader, rowIndex);
-            RowHeadersGrid.Children.Add(rowHeader);
-
+            // Create new row Cells
             for (int j = 0; j < DataView.ColumnNames.Count(); j++)
             {
-                var cell = new Cell { CellStyle = CellTextblockStyle, Foreground = CellForeground };
-                Grid.SetRow(cell, rowIndex);
-                Grid.SetColumn(cell, j);
-                GridPanel.Children.Add(cell);
+                var newCell = new Cell { CellStyle = CellTextblockStyle };
+                Grid.SetRow(newCell, GridPanel.RowDefinitions.Count - 1);
+                Grid.SetColumn(newCell, j);
+                GridPanel.Children.Add(newCell);
             }
 
-            // Create row grid line with theme color (clone brush to ensure proper rendering)
+            // Fill new row with data
+            int scrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+            if ((scrollBarValue + (GridPanel.RowDefinitions.Count - 1)) < _rowId.Count)
+            {
+                if (!_selectedRowsOnly)
+                {
+                    FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[scrollBarValue + GridPanel.RowDefinitions.Count - 1]));
+                }
+                else
+                {
+                    if (_columnSortOrder == SortOrder.None)
+                    {
+                        if (_selectedDataRowIndices.Count >= scrollBarValue + GridPanel.RowDefinitions.Count)
+                            FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[_selectedDataRowIndices[scrollBarValue + GridPanel.RowDefinitions.Count - 1]]));
+                    }
+                    else
+                    {
+                        if (_sortedSelectedRowOffsets.Length >= scrollBarValue + GridPanel.RowDefinitions.Count)
+                            FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[_sortedSelectedRowOffsets[scrollBarValue + GridPanel.RowDefinitions.Count - 1]]));
+                    }
+                }
+            }
+
+            // Create row line
             var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
-            double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
-            var lineStroke = CloneBrush(RowLineColor);
+            double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = lineStroke
+                SnapsToDevicePixels = true,
+                X1 = 0,
+                Y1 = rowDistanceFromTop,
+                Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness,
+                Stroke = RowLineColor
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
+
+            // Create Row selector
+            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight), MaxHeight = RowHeight });
+            var newRowSelector = new RowHeader
+            {
+                HeaderTextblockStyle = RowHeaderTextblockStyle,
+                HeaderBorderStyle = RowHeaderBorderStyle,
+                Height = RowHeight
+            };
+            Grid.SetRow(newRowSelector, RowHeadersGrid.RowDefinitions.Count - 1);
+            RowHeadersGrid.Children.Add(newRowSelector);
+
+            // Create row color - use _rowId for alternation like VB
+            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+            SolidColorBrush fillColor = RowColor as SolidColorBrush ?? Brushes.White;
+            if (_rowId[RowColorGrid.RowDefinitions.Count - 1] % 2 != 0)
+                fillColor = AlternateRowColor as SolidColorBrush ?? Brushes.LightGray;
+            var rect = new Rectangle
+            {
+                Stroke = new SolidColorBrush(Colors.Transparent),
+                StrokeThickness = 0,
+                Fill = fillColor
+            };
+            Grid.SetRow(rect, RowColorGrid.RowDefinitions.Count - 1);
+            RowColorGrid.Children.Add(rect);
         }
 
         #endregion
@@ -1382,27 +1420,22 @@ namespace DatabaseControls
         /// </summary>
         private void UpdateRowHeaders()
         {
-            if (DataView == null || _rowId == null) return;
+            // Match VB implementation exactly
             if (_visibleRowCount == 0) return;
 
             int firstRowVirtualIndex = (int)Math.Floor(VerticalScrollbar.Value);
             if (VerticalScrollbar.Value == VerticalScrollbar.Maximum && VerticalScrollbar.Value != 0)
             {
-                firstRowVirtualIndex = (int)VerticalScrollbar.Maximum - _visibleRowCount;
+                firstRowVirtualIndex = (int)(VerticalScrollbar.Maximum - _visibleRowCount);
                 if (firstRowVirtualIndex < 0) firstRowVirtualIndex = 0;
             }
 
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                // WORKING: Use hardcoded brushes - reading from properties causes scroll render issues
-                if (i < RowColorGrid.Children.Count)
-                {
-                    var rect = (Rectangle)RowColorGrid.Children[i];
-                    rect.Fill = alternate ? Brushes.LightGray : Brushes.White;
-                }
-                if (i < RowHeadersGrid.Children.Count)
-                    ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
+                // VB uses properties directly - no cloning
+                ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
+                ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
                 alternate = !alternate;
             }
         }
