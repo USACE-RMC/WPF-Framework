@@ -43,7 +43,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DatabaseManager;
 using Microsoft.Win32;
-using Themes;
 
 namespace DatabaseControls
 {
@@ -232,43 +231,37 @@ namespace DatabaseControls
         /// Identifies the <see cref="RowColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowColorProperty = DependencyProperty.Register(
-            nameof(RowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.White, OnRowColorChanged));
+            nameof(RowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.White));
 
         /// <summary>
         /// Identifies the <see cref="AlternateRowColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty AlternateRowColorProperty = DependencyProperty.Register(
-            nameof(AlternateRowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 243, 249, 247)), OnRowColorChanged));
+            nameof(AlternateRowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 243, 249, 247))));
 
         /// <summary>
         /// Identifies the <see cref="RowLineColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowLineColorProperty = DependencyProperty.Register(
-            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122)), OnGridLinePropertyChanged));
+            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
 
         /// <summary>
         /// Identifies the <see cref="RowLineThickness"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowLineThicknessProperty = DependencyProperty.Register(
-            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnGridLinePropertyChanged));
+            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
 
         /// <summary>
         /// Identifies the <see cref="ColumnLineColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnLineColorProperty = DependencyProperty.Register(
-            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122)), OnGridLinePropertyChanged));
+            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
 
         /// <summary>
         /// Identifies the <see cref="ColumnLineThickness"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnLineThicknessProperty = DependencyProperty.Register(
-            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnGridLinePropertyChanged));
-
-        /// <summary>
-        /// Identifies the <see cref="CellForeground"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty CellForegroundProperty = DependencyProperty.Register(
-            nameof(CellForeground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Black, OnCellForegroundChanged));
+            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
 
         /// <summary>
         /// Identifies the <see cref="ColumnSelectable"/> dependency property.
@@ -587,16 +580,6 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Gets or sets the foreground brush used for cell text.
-        /// </summary>
-        /// <value>The brush used for cell text. Default is Brushes.Black.</value>
-        public Brush CellForeground
-        {
-            get => (Brush)GetValue(CellForegroundProperty);
-            set => SetValue(CellForegroundProperty, value);
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether entire columns can be selected.
         /// </summary>
         /// <value><c>true</c> to allow column selection; otherwise, <c>false</c>. Default is <c>true</c>.</value>
@@ -740,87 +723,6 @@ namespace DatabaseControls
 
                 thisControl.SelectionToolbar.IsEnabled = true;
                 thisControl.EditorToolbar.IsEnabled = true;
-            }
-        }
-
-        /// <summary>
-        /// Handles changes to RowColor or AlternateRowColor properties.
-        /// Updates the row background colors when the theme changes.
-        /// </summary>
-        private static void OnRowColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
-            {
-                viewer.UpdateRowHeaders();
-            }
-        }
-
-        /// <summary>
-        /// Handles changes to grid line color or thickness properties.
-        /// Updates all grid lines when the theme changes.
-        /// </summary>
-        private static void OnGridLinePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
-            {
-                viewer.UpdateGridLineColors();
-            }
-        }
-
-        /// <summary>
-        /// Updates the stroke color and thickness of all grid lines in the canvas.
-        /// </summary>
-        private void UpdateGridLineColors()
-        {
-            if (DataView == null) return;
-
-            int columnLineCount = DataView.ColumnNames.Count() + 1;
-
-            for (int i = 0; i < GridLinesCanvas.Children.Count; i++)
-            {
-                if (GridLinesCanvas.Children[i] is Line line)
-                {
-                    if (i < columnLineCount)
-                    {
-                        // Column lines (vertical) - clone brush for proper rendering
-                        line.Stroke = CloneBrush(ColumnLineColor);
-                        line.StrokeThickness = ColumnLineThickness;
-                    }
-                    else
-                    {
-                        // Row lines (horizontal) - clone brush for proper rendering
-                        line.Stroke = CloneBrush(RowLineColor);
-                        line.StrokeThickness = RowLineThickness;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handles changes to the CellForeground property.
-        /// Updates the foreground color of all cells when the theme changes.
-        /// </summary>
-        private static void OnCellForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
-            {
-                viewer.UpdateCellForegrounds();
-            }
-        }
-
-        /// <summary>
-        /// Updates the foreground color of all cells in the grid.
-        /// </summary>
-        private void UpdateCellForegrounds()
-        {
-            if (DataView == null) return;
-
-            foreach (var child in GridPanel.Children)
-            {
-                if (child is Cell cell)
-                {
-                    cell.Foreground = CellForeground;
-                }
             }
         }
 
@@ -1006,7 +908,7 @@ namespace DatabaseControls
                     ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(false);
             }
 
-            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
+            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
@@ -1023,8 +925,6 @@ namespace DatabaseControls
             SetActiveCell();
             RefreshColumnWidths();
             UpdateRowHeaders();
-            UpdateGridLineColors();
-            UpdateCellForegrounds();
         }
 
         /// <summary>
@@ -1051,9 +951,6 @@ namespace DatabaseControls
                 LoadRows();
                 SetSelectedCells();
                 UpdateRowHeaders();
-                UpdateGridLineColors();
-                UpdateCellForegrounds();
-                UpdateLayout();
             }
             RefreshColumnWidths();
         }
@@ -1113,9 +1010,6 @@ namespace DatabaseControls
             }
 
             UpdateRowHeaders();
-            UpdateGridLineColors();
-            UpdateCellForegrounds();
-            UpdateLayout();
             SetSelectedCells();
             if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
         }
@@ -1147,7 +1041,7 @@ namespace DatabaseControls
                     ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(false);
             }
 
-            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
+            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
@@ -1289,82 +1183,36 @@ namespace DatabaseControls
         /// </summary>
         private void AddRow()
         {
-            if (GridPanel == null || DataView == null || VerticalScrollbar == null) return;
-
-            // Create new row definition
+            int rowIndex = GridPanel.RowDefinitions.Count;
             GridPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            // Create new row Cells
+            var rowColor = new Border { Background = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor };
+            Grid.SetRow(rowColor, rowIndex);
+            RowColorGrid.Children.Add(rowColor);
+
+            var rowHeader = new RowHeader { HeaderTextblockStyle = RowHeaderTextblockStyle, HeaderBorderStyle = RowHeaderBorderStyle };
+            Grid.SetRow(rowHeader, rowIndex);
+            RowHeadersGrid.Children.Add(rowHeader);
+
             for (int j = 0; j < DataView.ColumnNames.Count(); j++)
             {
-                var newCell = new Cell { CellStyle = CellTextblockStyle };
-                Grid.SetRow(newCell, GridPanel.RowDefinitions.Count - 1);
-                Grid.SetColumn(newCell, j);
-                GridPanel.Children.Add(newCell);
+                var cell = new Cell { CellStyle = CellTextblockStyle };
+                Grid.SetRow(cell, rowIndex);
+                Grid.SetColumn(cell, j);
+                GridPanel.Children.Add(cell);
             }
 
-            // Fill new row with data
-            int scrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
-            if ((scrollBarValue + (GridPanel.RowDefinitions.Count - 1)) < _rowId.Count)
-            {
-                if (!_selectedRowsOnly)
-                {
-                    FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[scrollBarValue + GridPanel.RowDefinitions.Count - 1]));
-                }
-                else
-                {
-                    if (_columnSortOrder == SortOrder.None)
-                    {
-                        if (_selectedDataRowIndices.Count >= scrollBarValue + GridPanel.RowDefinitions.Count)
-                            FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[_selectedDataRowIndices[scrollBarValue + GridPanel.RowDefinitions.Count - 1]]));
-                    }
-                    else
-                    {
-                        if (_sortedSelectedRowOffsets.Length >= scrollBarValue + GridPanel.RowDefinitions.Count)
-                            FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[_sortedSelectedRowOffsets[scrollBarValue + GridPanel.RowDefinitions.Count - 1]]));
-                    }
-                }
-            }
-
-            // Create row line
-            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
-            double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
+            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true,
-                X1 = 0,
-                Y1 = rowDistanceFromTop,
-                Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness,
-                Stroke = RowLineColor
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
-
-            // Create Row selector
-            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight), MaxHeight = RowHeight });
-            var newRowSelector = new RowHeader
-            {
-                HeaderTextblockStyle = RowHeaderTextblockStyle,
-                HeaderBorderStyle = RowHeaderBorderStyle,
-                Height = RowHeight
-            };
-            Grid.SetRow(newRowSelector, RowHeadersGrid.RowDefinitions.Count - 1);
-            RowHeadersGrid.Children.Add(newRowSelector);
-
-            // Create row color - use _rowId for alternation like VB
-            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
-            SolidColorBrush fillColor = RowColor as SolidColorBrush ?? Brushes.White;
-            if (_rowId[RowColorGrid.RowDefinitions.Count - 1] % 2 != 0)
-                fillColor = AlternateRowColor as SolidColorBrush ?? Brushes.LightGray;
-            var rect = new Rectangle
-            {
-                Stroke = new SolidColorBrush(Colors.Transparent),
-                StrokeThickness = 0,
-                Fill = fillColor
-            };
-            Grid.SetRow(rect, RowColorGrid.RowDefinitions.Count - 1);
-            RowColorGrid.Children.Add(rect);
         }
 
         #endregion
@@ -1420,22 +1268,23 @@ namespace DatabaseControls
         /// </summary>
         private void UpdateRowHeaders()
         {
-            // Match VB implementation exactly
+            if (DataView == null || _rowId == null) return;
             if (_visibleRowCount == 0) return;
 
             int firstRowVirtualIndex = (int)Math.Floor(VerticalScrollbar.Value);
             if (VerticalScrollbar.Value == VerticalScrollbar.Maximum && VerticalScrollbar.Value != 0)
             {
-                firstRowVirtualIndex = (int)(VerticalScrollbar.Maximum - _visibleRowCount);
+                firstRowVirtualIndex = (int)VerticalScrollbar.Maximum - _visibleRowCount;
                 if (firstRowVirtualIndex < 0) firstRowVirtualIndex = 0;
             }
 
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                // VB uses properties directly - no cloning
-                ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
-                ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
+                if (i < RowColorGrid.Children.Count)
+                    ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
+                if (i < RowHeadersGrid.Children.Count)
+                    ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
                 alternate = !alternate;
             }
         }
@@ -1853,100 +1702,7 @@ namespace DatabaseControls
         {
             bool wasFalse = !_isLoaded;
             _isLoaded = true;
-
-            // TODO: Theme support disabled - causes scroll render issues
-            // ApplyThemeResources();
-            // ThemeService.Instance.ThemeChanged += OnThemeChanged;
-
             if (wasFalse) RefreshView();
-        }
-
-        /// <summary>
-        /// Handles the Unloaded event to clean up event handlers.
-        /// </summary>
-        private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
-        {
-            // TODO: Theme support disabled - causes scroll render issues
-            // ThemeService.Instance.ThemeChanged -= OnThemeChanged;
-
-            if (DataView != null)
-            {
-                DataView.RowsAdded -= TableViewRowsAdded;
-                DataView.RowsDeleted -= TableViewRowsDeleted;
-                DataView.ColumnsAdded -= TableViewColumnsAdded;
-                DataView.ColumnsDeleted -= TableViewColumnsDeleted;
-            }
-        }
-
-        /// <summary>
-        /// Handles theme changes by re-applying theme resources and refreshing the view.
-        /// </summary>
-        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
-        {
-            // Apply new theme resources
-            ApplyThemeResources();
-
-            // Refresh the view to apply new colors
-            if (_isLoaded && DataView != null)
-            {
-                RefreshView();
-            }
-        }
-
-        /// <summary>
-        /// Applies theme resources to the control by reading colors from the application resource dictionary.
-        /// This approach avoids using Style setters which cause scroll rendering issues.
-        /// </summary>
-        private void ApplyThemeResources()
-        {
-            // Helper to get a brush resource, returning null if not found
-            Brush? GetBrush(string key) => TryFindResource(key) as Brush;
-
-            // Apply colors from theme resources (clone to avoid DynamicResource issues)
-            var rowBg = GetBrush("DataGrid.Row.Background");
-            if (rowBg != null) RowColor = CloneBrush(rowBg);
-
-            var altRowBg = GetBrush("DataGrid.Row.Alternating.Background");
-            if (altRowBg != null) AlternateRowColor = CloneBrush(altRowBg);
-
-            var gridLines = GetBrush("DataGrid.GridLines");
-            if (gridLines != null)
-            {
-                RowLineColor = CloneBrush(gridLines);
-                ColumnLineColor = CloneBrush(gridLines);
-            }
-
-            var selBg = GetBrush("DataGrid.Row.Selection.Background");
-            if (selBg != null)
-            {
-                SelectedColor = CloneBrush(selBg);
-                ActiveCellBackground = CloneBrush(selBg);
-            }
-
-            var selFg = GetBrush("DataGrid.Row.Selection.Foreground");
-            if (selFg != null)
-            {
-                SelectedForegroundColor = CloneBrush(selFg);
-                ActiveCellForeground = CloneBrush(selFg);
-            }
-
-            var deselBg = GetBrush("DataGrid.Row.Selection.Inactive.Background");
-            if (deselBg != null) DeSelectedColor = CloneBrush(deselBg);
-
-            var deselFg = GetBrush("DataGrid.Row.Selection.Inactive.Foreground");
-            if (deselFg != null) DeSelectedForegroundColor = CloneBrush(deselFg);
-
-            var cellFg = GetBrush("DataGrid.Row.Foreground");
-            if (cellFg != null) CellForeground = CloneBrush(cellFg);
-
-            var bgBrush = GetBrush("EnvironmentWindowBackground");
-            if (bgBrush != null) Background = CloneBrush(bgBrush);
-
-            var fgBrush = GetBrush("DataGrid.Static.Foreground");
-            if (fgBrush != null) Foreground = CloneBrush(fgBrush);
-
-            var borderBrush = GetBrush("DataGrid.Static.Border");
-            if (borderBrush != null) BorderBrush = CloneBrush(borderBrush);
         }
 
         /// <summary>
@@ -2040,7 +1796,6 @@ namespace DatabaseControls
             }
 
             UpdateRowHeaders();
-            // NOTE: VB version only calls UpdateRowHeaders() - not UpdateGridLineColors or UpdateCellForegrounds
         }
 
         /// <summary>
@@ -3180,56 +2935,6 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Handles right-click on the GridPanel to show copy/paste context menu.
-        /// </summary>
-        private void GridPanel_RightMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            bool enableCopy = false;
-            if (AllCellsSelected)
-                enableCopy = true;
-            else if (_selectedCellIndices.Count > 0)
-                enableCopy = true;
-            else if (_selectedColumnIndices.Count > 0)
-                enableCopy = true;
-            else if (_selectedDataRowIndices.Count > 0)
-                enableCopy = true;
-
-            var gridMenu = new ContextMenu();
-            var gridMenuItem = new MenuItem
-            {
-                IsEnabled = enableCopy,
-                Header = "Copy",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/copy.png")) }
-            };
-            gridMenuItem.Click += (s, args) => Copy();
-            gridMenu.Items.Add(gridMenuItem);
-
-            gridMenuItem = new MenuItem
-            {
-                IsEnabled = enableCopy,
-                Header = "Copy with Headers",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/copy_w_headers.png")) }
-            };
-            gridMenuItem.Click += (s, args) => CopyWithHeaders();
-            gridMenu.Items.Add(gridMenuItem);
-
-            if (Editable)
-            {
-                gridMenuItem = new MenuItem
-                {
-                    Header = "Paste",
-                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/paste.png")) }
-                };
-                gridMenuItem.Click += (s, args) => Paste();
-                if (!Clipboard.ContainsText() || _selectedRowsOnly)
-                    gridMenuItem.IsEnabled = false;
-                gridMenu.Items.Add(gridMenuItem);
-            }
-            gridMenu.IsOpen = true;
-        }
-
-
-        /// <summary>
         /// Creates and displays the column context menu with sorting options.
         /// </summary>
         /// <param name="sender">The column header that was right-clicked.</param>
@@ -3848,36 +3553,6 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Copies selected data to clipboard without headers. Routes to CaptureSelectionToClipboard with error handling.
-        /// </summary>
-        private void Copy()
-        {
-            try
-            {
-                CaptureSelectionToClipboard(false);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Copies selected data to clipboard with headers. Routes to CaptureSelectionToClipboard with error handling.
-        /// </summary>
-        private void CopyWithHeaders()
-        {
-            try
-            {
-                CaptureSelectionToClipboard(true);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Pastes clipboard content into the table. Routes to PasteClipboard with error handling.
         /// </summary>
         private void Paste()
@@ -4262,26 +3937,6 @@ namespace DatabaseControls
         #endregion
 
         #region Helper Methods
-
-        /// <summary>
-        /// Clones a brush to create a new instance, which ensures proper WPF rendering.
-        /// This is necessary because DynamicResource-backed brushes set via direct XAML properties
-        /// need to be cloned before being assigned to child elements during scroll updates.
-        /// </summary>
-        /// <param name="brush">The brush to clone.</param>
-        /// <returns>A cloned brush, or the original if it cannot be cloned.</returns>
-        private static Brush CloneBrush(Brush brush)
-        {
-            if (brush is SolidColorBrush scb)
-                return new SolidColorBrush(scb.Color);
-            // For other brush types, try to clone or return original
-            if (brush != null && brush.CanFreeze)
-            {
-                var clone = brush.Clone();
-                return clone;
-            }
-            return brush;
-        }
 
         /// <summary>
         /// Sets the text of a visible cell in the GridPanel.
