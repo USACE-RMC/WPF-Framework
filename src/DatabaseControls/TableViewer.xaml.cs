@@ -264,6 +264,12 @@ namespace DatabaseControls
             nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnGridLinePropertyChanged));
 
         /// <summary>
+        /// Identifies the <see cref="CellForeground"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CellForegroundProperty = DependencyProperty.Register(
+            nameof(CellForeground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Black, OnCellForegroundChanged));
+
+        /// <summary>
         /// Identifies the <see cref="ColumnSelectable"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnSelectableProperty = DependencyProperty.Register(
@@ -580,6 +586,16 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Gets or sets the foreground brush used for cell text.
+        /// </summary>
+        /// <value>The brush used for cell text. Default is Brushes.Black.</value>
+        public Brush CellForeground
+        {
+            get => (Brush)GetValue(CellForegroundProperty);
+            set => SetValue(CellForegroundProperty, value);
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether entire columns can be selected.
         /// </summary>
         /// <value><c>true</c> to allow column selection; otherwise, <c>false</c>. Default is <c>true</c>.</value>
@@ -775,6 +791,34 @@ namespace DatabaseControls
                         line.Stroke = RowLineColor;
                         line.StrokeThickness = RowLineThickness;
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles changes to the CellForeground property.
+        /// Updates the foreground color of all cells when the theme changes.
+        /// </summary>
+        private static void OnCellForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
+            {
+                viewer.UpdateCellForegrounds();
+            }
+        }
+
+        /// <summary>
+        /// Updates the foreground color of all cells in the grid.
+        /// </summary>
+        private void UpdateCellForegrounds()
+        {
+            if (DataView == null) return;
+
+            foreach (var child in GridPanel.Children)
+            {
+                if (child is Cell cell)
+                {
+                    cell.Foreground = CellForeground;
                 }
             }
         }
@@ -978,6 +1022,8 @@ namespace DatabaseControls
             SetActiveCell();
             RefreshColumnWidths();
             UpdateRowHeaders();
+            UpdateGridLineColors();
+            UpdateCellForegrounds();
         }
 
         /// <summary>
@@ -1063,6 +1109,8 @@ namespace DatabaseControls
             }
 
             UpdateRowHeaders();
+            UpdateGridLineColors();
+            UpdateCellForegrounds();
             SetSelectedCells();
             if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
         }
@@ -1251,7 +1299,7 @@ namespace DatabaseControls
 
             for (int j = 0; j < DataView.ColumnNames.Count(); j++)
             {
-                var cell = new Cell { CellStyle = CellTextblockStyle };
+                var cell = new Cell { CellStyle = CellTextblockStyle, Foreground = CellForeground };
                 Grid.SetRow(cell, rowIndex);
                 Grid.SetColumn(cell, j);
                 GridPanel.Children.Add(cell);
@@ -1863,6 +1911,8 @@ namespace DatabaseControls
             }
 
             UpdateRowHeaders();
+            UpdateGridLineColors();
+            UpdateCellForegrounds();
         }
 
         /// <summary>

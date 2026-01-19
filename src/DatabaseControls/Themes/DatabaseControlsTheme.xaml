@@ -198,6 +198,8 @@
         <Setter Property="DeSelectedForegroundColor" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
         <Setter Property="ActiveCellBackground" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
         <Setter Property="ActiveCellForeground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+        <!-- Cell Foreground for dark theme support -->
+        <Setter Property="CellForeground" Value="{DynamicResource DataGrid.Row.Foreground}"/>
         <!-- Default Row Height -->
         <Setter Property="RowHeight" Value="22"/>
     </Style>
