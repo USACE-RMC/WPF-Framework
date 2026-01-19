@@ -34,6 +34,7 @@ using System.Windows;
 using System.Windows.Controls;
 using DatabaseManager;
 using Microsoft.Win32;
+using GenericControls;
 using Themes;
 
 namespace DatabaseControls.Demo
