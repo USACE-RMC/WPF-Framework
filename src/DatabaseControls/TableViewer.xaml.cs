@@ -781,14 +781,14 @@ namespace DatabaseControls
                 {
                     if (i < columnLineCount)
                     {
-                        // Column lines (vertical)
-                        line.Stroke = ColumnLineColor;
+                        // Column lines (vertical) - clone brush for proper rendering
+                        line.Stroke = CloneBrush(ColumnLineColor);
                         line.StrokeThickness = ColumnLineThickness;
                     }
                     else
                     {
-                        // Row lines (horizontal)
-                        line.Stroke = RowLineColor;
+                        // Row lines (horizontal) - clone brush for proper rendering
+                        line.Stroke = CloneBrush(RowLineColor);
                         line.StrokeThickness = RowLineThickness;
                     }
                 }
@@ -1293,8 +1293,9 @@ namespace DatabaseControls
             RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            // DIAGNOSTIC: Use completely hardcoded brushes to bypass property system entirely
-            var fillColor = (rowIndex % 2 == 0) ? Brushes.White : Brushes.LightBlue;
+            // Create row background with theme colors (clone brush to ensure proper rendering)
+            var sourceBrush = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor;
+            var fillColor = CloneBrush(sourceBrush);
             var rect = new Rectangle { Stroke = Brushes.Transparent, StrokeThickness = 0, Fill = fillColor };
             Grid.SetRow(rect, rowIndex);
             RowColorGrid.Children.Add(rect);
@@ -1311,10 +1312,10 @@ namespace DatabaseControls
                 GridPanel.Children.Add(cell);
             }
 
-            // DIAGNOSTIC: Use hardcoded line color
+            // Create row grid line with theme color (clone brush to ensure proper rendering)
             var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
-            var lineStroke = Brushes.LightGray;
+            var lineStroke = CloneBrush(RowLineColor);
             var rowLine = new Line
             {
                 SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
@@ -1390,11 +1391,11 @@ namespace DatabaseControls
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                // DIAGNOSTIC: Use completely hardcoded brushes to bypass property system entirely
+                // Update row background colors (clone brush to ensure proper rendering)
                 if (i < RowColorGrid.Children.Count)
                 {
                     var rect = (Rectangle)RowColorGrid.Children[i];
-                    rect.Fill = alternate ? Brushes.LightBlue : Brushes.White;
+                    rect.Fill = CloneBrush(alternate ? AlternateRowColor : RowColor);
                 }
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
@@ -4145,6 +4146,26 @@ namespace DatabaseControls
         #endregion
 
         #region Helper Methods
+
+        /// <summary>
+        /// Clones a brush to create a new instance, which ensures proper WPF rendering.
+        /// This is necessary because DynamicResource-backed brushes set via direct XAML properties
+        /// need to be cloned before being assigned to child elements during scroll updates.
+        /// </summary>
+        /// <param name="brush">The brush to clone.</param>
+        /// <returns>A cloned brush, or the original if it cannot be cloned.</returns>
+        private static Brush CloneBrush(Brush brush)
+        {
+            if (brush is SolidColorBrush scb)
+                return new SolidColorBrush(scb.Color);
+            // For other brush types, try to clone or return original
+            if (brush != null && brush.CanFreeze)
+            {
+                var clone = brush.Clone();
+                return clone;
+            }
+            return brush;
+        }
 
         /// <summary>
         /// Sets the text of a visible cell in the GridPanel.

@@ -127,7 +127,21 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 CellSelectable="True"
                 HasFieldCalculator="True"
                 ShowRowHeaders="True"
-                AutoFitColumns="True"/>
+                AutoFitColumns="True"
+                Background="{DynamicResource EnvironmentWindowBackground}"
+                Foreground="{DynamicResource DataGrid.Static.Foreground}"
+                BorderBrush="{DynamicResource DataGrid.Static.Border}"
+                RowColor="{DynamicResource DataGrid.Row.Background}"
+                AlternateRowColor="{DynamicResource DataGrid.Row.Alternating.Background}"
+                RowLineColor="{DynamicResource DataGrid.GridLines}"
+                ColumnLineColor="{DynamicResource DataGrid.GridLines}"
+                SelectedColor="{DynamicResource DataGrid.Row.Selection.Background}"
+                SelectedForegroundColor="{DynamicResource DataGrid.Row.Selection.Foreground}"
+                DeSelectedColor="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"
+                DeSelectedForegroundColor="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"
+                ActiveCellBackground="{DynamicResource DataGrid.Row.Selection.Background}"
+                ActiveCellForeground="{DynamicResource DataGrid.Row.Selection.Foreground}"
+                CellForeground="{DynamicResource DataGrid.Row.Foreground}"/>
         </Grid>
 
         <!-- Status Bar -->
