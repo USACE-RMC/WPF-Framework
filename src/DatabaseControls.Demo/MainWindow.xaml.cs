@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -29,10 +29,12 @@
 */
 
 using System.IO;
+using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Controls;
 using DatabaseManager;
 using Microsoft.Win32;
+using Themes;
 
 namespace DatabaseControls.Demo
 {
@@ -41,16 +43,22 @@ namespace DatabaseControls.Demo
     /// Provides functionality to open, view, and export database files.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This window demonstrates the usage of the <see cref="DatabaseControls.TableViewer"/> control
     /// for viewing and editing database tables from various file formats including:
+    /// </para>
     /// <list type="bullet">
     /// <item><description>DBF (dBASE) files</description></item>
     /// <item><description>MDB (Microsoft Access) files</description></item>
     /// <item><description>SQLite database files</description></item>
     /// <item><description>CSV (Comma-Separated Values) files</description></item>
     /// </list>
+    /// <para>
+    /// The application supports runtime theme switching between Light, Blue, and Dark themes.
+    /// </para>
     /// </remarks>
-    public partial class MainWindow : Window
+    [SupportedOSPlatform("windows")]
+    public partial class MainWindow : MetroWindow
     {
         #region Fields
 
@@ -73,17 +81,33 @@ namespace DatabaseControls.Demo
 
         #endregion
 
-        #region Event Handlers
+        #region Theme Handling
 
         /// <summary>
-        /// Handles the Loaded event of the main window.
+        /// Handles theme radio button selection changes.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        /// <param name="sender">The radio button that was checked.</param>
+        /// <param name="e">Event arguments.</param>
+        private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
         {
-            // Window initialization complete
+            if (sender is RadioButton radioButton)
+            {
+                Theme theme = Theme.Light;
+
+                if (radioButton == LightThemeRadio)
+                    theme = Theme.Light;
+                else if (radioButton == BlueThemeRadio)
+                    theme = Theme.Blue;
+                else if (radioButton == DarkThemeRadio)
+                    theme = Theme.Dark;
+
+                ThemeService.Instance.SetTheme(theme);
+            }
         }
+
+        #endregion
+
+        #region Event Handlers
 
         /// <summary>
         /// Handles the Click event of the Select Database button.
@@ -117,7 +141,6 @@ namespace DatabaseControls.Demo
             {
                 case ".mdb":
                     MessageBox.Show("MDB file support is not available in this .NET version.");
-                    //LoadMdbFile(inputFile);
                     break;
 
                 case ".dbf":
@@ -160,6 +183,8 @@ namespace DatabaseControls.Demo
             string selectedTable = (string)TableComboBox.SelectedValue;
             DataTableView tableView = _databaseManager.GetTableManager(selectedTable);
             TestViewer.DataView = tableView;
+
+            UpdateStatusBar();
         }
 
         /// <summary>
@@ -211,6 +236,8 @@ namespace DatabaseControls.Demo
                         TestViewer.DataView.ExportToSqlite(outputPath, TestViewer.DataView.TableName);
                         break;
                 }
+
+                RowCountText.Text = $"Exported to: {outputPath}";
             }
         }
 
@@ -218,29 +245,24 @@ namespace DatabaseControls.Demo
 
         #region Private Methods
 
-        /* This will not work in .Net 9.0 because the necessary OleDb drivers are not available.
-         * Consider using a third-party library for MDB access if needed.
-        */
-
         /// <summary>
-        /// Loads a Microsoft Access database file (.mdb) and populates the table combo box.
+        /// Updates the status bar with the current row count.
         /// </summary>
-        /// <param name="filePath">The path to the MDB file.</param>
-        //private void LoadMdbFile(string filePath)
-        //{
-        //    var tableReader = new MdbReader(filePath);
-
-        //    TableComboBox.IsEnabled = true;
-        //    TableComboBox.Items.Clear();
-
-        //    string[] tableNames = tableReader.GetTableNames();
-        //    foreach (string tableName in tableNames)
-        //    {
-        //        TableComboBox.Items.Add(tableName);
-        //    }
-
-        //    _databaseManager = tableReader;
-        //}
+        private void UpdateStatusBar()
+        {
+            if (TestViewer.DataView != null)
+            {
+                int rowCount = TestViewer.DataView.RowCount;
+                int colCount = TestViewer.DataView.ColumnCount;
+                RowCountText.Text = $"Rows: {rowCount:N0} | Columns: {colCount:N0}";
+                StatusText.Text = $"Loaded: {TestViewer.DataView.TableName}";
+            }
+            else
+            {
+                RowCountText.Text = "Ready";
+                StatusText.Text = "Select a database file to begin";
+            }
+        }
 
         /// <summary>
         /// Loads a dBASE database file (.dbf) directly into the viewer.
@@ -274,6 +296,11 @@ namespace DatabaseControls.Demo
             }
 
             _databaseManager = tableReader;
+
+            if (tableNames.Length > 0)
+            {
+                StatusText.Text = $"Loaded: {Path.GetFileName(filePath)} ({tableNames.Length} tables)";
+            }
         }
 
         /// <summary>

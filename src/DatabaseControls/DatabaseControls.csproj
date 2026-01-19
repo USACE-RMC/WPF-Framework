@@ -15,6 +15,12 @@
     <Page Update="Resources\TableViewerResources.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="Resources\IconDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Themes\DatabaseControlsTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>
