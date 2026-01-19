@@ -1293,10 +1293,8 @@ namespace DatabaseControls
             RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            // Create row background rectangle with theme-aware colors
-            // Clone the brush to detach from DynamicResource binding (fixes scroll render issue)
-            var sourceBrush = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor;
-            var fillColor = (sourceBrush is SolidColorBrush scb) ? new SolidColorBrush(scb.Color) : sourceBrush;
+            // DIAGNOSTIC: Use completely hardcoded brushes to bypass property system entirely
+            var fillColor = (rowIndex % 2 == 0) ? Brushes.White : Brushes.LightBlue;
             var rect = new Rectangle { Stroke = Brushes.Transparent, StrokeThickness = 0, Fill = fillColor };
             Grid.SetRow(rect, rowIndex);
             RowColorGrid.Children.Add(rect);
@@ -1313,11 +1311,10 @@ namespace DatabaseControls
                 GridPanel.Children.Add(cell);
             }
 
-            // Create row grid line with theme-aware color
-            // Clone the brush to detach from DynamicResource binding
+            // DIAGNOSTIC: Use hardcoded line color
             var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
-            var lineStroke = (RowLineColor is SolidColorBrush slb) ? new SolidColorBrush(slb.Color) : RowLineColor;
+            var lineStroke = Brushes.LightGray;
             var rowLine = new Line
             {
                 SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
@@ -1393,13 +1390,11 @@ namespace DatabaseControls
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                // Update row background colors using theme-aware properties
-                // Clone the brush to detach from DynamicResource binding (fixes scroll render issue)
+                // DIAGNOSTIC: Use completely hardcoded brushes to bypass property system entirely
                 if (i < RowColorGrid.Children.Count)
                 {
                     var rect = (Rectangle)RowColorGrid.Children[i];
-                    var sourceBrush = alternate ? AlternateRowColor : RowColor;
-                    rect.Fill = (sourceBrush is SolidColorBrush scb) ? new SolidColorBrush(scb.Color) : sourceBrush;
+                    rect.Fill = alternate ? Brushes.LightBlue : Brushes.White;
                 }
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
