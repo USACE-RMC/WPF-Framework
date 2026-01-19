@@ -171,6 +171,7 @@
     <!-- TABLEVIEWER MAIN STYLE                                                           -->
     <!-- =============================================================================== -->
 
+    <!-- DIAGNOSTIC: Style with NO DynamicResource to test if that's the scroll issue -->
     <Style x:Key="TableViewerStyle" TargetType="{x:Type local:TableViewer}">
         <!-- Header Styles -->
         <Setter Property="ColumnHeaderTextblockStyle" Value="{StaticResource ColumnHeaderTextStyle}"/>
@@ -178,28 +179,28 @@
         <Setter Property="RowHeaderTextblockStyle" Value="{StaticResource RowHeaderTextStyle}"/>
         <Setter Property="RowHeaderBorderStyle" Value="{StaticResource RowHeaderBorderStyle}"/>
         <Setter Property="CellTextblockStyle" Value="{StaticResource CellTextStyle}"/>
-        <!-- Colors using DynamicResource -->
-        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
-        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
+        <!-- Fixed colors (no DynamicResource) for testing -->
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#FFABADB3"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <!-- Row Colors -->
-        <Setter Property="RowColor" Value="{DynamicResource DataGrid.Row.Background}"/>
-        <Setter Property="AlternateRowColor" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
-        <!-- Grid Line Colors -->
-        <Setter Property="RowLineColor" Value="{DynamicResource DataGrid.GridLines}"/>
-        <Setter Property="ColumnLineColor" Value="{DynamicResource DataGrid.GridLines}"/>
+        <!-- Row Colors - fixed -->
+        <Setter Property="RowColor" Value="White"/>
+        <Setter Property="AlternateRowColor" Value="#FFF3F9F7"/>
+        <!-- Grid Line Colors - fixed -->
+        <Setter Property="RowLineColor" Value="#FF353B7A"/>
+        <Setter Property="ColumnLineColor" Value="#FF353B7A"/>
         <Setter Property="RowLineThickness" Value="1"/>
         <Setter Property="ColumnLineThickness" Value="1"/>
-        <!-- Selection Colors -->
-        <Setter Property="SelectedColor" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
-        <Setter Property="SelectedForegroundColor" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
-        <Setter Property="DeSelectedColor" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
-        <Setter Property="DeSelectedForegroundColor" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
-        <Setter Property="ActiveCellBackground" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
-        <Setter Property="ActiveCellForeground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
-        <!-- Cell Foreground for dark theme support -->
-        <Setter Property="CellForeground" Value="{DynamicResource DataGrid.Row.Foreground}"/>
+        <!-- Selection Colors - fixed -->
+        <Setter Property="SelectedColor" Value="#FF0078D7"/>
+        <Setter Property="SelectedForegroundColor" Value="White"/>
+        <Setter Property="DeSelectedColor" Value="#FFCCCEDB"/>
+        <Setter Property="DeSelectedForegroundColor" Value="Black"/>
+        <Setter Property="ActiveCellBackground" Value="#FF0078D7"/>
+        <Setter Property="ActiveCellForeground" Value="White"/>
+        <!-- Cell Foreground - fixed -->
+        <Setter Property="CellForeground" Value="Black"/>
         <!-- Default Row Height -->
         <Setter Property="RowHeight" Value="22"/>
     </Style>
