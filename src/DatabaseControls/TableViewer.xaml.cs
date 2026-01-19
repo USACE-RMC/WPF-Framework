@@ -1919,8 +1919,7 @@ namespace DatabaseControls
             }
 
             UpdateRowHeaders();
-            UpdateGridLineColors();
-            UpdateCellForegrounds();
+            // NOTE: VB version only calls UpdateRowHeaders() - not UpdateGridLineColors or UpdateCellForegrounds
         }
 
         /// <summary>
