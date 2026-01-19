@@ -1005,7 +1005,7 @@ namespace DatabaseControls
                     ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(false);
             }
 
-            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
@@ -1050,6 +1050,9 @@ namespace DatabaseControls
                 LoadRows();
                 SetSelectedCells();
                 UpdateRowHeaders();
+                UpdateGridLineColors();
+                UpdateCellForegrounds();
+                UpdateLayout();
             }
             RefreshColumnWidths();
         }
@@ -1111,6 +1114,7 @@ namespace DatabaseControls
             UpdateRowHeaders();
             UpdateGridLineColors();
             UpdateCellForegrounds();
+            UpdateLayout();
             SetSelectedCells();
             if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
         }
@@ -1142,7 +1146,7 @@ namespace DatabaseControls
                     ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).AddSorter(false);
             }
 
-            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
@@ -1305,7 +1309,7 @@ namespace DatabaseControls
                 GridPanel.Children.Add(cell);
             }
 
-            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
+            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
             var rowLine = new Line
             {
@@ -1913,6 +1917,7 @@ namespace DatabaseControls
             UpdateRowHeaders();
             UpdateGridLineColors();
             UpdateCellForegrounds();
+            UpdateLayout();
         }
 
         /// <summary>
