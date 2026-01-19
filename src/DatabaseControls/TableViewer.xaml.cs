@@ -43,6 +43,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DatabaseManager;
 using Microsoft.Win32;
+using Themes;
 
 namespace DatabaseControls
 {
@@ -1816,6 +1817,11 @@ namespace DatabaseControls
         {
             bool wasFalse = !_isLoaded;
             _isLoaded = true;
+
+            // Apply theme resources and subscribe to theme changes
+            ApplyThemeResources();
+            ThemeService.Instance.ThemeChanged += OnThemeChanged;
+
             if (wasFalse) RefreshView();
         }
 
@@ -1824,6 +1830,9 @@ namespace DatabaseControls
         /// </summary>
         private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
         {
+            // Unsubscribe from theme changes
+            ThemeService.Instance.ThemeChanged -= OnThemeChanged;
+
             if (DataView != null)
             {
                 DataView.RowsAdded -= TableViewRowsAdded;
@@ -1831,6 +1840,77 @@ namespace DatabaseControls
                 DataView.ColumnsAdded -= TableViewColumnsAdded;
                 DataView.ColumnsDeleted -= TableViewColumnsDeleted;
             }
+        }
+
+        /// <summary>
+        /// Handles theme changes by re-applying theme resources and refreshing the view.
+        /// </summary>
+        private void OnThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            // Apply new theme resources
+            ApplyThemeResources();
+
+            // Refresh the view to apply new colors
+            if (_isLoaded && DataView != null)
+            {
+                RefreshView();
+            }
+        }
+
+        /// <summary>
+        /// Applies theme resources to the control by reading colors from the application resource dictionary.
+        /// This approach avoids using Style setters which cause scroll rendering issues.
+        /// </summary>
+        private void ApplyThemeResources()
+        {
+            // Helper to get a brush resource, returning null if not found
+            Brush? GetBrush(string key) => TryFindResource(key) as Brush;
+
+            // Apply colors from theme resources (clone to avoid DynamicResource issues)
+            var rowBg = GetBrush("DataGrid.Row.Background");
+            if (rowBg != null) RowColor = CloneBrush(rowBg);
+
+            var altRowBg = GetBrush("DataGrid.Row.Alternating.Background");
+            if (altRowBg != null) AlternateRowColor = CloneBrush(altRowBg);
+
+            var gridLines = GetBrush("DataGrid.GridLines");
+            if (gridLines != null)
+            {
+                RowLineColor = CloneBrush(gridLines);
+                ColumnLineColor = CloneBrush(gridLines);
+            }
+
+            var selBg = GetBrush("DataGrid.Row.Selection.Background");
+            if (selBg != null)
+            {
+                SelectedColor = CloneBrush(selBg);
+                ActiveCellBackground = CloneBrush(selBg);
+            }
+
+            var selFg = GetBrush("DataGrid.Row.Selection.Foreground");
+            if (selFg != null)
+            {
+                SelectedForegroundColor = CloneBrush(selFg);
+                ActiveCellForeground = CloneBrush(selFg);
+            }
+
+            var deselBg = GetBrush("DataGrid.Row.Selection.Inactive.Background");
+            if (deselBg != null) DeSelectedColor = CloneBrush(deselBg);
+
+            var deselFg = GetBrush("DataGrid.Row.Selection.Inactive.Foreground");
+            if (deselFg != null) DeSelectedForegroundColor = CloneBrush(deselFg);
+
+            var cellFg = GetBrush("DataGrid.Row.Foreground");
+            if (cellFg != null) CellForeground = CloneBrush(cellFg);
+
+            var bgBrush = GetBrush("EnvironmentWindowBackground");
+            if (bgBrush != null) Background = CloneBrush(bgBrush);
+
+            var fgBrush = GetBrush("DataGrid.Static.Foreground");
+            if (fgBrush != null) Foreground = CloneBrush(fgBrush);
+
+            var borderBrush = GetBrush("DataGrid.Static.Border");
+            if (borderBrush != null) BorderBrush = CloneBrush(borderBrush);
         }
 
         /// <summary>
