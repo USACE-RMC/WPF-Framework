@@ -2401,14 +2401,14 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void CopyButton_Click(object sender, RoutedEventArgs e) => Copy();
+        private void CopyButton_Click(object sender, RoutedEventArgs e) => CaptureSelectionToClipboard(false);
 
         /// <summary>
         /// Handles the Copy With Headers button click to copy selected cells with column headers.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e) => Copy(true);
+        private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e) => CaptureSelectionToClipboard(true);
 
         /// <summary>
         /// Handles the Paste button click to paste clipboard content to selected cells.
@@ -3131,38 +3131,305 @@ namespace DatabaseControls
         #region Clipboard
 
         /// <summary>
-        /// Copies selected cells to the clipboard in tab-separated format.
+        /// Main dispatcher for copy operations. Routes to specialized copy method based on selection type.
         /// </summary>
         /// <param name="includeHeaders">If true, includes column headers as the first row.</param>
-        private void Copy(bool includeHeaders = false)
+        private void CaptureSelectionToClipboard(bool includeHeaders)
         {
-            if (DataView == null) return;
-            var sb = new System.Text.StringBuilder();
+            if (!IsSelectionUniform())
+                throw new Exception("Selection must be uniform to copy.");
 
-            if (includeHeaders)
-            {
-                for (int j = 0; j < DataView.ColumnNames.Count(); j++)
-                {
-                    sb.Append(DataView.ColumnNames[j]);
-                    if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
-                }
-                sb.AppendLine();
-            }
+            Clipboard.Clear();
 
             if (AllCellsSelected)
             {
-                for (int i = 0; i < DataView.NumberOfRows; i++)
-                {
-                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
-                    {
-                        sb.Append(DataView.GetCell(j, i)?.ToString() ?? "");
-                        if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
-                    }
-                    sb.AppendLine();
-                }
+                CopyAllToClipboard(includeHeaders);
+            }
+            else if (_selectedDataRowIndices.Count > 0)
+            {
+                CopySelectedRowsToClipboard(includeHeaders);
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                CopySelectedColumnsToClipboard(includeHeaders);
+            }
+            else if (_selectedCellIndices.Count > 0)
+            {
+                CopySelectedCellsToClipboard(includeHeaders);
+            }
+        }
+
+        /// <summary>
+        /// Copies all table data to clipboard using GetRow pattern.
+        /// </summary>
+        private void CopyAllToClipboard(bool includeHeaders)
+        {
+            if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
+            {
+                var msgString = $"Operation will copy {DataView.NumberOfRows * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
             }
 
-            Clipboard.SetText(sb.ToString());
+            var boardText = new System.Text.StringBuilder();
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (includeHeaders)
+                {
+                    boardText.Append(DataView.ColumnNames[0]);
+                    for (int i = 1; i < DataView.ColumnNames.Count(); i++)
+                    {
+                        boardText.Append('\t' + DataView.ColumnNames[i]);
+                    }
+                    boardText.Append('\n');
+                }
+
+                object[] readerRow;
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    readerRow = DataView.GetRow(_rowId![i]);
+                    boardText.Append(readerRow[0].ToString());
+                    for (int j = 1; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        boardText.Append('\t' + readerRow[j].ToString());
+                    }
+                    if (i < DataView.NumberOfRows - 1) boardText.Append('\n');
+                }
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetText(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Copies selected columns to clipboard using GetColumn pattern.
+        /// </summary>
+        private void CopySelectedColumnsToClipboard(bool includeHeaders)
+        {
+            if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
+            {
+                var msgString = $"Operation will copy {_selectedColumnIndices.Count * DataView.NumberOfRows} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+
+            try
+            {
+                var columnData = new List<object[]>();
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                for (int i = 0; i < _selectedColumnIndices.Count; i++)
+                {
+                    if (includeHeaders) boardText.Append(DataView.ColumnNames[_selectedColumnIndices[i]] + '\t');
+                    columnData.Add(DataView.GetColumn(DataView.ColumnNames[_selectedColumnIndices[i]]));
+                }
+                if (includeHeaders) boardText[boardText.Length - 1] = '\n';
+
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    boardText.Append(columnData[0][_rowId![i]].ToString());
+                    for (int j = 1; j < columnData.Count; j++)
+                    {
+                        boardText.Append('\t' + columnData[j][_rowId![i]].ToString());
+                    }
+                    boardText.Append('\n');
+                }
+                boardText.Remove(boardText.Length - 1, 1);
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetText(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Copies selected rows to clipboard using GetRow pattern.
+        /// </summary>
+        private void CopySelectedRowsToClipboard(bool includeHeaders)
+        {
+            if (_selectedDataRowIndices.Count * DataView.ColumnNames.Count() > 50000)
+            {
+                var msgString = $"Operation will copy {_selectedDataRowIndices.Count * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+            object[]? readerRow;
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (includeHeaders)
+                {
+                    boardText.Append(DataView.ColumnNames[0]);
+                    for (int i = 1; i < DataView.ColumnNames.Count(); i++)
+                    {
+                        boardText.Append('\t' + DataView.ColumnNames[i]);
+                    }
+                    boardText.Append('\n');
+                }
+
+                if (_columnSortOrder != SortOrder.None)
+                {
+                    foreach (var r in GetSelectedRowVirtualRowIndices())
+                    {
+                        readerRow = DataView.GetRow(r.Value);
+                        boardText.Append(readerRow[0].ToString());
+                        for (int j = 1; j < DataView.ColumnNames.Count(); j++)
+                        {
+                            boardText.Append('\t' + readerRow[j].ToString());
+                        }
+                        boardText.Append('\n');
+                    }
+                    boardText.Remove(boardText.Length - 1, 1);
+                }
+                else
+                {
+                    for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+                    {
+                        readerRow = DataView.GetRow(_selectedDataRowIndices[i]);
+                        boardText.Append(readerRow[0].ToString());
+                        for (int j = 1; j < DataView.ColumnNames.Count(); j++)
+                        {
+                            boardText.Append('\t' + readerRow[j].ToString());
+                        }
+                        boardText.Append('\n');
+                    }
+                    boardText.Remove(boardText.Length - 1, 1);
+                }
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetText(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Copies selected cells to clipboard using GetRow pattern with visual ordering.
+        /// </summary>
+        private void CopySelectedCellsToClipboard(bool includeHeaders)
+        {
+            if (_selectedCellIndices.Count > 50000)
+            {
+                var msgString = $"Operation will copy {_selectedCellIndices.Count} cell values to the clipboard.  It can take a long time to copy this much data, are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                var keysInVisualOrder = new SortedDictionary<int, int>();
+                foreach (int dataRowIndex in _selectedCellIndices.Keys)
+                {
+                    keysInVisualOrder.Add(_rowOffset![dataRowIndex], dataRowIndex);
+                }
+
+                if (includeHeaders)
+                {
+                    foreach (int column in _selectedCellIndices[_selectedCellIndices.Keys.First()])
+                    {
+                        boardText.Append(DataView.ColumnNames[column] + '\t');
+                    }
+                    boardText[boardText.Length - 1] = '\n';
+                }
+
+                object[] row;
+                SortedSet<int> rowCellEdits;
+                foreach (int dataRowIndex in keysInVisualOrder.Values)
+                {
+                    rowCellEdits = _selectedCellIndices[dataRowIndex];
+                    row = DataView.GetRow(dataRowIndex);
+
+                    foreach (int column in rowCellEdits)
+                    {
+                        boardText.Append(row[column].ToString() + '\t');
+                    }
+                    boardText[boardText.Length - 1] = '\n';
+                }
+                boardText.Remove(boardText.Length - 1, 1);
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetDataObject(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Checks if the current selection is uniform (not mixing different selection types).
+        /// </summary>
+        private bool IsSelectionUniform()
+        {
+            if (_selectedColumnIndices.Count > 0 && _selectedDataRowIndices.Count > 0) return false;
+
+            // All Cells Selected
+            if (AllCellsSelected) return true;
+
+            if (_selectedDataRowIndices.Count > 0)
+            {
+                // Check for non-uniform cell selection
+                if (_selectedCellIndices.Count > 0)
+                {
+                    foreach (var rowSelectedCells in _selectedCellIndices)
+                    {
+                        if (_selectedDataRowIndices.BinarySearch(rowSelectedCells.Key) < 0) return false;
+                    }
+                }
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                // Check for non-uniform cell selection
+                if (_selectedCellIndices.Count > 0)
+                {
+                    foreach (var rowSelectedCells in _selectedCellIndices)
+                    {
+                        foreach (int column in rowSelectedCells.Value)
+                        {
+                            if (_selectedColumnIndices.BinarySearch(column) < 0) return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Gets selected row indices sorted by virtual row position for proper visual ordering.
+        /// </summary>
+        private SortedDictionary<int, int> GetSelectedRowVirtualRowIndices()
+        {
+            var sortedRowsIndices = new SortedDictionary<int, int>();
+            for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+            {
+                sortedRowsIndices.Add(_rowOffset![_selectedDataRowIndices[i]], _selectedDataRowIndices[i]);
+            }
+            if (_columnSortOrder == SortOrder.Descending) sortedRowsIndices.Reverse();
+            return sortedRowsIndices;
         }
 
         /// <summary>
