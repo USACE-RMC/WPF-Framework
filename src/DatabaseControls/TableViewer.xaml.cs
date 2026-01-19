@@ -1706,6 +1706,20 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Handles the Unloaded event to clean up event handlers.
+        /// </summary>
+        private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (DataView != null)
+            {
+                DataView.RowsAdded -= TableViewRowsAdded;
+                DataView.RowsDeleted -= TableViewRowsDeleted;
+                DataView.ColumnsAdded -= TableViewColumnsAdded;
+                DataView.ColumnsDeleted -= TableViewColumnsDeleted;
+            }
+        }
+
+        /// <summary>
         /// Handles vertical scrollbar value changes to update visible content.
         /// Uses incremental scrolling optimization: copies cell text and only loads changed rows.
         /// </summary>
@@ -2933,6 +2947,56 @@ namespace DatabaseControls
             _mouseSelectionMode = SelectionMode.None;
             ((UIElement)sender).ReleaseMouseCapture();
         }
+
+        /// <summary>
+        /// Handles right-click on the GridPanel to show copy/paste context menu.
+        /// </summary>
+        private void GridPanel_RightMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            bool enableCopy = false;
+            if (AllCellsSelected)
+                enableCopy = true;
+            else if (_selectedCellIndices.Count > 0)
+                enableCopy = true;
+            else if (_selectedColumnIndices.Count > 0)
+                enableCopy = true;
+            else if (_selectedDataRowIndices.Count > 0)
+                enableCopy = true;
+
+            var gridMenu = new ContextMenu();
+            var gridMenuItem = new MenuItem
+            {
+                IsEnabled = enableCopy,
+                Header = "Copy",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/copy.png")) }
+            };
+            gridMenuItem.Click += (s, args) => Copy();
+            gridMenu.Items.Add(gridMenuItem);
+
+            gridMenuItem = new MenuItem
+            {
+                IsEnabled = enableCopy,
+                Header = "Copy with Headers",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/copy_w_headers.png")) }
+            };
+            gridMenuItem.Click += (s, args) => CopyWithHeaders();
+            gridMenu.Items.Add(gridMenuItem);
+
+            if (Editable)
+            {
+                gridMenuItem = new MenuItem
+                {
+                    Header = "Paste",
+                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/paste.png")) }
+                };
+                gridMenuItem.Click += (s, args) => Paste();
+                if (!Clipboard.ContainsText() || _selectedRowsOnly)
+                    gridMenuItem.IsEnabled = false;
+                gridMenu.Items.Add(gridMenuItem);
+            }
+            gridMenu.IsOpen = true;
+        }
+
 
         /// <summary>
         /// Creates and displays the column context menu with sorting options.

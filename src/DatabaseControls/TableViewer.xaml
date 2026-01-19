@@ -8,7 +8,8 @@
              UseLayoutRounding="False"
              d:DesignHeight="400" d:DesignWidth="600"
              x:Name="TableViewerControl"
-             Loaded="TableViewer_Loaded">
+             Loaded="TableViewer_Loaded"
+             Unloaded="TableViewer_Unloaded">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -358,7 +359,13 @@
                     </Grid.RowDefinitions>
                     <Grid x:Name="ColumnHeadersGrid" HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Row="0" MouseLeftButtonDown="ColumnsGrid_MouseLeftButtonDown" MouseMove="ColumnsGrid_MouseMove" MouseLeftButtonUp="ColumnsGrid_MouseLeftButtonUp"/>
                     <Grid x:Name="RowColorGrid" Grid.Row="1" HorizontalAlignment="Left" Width="{Binding ElementName=GridPanel, Path=ActualWidth}" VerticalAlignment="Top" Background="Transparent" Focusable="False" IsHitTestVisible="False"/>
-                    <Grid x:Name="GridPanel" Grid.Row="1" HorizontalAlignment="Left" Background="Transparent" MouseWheel="TestGridPanel_MouseWheel" MouseLeftButtonDown="GridPanel_MouseLeftButtonDown" MouseMove="GridPanel_MouseMove" MouseLeftButtonUp="GridPanel_MouseLeftButtonUp" VerticalAlignment="Top" Focusable="True"/>
+                    <Grid x:Name="GridPanel"  Grid.Row="1" HorizontalAlignment="Left" Background="Transparent" 
+                          MouseWheel="TestGridPanel_MouseWheel" 
+                          MouseLeftButtonDown="GridPanel_MouseLeftButtonDown" 
+                          MouseLeftButtonUp="GridPanel_MouseLeftButtonUp" 
+                          MouseRightButtonUp="GridPanel_RightMouseUp"
+                          MouseMove="GridPanel_MouseMove"                       
+                          VerticalAlignment="Top" Focusable="True"/>
                     <Canvas x:Name="GridLinesCanvas" Grid.Row="1" IsHitTestVisible="False" HorizontalAlignment="Left"/>
                 </Grid>
             </ScrollViewer>
