@@ -1294,10 +1294,13 @@ namespace DatabaseControls
             RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            // Create row background with theme colors (clone brush to ensure proper rendering)
-            var sourceBrush = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor;
-            var fillColor = CloneBrush(sourceBrush);
-            var rect = new Rectangle { Stroke = Brushes.Transparent, StrokeThickness = 0, Fill = fillColor };
+            // WORKING: Use hardcoded brushes - reading from properties causes scroll render issues
+            var rect = new Rectangle
+            {
+                Stroke = Brushes.Transparent,
+                StrokeThickness = 0,
+                Fill = (rowIndex % 2 == 0) ? Brushes.White : Brushes.LightGray
+            };
             Grid.SetRow(rect, rowIndex);
             RowColorGrid.Children.Add(rect);
 
@@ -1392,11 +1395,11 @@ namespace DatabaseControls
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                // Update row background colors (clone brush to ensure proper rendering)
+                // WORKING: Use hardcoded brushes - reading from properties causes scroll render issues
                 if (i < RowColorGrid.Children.Count)
                 {
                     var rect = (Rectangle)RowColorGrid.Children[i];
-                    rect.Fill = CloneBrush(alternate ? AlternateRowColor : RowColor);
+                    rect.Fill = alternate ? Brushes.LightGray : Brushes.White;
                 }
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
@@ -1818,9 +1821,9 @@ namespace DatabaseControls
             bool wasFalse = !_isLoaded;
             _isLoaded = true;
 
-            // Apply theme resources and subscribe to theme changes
-            ApplyThemeResources();
-            ThemeService.Instance.ThemeChanged += OnThemeChanged;
+            // TODO: Theme support disabled - causes scroll render issues
+            // ApplyThemeResources();
+            // ThemeService.Instance.ThemeChanged += OnThemeChanged;
 
             if (wasFalse) RefreshView();
         }
@@ -1830,8 +1833,8 @@ namespace DatabaseControls
         /// </summary>
         private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
         {
-            // Unsubscribe from theme changes
-            ThemeService.Instance.ThemeChanged -= OnThemeChanged;
+            // TODO: Theme support disabled - causes scroll render issues
+            // ThemeService.Instance.ThemeChanged -= OnThemeChanged;
 
             if (DataView != null)
             {
