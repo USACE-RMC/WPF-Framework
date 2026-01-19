@@ -1294,7 +1294,9 @@ namespace DatabaseControls
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
             // Create row background rectangle with theme-aware colors
-            var fillColor = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor;
+            // Clone the brush to detach from DynamicResource binding (fixes scroll render issue)
+            var sourceBrush = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor;
+            var fillColor = (sourceBrush is SolidColorBrush scb) ? new SolidColorBrush(scb.Color) : sourceBrush;
             var rect = new Rectangle { Stroke = Brushes.Transparent, StrokeThickness = 0, Fill = fillColor };
             Grid.SetRow(rect, rowIndex);
             RowColorGrid.Children.Add(rect);
@@ -1312,12 +1314,14 @@ namespace DatabaseControls
             }
 
             // Create row grid line with theme-aware color
+            // Clone the brush to detach from DynamicResource binding
             var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
+            var lineStroke = (RowLineColor is SolidColorBrush slb) ? new SolidColorBrush(slb.Color) : RowLineColor;
             var rowLine = new Line
             {
                 SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                StrokeThickness = RowLineThickness, Stroke = lineStroke
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
@@ -1390,18 +1394,17 @@ namespace DatabaseControls
             for (int i = 0; i < _visibleRowCount; i++)
             {
                 // Update row background colors using theme-aware properties
+                // Clone the brush to detach from DynamicResource binding (fixes scroll render issue)
                 if (i < RowColorGrid.Children.Count)
                 {
                     var rect = (Rectangle)RowColorGrid.Children[i];
-                    rect.Fill = alternate ? AlternateRowColor : RowColor;
+                    var sourceBrush = alternate ? AlternateRowColor : RowColor;
+                    rect.Fill = (sourceBrush is SolidColorBrush scb) ? new SolidColorBrush(scb.Color) : sourceBrush;
                 }
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
                 alternate = !alternate;
             }
-
-            // Force visual refresh to ensure row colors render after scroll
-            RowColorGrid.InvalidateVisual();
         }
 
         /// <summary>
