@@ -1,7 +1,32 @@
 /*
- * Unit tests for Parameter in the NumericControls library.
- * Tests value changes and validation state.
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using NumericControls;
 using Xunit;
@@ -15,6 +40,9 @@ namespace NumericControls.Tests.Models
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Tests that the constructor correctly sets the Name property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsName()
         {
@@ -25,6 +53,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Mean", parameter.Name);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly sets the DisplayName property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsDisplayName()
         {
@@ -35,6 +66,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Mean (mu)", parameter.DisplayName);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly sets the Value property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsValue()
         {
@@ -45,6 +79,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(100.0, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that the constructor sets IsValid to true by default.
+        /// </summary>
         [Fact]
         public void Constructor_SetsIsValidToTrue()
         {
@@ -55,6 +92,9 @@ namespace NumericControls.Tests.Models
             Assert.True(parameter.IsValid);
         }
 
+        /// <summary>
+        /// Tests that the constructor sets ErrorMessage to null by default.
+        /// </summary>
         [Fact]
         public void Constructor_SetsErrorMessageToNull()
         {
@@ -65,6 +105,9 @@ namespace NumericControls.Tests.Models
             Assert.Null(parameter.ErrorMessage);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly handles a zero value.
+        /// </summary>
         [Fact]
         public void Constructor_WithZeroValue_SetsCorrectly()
         {
@@ -75,6 +118,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(0.0, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly handles a negative value.
+        /// </summary>
         [Fact]
         public void Constructor_WithNegativeValue_SetsCorrectly()
         {
@@ -85,6 +131,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(-50.0, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly handles NaN as a value.
+        /// </summary>
         [Fact]
         public void Constructor_WithNaN_SetsCorrectly()
         {
@@ -95,6 +144,9 @@ namespace NumericControls.Tests.Models
             Assert.True(double.IsNaN(parameter.Value));
         }
 
+        /// <summary>
+        /// Tests that the constructor correctly handles positive infinity as a value.
+        /// </summary>
         [Fact]
         public void Constructor_WithInfinity_SetsCorrectly()
         {
@@ -109,6 +161,9 @@ namespace NumericControls.Tests.Models
 
         #region Value Property Tests
 
+        /// <summary>
+        /// Tests that setting the Value property updates it correctly.
+        /// </summary>
         [Fact]
         public void Value_SetNewValue_UpdatesValue()
         {
@@ -122,6 +177,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(150.0, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that setting a new Value raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Value_SetNewValue_RaisesPropertyChanged()
         {
@@ -141,6 +199,9 @@ namespace NumericControls.Tests.Models
             Assert.True(propertyChangedRaised);
         }
 
+        /// <summary>
+        /// Tests that setting the same Value does not raise the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Value_SetSameValue_DoesNotRaisePropertyChanged()
         {
@@ -160,6 +221,9 @@ namespace NumericControls.Tests.Models
             Assert.False(propertyChangedRaised);
         }
 
+        /// <summary>
+        /// Tests that the Value property can be set to zero.
+        /// </summary>
         [Fact]
         public void Value_SetToZero_UpdatesCorrectly()
         {
@@ -173,6 +237,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(0.0, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that the Value property can be set to a negative value.
+        /// </summary>
         [Fact]
         public void Value_SetToNegative_UpdatesCorrectly()
         {
@@ -186,6 +253,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(-50.0, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that the Value property can be set to NaN.
+        /// </summary>
         [Fact]
         public void Value_SetToNaN_UpdatesCorrectly()
         {
@@ -199,6 +269,9 @@ namespace NumericControls.Tests.Models
             Assert.True(double.IsNaN(parameter.Value));
         }
 
+        /// <summary>
+        /// Tests that the Value property can be set to Double.MaxValue.
+        /// </summary>
         [Fact]
         public void Value_SetToMaxValue_UpdatesCorrectly()
         {
@@ -212,6 +285,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(double.MaxValue, parameter.Value);
         }
 
+        /// <summary>
+        /// Tests that the Value property can be set to Double.MinValue.
+        /// </summary>
         [Fact]
         public void Value_SetToMinValue_UpdatesCorrectly()
         {
@@ -229,6 +305,9 @@ namespace NumericControls.Tests.Models
 
         #region IsValid Property Tests
 
+        /// <summary>
+        /// Tests that setting IsValid to false updates the property correctly.
+        /// </summary>
         [Fact]
         public void IsValid_SetToFalse_UpdatesValue()
         {
@@ -242,6 +321,9 @@ namespace NumericControls.Tests.Models
             Assert.False(parameter.IsValid);
         }
 
+        /// <summary>
+        /// Tests that setting IsValid to false raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void IsValid_SetToFalse_RaisesPropertyChanged()
         {
@@ -261,6 +343,9 @@ namespace NumericControls.Tests.Models
             Assert.True(propertyChangedRaised);
         }
 
+        /// <summary>
+        /// Tests that setting IsValid to the same value does not raise PropertyChanged.
+        /// </summary>
         [Fact]
         public void IsValid_SetSameValue_DoesNotRaisePropertyChanged()
         {
@@ -280,6 +365,9 @@ namespace NumericControls.Tests.Models
             Assert.False(propertyChangedRaised);
         }
 
+        /// <summary>
+        /// Tests that IsValid can be set to true after being false.
+        /// </summary>
         [Fact]
         public void IsValid_SetToTrue_AfterFalse_UpdatesValue()
         {
@@ -298,6 +386,9 @@ namespace NumericControls.Tests.Models
 
         #region ErrorMessage Property Tests
 
+        /// <summary>
+        /// Tests that setting ErrorMessage updates the property correctly.
+        /// </summary>
         [Fact]
         public void ErrorMessage_SetMessage_UpdatesValue()
         {
@@ -312,6 +403,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(errorMessage, parameter.ErrorMessage);
         }
 
+        /// <summary>
+        /// Tests that setting ErrorMessage raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void ErrorMessage_SetMessage_RaisesPropertyChanged()
         {
@@ -331,6 +425,9 @@ namespace NumericControls.Tests.Models
             Assert.True(propertyChangedRaised);
         }
 
+        /// <summary>
+        /// Tests that setting the same ErrorMessage does not raise PropertyChanged.
+        /// </summary>
         [Fact]
         public void ErrorMessage_SetSameMessage_DoesNotRaisePropertyChanged()
         {
@@ -351,6 +448,9 @@ namespace NumericControls.Tests.Models
             Assert.False(propertyChangedRaised);
         }
 
+        /// <summary>
+        /// Tests that ErrorMessage can be set to null.
+        /// </summary>
         [Fact]
         public void ErrorMessage_SetToNull_UpdatesValue()
         {
@@ -365,6 +465,9 @@ namespace NumericControls.Tests.Models
             Assert.Null(parameter.ErrorMessage);
         }
 
+        /// <summary>
+        /// Tests that ErrorMessage can be set to an empty string.
+        /// </summary>
         [Fact]
         public void ErrorMessage_SetToEmptyString_UpdatesValue()
         {
@@ -383,6 +486,9 @@ namespace NumericControls.Tests.Models
 
         #region Combined Validation Tests
 
+        /// <summary>
+        /// Tests that setting invalid state updates both IsValid and ErrorMessage.
+        /// </summary>
         [Fact]
         public void SetInvalidState_UpdatesBothIsValidAndErrorMessage()
         {
@@ -398,6 +504,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Value must be greater than 0", parameter.ErrorMessage);
         }
 
+        /// <summary>
+        /// Tests that clearing invalid state resets both IsValid and ErrorMessage.
+        /// </summary>
         [Fact]
         public void ClearInvalidState_ResetsBothIsValidAndErrorMessage()
         {
@@ -419,6 +528,9 @@ namespace NumericControls.Tests.Models
 
         #region PropertyChanged Event Tests
 
+        /// <summary>
+        /// Tests that changing Value raises PropertyChanged event once.
+        /// </summary>
         [Fact]
         public void PropertyChanged_ValueChange_RaisesOnce()
         {
@@ -438,6 +550,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(1, changeCount);
         }
 
+        /// <summary>
+        /// Tests that multiple Value changes raise PropertyChanged multiple times.
+        /// </summary>
         [Fact]
         public void PropertyChanged_MultipleValueChanges_RaisesMultipleTimes()
         {
@@ -459,6 +574,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(3, changeCount);
         }
 
+        /// <summary>
+        /// Tests that changing Value without subscribers does not throw an exception.
+        /// </summary>
         [Fact]
         public void PropertyChanged_NoSubscriber_DoesNotThrow()
         {
@@ -474,6 +592,9 @@ namespace NumericControls.Tests.Models
 
         #region Immutable Properties Tests
 
+        /// <summary>
+        /// Tests that Name property is read-only and cannot be changed after construction.
+        /// </summary>
         [Fact]
         public void Name_IsReadOnly_CannotBeChanged()
         {
@@ -484,6 +605,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Mean", parameter.Name);
         }
 
+        /// <summary>
+        /// Tests that DisplayName property is read-only and cannot be changed after construction.
+        /// </summary>
         [Fact]
         public void DisplayName_IsReadOnly_CannotBeChanged()
         {
@@ -498,6 +622,9 @@ namespace NumericControls.Tests.Models
 
         #region Common Distribution Parameter Tests
 
+        /// <summary>
+        /// Tests creating a normal distribution mean parameter.
+        /// </summary>
         [Fact]
         public void NormalDistribution_MeanParameter()
         {
@@ -510,6 +637,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(0.0, meanParam.Value);
         }
 
+        /// <summary>
+        /// Tests creating a normal distribution standard deviation parameter.
+        /// </summary>
         [Fact]
         public void NormalDistribution_StdDevParameter()
         {
@@ -522,6 +652,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal(1.0, stdDevParam.Value);
         }
 
+        /// <summary>
+        /// Tests creating a uniform distribution minimum parameter.
+        /// </summary>
         [Fact]
         public void UniformDistribution_MinParameter()
         {
@@ -533,6 +666,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Minimum", minParam.DisplayName);
         }
 
+        /// <summary>
+        /// Tests creating a uniform distribution maximum parameter.
+        /// </summary>
         [Fact]
         public void UniformDistribution_MaxParameter()
         {
@@ -544,6 +680,9 @@ namespace NumericControls.Tests.Models
             Assert.Equal("Maximum", maxParam.DisplayName);
         }
 
+        /// <summary>
+        /// Tests creating a triangular distribution mode parameter.
+        /// </summary>
         [Fact]
         public void TriangularDistribution_ModeParameter()
         {

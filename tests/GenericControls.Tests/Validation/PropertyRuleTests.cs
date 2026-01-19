@@ -1,5 +1,31 @@
 /*
-* Unit tests for PropertyRule from GenericControls
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System.ComponentModel;
@@ -14,6 +40,9 @@ public class PropertyRuleTests
 {
     #region Constructor Tests
 
+    /// <summary>
+    /// Tests that PropertyRule constructor creates a rule with single rule entry.
+    /// </summary>
     [Fact]
     public void Constructor_CreatesRuleWithSingleRule()
     {
@@ -25,6 +54,9 @@ public class PropertyRuleTests
         Assert.Equal("Test error message", propertyRule.Rules[0].Message);
     }
 
+    /// <summary>
+    /// Tests that PropertyRule constructor initializes with default values.
+    /// </summary>
     [Fact]
     public void Constructor_InitializesWithDefaultValues()
     {
@@ -40,6 +72,9 @@ public class PropertyRuleTests
 
     #region ExecuteRules Tests - No Errors
 
+    /// <summary>
+    /// Tests that ExecuteRules sets HasError to false when no error conditions exist.
+    /// </summary>
     [Fact]
     public void ExecuteRules_NoErrorConditions_HasErrorIsFalse()
     {
@@ -54,6 +89,9 @@ public class PropertyRuleTests
         Assert.Equal("", propertyRule.ErrorMessage);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules sets HasError to false when all rules pass.
+    /// </summary>
     [Fact]
     public void ExecuteRules_AllRulesPass_HasErrorIsFalse()
     {
@@ -74,6 +112,9 @@ public class PropertyRuleTests
 
     #region ExecuteRules Tests - Single Error
 
+    /// <summary>
+    /// Tests that ExecuteRules sets HasError to true for single error condition.
+    /// </summary>
     [Fact]
     public void ExecuteRules_SingleErrorCondition_HasErrorIsTrue()
     {
@@ -88,6 +129,9 @@ public class PropertyRuleTests
         Assert.Equal("Error message", propertyRule.ErrorMessage);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules sets correct error message when first rule fails.
+    /// </summary>
     [Fact]
     public void ExecuteRules_FirstRuleFails_SetsCorrectErrorMessage()
     {
@@ -103,6 +147,9 @@ public class PropertyRuleTests
         Assert.Equal("First rule failed", propertyRule.ErrorMessage);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules sets correct error message when second rule fails.
+    /// </summary>
     [Fact]
     public void ExecuteRules_SecondRuleFails_SetsCorrectErrorMessage()
     {
@@ -123,6 +170,9 @@ public class PropertyRuleTests
 
     #region ExecuteRules Tests - Error Aggregation
 
+    /// <summary>
+    /// Tests that ExecuteRules aggregates multiple error conditions.
+    /// </summary>
     [Fact]
     public void ExecuteRules_MultipleErrorConditions_AggregatesErrors()
     {
@@ -139,6 +189,9 @@ public class PropertyRuleTests
         Assert.Contains("Error 2", propertyRule.ErrorMessage);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules separates multiple errors with newline.
+    /// </summary>
     [Fact]
     public void ExecuteRules_MultipleErrors_SeparatedByNewLine()
     {
@@ -158,6 +211,9 @@ public class PropertyRuleTests
         Assert.Equal("Error 3", lines[2]);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules aggregates only failing rules.
+    /// </summary>
     [Fact]
     public void ExecuteRules_MixedRuleResults_OnlyFailingRulesAggregated()
     {
@@ -182,6 +238,9 @@ public class PropertyRuleTests
 
     #region ExecuteRules Tests - Reset Behavior
 
+    /// <summary>
+    /// Tests that ExecuteRules resets error state after error.
+    /// </summary>
     [Fact]
     public void ExecuteRules_AfterError_ResetsErrorState()
     {
@@ -202,6 +261,9 @@ public class PropertyRuleTests
         Assert.Equal("", propertyRule.ErrorMessage);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules resets error message each time it is called.
+    /// </summary>
     [Fact]
     public void ExecuteRules_CalledMultipleTimes_ResetsErrorMessageEachTime()
     {
@@ -225,6 +287,9 @@ public class PropertyRuleTests
 
     #region ExecuteRules Tests - Exception Handling
 
+    /// <summary>
+    /// Tests that ExecuteRules sets HasError to true when rule throws exception.
+    /// </summary>
     [Fact]
     public void ExecuteRules_RuleThrowsException_SetsHasErrorTrue()
     {
@@ -238,6 +303,9 @@ public class PropertyRuleTests
         Assert.True(propertyRule.HasError);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules includes exception message in error message.
+    /// </summary>
     [Fact]
     public void ExecuteRules_RuleThrowsException_ErrorMessageContainsExceptionMessage()
     {
@@ -256,6 +324,9 @@ public class PropertyRuleTests
 
     #region AddRule Tests
 
+    /// <summary>
+    /// Tests that AddRule increases rule count.
+    /// </summary>
     [Fact]
     public void AddRule_AddsNewRule_IncreasesRuleCount()
     {
@@ -270,6 +341,9 @@ public class PropertyRuleTests
         Assert.Equal(2, propertyRule.Rules.Count);
     }
 
+    /// <summary>
+    /// Tests that AddRule adds multiple rules that are all executed.
+    /// </summary>
     [Fact]
     public void AddRule_MultipleRules_AllRulesExecuted()
     {
@@ -290,6 +364,9 @@ public class PropertyRuleTests
 
     #region PropertyChanged Tests
 
+    /// <summary>
+    /// Tests that HasError property change raises PropertyChanged event.
+    /// </summary>
     [Fact]
     public void HasError_Changed_RaisesPropertyChanged()
     {
@@ -311,6 +388,9 @@ public class PropertyRuleTests
         Assert.Contains(nameof(PropertyRule.ErrorMessage), changedPropertyNames);
     }
 
+    /// <summary>
+    /// Tests that ErrorMessage property change raises PropertyChanged event.
+    /// </summary>
     [Fact]
     public void ErrorMessage_Changed_RaisesPropertyChanged()
     {
@@ -331,6 +411,9 @@ public class PropertyRuleTests
         Assert.Contains(nameof(PropertyRule.ErrorMessage), propertyChangedEvents);
     }
 
+    /// <summary>
+    /// Tests that setting HasError to same value does not raise PropertyChanged event.
+    /// </summary>
     [Fact]
     public void HasError_SetToSameValue_DoesNotRaisePropertyChanged()
     {
@@ -352,6 +435,9 @@ public class PropertyRuleTests
         Assert.False(propertyChangedRaised);
     }
 
+    /// <summary>
+    /// Tests that setting ErrorMessage to same value does not raise PropertyChanged event.
+    /// </summary>
     [Fact]
     public void ErrorMessage_SetToSameValue_DoesNotRaisePropertyChanged()
     {
@@ -377,6 +463,9 @@ public class PropertyRuleTests
 
     #region Rule Class Tests
 
+    /// <summary>
+    /// Tests that Rule Expression property is set correctly.
+    /// </summary>
     [Fact]
     public void Rule_HasExpression_IsSetCorrectly()
     {
@@ -388,6 +477,9 @@ public class PropertyRuleTests
         Assert.False(propertyRule.Rules[0].Expression());
     }
 
+    /// <summary>
+    /// Tests that Rule Message property is set correctly.
+    /// </summary>
     [Fact]
     public void Rule_HasMessage_IsSetCorrectly()
     {
@@ -399,6 +491,9 @@ public class PropertyRuleTests
         Assert.Equal(message, propertyRule.Rules[0].Message);
     }
 
+    /// <summary>
+    /// Tests that Rule HasError property is initially false.
+    /// </summary>
     [Fact]
     public void Rule_HasError_InitiallyFalse()
     {
@@ -414,6 +509,9 @@ public class PropertyRuleTests
 
     #region Dynamic Rule Expression Tests
 
+    /// <summary>
+    /// Tests that ExecuteRules evaluates current state with dynamic expressions.
+    /// </summary>
     [Fact]
     public void ExecuteRules_WithDynamicExpression_EvaluatesCurrentState()
     {
@@ -436,6 +534,9 @@ public class PropertyRuleTests
         Assert.False(propertyRule.HasError);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules handles nullable comparisons correctly.
+    /// </summary>
     [Fact]
     public void ExecuteRules_WithNullableComparison_HandlesCorrectly()
     {
@@ -457,6 +558,9 @@ public class PropertyRuleTests
 
     #region Edge Cases
 
+    /// <summary>
+    /// Tests that ExecuteRules handles empty error message correctly.
+    /// </summary>
     [Fact]
     public void ExecuteRules_WithEmptyErrorMessage_HandlesCorrectly()
     {
@@ -471,6 +575,9 @@ public class PropertyRuleTests
         Assert.Equal("", propertyRule.ErrorMessage);
     }
 
+    /// <summary>
+    /// Tests that ExecuteRules handles very long error message correctly.
+    /// </summary>
     [Fact]
     public void ExecuteRules_WithVeryLongErrorMessage_HandlesCorrectly()
     {

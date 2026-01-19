@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -41,6 +41,11 @@ namespace DatabaseManager.Tests
     {
         #region IsNumericType Tests
 
+        /// <summary>
+        /// Verifies that IsNumericType returns true for all numeric types.
+        /// </summary>
+        /// <param name="type">The type to test.</param>
+        /// <param name="expected">The expected result.</param>
         [Theory]
         [InlineData(typeof(byte), true)]
         [InlineData(typeof(sbyte), true)]
@@ -59,6 +64,11 @@ namespace DatabaseManager.Tests
             Assert.Equal(expected, result);
         }
 
+        /// <summary>
+        /// Verifies that IsNumericType returns false for non-numeric types.
+        /// </summary>
+        /// <param name="type">The type to test.</param>
+        /// <param name="expected">The expected result.</param>
         [Theory]
         [InlineData(typeof(string), false)]
         [InlineData(typeof(bool), false)]
@@ -71,6 +81,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(expected, result);
         }
 
+        /// <summary>
+        /// Verifies that IsNumericType returns false when passed null.
+        /// </summary>
         [Fact]
         public void IsNumericType_WithNull_ReturnsFalse()
         {
@@ -78,6 +91,11 @@ namespace DatabaseManager.Tests
             Assert.False(result);
         }
 
+        /// <summary>
+        /// Verifies that IsNumericType returns true for nullable numeric types.
+        /// </summary>
+        /// <param name="type">The type to test.</param>
+        /// <param name="expected">The expected result.</param>
         [Theory]
         [InlineData(typeof(int?), true)]
         [InlineData(typeof(double?), true)]
@@ -92,6 +110,11 @@ namespace DatabaseManager.Tests
             Assert.Equal(expected, result);
         }
 
+        /// <summary>
+        /// Verifies that IsNumericType returns false for nullable non-numeric types.
+        /// </summary>
+        /// <param name="type">The type to test.</param>
+        /// <param name="expected">The expected result.</param>
         [Theory]
         [InlineData(typeof(bool?), false)]
         [InlineData(typeof(char?), false)]

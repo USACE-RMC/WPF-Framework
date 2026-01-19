@@ -109,9 +109,6 @@ namespace DatabaseControls
             if (_tableViewer == null || string.IsNullOrEmpty(FindText.Text))
                 return;
 
-            // Reset found flag at start of each search to ensure proper "not found" message display
-            _foundInstance = false;
-
             _currentRow += 1;
             if (_currentRow == _tableViewer.DataView.NumberOfRows)
                 _currentRow = 0;
@@ -166,9 +163,6 @@ namespace DatabaseControls
         {
             if (_tableViewer == null || string.IsNullOrEmpty(FindText.Text))
                 return;
-
-            // Reset found flag at start of each search to ensure proper "not found" message display
-            _foundInstance = false;
 
             _currentRow -= 1;
             if (_currentRow == -1)

@@ -1,42 +1,93 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using Themes;
 
 namespace Themes.Tests.Core
 {
+    /// <summary>
+    /// Unit tests for the ThemeResourceHelper class, which provides helper methods for managing theme resources and URIs.
+    /// </summary>
     public class ThemeResourceHelperTests
     {
         #region Constants Tests
 
+        /// <summary>
+        /// Verifies that the ControlTemplatesUri constant is not null or empty.
+        /// </summary>
         [Fact]
         public void ControlTemplatesUri_IsNotNullOrEmpty()
         {
             Assert.False(string.IsNullOrEmpty(ThemeResourceHelper.ControlTemplatesUri));
         }
 
+        /// <summary>
+        /// Verifies that the ControlTemplatesUri constant is a valid pack URI.
+        /// </summary>
         [Fact]
         public void ControlTemplatesUri_IsPackUri()
         {
             Assert.StartsWith("pack://application", ThemeResourceHelper.ControlTemplatesUri);
         }
 
+        /// <summary>
+        /// Verifies that the LightColorsUri constant is not null or empty.
+        /// </summary>
         [Fact]
         public void LightColorsUri_IsNotNullOrEmpty()
         {
             Assert.False(string.IsNullOrEmpty(ThemeResourceHelper.LightColorsUri));
         }
 
+        /// <summary>
+        /// Verifies that the BlueColorsUri constant is not null or empty.
+        /// </summary>
         [Fact]
         public void BlueColorsUri_IsNotNullOrEmpty()
         {
             Assert.False(string.IsNullOrEmpty(ThemeResourceHelper.BlueColorsUri));
         }
 
+        /// <summary>
+        /// Verifies that the DarkColorsUri constant is not null or empty.
+        /// </summary>
         [Fact]
         public void DarkColorsUri_IsNotNullOrEmpty()
         {
             Assert.False(string.IsNullOrEmpty(ThemeResourceHelper.DarkColorsUri));
         }
 
+        /// <summary>
+        /// Verifies that all color URI constants are valid pack URIs.
+        /// </summary>
         [Fact]
         public void AllColorUris_ArePackUris()
         {
@@ -45,6 +96,9 @@ namespace Themes.Tests.Core
             Assert.StartsWith("pack://application", ThemeResourceHelper.DarkColorsUri);
         }
 
+        /// <summary>
+        /// Verifies that all color URI constants contain the Themes component path.
+        /// </summary>
         [Fact]
         public void AllColorUris_ContainThemesComponent()
         {
@@ -57,6 +111,9 @@ namespace Themes.Tests.Core
 
         #region GetColorDictionaryUri Tests
 
+        /// <summary>
+        /// Verifies that GetColorDictionaryUri returns the correct URI for the Light theme.
+        /// </summary>
         [Fact]
         public void GetColorDictionaryUri_Light_ReturnsLightColorsUri()
         {
@@ -65,6 +122,9 @@ namespace Themes.Tests.Core
             Assert.Equal(ThemeResourceHelper.LightColorsUri, uri);
         }
 
+        /// <summary>
+        /// Verifies that GetColorDictionaryUri returns the correct URI for the Blue theme.
+        /// </summary>
         [Fact]
         public void GetColorDictionaryUri_Blue_ReturnsBlueColorsUri()
         {
@@ -73,6 +133,9 @@ namespace Themes.Tests.Core
             Assert.Equal(ThemeResourceHelper.BlueColorsUri, uri);
         }
 
+        /// <summary>
+        /// Verifies that GetColorDictionaryUri returns the correct URI for the Dark theme.
+        /// </summary>
         [Fact]
         public void GetColorDictionaryUri_Dark_ReturnsDarkColorsUri()
         {
@@ -81,6 +144,9 @@ namespace Themes.Tests.Core
             Assert.Equal(ThemeResourceHelper.DarkColorsUri, uri);
         }
 
+        /// <summary>
+        /// Verifies that GetColorDictionaryUri throws an ArgumentOutOfRangeException for invalid theme values.
+        /// </summary>
         [Fact]
         public void GetColorDictionaryUri_InvalidTheme_ThrowsArgumentOutOfRangeException()
         {
@@ -90,6 +156,10 @@ namespace Themes.Tests.Core
                 ThemeResourceHelper.GetColorDictionaryUri(invalidTheme));
         }
 
+        /// <summary>
+        /// Verifies that GetColorDictionaryUri returns a non-empty string for all valid theme values.
+        /// </summary>
+        /// <param name="theme">The theme to test.</param>
         [Theory]
         [InlineData(Theme.Light)]
         [InlineData(Theme.Blue)]
@@ -105,6 +175,9 @@ namespace Themes.Tests.Core
 
         #region ParseTheme Tests
 
+        /// <summary>
+        /// Verifies that ParseTheme returns Theme.Light when given the string "Light".
+        /// </summary>
         [Fact]
         public void ParseTheme_Light_ReturnsLightTheme()
         {
@@ -113,6 +186,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme);
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme returns Theme.Blue when given the string "Blue".
+        /// </summary>
         [Fact]
         public void ParseTheme_Blue_ReturnsBlueTheme()
         {
@@ -121,6 +197,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Blue, theme);
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme returns Theme.Dark when given the string "Dark".
+        /// </summary>
         [Fact]
         public void ParseTheme_Dark_ReturnsDarkTheme()
         {
@@ -129,6 +208,10 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Dark, theme);
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme is case-insensitive when parsing theme names.
+        /// </summary>
+        /// <param name="themeName">The theme name to parse in various case formats.</param>
         [Theory]
         [InlineData("light")]
         [InlineData("LIGHT")]
@@ -141,6 +224,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme);
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme throws an ArgumentNullException when given a null value.
+        /// </summary>
         [Fact]
         public void ParseTheme_Null_ThrowsArgumentNullException()
         {
@@ -148,6 +234,9 @@ namespace Themes.Tests.Core
                 ThemeResourceHelper.ParseTheme(null!));
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme throws an ArgumentNullException when given an empty string.
+        /// </summary>
         [Fact]
         public void ParseTheme_EmptyString_ThrowsArgumentNullException()
         {
@@ -155,6 +244,9 @@ namespace Themes.Tests.Core
                 ThemeResourceHelper.ParseTheme(""));
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme throws an ArgumentNullException when given a whitespace-only string.
+        /// </summary>
         [Fact]
         public void ParseTheme_WhitespaceOnly_ThrowsArgumentNullException()
         {
@@ -162,6 +254,9 @@ namespace Themes.Tests.Core
                 ThemeResourceHelper.ParseTheme("   "));
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme throws an ArgumentException when given an invalid theme name.
+        /// </summary>
         [Fact]
         public void ParseTheme_InvalidThemeName_ThrowsArgumentException()
         {
@@ -169,6 +264,9 @@ namespace Themes.Tests.Core
                 ThemeResourceHelper.ParseTheme("InvalidTheme"));
         }
 
+        /// <summary>
+        /// Verifies that ParseTheme's exception message contains valid theme values when an invalid name is provided.
+        /// </summary>
         [Fact]
         public void ParseTheme_InvalidThemeName_ExceptionMessageContainsValidValues()
         {
@@ -184,6 +282,9 @@ namespace Themes.Tests.Core
 
         #region TryParseTheme Tests
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns true and outputs Theme.Light when given the string "Light".
+        /// </summary>
         [Fact]
         public void TryParseTheme_Light_ReturnsTrue()
         {
@@ -193,6 +294,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme);
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns true and outputs Theme.Blue when given the string "Blue".
+        /// </summary>
         [Fact]
         public void TryParseTheme_Blue_ReturnsTrue()
         {
@@ -202,6 +306,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Blue, theme);
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns true and outputs Theme.Dark when given the string "Dark".
+        /// </summary>
         [Fact]
         public void TryParseTheme_Dark_ReturnsTrue()
         {
@@ -211,6 +318,10 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Dark, theme);
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme is case-insensitive when parsing theme names.
+        /// </summary>
+        /// <param name="themeName">The theme name to parse in various case formats.</param>
         [Theory]
         [InlineData("dark")]
         [InlineData("DARK")]
@@ -224,6 +335,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Dark, theme);
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns false when given a null value.
+        /// </summary>
         [Fact]
         public void TryParseTheme_Null_ReturnsFalse()
         {
@@ -233,6 +347,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme); // Default
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns false when given an empty string.
+        /// </summary>
         [Fact]
         public void TryParseTheme_EmptyString_ReturnsFalse()
         {
@@ -242,6 +359,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme); // Default
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns false when given a whitespace-only string.
+        /// </summary>
         [Fact]
         public void TryParseTheme_WhitespaceOnly_ReturnsFalse()
         {
@@ -251,6 +371,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme); // Default
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme returns false when given an invalid theme name.
+        /// </summary>
         [Fact]
         public void TryParseTheme_InvalidThemeName_ReturnsFalse()
         {
@@ -260,6 +383,9 @@ namespace Themes.Tests.Core
             Assert.Equal(Theme.Light, theme); // Default
         }
 
+        /// <summary>
+        /// Verifies that TryParseTheme does not throw exceptions for any invalid input.
+        /// </summary>
         [Fact]
         public void TryParseTheme_DoesNotThrow()
         {

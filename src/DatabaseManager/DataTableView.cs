@@ -1783,19 +1783,26 @@ namespace DatabaseManager
         public object GetCell(int columnIndex, int rowIndex)
         {
             if (_editIndex < 0)
-            { 
-                return GetStoredCell(columnIndex, rowIndex); 
+            {
+                return GetStoredCell(columnIndex, rowIndex);
             }
             object result = null;
             for (int i = _editIndex; i >= 0; i -= 1)
             {
                 if (_edits[i].ContainsCell(columnIndex, rowIndex, ref result))
-                { 
-                    return result; 
+                {
+                    return result;
                 }
             }
-            // 
-            return GetStoredCell(_viewToStoredColumnIndex[columnIndex], _viewToStoredRowIndex[rowIndex]);
+            //
+            // Check if column and row exist in stored data (newly added columns/rows have index -1)
+            if (_viewToStoredColumnIndex[columnIndex] >= 0 && _viewToStoredColumnIndex[columnIndex] < _storedColumnNames.Count() &&
+                _viewToStoredRowIndex[rowIndex] >= 0 && _viewToStoredRowIndex[rowIndex] < _storedNumberOfRows)
+            {
+                return GetStoredCell(_viewToStoredColumnIndex[columnIndex], _viewToStoredRowIndex[rowIndex]);
+            }
+            // Column or row doesn't exist in stored data (newly added with no edits)
+            return null;
         }
 
         /// <summary>
@@ -2953,14 +2960,8 @@ namespace DatabaseManager
                     {
                         if (value.GetType() != typeof(byte[]))
                         {
-                            //value = JsonSerializer.SerializeToUtf8Bytes(value, value.GetType());
-                           
-                            //var bf = new BinaryFormatter();
-                            //using (var ms = new MemoryStream())
-                            //{
-                            //    bf.Serialize(ms, value);
-                            //    value = ms.ToArray();
-                            //}
+                            // Use System.Text.Json for modern, secure serialization (backwards compatible with VB BinaryFormatter behavior)
+                            value = JsonSerializer.SerializeToUtf8Bytes(value, value.GetType());
                         }
                         return true;
                     }

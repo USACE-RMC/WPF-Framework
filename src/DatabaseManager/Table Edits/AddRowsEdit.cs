@@ -65,7 +65,7 @@ namespace DatabaseManager
         /// <returns></returns>
         public List<object[]> GetOriginalRowEdits()
         {
-            var edits = new List<object[]>(_addRowEdits.Count());
+            var edits = new List<object[]>(_addRowEdits.Length);
             foreach (AddRowEdit rowEdit in _addRowEdits)
                 edits.Add(rowEdit.OriginalRowEdit);
             // 

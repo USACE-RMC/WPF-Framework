@@ -1,7 +1,32 @@
 /*
- * Unit tests for MathEditorControl functions in the NumericControls library.
- * Tests ApplyFunctionToSeries for Add, Subtract, Multiply, Divide and advanced functions.
- */
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 using Numerics.Data;
 using NumericControls;
@@ -14,6 +39,10 @@ namespace NumericControls.Tests.MathEditor
     /// </summary>
     public class MathEditorFunctionTests
     {
+        /// <summary>
+        /// Creates a test time series with 5 data points containing values 10, 20, 30, 40, 50.
+        /// </summary>
+        /// <returns>A TimeSeries with irregular intervals and 5 ordinates.</returns>
         private TimeSeries CreateTestSeries()
         {
             var series = new TimeSeries(TimeInterval.Irregular);
@@ -25,6 +54,10 @@ namespace NumericControls.Tests.MathEditor
             return series;
         }
 
+        /// <summary>
+        /// Creates a test time series with NaN (missing) values at indices 1 and 3.
+        /// </summary>
+        /// <returns>A TimeSeries containing both valid values and NaN values.</returns>
         private TimeSeries CreateTestSeriesWithNaN()
         {
             var series = new TimeSeries(TimeInterval.Irregular);
@@ -39,6 +72,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Add Function Tests
 
+        /// <summary>
+        /// Tests that the Add function adds a value to all rows when no indices are specified.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Add_AllRows_AddsValueToAll()
         {
@@ -57,6 +93,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(55.0, series[4].Value);
         }
 
+        /// <summary>
+        /// Tests that the Add function adds a value only to specific indices when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Add_SpecificIndices_AddsValueToSelected()
         {
@@ -76,6 +115,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);  // Unchanged
         }
 
+        /// <summary>
+        /// Tests that adding a negative value effectively subtracts from the series values.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Add_NegativeValue_SubtractsEffectively()
         {
@@ -92,6 +134,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(25.0, series[2].Value);
         }
 
+        /// <summary>
+        /// Tests that the Add function preserves NaN values in the series.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Add_PreservesNaN()
         {
@@ -110,6 +155,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(55.0, series[4].Value);
         }
 
+        /// <summary>
+        /// Tests that adding zero to a series results in no change to values.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Add_Zero_NoChange()
         {
@@ -129,6 +177,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Subtract Function Tests
 
+        /// <summary>
+        /// Tests that the Subtract function subtracts a value from all rows when no indices are specified.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Subtract_AllRows_SubtractsValueFromAll()
         {
@@ -147,6 +198,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(45.0, series[4].Value);
         }
 
+        /// <summary>
+        /// Tests that the Subtract function subtracts a value only from specific indices when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Subtract_SpecificIndices_SubtractsValueFromSelected()
         {
@@ -166,6 +220,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(45.0, series[4].Value);  // Changed
         }
 
+        /// <summary>
+        /// Tests that the Subtract function preserves NaN values in the series.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Subtract_PreservesNaN()
         {
@@ -186,6 +243,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Multiply Function Tests
 
+        /// <summary>
+        /// Tests that the Multiply function multiplies all values by a constant.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Multiply_AllRows_MultipliesAllByValue()
         {
@@ -204,6 +264,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(100.0, series[4].Value);
         }
 
+        /// <summary>
+        /// Tests that the Multiply function multiplies only specific indices when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Multiply_SpecificIndices_MultipliesSelected()
         {
@@ -223,6 +286,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);  // Unchanged
         }
 
+        /// <summary>
+        /// Tests that multiplying by zero sets all values to zero.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Multiply_ByZero_SetsToZero()
         {
@@ -238,6 +304,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(0.0, series[1].Value);
         }
 
+        /// <summary>
+        /// Tests that multiplying by -1 reverses the sign of all values.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Multiply_ByNegative_ReversesSign()
         {
@@ -253,6 +322,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(-20.0, series[1].Value);
         }
 
+        /// <summary>
+        /// Tests that the Multiply function preserves NaN values in the series.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Multiply_PreservesNaN()
         {
@@ -273,6 +345,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Divide Function Tests
 
+        /// <summary>
+        /// Tests that the Divide function divides all values by a constant.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Divide_AllRows_DividesAllByValue()
         {
@@ -291,6 +366,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(25.0, series[4].Value);
         }
 
+        /// <summary>
+        /// Tests that the Divide function divides only specific indices when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Divide_SpecificIndices_DividesSelected()
         {
@@ -310,6 +388,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(10.0, series[4].Value);  // Changed
         }
 
+        /// <summary>
+        /// Tests that the Divide function preserves NaN values in the series.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Divide_PreservesNaN()
         {
@@ -330,6 +411,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Exponentiate Function Tests
 
+        /// <summary>
+        /// Tests that the Exponentiate function raises all values to a specified power.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_AllRows_RaisesToPower()
         {
@@ -350,6 +434,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(16.0, series[2].Value);
         }
 
+        /// <summary>
+        /// Tests that raising values to the power of zero returns 1.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_PowerOfZero_ReturnsOne()
         {
@@ -365,6 +452,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(1.0, series[1].Value);
         }
 
+        /// <summary>
+        /// Tests that raising values to the power of 0.5 calculates the square root.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_SquareRoot()
         {
@@ -385,6 +475,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(4.0, series[2].Value, 5);
         }
 
+        /// <summary>
+        /// Tests that the Exponentiate function raises only specific indices to a power when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Exponentiate_SpecificIndices_RaisesSelected()
         {
@@ -410,6 +503,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Logarithm Function Tests
 
+        /// <summary>
+        /// Tests that the Logarithm function calculates base-10 logarithm for all values.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Logarithm_Base10_AllRows()
         {
@@ -430,6 +526,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(3.0, series[2].Value, 5);
         }
 
+        /// <summary>
+        /// Tests that the Logarithm function calculates natural logarithm (base e).
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Logarithm_NaturalLog()
         {
@@ -448,6 +547,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(2.0, series[1].Value, 5);
         }
 
+        /// <summary>
+        /// Tests that the Logarithm function applies only to specific indices when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Logarithm_SpecificIndices()
         {
@@ -473,6 +575,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Inverse Function Tests
 
+        /// <summary>
+        /// Tests that the Inverse function calculates the reciprocal (1/x) of all values.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Inverse_AllRows_TakesInverse()
         {
@@ -492,6 +597,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(0.2, series[2].Value);
         }
 
+        /// <summary>
+        /// Tests that the Inverse function applies only to specific indices when provided.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Inverse_SpecificIndices()
         {
@@ -516,6 +624,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Replace Function Tests
 
+        /// <summary>
+        /// Tests that the Replace function replaces all NaN values with a specified value.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Replace_AllRows_ReplacesMissingWithValue()
         {
@@ -534,6 +645,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);  // Unchanged (not NaN)
         }
 
+        /// <summary>
+        /// Tests that the Replace function replaces NaN values only at specific indices.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Replace_SpecificIndices_ReplacesMissingInSelected()
         {
@@ -553,6 +667,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(50.0, series[4].Value);
         }
 
+        /// <summary>
+        /// Tests that the Replace function does not modify a series with no missing data.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_Replace_NoMissingData_NoChange()
         {
@@ -575,6 +692,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Null Series Tests
 
+        /// <summary>
+        /// Tests that applying a function to a null series does not throw an exception.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_NullSeries_DoesNotThrow()
         {
@@ -588,6 +708,9 @@ namespace NumericControls.Tests.MathEditor
 
         #region Empty Indices Tests
 
+        /// <summary>
+        /// Tests that providing an empty indices list applies the function to all values.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_EmptyIndices_AppliesToAll()
         {
@@ -603,6 +726,9 @@ namespace NumericControls.Tests.MathEditor
             Assert.Equal(25.0, series[1].Value);
         }
 
+        /// <summary>
+        /// Tests that providing all indices produces the same result as null indices.
+        /// </summary>
         [StaFact]
         public void ApplyFunctionToSeries_AllIndices_AppliesLikeNull()
         {
@@ -626,54 +752,81 @@ namespace NumericControls.Tests.MathEditor
 
         #region TimeSeriesTable HasOperand Tests
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Add function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Add_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Add));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Subtract function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Subtract_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Subtract));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Multiply function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Multiply_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Multiply));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Divide function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Divide_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Divide));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Logarithm function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Logarithm_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Logarithm));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Exponentiate function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Exponentiate_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Exponentiate));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns true for the Replace function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Replace_ReturnsTrue()
         {
             Assert.True(TimeSeriesTable.HasOperand(MathFunctionType.Replace));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns false for the Inverse function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Inverse_ReturnsFalse()
         {
             Assert.False(TimeSeriesTable.HasOperand(MathFunctionType.Inverse));
         }
 
+        /// <summary>
+        /// Tests that HasOperand returns false for the Interpolate function type.
+        /// </summary>
         [Fact]
         public void HasOperand_Interpolate_ReturnsFalse()
         {

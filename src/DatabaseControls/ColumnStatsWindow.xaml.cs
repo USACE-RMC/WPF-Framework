@@ -47,8 +47,9 @@ namespace DatabaseControls
 
         /// <summary>
         /// Reference to the parent TableViewer control containing the data.
+        /// May be null if constructor was called with null parameter (backwards compatibility).
         /// </summary>
-        private readonly TableViewer _viewer;
+        private readonly TableViewer? _viewer;
 
         /// <summary>
         /// The zero-based index of the column to display statistics for.
@@ -67,14 +68,19 @@ namespace DatabaseControls
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnStatsWindow"/> class with the specified table viewer and column index.
         /// </summary>
-        /// <param name="theViewer">The TableViewer control containing the data to analyze.</param>
+        /// <param name="theViewer">The TableViewer control containing the data to analyze. If null, the window will close gracefully.</param>
         /// <param name="columnIndex">The zero-based index of the column to display statistics for.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="theViewer"/> is null.</exception>
         public ColumnStatsWindow(TableViewer theViewer, int columnIndex)
         {
             InitializeComponent();
 
-            _viewer = theViewer ?? throw new ArgumentNullException(nameof(theViewer));
+            // Allow null for backwards compatibility with VB version - exit gracefully if null
+            if (theViewer == null)
+            {
+                return;
+            }
+
+            _viewer = theViewer;
             _columnIndex = columnIndex;
 
             string fieldName = _viewer.DataView.ColumnNames[_columnIndex];
@@ -128,6 +134,12 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ColumnStatsWindow_ContentRendered(object sender, EventArgs e)
         {
+            // Safety check for null viewer (backwards compatibility with VB version)
+            if (_viewer == null)
+            {
+                return;
+            }
+
             if (_viewer.GetSelectedRows.Count > 0)
                 SelectedOnlyCheckbox.IsEnabled = true;
 

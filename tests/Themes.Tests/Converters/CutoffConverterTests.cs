@@ -1,3 +1,33 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using Themes;
 using System.Windows;
@@ -5,10 +35,16 @@ using System.Globalization;
 
 namespace Themes.Tests.Converters
 {
+    /// <summary>
+    /// Unit tests for the CutoffConverter class, which converts numeric values to boolean based on a cutoff threshold.
+    /// </summary>
     public class CutoffConverterTests
     {
         #region Property Tests
 
+        /// <summary>
+        /// Verifies that the Cutoff property has a default value of zero.
+        /// </summary>
         [Fact]
         public void Cutoff_DefaultIsZero()
         {
@@ -17,6 +53,10 @@ namespace Themes.Tests.Converters
             Assert.Equal(0, converter.Cutoff);
         }
 
+        /// <summary>
+        /// Verifies that the Cutoff property can be set and retrieved with various numeric values.
+        /// </summary>
+        /// <param name="value">The cutoff value to test.</param>
         [Theory]
         [InlineData(100)]
         [InlineData(50.5)]
@@ -33,6 +73,9 @@ namespace Themes.Tests.Converters
 
         #region Convert with Double Tests
 
+        /// <summary>
+        /// Verifies that Convert returns true when a double value is below the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_DoubleBelowCutoff_ReturnsTrue()
         {
@@ -43,6 +86,9 @@ namespace Themes.Tests.Converters
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when a double value is equal to the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_DoubleEqualToCutoff_ReturnsFalse()
         {
@@ -53,6 +99,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when a double value is above the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_DoubleAboveCutoff_ReturnsFalse()
         {
@@ -63,6 +112,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns true when a negative double value is below the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_NegativeDouble_BelowCutoff()
         {
@@ -73,6 +125,9 @@ namespace Themes.Tests.Converters
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when a zero double value is equal to a zero cutoff.
+        /// </summary>
         [Fact]
         public void Convert_ZeroDouble_EqualToZeroCutoff()
         {
@@ -87,6 +142,9 @@ namespace Themes.Tests.Converters
 
         #region Convert with GridLength Tests
 
+        /// <summary>
+        /// Verifies that Convert returns true when a GridLength value is below the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_GridLengthBelowCutoff_ReturnsTrue()
         {
@@ -98,6 +156,9 @@ namespace Themes.Tests.Converters
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when a GridLength value is equal to the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_GridLengthEqualToCutoff_ReturnsFalse()
         {
@@ -109,6 +170,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when a GridLength value is above the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_GridLengthAboveCutoff_ReturnsFalse()
         {
@@ -124,6 +188,9 @@ namespace Themes.Tests.Converters
 
         #region Convert with Null and Invalid Types Tests
 
+        /// <summary>
+        /// Verifies that Convert returns false when provided with a null value.
+        /// </summary>
         [Fact]
         public void Convert_NullValue_ReturnsFalse()
         {
@@ -134,6 +201,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when provided with a string value.
+        /// </summary>
         [Fact]
         public void Convert_StringValue_ReturnsFalse()
         {
@@ -144,6 +214,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when provided with an integer value.
+        /// </summary>
         [Fact]
         public void Convert_IntValue_ReturnsFalse()
         {
@@ -154,6 +227,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when provided with a generic object value.
+        /// </summary>
         [Fact]
         public void Convert_ObjectValue_ReturnsFalse()
         {
@@ -168,6 +244,9 @@ namespace Themes.Tests.Converters
 
         #region ConvertBack Tests
 
+        /// <summary>
+        /// Verifies that ConvertBack throws a NotImplementedException when called.
+        /// </summary>
         [Fact]
         public void ConvertBack_ThrowsNotImplementedException()
         {
@@ -181,6 +260,9 @@ namespace Themes.Tests.Converters
 
         #region Edge Cases Tests
 
+        /// <summary>
+        /// Verifies that Convert returns true when a very small double value is below the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_VerySmallDouble_BelowCutoff()
         {
@@ -191,6 +273,9 @@ namespace Themes.Tests.Converters
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns true when a very large double value is just below the cutoff.
+        /// </summary>
         [Fact]
         public void Convert_VeryLargeDouble_AboveCutoff()
         {
@@ -201,6 +286,9 @@ namespace Themes.Tests.Converters
             Assert.True((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns false when the value is Double.MaxValue.
+        /// </summary>
         [Fact]
         public void Convert_DoubleMaxValue_AboveCutoff()
         {
@@ -211,6 +299,9 @@ namespace Themes.Tests.Converters
             Assert.False((bool)result);
         }
 
+        /// <summary>
+        /// Verifies that Convert returns true when the value is Double.MinValue.
+        /// </summary>
         [Fact]
         public void Convert_DoubleMinValue_BelowCutoff()
         {

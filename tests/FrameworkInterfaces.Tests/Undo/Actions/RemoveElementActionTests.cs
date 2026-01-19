@@ -1,13 +1,51 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces;
 using FrameworkInterfaces.Undo.Actions;
 
 namespace FrameworkInterfaces.Tests.Undo.Actions
 {
+    /// <summary>
+    /// Test class for the RemoveElementAction implementation, providing comprehensive tests for element removal
+    /// from collections, undo/redo functionality, index tracking, and action merging behavior.
+    /// </summary>
     public class RemoveElementActionTests
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that attempting to create a RemoveElementAction with a null collection throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when collection parameter is null.</exception>
         [Fact]
         public void Constructor_NullCollection_ThrowsArgumentNullException()
         {
@@ -17,6 +55,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
                 new RemoveElementAction(null!, element));
         }
 
+        /// <summary>
+        /// Verifies that attempting to create a RemoveElementAction with a null element throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when element parameter is null.</exception>
         [Fact]
         public void Constructor_NullElement_ThrowsArgumentNullException()
         {
@@ -26,6 +68,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
                 new RemoveElementAction(collection, null!));
         }
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the Collection, Element, and Target properties.
+        /// </summary>
         [Fact]
         public void Constructor_ValidArgs_SetsProperties()
         {
@@ -40,6 +85,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Same(collection, action.Target);
         }
 
+        /// <summary>
+        /// Verifies that the constructor sets a timestamp within the expected time range.
+        /// </summary>
         [Fact]
         public void Constructor_SetsTimestamp()
         {
@@ -54,6 +102,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.True(action.Timestamp <= after);
         }
 
+        /// <summary>
+        /// Verifies that the constructor captures the element's index in the collection for later restoration.
+        /// </summary>
         [Fact]
         public void Constructor_CapturesElementIndex()
         {
@@ -70,6 +121,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(1, action.Index);
         }
 
+        /// <summary>
+        /// Verifies that the constructor accepts an explicit index parameter and uses the provided value.
+        /// </summary>
         [Fact]
         public void Constructor_WithExplicitIndex_UsesProvidedIndex()
         {
@@ -85,6 +139,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Description Tests
 
+        /// <summary>
+        /// Verifies that the Description property uses the element's DisplayName when available.
+        /// </summary>
         [Fact]
         public void Description_UsesDisplayName()
         {
@@ -96,6 +153,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal("Delete My Element", action.Description);
         }
 
+        /// <summary>
+        /// Verifies that the Description property falls back to the element's Name when DisplayName is null.
+        /// </summary>
         [Fact]
         public void Description_FallsBackToName()
         {
@@ -107,6 +167,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal("Delete ElementName", action.Description);
         }
 
+        /// <summary>
+        /// Verifies that the Description property uses a generic fallback when both DisplayName and Name are null.
+        /// </summary>
         [Fact]
         public void Description_FallsBackToGeneric()
         {
@@ -122,6 +185,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Execute Tests
 
+        /// <summary>
+        /// Verifies that executing the action removes the element from the collection.
+        /// </summary>
         [Fact]
         public void Execute_RemovesElementFromCollection()
         {
@@ -135,6 +201,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.DoesNotContain(element, collection);
         }
 
+        /// <summary>
+        /// Verifies that executing the action decreases the collection size and preserves other elements.
+        /// </summary>
         [Fact]
         public void Execute_CollectionSizeDecreases()
         {
@@ -155,6 +224,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region Undo Tests
 
+        /// <summary>
+        /// Verifies that undoing the action re-adds the element to the collection.
+        /// </summary>
         [Fact]
         public void Undo_ReAddsElementToCollection()
         {
@@ -169,6 +241,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Contains(element, collection);
         }
 
+        /// <summary>
+        /// Verifies that undoing the action re-adds the element at its original index position.
+        /// </summary>
         [Fact]
         public void Undo_ReAddsElementAtOriginalIndex()
         {
@@ -189,6 +264,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(3, collection.Count);
         }
 
+        /// <summary>
+        /// Verifies that undoing an action with a negative index adds the element to the beginning of the collection.
+        /// </summary>
         [Fact]
         public void Undo_NegativeIndex_AddsToEnd()
         {
@@ -203,6 +281,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(0, collection.IndexOf(element));
         }
 
+        /// <summary>
+        /// Verifies that undoing an action with an out-of-range index adds the element to the end of the collection.
+        /// </summary>
         [Fact]
         public void Undo_IndexOutOfRange_AddsToEnd()
         {
@@ -218,6 +299,9 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
             Assert.Equal(1, collection.IndexOf(element));
         }
 
+        /// <summary>
+        /// Verifies that executing and undoing the action multiple times correctly restores collection state.
+        /// </summary>
         [Fact]
         public void Undo_ExecuteRoundTrip_RestoresState()
         {
@@ -249,6 +333,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region CanMergeWith Tests
 
+        /// <summary>
+        /// Verifies that RemoveElementAction does not support merging with other actions.
+        /// </summary>
+        /// <returns>False, indicating the action cannot be merged.</returns>
         [Fact]
         public void CanMergeWith_ReturnsFalse()
         {
@@ -265,6 +353,10 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
         #region MergeWith Tests
 
+        /// <summary>
+        /// Verifies that attempting to merge returns the original action unchanged.
+        /// </summary>
+        /// <returns>The original action instance.</returns>
         [Fact]
         public void MergeWith_ReturnsSelf()
         {

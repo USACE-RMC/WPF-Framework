@@ -1,19 +1,70 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces.Undo;
 using System.ComponentModel;
 
 namespace FrameworkInterfaces.Tests.Undo
 {
+    /// <summary>
+    /// Test class for the UndoableStateBridge implementation, providing comprehensive tests for automatic
+    /// undo/redo tracking of property changes, recording suspension, property filtering, and disposal.
+    /// </summary>
     public class UndoableStateBridgeTests
     {
         #region Test Helpers
 
+        /// <summary>
+        /// Test object that implements INotifyPropertyChanged for testing property change tracking and undo/redo functionality.
+        /// </summary>
         private class TestNotifyObject : INotifyPropertyChanged
         {
+            /// <summary>
+            /// Backing field for the Name property.
+            /// </summary>
             private string _name = string.Empty;
+
+            /// <summary>
+            /// Backing field for the Value property.
+            /// </summary>
             private int _value;
+
+            /// <summary>
+            /// Backing field for the Amount property.
+            /// </summary>
             private double _amount;
 
+            /// <summary>
+            /// Gets or sets the name of the test object.
+            /// </summary>
             public string Name
             {
                 get => _name;
@@ -27,6 +78,9 @@ namespace FrameworkInterfaces.Tests.Undo
                 }
             }
 
+            /// <summary>
+            /// Gets or sets the numeric value of the test object.
+            /// </summary>
             public int Value
             {
                 get => _value;
@@ -40,6 +94,9 @@ namespace FrameworkInterfaces.Tests.Undo
                 }
             }
 
+            /// <summary>
+            /// Gets or sets the amount of the test object.
+            /// </summary>
             public double Amount
             {
                 get => _amount;
@@ -53,6 +110,9 @@ namespace FrameworkInterfaces.Tests.Undo
                 }
             }
 
+            /// <summary>
+            /// Occurs when a property value changes.
+            /// </summary>
             public event PropertyChangedEventHandler? PropertyChanged;
         }
 
@@ -60,6 +120,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the Source property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsSource()
         {
@@ -70,6 +133,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Same(source, bridge.Source);
         }
 
+        /// <summary>
+        /// Verifies that the constructor correctly sets the SourceDescription property.
+        /// </summary>
         [Fact]
         public void Constructor_SetsSourceDescription()
         {
@@ -80,6 +146,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("test source", bridge.SourceDescription);
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws an ArgumentNullException when source is null.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when source parameter is null.</exception>
         [Fact]
         public void Constructor_NullSource_ThrowsArgumentNullException()
         {
@@ -89,6 +159,10 @@ namespace FrameworkInterfaces.Tests.Undo
                 new UndoableStateBridge(null!, () => undoManager));
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws an ArgumentNullException when getUndoManager is null.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when getUndoManager parameter is null.</exception>
         [Fact]
         public void Constructor_NullGetUndoManager_ThrowsArgumentNullException()
         {
@@ -98,6 +172,10 @@ namespace FrameworkInterfaces.Tests.Undo
                 new UndoableStateBridge(source, null!));
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws an ArgumentException when both included and excluded properties are specified.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when both includedProperties and excludedProperties are provided.</exception>
         [Fact]
         public void Constructor_BothIncludedAndExcluded_ThrowsArgumentException()
         {
@@ -114,6 +192,9 @@ namespace FrameworkInterfaces.Tests.Undo
                     excludedProperties: new[] { "Value" }));
         }
 
+        /// <summary>
+        /// Verifies that the constructor subscribes to the source's PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Constructor_SubscribesToPropertyChanged()
         {
@@ -130,6 +211,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Property Change Recording Tests
 
+        /// <summary>
+        /// Verifies that property changes are automatically recorded as undoable actions.
+        /// </summary>
         [Fact]
         public void PropertyChange_RecordsUndoableAction()
         {
@@ -143,6 +227,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Single(undoManager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that undoing a property change restores the old value.
+        /// </summary>
         [Fact]
         public void PropertyChange_UndoRestoresOldValue()
         {
@@ -156,6 +243,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Initial", source.Name);
         }
 
+        /// <summary>
+        /// Verifies that multiple property changes can all be undone individually.
+        /// </summary>
         [Fact]
         public void MultiplePropertyChanges_AllCanBeUndone()
         {
@@ -179,6 +269,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("A", source.Name);
         }
 
+        /// <summary>
+        /// Verifies that redoing a property change reapplies the new value.
+        /// </summary>
         [Fact]
         public void PropertyChange_Redo_ReappliesValue()
         {
@@ -193,6 +286,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Changed", source.Name);
         }
 
+        /// <summary>
+        /// Verifies that property changes are not recorded when the undo manager returns null.
+        /// </summary>
         [Fact]
         public void PropertyChange_WhenUndoManagerReturnsNull_DoesNotRecord()
         {
@@ -208,6 +304,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region SuspendRecording Tests
 
+        /// <summary>
+        /// Verifies that property changes are not recorded when recording is suspended.
+        /// </summary>
         [Fact]
         public void SuspendRecording_PropertyChangesNotRecorded()
         {
@@ -223,6 +322,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(undoManager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that recording resumes after the suspend scope is disposed.
+        /// </summary>
         [Fact]
         public void SuspendRecording_AfterDispose_RecordingResumes()
         {
@@ -241,6 +343,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Single(undoManager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that suspending recording updates shadow values to match current property values.
+        /// </summary>
         [Fact]
         public void SuspendRecording_UpdatesShadowValues()
         {
@@ -264,6 +369,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Property Filter Tests - Included
 
+        /// <summary>
+        /// Verifies that only included properties are monitored when using an inclusion list.
+        /// </summary>
         [Fact]
         public void IncludedProperties_OnlyMonitorsSpecifiedProperties()
         {
@@ -282,6 +390,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Single(undoManager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that properties not in the inclusion list are ignored.
+        /// </summary>
         [Fact]
         public void IncludedProperties_IgnoresNonIncludedProperties()
         {
@@ -303,6 +414,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Property Filter Tests - Excluded
 
+        /// <summary>
+        /// Verifies that excluded properties are not monitored when using an exclusion list.
+        /// </summary>
         [Fact]
         public void ExcludedProperties_ExcludesSpecifiedProperties()
         {
@@ -322,6 +436,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Single(undoManager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that ExcludeProperty adds a property to the exclusion list dynamically.
+        /// </summary>
         [Fact]
         public void ExcludeProperty_AddsToExclusionList()
         {
@@ -335,6 +452,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(undoManager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that ExcludeProperty throws an InvalidOperationException when using an inclusion list.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown when trying to exclude properties while using an inclusion list.</exception>
         [Fact]
         public void ExcludeProperty_WhenUsingInclusionList_ThrowsInvalidOperationException()
         {
@@ -351,6 +472,9 @@ namespace FrameworkInterfaces.Tests.Undo
                 bridge.ExcludeProperty(nameof(TestNotifyObject.Value)));
         }
 
+        /// <summary>
+        /// Verifies that IncludeProperty removes a property from the exclusion list dynamically.
+        /// </summary>
         [Fact]
         public void IncludeProperty_RemovesFromExclusionList()
         {
@@ -370,6 +494,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(undoManager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that IncludeProperty throws an InvalidOperationException when using an inclusion list.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown when trying to include properties while using an inclusion list.</exception>
         [Fact]
         public void IncludeProperty_WhenUsingInclusionList_ThrowsInvalidOperationException()
         {
@@ -390,6 +518,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Dispose Tests
 
+        /// <summary>
+        /// Verifies that Dispose unsubscribes from the source's PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Dispose_UnsubscribesFromPropertyChanged()
         {
@@ -403,6 +534,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(undoManager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that Dispose sets the IsDisposed property to true.
+        /// </summary>
         [Fact]
         public void Dispose_SetsIsDisposedToTrue()
         {
@@ -415,6 +549,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(bridge.IsDisposed);
         }
 
+        /// <summary>
+        /// Verifies that calling Dispose multiple times does not throw an exception.
+        /// </summary>
         [Fact]
         public void Dispose_MultipleCalls_DoNotThrow()
         {
@@ -431,6 +568,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that the IsDisposed property is initially false.
+        /// </summary>
         [Fact]
         public void IsDisposed_InitiallyFalse()
         {
@@ -445,6 +585,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region UseDetailedDescriptions Tests
 
+        /// <summary>
+        /// Verifies that UseDetailedDescriptions defaults to true.
+        /// </summary>
         [Fact]
         public void UseDetailedDescriptions_DefaultIsTrue()
         {
@@ -455,6 +598,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(bridge.UseDetailedDescriptions);
         }
 
+        /// <summary>
+        /// Verifies that UseDetailedDescriptions can be set to false.
+        /// </summary>
         [Fact]
         public void UseDetailedDescriptions_CanBeSetToFalse()
         {
@@ -467,6 +613,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(bridge.UseDetailedDescriptions);
         }
 
+        /// <summary>
+        /// Verifies that when UseDetailedDescriptions is true, action descriptions include property values.
+        /// </summary>
         [Fact]
         public void UseDetailedDescriptions_WhenTrue_IncludesValuesInDescription()
         {
@@ -485,6 +634,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Contains("Name", description, StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Verifies that when UseDetailedDescriptions is false, action descriptions are simple.
+        /// </summary>
         [Fact]
         public void UseDetailedDescriptions_WhenFalse_UsesSimpleDescription()
         {
@@ -506,6 +658,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region RefreshShadowValues Tests
 
+        /// <summary>
+        /// Verifies that RefreshShadowValues updates internal shadow values to match current property values.
+        /// </summary>
         [Fact]
         public void RefreshShadowValues_UpdatesShadowToCurrentValues()
         {
@@ -530,6 +685,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Same Value Tests
 
+        /// <summary>
+        /// Verifies that setting a property to the same value does not record an action.
+        /// </summary>
         [Fact]
         public void PropertyChange_SameValue_DoesNotRecordAction()
         {
@@ -547,6 +705,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region IsExecutingAction Tests
 
+        /// <summary>
+        /// Verifies that property changes during undo/redo operations do not create new undo actions.
+        /// </summary>
         [Fact]
         public void WhenUndoManagerIsExecutingAction_DoesNotRecordAction()
         {

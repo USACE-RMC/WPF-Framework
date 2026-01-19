@@ -1,3 +1,33 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
@@ -5,10 +35,17 @@ using System.ComponentModel;
 
 namespace FrameworkInterfaces.Tests.Messaging
 {
+    /// <summary>
+    /// Test class for the BasicMessageItem implementation, providing comprehensive tests for constructors,
+    /// properties, property change notifications, equality comparisons, and text formatting.
+    /// </summary>
     public class BasicMessageItemTests
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the default constructor sets default values for Code and TimeStamp properties.
+        /// </summary>
         [Fact]
         public void DefaultConstructor_SetsDefaultValues()
         {
@@ -19,6 +56,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Matches(@"\d{2}:\d{2}:\d{2}", item.TimeStamp);
         }
 
+        /// <summary>
+        /// Verifies that the parameterized constructor correctly sets all properties from the provided values.
+        /// </summary>
         [Fact]
         public void ParameterizedConstructor_SetsAllProperties()
         {
@@ -41,6 +81,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal("TST-001", item.Code);
         }
 
+        /// <summary>
+        /// Verifies that the parameterized constructor uses default values when optional parameters are null.
+        /// </summary>
         [Fact]
         public void ParameterizedConstructor_WithNullOptionalParameter_UsesDefaults()
         {
@@ -61,6 +104,10 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Property Tests
 
+        /// <summary>
+        /// Verifies that the Type property can be set and retrieved correctly for various MessageType values.
+        /// </summary>
+        /// <param name="type">The MessageType value to test.</param>
         [Theory]
         [InlineData(MessageType.Error)]
         [InlineData(MessageType.Warning)]
@@ -72,6 +119,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(type, item.Type);
         }
 
+        /// <summary>
+        /// Verifies that changing the Type property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Type_WhenChanged_RaisesPropertyChanged()
         {
@@ -89,6 +139,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(propertyChanged);
         }
 
+        /// <summary>
+        /// Verifies that setting the Type property to the same value does not raise the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Type_WhenSetToSameValue_DoesNotRaisePropertyChanged()
         {
@@ -105,6 +158,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(propertyChanged);
         }
 
+        /// <summary>
+        /// Verifies that setting the Code property to null defaults it to the event code "MI-EVT-000".
+        /// </summary>
         [Fact]
         public void Code_SetNull_DefaultsToEventCode()
         {
@@ -113,6 +169,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal("MI-EVT-000", item.Code);
         }
 
+        /// <summary>
+        /// Verifies that changing the Code property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Code_WhenChanged_RaisesPropertyChanged()
         {
@@ -129,6 +188,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(propertyChanged);
         }
 
+        /// <summary>
+        /// Verifies that the Description property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void Description_SetAndGet_ReturnsExpectedValue()
         {
@@ -136,6 +198,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal("Test description", item.Description);
         }
 
+        /// <summary>
+        /// Verifies that changing the Description property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void Description_WhenChanged_RaisesPropertyChanged()
         {
@@ -152,6 +217,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(propertyChanged);
         }
 
+        /// <summary>
+        /// Verifies that the Source property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void Source_SetAndGet_ReturnsExpectedValue()
         {
@@ -160,6 +228,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Same(source, item.Source);
         }
 
+        /// <summary>
+        /// Verifies that the MessageAction property can be set and invoked correctly.
+        /// </summary>
         [Fact]
         public void MessageAction_SetAndGet_ReturnsExpectedValue()
         {
@@ -177,6 +248,9 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region ToText Tests
 
+        /// <summary>
+        /// Verifies that the ToText method returns a properly formatted string containing all message item details.
+        /// </summary>
         [Fact]
         public void ToText_ReturnsFormattedString()
         {
@@ -198,6 +272,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Contains("Parameter: Param1", result);
         }
 
+        /// <summary>
+        /// Verifies that the ToString method returns the same result as the ToText method.
+        /// </summary>
         [Fact]
         public void ToString_ReturnsToTextResult()
         {
@@ -214,6 +291,9 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Equality Tests
 
+        /// <summary>
+        /// Verifies that the Equals method returns false when comparing to null.
+        /// </summary>
         [Fact]
         public void Equals_NullObject_ReturnsFalse()
         {
@@ -221,6 +301,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(item.Equals(null));
         }
 
+        /// <summary>
+        /// Verifies that the Equals method returns false when comparing to a non-MessageItem object.
+        /// </summary>
         [Fact]
         public void Equals_NonMessageItem_ReturnsFalse()
         {
@@ -228,6 +311,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(item.Equals("not a message item"));
         }
 
+        /// <summary>
+        /// Verifies that the Equals method returns false for items with the same code but different sources.
+        /// </summary>
         [Fact]
         public void Equals_SameCodeDifferentSource_ReturnsFalse()
         {
@@ -237,6 +323,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(item1.Equals(item2));
         }
 
+        /// <summary>
+        /// Verifies that the Equals method returns false when both items have null sources.
+        /// </summary>
         [Fact]
         public void Equals_NullSourceOnBoth_ReturnsFalse()
         {
@@ -246,6 +335,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(item1.Equals(item2));
         }
 
+        /// <summary>
+        /// Verifies that the Equals method returns false for items with different codes.
+        /// </summary>
         [Fact]
         public void Equals_DifferentCodes_ReturnsFalse()
         {
@@ -256,6 +348,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(item1.Equals(item2));
         }
 
+        /// <summary>
+        /// Verifies that the equality operator returns true when both items are null.
+        /// </summary>
         [Fact]
         public void OperatorEquals_BothNull_ReturnsTrue()
         {
@@ -265,6 +360,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(item1 == item2);
         }
 
+        /// <summary>
+        /// Verifies that the equality operator returns false when one item is null.
+        /// </summary>
         [Fact]
         public void OperatorEquals_OneNull_ReturnsFalse()
         {
@@ -274,6 +372,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(item1 == item2);
         }
 
+        /// <summary>
+        /// Verifies that the inequality operator returns true for different items.
+        /// </summary>
         [Fact]
         public void OperatorNotEquals_DifferentItems_ReturnsTrue()
         {
@@ -283,6 +384,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(item1 != item2);
         }
 
+        /// <summary>
+        /// Verifies that GetHashCode returns the same hash code for items with the same properties.
+        /// </summary>
         [Fact]
         public void GetHashCode_SameProperties_ReturnsSameHashCode()
         {
@@ -292,6 +396,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(item1.GetHashCode(), item2.GetHashCode());
         }
 
+        /// <summary>
+        /// Verifies that GetHashCode returns different hash codes for items with different codes.
+        /// </summary>
         [Fact]
         public void GetHashCode_DifferentCodes_ReturnsDifferentHashCodes()
         {

@@ -614,20 +614,33 @@ namespace DatabaseControls
         #region Events
 
         /// <summary>
+        /// Event handler delegate for selected row indices changed event.
+        /// </summary>
+        /// <param name="selectedRowIndices">The list of selected row indices.</param>
+        public delegate void SelectedRowIndicesChangedEventHandler(List<int> selectedRowIndices);
+
+        /// <summary>
+        /// Event handler delegate for row right button up event.
+        /// </summary>
+        /// <param name="rowUpMenu">The context menu for the row.</param>
+        /// <param name="dataRowIndex">The data row index.</param>
+        public delegate void RowRightButtonUpEventHandler(ContextMenu rowUpMenu, int dataRowIndex);
+
+        /// <summary>
         /// Occurs when the set of selected row indices changes.
         /// </summary>
-        public event Action<List<int>>? SelectedRowIndicesChanged;
+        public event SelectedRowIndicesChangedEventHandler? SelectedRowIndicesChanged;
 
         /// <summary>
         /// Occurs when the active cell location changes.
         /// </summary>
-        public event Action? ActiveCellLocationChanged;
+        public event EventHandler? ActiveCellLocationChanged;
 
         /// <summary>
         /// Occurs when the right mouse button is released on a row header.
         /// Provides the context menu and row index for custom menu handling.
         /// </summary>
-        public event Action<ContextMenu, int>? RowRightButtonUp;
+        public event RowRightButtonUpEventHandler? RowRightButtonUp;
 
         #endregion
 
@@ -1207,39 +1220,114 @@ namespace DatabaseControls
         #region Update Methods
 
         /// <summary>
-        /// Updates the text content of all visible cells from the DataView.
+        /// Fills a visible row with data from a row array.
         /// </summary>
-        public void UpdateVisibleRows()
+        /// <param name="rowIndex">The visible row index to fill.</param>
+        /// <param name="row">The row data array, or null to clear the row.</param>
+        private void FillRow(int rowIndex, object[]? row)
         {
-            if (DataView == null || _rowId == null) return;
-            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
-
-            for (int i = 0; i < _visibleRowCount; i++)
+            if (row == null)
             {
-                int dataRowIndex = GetDataRowIndex(i);
-                if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) continue;
-
-                for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
                 {
-                    var cell = (Cell)GridPanel.Children[i * DataView.ColumnNames.Count() + j];
-                    var value = DataView.GetCell(dataRowIndex, j);
-                    cell.Text = value?.ToString() ?? "";
+                    SetCellText(rowIndex, i, "");
+                }
+            }
+            else
+            {
+                for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                {
+                    if (row[i] == null)
+                    {
+                        SetCellText(rowIndex, i, "");
+                    }
+                    else
+                    {
+                        SetCellText(rowIndex, i, row[i].ToString() ?? "");
+                    }
                 }
             }
         }
 
         /// <summary>
+        /// Updates the text content of all visible cells from the DataView.
+        /// </summary>
+        public void UpdateVisibleRows()
+        {
+            var dataRowIndices = GetDataRowIndexes(0, _visibleRowCount - 1);
+            for (int i = 0; i < dataRowIndices.Count; i++)
+            {
+                FillRow(i, DataView.GetRow(dataRowIndices[i]));
+            }
+        }
+
+        /// <summary>
         /// Updates the row header labels to display the correct row numbers.
+        /// Displays 0-based row indices for backwards compatibility with VB version.
+        /// Also updates row background color alternation.
         /// </summary>
         private void UpdateRowHeaders()
         {
             if (DataView == null || _rowId == null) return;
+            if (_visibleRowCount == 0) return;
+
+            int firstRowVirtualIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            if (VerticalScrollbar.Value == VerticalScrollbar.Maximum && VerticalScrollbar.Value != 0)
+            {
+                firstRowVirtualIndex = (int)VerticalScrollbar.Maximum - _visibleRowCount;
+                if (firstRowVirtualIndex < 0) firstRowVirtualIndex = 0;
+            }
+
+            bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                int dataRowIndex = GetDataRowIndex(i);
+                if (i < RowColorGrid.Children.Count)
+                    ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
                 if (i < RowHeadersGrid.Children.Count)
-                    ((RowHeader)RowHeadersGrid.Children[i]).Text = (dataRowIndex + 1).ToString();
+                    ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
+                alternate = !alternate;
             }
+        }
+
+        /// <summary>
+        /// Gets a list of data row indices for a range of visible table rows.
+        /// Accounts for scrolling, row selection mode, and sorting.
+        /// </summary>
+        /// <param name="viewRowStartIndex">The starting visible row index.</param>
+        /// <param name="viewRowEndIndex">The ending visible row index.</param>
+        /// <returns>A list of data row indices corresponding to the visible range.</returns>
+        private List<int> GetDataRowIndexes(int viewRowStartIndex, int viewRowEndIndex)
+        {
+            if (viewRowEndIndex == -1) return new List<int>();
+            var dataRowIndexes = new List<int>(viewRowEndIndex - viewRowStartIndex);
+            int firstRowVirtualIndex = (int)Math.Floor(VerticalScrollbar.Value);
+
+            if (_selectedRowsOnly)
+            {
+                if (_columnSortOrder == SortOrder.None)
+                {
+                    for (int i = viewRowStartIndex; i <= viewRowEndIndex; i++)
+                    {
+                        dataRowIndexes.Add(_rowId![_selectedDataRowIndices[firstRowVirtualIndex + i]]);
+                    }
+                }
+                else
+                {
+                    for (int i = viewRowStartIndex; i <= viewRowEndIndex; i++)
+                    {
+                        dataRowIndexes.Add(_rowId![_sortedSelectedRowOffsets![firstRowVirtualIndex + i]]);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = viewRowStartIndex; i <= viewRowEndIndex; i++)
+                {
+                    dataRowIndexes.Add(_rowId![firstRowVirtualIndex + i]);
+                }
+            }
+
+            return dataRowIndexes;
         }
 
         /// <summary>
@@ -1268,17 +1356,14 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Gets the text content of a cell at the specified table position.
+        /// Gets the text content of a cell at the specified table position from the UI.
         /// </summary>
         /// <param name="tableRowIndex">The visible row index in the grid.</param>
         /// <param name="columnIndex">The column index.</param>
-        /// <returns>The cell text, or an empty string if the cell is out of bounds.</returns>
+        /// <returns>The cell text.</returns>
         private string GetCellText(int tableRowIndex, int columnIndex)
         {
-            int dataRowIndex = GetDataRowIndex(tableRowIndex);
-            if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) return "";
-            var value = DataView.GetCell(dataRowIndex, columnIndex);
-            return value?.ToString() ?? "";
+            return ((Cell)GridPanel.Children[tableRowIndex * DataView.ColumnNames.Count() + columnIndex]).Text;
         }
 
         /// <summary>
@@ -1323,7 +1408,7 @@ namespace DatabaseControls
             if (DataView == null) return;
             int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
 
-            if (AllCellsSelected)
+            if (AllCellsSelected || _selectedRowsOnly)
             {
                 for (int i = 0; i < _visibleRowCount; i++)
                     for (int j = 0; j < DataView.ColumnNames.Count(); j++)
@@ -1416,24 +1501,17 @@ namespace DatabaseControls
         /// <summary>
         /// Sets the active cell to the specified row and column, optionally scrolling to make it visible.
         /// </summary>
-        /// <param name="rowIndex">The zero-based row index of the cell to activate.</param>
-        /// <param name="columnIndex">The zero-based column index of the cell to activate.</param>
-        /// <param name="scroll">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
-        public void SetActiveCell(int rowIndex, int columnIndex, bool scroll)
+        /// <param name="newDataRowIndex">The zero-based row index of the cell to activate.</param>
+        /// <param name="newDataColumnIndex">The zero-based column index of the cell to activate.</param>
+        /// <param name="scrollToRow">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
+        public void SetActiveCell(int newDataRowIndex, int newDataColumnIndex, bool scrollToRow = false)
         {
-            _activeCellVirtualRowIndex = rowIndex;
-            _activeCellDataColumnIndex = columnIndex;
-            if (scroll)
-            {
-                int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
-                int lastRowIndex = firstRowIndex + _visibleRowCount - 1;
-                if (rowIndex < firstRowIndex) VerticalScrollbar.Value = rowIndex;
-                if (rowIndex > lastRowIndex) VerticalScrollbar.Value = rowIndex - _visibleRowCount + 1;
-            }
+            _activeCellDataColumnIndex = newDataColumnIndex;
+            _activeCellVirtualRowIndex = _rowOffset![newDataRowIndex];  // Convert data row index to virtual row index for sorted tables
+            if (scrollToRow) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
             DeSelectAllCells();
             SetSelectedCells();
-            SetActiveCell();
-            ActiveCellLocationChanged?.Invoke();
+            ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -1628,18 +1706,110 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Handles the Unloaded event to clean up event handlers.
+        /// </summary>
+        private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (DataView != null)
+            {
+                DataView.RowsAdded -= TableViewRowsAdded;
+                DataView.RowsDeleted -= TableViewRowsDeleted;
+                DataView.ColumnsAdded -= TableViewColumnsAdded;
+                DataView.ColumnsDeleted -= TableViewColumnsDeleted;
+            }
+        }
+
+        /// <summary>
         /// Handles vertical scrollbar value changes to update visible content.
-        /// Refreshes visible rows, row headers, and cell selection when scrolling.
+        /// Uses incremental scrolling optimization: copies cell text and only loads changed rows.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data containing old and new values.</param>
         private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            UpdateVisibleRows();
+            // Convert old and new values to integers to match row indices
+            int oldValue = (int)Math.Floor(e.OldValue);
+            int newValue = (int)Math.Floor(e.NewValue);
+            if (oldValue == newValue) return;
+
+            int counter = 0;
+
+            if (newValue >= VerticalScrollbar.Maximum && VerticalScrollbar.Maximum != 0) // The last row has been reached
+            {
+                // Remove the last row and refresh all cells
+                NumberOfRowsChanged();
+                if (_visibleRowCount > 0) FillRow(_visibleRowCount - 1, DataView.GetRow(GetDataRowIndex(_visibleRowCount - 1)));
+            }
+            else if (oldValue >= VerticalScrollbar.Maximum && VerticalScrollbar.Maximum != 0) // The last row has been vacated
+            {
+                // Add a row and refresh all cells
+                _visibleRowCount += 1;
+                VerticalScrollbar.ViewportSize = _visibleRowCount;
+                AddRow();
+                UpdateVisibleRows();
+            }
+            else if (oldValue > newValue) // Going Up (scrolling towards beginning)
+            {
+                int offset = oldValue - newValue;
+                // Shift existing cell text down
+                for (int i = _visibleRowCount - 1; i >= offset; i--)
+                {
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        SetCellText(i, j, GetCellText(i - offset, j));
+                    }
+                }
+                // Fill new rows at top
+                if (offset >= _visibleRowCount) offset = _visibleRowCount;
+                foreach (int dataRowIndex in GetDataRowIndexes(0, offset - 1))
+                {
+                    FillRow(counter, DataView.GetRow(dataRowIndex));
+                    counter++;
+                }
+            }
+            else if (oldValue < newValue) // Going Down (scrolling towards end)
+            {
+                int offset = newValue - oldValue;
+                // Shift existing cell text up
+                for (int i = 0; i <= _visibleRowCount - offset - 1; i++)
+                {
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        SetCellText(i, j, GetCellText(i + offset, j));
+                    }
+                }
+                // Fill new rows at bottom
+                if (_visibleRowCount - offset - 1 < 0)
+                {
+                    offset = 0;
+                }
+                else
+                {
+                    offset = _visibleRowCount - offset;
+                }
+                counter = offset;
+                foreach (int dataRowIndex in GetDataRowIndexes(offset, _visibleRowCount - 1))
+                {
+                    FillRow(counter, DataView.GetRow(dataRowIndex));
+                    counter++;
+                }
+            }
+
+            // Turn off cell editing
+            if (GridPanel.Children.Contains(_cellEditTextBox)) GridPanel.Focus();
+
+            // Update selection
+            if (!_selectedRowsOnly)
+            {
+                DeSelectAllCells();
+                SetSelectedCells();
+            }
+            else
+            {
+                SetSelectedCells();
+            }
+
             UpdateRowHeaders();
-            DeSelectAllCells();
-            SetSelectedCells();
-            SetActiveCell();
         }
 
         /// <summary>
@@ -2138,10 +2308,18 @@ namespace DatabaseControls
                 _mouseSelectionMode = SelectionMode.None;
                 _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
                 if (!_selectedRowsOnly) _selectedColumnIndices.Add(_mouseDownColumnIndex);
-                if (_columnSortOrder == SortOrder.Ascending)
-                    SortColumnDescending();
-                else
-                    SortColumnAscending();
+                switch (_columnSortOrder)
+                {
+                    case SortOrder.Ascending:
+                        SortColumnDescending();
+                        break;
+                    case SortOrder.Descending:
+                        SortColumnAscending();
+                        break;
+                    case SortOrder.None:
+                        SortColumnDescending();
+                        break;
+                }
                 return;
             }
             ((UIElement)sender).CaptureMouse();
@@ -2177,6 +2355,29 @@ namespace DatabaseControls
                         for (int j = 0; j < _visibleRowCount; j++)
                             SelectCell(i, j);
                 }
+                else if (_mouseSelectionMode == SelectionMode.CellSelect)
+                {
+                    int mouseColumnIndex = GetTableColumnIndex(gridPosition);
+                    int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+                    _selectedCellIndices.Clear();
+                    _selectedDataRowIndices.Clear();
+                    _selectedColumnIndices.Clear();
+
+                    int columnStep = _mouseDownColumnIndex < mouseColumnIndex ? 1 : -1;
+                    int rowStep = _mouseDownVirtualRowIndex < verticalScrollBarValue ? 1 : -1;
+
+                    for (int i = _mouseDownVirtualRowIndex; ; i += rowStep)
+                    {
+                        var columnSet = new SortedSet<int>();
+                        for (int j = _mouseDownColumnIndex; ; j += columnStep)
+                        {
+                            columnSet.Add(j);
+                            if (j == mouseColumnIndex) break;
+                        }
+                        _selectedCellIndices.Add(_rowId![i], columnSet);
+                        if (i == verticalScrollBarValue) break;
+                    }
+                }
                 SetActiveCell();
             }
         }
@@ -2199,6 +2400,43 @@ namespace DatabaseControls
                 _selectedColumnIndices.Sort();
                 SetSelectedCells();
             }
+            else if (_mouseSelectionMode == SelectionMode.CellSelect)
+            {
+                int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+                int mouseUpDataRowIndex = verticalScrollBarValue;
+
+                if (_mouseDownVirtualRowIndex == mouseUpDataRowIndex && _mouseDownColumnIndex == mouseUpColumnIndex)
+                {
+                    // Single cell selection
+                    _selectedCellIndices.Clear();
+                    _selectedDataRowIndices.Clear();
+                    _selectedColumnIndices.Clear();
+                    var columnSet = new SortedSet<int> { _mouseDownColumnIndex };
+                    _selectedCellIndices.Add(_rowId![_mouseDownVirtualRowIndex], columnSet);
+                }
+                else
+                {
+                    // Range of cells
+                    int columnStep = _mouseDownColumnIndex < mouseUpColumnIndex ? 1 : -1;
+                    int rowStep = _mouseDownVirtualRowIndex < mouseUpDataRowIndex ? 1 : -1;
+                    _selectedCellIndices.Clear();
+                    _selectedDataRowIndices.Clear();
+                    _selectedColumnIndices.Clear();
+
+                    for (int i = _mouseDownVirtualRowIndex; ; i += rowStep)
+                    {
+                        var columnSet = new SortedSet<int>();
+                        for (int j = _mouseDownColumnIndex; ; j += columnStep)
+                        {
+                            columnSet.Add(j);
+                            if (j == mouseUpColumnIndex) break;
+                        }
+                        _selectedCellIndices.Add(_rowId![i], columnSet);
+                        if (i == mouseUpDataRowIndex) break;
+                    }
+                }
+                SetSelectedCells();
+            }
 
             UpdateSelectionButtonStates();
             _mouseSelectionMode = SelectionMode.None;
@@ -2219,10 +2457,62 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void SelectAllLeftMouseUp(object sender, MouseButtonEventArgs e)
         {
-            AllCellsSelected = !AllCellsSelected;
+            if (_mouseSelectionMode == SelectionMode.All)
+            {
+                AllCellsSelected = !AllCellsSelected;
+                _selectedDataRowIndices.Clear();
+                _selectedCellIndices.Clear();
+                _selectedColumnIndices.Clear();
+            }
+            else if (_mouseSelectionMode == SelectionMode.CellSelect)
+            {
+                AllCellsSelected = false;
+                int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+                int mouseUpDataRowIndex = verticalScrollBarValue;
+                int mouseUpColumnIndex = 0;
+
+                if (_mouseDownVirtualRowIndex == mouseUpDataRowIndex && _mouseDownColumnIndex == mouseUpColumnIndex)
+                {
+                    // Single cell selection
+                    _selectedCellIndices.Clear();
+                    _selectedDataRowIndices.Clear();
+                    _selectedColumnIndices.Clear();
+                    if (!_selectedCellIndices.ContainsKey(_rowId![mouseUpDataRowIndex]))
+                        _selectedCellIndices.Add(_rowId[mouseUpDataRowIndex], new SortedSet<int>());
+                    _selectedCellIndices[_rowId[mouseUpDataRowIndex]].Add(mouseUpColumnIndex);
+                }
+                else
+                {
+                    // Multi-cell selection
+                    int rowStep = mouseUpDataRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
+                    int columnStep = mouseUpColumnIndex >= _mouseDownColumnIndex ? 1 : -1;
+
+                    _selectedCellIndices.Clear();
+                    _selectedDataRowIndices.Clear();
+                    _selectedColumnIndices.Clear();
+
+                    for (int i = _mouseDownVirtualRowIndex; ; i += rowStep)
+                    {
+                        if (!_selectedCellIndices.ContainsKey(_rowId![i]))
+                            _selectedCellIndices.Add(_rowId[i], new SortedSet<int>());
+
+                        for (int j = _mouseDownColumnIndex; ; j += columnStep)
+                        {
+                            _selectedCellIndices[_rowId[i]].Add(j);
+                            if (j == mouseUpColumnIndex) break;
+                        }
+                        if (i == mouseUpDataRowIndex) break;
+                    }
+                }
+            }
+            else
+            {
+                AllCellsSelected = false;
+            }
+
             DeSelectAllCells();
             SetSelectedCells();
-            SetActiveCell();
+            _mouseSelectionMode = SelectionMode.None;
         }
 
         /// <summary>
@@ -2245,14 +2535,14 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void CopyButton_Click(object sender, RoutedEventArgs e) => Copy();
+        private void CopyButton_Click(object sender, RoutedEventArgs e) => CaptureSelectionToClipboard(false);
 
         /// <summary>
         /// Handles the Copy With Headers button click to copy selected cells with column headers.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e) => Copy(true);
+        private void CopyWithHeadersButton_Click(object sender, RoutedEventArgs e) => CaptureSelectionToClipboard(true);
 
         /// <summary>
         /// Handles the Paste button click to paste clipboard content to selected cells.
@@ -2440,7 +2730,7 @@ namespace DatabaseControls
                 _mouseDownVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value) + GetTableRowIndex(gridPosition);
                 _activeCellDataColumnIndex = _mouseDownColumnIndex;
                 _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
-                ActiveCellLocationChanged?.Invoke();
+                ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
                 SetActiveCell();
 
                 if (e.ClickCount == 2 && Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
@@ -2481,7 +2771,7 @@ namespace DatabaseControls
                 _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
                 _activeCellDataColumnIndex = _mouseDownColumnIndex;
                 _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
-                ActiveCellLocationChanged?.Invoke();
+                ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
             }
 
             if (CellSelectable)
@@ -2659,6 +2949,56 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Handles right-click on the GridPanel to show copy/paste context menu.
+        /// </summary>
+        private void GridPanel_RightMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            bool enableCopy = false;
+            if (AllCellsSelected)
+                enableCopy = true;
+            else if (_selectedCellIndices.Count > 0)
+                enableCopy = true;
+            else if (_selectedColumnIndices.Count > 0)
+                enableCopy = true;
+            else if (_selectedDataRowIndices.Count > 0)
+                enableCopy = true;
+
+            var gridMenu = new ContextMenu();
+            var gridMenuItem = new MenuItem
+            {
+                IsEnabled = enableCopy,
+                Header = "Copy",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/copy.png")) }
+            };
+            gridMenuItem.Click += (s, args) => Copy();
+            gridMenu.Items.Add(gridMenuItem);
+
+            gridMenuItem = new MenuItem
+            {
+                IsEnabled = enableCopy,
+                Header = "Copy with Headers",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/copy_w_headers.png")) }
+            };
+            gridMenuItem.Click += (s, args) => CopyWithHeaders();
+            gridMenu.Items.Add(gridMenuItem);
+
+            if (Editable)
+            {
+                gridMenuItem = new MenuItem
+                {
+                    Header = "Paste",
+                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/GenericControls;component/Resources/paste.png")) }
+                };
+                gridMenuItem.Click += (s, args) => Paste();
+                if (!Clipboard.ContainsText() || _selectedRowsOnly)
+                    gridMenuItem.IsEnabled = false;
+                gridMenu.Items.Add(gridMenuItem);
+            }
+            gridMenu.IsOpen = true;
+        }
+
+
+        /// <summary>
         /// Creates and displays the column context menu with sorting options.
         /// </summary>
         /// <param name="sender">The column header that was right-clicked.</param>
@@ -2669,17 +3009,83 @@ namespace DatabaseControls
             _mouseDownColumnIndex = Grid.GetColumn(header);
             var menu = new ContextMenu();
 
-            var sortAsc = new MenuItem { Header = "Sort Ascending" };
+            // Sort Ascending
+            var sortAsc = new MenuItem
+            {
+                Header = "Sort Ascending",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortASCFilter.png")) }
+            };
             sortAsc.Click += (s, args) => SortColumnAscending();
+            if (_columnsSortedOrder![_mouseDownColumnIndex] == SortOrder.Ascending)
+                sortAsc.IsEnabled = false;
             menu.Items.Add(sortAsc);
 
-            var sortDesc = new MenuItem { Header = "Sort Descending" };
+            // Sort Descending
+            var sortDesc = new MenuItem
+            {
+                Header = "Sort Descending",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortDSCFilter.png")) }
+            };
             sortDesc.Click += (s, args) => SortColumnDescending();
+            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.Descending)
+                sortDesc.IsEnabled = false;
             menu.Items.Add(sortDesc);
 
-            var removeSort = new MenuItem { Header = "Remove Sort" };
+            // Remove Sort
+            var removeSort = new MenuItem
+            {
+                Header = "Remove Sort",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/ClearFilter.png")) }
+            };
             removeSort.Click += (s, args) => RemoveSort();
+            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.None)
+                removeSort.IsEnabled = false;
             menu.Items.Add(removeSort);
+
+            // Summary Statistics
+            var summaryStats = new MenuItem
+            {
+                Header = "Summary Statistics...",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SummaryStatistics_16x.png")) }
+            };
+            summaryStats.Click += CalcColumnStatistics;
+            if (DataView.ColumnTypes[_mouseDownColumnIndex] == typeof(object))
+                summaryStats.IsEnabled = false;
+            menu.Items.Add(summaryStats);
+
+            // Find
+            var find = new MenuItem
+            {
+                Header = "Find...",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/QuickFind_16x.png")) }
+            };
+            find.Click += (s, args) => SearchText();
+            if (_selectedRowsOnly || DataView.NumberOfRows == 0)
+                find.IsEnabled = false;
+            menu.Items.Add(find);
+
+            // Field Calculator (only if editable and column not read-only)
+            if (Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+            {
+                var fieldCalc = new MenuItem
+                {
+                    Header = "Field Calculator...",
+                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png")) }
+                };
+                fieldCalc.Click += OpenFieldCalculatorForColumn;
+                menu.Items.Add(fieldCalc);
+            }
+
+            // Delete Column(s) (only if editable and column not read-only)
+            if (Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+            {
+                var deleteCol = new MenuItem
+                {
+                    Header = _selectedColumnIndices.Count == 1 ? "Delete Column" : "Delete Columns"
+                };
+                deleteCol.Click += DeleteColumn;
+                menu.Items.Add(deleteCol);
+            }
 
             menu.IsOpen = true;
         }
@@ -2847,51 +3253,653 @@ namespace DatabaseControls
 
         #endregion
 
-        #region Clipboard
+        #region Column Context Menu Actions
 
         /// <summary>
-        /// Copies selected cells to the clipboard in tab-separated format.
+        /// Opens the Column Statistics window for the selected column.
         /// </summary>
-        /// <param name="includeHeaders">If true, includes column headers as the first row.</param>
-        private void Copy(bool includeHeaders = false)
+        private void CalcColumnStatistics(object sender, RoutedEventArgs e)
         {
-            if (DataView == null) return;
-            var sb = new System.Text.StringBuilder();
-
-            if (includeHeaders)
+            var columnStats = new ColumnStatsWindow(this, _mouseDownColumnIndex)
             {
-                for (int j = 0; j < DataView.ColumnNames.Count(); j++)
-                {
-                    sb.Append(DataView.ColumnNames[j]);
-                    if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
-                }
-                sb.AppendLine();
-            }
-
-            if (AllCellsSelected)
-            {
-                for (int i = 0; i < DataView.NumberOfRows; i++)
-                {
-                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
-                    {
-                        sb.Append(DataView.GetCell(i, j)?.ToString() ?? "");
-                        if (j < DataView.ColumnNames.Count() - 1) sb.Append("\t");
-                    }
-                    sb.AppendLine();
-                }
-            }
-
-            Clipboard.SetText(sb.ToString());
+                Owner = Window.GetWindow(this)
+            };
+            columnStats.Show();
         }
 
         /// <summary>
-        /// Pastes clipboard content into the table starting at the active cell.
-        /// Expects tab-separated data with line breaks between rows.
+        /// Opens the Find and Replace dialog for the selected column.
+        /// </summary>
+        private void SearchText()
+        {
+            if (DataView.NumberOfRows > 0)
+            {
+                var findWindow = new FindAndReplace(this, _mouseDownColumnIndex, _activeCellVirtualRowIndex);
+                findWindow.ShowDialog();
+            }
+        }
+
+        /// <summary>
+        /// Opens the Field Calculator for the selected column.
+        /// </summary>
+        private void OpenFieldCalculatorForColumn(object sender, RoutedEventArgs e)
+        {
+            var fc = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, DataView.ColumnNames[_mouseDownColumnIndex]);
+            if (fc.ShowDialog() == true)
+            {
+                UpdateVisibleRows();
+                UpdateUndoRedoButtons();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the selected column(s) from the DataView.
+        /// </summary>
+        private void DeleteColumn(object sender, RoutedEventArgs e)
+        {
+            var columnIndices = _selectedColumnIndices.ToList();
+            // Remove read-only columns from the deletion list
+            for (int i = columnIndices.Count - 1; i >= 0; i--)
+            {
+                if (_readOnlyColumns.Contains(columnIndices[i]))
+                    columnIndices.RemoveAt(i);
+            }
+            if (columnIndices.Count > 0)
+            {
+                DataView.DeleteColumns(columnIndices.ToArray());
+            }
+        }
+
+        #endregion
+
+        #region Clipboard
+
+        /// <summary>
+        /// Main dispatcher for copy operations. Routes to specialized copy method based on selection type.
+        /// </summary>
+        /// <param name="includeHeaders">If true, includes column headers as the first row.</param>
+        private void CaptureSelectionToClipboard(bool includeHeaders)
+        {
+            if (!IsSelectionUniform())
+                throw new Exception("Selection must be uniform to copy.");
+
+            Clipboard.Clear();
+
+            if (AllCellsSelected)
+            {
+                CopyAllToClipboard(includeHeaders);
+            }
+            else if (_selectedDataRowIndices.Count > 0)
+            {
+                CopySelectedRowsToClipboard(includeHeaders);
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                CopySelectedColumnsToClipboard(includeHeaders);
+            }
+            else if (_selectedCellIndices.Count > 0)
+            {
+                CopySelectedCellsToClipboard(includeHeaders);
+            }
+        }
+
+        /// <summary>
+        /// Copies all table data to clipboard using GetRow pattern.
+        /// </summary>
+        private void CopyAllToClipboard(bool includeHeaders)
+        {
+            if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
+            {
+                var msgString = $"Operation will copy {DataView.NumberOfRows * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (includeHeaders)
+                {
+                    boardText.Append(DataView.ColumnNames[0]);
+                    for (int i = 1; i < DataView.ColumnNames.Count(); i++)
+                    {
+                        boardText.Append('\t' + DataView.ColumnNames[i]);
+                    }
+                    boardText.Append('\n');
+                }
+
+                object[] readerRow;
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    readerRow = DataView.GetRow(_rowId![i]);
+                    boardText.Append(readerRow[0].ToString());
+                    for (int j = 1; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        boardText.Append('\t' + readerRow[j].ToString());
+                    }
+                    if (i < DataView.NumberOfRows - 1) boardText.Append('\n');
+                }
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetText(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Copies selected columns to clipboard using GetColumn pattern.
+        /// </summary>
+        private void CopySelectedColumnsToClipboard(bool includeHeaders)
+        {
+            if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
+            {
+                var msgString = $"Operation will copy {_selectedColumnIndices.Count * DataView.NumberOfRows} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+
+            try
+            {
+                var columnData = new List<object[]>();
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                for (int i = 0; i < _selectedColumnIndices.Count; i++)
+                {
+                    if (includeHeaders) boardText.Append(DataView.ColumnNames[_selectedColumnIndices[i]] + '\t');
+                    columnData.Add(DataView.GetColumn(DataView.ColumnNames[_selectedColumnIndices[i]]));
+                }
+                if (includeHeaders) boardText[boardText.Length - 1] = '\n';
+
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    boardText.Append(columnData[0][_rowId![i]].ToString());
+                    for (int j = 1; j < columnData.Count; j++)
+                    {
+                        boardText.Append('\t' + columnData[j][_rowId![i]].ToString());
+                    }
+                    boardText.Append('\n');
+                }
+                boardText.Remove(boardText.Length - 1, 1);
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetText(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Copies selected rows to clipboard using GetRow pattern.
+        /// </summary>
+        private void CopySelectedRowsToClipboard(bool includeHeaders)
+        {
+            if (_selectedDataRowIndices.Count * DataView.ColumnNames.Count() > 50000)
+            {
+                var msgString = $"Operation will copy {_selectedDataRowIndices.Count * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+            object[]? readerRow;
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (includeHeaders)
+                {
+                    boardText.Append(DataView.ColumnNames[0]);
+                    for (int i = 1; i < DataView.ColumnNames.Count(); i++)
+                    {
+                        boardText.Append('\t' + DataView.ColumnNames[i]);
+                    }
+                    boardText.Append('\n');
+                }
+
+                if (_columnSortOrder != SortOrder.None)
+                {
+                    foreach (var r in GetSelectedRowVirtualRowIndices())
+                    {
+                        readerRow = DataView.GetRow(r.Value);
+                        boardText.Append(readerRow[0].ToString());
+                        for (int j = 1; j < DataView.ColumnNames.Count(); j++)
+                        {
+                            boardText.Append('\t' + readerRow[j].ToString());
+                        }
+                        boardText.Append('\n');
+                    }
+                    boardText.Remove(boardText.Length - 1, 1);
+                }
+                else
+                {
+                    for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+                    {
+                        readerRow = DataView.GetRow(_selectedDataRowIndices[i]);
+                        boardText.Append(readerRow[0].ToString());
+                        for (int j = 1; j < DataView.ColumnNames.Count(); j++)
+                        {
+                            boardText.Append('\t' + readerRow[j].ToString());
+                        }
+                        boardText.Append('\n');
+                    }
+                    boardText.Remove(boardText.Length - 1, 1);
+                }
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetText(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Copies selected cells to clipboard using GetRow pattern with visual ordering.
+        /// </summary>
+        private void CopySelectedCellsToClipboard(bool includeHeaders)
+        {
+            if (_selectedCellIndices.Count > 50000)
+            {
+                var msgString = $"Operation will copy {_selectedCellIndices.Count} cell values to the clipboard.  It can take a long time to copy this much data, are you sure you want to copy that much data to the clipboard?";
+                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    return;
+            }
+
+            var boardText = new System.Text.StringBuilder();
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                var keysInVisualOrder = new SortedDictionary<int, int>();
+                foreach (int dataRowIndex in _selectedCellIndices.Keys)
+                {
+                    keysInVisualOrder.Add(_rowOffset![dataRowIndex], dataRowIndex);
+                }
+
+                if (includeHeaders)
+                {
+                    foreach (int column in _selectedCellIndices[_selectedCellIndices.Keys.First()])
+                    {
+                        boardText.Append(DataView.ColumnNames[column] + '\t');
+                    }
+                    boardText[boardText.Length - 1] = '\n';
+                }
+
+                object[] row;
+                SortedSet<int> rowCellEdits;
+                foreach (int dataRowIndex in keysInVisualOrder.Values)
+                {
+                    rowCellEdits = _selectedCellIndices[dataRowIndex];
+                    row = DataView.GetRow(dataRowIndex);
+
+                    foreach (int column in rowCellEdits)
+                    {
+                        boardText.Append(row[column].ToString() + '\t');
+                    }
+                    boardText[boardText.Length - 1] = '\n';
+                }
+                boardText.Remove(boardText.Length - 1, 1);
+                Mouse.OverrideCursor = null;
+            }
+            catch (Exception)
+            {
+                Mouse.OverrideCursor = null;
+                throw new Exception("Error copying data to clipboard.");
+            }
+
+            Clipboard.SetDataObject(boardText.ToString());
+        }
+
+        /// <summary>
+        /// Checks if the current selection is uniform (not mixing different selection types).
+        /// </summary>
+        private bool IsSelectionUniform()
+        {
+            if (_selectedColumnIndices.Count > 0 && _selectedDataRowIndices.Count > 0) return false;
+
+            // All Cells Selected
+            if (AllCellsSelected) return true;
+
+            if (_selectedDataRowIndices.Count > 0)
+            {
+                // Check for non-uniform cell selection
+                if (_selectedCellIndices.Count > 0)
+                {
+                    foreach (var rowSelectedCells in _selectedCellIndices)
+                    {
+                        if (_selectedDataRowIndices.BinarySearch(rowSelectedCells.Key) < 0) return false;
+                    }
+                }
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                // Check for non-uniform cell selection
+                if (_selectedCellIndices.Count > 0)
+                {
+                    foreach (var rowSelectedCells in _selectedCellIndices)
+                    {
+                        foreach (int column in rowSelectedCells.Value)
+                        {
+                            if (_selectedColumnIndices.BinarySearch(column) < 0) return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Gets selected row indices sorted by virtual row position for proper visual ordering.
+        /// </summary>
+        private SortedDictionary<int, int> GetSelectedRowVirtualRowIndices()
+        {
+            var sortedRowsIndices = new SortedDictionary<int, int>();
+            for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+            {
+                sortedRowsIndices.Add(_rowOffset![_selectedDataRowIndices[i]], _selectedDataRowIndices[i]);
+            }
+            if (_columnSortOrder == SortOrder.Descending) sortedRowsIndices.Reverse();
+            return sortedRowsIndices;
+        }
+
+        /// <summary>
+        /// Copies selected data to clipboard without headers. Routes to CaptureSelectionToClipboard with error handling.
+        /// </summary>
+        private void Copy()
+        {
+            try
+            {
+                CaptureSelectionToClipboard(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Copies selected data to clipboard with headers. Routes to CaptureSelectionToClipboard with error handling.
+        /// </summary>
+        private void CopyWithHeaders()
+        {
+            try
+            {
+                CaptureSelectionToClipboard(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Pastes clipboard content into the table. Routes to PasteClipboard with error handling.
         /// </summary>
         private void Paste()
         {
-            if (!Clipboard.ContainsText() || !Editable) return;
-            // TODO: Implement paste logic
+            try
+            {
+                PasteClipboard();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Parses clipboard text into string array of arrays (rows and columns).
+        /// </summary>
+        private string[][] GetClipboardData()
+        {
+            string clipText = Clipboard.GetText();
+            string[] clipTextLineSplit = clipText.Split('\n');
+            string[][] result = new string[clipTextLineSplit.Length][];
+            var clipboardRows = clipTextLineSplit.Select(r => r.Split('\t'));
+            int counter = 0;
+
+            foreach (var row in clipboardRows)
+            {
+                string[] rowData = new string[row.Length];
+                for (int i = 0; i < row.Length; i++)
+                {
+                    if (row[i].Length > 0 && row[i][row[i].Length - 1] == '\r')
+                    {
+                        rowData[i] = row[i].Substring(0, row[i].Length - 1);
+                    }
+                    else
+                    {
+                        rowData[i] = row[i];
+                    }
+                }
+                result[counter] = rowData;
+                counter++;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Validates that the current selection is continuous (no gaps) for paste operation.
+        /// </summary>
+        private bool IsSelectionContinuous()
+        {
+            if (_selectedColumnIndices.Count > 0 && _selectedDataRowIndices.Count > 0) return false;
+
+            if (AllCellsSelected)
+            {
+                return true;
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                // Check columns are continuous
+                for (int i = 1; i < _selectedColumnIndices.Count; i++)
+                {
+                    if (_selectedColumnIndices[i] - _selectedColumnIndices[i - 1] != 1) return false;
+                }
+                // Check cell selection matches column selection
+                if (_selectedCellIndices.Count > 0)
+                {
+                    foreach (var selectedCellsByRow in _selectedCellIndices)
+                    {
+                        foreach (int columnIndex in selectedCellsByRow.Value)
+                        {
+                            if (_selectedColumnIndices.BinarySearch(columnIndex) < 0) return false;
+                        }
+                    }
+                }
+            }
+            else if (_selectedDataRowIndices.Count > 0)
+            {
+                // Check rows are continuous (in visual order)
+                var virtualSelectedRowIndices = GetSelectedRowVirtualRowIndices();
+                int rowIndex = virtualSelectedRowIndices.First().Key;
+                foreach (var r in virtualSelectedRowIndices)
+                {
+                    if (r.Key - rowIndex > 1) return false;
+                    rowIndex = r.Key;
+                }
+                // Check cell selection matches row selection
+                if (_selectedCellIndices.Count > 0)
+                {
+                    foreach (var selectedCellsByRow in _selectedCellIndices)
+                    {
+                        if (_selectedDataRowIndices.BinarySearch(selectedCellsByRow.Key) < 0) return false;
+                    }
+                }
+            }
+            else if (_selectedCellIndices.Count > 0)
+            {
+                if (_selectedCellIndices.Count == 1) return true;
+
+                // Check columns are continuous across all rows
+                int[] columnIndices = _selectedCellIndices.First().Value.ToArray();
+                int tempRowIndex = _selectedCellIndices.First().Key;
+                var virtualRowsSorted = new List<int>(_selectedCellIndices.Count);
+
+                foreach (var selectedCellsByRow in _selectedCellIndices)
+                {
+                    virtualRowsSorted.Add(_rowOffset![selectedCellsByRow.Key]);
+                    if (selectedCellsByRow.Key == tempRowIndex) continue;
+
+                    for (int i = 0; i < columnIndices.Length; i++)
+                    {
+                        if (!selectedCellsByRow.Value.Contains(columnIndices[i])) return false;
+                    }
+                    tempRowIndex = selectedCellsByRow.Key;
+                }
+
+                // Check rows are continuous
+                virtualRowsSorted.Sort();
+                for (int i = 1; i < virtualRowsSorted.Count; i++)
+                {
+                    if (virtualRowsSorted[i] - virtualRowsSorted[i - 1] != 1) return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Main paste logic. Pastes clipboard data based on current selection type.
+        /// </summary>
+        private void PasteClipboard()
+        {
+            if (!IsSelectionContinuous())
+                throw new Exception("Selection must be continuous to paste.");
+
+            string[][] clipboardData = GetClipboardData();
+            var rowIndices = new List<int>();
+            var columnIndices = new List<int>();
+            var editValues = new List<object>();
+
+            if (AllCellsSelected)
+            {
+                // Paste into all cells
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    if (i == clipboardData.Length) break;
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        if (j == clipboardData[i].Length) break;
+                        if (_readOnlyColumns.Contains(j)) continue;
+                        rowIndices.Add(_rowId![i]);
+                        columnIndices.Add(j);
+                        editValues.Add(clipboardData[i][j]);
+                    }
+                }
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                // Paste into selected columns
+                for (int i = 0; i < DataView.NumberOfRows; i++)
+                {
+                    if (i == clipboardData.Length) break;
+                    for (int j = 0; j < _selectedColumnIndices.Count; j++)
+                    {
+                        if (j == clipboardData[i].Length) break;
+                        if (_readOnlyColumns.Contains(_selectedColumnIndices[j])) continue;
+                        rowIndices.Add(_rowId![i]);
+                        columnIndices.Add(_selectedColumnIndices[j]);
+                        editValues.Add(clipboardData[i][j]);
+                    }
+                }
+            }
+            else if (_selectedDataRowIndices.Count > 0)
+            {
+                // Paste into selected rows
+                int rowIndexCounter = 0;
+                foreach (var r in GetSelectedRowVirtualRowIndices())
+                {
+                    if (rowIndexCounter == clipboardData.Length) break;
+                    for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                    {
+                        if (i == clipboardData[rowIndexCounter].Length) break;
+                        if (_readOnlyColumns.Contains(i)) continue;
+                        rowIndices.Add(r.Value);
+                        columnIndices.Add(i);
+                        editValues.Add(clipboardData[rowIndexCounter][i]);
+                    }
+                    rowIndexCounter++;
+                }
+            }
+            else if (_selectedCellIndices.Count > 0)
+            {
+                int dataBaseRowIndex = _selectedCellIndices.First().Key;
+                int columnIndex = _selectedCellIndices.First().Value.First();
+
+                if (_selectedCellIndices.Count == 1 && _selectedCellIndices.First().Value.Count == 1)
+                {
+                    // Single cell selected - paste from that cell onwards
+                    for (int i = 0; i < clipboardData.Length; i++)
+                    {
+                        if (_rowOffset![dataBaseRowIndex] + i >= DataView.NumberOfRows) break;
+                        for (int j = 0; j < clipboardData[i].Length; j++)
+                        {
+                            if (columnIndex + j >= DataView.ColumnNames.Count()) break;
+                            if (_readOnlyColumns.Contains(columnIndex + j)) continue;
+                            rowIndices.Add(_rowId![_rowOffset[dataBaseRowIndex] + i]);
+                            columnIndices.Add(columnIndex + j);
+                            editValues.Add(clipboardData[i][j]);
+                        }
+                    }
+                }
+                else
+                {
+                    // Multiple cells selected - paste into selection
+                    int rowIndexCounter = 0;
+                    foreach (var r in GetSelectedCellVirtualRowIndices())
+                    {
+                        if (rowIndexCounter == clipboardData.Length) break;
+                        int columnIndexCounter = 0;
+                        foreach (int column in _selectedCellIndices[r.Value])
+                        {
+                            if (columnIndexCounter == clipboardData[rowIndexCounter].Length) break;
+                            if (_readOnlyColumns.Contains(column)) continue;
+                            rowIndices.Add(r.Value);
+                            columnIndices.Add(column);
+                            editValues.Add(clipboardData[rowIndexCounter][columnIndexCounter]);
+                            columnIndexCounter++;
+                        }
+                        rowIndexCounter++;
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("No Cells are currently selected to paste into.");
+            }
+
+            DataView.EditCells(rowIndices.ToArray(), columnIndices.ToArray(), editValues.ToArray());
+            UpdateVisibleRows();
+            UpdateUndoRedoButtons();
+        }
+
+        /// <summary>
+        /// Gets selected cell indices sorted by virtual row position for proper visual ordering.
+        /// </summary>
+        private SortedDictionary<int, int> GetSelectedCellVirtualRowIndices()
+        {
+            var keysInVisualOrder = new SortedDictionary<int, int>();
+            foreach (int dataRowIndex in _selectedCellIndices.Keys)
+            {
+                keysInVisualOrder.Add(_rowOffset![dataRowIndex], dataRowIndex);
+            }
+            return keysInVisualOrder;
         }
 
         /// <summary>
@@ -3116,7 +4124,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderTextblockStyleProperty = DependencyProperty.Register(
-                nameof(HeaderTextblockStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(null));
+                nameof(HeaderTextblockStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(GetDefaultColumnHeaderTextblockStyle()));
 
             public Style HeaderTextblockStyle
             {
@@ -3125,7 +4133,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderBorderStyleProperty = DependencyProperty.Register(
-                nameof(HeaderBorderStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(null));
+                nameof(HeaderBorderStyle), typeof(Style), typeof(ColumnHeader), new PropertyMetadata(GetDefaultColumnHeaderBorderStyle()));
 
             public Style HeaderBorderStyle
             {
@@ -3196,7 +4204,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty CellStyleProperty = DependencyProperty.Register(
-                nameof(CellStyle), typeof(Style), typeof(Cell), new PropertyMetadata(null));
+                nameof(CellStyle), typeof(Style), typeof(Cell), new PropertyMetadata(GetDefaultCellTextblockStyle()));
 
             public Style CellStyle
             {
@@ -3240,7 +4248,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderTextblockStyleProperty = DependencyProperty.Register(
-                nameof(HeaderTextblockStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(null));
+                nameof(HeaderTextblockStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(GetDefaultRowHeaderTextblockStyle()));
 
             public Style HeaderTextblockStyle
             {
@@ -3249,7 +4257,7 @@ namespace DatabaseControls
             }
 
             public static readonly DependencyProperty HeaderBorderStyleProperty = DependencyProperty.Register(
-                nameof(HeaderBorderStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(null));
+                nameof(HeaderBorderStyle), typeof(Style), typeof(RowHeader), new PropertyMetadata(GetDefaultRowHeaderBorderStyle()));
 
             public Style HeaderBorderStyle
             {

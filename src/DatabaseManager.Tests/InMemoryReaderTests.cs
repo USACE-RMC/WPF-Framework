@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -111,6 +111,9 @@ namespace DatabaseManager.Tests
 
         #region AddColumn Tests
 
+        /// <summary>
+        /// Verifies that adding a column with integer data adds the column correctly with all values.
+        /// </summary>
         [Fact]
         public void AddColumn_WithIntData_AddsColumnCorrectly()
         {
@@ -133,6 +136,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(30, tableManager.GetCell(1, 2));
         }
 
+        /// <summary>
+        /// Verifies that adding a column with double data adds the column correctly with all values.
+        /// </summary>
         [Fact]
         public void AddColumn_WithDoubleData_AddsColumnCorrectly()
         {
@@ -153,6 +159,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(2.5, tableManager.GetCell(1, 1));
         }
 
+        /// <summary>
+        /// Verifies that adding a column with string data adds the column correctly with all values.
+        /// </summary>
         [Fact]
         public void AddColumn_WithStringData_AddsColumnCorrectly()
         {
@@ -173,6 +182,9 @@ namespace DatabaseManager.Tests
             Assert.Equal("B", tableManager.GetCell(1, 1));
         }
 
+        /// <summary>
+        /// Verifies that adding a column with boolean data adds the column correctly with all values.
+        /// </summary>
         [Fact]
         public void AddColumn_WithBoolData_AddsColumnCorrectly()
         {
@@ -193,6 +205,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(false, tableManager.GetCell(1, 1));
         }
 
+        /// <summary>
+        /// Verifies that adding multiple columns in sequence adds all columns correctly with proper indexing.
+        /// </summary>
         [Fact]
         public void AddMultipleColumns_InSequence_AddsAllColumnsCorrectly()
         {
@@ -223,6 +238,9 @@ namespace DatabaseManager.Tests
 
         #region DeleteRow Tests
 
+        /// <summary>
+        /// Verifies that deleting a row removes it correctly and adjusts remaining row indices.
+        /// </summary>
         [Fact]
         public void DeleteRow_RemovesRowCorrectly()
         {
@@ -243,6 +261,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(3, tableManager.GetCell(0, 1));
         }
 
+        /// <summary>
+        /// Verifies that deleting the first row removes it correctly.
+        /// </summary>
         [Fact]
         public void DeleteRow_FirstRow_RemovesCorrectly()
         {
@@ -263,6 +284,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(3, tableManager.GetCell(0, 1));
         }
 
+        /// <summary>
+        /// Verifies that deleting the last row removes it correctly.
+        /// </summary>
         [Fact]
         public void DeleteRow_LastRow_RemovesCorrectly()
         {
@@ -283,6 +307,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(2, tableManager.GetCell(0, 1));
         }
 
+        /// <summary>
+        /// Verifies that deleting multiple rows removes them all correctly.
+        /// </summary>
         [Fact]
         public void DeleteMultipleRows_RemovesAllCorrectly()
         {
@@ -310,6 +337,9 @@ namespace DatabaseManager.Tests
 
         #region AddRow Tests
 
+        /// <summary>
+        /// Verifies that adding a row with data adds the row correctly with all column values.
+        /// </summary>
         [Fact]
         public void AddRow_AddsRowCorrectly()
         {
@@ -329,6 +359,9 @@ namespace DatabaseManager.Tests
             Assert.Equal("B", tableManager.GetCell(1, 1));
         }
 
+        /// <summary>
+        /// Verifies that adding multiple rows from a DataTable adds all rows correctly.
+        /// </summary>
         [Fact]
         public void AddMultipleRows_AddsAllRowsCorrectly()
         {
@@ -354,6 +387,9 @@ namespace DatabaseManager.Tests
 
         #region DeleteColumn Tests
 
+        /// <summary>
+        /// Verifies that deleting a column removes it correctly and adjusts remaining column indices.
+        /// </summary>
         [Fact]
         public void DeleteColumn_RemovesColumnCorrectly()
         {
@@ -378,6 +414,9 @@ namespace DatabaseManager.Tests
 
         #region Cell Edit Tests
 
+        /// <summary>
+        /// Verifies that editing a cell updates its value correctly.
+        /// </summary>
         [Fact]
         public void EditCell_UpdatesCellCorrectly()
         {
@@ -396,6 +435,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(2, tableManager.GetCell(0, 1));
         }
 
+        /// <summary>
+        /// Verifies that editing multiple cells applies all edits correctly.
+        /// </summary>
         [Fact]
         public void EditCell_WithMultipleEdits_AppliesAllCorrectly()
         {
@@ -469,6 +511,9 @@ namespace DatabaseManager.Tests
 
         #region GetStoredNumberOfRows/Columns Tests
 
+        /// <summary>
+        /// Verifies that GetStoredNumberOfRows returns the correct row count.
+        /// </summary>
         [Fact]
         public void GetStoredNumberOfRows_ReturnsCorrectCount()
         {
@@ -483,6 +528,9 @@ namespace DatabaseManager.Tests
             Assert.Equal(3, reader.GetStoredNumberOfRows("TestTable"));
         }
 
+        /// <summary>
+        /// Verifies that GetStoredNumberOfColumns returns the correct column count.
+        /// </summary>
         [Fact]
         public void GetStoredNumberOfColumns_ReturnsCorrectCount()
         {

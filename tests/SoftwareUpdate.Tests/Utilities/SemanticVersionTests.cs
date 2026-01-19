@@ -1,12 +1,49 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate;
 
 namespace SoftwareUpdate.Tests.Utilities
 {
+    /// <summary>
+    /// Provides comprehensive unit tests for the <see cref="SemanticVersion"/> class, verifying
+    /// constructors, parsing, comparison, equality, operators, and string formatting for semantic versioning.
+    /// </summary>
     public class SemanticVersionTests
     {
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the constructor sets Major, Minor, and Patch properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_SetsProperties()
         {
@@ -19,6 +56,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Null(version.BuildMetadata);
         }
 
+        /// <summary>
+        /// Verifies that the constructor accepts a prerelease identifier.
+        /// </summary>
         [Fact]
         public void Constructor_WithPreRelease()
         {
@@ -28,6 +68,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(version.IsPreRelease);
         }
 
+        /// <summary>
+        /// Verifies that the constructor accepts build metadata.
+        /// </summary>
         [Fact]
         public void Constructor_WithBuildMetadata()
         {
@@ -36,6 +79,10 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal("build.123", version.BuildMetadata);
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws <see cref="ArgumentOutOfRangeException"/> when major version is negative.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when major version is negative.</exception>
         [Fact]
         public void Constructor_NegativeMajor_ThrowsArgumentOutOfRangeException()
         {
@@ -43,6 +90,10 @@ namespace SoftwareUpdate.Tests.Utilities
                 new SemanticVersion(-1, 0, 0));
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws <see cref="ArgumentOutOfRangeException"/> when minor version is negative.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when minor version is negative.</exception>
         [Fact]
         public void Constructor_NegativeMinor_ThrowsArgumentOutOfRangeException()
         {
@@ -50,6 +101,10 @@ namespace SoftwareUpdate.Tests.Utilities
                 new SemanticVersion(1, -1, 0));
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws <see cref="ArgumentOutOfRangeException"/> when patch version is negative.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when patch version is negative.</exception>
         [Fact]
         public void Constructor_NegativePatch_ThrowsArgumentOutOfRangeException()
         {
@@ -57,6 +112,9 @@ namespace SoftwareUpdate.Tests.Utilities
                 new SemanticVersion(1, 0, -1));
         }
 
+        /// <summary>
+        /// Verifies that the constructor defaults the patch version to zero when not specified.
+        /// </summary>
         [Fact]
         public void Constructor_DefaultPatchIsZero()
         {
@@ -69,6 +127,13 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region Parse Tests
 
+        /// <summary>
+        /// Verifies that the Parse method correctly parses valid version strings.
+        /// </summary>
+        /// <param name="input">The version string to parse.</param>
+        /// <param name="expectedMajor">The expected major version number.</param>
+        /// <param name="expectedMinor">The expected minor version number.</param>
+        /// <param name="expectedPatch">The expected patch version number.</param>
         [Theory]
         [InlineData("1.0.0", 1, 0, 0)]
         [InlineData("2.1.3", 2, 1, 3)]
@@ -83,6 +148,13 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(expectedPatch, version.Patch);
         }
 
+        /// <summary>
+        /// Verifies that the Parse method handles version strings with a "v" or "V" prefix.
+        /// </summary>
+        /// <param name="input">The version string to parse.</param>
+        /// <param name="expectedMajor">The expected major version number.</param>
+        /// <param name="expectedMinor">The expected minor version number.</param>
+        /// <param name="expectedPatch">The expected patch version number.</param>
         [Theory]
         [InlineData("v1.0.0", 1, 0, 0)]
         [InlineData("V2.1.3", 2, 1, 3)]
@@ -95,6 +167,11 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(expectedPatch, version.Patch);
         }
 
+        /// <summary>
+        /// Verifies that the Parse method correctly extracts prerelease identifiers.
+        /// </summary>
+        /// <param name="input">The version string to parse.</param>
+        /// <param name="expectedPreRelease">The expected prerelease identifier.</param>
         [Theory]
         [InlineData("1.0.0-alpha", "alpha")]
         [InlineData("1.0.0-beta.1", "beta.1")]
@@ -106,6 +183,11 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(expectedPreRelease, version.PreRelease);
         }
 
+        /// <summary>
+        /// Verifies that the Parse method correctly extracts build metadata.
+        /// </summary>
+        /// <param name="input">The version string to parse.</param>
+        /// <param name="expectedBuild">The expected build metadata.</param>
         [Theory]
         [InlineData("1.0.0+build.123", "build.123")]
         [InlineData("1.0.0+20130313144700", "20130313144700")]
@@ -116,6 +198,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(expectedBuild, version.BuildMetadata);
         }
 
+        /// <summary>
+        /// Verifies that the Parse method handles both prerelease and build metadata.
+        /// </summary>
         [Fact]
         public void Parse_WithPreReleaseAndBuildMetadata()
         {
@@ -125,18 +210,31 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal("build.123", version.BuildMetadata);
         }
 
+        /// <summary>
+        /// Verifies that the Parse method throws <see cref="ArgumentNullException"/> when given a null string.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when input is null.</exception>
         [Fact]
         public void Parse_NullString_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => SemanticVersion.Parse(null!));
         }
 
+        /// <summary>
+        /// Verifies that the Parse method throws <see cref="ArgumentNullException"/> when given an empty string.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when input is empty.</exception>
         [Fact]
         public void Parse_EmptyString_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => SemanticVersion.Parse(string.Empty));
         }
 
+        /// <summary>
+        /// Verifies that the Parse method throws <see cref="FormatException"/> for invalid version strings.
+        /// </summary>
+        /// <param name="input">The invalid version string.</param>
+        /// <exception cref="FormatException">Thrown when the version string format is invalid.</exception>
         [Theory]
         [InlineData("invalid")]
         [InlineData("1")]
@@ -151,6 +249,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region TryParse Tests
 
+        /// <summary>
+        /// Verifies that TryParse returns true and outputs a valid version for valid input.
+        /// </summary>
         [Fact]
         public void TryParse_ValidString_ReturnsTrue()
         {
@@ -161,6 +262,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(1, version!.Major);
         }
 
+        /// <summary>
+        /// Verifies that TryParse returns false for invalid input.
+        /// </summary>
         [Fact]
         public void TryParse_InvalidString_ReturnsFalse()
         {
@@ -170,6 +274,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Null(version);
         }
 
+        /// <summary>
+        /// Verifies that TryParse returns false for null input.
+        /// </summary>
         [Fact]
         public void TryParse_NullString_ReturnsFalse()
         {
@@ -179,6 +286,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Null(version);
         }
 
+        /// <summary>
+        /// Verifies that TryParse returns false for empty string input.
+        /// </summary>
         [Fact]
         public void TryParse_EmptyString_ReturnsFalse()
         {
@@ -192,6 +302,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region FromVersion Tests
 
+        /// <summary>
+        /// Verifies that FromVersion converts a System.Version to SemanticVersion correctly.
+        /// </summary>
         [Fact]
         public void FromVersion_ConvertsSystemVersion()
         {
@@ -203,6 +316,10 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(3, semver.Patch);
         }
 
+        /// <summary>
+        /// Verifies that FromVersion throws <see cref="ArgumentNullException"/> when given a null version.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when version is null.</exception>
         [Fact]
         public void FromVersion_NullVersion_ThrowsArgumentNullException()
         {
@@ -210,6 +327,9 @@ namespace SoftwareUpdate.Tests.Utilities
                 SemanticVersion.FromVersion(null!));
         }
 
+        /// <summary>
+        /// Verifies that FromVersion treats a negative build number as zero.
+        /// </summary>
         [Fact]
         public void FromVersion_HandlesNegativeBuildAsZero()
         {
@@ -223,6 +343,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region CompareTo Tests
 
+        /// <summary>
+        /// Verifies that CompareTo returns a positive value when compared to null.
+        /// </summary>
         [Fact]
         public void CompareTo_NullReturnsPositive()
         {
@@ -231,6 +354,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(version.CompareTo(null) > 0);
         }
 
+        /// <summary>
+        /// Verifies that CompareTo returns zero for equal versions.
+        /// </summary>
         [Fact]
         public void CompareTo_EqualVersionsReturnsZero()
         {
@@ -240,6 +366,15 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(0, v1.CompareTo(v2));
         }
 
+        /// <summary>
+        /// Verifies that CompareTo returns a positive value when the version is greater.
+        /// </summary>
+        /// <param name="m1">Major version of first version.</param>
+        /// <param name="mi1">Minor version of first version.</param>
+        /// <param name="p1">Patch version of first version.</param>
+        /// <param name="m2">Major version of second version.</param>
+        /// <param name="mi2">Minor version of second version.</param>
+        /// <param name="p2">Patch version of second version.</param>
         [Theory]
         [InlineData(2, 0, 0, 1, 0, 0)]
         [InlineData(1, 2, 0, 1, 1, 0)]
@@ -252,6 +387,15 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1.CompareTo(v2) > 0);
         }
 
+        /// <summary>
+        /// Verifies that CompareTo returns a negative value when the version is lesser.
+        /// </summary>
+        /// <param name="m1">Major version of first version.</param>
+        /// <param name="mi1">Minor version of first version.</param>
+        /// <param name="p1">Patch version of first version.</param>
+        /// <param name="m2">Major version of second version.</param>
+        /// <param name="mi2">Minor version of second version.</param>
+        /// <param name="p2">Patch version of second version.</param>
         [Theory]
         [InlineData(1, 0, 0, 2, 0, 0)]
         [InlineData(1, 1, 0, 1, 2, 0)]
@@ -264,6 +408,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1.CompareTo(v2) < 0);
         }
 
+        /// <summary>
+        /// Verifies that a prerelease version is considered less than a release version.
+        /// </summary>
         [Fact]
         public void CompareTo_PreReleaseIsLessThanRelease()
         {
@@ -274,6 +421,11 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(release.CompareTo(prerelease) > 0);
         }
 
+        /// <summary>
+        /// Verifies that prerelease versions are compared correctly.
+        /// </summary>
+        /// <param name="less">The lesser version string.</param>
+        /// <param name="greater">The greater version string.</param>
         [Theory]
         [InlineData("1.0.0-alpha", "1.0.0-beta")]
         [InlineData("1.0.0-alpha.1", "1.0.0-alpha.2")]
@@ -286,6 +438,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1.CompareTo(v2) < 0);
         }
 
+        /// <summary>
+        /// Verifies that numeric prerelease identifiers come before alphanumeric ones.
+        /// </summary>
         [Fact]
         public void CompareTo_NumericPreReleaseComesBeforeAlphanumeric()
         {
@@ -295,6 +450,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(numeric.CompareTo(alpha) < 0);
         }
 
+        /// <summary>
+        /// Verifies that shorter prerelease identifiers are considered less than longer ones.
+        /// </summary>
         [Fact]
         public void CompareTo_ShorterPreReleaseIsLess()
         {
@@ -308,6 +466,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region Equality Tests
 
+        /// <summary>
+        /// Verifies that Equals returns true for identical versions.
+        /// </summary>
         [Fact]
         public void Equals_SameVersionReturnsTrue()
         {
@@ -317,6 +478,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1.Equals(v2));
         }
 
+        /// <summary>
+        /// Verifies that Equals returns false for different versions.
+        /// </summary>
         [Fact]
         public void Equals_DifferentVersionReturnsFalse()
         {
@@ -326,6 +490,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(v1.Equals(v2));
         }
 
+        /// <summary>
+        /// Verifies that Equals returns false when compared to null.
+        /// </summary>
         [Fact]
         public void Equals_NullReturnsFalse()
         {
@@ -334,6 +501,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(v1.Equals(null));
         }
 
+        /// <summary>
+        /// Verifies that Equals returns true when comparing to an object of the same version.
+        /// </summary>
         [Fact]
         public void Equals_Object_SameVersionReturnsTrue()
         {
@@ -343,6 +513,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1.Equals(v2));
         }
 
+        /// <summary>
+        /// Verifies that Equals returns false when comparing to a non-SemanticVersion object.
+        /// </summary>
         [Fact]
         public void Equals_Object_NonSemanticVersionReturnsFalse()
         {
@@ -351,6 +524,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(v1.Equals("1.2.3"));
         }
 
+        /// <summary>
+        /// Verifies that identical versions produce the same hash code.
+        /// </summary>
         [Fact]
         public void GetHashCode_SameVersionsSameHashCode()
         {
@@ -360,6 +536,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal(v1.GetHashCode(), v2.GetHashCode());
         }
 
+        /// <summary>
+        /// Verifies that different versions produce different hash codes.
+        /// </summary>
         [Fact]
         public void GetHashCode_DifferentVersionsDifferentHashCode()
         {
@@ -373,6 +552,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region Operator Tests
 
+        /// <summary>
+        /// Verifies that the equality operator returns true for equal versions.
+        /// </summary>
         [Fact]
         public void OperatorEquals_EqualVersionsReturnsTrue()
         {
@@ -382,6 +564,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 == v2);
         }
 
+        /// <summary>
+        /// Verifies that the equality operator returns true when both versions are null.
+        /// </summary>
         [Fact]
         public void OperatorEquals_BothNullReturnsTrue()
         {
@@ -391,6 +576,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 == v2);
         }
 
+        /// <summary>
+        /// Verifies that the equality operator returns false when left operand is null.
+        /// </summary>
         [Fact]
         public void OperatorEquals_LeftNullReturnsFalse()
         {
@@ -400,6 +588,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(v1 == v2);
         }
 
+        /// <summary>
+        /// Verifies that the inequality operator returns true for different versions.
+        /// </summary>
         [Fact]
         public void OperatorNotEquals_DifferentVersionsReturnsTrue()
         {
@@ -409,6 +600,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 != v2);
         }
 
+        /// <summary>
+        /// Verifies that the less-than operator returns true for a lesser version.
+        /// </summary>
         [Fact]
         public void OperatorLessThan_LesserVersionReturnsTrue()
         {
@@ -418,6 +612,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 < v2);
         }
 
+        /// <summary>
+        /// Verifies that the less-than operator returns true when left operand is null.
+        /// </summary>
         [Fact]
         public void OperatorLessThan_LeftNullReturnsTrue()
         {
@@ -427,6 +624,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 < v2);
         }
 
+        /// <summary>
+        /// Verifies that the less-than operator returns false when both operands are null.
+        /// </summary>
         [Fact]
         public void OperatorLessThan_BothNullReturnsFalse()
         {
@@ -436,6 +636,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(v1 < v2);
         }
 
+        /// <summary>
+        /// Verifies that the greater-than operator returns true for a greater version.
+        /// </summary>
         [Fact]
         public void OperatorGreaterThan_GreaterVersionReturnsTrue()
         {
@@ -445,6 +648,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 > v2);
         }
 
+        /// <summary>
+        /// Verifies that the greater-than operator returns false when left operand is null.
+        /// </summary>
         [Fact]
         public void OperatorGreaterThan_LeftNullReturnsFalse()
         {
@@ -454,6 +660,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(v1 > v2);
         }
 
+        /// <summary>
+        /// Verifies that the less-than-or-equal operator returns true for equal versions.
+        /// </summary>
         [Fact]
         public void OperatorLessThanOrEqual_EqualVersionsReturnsTrue()
         {
@@ -463,6 +672,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(v1 <= v2);
         }
 
+        /// <summary>
+        /// Verifies that the greater-than-or-equal operator returns true for equal versions.
+        /// </summary>
         [Fact]
         public void OperatorGreaterThanOrEqual_EqualVersionsReturnsTrue()
         {
@@ -476,6 +688,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region ToString Tests
 
+        /// <summary>
+        /// Verifies that ToString returns the correct string representation for a basic version.
+        /// </summary>
         [Fact]
         public void ToString_BasicVersion()
         {
@@ -484,6 +699,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal("1.2.3", version.ToString());
         }
 
+        /// <summary>
+        /// Verifies that ToString includes the prerelease identifier.
+        /// </summary>
         [Fact]
         public void ToString_WithPreRelease()
         {
@@ -492,6 +710,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal("1.0.0-alpha", version.ToString());
         }
 
+        /// <summary>
+        /// Verifies that ToString includes the build metadata.
+        /// </summary>
         [Fact]
         public void ToString_WithBuildMetadata()
         {
@@ -500,6 +721,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal("1.0.0+build.123", version.ToString());
         }
 
+        /// <summary>
+        /// Verifies that ToString includes both prerelease and build metadata.
+        /// </summary>
         [Fact]
         public void ToString_WithPreReleaseAndBuildMetadata()
         {
@@ -508,6 +732,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.Equal("1.0.0-alpha+build.123", version.ToString());
         }
 
+        /// <summary>
+        /// Verifies that ToTagString adds the "v" prefix to the version string.
+        /// </summary>
         [Fact]
         public void ToTagString_AddsVPrefix()
         {
@@ -520,6 +747,9 @@ namespace SoftwareUpdate.Tests.Utilities
 
         #region IsPreRelease Tests
 
+        /// <summary>
+        /// Verifies that IsPreRelease returns true when a prerelease identifier is present.
+        /// </summary>
         [Fact]
         public void IsPreRelease_WithPreRelease_ReturnsTrue()
         {
@@ -528,6 +758,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.True(version.IsPreRelease);
         }
 
+        /// <summary>
+        /// Verifies that IsPreRelease returns false when no prerelease identifier is present.
+        /// </summary>
         [Fact]
         public void IsPreRelease_WithoutPreRelease_ReturnsFalse()
         {
@@ -536,6 +769,9 @@ namespace SoftwareUpdate.Tests.Utilities
             Assert.False(version.IsPreRelease);
         }
 
+        /// <summary>
+        /// Verifies that IsPreRelease returns false when the prerelease identifier is empty.
+        /// </summary>
         [Fact]
         public void IsPreRelease_EmptyPreRelease_ReturnsFalse()
         {

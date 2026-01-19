@@ -68,8 +68,8 @@ namespace DatabaseManager
         /// <returns>An array of deleted row indices.</returns>
         public int[] GetDeletedRowIndices()
         {
-            var rowsDeleted = new int[(_deleteRowEdits.Count())];
-            for (int i = 0; i < _deleteRowEdits.Count(); i++)
+            var rowsDeleted = new int[_deleteRowEdits.Length];
+            for (int i = 0; i < _deleteRowEdits.Length; i++)
                 rowsDeleted[i] = _deleteRowEdits[i].RowIndex;
             return rowsDeleted;
         }

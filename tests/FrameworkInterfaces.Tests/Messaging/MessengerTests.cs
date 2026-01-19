@@ -1,3 +1,33 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
@@ -6,8 +36,16 @@ using System.IO;
 
 namespace FrameworkInterfaces.Tests.Messaging
 {
+    /// <summary>
+    /// Test class for the Messenger singleton implementation, providing comprehensive tests for message management,
+    /// event notification, property configuration, and file export functionality.
+    /// </summary>
     public class MessengerTests
     {
+        /// <summary>
+        /// Gets a fresh Messenger instance with cleared message collection for testing.
+        /// </summary>
+        /// <returns>A Messenger instance with no messages.</returns>
         private Messenger GetFreshMessenger()
         {
             var messenger = Messenger.GetInstance();
@@ -17,6 +55,9 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Singleton Tests
 
+        /// <summary>
+        /// Verifies that the Messenger GetInstance method returns the same singleton instance on multiple calls.
+        /// </summary>
         [Fact]
         public void GetInstance_ReturnsSameInstance()
         {
@@ -30,6 +71,9 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Add Message Tests
 
+        /// <summary>
+        /// Verifies that adding a single message successfully adds it to the Messenger collection.
+        /// </summary>
         [Fact]
         public void Add_SingleMessage_AddsToCollection()
         {
@@ -44,6 +88,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Same(message, allMessages[0]);
         }
 
+        /// <summary>
+        /// Verifies that attempting to add a null message throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when message is null.</exception>
         [Fact]
         public void Add_NullMessage_ThrowsArgumentNullException()
         {
@@ -52,6 +100,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Throws<ArgumentNullException>(() => messenger.Add((IMessageItem)null!));
         }
 
+        /// <summary>
+        /// Verifies that a message with a null source is not added to the collection.
+        /// </summary>
         [Fact]
         public void Add_MessageWithNullSource_DoesNotAdd()
         {
@@ -63,6 +114,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Empty(messenger.AllMessageItems());
         }
 
+        /// <summary>
+        /// Verifies that attempting to add a duplicate message (same code and source) ignores the duplicate.
+        /// </summary>
         [Fact]
         public void Add_DuplicateMessage_IgnoresDuplicate()
         {
@@ -79,6 +133,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal("Error 1", allMessages[0].Description);
         }
 
+        /// <summary>
+        /// Verifies that adding event messages with the same code auto-increments the code for subsequent events.
+        /// </summary>
         [Fact]
         public void Add_EventMessage_AutoIncrementsCode()
         {
@@ -96,6 +153,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal("EVT-0011", event2.Code);
         }
 
+        /// <summary>
+        /// Verifies that adding a message raises the MessagesAdded event with the correct message.
+        /// </summary>
         [Fact]
         public void Add_RaisesMessagesAddedEvent()
         {
@@ -112,6 +172,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Same(message, addedMessages[0]);
         }
 
+        /// <summary>
+        /// Verifies that adding multiple messages in a single call adds all messages to the collection.
+        /// </summary>
         [Fact]
         public void Add_MultipleMessages_AddsAll()
         {
@@ -129,6 +192,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(3, messenger.AllMessageItems().Count);
         }
 
+        /// <summary>
+        /// Verifies that attempting to add a null enumerable of messages throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when messages collection is null.</exception>
         [Fact]
         public void Add_NullEnumerable_ThrowsArgumentNullException()
         {
@@ -141,6 +208,10 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Remove Message Tests
 
+        /// <summary>
+        /// Verifies that removing an existing message returns true and removes it from the collection.
+        /// </summary>
+        /// <returns>True if the message was successfully removed.</returns>
         [Fact]
         public void Remove_ExistingMessage_ReturnsTrue()
         {
@@ -155,6 +226,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Empty(messenger.AllMessageItems());
         }
 
+        /// <summary>
+        /// Verifies that attempting to remove a non-existent message returns false.
+        /// </summary>
+        /// <returns>False if the message was not found in the collection.</returns>
         [Fact]
         public void Remove_NonExistentMessage_ReturnsFalse()
         {
@@ -167,6 +242,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(result);
         }
 
+        /// <summary>
+        /// Verifies that attempting to remove a null message throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when message is null.</exception>
         [Fact]
         public void Remove_NullMessage_ThrowsArgumentNullException()
         {
@@ -175,6 +254,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Throws<ArgumentNullException>(() => messenger.Remove(null!));
         }
 
+        /// <summary>
+        /// Verifies that attempting to remove a message with a null source returns false.
+        /// </summary>
+        /// <returns>False since messages with null sources cannot be tracked.</returns>
         [Fact]
         public void Remove_MessageWithNullSource_ReturnsFalse()
         {
@@ -184,6 +267,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(messenger.Remove(message));
         }
 
+        /// <summary>
+        /// Verifies that removing a message raises the MessagesRemoved event.
+        /// </summary>
         [Fact]
         public void Remove_RaisesMessagesRemovedEvent()
         {
@@ -204,6 +290,9 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Clear Tests
 
+        /// <summary>
+        /// Verifies that Clear removes all messages from the collection.
+        /// </summary>
         [Fact]
         public void Clear_RemovesAllMessages()
         {
@@ -217,6 +306,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Empty(messenger.AllMessageItems());
         }
 
+        /// <summary>
+        /// Verifies that Clear with a specific source only removes messages from that source.
+        /// </summary>
+        /// <param name="source">The source object to filter messages by.</param>
         [Fact]
         public void Clear_WithSource_RemovesOnlySourceMessages()
         {
@@ -233,6 +326,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal("Error 2", allMessages[0].Description);
         }
 
+        /// <summary>
+        /// Verifies that attempting to clear messages with a null source throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when source is null.</exception>
         [Fact]
         public void Clear_WithNullSource_ThrowsArgumentNullException()
         {
@@ -241,6 +338,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Throws<ArgumentNullException>(() => messenger.Clear(null!));
         }
 
+        /// <summary>
+        /// Verifies that clearing messages for a non-existent source does not throw an exception.
+        /// </summary>
         [Fact]
         public void Clear_WithNonExistentSource_DoesNotThrow()
         {
@@ -256,6 +356,9 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Property Tests
 
+        /// <summary>
+        /// Verifies that the ShowErrors property defaults to true.
+        /// </summary>
         [Fact]
         public void ShowErrors_DefaultTrue()
         {
@@ -263,6 +366,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(messenger.ShowErrors);
         }
 
+        /// <summary>
+        /// Verifies that the ShowErrors property can be set and retrieved correctly.
+        /// </summary>
+        /// <param name="value">The value to set for ShowErrors.</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -273,6 +380,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(value, messenger.ShowErrors);
         }
 
+        /// <summary>
+        /// Verifies that changing the ShowErrors property raises the PropertyChanged event.
+        /// </summary>
         [Fact]
         public void ShowErrors_WhenChanged_RaisesPropertyChanged()
         {
@@ -291,6 +401,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             messenger.ShowErrors = originalValue;
         }
 
+        /// <summary>
+        /// Verifies that the ShowWarnings property defaults to true.
+        /// </summary>
         [Fact]
         public void ShowWarnings_DefaultTrue()
         {
@@ -298,6 +411,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(messenger.ShowWarnings);
         }
 
+        /// <summary>
+        /// Verifies that the ShowMessages property defaults to true.
+        /// </summary>
         [Fact]
         public void ShowMessages_DefaultTrue()
         {
@@ -305,6 +421,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(messenger.ShowMessages);
         }
 
+        /// <summary>
+        /// Verifies that the ShowEvents property defaults to true.
+        /// </summary>
         [Fact]
         public void ShowEvents_DefaultTrue()
         {
@@ -312,6 +431,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.True(messenger.ShowEvents);
         }
 
+        /// <summary>
+        /// Verifies that the ErrorColor property defaults to Red.
+        /// </summary>
         [Fact]
         public void ErrorColor_DefaultRed()
         {
@@ -319,6 +441,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(Colors.Red, messenger.ErrorColor.Color);
         }
 
+        /// <summary>
+        /// Verifies that the WarningColor property defaults to DarkOrange.
+        /// </summary>
         [Fact]
         public void WarningColor_DefaultDarkOrange()
         {
@@ -326,6 +451,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(Colors.DarkOrange, messenger.WarningColor.Color);
         }
 
+        /// <summary>
+        /// Verifies that the MessageColor property defaults to Blue.
+        /// </summary>
         [Fact]
         public void MessageColor_DefaultBlue()
         {
@@ -333,6 +461,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(Colors.Blue, messenger.MessageColor.Color);
         }
 
+        /// <summary>
+        /// Verifies that the EventColor property defaults to Black.
+        /// </summary>
         [Fact]
         public void EventColor_DefaultBlack()
         {
@@ -340,6 +471,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(Colors.Black, messenger.EventColor.Color);
         }
 
+        /// <summary>
+        /// Verifies that setting the ErrorColor property to null does not change the value.
+        /// </summary>
         [Fact]
         public void ErrorColor_SetNull_DoesNotChange()
         {
@@ -351,6 +485,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Same(originalColor, messenger.ErrorColor);
         }
 
+        /// <summary>
+        /// Verifies that the TextFileName property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void TextFileName_SetAndGet()
         {
@@ -362,6 +499,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(testPath, messenger.TextFileName);
         }
 
+        /// <summary>
+        /// Verifies that setting the TextFileName property to null defaults it to an empty string.
+        /// </summary>
         [Fact]
         public void TextFileName_SetNull_DefaultsToEmpty()
         {
@@ -373,6 +513,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(string.Empty, messenger.TextFileName);
         }
 
+        /// <summary>
+        /// Verifies that the WriteToFile property can be set and retrieved correctly.
+        /// </summary>
         [Fact]
         public void WriteToFile_SetAndGet()
         {
@@ -385,6 +528,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.False(messenger.WriteToFile);
         }
 
+        /// <summary>
+        /// Verifies that the ErrorBeep property can be set and retrieved correctly.
+        /// </summary>
+        /// <param name="value">The value to set for ErrorBeep.</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -395,6 +542,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(value, messenger.ErrorBeep);
         }
 
+        /// <summary>
+        /// Verifies that the WarningBeep property can be set and retrieved correctly.
+        /// </summary>
+        /// <param name="value">The value to set for WarningBeep.</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -405,6 +556,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(value, messenger.WarningBeep);
         }
 
+        /// <summary>
+        /// Verifies that the MessageBeep property can be set and retrieved correctly.
+        /// </summary>
+        /// <param name="value">The value to set for MessageBeep.</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -415,6 +570,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Equal(value, messenger.MessageBeep);
         }
 
+        /// <summary>
+        /// Verifies that the EventBeep property can be set and retrieved correctly.
+        /// </summary>
+        /// <param name="value">The value to set for EventBeep.</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -429,6 +588,10 @@ namespace FrameworkInterfaces.Tests.Messaging
 
         #region Export Tests
 
+        /// <summary>
+        /// Verifies that attempting to export to a text file with a null filename throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when filename is null.</exception>
         [Fact]
         public void ExportToTextFile_NullFileName_ThrowsArgumentNullException()
         {
@@ -437,6 +600,10 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Throws<ArgumentNullException>(() => messenger.ExportToTextFile(null!));
         }
 
+        /// <summary>
+        /// Verifies that attempting to export to a text file with an empty filename throws an ArgumentNullException.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when filename is empty.</exception>
         [Fact]
         public void ExportToTextFile_EmptyFileName_ThrowsArgumentNullException()
         {
@@ -445,6 +612,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             Assert.Throws<ArgumentNullException>(() => messenger.ExportToTextFile(string.Empty));
         }
 
+        /// <summary>
+        /// Verifies that exporting messages to a text file writes the messages correctly.
+        /// </summary>
         [Fact]
         public void ExportToTextFile_WritesMessages()
         {
@@ -468,6 +638,9 @@ namespace FrameworkInterfaces.Tests.Messaging
             }
         }
 
+        /// <summary>
+        /// Verifies that exporting to a text file creates the directory if it does not exist.
+        /// </summary>
         [Fact]
         public void ExportToTextFile_CreatesDirectoryIfNotExists()
         {

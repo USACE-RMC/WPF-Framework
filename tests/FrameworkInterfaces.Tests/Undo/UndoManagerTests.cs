@@ -1,3 +1,33 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using FrameworkInterfaces.Undo;
 using FrameworkInterfaces.Undo.Actions;
@@ -5,10 +35,17 @@ using System.ComponentModel;
 
 namespace FrameworkInterfaces.Tests.Undo
 {
+    /// <summary>
+    /// Test class for the UndoManager implementation, providing comprehensive tests for undo/redo stack management,
+    /// action execution, transaction handling, state tracking, and property change notifications.
+    /// </summary>
     public class UndoManagerTests
     {
         #region Initial State Tests
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance cannot perform undo operations initially.
+        /// </summary>
         [Fact]
         public void NewUndoManager_CannotUndo()
         {
@@ -16,6 +53,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance cannot perform redo operations initially.
+        /// </summary>
         [Fact]
         public void NewUndoManager_CannotRedo()
         {
@@ -23,6 +63,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanRedo);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance has a null undo description initially.
+        /// </summary>
         [Fact]
         public void NewUndoManager_UndoDescriptionIsNull()
         {
@@ -30,6 +73,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Null(manager.UndoDescription);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance has a null redo description initially.
+        /// </summary>
         [Fact]
         public void NewUndoManager_RedoDescriptionIsNull()
         {
@@ -37,6 +83,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Null(manager.RedoDescription);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance reports no changes since save initially.
+        /// </summary>
         [Fact]
         public void NewUndoManager_HasNotChangedSinceSave()
         {
@@ -44,6 +93,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.HasChangedSinceSave);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance is not executing an action initially.
+        /// </summary>
         [Fact]
         public void NewUndoManager_IsNotExecutingAction()
         {
@@ -51,6 +103,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.IsExecutingAction);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance has an empty undo stack.
+        /// </summary>
         [Fact]
         public void NewUndoManager_UndoStackIsEmpty()
         {
@@ -58,6 +113,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Empty(manager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance has an empty redo stack.
+        /// </summary>
         [Fact]
         public void NewUndoManager_RedoStackIsEmpty()
         {
@@ -65,6 +123,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Empty(manager.RedoStack);
         }
 
+        /// <summary>
+        /// Verifies that a new UndoManager instance has the default maximum undo levels of 100.
+        /// </summary>
         [Fact]
         public void NewUndoManager_MaxUndoLevelsDefault()
         {
@@ -76,6 +137,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region ExecuteAction Tests
 
+        /// <summary>
+        /// Verifies that ExecuteAction executes the provided action.
+        /// </summary>
         [Fact]
         public void ExecuteAction_ExecutesTheAction()
         {
@@ -88,6 +152,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(executed);
         }
 
+        /// <summary>
+        /// Verifies that ExecuteAction adds the action to the undo stack.
+        /// </summary>
         [Fact]
         public void ExecuteAction_AddsToUndoStack()
         {
@@ -100,6 +167,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Single(manager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that ExecuteAction clears the redo stack when a new action is executed.
+        /// </summary>
         [Fact]
         public void ExecuteAction_ClearsRedoStack()
         {
@@ -114,6 +184,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanRedo);
         }
 
+        /// <summary>
+        /// Verifies that ExecuteAction throws an ArgumentNullException when passed a null action.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when action parameter is null.</exception>
         [Fact]
         public void ExecuteAction_NullAction_ThrowsArgumentNullException()
         {
@@ -122,6 +196,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Throws<ArgumentNullException>(() => manager.ExecuteAction(null!));
         }
 
+        /// <summary>
+        /// Verifies that ExecuteAction sets the HasChangedSinceSave property to true.
+        /// </summary>
         [Fact]
         public void ExecuteAction_SetsHasChangedSinceSave()
         {
@@ -137,6 +214,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region RecordAction Tests
 
+        /// <summary>
+        /// Verifies that RecordAction does not execute the action immediately.
+        /// </summary>
         [Fact]
         public void RecordAction_DoesNotExecuteTheAction()
         {
@@ -149,6 +229,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(executed);
         }
 
+        /// <summary>
+        /// Verifies that RecordAction adds the action to the undo stack.
+        /// </summary>
         [Fact]
         public void RecordAction_AddsToUndoStack()
         {
@@ -160,6 +243,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(manager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that RecordAction throws an ArgumentNullException when passed a null action.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when action parameter is null.</exception>
         [Fact]
         public void RecordAction_NullAction_ThrowsArgumentNullException()
         {
@@ -172,6 +259,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Undo Tests
 
+        /// <summary>
+        /// Verifies that Undo calls the undo operation on the action.
+        /// </summary>
         [Fact]
         public void Undo_CallsUndoOnAction()
         {
@@ -185,6 +275,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(undoCalled);
         }
 
+        /// <summary>
+        /// Verifies that Undo moves the action from the undo stack to the redo stack.
+        /// </summary>
         [Fact]
         public void Undo_MovesActionToRedoStack()
         {
@@ -198,6 +291,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(manager.CanRedo);
         }
 
+        /// <summary>
+        /// Verifies that Undo does nothing when there are no actions to undo.
+        /// </summary>
         [Fact]
         public void Undo_WhenNoActions_DoesNothing()
         {
@@ -209,6 +305,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanRedo);
         }
 
+        /// <summary>
+        /// Verifies that Undo raises the StateChanged event.
+        /// </summary>
         [Fact]
         public void Undo_RaisesStateChanged()
         {
@@ -227,6 +326,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Redo Tests
 
+        /// <summary>
+        /// Verifies that Redo calls the execute operation on the action.
+        /// </summary>
         [Fact]
         public void Redo_CallsExecuteOnAction()
         {
@@ -241,6 +343,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal(2, executeCount);
         }
 
+        /// <summary>
+        /// Verifies that Redo moves the action from the redo stack to the undo stack.
+        /// </summary>
         [Fact]
         public void Redo_MovesActionToUndoStack()
         {
@@ -255,6 +360,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanRedo);
         }
 
+        /// <summary>
+        /// Verifies that Redo does nothing when there are no actions to redo.
+        /// </summary>
         [Fact]
         public void Redo_WhenNoActions_DoesNothing()
         {
@@ -269,6 +377,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region UndoTo/RedoTo Tests
 
+        /// <summary>
+        /// Verifies that UndoTo undoes multiple actions up to and including the specified action.
+        /// </summary>
         [Fact]
         public void UndoTo_UndoesMultipleActions()
         {
@@ -287,6 +398,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanUndo);
         }
 
+        /// <summary>
+        /// Verifies that UndoTo throws an ArgumentNullException when passed a null action.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when action parameter is null.</exception>
         [Fact]
         public void UndoTo_NullAction_ThrowsArgumentNullException()
         {
@@ -295,6 +410,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Throws<ArgumentNullException>(() => manager.UndoTo(null!));
         }
 
+        /// <summary>
+        /// Verifies that RedoTo redoes multiple actions up to and including the specified action.
+        /// </summary>
         [Fact]
         public void RedoTo_RedoesMultipleActions()
         {
@@ -317,6 +435,10 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.CanRedo);
         }
 
+        /// <summary>
+        /// Verifies that RedoTo throws an ArgumentNullException when passed a null action.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when action parameter is null.</exception>
         [Fact]
         public void RedoTo_NullAction_ThrowsArgumentNullException()
         {
@@ -329,6 +451,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Clear Tests
 
+        /// <summary>
+        /// Verifies that Clear removes all actions from the undo stack.
+        /// </summary>
         [Fact]
         public void Clear_ClearsUndoStack()
         {
@@ -342,6 +467,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Empty(manager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that Clear removes all actions from the redo stack.
+        /// </summary>
         [Fact]
         public void Clear_ClearsRedoStack()
         {
@@ -356,6 +484,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Empty(manager.RedoStack);
         }
 
+        /// <summary>
+        /// Verifies that Clear resets the HasChangedSinceSave property to false.
+        /// </summary>
         [Fact]
         public void Clear_ResetsHasChangedSinceSave()
         {
@@ -372,6 +503,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region SavePoint Tests
 
+        /// <summary>
+        /// Verifies that MarkSavePoint resets the HasChangedSinceSave property to false.
+        /// </summary>
         [Fact]
         public void MarkSavePoint_ResetsHasChangedSinceSave()
         {
@@ -384,6 +518,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.False(manager.HasChangedSinceSave);
         }
 
+        /// <summary>
+        /// Verifies that executing a new action after marking a save point sets HasChangedSinceSave to true.
+        /// </summary>
         [Fact]
         public void AfterMarkSavePoint_NewActionSetsHasChangedSinceSave()
         {
@@ -398,6 +535,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.True(manager.HasChangedSinceSave);
         }
 
+        /// <summary>
+        /// Verifies that undoing back to the save point resets HasChangedSinceSave to false.
+        /// </summary>
         [Fact]
         public void UndoToSavePoint_ResetsHasChangedSinceSave()
         {
@@ -417,6 +557,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region Transaction Tests
 
+        /// <summary>
+        /// Verifies that BeginTransaction groups multiple actions into a single undoable composite action.
+        /// </summary>
         [Fact]
         public void BeginTransaction_GroupsActionsIntoSingleUndo()
         {
@@ -433,6 +576,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Grouped", manager.UndoDescription);
         }
 
+        /// <summary>
+        /// Verifies that nested transactions return a no-op disposable and use the outer transaction.
+        /// </summary>
         [Fact]
         public void BeginTransaction_NestedTransaction_ReturnsNoOpDisposable()
         {
@@ -454,6 +600,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal("Outer", manager.UndoDescription);
         }
 
+        /// <summary>
+        /// Verifies that committing a transaction with no actions does not add anything to the undo stack.
+        /// </summary>
         [Fact]
         public void CommitTransaction_WithNoActions_DoesNotAddToUndoStack()
         {
@@ -467,6 +616,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Empty(manager.UndoStack);
         }
 
+        /// <summary>
+        /// Verifies that rolling back a transaction undoes all actions within it in reverse order.
+        /// </summary>
         [Fact]
         public void RollbackTransaction_UndoesAllActionsInReverseOrder()
         {
@@ -484,6 +636,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal(new[] { 3, 2, 1 }, undoOrder);
         }
 
+        /// <summary>
+        /// Verifies that rolling back when no transaction is active does nothing.
+        /// </summary>
         [Fact]
         public void RollbackTransaction_WithNoTransaction_DoesNothing()
         {
@@ -501,6 +656,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region MaxUndoLevels Tests
 
+        /// <summary>
+        /// Verifies that setting MaxUndoLevels trims the undo stack to the specified size.
+        /// </summary>
         [Fact]
         public void MaxUndoLevels_TrimsUndoStack()
         {
@@ -515,6 +673,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal(3, manager.UndoStack.Count);
         }
 
+        /// <summary>
+        /// Verifies that setting MaxUndoLevels to less than one sets it to one instead.
+        /// </summary>
         [Fact]
         public void MaxUndoLevels_SetToLessThanOne_SetsToOne()
         {
@@ -525,6 +686,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Equal(1, manager.MaxUndoLevels);
         }
 
+        /// <summary>
+        /// Verifies that setting MaxUndoLevels to a negative value sets it to one instead.
+        /// </summary>
         [Fact]
         public void MaxUndoLevels_SetToNegative_SetsToOne()
         {
@@ -539,6 +703,9 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #region PropertyChanged Tests
 
+        /// <summary>
+        /// Verifies that ExecuteAction raises PropertyChanged event for CanUndo property.
+        /// </summary>
         [Fact]
         public void ExecuteAction_RaisesPropertyChangedForCanUndo()
         {
@@ -552,6 +719,9 @@ namespace FrameworkInterfaces.Tests.Undo
             Assert.Contains(nameof(IUndoManager.CanUndo), changedProperties);
         }
 
+        /// <summary>
+        /// Verifies that Undo raises PropertyChanged event for CanRedo property.
+        /// </summary>
         [Fact]
         public void Undo_RaisesPropertyChangedForCanRedo()
         {

@@ -1,30 +1,75 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using Themes;
 
 namespace Themes.Tests.Core
 {
+    /// <summary>
+    /// Unit tests for the Theme enumeration, which defines the available application themes.
+    /// </summary>
     public class ThemeTests
     {
         #region Enum Value Tests
 
+        /// <summary>
+        /// Verifies that the Theme enumeration contains a Light value.
+        /// </summary>
         [Fact]
         public void Theme_HasLightValue()
         {
             Assert.True(Enum.IsDefined(typeof(Theme), Theme.Light));
         }
 
+        /// <summary>
+        /// Verifies that the Theme enumeration contains a Blue value.
+        /// </summary>
         [Fact]
         public void Theme_HasBlueValue()
         {
             Assert.True(Enum.IsDefined(typeof(Theme), Theme.Blue));
         }
 
+        /// <summary>
+        /// Verifies that the Theme enumeration contains a Dark value.
+        /// </summary>
         [Fact]
         public void Theme_HasDarkValue()
         {
             Assert.True(Enum.IsDefined(typeof(Theme), Theme.Dark));
         }
 
+        /// <summary>
+        /// Verifies that the Theme enumeration contains exactly three values.
+        /// </summary>
         [Fact]
         public void Theme_HasThreeValues()
         {
@@ -37,18 +82,27 @@ namespace Themes.Tests.Core
 
         #region Enum Ordering Tests
 
+        /// <summary>
+        /// Verifies that Theme.Light has an underlying value of 0 (first value).
+        /// </summary>
         [Fact]
         public void Theme_Light_IsFirstValue()
         {
             Assert.Equal(0, (int)Theme.Light);
         }
 
+        /// <summary>
+        /// Verifies that Theme.Blue has an underlying value of 1 (second value).
+        /// </summary>
         [Fact]
         public void Theme_Blue_IsSecondValue()
         {
             Assert.Equal(1, (int)Theme.Blue);
         }
 
+        /// <summary>
+        /// Verifies that Theme.Dark has an underlying value of 2 (third value).
+        /// </summary>
         [Fact]
         public void Theme_Dark_IsThirdValue()
         {
@@ -59,18 +113,27 @@ namespace Themes.Tests.Core
 
         #region ToString Tests
 
+        /// <summary>
+        /// Verifies that Theme.Light.ToString() returns "Light".
+        /// </summary>
         [Fact]
         public void Theme_Light_ToStringReturnsLight()
         {
             Assert.Equal("Light", Theme.Light.ToString());
         }
 
+        /// <summary>
+        /// Verifies that Theme.Blue.ToString() returns "Blue".
+        /// </summary>
         [Fact]
         public void Theme_Blue_ToStringReturnsBlue()
         {
             Assert.Equal("Blue", Theme.Blue.ToString());
         }
 
+        /// <summary>
+        /// Verifies that Theme.Dark.ToString() returns "Dark".
+        /// </summary>
         [Fact]
         public void Theme_Dark_ToStringReturnsDark()
         {
@@ -81,6 +144,11 @@ namespace Themes.Tests.Core
 
         #region Parse Tests
 
+        /// <summary>
+        /// Verifies that Theme values can be parsed from their string names.
+        /// </summary>
+        /// <param name="name">The string name of the theme.</param>
+        /// <param name="expected">The expected Theme value.</param>
         [Theory]
         [InlineData("Light", Theme.Light)]
         [InlineData("Blue", Theme.Blue)]
@@ -92,6 +160,11 @@ namespace Themes.Tests.Core
             Assert.Equal(expected, theme);
         }
 
+        /// <summary>
+        /// Verifies that Theme values can be parsed from their numeric string representations.
+        /// </summary>
+        /// <param name="value">The numeric string value.</param>
+        /// <param name="expected">The expected Theme value.</param>
         [Theory]
         [InlineData("0", Theme.Light)]
         [InlineData("1", Theme.Blue)]
@@ -107,6 +180,9 @@ namespace Themes.Tests.Core
 
         #region Equality Tests
 
+        /// <summary>
+        /// Verifies that two Theme values with the same enumeration value are equal.
+        /// </summary>
         [Fact]
         public void Theme_SameValues_AreEqual()
         {
@@ -117,6 +193,9 @@ namespace Themes.Tests.Core
             Assert.True(a == b);
         }
 
+        /// <summary>
+        /// Verifies that two Theme values with different enumeration values are not equal.
+        /// </summary>
         [Fact]
         public void Theme_DifferentValues_AreNotEqual()
         {
@@ -131,6 +210,9 @@ namespace Themes.Tests.Core
 
         #region Default Value Test
 
+        /// <summary>
+        /// Verifies that the default value of the Theme enumeration is Theme.Light.
+        /// </summary>
         [Fact]
         public void Theme_DefaultValue_IsLight()
         {

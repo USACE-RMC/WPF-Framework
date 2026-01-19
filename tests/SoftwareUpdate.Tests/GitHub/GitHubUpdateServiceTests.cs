@@ -1,3 +1,33 @@
+/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* - Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* - Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or materials provided with the distribution.
+* - The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 using Xunit;
 using SoftwareUpdate;
 using SoftwareUpdate.GitHub;
@@ -5,17 +35,35 @@ using System.IO;
 
 namespace SoftwareUpdate.Tests.GitHub
 {
+    /// <summary>
+    /// Provides unit tests for the <see cref="GitHubUpdateService"/> class, verifying construction,
+    /// version skipping, download operations, installation, disposal, and thread safety.
+    /// </summary>
     public class GitHubUpdateServiceTests : IDisposable
     {
+        /// <summary>
+        /// The temporary test directory used for test file operations.
+        /// </summary>
         private readonly string _testDir;
+
+        /// <summary>
+        /// The GitHubUpdateService instance under test.
+        /// </summary>
         private GitHubUpdateService? _service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GitHubUpdateServiceTests"/> class.
+        /// Sets up a temporary test directory for file operations.
+        /// </summary>
         public GitHubUpdateServiceTests()
         {
             _testDir = Path.Combine(Path.GetTempPath(), "GitHubUpdateServiceTests_" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(_testDir);
         }
 
+        /// <summary>
+        /// Performs cleanup operations, disposing the service and deleting the temporary test directory.
+        /// </summary>
         public void Dispose()
         {
             _service?.Dispose();
@@ -33,6 +81,10 @@ namespace SoftwareUpdate.Tests.GitHub
             }
         }
 
+        /// <summary>
+        /// Creates a valid <see cref="UpdateOptions"/> instance for testing purposes.
+        /// </summary>
+        /// <returns>A valid UpdateOptions instance.</returns>
         private UpdateOptions CreateValidOptions()
         {
             return new UpdateOptions
@@ -46,12 +98,20 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region Constructor Tests
 
+        /// <summary>
+        /// Verifies that the constructor throws <see cref="ArgumentNullException"/> when given null options.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when options is null.</exception>
         [Fact]
         public void Constructor_NullOptions_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => new GitHubUpdateService(null!));
         }
 
+        /// <summary>
+        /// Verifies that the constructor throws <see cref="ArgumentException"/> when given invalid options.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when options are invalid.</exception>
         [Fact]
         public void Constructor_InvalidOptions_ThrowsArgumentException()
         {
@@ -65,6 +125,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Throws<ArgumentException>(() => new GitHubUpdateService(options));
         }
 
+        /// <summary>
+        /// Verifies that the constructor creates an instance successfully with valid options.
+        /// </summary>
         [Fact]
         public void Constructor_ValidOptions_CreatesInstance()
         {
@@ -75,6 +138,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.NotNull(_service);
         }
 
+        /// <summary>
+        /// Verifies that the constructor sets the Options property correctly.
+        /// </summary>
         [Fact]
         public void Constructor_SetsOptionsProperty()
         {
@@ -85,6 +151,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Same(options, _service.Options);
         }
 
+        /// <summary>
+        /// Verifies that the initial state is Idle after construction.
+        /// </summary>
         [Fact]
         public void Constructor_InitialStateIsIdle()
         {
@@ -95,6 +164,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Equal(UpdateState.Idle, _service.State);
         }
 
+        /// <summary>
+        /// Verifies that AvailableUpdate is null after construction.
+        /// </summary>
         [Fact]
         public void Constructor_AvailableUpdateIsNull()
         {
@@ -109,6 +181,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region SkipVersion Tests
 
+        /// <summary>
+        /// Verifies that SkipVersion adds a version to the skipped list.
+        /// </summary>
         [Fact]
         public void SkipVersion_AddsVersionToSkippedList()
         {
@@ -121,6 +196,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.True(_service.IsVersionSkipped(version));
         }
 
+        /// <summary>
+        /// Verifies that SkipVersion does not throw when given a null version.
+        /// </summary>
         [Fact]
         public void SkipVersion_NullVersion_DoesNotThrow()
         {
@@ -132,6 +210,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that SkipVersion persists skipped versions to a file.
+        /// </summary>
         [Fact]
         public void SkipVersion_PersistsToFile()
         {
@@ -147,6 +228,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Contains("2.0.0", content);
         }
 
+        /// <summary>
+        /// Verifies that multiple versions can be skipped and all are marked as skipped.
+        /// </summary>
         [Fact]
         public void SkipVersion_MultipleVersions_AllSkipped()
         {
@@ -166,6 +250,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region IsVersionSkipped Tests
 
+        /// <summary>
+        /// Verifies that IsVersionSkipped returns false for a null version.
+        /// </summary>
         [Fact]
         public void IsVersionSkipped_NullVersion_ReturnsFalse()
         {
@@ -175,6 +262,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.False(_service.IsVersionSkipped(null));
         }
 
+        /// <summary>
+        /// Verifies that IsVersionSkipped returns false for a version that has not been skipped.
+        /// </summary>
         [Fact]
         public void IsVersionSkipped_NotSkippedVersion_ReturnsFalse()
         {
@@ -184,6 +274,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.False(_service.IsVersionSkipped(SemanticVersion.Parse("99.0.0")));
         }
 
+        /// <summary>
+        /// Verifies that IsVersionSkipped loads skipped versions from file during construction.
+        /// </summary>
         [Fact]
         public void IsVersionSkipped_LoadsFromFile()
         {
@@ -200,6 +293,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.False(_service.IsVersionSkipped(SemanticVersion.Parse("1.0.0")));
         }
 
+        /// <summary>
+        /// Verifies that IsVersionSkipped performs case-insensitive comparison for prerelease identifiers.
+        /// </summary>
         [Fact]
         public void IsVersionSkipped_CaseInsensitive()
         {
@@ -219,6 +315,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region ClearSkippedVersions Tests
 
+        /// <summary>
+        /// Verifies that ClearSkippedVersions removes all skipped versions.
+        /// </summary>
         [Fact]
         public void ClearSkippedVersions_RemovesAllSkippedVersions()
         {
@@ -233,6 +332,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.False(_service.IsVersionSkipped(SemanticVersion.Parse("3.0.0")));
         }
 
+        /// <summary>
+        /// Verifies that ClearSkippedVersions clears the skipped versions file.
+        /// </summary>
         [Fact]
         public void ClearSkippedVersions_ClearsFile()
         {
@@ -248,6 +350,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Empty(content.Trim());
         }
 
+        /// <summary>
+        /// Verifies that ClearSkippedVersions does not throw when there are no skipped versions.
+        /// </summary>
         [Fact]
         public void ClearSkippedVersions_WhenEmpty_DoesNotThrow()
         {
@@ -263,6 +368,10 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region DownloadUpdateAsync Validation Tests
 
+        /// <summary>
+        /// Verifies that DownloadUpdateAsync throws <see cref="ArgumentNullException"/> when given a null update.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when update is null.</exception>
         [Fact]
         public async Task DownloadUpdateAsync_NullUpdate_ThrowsArgumentNullException()
         {
@@ -273,6 +382,9 @@ namespace SoftwareUpdate.Tests.GitHub
                 _service.DownloadUpdateAsync(null!));
         }
 
+        /// <summary>
+        /// Verifies that DownloadUpdateAsync returns a failed result when the download URL is missing.
+        /// </summary>
         [Fact]
         public async Task DownloadUpdateAsync_MissingDownloadUrl_ReturnsFailedResult()
         {
@@ -295,6 +407,10 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region InstallUpdateAndRestart Validation Tests
 
+        /// <summary>
+        /// Verifies that InstallUpdateAndRestart throws <see cref="ArgumentNullException"/> when given a null file path.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when filePath is null.</exception>
         [Fact]
         public void InstallUpdateAndRestart_NullFilePath_ThrowsArgumentNullException()
         {
@@ -305,6 +421,10 @@ namespace SoftwareUpdate.Tests.GitHub
                 _service.InstallUpdateAndRestart(null!));
         }
 
+        /// <summary>
+        /// Verifies that InstallUpdateAndRestart throws <see cref="ArgumentNullException"/> when given an empty file path.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when filePath is empty.</exception>
         [Fact]
         public void InstallUpdateAndRestart_EmptyFilePath_ThrowsArgumentNullException()
         {
@@ -315,6 +435,10 @@ namespace SoftwareUpdate.Tests.GitHub
                 _service.InstallUpdateAndRestart(string.Empty));
         }
 
+        /// <summary>
+        /// Verifies that InstallUpdateAndRestart throws <see cref="FileNotFoundException"/> when given a non-existent file.
+        /// </summary>
+        /// <exception cref="FileNotFoundException">Thrown when the file does not exist.</exception>
         [Fact]
         public void InstallUpdateAndRestart_NonExistentFile_ThrowsFileNotFoundException()
         {
@@ -329,6 +453,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region Dispose Tests
 
+        /// <summary>
+        /// Verifies that Dispose can be called multiple times without throwing.
+        /// </summary>
         [Fact]
         public void Dispose_CanBeCalledMultipleTimes()
         {
@@ -348,6 +475,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region State Property Tests
 
+        /// <summary>
+        /// Verifies that the State property can be safely accessed from multiple threads.
+        /// </summary>
         [Fact]
         public void State_IsThreadSafe()
         {
@@ -366,6 +496,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region AvailableUpdate Property Tests
 
+        /// <summary>
+        /// Verifies that the AvailableUpdate property can be safely accessed from multiple threads.
+        /// </summary>
         [Fact]
         public void AvailableUpdate_IsThreadSafe()
         {
@@ -384,6 +517,9 @@ namespace SoftwareUpdate.Tests.GitHub
 
         #region Skipped Versions File Handling Tests
 
+        /// <summary>
+        /// Verifies that the constructor does not throw when the skipped versions file is missing.
+        /// </summary>
         [Fact]
         public void Constructor_MissingSkippedVersionsFile_DoesNotThrow()
         {
@@ -395,6 +531,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that the constructor does not throw when the skipped versions file is empty.
+        /// </summary>
         [Fact]
         public void Constructor_EmptySkippedVersionsFile_DoesNotThrow()
         {
@@ -409,6 +548,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.Null(exception);
         }
 
+        /// <summary>
+        /// Verifies that the constructor ignores empty lines and whitespace in the skipped versions file.
+        /// </summary>
         [Fact]
         public void Constructor_SkippedVersionsFileWithWhitespace_IgnoresEmpty()
         {
@@ -423,6 +565,9 @@ namespace SoftwareUpdate.Tests.GitHub
             Assert.True(_service.IsVersionSkipped(SemanticVersion.Parse("2.0.0")));
         }
 
+        /// <summary>
+        /// Verifies that SkipVersion creates the necessary directory structure if it doesn't exist.
+        /// </summary>
         [Fact]
         public void SkipVersion_CreatesDirectoryIfNeeded()
         {
