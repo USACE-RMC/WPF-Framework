@@ -744,55 +744,31 @@ namespace DatabaseControls
 
         /// <summary>
         /// Handles changes to RowColor or AlternateRowColor properties.
-        /// Updates the row background colors when the theme changes.
+        /// Note: Row colors now use bindings to RowColor/AlternateRowColor and update automatically.
+        /// This callback is kept for compatibility but does not need to update UI.
         /// </summary>
         private static void OnRowColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
-            {
-                viewer.UpdateRowHeaders();
-            }
+            // Row backgrounds now use bindings and update automatically when RowColor/AlternateRowColor change
         }
 
         /// <summary>
         /// Handles changes to grid line color or thickness properties.
-        /// Updates all grid lines when the theme changes.
+        /// Note: Grid lines now use bindings and update automatically when theme changes.
         /// </summary>
         private static void OnGridLinePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
-            {
-                viewer.UpdateGridLineColors();
-            }
+            // Grid lines now use bindings and update automatically
         }
 
         /// <summary>
         /// Updates the stroke color and thickness of all grid lines in the canvas.
+        /// Note: Grid lines now use bindings for Stroke and StrokeThickness, so they
+        /// update automatically when theme changes. This method is kept for compatibility.
         /// </summary>
         private void UpdateGridLineColors()
         {
-            if (DataView == null) return;
-
-            int columnLineCount = DataView.ColumnNames.Count() + 1;
-
-            for (int i = 0; i < GridLinesCanvas.Children.Count; i++)
-            {
-                if (GridLinesCanvas.Children[i] is Line line)
-                {
-                    if (i < columnLineCount)
-                    {
-                        // Column lines (vertical)
-                        line.Stroke = ColumnLineColor;
-                        line.StrokeThickness = ColumnLineThickness;
-                    }
-                    else
-                    {
-                        // Row lines (horizontal)
-                        line.Stroke = RowLineColor;
-                        line.StrokeThickness = RowLineThickness;
-                    }
-                }
-            }
+            // Grid lines now use bindings to RowLineColor/ColumnLineColor and update automatically
         }
 
         /// <summary>
@@ -1009,9 +985,11 @@ namespace DatabaseControls
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop
             };
+            // Use bindings so stroke updates with theme changes
+            rowLine.SetBinding(Line.StrokeProperty, new Binding(nameof(RowLineColor)) { Source = this });
+            rowLine.SetBinding(Line.StrokeThicknessProperty, new Binding(nameof(RowLineThickness)) { Source = this });
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
 
@@ -1150,9 +1128,11 @@ namespace DatabaseControls
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop
             };
+            // Use bindings so stroke updates with theme changes
+            rowLine.SetBinding(Line.StrokeProperty, new Binding(nameof(RowLineColor)) { Source = this });
+            rowLine.SetBinding(Line.StrokeThicknessProperty, new Binding(nameof(RowLineThickness)) { Source = this });
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
 
@@ -1251,9 +1231,11 @@ namespace DatabaseControls
             {
                 var gridLine = new Line
                 {
-                    SnapsToDevicePixels = true, X1 = 0, Y1 = 0, X2 = 0,
-                    StrokeThickness = ColumnLineThickness, Stroke = ColumnLineColor
+                    SnapsToDevicePixels = true, X1 = 0, Y1 = 0, X2 = 0
                 };
+                // Use bindings so stroke updates with theme changes
+                gridLine.SetBinding(Line.StrokeProperty, new Binding(nameof(ColumnLineColor)) { Source = this });
+                gridLine.SetBinding(Line.StrokeThicknessProperty, new Binding(nameof(ColumnLineThickness)) { Source = this });
                 BindingOperations.SetBinding(gridLine, Line.Y2Property, lengthBinding);
                 GridLinesCanvas.Children.Add(gridLine);
             }
@@ -1293,7 +1275,14 @@ namespace DatabaseControls
             RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            var rowColor = new Border { Background = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor };
+            var rowColor = new Border
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
+            // Use binding so it automatically updates when theme changes
+            rowColor.SetBinding(Border.BackgroundProperty,
+                new Binding((rowIndex % 2 == 0) ? nameof(RowColor) : nameof(AlternateRowColor)) { Source = this });
             Grid.SetRow(rowColor, rowIndex);
             RowColorGrid.Children.Add(rowColor);
 
@@ -1313,9 +1302,11 @@ namespace DatabaseControls
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop
             };
+            // Use bindings so stroke updates with theme changes
+            rowLine.SetBinding(Line.StrokeProperty, new Binding(nameof(RowLineColor)) { Source = this });
+            rowLine.SetBinding(Line.StrokeThicknessProperty, new Binding(nameof(RowLineThickness)) { Source = this });
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
         }
@@ -1387,7 +1378,12 @@ namespace DatabaseControls
             for (int i = 0; i < _visibleRowCount; i++)
             {
                 if (i < RowColorGrid.Children.Count)
-                    ((Border)RowColorGrid.Children[i]).Background = alternate ? AlternateRowColor : RowColor;
+                {
+                    var border = (Border)RowColorGrid.Children[i];
+                    // Update binding to track the correct color property based on row position
+                    border.SetBinding(Border.BackgroundProperty,
+                        new Binding(alternate ? nameof(AlternateRowColor) : nameof(RowColor)) { Source = this });
+                }
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
                 alternate = !alternate;
