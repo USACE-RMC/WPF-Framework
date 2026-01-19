@@ -37,63 +37,89 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         xmlns:gc="clr-namespace:GenericControls;assembly=GenericControls"
         xmlns:dtview="clr-namespace:DatabaseControls;assembly=DatabaseControls"
         mc:Ignorable="d"
-        Title="DatabaseControls Demo" Height="600" Width="900"
+        Title="DatabaseControls Demo" Height="700" Width="1000" MinWidth="800" MinHeight="500"
         Style="{DynamicResource MetroWindowStyle}"
         Background="{DynamicResource EnvironmentWindowBackground}">
 
-    <Grid Name="MainGrid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Menu Bar -->
-        <Menu Grid.Row="0" Height="23" Name="ApplicationMenu" VerticalAlignment="Top">
-            <MenuItem Name="FileMenu" Header="_File">
-                <MenuItem Header="_Export..." Name="ExportMenuItem" Click="ExportMenuItem_Click" />
-            </MenuItem>
-        </Menu>
+        <!-- Header Bar with Theme Selection -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource EnvironmentWindowBackground}"
+                BorderBrush="{DynamicResource Button.Static.Border}"
+                BorderThickness="0,0,0,1"
+                Padding="15,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Theme Selection Panel -->
-        <Border Grid.Row="1" Background="{DynamicResource EnvironmentWindowBackground}"
-                BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="0,0,0,1" Padding="8,6">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Theme:" VerticalAlignment="Center" Margin="0,0,10,0"
-                           Foreground="{DynamicResource EnvironmentWindowText}"/>
-                <RadioButton x:Name="LightThemeRadio" Content="Light" GroupName="Theme"
-                             IsChecked="True" Checked="ThemeRadio_Checked"
-                             VerticalAlignment="Center" Margin="0,0,15,0"/>
-                <RadioButton x:Name="BlueThemeRadio" Content="Blue" GroupName="Theme"
-                             Checked="ThemeRadio_Checked"
-                             VerticalAlignment="Center" Margin="0,0,15,0"/>
-                <RadioButton x:Name="DarkThemeRadio" Content="Dark" GroupName="Theme"
-                             Checked="ThemeRadio_Checked"
-                             VerticalAlignment="Center"/>
-            </StackPanel>
+                <!-- Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="DatabaseControls Library Demo"
+                               FontSize="18" FontWeight="SemiBold"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
+                    <TextBlock Text=" - USACE Risk Management Center"
+                               FontSize="12" VerticalAlignment="Bottom" Margin="0,0,0,2"
+                               Foreground="{DynamicResource EnvironmentWindowText}" Opacity="0.6"/>
+                </StackPanel>
+
+                <!-- Theme Selection -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Theme:" VerticalAlignment="Center" Margin="0,0,12,0"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
+                    <RadioButton x:Name="LightThemeRadio" Content="Light" GroupName="Theme"
+                                 IsChecked="True" Checked="ThemeRadio_Checked" Margin="0,0,12,0"
+                                 Foreground="{DynamicResource EnvironmentWindowText}"/>
+                    <RadioButton x:Name="BlueThemeRadio" Content="Blue" GroupName="Theme"
+                                 Checked="ThemeRadio_Checked" Margin="0,0,12,0"
+                                 Foreground="{DynamicResource EnvironmentWindowText}"/>
+                    <RadioButton x:Name="DarkThemeRadio" Content="Dark" GroupName="Theme"
+                                 Checked="ThemeRadio_Checked"
+                                 Foreground="{DynamicResource EnvironmentWindowText}"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Database Controls Panel -->
-        <Border Grid.Row="2" Background="{DynamicResource EnvironmentWindowBackground}"
-                BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="0,0,0,1" Padding="8,6">
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Select Database" Height="23" Name="SelectDatabaseButton"
-                        Width="100" Click="SelectDatabaseButton_Click"/>
-                <ComboBox Height="23" Margin="10,0,0,0" Name="TableComboBox" Width="150"
+        <Border Grid.Row="1"
+                Background="{DynamicResource EnvironmentWindowBackground}"
+                BorderBrush="{DynamicResource Button.Static.Border}"
+                BorderThickness="0,0,0,1"
+                Padding="15,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Database:" VerticalAlignment="Center" Margin="0,0,8,0"
+                           Foreground="{DynamicResource EnvironmentWindowText}"/>
+                <Button Grid.Column="1" Content="Select File..." Height="24" Name="SelectDatabaseButton"
+                        Width="90" Click="SelectDatabaseButton_Click" Padding="8,2"/>
+
+                <TextBlock Grid.Column="2" Text="Table:" VerticalAlignment="Center" Margin="20,0,8,0"
+                           Foreground="{DynamicResource EnvironmentWindowText}"/>
+                <ComboBox Grid.Column="3" Height="24" Name="TableComboBox" Width="200"
+                          HorizontalAlignment="Left"
                           IsEnabled="False" SelectionChanged="TableComboBox_SelectionChanged"/>
-                <TextBlock x:Name="StatusText" VerticalAlignment="Center" Margin="15,0,0,0"
-                           Foreground="{DynamicResource EnvironmentToolWindowDisabledText}"
-                           Text="Select a database file to begin"/>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Main Table Viewer -->
-        <Grid Grid.Row="3" Name="ViewerContainer" Background="{DynamicResource EnvironmentWindowBackground}">
+        <Grid Grid.Row="2" Background="{DynamicResource EnvironmentWindowBackground}">
             <dtview:TableViewer
                 Name="TestViewer"
-                Margin="8"
+                Margin="15"
                 Editable="True"
                 RowSelectable="True"
                 RowHeight="22"
@@ -105,10 +131,24 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </Grid>
 
         <!-- Status Bar -->
-        <StatusBar Grid.Row="4">
-            <StatusBarItem>
-                <TextBlock x:Name="RowCountText" Text="Ready"/>
-            </StatusBarItem>
-        </StatusBar>
+        <Border Grid.Row="3"
+                Background="{DynamicResource EnvironmentWindowBackground}"
+                BorderBrush="{DynamicResource Button.Static.Border}"
+                BorderThickness="0,1,0,0"
+                Padding="15,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" x:Name="StatusText"
+                           Text="Select a database file to begin"
+                           Foreground="{DynamicResource EnvironmentWindowText}" Opacity="0.7"/>
+                <TextBlock Grid.Column="1" x:Name="RowCountText"
+                           Text="Ready"
+                           Foreground="{DynamicResource EnvironmentWindowText}" Opacity="0.7"/>
+            </Grid>
+        </Border>
     </Grid>
 </gc:MetroWindow>

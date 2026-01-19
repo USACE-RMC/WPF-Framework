@@ -243,25 +243,25 @@ namespace DatabaseControls
         /// Identifies the <see cref="RowLineColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowLineColorProperty = DependencyProperty.Register(
-            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
+            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122)), OnGridLinePropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RowLineThickness"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowLineThicknessProperty = DependencyProperty.Register(
-            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
+            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnGridLinePropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ColumnLineColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnLineColorProperty = DependencyProperty.Register(
-            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
+            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122)), OnGridLinePropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ColumnLineThickness"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnLineThicknessProperty = DependencyProperty.Register(
-            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
+            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnGridLinePropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ColumnSelectable"/> dependency property.
@@ -739,6 +739,47 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Handles changes to grid line color or thickness properties.
+        /// Updates all grid lines when the theme changes.
+        /// </summary>
+        private static void OnGridLinePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TableViewer viewer && viewer._isLoaded && viewer.DataView != null)
+            {
+                viewer.UpdateGridLineColors();
+            }
+        }
+
+        /// <summary>
+        /// Updates the stroke color and thickness of all grid lines in the canvas.
+        /// </summary>
+        private void UpdateGridLineColors()
+        {
+            if (DataView == null) return;
+
+            int columnLineCount = DataView.ColumnNames.Count() + 1;
+
+            for (int i = 0; i < GridLinesCanvas.Children.Count; i++)
+            {
+                if (GridLinesCanvas.Children[i] is Line line)
+                {
+                    if (i < columnLineCount)
+                    {
+                        // Column lines (vertical)
+                        line.Stroke = ColumnLineColor;
+                        line.StrokeThickness = ColumnLineThickness;
+                    }
+                    else
+                    {
+                        // Row lines (horizontal)
+                        line.Stroke = RowLineColor;
+                        line.StrokeThickness = RowLineThickness;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Marks the specified columns as read-only, preventing edits to their cells.
         /// </summary>
         /// <param name="columnIndices">Array of zero-based column indices to mark as read-only.</param>
@@ -924,10 +965,9 @@ namespace DatabaseControls
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
             };
-            BindingOperations.SetBinding(rowLine, Line.StrokeThicknessProperty, new Binding(nameof(RowLineThickness)) { Source = this });
-            BindingOperations.SetBinding(rowLine, Line.StrokeProperty, new Binding(nameof(RowLineColor)) { Source = this });
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
 
@@ -1058,10 +1098,9 @@ namespace DatabaseControls
             double rowDistanceFromTop = RowHeight * GridPanel.RowDefinitions.Count - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
             };
-            BindingOperations.SetBinding(rowLine, Line.StrokeThicknessProperty, new Binding(nameof(RowLineThickness)) { Source = this });
-            BindingOperations.SetBinding(rowLine, Line.StrokeProperty, new Binding(nameof(RowLineColor)) { Source = this });
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
 
@@ -1160,10 +1199,9 @@ namespace DatabaseControls
             {
                 var gridLine = new Line
                 {
-                    SnapsToDevicePixels = true, X1 = 0, Y1 = 0, X2 = 0
+                    SnapsToDevicePixels = true, X1 = 0, Y1 = 0, X2 = 0,
+                    StrokeThickness = ColumnLineThickness, Stroke = ColumnLineColor
                 };
-                BindingOperations.SetBinding(gridLine, Line.StrokeThicknessProperty, new Binding(nameof(ColumnLineThickness)) { Source = this });
-                BindingOperations.SetBinding(gridLine, Line.StrokeProperty, new Binding(nameof(ColumnLineColor)) { Source = this });
                 BindingOperations.SetBinding(gridLine, Line.Y2Property, lengthBinding);
                 GridLinesCanvas.Children.Add(gridLine);
             }
@@ -1223,10 +1261,9 @@ namespace DatabaseControls
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop
+                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness, Stroke = RowLineColor
             };
-            BindingOperations.SetBinding(rowLine, Line.StrokeThicknessProperty, new Binding(nameof(RowLineThickness)) { Source = this });
-            BindingOperations.SetBinding(rowLine, Line.StrokeProperty, new Binding(nameof(RowLineColor)) { Source = this });
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
         }
