@@ -1030,6 +1030,9 @@ namespace DatabaseControls
                 UpdateRowHeaders();
                 UpdateGridLineColors();
                 UpdateCellForegrounds();
+                // Force WPF to re-render after binding updates
+                RowColorGrid.InvalidateVisual();
+                GridLinesCanvas.InvalidateVisual();
                 UpdateLayout();
             }
             RefreshColumnWidths();
@@ -1092,6 +1095,9 @@ namespace DatabaseControls
             UpdateRowHeaders();
             UpdateGridLineColors();
             UpdateCellForegrounds();
+            // Force WPF to re-render after binding updates
+            RowColorGrid.InvalidateVisual();
+            GridLinesCanvas.InvalidateVisual();
             UpdateLayout();
             SetSelectedCells();
             if (DataView.NumberOfRows > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex);
@@ -1913,6 +1919,10 @@ namespace DatabaseControls
             UpdateRowHeaders();
             UpdateGridLineColors();
             UpdateCellForegrounds();
+
+            // Force WPF to re-render the visual elements after binding updates
+            RowColorGrid.InvalidateVisual();
+            GridLinesCanvas.InvalidateVisual();
             UpdateLayout();
         }
 
