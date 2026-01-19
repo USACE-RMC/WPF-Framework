@@ -199,8 +199,6 @@
         <Setter Property="DeSelectedForegroundColor" Value="Black"/>
         <Setter Property="ActiveCellBackground" Value="#FF0078D7"/>
         <Setter Property="ActiveCellForeground" Value="White"/>
-        <!-- Cell Foreground - fixed -->
-        <Setter Property="CellForeground" Value="Black"/>
         <!-- Default Row Height -->
         <Setter Property="RowHeight" Value="22"/>
     </Style>
