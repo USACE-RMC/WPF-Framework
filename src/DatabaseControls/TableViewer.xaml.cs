@@ -51,7 +51,7 @@ namespace DatabaseControls
     /// </summary>
     public partial class TableViewer : UserControl
     {
-        #region Enumerations
+        #region Enumerables
 
         private enum SelectionMode : byte
         {
@@ -631,10 +631,7 @@ namespace DatabaseControls
         /// </summary>
         public event SelectedRowIndicesChangedEventHandler? SelectedRowIndicesChanged;
 
-        /// <summary>
-        /// Occurs when the active cell location changes.
-        /// </summary>
-        public event EventHandler? ActiveCellLocationChanged;
+        public event Action? ActiveCellLocationChanged;
 
         /// <summary>
         /// Occurs when the right mouse button is released on a row header.
@@ -1502,20 +1499,15 @@ namespace DatabaseControls
             return GridPanel.RowDefinitions.Count - 1;
         }
 
-        /// <summary>
-        /// Determines the table column index from a grid position (mouse coordinates).
-        /// </summary>
-        /// <param name="gridPosition">The position within the grid panel.</param>
-        /// <returns>The column index at the specified position.</returns>
         private int GetTableColumnIndex(Point gridPosition)
         {
-            double runningWidth = 0;
-            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+            double runningSum = 0;
+            for (int i = 0; i <= GridPanel.ColumnDefinitions.Count - 1; i++)
             {
-                runningWidth += ColumnHeadersGrid.ColumnDefinitions[i].ActualWidth;
-                if (gridPosition.X < runningWidth) return i;
+                runningSum += GridPanel.ColumnDefinitions[i].ActualWidth;
+                if (runningSum >= gridPosition.X) return i;
             }
-            return DataView.ColumnNames.Count() - 1;
+            return GridPanel.ColumnDefinitions.Count - 1;
         }
 
         #endregion
@@ -1609,71 +1601,38 @@ namespace DatabaseControls
                     DeSelectCell(i, j);
         }
 
-        /// <summary>
-        /// Applies selection highlighting to a specific cell.
-        /// </summary>
-        /// <param name="columnIndex">The column index of the cell.</param>
-        /// <param name="rowIndex">The visible row index of the cell.</param>
         private void SelectCell(int columnIndex, int rowIndex)
         {
-            if (rowIndex < 0 || rowIndex >= _visibleRowCount) return;
-            if (columnIndex < 0 || columnIndex >= DataView.ColumnNames.Count()) return;
-            var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
-            cell.Background = SelectedColor;
-            cell.Foreground = SelectedForegroundColor;
+            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Background = SelectedColor;
+            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Foreground = SelectedForegroundColor;
         }
-
-        /// <summary>
-        /// Removes selection highlighting from a specific cell.
-        /// </summary>
-        /// <param name="columnIndex">The column index of the cell.</param>
-        /// <param name="rowIndex">The visible row index of the cell.</param>
         private void DeSelectCell(int columnIndex, int rowIndex)
         {
-            if (rowIndex < 0 || rowIndex >= _visibleRowCount) return;
-            if (columnIndex < 0 || columnIndex >= DataView.ColumnNames.Count()) return;
-            var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
-            cell.Background = DeSelectedColor;
-            cell.Foreground = DeSelectedForegroundColor;
+            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Background = DeSelectedColor;
+            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Foreground = DeSelectedForegroundColor;
         }
 
-        /// <summary>
-        /// Updates the visual appearance of the active cell with active cell colors.
-        /// Optionally updates the stored active cell position.
-        /// </summary>
-        /// <param name="rowIndex">The row index to set as active, or -1 to keep current.</param>
-        /// <param name="columnIndex">The column index to set as active, or -1 to keep current.</param>
-        private void SetActiveCell(int rowIndex = -1, int columnIndex = -1)
+        private void SetActiveCell()
         {
-            if (DataView == null || DataView.NumberOfRows == 0) return;
-            if (rowIndex >= 0) _activeCellVirtualRowIndex = rowIndex;
-            if (columnIndex >= 0) _activeCellDataColumnIndex = columnIndex;
-
-            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
-            int tableRow = _activeCellVirtualRowIndex - firstRowIndex;
-
-            if (tableRow >= 0 && tableRow < _visibleRowCount)
+            if (GridPanel.Children.Count == 0) return;
+            int firstRowTableIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            int lastRowTableIndex = firstRowTableIndex + _visibleRowCount - 1;
+            if (_activeCellVirtualRowIndex >= firstRowTableIndex && _activeCellVirtualRowIndex <= lastRowTableIndex)
             {
-                var cell = (Cell)GridPanel.Children[tableRow * DataView.ColumnNames.Count() + _activeCellDataColumnIndex];
-                cell.Background = ActiveCellBackground;
-                cell.Foreground = ActiveCellForeground;
+                int rowIndex = _activeCellVirtualRowIndex - firstRowTableIndex;
+                ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + _activeCellDataColumnIndex]).Background = ActiveCellBackground;
+                ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + _activeCellDataColumnIndex]).Foreground = ActiveCellForeground;
             }
         }
-
-        /// <summary>
-        /// Sets the active cell to the specified row and column, optionally scrolling to make it visible.
-        /// </summary>
-        /// <param name="newDataRowIndex">The zero-based row index of the cell to activate.</param>
-        /// <param name="newDataColumnIndex">The zero-based column index of the cell to activate.</param>
-        /// <param name="scrollToRow">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
         public void SetActiveCell(int newDataRowIndex, int newDataColumnIndex, bool scrollToRow = false)
         {
+            //
             _activeCellDataColumnIndex = newDataColumnIndex;
-            _activeCellVirtualRowIndex = _rowOffset![newDataRowIndex];  // Convert data row index to virtual row index for sorted tables
+            _activeCellVirtualRowIndex = _rowOffset![newDataRowIndex];
             if (scrollToRow) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
             DeSelectAllCells();
             SetSelectedCells();
-            ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
+            ActiveCellLocationChanged?.Invoke();
         }
 
         /// <summary>
@@ -1992,77 +1951,72 @@ namespace DatabaseControls
             VerticalScrollbar.Value -= e.Delta / 10; // if e.Delta = 30 then table will go up 3 rows
         }
 
-        /// <summary>
-        /// Handles the PreviewKeyDown event for keyboard navigation (PageUp, PageDown, Arrow keys).
-        /// Manages page-based and cell-based navigation throughout the grid.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
             int lastRowDataIndex = firstRowDataIndex + _visibleRowCount - 1;
             int rowIndex = _activeCellVirtualRowIndex - firstRowDataIndex;
-
             if (e.Key == Key.PageDown)
             {
                 if (lastRowDataIndex == DataView.NumberOfRows - 1) return;
                 if (_cellEditTextBox.IsFocused) GridPanel.Focus();
                 VerticalScrollbar.Value += _visibleRowCount;
-                int maxRows = _selectedRowsOnly ? _selectedDataRowIndices.Count : DataView.NumberOfRows;
+                int maxRows = DataView.NumberOfRows;
+                if (_selectedRowsOnly == true) maxRows = _selectedDataRowIndices.Count;
                 if ((_activeCellVirtualRowIndex + _visibleRowCount) < maxRows - _visibleRowCount)
+                {
                     SetActiveCell(_activeCellVirtualRowIndex + _visibleRowCount, _activeCellDataColumnIndex);
+                }
                 else
+                {
                     SetActiveCell((int)Math.Floor(VerticalScrollbar.Value) + rowIndex, _activeCellDataColumnIndex);
-                e.Handled = true;
-                return;
+                }
             }
-
             if (e.Key == Key.PageUp)
             {
                 if (firstRowDataIndex == 0) return;
                 if (_cellEditTextBox.IsFocused) GridPanel.Focus();
                 VerticalScrollbar.Value -= _visibleRowCount;
                 if ((firstRowDataIndex - _visibleRowCount) >= 0)
+                {
                     SetActiveCell(_activeCellVirtualRowIndex - _visibleRowCount, _activeCellDataColumnIndex);
+                }
                 else
+                {
                     SetActiveCell((int)Math.Floor(VerticalScrollbar.Value) + rowIndex, _activeCellDataColumnIndex);
-                e.Handled = true;
-                return;
+                }
             }
-
             if (_cellEditTextBox.IsFocused) return;
-
             if (e.Key == Key.Left)
             {
                 if (_activeCellDataColumnIndex > 0) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex - 1);
                 e.Handled = true;
                 return;
             }
-
             if (e.Key == Key.Down)
             {
-                int maxRows = _selectedRowsOnly ? _selectedDataRowIndices.Count : DataView.NumberOfRows;
-                if (_activeCellVirtualRowIndex < maxRows - 1)
-                    SetActiveCell(_activeCellVirtualRowIndex + 1, _activeCellDataColumnIndex);
+                if (_selectedRowsOnly == true)
+                {
+                    if (_activeCellVirtualRowIndex < _selectedDataRowIndices.Count - 1) SetActiveCell(_activeCellVirtualRowIndex + 1, _activeCellDataColumnIndex);
+                }
+                else
+                {
+                    if (_activeCellVirtualRowIndex < DataView.NumberOfRows - 1) SetActiveCell(_activeCellVirtualRowIndex + 1, _activeCellDataColumnIndex);
+                }
                 if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
                 if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
                 e.Handled = true;
                 return;
             }
-
             if (e.Key == Key.Right)
             {
-                if (_activeCellDataColumnIndex < DataView.ColumnNames.Count() - 1)
-                    SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex + 1);
+                if (_activeCellDataColumnIndex < DataView.ColumnNames.Count() - 1) SetActiveCell(_activeCellVirtualRowIndex, _activeCellDataColumnIndex + 1);
                 e.Handled = true;
                 return;
             }
-
             if (e.Key == Key.Up)
             {
-                if (_activeCellVirtualRowIndex > 0)
-                    SetActiveCell(_activeCellVirtualRowIndex - 1, _activeCellDataColumnIndex);
+                if (_activeCellVirtualRowIndex > 0) SetActiveCell(_activeCellVirtualRowIndex - 1, _activeCellDataColumnIndex);
                 if (_activeCellVirtualRowIndex < firstRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
                 if (_activeCellVirtualRowIndex > lastRowDataIndex) VerticalScrollbar.Value = _activeCellVirtualRowIndex - _visibleRowCount + 1;
                 e.Handled = true;
@@ -2600,7 +2554,10 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void SelectAllLeftMouseDown(object sender, MouseButtonEventArgs e) { }
+        private void SelectAllLeftMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _mouseSelectionMode = SelectionMode.All;
+        }
 
         /// <summary>
         /// Handles the MouseLeftButtonUp event on the select-all button to toggle all cells selection.
@@ -2715,23 +2672,28 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="sender">The source of the event, or null if called programmatically.</param>
         /// <param name="e">The event arguments, or null if called programmatically.</param>
-        private void ShowAll_Checked(object? sender, RoutedEventArgs? e)
+        private void ShowAll_Checked(object sender, RoutedEventArgs e)
         {
+
             _selectedRowsOnly = false;
-            double rowsAreaHeight = HorizontalScrollViewer.ActualHeight - ColumnHeadersGrid.ActualHeight;
-            VerticalScrollbar.Maximum = DataView.NumberOfRows - (int)Math.Floor(rowsAreaHeight / RowHeight);
+            VerticalScrollbar.Maximum = DataView.NumberOfRows - (int)Math.Floor(RowsAr.ActualHeight / RowHeight);
             if (_selectedDataRowIndices.Count > 0)
             {
-                VerticalScrollbar.Value = _selectedDataRowIndices[0] > VerticalScrollbar.Maximum
-                    ? VerticalScrollbar.Maximum - 1
-                    : _selectedDataRowIndices[0];
+                if (_selectedDataRowIndices[0] > VerticalScrollbar.Maximum)
+                {
+                    VerticalScrollbar.Value = VerticalScrollbar.Maximum - 1;
+                }
+                else
+                {
+                    VerticalScrollbar.Value = _selectedDataRowIndices[0];
+                }
             }
-            _visibleRowCount = (int)Math.Floor(rowsAreaHeight / RowHeight);
+            _visibleRowCount = (int)Math.Floor(RowsAr.ActualHeight / RowHeight);
             if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
             LoadRows();
             SetSelectedCells();
             UpdateRowHeaders();
-            ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             ShowAll.IsEnabled = false;
             GridPanel.Focus();
         }
@@ -2756,7 +2718,7 @@ namespace DatabaseControls
                 }
 
                 _selectedRowsOnly = true;
-                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowAllIcon_22x22.png"));
+                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ShowAllIcon_22x22.png"));
                 ShowAll.IsEnabled = true;
                 if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
                 VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
@@ -2770,9 +2732,6 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
-        /// <summary>
-        /// Handles the DeSelectAll button click to clear all selections.
-        /// </summary>
         private void DeSelectAll_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedDataRowIndices.Count > 0)
@@ -2783,30 +2742,26 @@ namespace DatabaseControls
             DeSelectAllCells();
             SetSelectedCells();
             ShowSelected.IsEnabled = false;
-            ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             DeSelectAll.IsEnabled = false;
-            ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
-
-            if (_selectedRowsOnly)
+            ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            if (_selectedRowsOnly == true)
             {
                 _selectedRowsOnly = false;
-                _visibleRowCount = (int)Math.Floor((HorizontalScrollViewer.ActualHeight - ColumnHeadersGrid.ActualHeight) / RowHeight);
+                _visibleRowCount = (int)Math.Floor(RowsAr.ActualHeight / RowHeight);
                 if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
                 VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
                 LoadRows();
                 SetSelectedCells();
-                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 ShowAll.IsEnabled = false;
             }
             GridPanel.Focus();
         }
 
-        /// <summary>
-        /// Handles the SelectByAttribute button click to open the attribute selector dialog.
-        /// </summary>
         private void SelectByAttribute_Click(object sender, RoutedEventArgs e)
         {
-            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, null, true);
+            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, null, null, true);
             attributeSelector.ContentRendered += SelectorRendered;
 
             if (attributeSelector.ShowDialog() == true)
@@ -2816,7 +2771,7 @@ namespace DatabaseControls
                 _selectedCellIndices.Clear();
                 _selectedColumnIndices.Clear();
                 DeSelectAllCells();
-                if (!_selectedRowsOnly)
+                if (_selectedRowsOnly == false)
                 {
                     _selectedDataRowIndices = attributeSelector.GetSelectedRows;
                 }
@@ -2824,10 +2779,23 @@ namespace DatabaseControls
                 {
                     ShowAll_Checked(null, null);
                     _selectedDataRowIndices = attributeSelector.GetSelectedRows;
-                    ShowSelected_Checked(null, null!);
+                    ShowSelected_Checked(null, null);
                 }
                 SetSelectedCells();
-                UpdateSelectionButtonStates();
+                if (_selectedDataRowIndices.Count > 0 && _selectedRowsOnly == false)
+                {
+                    ShowSelected.IsEnabled = true;
+                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ShowSelectedIcon_22x22.png"));
+                    DeSelectAll.IsEnabled = true;
+                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIcon_22x22.png"));
+                }
+                else
+                {
+                    ShowSelected.IsEnabled = false;
+                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                    DeSelectAll.IsEnabled = false;
+                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                }
                 SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
                 _attributeSelectorString = attributeSelector.ExpressionCalculator.GetExpressionText();
                 attributeSelector.ContentRendered -= SelectorRendered;
@@ -2835,28 +2803,14 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
-        /// <summary>
-        /// Handles the ContentRendered event for the attribute selector dialog.
-        /// Restores the previous expression text if available.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void SelectorRendered(object? sender, EventArgs e)
+        private void SelectorRendered(object sender, EventArgs e)
         {
-            if (sender is FieldCalculator fc && !string.IsNullOrEmpty(_attributeSelectorString))
-                fc.ExpressionCalculator.SetExpressionText(_attributeSelectorString);
+            ((FieldCalculator)sender).ExpressionCalculator.SetExpressionText(_attributeSelectorString);
         }
 
-        /// <summary>
-        /// Handles the ContentRendered event for the field calculator dialog.
-        /// Restores the previous expression text if available.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void CalculatorRendered(object? sender, EventArgs e)
+        private void CalculatorRendered(object sender, EventArgs e)
         {
-            if (sender is FieldCalculator fc && !string.IsNullOrEmpty(_fieldCalculatorString))
-                fc.ExpressionCalculator.SetExpressionText(_fieldCalculatorString);
+            ((FieldCalculator)sender).ExpressionCalculator.SetExpressionText(_fieldCalculatorString);
         }
 
         /// <summary>
@@ -2882,7 +2836,7 @@ namespace DatabaseControls
                 _mouseDownVirtualRowIndex = (int)Math.Floor(VerticalScrollbar.Value) + GetTableRowIndex(gridPosition);
                 _activeCellDataColumnIndex = _mouseDownColumnIndex;
                 _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
-                ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
+                ActiveCellLocationChanged?.Invoke();
                 SetActiveCell();
 
                 if (e.ClickCount == 2 && Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
@@ -2923,7 +2877,7 @@ namespace DatabaseControls
                 _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
                 _activeCellDataColumnIndex = _mouseDownColumnIndex;
                 _activeCellVirtualRowIndex = _mouseDownVirtualRowIndex;
-                ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
+                ActiveCellLocationChanged?.Invoke();
             }
 
             if (CellSelectable)
@@ -3100,106 +3054,80 @@ namespace DatabaseControls
             ((UIElement)sender).ReleaseMouseCapture();
         }
 
-        /// <summary>
-        /// Creates and displays the column context menu with sorting options.
-        /// </summary>
-        /// <param name="sender">The column header that was right-clicked.</param>
-        /// <param name="e">The event data.</param>
         private void CreateColumnContextMenu(object sender, MouseButtonEventArgs e)
         {
-            var header = (ColumnHeader)sender;
-            _mouseDownColumnIndex = Grid.GetColumn(header);
-            var menu = new ContextMenu();
+            if (DataView.NumberOfRows == 0) return;
 
-            // Sort Ascending
-            var sortAsc = new MenuItem
+            Point gridPosition = e.GetPosition(GridPanel);
+            _mouseDownColumnIndex = GetTableColumnIndex(gridPosition);
+            //
+            if (_selectedColumnIndices.BinarySearch(_mouseDownColumnIndex) < 0)
             {
-                Header = "Sort Ascending",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortASCFilter.png")) }
-            };
-            sortAsc.Click += (s, args) => SortColumnAscending();
-            if (_columnsSortedOrder![_mouseDownColumnIndex] == SortOrder.Ascending)
-                sortAsc.IsEnabled = false;
-            menu.Items.Add(sortAsc);
+                // I want to select the column but I don't want to de-select the rows because I don't want to lose
+                // the ability to apply to selected records only in the field calculator.
+                //
+                // If _selectedDataRowIndices.Count > 0 Then
+                //     _selectedDataRowIndices.Clear()
+                //     RaiseEvent SelectedRowIndicesChanged(_selectedDataRowIndices)
+                // End If
+                _selectedCellIndices.Clear();
+                _selectedColumnIndices.Clear();
+                _selectedColumnIndices.Add(_mouseDownColumnIndex);
+                DeSelectAllCells();
+                SetSelectedCells();
+            }
+            //
+            var columnMenu = new ContextMenu();
+            var columnMenuItem = new MenuItem { Header = "Sort Ascending", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortASCFilter.png")) } };
+            columnMenuItem.Click += SortColumnAscending;
+            if (_columnsSortedOrder![_mouseDownColumnIndex] == SortOrder.Ascending) columnMenuItem.IsEnabled = false;
+            columnMenu.Items.Add(columnMenuItem);
+            //
+            columnMenuItem = new MenuItem { Header = "Sort Descending", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortDSCFilter.png")) } };
+            columnMenuItem.Click += SortColumnDescending;
+            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.Descending) columnMenuItem.IsEnabled = false;
+            columnMenu.Items.Add(columnMenuItem);
+            //
+            columnMenuItem = new MenuItem { Header = "Remove Sort", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/ClearFilter.png")) } };
+            columnMenuItem.Click += RemoveSort;
+            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.None) columnMenuItem.IsEnabled = false;
+            columnMenu.Items.Add(columnMenuItem);
+            //
+            columnMenuItem = new MenuItem { Header = "Summary Statistics...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/SummaryStatistics_16x.png")) } };
+            columnMenuItem.Click += CalcColumnStatistics;
+            if (DataView.ColumnTypes[_mouseDownColumnIndex] == typeof(object)) columnMenuItem.IsEnabled = false;
+            columnMenu.Items.Add(columnMenuItem);
+            //
+            columnMenuItem = new MenuItem { Header = "Find...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/QuickFind_16x.png")) } };
+            columnMenuItem.Click += SearchText;
+            if (_selectedRowsOnly == true) columnMenuItem.IsEnabled = false;
+            if (DataView.NumberOfRows == 0) columnMenuItem.IsEnabled = false;
+            columnMenu.Items.Add(columnMenuItem);
 
-            // Sort Descending
-            var sortDesc = new MenuItem
+            if (Editable == true && _readOnlyColumns.Contains(_mouseDownColumnIndex) == false)
             {
-                Header = "Sort Descending",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortDSCFilter.png")) }
-            };
-            sortDesc.Click += (s, args) => SortColumnDescending();
-            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.Descending)
-                sortDesc.IsEnabled = false;
-            menu.Items.Add(sortDesc);
-
-            // Remove Sort
-            var removeSort = new MenuItem
-            {
-                Header = "Remove Sort",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/ClearFilter.png")) }
-            };
-            removeSort.Click += (s, args) => RemoveSort();
-            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.None)
-                removeSort.IsEnabled = false;
-            menu.Items.Add(removeSort);
-
-            // Summary Statistics
-            var summaryStats = new MenuItem
-            {
-                Header = "Summary Statistics...",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SummaryStatistics_16x.png")) }
-            };
-            summaryStats.Click += CalcColumnStatistics;
-            if (DataView.ColumnTypes[_mouseDownColumnIndex] == typeof(object))
-                summaryStats.IsEnabled = false;
-            menu.Items.Add(summaryStats);
-
-            // Find
-            var find = new MenuItem
-            {
-                Header = "Find...",
-                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/QuickFind_16x.png")) }
-            };
-            find.Click += (s, args) => SearchText();
-            if (_selectedRowsOnly || DataView.NumberOfRows == 0)
-                find.IsEnabled = false;
-            menu.Items.Add(find);
-
-            // Field Calculator (only if editable and column not read-only)
-            if (Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
-            {
-                var fieldCalc = new MenuItem
-                {
-                    Header = "Field Calculator...",
-                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png")) }
-                };
-                fieldCalc.Click += OpenFieldCalculatorForColumn;
-                menu.Items.Add(fieldCalc);
+                columnMenuItem = new MenuItem { Header = "Field Calculator...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/calculator_16x.png")) } };
+                columnMenuItem.Click += OpenFcForSpecificColumn;
+                columnMenu.Items.Add(columnMenuItem);
             }
 
-            // Delete Column(s) (only if editable and column not read-only)
-            if (Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+            if (Editable == true && _readOnlyColumns.Contains(_mouseDownColumnIndex) == false)
             {
-                var deleteCol = new MenuItem
-                {
-                    Header = _selectedColumnIndices.Count == 1 ? "Delete Column" : "Delete Columns"
-                };
-                deleteCol.Click += DeleteColumn;
-                menu.Items.Add(deleteCol);
+                columnMenuItem = new MenuItem { Header = "Delete Columns", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/delete_column.png")) } };
+                if (_selectedColumnIndices.Count == 1) columnMenuItem.Header = "Delete Column";
+                columnMenuItem.Click += DeleteColumn;
+                columnMenu.Items.Add(columnMenuItem);
             }
 
-            menu.IsOpen = true;
+            columnMenu.IsOpen = true;
+
         }
 
         #endregion
 
         #region Sorting
 
-        /// <summary>
-        /// Removes any active sort and restores the original row order.
-        /// </summary>
-        private void RemoveSort()
+        private void RemoveSort(object sender, RoutedEventArgs e)
         {
             _columnSortOrder = SortOrder.None;
             for (int i = 0; i < DataView.ColumnNames.Count(); i++)
@@ -3215,11 +3143,7 @@ namespace DatabaseControls
             UpdateRowHeaders();
         }
 
-        /// <summary>
-        /// Sorts the current column in descending order.
-        /// Updates the visual sort indicator on the column header.
-        /// </summary>
-        private void SortColumnDescending()
+        private void SortColumnDescending(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -3254,11 +3178,7 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
-        /// <summary>
-        /// Sorts the current column in ascending order.
-        /// Updates the visual sort indicator on the column header.
-        /// </summary>
-        private void SortColumnAscending()
+        private void SortColumnAscending(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -3292,91 +3212,69 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
-        /// <summary>
-        /// Sorts the table data by the specified column using type-specific comparison.
-        /// Handles all common data types including numeric, string, boolean, and DateTime.
-        /// DBNull values are sorted to the beginning (ascending) or end (descending).
-        /// </summary>
-        /// <param name="columnIndex">The zero-based index of the column to sort by.</param>
-        /// <param name="ascending">True to sort in ascending order, false for descending.</param>
         private void SortColumn(int columnIndex, bool ascending)
         {
-            var columnData = DataView.GetColumn(columnIndex);
-            var columnType = DataView.ColumnTypes[columnIndex];
+            object[] columnData = DataView.GetColumn(columnIndex);
+            //
             List<int> idx;
-
-            // Type-specific sorting to ensure proper comparison (especially for numeric types)
-            if (columnType == typeof(byte))
+            switch (DataView.ColumnTypes[columnIndex])
             {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<byte, int>(Convert.IsDBNull(x) ? byte.MinValue : Convert.ToByte(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
+                case Type t when t == typeof(byte):
+                    var sortedByte = columnData.ToList().Select((x, i) => new KeyValuePair<byte, int>(Convert.IsDBNull(x) ? byte.MinValue : Convert.ToByte(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedByte.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(short):
+                    var sortedShort = columnData.ToList().Select((x, i) => new KeyValuePair<short, int>(Convert.IsDBNull(x) ? short.MinValue : Convert.ToInt16(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedShort.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(ushort):
+                    var sortedUShort = columnData.ToList().Select((x, i) => new KeyValuePair<ushort, int>(Convert.IsDBNull(x) ? ushort.MinValue : Convert.ToUInt16(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedUShort.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(int):
+                    // Dim sorted As List(Of KeyValuePair(Of Int32, Int32))
+                    var sortedInt = columnData.ToList().Select((x, i) => new KeyValuePair<int, int>(Convert.IsDBNull(x) ? int.MinValue : Convert.ToInt32(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedInt.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(uint):
+                    var sortedUInt = columnData.ToList().Select((x, i) => new KeyValuePair<uint, int>(Convert.IsDBNull(x) ? uint.MinValue : Convert.ToUInt32(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedUInt.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(long):
+                    var sortedLong = columnData.ToList().Select((x, i) => new KeyValuePair<long, int>(Convert.IsDBNull(x) ? long.MinValue : Convert.ToInt64(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedLong.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(ulong):
+                    var sortedULong = columnData.ToList().Select((x, i) => new KeyValuePair<ulong, int>(Convert.IsDBNull(x) ? ulong.MinValue : Convert.ToUInt64(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedULong.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(float):
+                    var sortedSingle = columnData.ToList().Select((x, i) => new KeyValuePair<float, int>(Convert.IsDBNull(x) ? float.NaN : Convert.ToSingle(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedSingle.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(double):
+                    var sortedDouble = columnData.ToList().Select((x, i) => new KeyValuePair<double, int>(Convert.IsDBNull(x) ? double.NaN : Convert.ToDouble(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedDouble.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(string):
+                    var sortedString = columnData.ToList().Select((x, i) => new KeyValuePair<string, int>(x.ToString()!, i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedString.Select(x => x.Value).ToList();
+                    break;
+                case Type t when t == typeof(bool):
+                    var sortedBool = columnData.ToList().Select((x, i) => new KeyValuePair<bool, int>(Convert.IsDBNull(x) ? false : Convert.ToBoolean(x), i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedBool.Select(x => x.Value).ToList();
+                    break;
+                default:
+                    var sortedDefault = columnData.ToList().Select((x, i) => new KeyValuePair<string, int>(x.ToString()!, i)).OrderBy(x => x.Key).ToList();
+                    idx = sortedDefault.Select(x => x.Value).ToList();
+                    break;
             }
-            else if (columnType == typeof(short))
+            //
+            if (ascending == false) idx.Reverse();
+            for (int i = 0; i <= idx.Count - 1; i++)
             {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<short, int>(Convert.IsDBNull(x) ? short.MinValue : Convert.ToInt16(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(ushort))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<ushort, int>(Convert.IsDBNull(x) ? ushort.MinValue : Convert.ToUInt16(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(int))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<int, int>(Convert.IsDBNull(x) ? int.MinValue : Convert.ToInt32(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(uint))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<uint, int>(Convert.IsDBNull(x) ? uint.MinValue : Convert.ToUInt32(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(long))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<long, int>(Convert.IsDBNull(x) ? long.MinValue : Convert.ToInt64(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(ulong))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<ulong, int>(Convert.IsDBNull(x) ? ulong.MinValue : Convert.ToUInt64(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(float))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<float, int>(Convert.IsDBNull(x) ? float.NaN : Convert.ToSingle(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(double))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<double, int>(Convert.IsDBNull(x) ? double.NaN : Convert.ToDouble(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(decimal))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<decimal, int>(Convert.IsDBNull(x) ? decimal.MinValue : Convert.ToDecimal(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(DateTime))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<DateTime, int>(Convert.IsDBNull(x) ? DateTime.MinValue : Convert.ToDateTime(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else if (columnType == typeof(bool))
-            {
-                var sorted = columnData.Select((x, i) => new KeyValuePair<bool, int>(Convert.IsDBNull(x) ? false : Convert.ToBoolean(x), i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-            else
-            {
-                // Default to string comparison for unknown types
-                var sorted = columnData.Select((x, i) => new KeyValuePair<string, int>(x?.ToString() ?? "", i)).OrderBy(x => x.Key).ToList();
-                idx = sorted.Select(x => x.Value).ToList();
-            }
-
-            if (!ascending) idx.Reverse();
-
-            for (int i = 0; i < idx.Count; i++)
                 _rowOffset![idx[i]] = i;
+            }
             idx.CopyTo(_rowId!);
         }
 
@@ -3384,22 +3282,13 @@ namespace DatabaseControls
 
         #region Column Context Menu Actions
 
-        /// <summary>
-        /// Opens the Column Statistics window for the selected column.
-        /// </summary>
         private void CalcColumnStatistics(object sender, RoutedEventArgs e)
         {
-            var columnStats = new ColumnStatsWindow(this, _mouseDownColumnIndex)
-            {
-                Owner = Window.GetWindow(this)
-            };
-            columnStats.Show();
+            var columnstats = new ColumnStatsWindow(this, _mouseDownColumnIndex) { Owner = Window.GetWindow(this) };
+            columnstats.Show();
         }
 
-        /// <summary>
-        /// Opens the Find and Replace dialog for the selected column.
-        /// </summary>
-        private void SearchText()
+        private void SearchText(object sender, RoutedEventArgs e)
         {
             if (DataView.NumberOfRows > 0)
             {
@@ -3408,35 +3297,25 @@ namespace DatabaseControls
             }
         }
 
-        /// <summary>
-        /// Opens the Field Calculator for the selected column.
-        /// </summary>
-        private void OpenFieldCalculatorForColumn(object sender, RoutedEventArgs e)
+        private void OpenFcForSpecificColumn(object sender, RoutedEventArgs e)
         {
-            var fc = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, DataView.ColumnNames[_mouseDownColumnIndex]);
-            if (fc.ShowDialog() == true)
+            var f = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, DataView.ColumnNames[_mouseDownColumnIndex]);
+            if (f.ShowDialog() == true)
             {
                 UpdateVisibleRows();
                 UpdateUndoRedoButtons();
             }
         }
 
-        /// <summary>
-        /// Deletes the selected column(s) from the DataView.
-        /// </summary>
         private void DeleteColumn(object sender, RoutedEventArgs e)
         {
             var columnIndices = _selectedColumnIndices.ToList();
-            // Remove read-only columns from the deletion list
             for (int i = columnIndices.Count - 1; i >= 0; i--)
             {
-                if (_readOnlyColumns.Contains(columnIndices[i]))
-                    columnIndices.RemoveAt(i);
+                if (_readOnlyColumns.Contains(columnIndices[i])) columnIndices.RemoveAt(i);
             }
-            if (columnIndices.Count > 0)
-            {
-                DataView.DeleteColumns(columnIndices.ToArray());
-            }
+            //
+            DataView.DeleteColumns(columnIndices.ToArray());
         }
 
         #endregion
@@ -3993,12 +3872,14 @@ namespace DatabaseControls
         /// </summary>
         private SortedDictionary<int, int> GetSelectedCellVirtualRowIndices()
         {
-            var keysInVisualOrder = new SortedDictionary<int, int>();
-            foreach (int dataRowIndex in _selectedCellIndices.Keys)
+            var sortedRowsIndices = new SortedDictionary<int, int>();
+            foreach (var selectedCell in _selectedCellIndices)
             {
-                keysInVisualOrder.Add(_rowOffset![dataRowIndex], dataRowIndex);
+                sortedRowsIndices.Add(_rowOffset![selectedCell.Key], selectedCell.Key);
             }
-            return keysInVisualOrder;
+            //
+            if (_columnSortOrder == SortOrder.Descending) sortedRowsIndices.Reverse();
+            return sortedRowsIndices;
         }
 
         /// <summary>
@@ -4022,37 +3903,34 @@ namespace DatabaseControls
 
         #region Undo/Redo
 
-        /// <summary>
-        /// Updates the enabled state and icons of the Undo, Redo, and Save buttons.
-        /// </summary>
         private void UpdateUndoRedoButtons()
         {
-            if (DataView == null) return;
-
             if (DataView.CanUndo())
             {
                 Undo.IsEnabled = true;
                 SaveButton.IsEnabled = true;
-                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Undo.png"));
-                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Save.ico"));
+                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Undo.png"));
+                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Save.ico"));
             }
             else
             {
+                // Disable undo button
                 Undo.IsEnabled = false;
                 SaveButton.IsEnabled = false;
-                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/UndoDisabled.png"));
-                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SaveDisabled.ico"));
+                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Undodisabled.png"));
+                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Savedisabled.ico"));
             }
-
-            if (DataView.CanRedo())
+            // Disable Redo if no more edits to redo
+            if (DataView.CanRedo() == false)
             {
-                Redo.IsEnabled = true;
-                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Redo.png"));
+                Redo.IsEnabled = false;
+                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/RedoDisabled.png"));
             }
             else
             {
-                Redo.IsEnabled = false;
-                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/RedoDisabled.png"));
+                // Enable Redo
+                Redo.IsEnabled = true;
+                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Redo.png"));
             }
         }
 
@@ -4066,10 +3944,7 @@ namespace DatabaseControls
         /// </summary>
         private void Redo_Click(object sender, RoutedEventArgs e) => RedoLastEdit();
 
-        /// <summary>
-        /// Handles the Save button click event.
-        /// </summary>
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void Save_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Are you sure you want to save edits?", "Apply Edits", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
@@ -4082,7 +3957,7 @@ namespace DatabaseControls
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Error Saving Edits", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    MessageBox.Show(ex.Message);
                     Mouse.OverrideCursor = null;
                 }
             }
@@ -4105,24 +3980,15 @@ namespace DatabaseControls
             }
         }
 
-        /// <summary>
-        /// Undoes the last edit operation.
-        /// </summary>
-        private void UndoLastEdit()
+        private void RedoLastEdit()
         {
-            if (!DataView.CanUndo()) return;
-            DataView.UndoEdit();
+            DataView.RedoEdit();
             UpdateVisibleRows();
             UpdateUndoRedoButtons();
         }
-
-        /// <summary>
-        /// Redoes the last undone edit operation.
-        /// </summary>
-        private void RedoLastEdit()
+        private void UndoLastEdit()
         {
-            if (!DataView.CanRedo()) return;
-            DataView.RedoEdit();
+            DataView.UndoEdit();
             UpdateVisibleRows();
             UpdateUndoRedoButtons();
         }
@@ -4131,15 +3997,9 @@ namespace DatabaseControls
 
         #region Helper Methods
 
-        /// <summary>
-        /// Sets the text of a visible cell in the GridPanel.
-        /// </summary>
-        private void SetCellText(int tableRowIndex, int columnIndex, string text)
+        private void SetCellText(int rowIndex, int columnIndex, string newText)
         {
-            if (tableRowIndex < 0 || tableRowIndex >= _visibleRowCount) return;
-            if (columnIndex < 0 || columnIndex >= DataView.ColumnNames.Count()) return;
-            var cell = (Cell)GridPanel.Children[tableRowIndex * DataView.ColumnNames.Count() + columnIndex];
-            cell.Text = text;
+            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Text = newText;
         }
 
         /// <summary>
@@ -4150,9 +4010,9 @@ namespace DatabaseControls
             if (_selectedDataRowIndices.Count > 0 && !_selectedRowsOnly)
             {
                 ShowSelected.IsEnabled = true;
-                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowSelectedIcon_22x22.png"));
+                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ShowSelectedIcon_22x22.png"));
                 DeSelectAll.IsEnabled = true;
-                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"));
+                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIcon_22x22.png"));
             }
             else if (_selectedDataRowIndices.Count <= 0 && _selectedRowsOnly)
             {
@@ -4165,46 +4025,15 @@ namespace DatabaseControls
             else
             {
                 ShowSelected.IsEnabled = false;
-                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 DeSelectAll.IsEnabled = false;
-                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             }
         }
 
-        /// <summary>
-        /// Deletes the selected rows from the data view.
-        /// </summary>
         private void DeleteRows(object sender, RoutedEventArgs e)
         {
-            if (_selectedDataRowIndices.Count == 0) return;
-
-            string message = _selectedDataRowIndices.Count == 1
-                ? "Are you sure you want to delete the selected row?"
-                : $"Are you sure you want to delete {_selectedDataRowIndices.Count} selected rows?";
-
-            if (MessageBox.Show(message, "Delete Rows", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    Mouse.OverrideCursor = Cursors.Wait;
-                    // Delete rows in reverse order to maintain correct indices
-                    var sortedIndices = _selectedDataRowIndices.OrderByDescending(i => i).ToList();
-                    foreach (int rowIndex in sortedIndices)
-                        DataView.DeleteRow(rowIndex);
-
-                    _selectedDataRowIndices.Clear();
-                    SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
-                    RefreshView();
-                    UpdateUndoRedoButtons();
-                    UpdateSelectionButtonStates();
-                    Mouse.OverrideCursor = null;
-                }
-                catch (Exception ex)
-                {
-                    Mouse.OverrideCursor = null;
-                    MessageBox.Show(ex.Message, "Error Deleting Rows", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            DataView.DeleteRows(_selectedDataRowIndices.ToArray());
         }
 
         #endregion
