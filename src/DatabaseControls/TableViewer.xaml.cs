@@ -1320,8 +1320,8 @@ namespace DatabaseControls
 
             // Create row color
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
-            SolidColorBrush fillColor = RowColor;
-            if (_rowId[RowColorGrid.RowDefinitions.Count - 1] % 2 != 0) fillColor = AlternateRowColor;
+            Brush fillColor = RowColor;
+            if (_rowId![RowColorGrid.RowDefinitions.Count - 1] % 2 != 0) fillColor = AlternateRowColor;
             var rect = new Rectangle
             {
                 Stroke = new SolidColorBrush(Colors.Transparent),
@@ -1821,9 +1821,21 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void TableViewer_Loaded(object sender, RoutedEventArgs e)
         {
-            bool wasFalse = !_isLoaded;
+            bool wasFalse = _isLoaded;
             _isLoaded = true;
-            if (wasFalse) RefreshView();
+            if (wasFalse == false) RefreshView();
+
+        }
+
+        private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (DataView != null)
+            {
+                DataView.RowsAdded -= TableViewRowsAdded;
+                DataView.RowsDeleted -= TableViewRowsDeleted;
+                DataView.ColumnsAdded -= TableViewColumnsAdded;
+                DataView.ColumnsDeleted -= TableViewColumnsDeleted;
+            }
         }
 
         /// <summary>
@@ -3127,7 +3139,8 @@ namespace DatabaseControls
 
         #region Sorting
 
-        private void RemoveSort(object sender, RoutedEventArgs e)
+        private void RemoveSort(object sender, RoutedEventArgs e) => RemoveSort();
+        private void RemoveSort()
         {
             _columnSortOrder = SortOrder.None;
             for (int i = 0; i < DataView.ColumnNames.Count(); i++)
@@ -3143,7 +3156,8 @@ namespace DatabaseControls
             UpdateRowHeaders();
         }
 
-        private void SortColumnDescending(object sender, RoutedEventArgs e)
+        private void SortColumnDescending(object sender, RoutedEventArgs e) => SortColumnDescending();
+        private void SortColumnDescending()
         {
             try
             {
@@ -3178,7 +3192,8 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
-        private void SortColumnAscending(object sender, RoutedEventArgs e)
+        private void SortColumnAscending(object sender, RoutedEventArgs e) => SortColumnAscending();
+        private void SortColumnAscending()
         {
             try
             {
@@ -3321,11 +3336,68 @@ namespace DatabaseControls
         #endregion
 
         #region Clipboard
+        private void GridPanel_RightMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            bool enableCopy = false;
+            if (AllCellsSelected == true)
+            {
+                enableCopy = true;
+            }
+            else if (_selectedCellIndices.Count > 0)
+            {
+                enableCopy = true;
+            }
+            else if (_selectedColumnIndices.Count > 0)
+            {
+                enableCopy = true;
+            }
+            else if (_selectedDataRowIndices.Count > 0)
+            {
+                enableCopy = true;
+            }
+            //
+            var gridMenu = new ContextMenu();
+            var gridMenuItem = new MenuItem { IsEnabled = enableCopy, Header = "Copy", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/copy.png")) } };
+            gridMenuItem.Click += Copy;
+            gridMenu.Items.Add(gridMenuItem);
+            //
+            gridMenuItem = new MenuItem { IsEnabled = enableCopy, Header = "Copy with Headers", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/copy_w_headers.png")) } };
+            gridMenuItem.Click += CopyWithHeaders;
+            gridMenu.Items.Add(gridMenuItem);
+            //
+            if (Editable == true)
+            {
+                gridMenuItem = new MenuItem { Header = "Paste", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/paste.png")) } };
+                gridMenuItem.Click += Paste;
+                if (Clipboard.ContainsText() == false || _selectedRowsOnly == true) gridMenuItem.IsEnabled = false;
+                gridMenu.Items.Add(gridMenuItem);
+            }
+            gridMenu.IsOpen = true;
+        }
+        private void Copy(object sender, RoutedEventArgs e) => Copy();
+        private void Copy()
+        {
+            try
+            {
+                CaptureSelectionToClipboard(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void CopyWithHeaders(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                CaptureSelectionToClipboard(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
-        /// <summary>
-        /// Main dispatcher for copy operations. Routes to specialized copy method based on selection type.
-        /// </summary>
-        /// <param name="includeHeaders">If true, includes column headers as the first row.</param>
         private void CaptureSelectionToClipboard(bool includeHeaders)
         {
             if (!IsSelectionUniform())
@@ -3624,9 +3696,10 @@ namespace DatabaseControls
             return sortedRowsIndices;
         }
 
-        /// <summary>
-        /// Pastes clipboard content into the table. Routes to PasteClipboard with error handling.
-        /// </summary>
+        private void Paste(object sender, RoutedEventArgs e)
+        {
+            Paste();
+        }
         private void Paste()
         {
             try

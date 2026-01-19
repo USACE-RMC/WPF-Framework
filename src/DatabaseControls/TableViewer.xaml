@@ -291,7 +291,7 @@
                     x:Name="SaveButton"
                     ToolTip="Save All Edits"
                     ToolTipService.ShowOnDisabled="True"
-                    Click="SaveButton_Click"
+                    Click="Save_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
                     Visibility="{Binding HasSaveButton, Converter={StaticResource BooleanToVisibility}}"
