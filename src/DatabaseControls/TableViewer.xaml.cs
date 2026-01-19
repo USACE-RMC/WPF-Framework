@@ -1264,15 +1264,28 @@ namespace DatabaseControls
         /// <summary>
         /// Updates the row header labels to display the correct row numbers.
         /// Displays 0-based row indices for backwards compatibility with VB version.
+        /// Also updates row background color alternation.
         /// </summary>
         private void UpdateRowHeaders()
         {
             if (DataView == null || _rowId == null) return;
+            if (_visibleRowCount == 0) return;
+
+            int firstRowVirtualIndex = (int)Math.Floor(VerticalScrollbar.Value);
+            if (VerticalScrollbar.Value == VerticalScrollbar.Maximum && VerticalScrollbar.Value != 0)
+            {
+                firstRowVirtualIndex = (int)VerticalScrollbar.Maximum - _visibleRowCount;
+                if (firstRowVirtualIndex < 0) firstRowVirtualIndex = 0;
+            }
+
+            bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                int dataRowIndex = GetDataRowIndex(i);
+                if (i < RowColorGrid.Children.Count)
+                    ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
                 if (i < RowHeadersGrid.Children.Count)
-                    ((RowHeader)RowHeadersGrid.Children[i]).Text = dataRowIndex.ToString();
+                    ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
+                alternate = !alternate;
             }
         }
 
@@ -1343,17 +1356,14 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Gets the text content of a cell at the specified table position.
+        /// Gets the text content of a cell at the specified table position from the UI.
         /// </summary>
         /// <param name="tableRowIndex">The visible row index in the grid.</param>
         /// <param name="columnIndex">The column index.</param>
-        /// <returns>The cell text, or an empty string if the cell is out of bounds.</returns>
+        /// <returns>The cell text.</returns>
         private string GetCellText(int tableRowIndex, int columnIndex)
         {
-            int dataRowIndex = GetDataRowIndex(tableRowIndex);
-            if (dataRowIndex < 0 || dataRowIndex >= DataView.NumberOfRows) return "";
-            var value = DataView.GetCell(columnIndex, dataRowIndex);
-            return value?.ToString() ?? "";
+            return ((Cell)GridPanel.Children[tableRowIndex * DataView.ColumnNames.Count() + columnIndex]).Text;
         }
 
         /// <summary>
@@ -1496,18 +1506,11 @@ namespace DatabaseControls
         /// <param name="scrollToRow">If <c>true</c>, scrolls the view to ensure the cell is visible.</param>
         public void SetActiveCell(int newDataRowIndex, int newDataColumnIndex, bool scrollToRow = false)
         {
-            _activeCellVirtualRowIndex = newDataRowIndex;
             _activeCellDataColumnIndex = newDataColumnIndex;
-            if (scrollToRow)
-            {
-                int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
-                int lastRowIndex = firstRowIndex + _visibleRowCount - 1;
-                if (newDataRowIndex < firstRowIndex) VerticalScrollbar.Value = newDataRowIndex;
-                if (newDataRowIndex > lastRowIndex) VerticalScrollbar.Value = newDataRowIndex - _visibleRowCount + 1;
-            }
+            _activeCellVirtualRowIndex = _rowOffset![newDataRowIndex];  // Convert data row index to virtual row index for sorted tables
+            if (scrollToRow) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
             DeSelectAllCells();
             SetSelectedCells();
-            SetActiveCell();
             ActiveCellLocationChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -1704,17 +1707,95 @@ namespace DatabaseControls
 
         /// <summary>
         /// Handles vertical scrollbar value changes to update visible content.
-        /// Refreshes visible rows, row headers, and cell selection when scrolling.
+        /// Uses incremental scrolling optimization: copies cell text and only loads changed rows.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data containing old and new values.</param>
         private void VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            UpdateVisibleRows();
+            // Convert old and new values to integers to match row indices
+            int oldValue = (int)Math.Floor(e.OldValue);
+            int newValue = (int)Math.Floor(e.NewValue);
+            if (oldValue == newValue) return;
+
+            int counter = 0;
+
+            if (newValue >= VerticalScrollbar.Maximum && VerticalScrollbar.Maximum != 0) // The last row has been reached
+            {
+                // Remove the last row and refresh all cells
+                NumberOfRowsChanged();
+                if (_visibleRowCount > 0) FillRow(_visibleRowCount - 1, DataView.GetRow(GetDataRowIndex(_visibleRowCount - 1)));
+            }
+            else if (oldValue >= VerticalScrollbar.Maximum && VerticalScrollbar.Maximum != 0) // The last row has been vacated
+            {
+                // Add a row and refresh all cells
+                _visibleRowCount += 1;
+                VerticalScrollbar.ViewportSize = _visibleRowCount;
+                AddRow();
+                UpdateVisibleRows();
+            }
+            else if (oldValue > newValue) // Going Up (scrolling towards beginning)
+            {
+                int offset = oldValue - newValue;
+                // Shift existing cell text down
+                for (int i = _visibleRowCount - 1; i >= offset; i--)
+                {
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        SetCellText(i, j, GetCellText(i - offset, j));
+                    }
+                }
+                // Fill new rows at top
+                if (offset >= _visibleRowCount) offset = _visibleRowCount;
+                foreach (int dataRowIndex in GetDataRowIndexes(0, offset - 1))
+                {
+                    FillRow(counter, DataView.GetRow(dataRowIndex));
+                    counter++;
+                }
+            }
+            else if (oldValue < newValue) // Going Down (scrolling towards end)
+            {
+                int offset = newValue - oldValue;
+                // Shift existing cell text up
+                for (int i = 0; i <= _visibleRowCount - offset - 1; i++)
+                {
+                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                    {
+                        SetCellText(i, j, GetCellText(i + offset, j));
+                    }
+                }
+                // Fill new rows at bottom
+                if (_visibleRowCount - offset - 1 < 0)
+                {
+                    offset = 0;
+                }
+                else
+                {
+                    offset = _visibleRowCount - offset;
+                }
+                counter = offset;
+                foreach (int dataRowIndex in GetDataRowIndexes(offset, _visibleRowCount - 1))
+                {
+                    FillRow(counter, DataView.GetRow(dataRowIndex));
+                    counter++;
+                }
+            }
+
+            // Turn off cell editing
+            if (GridPanel.Children.Contains(_cellEditTextBox)) GridPanel.Focus();
+
+            // Update selection
+            if (!_selectedRowsOnly)
+            {
+                DeSelectAllCells();
+                SetSelectedCells();
+            }
+            else
+            {
+                SetSelectedCells();
+            }
+
             UpdateRowHeaders();
-            DeSelectAllCells();
-            SetSelectedCells();
-            SetActiveCell();
         }
 
         /// <summary>
