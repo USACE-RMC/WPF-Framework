@@ -119,6 +119,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <Grid Grid.Row="2" Background="{DynamicResource EnvironmentWindowBackground}">
             <dtview:TableViewer
                 Name="TestViewer"
+                Style="{StaticResource TableViewerStyle}"
                 Margin="15"
                 Editable="True"
                 RowSelectable="True"

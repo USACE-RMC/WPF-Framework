@@ -204,8 +204,8 @@
         <Setter Property="RowHeight" Value="22"/>
     </Style>
 
-    <!-- Default TableViewer style -->
-    <Style TargetType="{x:Type local:TableViewer}" BasedOn="{StaticResource TableViewerStyle}"/>
+    <!-- NOTE: Implicit style removed - causes scroll rendering issues when applied implicitly.
+         Use Style="{StaticResource TableViewerStyle}" explicitly on TableViewer instances instead. -->
 
     <!-- =============================================================================== -->
     <!-- FIND AND REPLACE WINDOW STYLES                                                   -->
