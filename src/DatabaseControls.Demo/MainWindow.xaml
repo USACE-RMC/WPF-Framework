@@ -101,7 +101,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 CellSelectable="True"
                 HasFieldCalculator="True"
                 ShowRowHeaders="True"
-                AutoFitColumns="False"/>
+                AutoFitColumns="True"/>
         </Grid>
 
         <!-- Status Bar -->
