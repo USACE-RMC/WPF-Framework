@@ -3553,6 +3553,36 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Copies selected data to clipboard without headers. Routes to CaptureSelectionToClipboard with error handling.
+        /// </summary>
+        private void Copy()
+        {
+            try
+            {
+                CaptureSelectionToClipboard(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Copies selected data to clipboard with headers. Routes to CaptureSelectionToClipboard with error handling.
+        /// </summary>
+        private void CopyWithHeaders()
+        {
+            try
+            {
+                CaptureSelectionToClipboard(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Pastes clipboard content into the table. Routes to PasteClipboard with error handling.
         /// </summary>
         private void Paste()
