@@ -1293,8 +1293,8 @@ namespace DatabaseControls
             RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            // Use Rectangle with direct Fill assignment like VB version
-            var fillColor = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor;
+            // DIAGNOSTIC: Use hardcoded colors to bypass property system
+            var fillColor = (rowIndex % 2 == 0) ? Brushes.White : Brushes.LightBlue;
             var rect = new Rectangle { Stroke = Brushes.Transparent, StrokeThickness = 0, Fill = fillColor };
             Grid.SetRow(rect, rowIndex);
             RowColorGrid.Children.Add(rect);
@@ -1311,13 +1311,13 @@ namespace DatabaseControls
                 GridPanel.Children.Add(cell);
             }
 
-            // Use direct assignment for Line stroke like VB version
+            // DIAGNOSTIC: Use hardcoded line color to bypass property system
             var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
             double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
             var rowLine = new Line
             {
                 SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                StrokeThickness = RowLineThickness, Stroke = Brushes.LightGray
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
@@ -1389,13 +1389,19 @@ namespace DatabaseControls
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
-                // Use direct Fill assignment like VB version - no bindings
+                // DIAGNOSTIC: Use hardcoded colors to bypass property system
                 if (i < RowColorGrid.Children.Count)
-                    ((Rectangle)RowColorGrid.Children[i]).Fill = alternate ? AlternateRowColor : RowColor;
+                {
+                    var rect = (Rectangle)RowColorGrid.Children[i];
+                    rect.Fill = alternate ? Brushes.LightBlue : Brushes.White;
+                }
                 if (i < RowHeadersGrid.Children.Count)
                     ((RowHeader)RowHeadersGrid.Children[i]).Text = GetDataRowIndex(i).ToString();
                 alternate = !alternate;
             }
+
+            // Force visual refresh - this should not be needed but trying as diagnostic
+            RowColorGrid.InvalidateVisual();
         }
 
         /// <summary>
