@@ -2744,17 +2744,83 @@ namespace DatabaseControls
             _mouseDownColumnIndex = Grid.GetColumn(header);
             var menu = new ContextMenu();
 
-            var sortAsc = new MenuItem { Header = "Sort Ascending" };
+            // Sort Ascending
+            var sortAsc = new MenuItem
+            {
+                Header = "Sort Ascending",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortASCFilter.png")) }
+            };
             sortAsc.Click += (s, args) => SortColumnAscending();
+            if (_columnsSortedOrder![_mouseDownColumnIndex] == SortOrder.Ascending)
+                sortAsc.IsEnabled = false;
             menu.Items.Add(sortAsc);
 
-            var sortDesc = new MenuItem { Header = "Sort Descending" };
+            // Sort Descending
+            var sortDesc = new MenuItem
+            {
+                Header = "Sort Descending",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortDSCFilter.png")) }
+            };
             sortDesc.Click += (s, args) => SortColumnDescending();
+            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.Descending)
+                sortDesc.IsEnabled = false;
             menu.Items.Add(sortDesc);
 
-            var removeSort = new MenuItem { Header = "Remove Sort" };
+            // Remove Sort
+            var removeSort = new MenuItem
+            {
+                Header = "Remove Sort",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/ClearFilter.png")) }
+            };
             removeSort.Click += (s, args) => RemoveSort();
+            if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.None)
+                removeSort.IsEnabled = false;
             menu.Items.Add(removeSort);
+
+            // Summary Statistics
+            var summaryStats = new MenuItem
+            {
+                Header = "Summary Statistics...",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SummaryStatistics_16x.png")) }
+            };
+            summaryStats.Click += CalcColumnStatistics;
+            if (DataView.ColumnTypes[_mouseDownColumnIndex] == typeof(object))
+                summaryStats.IsEnabled = false;
+            menu.Items.Add(summaryStats);
+
+            // Find
+            var find = new MenuItem
+            {
+                Header = "Find...",
+                Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/QuickFind_16x.png")) }
+            };
+            find.Click += (s, args) => SearchText();
+            if (_selectedRowsOnly || DataView.NumberOfRows == 0)
+                find.IsEnabled = false;
+            menu.Items.Add(find);
+
+            // Field Calculator (only if editable and column not read-only)
+            if (Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+            {
+                var fieldCalc = new MenuItem
+                {
+                    Header = "Field Calculator...",
+                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png")) }
+                };
+                fieldCalc.Click += OpenFieldCalculatorForColumn;
+                menu.Items.Add(fieldCalc);
+            }
+
+            // Delete Column(s) (only if editable and column not read-only)
+            if (Editable && !_readOnlyColumns.Contains(_mouseDownColumnIndex))
+            {
+                var deleteCol = new MenuItem
+                {
+                    Header = _selectedColumnIndices.Count == 1 ? "Delete Column" : "Delete Columns"
+                };
+                deleteCol.Click += DeleteColumn;
+                menu.Items.Add(deleteCol);
+            }
 
             menu.IsOpen = true;
         }
@@ -2918,6 +2984,65 @@ namespace DatabaseControls
             for (int i = 0; i < idx.Count; i++)
                 _rowOffset![idx[i]] = i;
             idx.CopyTo(_rowId!);
+        }
+
+        #endregion
+
+        #region Column Context Menu Actions
+
+        /// <summary>
+        /// Opens the Column Statistics window for the selected column.
+        /// </summary>
+        private void CalcColumnStatistics(object sender, RoutedEventArgs e)
+        {
+            var columnStats = new ColumnStatsWindow(this, _mouseDownColumnIndex)
+            {
+                Owner = Window.GetWindow(this)
+            };
+            columnStats.Show();
+        }
+
+        /// <summary>
+        /// Opens the Find and Replace dialog for the selected column.
+        /// </summary>
+        private void SearchText()
+        {
+            if (DataView.NumberOfRows > 0)
+            {
+                var findWindow = new FindAndReplace(this, _mouseDownColumnIndex, _activeCellVirtualRowIndex);
+                findWindow.ShowDialog();
+            }
+        }
+
+        /// <summary>
+        /// Opens the Field Calculator for the selected column.
+        /// </summary>
+        private void OpenFieldCalculatorForColumn(object sender, RoutedEventArgs e)
+        {
+            var fc = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, DataView.ColumnNames[_mouseDownColumnIndex]);
+            if (fc.ShowDialog() == true)
+            {
+                UpdateVisibleRows();
+                UpdateUndoRedoButtons();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the selected column(s) from the DataView.
+        /// </summary>
+        private void DeleteColumn(object sender, RoutedEventArgs e)
+        {
+            var columnIndices = _selectedColumnIndices.ToList();
+            // Remove read-only columns from the deletion list
+            for (int i = columnIndices.Count - 1; i >= 0; i--)
+            {
+                if (_readOnlyColumns.Contains(columnIndices[i]))
+                    columnIndices.RemoveAt(i);
+            }
+            if (columnIndices.Count > 0)
+            {
+                DataView.DeleteColumns(columnIndices.ToArray());
+            }
         }
 
         #endregion
