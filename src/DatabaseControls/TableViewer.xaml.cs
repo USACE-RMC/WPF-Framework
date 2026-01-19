@@ -759,13 +759,39 @@ namespace DatabaseControls
             Array.Sort(columnIndices);
             for (int i = columnIndices.Length - 1; i >= 0; i--)
             {
+                // Update selected column indices
                 _selectedColumnIndices.Remove(columnIndices[i]);
                 for (int j = 0; j < _selectedColumnIndices.Count; j++)
                     if (_selectedColumnIndices[j] > columnIndices[i]) _selectedColumnIndices[j] -= 1;
 
+                // Delete column from selected cells collection
+                var keysToRemove = new List<int>();
+                foreach (var selectedCellsByRow in _selectedCellIndices)
+                {
+                    selectedCellsByRow.Value.Remove(columnIndices[i]);
+                    if (selectedCellsByRow.Value.Count == 0) keysToRemove.Add(selectedCellsByRow.Key);
+                }
+                foreach (var keyToRemove in keysToRemove)
+                    _selectedCellIndices.Remove(keyToRemove);
+
+                foreach (var selectedCellsByRow in _selectedCellIndices)
+                {
+                    var columnsToUpdate = new List<int>();
+                    foreach (var selectedCellColumn in selectedCellsByRow.Value)
+                        if (selectedCellColumn >= columnIndices[i]) columnsToUpdate.Add(selectedCellColumn);
+
+                    foreach (var columnToUpdate in columnsToUpdate)
+                        selectedCellsByRow.Value.Remove(columnToUpdate);
+
+                    foreach (var columnToUpdate in columnsToUpdate)
+                        selectedCellsByRow.Value.Add(columnToUpdate - 1);
+                }
+
+                // Update active cell
                 if (_activeCellDataColumnIndex >= columnIndices[i]) _activeCellDataColumnIndex -= 1;
                 if (_activeCellDataColumnIndex < 0) _activeCellDataColumnIndex = 0;
 
+                // Update sort order
                 if (_columnsSortedOrder![columnIndices[i]] != SortOrder.None) RemoveSort();
 
                 var updated = new SortOrder[_columnsSortedOrder.Length - 1];
@@ -773,7 +799,9 @@ namespace DatabaseControls
                 for (int j = columnIndices[i]; j < _columnsSortedOrder.Length - 1; j++) updated[j] = _columnsSortedOrder[j + 1];
                 _columnsSortedOrder = updated;
             }
+            // Update undo and redo buttons if needed
             UpdateUndoRedoButtons();
+            // Refresh viewer to include new column
             NumberOfColumnsChanged();
         }
 
@@ -787,13 +815,30 @@ namespace DatabaseControls
             Array.Sort(columnIndices);
             for (int i = 0; i < columnIndices.Length; i++)
             {
+                // Update selected column indices
                 for (int j = 0; j < _selectedColumnIndices.Count; j++)
                     if (_selectedColumnIndices[j] >= columnIndices[i]) _selectedColumnIndices[j] += 1;
 
+                // Adjust column in selected cells collection
+                foreach (var selectedCellsByRow in _selectedCellIndices)
+                {
+                    var columnsToUpdate = new List<int>();
+                    foreach (var selectedCellColumn in selectedCellsByRow.Value)
+                        if (selectedCellColumn >= columnIndices[i]) columnsToUpdate.Add(selectedCellColumn);
+
+                    foreach (var columnToUpdate in columnsToUpdate)
+                        selectedCellsByRow.Value.Remove(columnToUpdate);
+
+                    foreach (var columnToUpdate in columnsToUpdate)
+                        selectedCellsByRow.Value.Add(columnToUpdate + 1);
+                }
+
+                // Update active cell
                 if (_activeCellDataColumnIndex >= columnIndices[i]) _activeCellDataColumnIndex += 1;
                 if (_activeCellDataColumnIndex > DataView.ColumnNames.Count() - 1)
                     _activeCellDataColumnIndex = DataView.ColumnNames.Count() - 1;
 
+                // Update sort order
                 var updated = new SortOrder[_columnsSortedOrder!.Length + 1];
                 for (int j = 0; j < columnIndices[i]; j++) updated[j] = _columnsSortedOrder[j];
                 updated[columnIndices[i]] = SortOrder.None;
@@ -814,9 +859,25 @@ namespace DatabaseControls
             Array.Sort(rowIndices);
             for (int i = 0; i < rowIndices.Length; i++)
             {
+                // Update selected row indices
                 for (int j = 0; j < _selectedDataRowIndices.Count; j++)
                     if (_selectedDataRowIndices[j] >= rowIndices[i]) _selectedDataRowIndices[j] += 1;
 
+                // Adjust row in selected cells collection
+                var rowsToUpdate = new List<int>();
+                foreach (var selectedCellsByRow in _selectedCellIndices)
+                    if (selectedCellsByRow.Key >= rowIndices[i]) rowsToUpdate.Add(selectedCellsByRow.Key);
+
+                rowsToUpdate.Sort();
+                rowsToUpdate.Reverse();
+
+                foreach (var rowToUpdate in rowsToUpdate)
+                {
+                    _selectedCellIndices.Add(rowToUpdate + 1, _selectedCellIndices[rowToUpdate]);
+                    _selectedCellIndices.Remove(rowToUpdate);
+                }
+
+                // Update active cell
                 if (_activeCellVirtualRowIndex >= rowIndices[i]) _activeCellVirtualRowIndex += 1;
                 if (_activeCellVirtualRowIndex > DataView.NumberOfRows - 1)
                     _activeCellVirtualRowIndex = DataView.NumberOfRows - 1;
@@ -835,12 +896,26 @@ namespace DatabaseControls
             Array.Sort(rowIndices);
             for (int i = rowIndices.Length - 1; i >= 0; i--)
             {
+                // Update selected row indices
                 _selectedDataRowIndices.Remove(rowIndices[i]);
                 for (int j = 0; j < _selectedDataRowIndices.Count; j++)
                     if (_selectedDataRowIndices[j] > rowIndices[i]) _selectedDataRowIndices[j] -= 1;
 
+                // Delete row from selected cells collection
                 _selectedCellIndices.Remove(rowIndices[i]);
+                var rowsToUpdate = new List<int>();
+                foreach (var selectedCellsByRow in _selectedCellIndices)
+                    if (selectedCellsByRow.Key > rowIndices[i]) rowsToUpdate.Add(selectedCellsByRow.Key);
 
+                rowsToUpdate.Sort();
+
+                foreach (var rowToUpdate in rowsToUpdate)
+                {
+                    _selectedCellIndices.Add(rowToUpdate - 1, _selectedCellIndices[rowToUpdate]);
+                    _selectedCellIndices.Remove(rowToUpdate);
+                }
+
+                // Update active cell
                 if (_activeCellVirtualRowIndex >= rowIndices[i]) _activeCellVirtualRowIndex -= 1;
                 if (_activeCellVirtualRowIndex < 0) _activeCellVirtualRowIndex = 0;
             }
@@ -1183,36 +1258,81 @@ namespace DatabaseControls
         /// </summary>
         private void AddRow()
         {
-            int rowIndex = GridPanel.RowDefinitions.Count;
+            if (GridPanel == null || DataView == null || VerticalScrollbar == null) return;
+
+            // Create new row definition
             GridPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
-            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
-            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
-            var rowColor = new Border { Background = (rowIndex % 2 == 0) ? RowColor : AlternateRowColor };
-            Grid.SetRow(rowColor, rowIndex);
-            RowColorGrid.Children.Add(rowColor);
-
-            var rowHeader = new RowHeader { HeaderTextblockStyle = RowHeaderTextblockStyle, HeaderBorderStyle = RowHeaderBorderStyle };
-            Grid.SetRow(rowHeader, rowIndex);
-            RowHeadersGrid.Children.Add(rowHeader);
-
-            for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+            // Create new row Cells
+            for (int j = 0; j < DataView.ColumnTypes.Count(); j++)
             {
-                var cell = new Cell { CellStyle = CellTextblockStyle };
-                Grid.SetRow(cell, rowIndex);
-                Grid.SetColumn(cell, j);
-                GridPanel.Children.Add(cell);
+                var newCell = new Cell { CellStyle = CellTextblockStyle };
+                Grid.SetRow(newCell, GridPanel.RowDefinitions.Count - 1);
+                Grid.SetColumn(newCell, j);
+                GridPanel.Children.Add(newCell);
             }
 
-            var lengthBinding = new Binding("ActualWidth") { ElementName = "GridPanel" };
-            double rowDistanceFromTop = RowHeight * (rowIndex + 1) - (RowLineThickness / 2);
+            // Fill new row with data
+            int scrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
+            if ((scrollBarValue + (GridPanel.RowDefinitions.Count - 1)) < _rowId!.Length)
+            {
+                if (_selectedRowsOnly == false)
+                {
+                    FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[scrollBarValue + GridPanel.RowDefinitions.Count - 1]));
+                }
+                else
+                {
+                    if (_columnSortOrder == SortOrder.None)
+                    {
+                        if (_selectedDataRowIndices.Count >= scrollBarValue + GridPanel.RowDefinitions.Count)
+                            FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[_selectedDataRowIndices[scrollBarValue + GridPanel.RowDefinitions.Count - 1]]));
+                    }
+                    else
+                    {
+                        if (_sortedSelectedRowOffsets!.Length >= scrollBarValue + GridPanel.RowDefinitions.Count)
+                            FillRow(GridPanel.RowDefinitions.Count - 1, DataView.GetRow(_rowId[_sortedSelectedRowOffsets[scrollBarValue + GridPanel.RowDefinitions.Count - 1]]));
+                    }
+                }
+            }
+
+            // Create row line
+            var lengthBinding = new Binding(nameof(Grid.ActualWidth)) { Source = GridPanel };
+            double rowDistanceFromTop = RowHeight * (GridPanel.RowDefinitions.Count) - (RowLineThickness / 2);
             var rowLine = new Line
             {
-                SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                SnapsToDevicePixels = true,
+                X1 = 0,
+                Y1 = rowDistanceFromTop,
+                Y2 = rowDistanceFromTop,
+                StrokeThickness = RowLineThickness,
+                Stroke = RowLineColor
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
+
+            // Create Row selector
+            RowHeadersGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight), MaxHeight = RowHeight });
+            var newRowSelector = new RowHeader
+            {
+                HeaderTextblockStyle = RowHeaderTextblockStyle,
+                HeaderBorderStyle = RowHeaderBorderStyle,
+                Height = RowHeight
+            };
+            Grid.SetRow(newRowSelector, RowHeadersGrid.RowDefinitions.Count - 1);
+            RowHeadersGrid.Children.Add(newRowSelector);
+
+            // Create row color
+            RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
+            SolidColorBrush fillColor = RowColor;
+            if (_rowId[RowColorGrid.RowDefinitions.Count - 1] % 2 != 0) fillColor = AlternateRowColor;
+            var rect = new Rectangle
+            {
+                Stroke = new SolidColorBrush(Colors.Transparent),
+                StrokeThickness = 0,
+                Fill = fillColor
+            };
+            Grid.SetRow(rect, RowColorGrid.RowDefinitions.Count - 1);
+            RowColorGrid.Children.Add(rect);
         }
 
         #endregion
@@ -1370,13 +1490,16 @@ namespace DatabaseControls
         /// Determines the table row index from a grid position (mouse coordinates).
         /// </summary>
         /// <param name="gridPosition">The position within the grid panel.</param>
-        /// <returns>The row index at the specified position, clamped to valid bounds.</returns>
+        /// <returns>The row index at the specified position.</returns>
         private int GetTableRowIndex(Point gridPosition)
         {
-            int rowIndex = (int)Math.Floor(gridPosition.Y / RowHeight);
-            if (rowIndex < 0) rowIndex = 0;
-            if (rowIndex >= _visibleRowCount) rowIndex = _visibleRowCount - 1;
-            return rowIndex;
+            double runningSum = 0;
+            for (int i = 0; i < GridPanel.RowDefinitions.Count; i++)
+            {
+                runningSum += GridPanel.RowDefinitions[i].ActualHeight;
+                if (runningSum >= gridPosition.Y) return i;
+            }
+            return GridPanel.RowDefinitions.Count - 1;
         }
 
         /// <summary>
@@ -1406,35 +1529,74 @@ namespace DatabaseControls
         private void SetSelectedCells()
         {
             if (DataView == null) return;
-            int firstRowIndex = (int)Math.Floor(VerticalScrollbar.Value);
 
+            // All selected
             if (AllCellsSelected || _selectedRowsOnly)
             {
                 for (int i = 0; i < _visibleRowCount; i++)
                     for (int j = 0; j < DataView.ColumnNames.Count(); j++)
                         SelectCell(j, i);
+                SetActiveCell();
                 return;
             }
 
-            foreach (var rowIndex in _selectedDataRowIndices)
+            // Columns
+            if (_selectedColumnIndices.Count > 0)
             {
-                int tableRow = _rowOffset![rowIndex] - firstRowIndex;
-                if (tableRow >= 0 && tableRow < _visibleRowCount)
-                    for (int j = 0; j < DataView.ColumnNames.Count(); j++)
-                        SelectCell(j, tableRow);
+                foreach (var columnIndex in _selectedColumnIndices)
+                    for (int i = 0; i < _visibleRowCount; i++)
+                        SelectCell(columnIndex, i);
             }
 
-            foreach (var colIndex in _selectedColumnIndices)
-                for (int i = 0; i < _visibleRowCount; i++)
-                    SelectCell(colIndex, i);
-
-            foreach (var kvp in _selectedCellIndices)
+            // Rows
+            if (_selectedDataRowIndices.Count > 0)
             {
-                int tableRow = _rowOffset![kvp.Key] - firstRowIndex;
-                if (tableRow >= 0 && tableRow < _visibleRowCount)
-                    foreach (var colIndex in kvp.Value)
-                        SelectCell(colIndex, tableRow);
+                int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                int lastRowDataIndex = firstRowDataIndex + _visibleRowCount - 1;
+
+                if (_columnSortOrder == SortOrder.Ascending || _columnSortOrder == SortOrder.Descending)
+                {
+                    // Now set the proper row selections
+                    int counter = 0;
+                    for (int i = firstRowDataIndex; i <= lastRowDataIndex; i++)
+                    {
+                        if (_selectedDataRowIndices.BinarySearch(_rowId![i]) >= 0)
+                        {
+                            for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                                SelectCell(j, counter);
+                        }
+                        counter++;
+                    }
+                }
+                else
+                {
+                    int searchIndex = _selectedDataRowIndices.BinarySearch(firstRowDataIndex);
+                    if (searchIndex < 0) searchIndex = ~searchIndex; // bitwise complement
+                    for (int i = searchIndex; i < _selectedDataRowIndices.Count; i++)
+                    {
+                        if (_selectedDataRowIndices[i] > lastRowDataIndex) break;
+                        for (int j = 0; j < DataView.ColumnNames.Count(); j++)
+                            SelectCell(j, _selectedDataRowIndices[i] - firstRowDataIndex);
+                    }
+                }
             }
+
+            // Cells
+            if (_selectedCellIndices.Count > 0)
+            {
+                int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
+                for (int i = firstRowDataIndex; i <= (firstRowDataIndex + _visibleRowCount - 1); i++)
+                {
+                    if (_selectedCellIndices.ContainsKey(_rowId![i]))
+                    {
+                        int tableRowIndex = _rowOffset![_rowId[i]] - firstRowDataIndex;
+                        foreach (var columnIndex in _selectedCellIndices[_rowId[i]])
+                            SelectCell(columnIndex, tableRowIndex);
+                    }
+                }
+            }
+
+            SetActiveCell();
         }
 
         /// <summary>
@@ -1799,11 +1961,18 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Handles changes to the vertical scrollbar's enabled state. Currently unused.
+        /// Handles changes to the vertical scrollbar's enabled state.
+        /// Shows or hides the scrollbar based on whether it is enabled.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data.</param>
-        private void VerticalScrollbar_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e) { }
+        private void VerticalScrollbar_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (VerticalScrollbar.IsEnabled == false)
+                VerticalScrollbar.Visibility = Visibility.Collapsed;
+            else
+                VerticalScrollbar.Visibility = Visibility.Visible;
+        }
 
         /// <summary>
         /// Handles size changes of the horizontal scroll viewer by refreshing the view.
@@ -1814,16 +1983,13 @@ namespace DatabaseControls
 
         /// <summary>
         /// Handles mouse wheel scrolling on the grid panel.
-        /// Scrolls up or down by 3 rows based on wheel direction.
+        /// Uses proportional scrolling based on wheel delta (e.Delta/10).
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event data containing wheel delta.</param>
         private void TestGridPanel_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta > 0 && VerticalScrollbar.Value > 0)
-                VerticalScrollbar.Value -= 3;
-            else if (e.Delta < 0 && VerticalScrollbar.Value < VerticalScrollbar.Maximum)
-                VerticalScrollbar.Value += 3;
+            VerticalScrollbar.Value -= e.Delta / 10; // if e.Delta = 30 then table will go up 3 rows
         }
 
         /// <summary>
@@ -3064,6 +3230,20 @@ namespace DatabaseControls
                     _columnsSortedOrder![i] = SortOrder.None;
                 _columnsSortedOrder![_mouseDownColumnIndex] = SortOrder.Descending;
 
+                if (_selectedRowsOnly == false)
+                {
+                    DeSelectAllCells();
+                    SetSelectedCells();
+                }
+                else
+                {
+                    _sortedSelectedRowOffsets = new int[_selectedDataRowIndices.Count];
+                    for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+                        _sortedSelectedRowOffsets[i] = _rowOffset![_selectedDataRowIndices[i]];
+                    Array.Sort(_sortedSelectedRowOffsets);
+                    Array.Reverse(_sortedSelectedRowOffsets);
+                }
+
                 UpdateVisibleRows();
                 for (int i = 0; i < DataView.ColumnNames.Count(); i++)
                     ((ColumnHeader)ColumnHeadersGrid.Children[i * 2]).RemoveSorter();
@@ -3088,6 +3268,19 @@ namespace DatabaseControls
                 for (int i = 0; i < DataView.ColumnNames.Count(); i++)
                     _columnsSortedOrder![i] = SortOrder.None;
                 _columnsSortedOrder![_mouseDownColumnIndex] = SortOrder.Ascending;
+
+                if (_selectedRowsOnly == false)
+                {
+                    DeSelectAllCells();
+                    SetSelectedCells();
+                }
+                else
+                {
+                    _sortedSelectedRowOffsets = new int[_selectedDataRowIndices.Count];
+                    for (int i = 0; i < _selectedDataRowIndices.Count; i++)
+                        _sortedSelectedRowOffsets[i] = _rowOffset![_selectedDataRowIndices[i]];
+                    Array.Sort(_sortedSelectedRowOffsets);
+                }
 
                 UpdateVisibleRows();
                 for (int i = 0; i < DataView.ColumnNames.Count(); i++)
