@@ -367,6 +367,14 @@ namespace Xceed.Wpf.AvalonDock.Controls
       _resizer.DragDelta -= new System.Windows.Controls.Primitives.DragDeltaEventHandler( OnResizerDragDelta );
       _resizer.DragCompleted -= new System.Windows.Controls.Primitives.DragCompletedEventHandler( OnResizerDragCompleted );
 
+      // Clear the LayoutAnchorableControl's model to break its LayoutItem.View.Content
+      // binding chain. In .NET 9, leaving this active prevents the content UserControl
+      // from rendering in the new docked pane due to visual parent conflict.
+      if( _internalHost != null )
+      {
+        _internalHost.Model = null;
+      }
+
       _internalHostPresenter.Content = null;
     }
 

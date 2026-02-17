@@ -103,6 +103,7 @@
     <SolidColorBrush x:Key="DataGrid.Header.Foreground" Color="#000000"/>
     <SolidColorBrush x:Key="DataGrid.Header.MouseOver.Background" Color="#FDF4BF"/>
     <SolidColorBrush x:Key="DataGrid.Header.Pressed.Background" Color="#E5C365"/>
+    <Color x:Key="DataGrid.RowHeader.Background">#E8EBF0</Color>
     <SolidColorBrush x:Key="DataGrid.Row.Background" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="DataGrid.Row.Alternating.Background" Color="#F3F9F7"/>
     <SolidColorBrush x:Key="DataGrid.Row.Foreground" Color="#000000"/>
@@ -184,7 +185,7 @@
     <SolidColorBrush x:Key="MainWindowActiveBorder" Color="#0D202D"/>
     <SolidColorBrush x:Key="MainWindowInactiveBorder" Color="#525252"/>
     <SolidColorBrush x:Key="MainWindowCaptionActiveBackground" Color="#D6DBE9"/>
-    <SolidColorBrush x:Key="MainWindowCaptionActiveText" Color="#000000"/>
+    <SolidColorBrush x:Key="MainWindowCaptionActiveText" Color="#1B293E"/>
     <SolidColorBrush x:Key="MainWindowCaptionInactiveBackground" Color="#D6DBE9"/>
     <SolidColorBrush x:Key="MainWindowCaptionInactiveText" Color="#99000000"/>
     <SolidColorBrush x:Key="MainWindowCaptionButtonActiveGlyph" Color="#000000"/>
@@ -281,6 +282,12 @@
     <SolidColorBrush x:Key="SeparatorBorder" Color="#BEC3CB"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- GRID SPLITTER                                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <SolidColorBrush x:Key="GridSplitter.Handle.Light" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="GridSplitter.Handle.Dark" Color="#A0A0A0"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- SLIDER                                                                       -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <SolidColorBrush x:Key="SliderThumb.Static.Background" Color="#F0F0F0"/>
@@ -294,6 +301,17 @@
     <SolidColorBrush x:Key="SliderThumb.Disabled.Border" Color="#D9D9D9"/>
     <SolidColorBrush x:Key="SliderThumb.Track.Background" Color="#E7EAEA"/>
     <SolidColorBrush x:Key="SliderThumb.Track.Border" Color="#D6D6D6"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- PROGRESSBAR                                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <SolidColorBrush x:Key="ProgressBar.Static.Background" Color="#E6E6E6"/>
+    <SolidColorBrush x:Key="ProgressBar.Static.Border" Color="#CCCEDB"/>
+    <SolidColorBrush x:Key="ProgressBar.Static.Foreground" Color="#06B025"/>
+    <SolidColorBrush x:Key="ProgressBar.Disabled.Background" Color="#E6E6E6"/>
+    <SolidColorBrush x:Key="ProgressBar.Disabled.Border" Color="#D9D9D9"/>
+    <SolidColorBrush x:Key="ProgressBar.Disabled.Foreground" Color="#BCBCBC"/>
+    <SolidColorBrush x:Key="ProgressBar.Indeterminate.Background" Color="#E6E6E6"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- STACKPANEL                                                                   -->
@@ -322,6 +340,7 @@
     <SolidColorBrush x:Key="TabItem.Selection.Foreground" Color="Black"/>
     <SolidColorBrush x:Key="TabItem.Selection.Border" Color="#E5C365"/>
     <SolidColorBrush x:Key="TabItem.MouseOver.Background" Color="#FDF4BF"/>
+    <SolidColorBrush x:Key="TabItem.MouseOver.Foreground" Color="Black"/>
     <SolidColorBrush x:Key="TabItem.MouseOver.Border" Color="#E5C365"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
@@ -377,7 +396,7 @@
     <!-- Toolbar Icon Colors (for vector icons) -->
     <SolidColorBrush x:Key="ToolbarIconForeground" Color="#1B293E"/>
     <SolidColorBrush x:Key="ToolbarIconDisabledForeground" Color="#8E9BBC"/>
-    <SolidColorBrush x:Key="ToolbarIconAccent" Color="#007ACC"/>
+    <SolidColorBrush x:Key="ToolbarIconAccent" Color="#1C97EA"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- TOOLTIP                                                                      -->

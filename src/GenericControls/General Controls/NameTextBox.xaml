@@ -14,7 +14,7 @@
                  VerticalContentAlignment="Center"
                  VerticalAlignment="Stretch"
                  Text="{Binding ElementName=NameTextBoxControl, Path=Text, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                 PreviewKeyUp="TextBox_PreviewKeyUp">
+                 PreviewKeyDown="TextBox_PreviewKeyDown" PreviewKeyUp="TextBox_PreviewKeyUp">
             <TextBox.Style>
                 <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Style.Triggers>

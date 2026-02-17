@@ -66,6 +66,8 @@
         <ResourceDictionary Source="Button.xaml"/>
         <ResourceDictionary Source="Calendar.xaml"/>
         <ResourceDictionary Source="CheckBox.xaml"/>
+        <ResourceDictionary Source="RadioButton.xaml"/>
+        <ResourceDictionary Source="RichTextBox.xaml"/>
         <ResourceDictionary Source="ComboBox.xaml"/>
         <ResourceDictionary Source="DataGrid.xaml"/>
         <ResourceDictionary Source="Expander.xaml"/>
@@ -75,12 +77,14 @@
         <ResourceDictionary Source="ListView.xaml"/>
         <ResourceDictionary Source="Menu.xaml"/>
         <ResourceDictionary Source="MetroWindowStyle.xaml"/>
+        <ResourceDictionary Source="ProgressBar.xaml"/>
         <ResourceDictionary Source="ScrollBar.xaml"/>
         <ResourceDictionary Source="Separator.xaml"/>
         <ResourceDictionary Source="Slider.xaml"/>
         <ResourceDictionary Source="StackPanel.xaml"/>
         <ResourceDictionary Source="StatusBar.xaml"/>
         <ResourceDictionary Source="TabControl.xaml"/>
+        <ResourceDictionary Source="TextBlock.xaml"/>
         <ResourceDictionary Source="TextBox.xaml"/>
         <ResourceDictionary Source="ToolBar.xaml"/>
         <ResourceDictionary Source="ToolTip.xaml"/>

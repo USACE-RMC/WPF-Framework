@@ -122,22 +122,22 @@ namespace FrameworkUI
         /// <summary>
         /// Gets or sets the error message color.
         /// </summary>
-        public static System.Drawing.Color ErrorColor { get; set; } = System.Drawing.Color.Red;
+        public static System.Drawing.Color ErrorColor { get; set; } = System.Drawing.Color.FromArgb(228, 20, 0);
 
         /// <summary>
         /// Gets or sets the warning message color.
         /// </summary>
-        public static System.Drawing.Color WarningColor { get; set; } = System.Drawing.Color.DarkOrange;
+        public static System.Drawing.Color WarningColor { get; set; } = System.Drawing.Color.FromArgb(229, 160, 0);
 
         /// <summary>
         /// Gets or sets the message color.
         /// </summary>
-        public static System.Drawing.Color MessageColor { get; set; } = System.Drawing.Color.Blue;
+        public static System.Drawing.Color MessageColor { get; set; } = System.Drawing.Color.FromArgb(26, 161, 226);
 
         /// <summary>
         /// Gets or sets the event message color.
         /// </summary>
-        public static System.Drawing.Color EventColor { get; set; } = System.Drawing.Color.FromArgb(193, 124, 26);
+        public static System.Drawing.Color EventColor { get; set; } = System.Drawing.Color.FromArgb(0, 206, 209);
 
         /// <summary>
         /// Gets or sets the default folder location.
@@ -235,10 +235,10 @@ namespace FrameworkUI
             WarningBeep = false;
             MessageBeep = false;
             EventBeep = false;
-            ErrorColor = System.Drawing.Color.Red;
-            WarningColor = System.Drawing.Color.DarkOrange;
-            MessageColor = System.Drawing.Color.Blue;
-            EventColor = System.Drawing.Color.FromArgb(193, 124, 26);
+            ErrorColor = System.Drawing.Color.FromArgb(228, 20, 0);
+            WarningColor = System.Drawing.Color.FromArgb(229, 160, 0);
+            MessageColor = System.Drawing.Color.FromArgb(26, 161, 226);
+            EventColor = System.Drawing.Color.FromArgb(0, 206, 209);
             // Defaults
             DefaultLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             DefaultValueDigits = 2;

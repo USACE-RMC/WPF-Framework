@@ -24,11 +24,18 @@
 
     <Style x:Key="Center_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-        <Setter Property="TextBlock.Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 
     <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+    </Style>
+
+    <Style x:Key="Right_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 
     <Style x:Key="Disabled_CellStyle" TargetType="{x:Type DataGridCell}">
@@ -181,12 +188,7 @@
                                 Background="{TemplateBinding Background}">
                             <Grid Name="HeaderGrid" SnapsToDevicePixels="True">
                                 <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0 0" EndPoint="1 0">
-                                        <LinearGradientBrush.GradientStops>
-                                            <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
-                                            <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
-                                        </LinearGradientBrush.GradientStops>
-                                    </LinearGradientBrush>
+                                    <SolidColorBrush Color="{DynamicResource DataGrid.RowHeader.Background}"/>
                                 </Grid.Background>
                                 <ContentPresenter Margin="4,2,4,2" SnapsToDevicePixels="True"
                                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>

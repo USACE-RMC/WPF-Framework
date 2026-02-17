@@ -135,7 +135,18 @@ namespace Xceed.Wpf.AvalonDock.Layout
     protected override bool GetVisibility()
     {
       if( this.Parent is LayoutDocumentPaneGroup )
-        return ( this.ChildrenCount > 0 ) && this.Children.Any( c => ( c is LayoutDocument && ( ( LayoutDocument )c ).IsVisible ) || ( c is LayoutAnchorable ) );
+      {
+        if( this.ChildrenCount > 0 )
+          return this.Children.Any( c => ( c is LayoutDocument && ( ( LayoutDocument )c ).IsVisible ) || ( c is LayoutAnchorable ) );
+
+        // Keep the last document pane visible even when empty so the center
+        // area is preserved when all documents are floated.  This is consistent
+        // with LayoutRoot.CollectGarbage() which preserves the last empty pane.
+        if( this.Root is ILayoutElement rootElement && rootElement.Descendents().OfType<LayoutDocumentPane>().Count( p => p != this ) == 0 )
+          return true;
+
+        return false;
+      }
 
       return true;
     }

@@ -198,19 +198,23 @@
                                     HorizontalAlignment="Right" 
                                     VerticalAlignment="Bottom"/>
 
-                                <Popup 
-                                    x:Name="DateTimePopup" 
-                                    IsOpen="{Binding ElementName=DateTimeRadioButton, Path=IsChecked, Mode=TwoWay}" 
-                                    StaysOpen="False" 
-                                    AllowsTransparency="True" 
-                                    Placement="Bottom" 
+                                <Popup
+                                    x:Name="DateTimePopup"
+                                    IsOpen="{Binding ElementName=DateTimeRadioButton, Path=IsChecked, Mode=TwoWay}"
+                                    StaysOpen="False"
+                                    AllowsTransparency="True"
+                                    Placement="Bottom"
                                     PlacementTarget="{Binding ElementName=DummyRect}">
-                                    <cntrls:DateAndTimePickerControl
-                                        HasSeconds="True"
-                                        SetToHoursOnLoad="True"
-                                        Background="{DynamicResource EnvironmentWindowBackground}"
-                                        DateAndTime="{Binding Index, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                        Is24Hour="True"/>
+                                    <Border BorderBrush="{DynamicResource Button.Static.Border}"
+                                            BorderThickness="1"
+                                            Background="{DynamicResource EnvironmentWindowBackground}">
+                                        <cntrls:DateAndTimePickerControl
+                                            HasSeconds="True"
+                                            SetToHoursOnLoad="True"
+                                            Background="{DynamicResource EnvironmentWindowBackground}"
+                                            DateAndTime="{Binding Index, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            Is24Hour="True"/>
+                                    </Border>
                                 </Popup>
                             </Grid>
                         </DataTemplate>

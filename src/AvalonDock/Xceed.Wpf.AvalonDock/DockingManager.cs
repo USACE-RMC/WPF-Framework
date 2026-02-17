@@ -2910,6 +2910,15 @@ namespace Xceed.Wpf.AvalonDock
 
       while( parentPane != null && parentPane.ChildrenCount == 0 )
       {
+        // Preserve the last LayoutDocumentPane so the center document area
+        // is maintained when all documents are floated.  This is consistent
+        // with LayoutRoot.CollectGarbage() which preserves the last empty pane.
+        if( parentPane is LayoutDocumentPane &&
+            this.Layout.Descendents().OfType<LayoutDocumentPane>().Count( p => p != parentPane ) == 0 )
+        {
+          break;
+        }
+
         var grandParentPane = parentPane.Parent as ILayoutPane;
 
         if( grandParentPane != null )

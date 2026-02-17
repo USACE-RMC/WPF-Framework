@@ -124,6 +124,7 @@ namespace GenericControls
                 valueToFormat = newValue;
             }
             thisControl.NumericTextBox.Text = NumberFormatHelper.FormatDouble(valueToFormat, thisControl.FormatString);
+            thisControl.ValueChanged?.Invoke(thisControl.Value);
         }
 
         /// <summary>
@@ -261,16 +262,6 @@ namespace GenericControls
             {
                 Value -= Increment;
             }
-        }
-
-        /// <summary>
-        /// Event handler for slider changing value.
-        /// </summary>
-        /// <param name="sender">The object that raised the event.</param>
-        /// <param name="e">Event arguments containing the old and new slider values.</param>
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            ValueChanged?.Invoke(Value);
         }
 
         #endregion

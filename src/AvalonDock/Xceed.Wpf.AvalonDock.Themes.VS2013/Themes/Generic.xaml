@@ -483,7 +483,7 @@
                                                                             RelativeSource={RelativeSource TemplatedParent}}"
                                                   ContentTemplateSelector="{Binding Model.Root.Manager.AnchorableTitleTemplateSelector,
                                                                                     RelativeSource={RelativeSource TemplatedParent}}"
-                                                  TextElement.Foreground="{TemplateBinding Foreground}" />
+                                                  TextElement.Foreground="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionInactiveText}}" />
                             </avalonDockControls:DropDownControlArea>
 
                             <Rectangle x:Name="DragHandleGeometryPlaceholder"
@@ -596,6 +596,7 @@
                             <Setter Property="Background" Value="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveBackground}}" />
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveText}}" />
                             <Setter TargetName="DragHandleGeometryPlaceholder" Property="Fill" Value="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveGrip}}" />
+                            <Setter TargetName="Header" Property="TextElement.Foreground" Value="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveText}}" />
                         </DataTrigger>
 
                         <!-- Tool Window : Caption : Button / Active -->
@@ -1398,7 +1399,8 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter Content="{Binding LayoutItem.View, RelativeSource={RelativeSource TemplatedParent}}" />
+                        <ContentControl Content="{Binding LayoutItem.View, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Focusable="False" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -1617,10 +1619,11 @@
                             <Border x:Name="Header">
                                 <avalonDockControls:AnchorablePaneTitle Model="{Binding Model, RelativeSource={RelativeSource TemplatedParent}}" />
                             </Border>
-                            <ContentPresenter Grid.Row="1"
-                                              Content="{Binding LayoutItem.View,
-                                                                RelativeSource={RelativeSource TemplatedParent}}"
-                                              FlowDirection="{TemplateBinding FlowDirection}" />
+                            <ContentControl Grid.Row="1"
+                                            Content="{Binding LayoutItem.View,
+                                                              RelativeSource={RelativeSource TemplatedParent}}"
+                                            FlowDirection="{TemplateBinding FlowDirection}"
+                                            Focusable="False" />
 
                             <!--
                                 <ContentPresenter

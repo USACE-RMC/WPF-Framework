@@ -390,6 +390,30 @@ namespace Xceed.Wpf.AvalonDock.Controls
           Resources.MergedDictionaries.Add( new ResourceDictionary() { Source = manager.Theme.GetResourceUri() } );
         }
       }
+      else
+      {
+        // When Theme property is not set, find theme resource dictionaries
+        // from the DockingManager or its parent Window.  FrameworkUI adds
+        // VS2013 theme dictionaries to MainWindow.Resources, not to the
+        // DockingManager.  Since floating windows are separate Win32 windows
+        // that do not inherit from the main window's visual tree, we must
+        // propagate the dictionaries so this window can resolve the VS2013
+        // implicit styles and DynamicResource brush lookups.
+        var sourceDict = manager.Resources.MergedDictionaries.Count > 0
+            ? manager.Resources.MergedDictionaries
+            : Window.GetWindow( manager )?.Resources.MergedDictionaries;
+
+        if( sourceDict != null )
+        {
+          foreach( var rd in sourceDict )
+          {
+            if( !Resources.MergedDictionaries.Contains( rd ) )
+            {
+              Resources.MergedDictionaries.Add( rd );
+            }
+          }
+        }
+      }
     }
 
     protected virtual bool CanClose( object parameter = null )

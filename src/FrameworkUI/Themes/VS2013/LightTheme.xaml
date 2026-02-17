@@ -117,7 +117,7 @@
 
     <!-- Main Window → Caption -->
     <SolidColorBrush x:Key="MainWindowCaptionActiveBackground" Color="#EEEEF2" />
-    <SolidColorBrush x:Key="MainWindowCaptionActiveText" Color="#525252" />
+    <SolidColorBrush x:Key="MainWindowCaptionActiveText" Color="#1E1E1E" />
     <SolidColorBrush x:Key="MainWindowCaptionInactiveBackground" Color="#EEEEF2" />
     <SolidColorBrush x:Key="MainWindowCaptionInactiveText" Color="#99525252" />
 
@@ -194,6 +194,10 @@
 
     <!--Separator-->
     <SolidColorBrush x:Key="SeparatorBorder" Color="#CCCEDB"/>
+
+    <!--Grid splitter-->
+    <SolidColorBrush x:Key="GridSplitter.Handle.Light" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="GridSplitter.Handle.Dark" Color="#A0A0A0"/>
 
     <!--Stack panel-->
     <SolidColorBrush x:Key="StackPanelBackground" Color="#EEEEF2" />

@@ -575,7 +575,7 @@ namespace FrameworkUI
             var LayoutAnchorableList = MainDock.Layout.Descendents().OfType<LayoutAnchorable>().ToList();
             for (int i = 0; i < LayoutAnchorableList.Count; i++)
             {
-                if (LayoutAnchorableList[i].Title == ShellPublicVariables.ProjectExplorerTitle)
+                if (LayoutAnchorableList[i].ContentId == ShellPublicVariables.ProjectExplorerContentID)
                 {
                     _projectExplorerDock = LayoutAnchorableList[i];
                     _projectExplorerDock.Content = _projectExplorerTreeView;
@@ -612,7 +612,7 @@ namespace FrameworkUI
             var LayoutAnchorableList = MainDock.Layout.Descendents().OfType<LayoutAnchorable>().ToList();
             for (int i = 0; i < LayoutAnchorableList.Count; i++)
             {
-                if (LayoutAnchorableList[i].Title == ShellPublicVariables.MessageWindowTitle)
+                if (LayoutAnchorableList[i].ContentId == ShellPublicVariables.MessageWindowContentID)
                 {
                     _messageWindowDock = LayoutAnchorableList[i];
                     _messageWindowDock.Content = _messageWindowControl;
@@ -632,7 +632,7 @@ namespace FrameworkUI
             var LayoutAnchorableList = MainDock.Layout.Descendents().OfType<LayoutAnchorable>().ToList();
             for (int i = 0; i < LayoutAnchorableList.Count; i++)
             {
-                if (LayoutAnchorableList[i].Title == ShellPublicVariables.PropertiesWindowTitle)
+                if (LayoutAnchorableList[i].ContentId == ShellPublicVariables.PropertiesWindowContentID)
                 {
                     _propertiesWindowDock = LayoutAnchorableList[i];
                     _propertiesWindowDock.IsActiveChanged += PropertiesWindow_IsActiveChanged;
@@ -2160,9 +2160,8 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void ProjectExplorer_Click(object sender, RoutedEventArgs e)
         {
-            if (_projectExplorerDock == null) return;
-            _projectExplorerDock.Show();
-            _projectExplorerDock.IsActive = true;
+            BuildProjectExplorer();
+            ShowAnchorable(_projectExplorerDock, AnchorableShowStrategy.Left);
         }
 
         ///// <summary>
@@ -2181,9 +2180,8 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void MessageWindow_Click(object sender, RoutedEventArgs e)
         {
-            if (_messageWindowDock == null) return;
-            _messageWindowDock.Show();
-            _messageWindowDock.IsActive = true;
+            BuildMessageWindow();
+            ShowAnchorable(_messageWindowDock, AnchorableShowStrategy.Bottom);
         }
 
         /// <summary>
@@ -2193,9 +2191,8 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void PropertiesWindow_Click(object sender, RoutedEventArgs e)
         {
-            if (_propertiesWindowDock == null) return;
-            _propertiesWindowDock.Show();
-            _propertiesWindowDock.IsActive = true;
+            BuildPropertiesWindow();
+            ShowAnchorable(_propertiesWindowDock, AnchorableShowStrategy.Right);
         }
 
         /// <summary>
@@ -2205,12 +2202,41 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void AllWindows_Click(object sender, RoutedEventArgs e)
         {
-            _projectExplorerDock?.Show();
-            if (_projectExplorerDock != null)
-                _projectExplorerDock.IsActive = true;
+            // Re-acquire references and restore each pane.
+            BuildProjectExplorer();
+            ShowAnchorable(_projectExplorerDock, AnchorableShowStrategy.Left);
             //_mapExplorerDock.Show();
-            _messageWindowDock?.Show();
-            _propertiesWindowDock?.Show();
+            BuildMessageWindow();
+            ShowAnchorable(_messageWindowDock, AnchorableShowStrategy.Bottom);
+            BuildPropertiesWindow();
+            ShowAnchorable(_propertiesWindowDock, AnchorableShowStrategy.Right);
+        }
+
+        /// <summary>
+        /// Safely shows a LayoutAnchorable, handling auto-hidden, hidden, and detached states.
+        /// </summary>
+        private void ShowAnchorable(LayoutAnchorable? dock, AnchorableShowStrategy fallbackStrategy)
+        {
+            if (dock == null) return;
+            if (dock.IsAutoHidden)
+            {
+                dock.ToggleAutoHide();
+            }
+            else if (dock.IsHidden)
+            {
+                dock.Show();
+                if (!dock.IsVisible)
+                {
+                    // Show() failed because PreviousContainer was lost. Re-add to layout.
+                    dock.AddToLayout(MainDock, fallbackStrategy);
+                }
+            }
+            else if (!dock.IsVisible)
+            {
+                // Anchorable is fully detached (Parent is null). Re-add to layout.
+                dock.AddToLayout(MainDock, fallbackStrategy);
+            }
+            dock.IsActive = true;
         }
 
         /// <summary>
@@ -2223,6 +2249,12 @@ namespace FrameworkUI
             OpenWindows.CloseAllWindows();
             if (OpenWindows.CancelClosing == false)
             {
+                // Clear stale references before loading new layout.
+                // LoadLayout replaces the entire LayoutRoot, so old references become orphaned.
+                _projectExplorerDock = null;
+                _messageWindowDock = null;
+                _propertiesWindowDock = null;
+
                 LoadLayout(true);
                 BuildProjectExplorer();
                 //BuildMapExplorer();

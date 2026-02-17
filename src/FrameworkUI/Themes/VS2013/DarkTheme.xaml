@@ -16,13 +16,13 @@
 
     <!-- Check box -->
     <SolidColorBrush x:Key="OptionMark.Static.Background" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="OptionMark.Static.Border" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="OptionMark.Static.Border" Color="#6B6B70"/>
     <SolidColorBrush x:Key="OptionMark.Static.Glyph" Color="#F1F1F1"/>
     <SolidColorBrush x:Key="OptionMark.MouseOver.Background" Color="#3E3E40"/>
     <SolidColorBrush x:Key="OptionMark.MouseOver.Border" Color="#0099FF"/>
     <SolidColorBrush x:Key="OptionMark.MouseOver.Glyph" Color="#F1F1F1"/>
-    <SolidColorBrush x:Key="OptionMark.Disabled.Background" Color="#424245"/>
-    <SolidColorBrush x:Key="OptionMark.Disabled.Border" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="OptionMark.Disabled.Background" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="OptionMark.Disabled.Border" Color="#3E3E42"/>
     <SolidColorBrush x:Key="OptionMark.Disabled.Glyph" Color="#656565"/>
     <SolidColorBrush x:Key="OptionMark.Pressed.Background" Color="#424245"/>
     <SolidColorBrush x:Key="OptionMark.Pressed.Border" Color="#007ACC"/>
@@ -112,7 +112,7 @@
 
     <!-- Main Window → Caption -->
     <SolidColorBrush x:Key="MainWindowCaptionActiveBackground" Color="#2D2D30" />
-    <SolidColorBrush x:Key="MainWindowCaptionActiveText" Color="#999999" />
+    <SolidColorBrush x:Key="MainWindowCaptionActiveText" Color="#F1F1F1" />
     <SolidColorBrush x:Key="MainWindowCaptionInactiveBackground" Color="#2D2D30" />
     <SolidColorBrush x:Key="MainWindowCaptionInactiveText" Color="#99999999" />
 
@@ -190,6 +190,10 @@
     <!--Separator-->
     <SolidColorBrush x:Key="SeparatorBorder" Color="#4D4D50"/>
 
+    <!--Grid splitter-->
+    <SolidColorBrush x:Key="GridSplitter.Handle.Light" Color="#686868"/>
+    <SolidColorBrush x:Key="GridSplitter.Handle.Dark" Color="#4D4D50"/>
+
     <!--Stack panel-->
     <SolidColorBrush x:Key="StackPanelBackground" Color="#2D2D30" />
 
@@ -228,7 +232,7 @@
     <SolidColorBrush x:Key="SliderThumb.Track.Background" Color="#686868"/>
 
     <!--Tab Control-->
-    <SolidColorBrush x:Key="TabControl.Background" Color="#FF323235"/>
+    <SolidColorBrush x:Key="TabControl.Background" Color="#FF2D2D30"/>
     <SolidColorBrush x:Key="TabControl.Foreground" Color="#FFF1F1F1"/>
     <SolidColorBrush x:Key="TabControl.Border" Color="#4D4D50"/>
     <LinearGradientBrush  x:Key="TabItem.Static.Background" StartPoint="0,0" EndPoint="0,1">

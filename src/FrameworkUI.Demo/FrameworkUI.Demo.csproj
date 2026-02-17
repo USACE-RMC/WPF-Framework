@@ -10,6 +10,7 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,7 +48,8 @@
     <Resource Include="Resources\*.png" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- Debug references -->
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Reference Include="Numerics">
       <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
     </Reference>
@@ -61,5 +63,38 @@
       <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <!-- Release references -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <Reference Include="Numerics">
+      <HintPath>..\..\..\numerics\Numerics\bin\Release\net9.0\Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Release\net9.0-windows\OxyPlot.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Release\net9.0-windows\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="OxyPlot.Wpf.Shared">
+      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Release\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Post-build: Move supporting files to libraries subfolder and clean up -->
+  <Target Name="MoveToLibraries" AfterTargets="Build">
+    <ItemGroup>
+      <LibraryDlls Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(AssemblyName).dll" />
+      <LibraryPdbs Include="$(OutputPath)*.pdb" Exclude="$(OutputPath)$(AssemblyName).pdb" />
+      <LibraryXmls Include="$(OutputPath)*.xml" />
+      <LibraryConfigs Include="$(OutputPath)*.dll.config" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutputPath)libraries" />
+    <Move SourceFiles="@(LibraryDlls)" DestinationFolder="$(OutputPath)libraries" />
+    <Move SourceFiles="@(LibraryPdbs)" DestinationFolder="$(OutputPath)libraries" />
+    <Move SourceFiles="@(LibraryXmls)" DestinationFolder="$(OutputPath)libraries" />
+    <Move SourceFiles="@(LibraryConfigs)" DestinationFolder="$(OutputPath)libraries" />
+    <!-- Remove AvalonDock satellite assembly locale folders (not needed for English-only apps) -->
+    <RemoveDir Directories="$(OutputPath)cs-CZ;$(OutputPath)de;$(OutputPath)es;$(OutputPath)fr;$(OutputPath)hu;$(OutputPath)it;$(OutputPath)ja-JP;$(OutputPath)nl-BE;$(OutputPath)pt-BR;$(OutputPath)ro;$(OutputPath)ru;$(OutputPath)sv;$(OutputPath)zh-Hans" />
+  </Target>
 
 </Project>

@@ -178,6 +178,7 @@
                             <MultiTrigger.Setters>
                                 <Setter TargetName="border" Property="Background" Value="{DynamicResource TabItem.MouseOver.Background}"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TabItem.MouseOver.Border}"/>
+                                <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.MouseOver.Foreground}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <MultiTrigger>
@@ -188,15 +189,13 @@
                             <MultiTrigger.Setters>
                                 <Setter TargetName="border" Property="Background" Value="Transparent"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="Transparent"/>
+                                <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.Static.Foreground}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource TabItem.Selection.Background}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TabItem.Selection.Background}"/>
                             <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.Selection.Foreground}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.Static.Foreground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -230,6 +229,7 @@
                             <MultiTrigger.Setters>
                                 <Setter TargetName="border" Property="Background" Value="{DynamicResource TabItem.MouseOver.Background}"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TabItem.MouseOver.Border}"/>
+                                <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.MouseOver.Foreground}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <MultiTrigger>
@@ -240,15 +240,13 @@
                             <MultiTrigger.Setters>
                                 <Setter TargetName="border" Property="Background" Value="Transparent"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="Transparent"/>
+                                <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.Static.Foreground}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource TabItem.Selection.Background}"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource TabItem.Selection.Background}"/>
                             <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.Selection.Foreground}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource TabItem.Static.Foreground}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="presenter" Property="TextBlock.Foreground" Value="{DynamicResource DisabledMenuItemBrush}"/>
@@ -295,6 +293,7 @@
                                 <Setter TargetName="rectangleBorder" Property="BorderBrush" Value="{DynamicResource TabItem.MouseOver.Border}"/>
                                 <Setter TargetName="arrow" Property="Fill" Value="{DynamicResource TabItem.MouseOver.Background}"/>
                                 <Setter TargetName="arrow" Property="Stroke" Value="{DynamicResource TabItem.MouseOver.Border}"/>
+                                <Setter TargetName="presenter" Property="Foreground" Value="{DynamicResource TabItem.MouseOver.Foreground}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <MultiTrigger>
@@ -307,6 +306,7 @@
                                 <Setter TargetName="rectangleBorder" Property="BorderBrush" Value="Transparent"/>
                                 <Setter TargetName="arrow" Property="Fill" Value="Transparent"/>
                                 <Setter TargetName="arrow" Property="Stroke" Value="Transparent"/>
+                                <Setter TargetName="presenter" Property="Foreground" Value="{DynamicResource TabItem.Static.Foreground}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <Trigger Property="IsSelected" Value="True">
@@ -315,9 +315,6 @@
                             <Setter TargetName="arrow" Property="Fill" Value="{DynamicResource TabItem.Selection.Background}"/>
                             <Setter TargetName="arrow" Property="Stroke" Value="{DynamicResource TabItem.Selection.Background}"/>
                             <Setter TargetName="presenter" Property="Foreground" Value="{DynamicResource TabItem.Selection.Foreground}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="presenter" Property="Foreground" Value="{DynamicResource TabItem.Static.Foreground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

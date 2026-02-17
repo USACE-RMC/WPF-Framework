@@ -75,9 +75,16 @@ namespace FrameworkUI
         public const string PropertiesWindowTitle = "  Properties";
 
         /// <summary>
-        /// The folder path for user settings
+        /// The base folder path for all application settings.
+        /// Prefers a "settings" subfolder next to the application exe for easy user access.
+        /// Falls back to AppData\Roaming if the exe directory is not writable.
         /// </summary>
-        public static string UserSettingsFolderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationAttributes.CompanyName + @"\" + ApplicationAttributes.ProductName + " " + Version.Parse(ApplicationAttributes.Version).Major + @"\Settings\");
+        public static readonly string BaseFolderPath = GetBaseFolderPath();
+
+        /// <summary>
+        /// The folder path for user settings.
+        /// </summary>
+        public static string UserSettingsFolderPath = System.IO.Path.Combine(BaseFolderPath, "UserSettings") + System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>
         /// File path of the user settings.
@@ -87,7 +94,7 @@ namespace FrameworkUI
         /// <summary>
         /// The folder path for layout.
         /// </summary>
-        public static string AvalonDockLayoutFolderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationAttributes.CompanyName + @"\" + ApplicationAttributes.ProductName + " " + Version.Parse(ApplicationAttributes.Version).Major + @"\Layout\");
+        public static string AvalonDockLayoutFolderPath = System.IO.Path.Combine(BaseFolderPath, "Layout") + System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>
         /// File path of the default AvalonDock layout.
@@ -97,7 +104,7 @@ namespace FrameworkUI
         /// <summary>
         /// The folder path for recent file list.
         /// </summary>
-        public static string RecentFileListFolderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationAttributes.CompanyName + @"\" + ApplicationAttributes.ProductName + " " + Version.Parse(ApplicationAttributes.Version).Major + @"\RecentFiles\");
+        public static string RecentFileListFolderPath = System.IO.Path.Combine(BaseFolderPath, "RecentFiles") + System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>
         /// File path of the recent file list.
@@ -107,12 +114,43 @@ namespace FrameworkUI
         /// <summary>
         /// The folder path for message log.
         /// </summary>
-        public static string MessageLogFolderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationAttributes.CompanyName + @"\" + ApplicationAttributes.ProductName + " " + Version.Parse(ApplicationAttributes.Version).Major + @"\MessageLog\");
+        public static string MessageLogFolderPath = System.IO.Path.Combine(BaseFolderPath, "MessageLog") + System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>
         /// File path of the message log.
         /// </summary>
         public static string MessageLogFilePath = MessageLogFolderPath + "MessageLog.txt";
+
+        /// <summary>
+        /// Determines the base folder path for application settings.
+        /// Tries the application exe directory first; falls back to AppData\Roaming if not writable.
+        /// </summary>
+        /// <returns>The base folder path for application settings.</returns>
+        private static string GetBaseFolderPath()
+        {
+            // Primary: Settings folder next to the application exe
+            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string primaryPath = System.IO.Path.Combine(exeDirectory, "settings");
+
+            try
+            {
+                // Test if we can write to the exe directory
+                System.IO.Directory.CreateDirectory(primaryPath);
+                return primaryPath;
+            }
+            catch
+            {
+                // Fallback: AppData\Roaming with product name
+                string productName = ApplicationAttributes.ProductName;
+                if (string.IsNullOrWhiteSpace(productName))
+                    productName = "Application";
+
+                return System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    productName,
+                    "settings");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the software version from application attributes.

@@ -72,12 +72,14 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Border Background="{DynamicResource EnvironmentWindowBackground}" Grid.Row="0" Margin="1 0">
+    <Border BorderBrush="{Binding ElementName=TimePicker, Path=BorderBrush}"
+            BorderThickness="{Binding ElementName=TimePicker, Path=BorderThickness}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Background="{DynamicResource EnvironmentWindowBackground}" Grid.Row="0" Margin="1 0">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock MouseUp="HoursMouseUp">
                     <TextBlock.Style>
@@ -146,7 +148,7 @@
             </StackPanel>
         </Border>
 
-        <Viewbox Grid.Row="1" Margin="0,5,0,0">
+        <Viewbox Grid.Row="1" Margin="0,5,0,5">
             <Canvas x:Name="MyCanvas" Width="100" Height="100">
                 <Ellipse Name="ClockFace" Fill="{Binding ElementName=TimePicker, Path=FaceColor}" Width="100" Height="100" MouseMove="ClockFace_MouseMove" MouseDown="ClockFace_MouseDown" MouseUp="ClockFace_MouseUp" MouseEnter="ClockFace_MouseEnter" MouseLeave="ClockFace_MouseLeave"></Ellipse>
                 <Border Name="AMFace" Style="{StaticResource AMPMStyle}" Visibility="{Binding ElementName=TimePicker, Path=Is24Hour, Converter={StaticResource TrueToCollapsed}}">
@@ -198,5 +200,6 @@
         </Viewbox>
 
 
-    </Grid>
+        </Grid>
+    </Border>
 </UserControl>

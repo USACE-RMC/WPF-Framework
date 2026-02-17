@@ -91,7 +91,7 @@
                 <DataGridTemplateColumn x:Name="DescriptionColumn"  Width="0.4*" Header=" Description " >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="2" Text="{Binding Message.Description}" TextWrapping="WrapWithOverflow" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <TextBlock Margin="2" Text="{Binding Message.Description}" Foreground="{Binding ForegroundColor}" TextWrapping="WrapWithOverflow" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left">
                                 <TextBlock.ToolTip>
                                     <TextBlock Text="Double-click the message to open the source file and resolve any issues." TextWrapping="WrapWithOverflow"/>
                                 </TextBlock.ToolTip>
@@ -103,7 +103,7 @@
                 <DataGridTemplateColumn x:Name="SourceColumn" Width="0.1*" MinWidth="60" Header=" Source " CanUserSort="False" CanUserReorder="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="2" Text="{Binding Message.SourceCollectionName}" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="2" Text="{Binding Message.SourceCollectionName}" Foreground="{Binding ForegroundColor}" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -111,7 +111,7 @@
                 <DataGridTemplateColumn x:Name="NameColumn" Width="0.1*" MinWidth="60" Header=" Name " CanUserSort="False" CanUserReorder="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="2" Text="{Binding Message.SourceName}" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="2" Text="{Binding Message.SourceName}" Foreground="{Binding ForegroundColor}" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -119,7 +119,7 @@
                 <DataGridTemplateColumn x:Name="ParameterColumn" Width="0.1*" MinWidth="60" Header=" Parameter " CanUserSort="False" CanUserReorder="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="2" Text="{Binding Message.ParameterName}" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="2" Text="{Binding Message.ParameterName}" Foreground="{Binding ForegroundColor}" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

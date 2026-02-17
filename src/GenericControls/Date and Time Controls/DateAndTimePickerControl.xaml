@@ -12,13 +12,14 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Viewbox x:Name="CalendarViewBox" Grid.Column="0" VerticalAlignment="Top">
-            <Calendar x:Name="CalendarSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-3,0,-3" DisplayDateChanged="CalendarSelector_DisplayDateChanged" SelectedDatesChanged="CalendarSelector_SelectedDatesChanged" GotMouseCapture="CalendarSelector_GotMouseCapture"></Calendar>
+            <Calendar x:Name="CalendarSelector" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0.5,-3.5,0.5,-3.5" DisplayDateChanged="CalendarSelector_DisplayDateChanged" SelectedDatesChanged="CalendarSelector_SelectedDatesChanged" GotMouseCapture="CalendarSelector_GotMouseCapture"></Calendar>
         </Viewbox>
         
-        <local:ClockControl x:Name="Clock" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" TimeFontSize="20" SelectedTimeFontSize="20" BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness=".5"
-                            Width="{Binding ElementName=CalendarViewBox, Path=ActualWidth}" 
-                            Height="{Binding ElementName=CalendarViewBox, Path=ActualHeight}"                           
-                            HasSeconds="{Binding ElementName=DateTimePicker, Path=HasSeconds, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+        <local:ClockControl x:Name="Clock" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" TimeFontSize="20" SelectedTimeFontSize="20"
+                            Width="{Binding ElementName=CalendarViewBox, Path=ActualWidth}"
+                            Height="{Binding ElementName=CalendarViewBox, Path=ActualHeight}"
+                            BorderBrush="{DynamicResource Button.Static.Border}" BorderThickness="0.5"
+                            HasSeconds="{Binding ElementName=DateTimePicker, Path=HasSeconds, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             Time="{Binding ElementName=DateTimePicker, Path=DateAndTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             Is24Hour="{Binding ElementName=DateTimePicker, Path=Is24Hour, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 

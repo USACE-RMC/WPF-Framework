@@ -17,6 +17,7 @@
 
 
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -68,10 +69,29 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     #region Overrides
 
+    protected override void OnItemsChanged( NotifyCollectionChangedEventArgs e )
+    {
+      base.OnItemsChanged( e );
+
+      // .NET 9 WPF TabControl may not auto-select the first item when ItemsSource
+      // goes from empty to populated. Force selection so the ContentPresenter
+      // bound to SelectedContent renders the content.
+      if( Items.Count > 0 && SelectedIndex < 0 )
+      {
+        SelectedIndex = 0;
+      }
+    }
+
     protected override void OnSelectionChanged( SelectionChangedEventArgs e )
     {
-      if( this.SelectedIndex < 0 )
+      if( this.SelectedIndex < 0 && Items.Count > 0 )
+      {
+        this.SelectedIndex = 0;
+      }
+      else if( this.SelectedIndex < 0 )
+      {
         e.Handled = true;
+      }
 
       base.OnSelectionChanged( e );
     }

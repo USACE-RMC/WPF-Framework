@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(git -C \"C:\\\\GIT\\\\wpf-framework\" diff src/AvalonDock/Xceed.Wpf.AvalonDock/Controls/LayoutAnchorablePaneControl.cs)",
+      "Bash(git -C \"C:\\\\GIT\\\\wpf-framework\" diff --no-color src/AvalonDock/Xceed.Wpf.AvalonDock/Controls/LayoutAnchorablePaneControl.cs)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(findstr:*)",
+      "Bash(python3:*)",
+      "Bash(powershell -Command:*)"
+    ]
+  }
+}

@@ -62,13 +62,17 @@
             Placement="Bottom" 
             PlacementTarget="{Binding ElementName=DateTimeTextBox}">
             
-            <local:DateAndTimePickerControl
-                x:Name="DateAndTimePicker"
-                HasSeconds="False"
-                SetToHoursOnLoad="True"
-                Background="{DynamicResource EnvironmentWindowBackground}"
-                DateAndTime="{Binding SelectedDateTime, ElementName=DateAndTimeTextBoxSelector, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                Is24Hour="{Binding ElementName=DateAndTimeTextBoxSelector, Path=Is24Hour, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <Border BorderBrush="{DynamicResource Button.Static.Border}"
+                    BorderThickness="1"
+                    Background="{DynamicResource EnvironmentWindowBackground}">
+                <local:DateAndTimePickerControl
+                    x:Name="DateAndTimePicker"
+                    HasSeconds="False"
+                    SetToHoursOnLoad="True"
+                    Background="{DynamicResource EnvironmentWindowBackground}"
+                    DateAndTime="{Binding SelectedDateTime, ElementName=DateAndTimeTextBoxSelector, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Is24Hour="{Binding ElementName=DateAndTimeTextBoxSelector, Path=Is24Hour, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            </Border>
         </Popup>
     </Grid>
 </UserControl>

@@ -340,5 +340,28 @@ namespace GenericControls
             }
         }
 
+        /// <summary>
+        /// Suppresses numpad minus and plus keys to prevent WPF TreeView's
+        /// built-in collapse/expand behavior while the user is typing.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">Key event arguments.</param>
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Subtract || e.Key == Key.Add)
+            {
+                // Mark handled to prevent WPF TreeView collapse/expand,
+                // then manually insert the character since handling the
+                // event also suppresses the normal text input pipeline.
+                e.Handled = true;
+                var textBox = (TextBox)sender;
+                string ch = e.Key == Key.Subtract ? "-" : "+";
+                int caretIndex = textBox.CaretIndex;
+                int selectionLength = textBox.SelectionLength;
+                textBox.Text = textBox.Text.Remove(caretIndex, selectionLength).Insert(caretIndex, ch);
+                textBox.CaretIndex = caretIndex + 1;
+            }
+        }
+
     }
 }

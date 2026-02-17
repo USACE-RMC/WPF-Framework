@@ -103,10 +103,10 @@ namespace FrameworkInterfaces.Messaging
         private bool _warningBeep;
         private bool _messageBeep;
         private bool _eventBeep;
-        private SolidColorBrush _errorColor = new SolidColorBrush(Colors.Red);
-        private SolidColorBrush _warningColor = new SolidColorBrush(Colors.DarkOrange);
-        private SolidColorBrush _messageColor = new SolidColorBrush(Colors.Blue);
-        private SolidColorBrush _eventColor = new SolidColorBrush(Colors.Black);
+        private SolidColorBrush _errorColor = new SolidColorBrush(Color.FromRgb(228, 20, 0));
+        private SolidColorBrush _warningColor = new SolidColorBrush(Color.FromRgb(229, 160, 0));
+        private SolidColorBrush _messageColor = new SolidColorBrush(Color.FromRgb(26, 161, 226));
+        private SolidColorBrush _eventColor = new SolidColorBrush(Color.FromRgb(0, 206, 209));
 
         #endregion
 
@@ -316,7 +316,7 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Gets or sets the color used to display error messages.
         /// </summary>
-        /// <value>A <see cref="SolidColorBrush"/> for error message display. Default is Red.</value>
+        /// <value>A <see cref="SolidColorBrush"/> for error message display. Default is #E41400.</value>
         public SolidColorBrush ErrorColor
         {
             get { return _errorColor; }
@@ -334,7 +334,7 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Gets or sets the color used to display warning messages.
         /// </summary>
-        /// <value>A <see cref="SolidColorBrush"/> for warning message display. Default is DarkOrange.</value>
+        /// <value>A <see cref="SolidColorBrush"/> for warning message display. Default is golden amber (#E5A000).</value>
         public SolidColorBrush WarningColor
         {
             get { return _warningColor; }
@@ -352,7 +352,7 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Gets or sets the color used to display normal messages.
         /// </summary>
-        /// <value>A <see cref="SolidColorBrush"/> for message display. Default is Blue.</value>
+        /// <value>A <see cref="SolidColorBrush"/> for message display. Default is sky blue (#1AA1E2).</value>
         public SolidColorBrush MessageColor
         {
             get { return _messageColor; }
@@ -370,7 +370,7 @@ namespace FrameworkInterfaces.Messaging
         /// <summary>
         /// Gets or sets the color used to display event messages.
         /// </summary>
-        /// <value>A <see cref="SolidColorBrush"/> for event message display. Default is Black.</value>
+        /// <value>A <see cref="SolidColorBrush"/> for event message display. Default is dark turquoise (#00CED1).</value>
         public SolidColorBrush EventColor
         {
             get { return _eventColor; }

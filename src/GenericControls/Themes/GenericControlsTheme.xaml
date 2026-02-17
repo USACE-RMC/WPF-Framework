@@ -701,12 +701,7 @@
                                 Background="{TemplateBinding Background}">
                             <Grid Name="HeaderGrid" SnapsToDevicePixels="True" Margin="1,0,0,0">
                                 <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">
-                                        <LinearGradientBrush.GradientStops>
-                                            <GradientStop Offset="0.25" Color="{DynamicResource DataGrid.Header.Background}"/>
-                                            <GradientStop Offset="1" Color="{DynamicResource DataGrid.Header.GradientEnd}"/>
-                                        </LinearGradientBrush.GradientStops>
-                                    </LinearGradientBrush>
+                                    <SolidColorBrush Color="{DynamicResource DataGrid.RowHeader.Background}"/>
                                 </Grid.Background>
                                 <ContentPresenter Margin="{TemplateBinding Padding}" SnapsToDevicePixels="True"
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

@@ -262,6 +262,7 @@
 
     <!-- MenuItem Style -->
     <Style x:Key="MetroMenuItem" TargetType="{x:Type MenuItem}">
+        <Setter Property="Foreground" Value="{DynamicResource MenuDefaultText}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="8,2,10,2" />
         <Setter Property="Template" Value="{StaticResource {ComponentResourceKey ResourceId=SubmenuItemTemplateKey}}" />
@@ -344,6 +345,7 @@
     <Style x:Key="StandardMenu" TargetType="Menu">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource MenuDefaultText}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Menu">

@@ -72,6 +72,10 @@ namespace FrameworkUI.Demo
         /// </summary>
         public App()
         {
+            // Register assembly resolver to load DLLs from the Libraries subfolder.
+            // This must be done before any external assemblies are referenced.
+            AssemblyResolver.Register();
+
             // Set WPF to use the current culture for all bindings (international number support)
             // This ensures StringFormat in XAML bindings uses the user's locale settings
             FrameworkElement.LanguageProperty.OverrideMetadata(

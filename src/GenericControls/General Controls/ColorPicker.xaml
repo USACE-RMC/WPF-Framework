@@ -14,7 +14,7 @@
         <local:ColorToByteConverter x:Key="BlueColorConverter" Component="B"/>
 
         <ControlTemplate x:Key="ColorSliderTemplate" TargetType="{x:Type Slider}">
-            <Border SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <Border Cursor="SizeWE" SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                 <Grid>
                     <Track x:Name="PART_Track">
                         <Track.Thumb>
@@ -47,7 +47,7 @@
         </ControlTemplate>
 
         <ControlTemplate x:Key="VerticalColorSliderTemplate" TargetType="{x:Type Slider}">
-            <Border SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+            <Border Cursor="SizeNS" SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                 <Grid>
                     <Track x:Name="PART_Track">
                         <Track.Thumb>
@@ -216,8 +216,9 @@
         </Border>
 
         <!--Vertical Slider-->
-        <Slider 
-            x:Name="PART_ColorSlider" 
+        <Slider
+            x:Name="PART_ColorSlider"
+                Cursor="SizeNS"
                 Margin="2,0,0,0"
                 Grid.Column="1"
                 Value="0" 

@@ -12,10 +12,10 @@
                 <ControlTemplate TargetType="{x:Type GridSplitter}">
                     <Border BorderThickness="{TemplateBinding BorderThickness}">
                         <Canvas x:Name="GridCanvas" RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True" Height="6" VerticalAlignment="Center" Width="50" HorizontalAlignment="Center">
-                            <Line X1="0" X2="50" Y1="0" Y2="0" Stroke="White" StrokeThickness="1"/>
-                            <Line X1="0" X2="50" Y1="1" Y2="1" Stroke="{DynamicResource SeparatorBorder}" StrokeThickness="1"/>
-                            <Line X1="0" X2="50" Y1="4" Y2="4" Stroke="White" StrokeThickness="1"/>
-                            <Line X1="0" X2="50" Y1="5" Y2="5" Stroke="{DynamicResource SeparatorBorder}" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="0" Y2="0" Stroke="{DynamicResource GridSplitter.Handle.Light}" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="1" Y2="1" Stroke="{DynamicResource GridSplitter.Handle.Dark}" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="4" Y2="4" Stroke="{DynamicResource GridSplitter.Handle.Light}" StrokeThickness="1"/>
+                            <Line X1="0" X2="50" Y1="5" Y2="5" Stroke="{DynamicResource GridSplitter.Handle.Dark}" StrokeThickness="1"/>
                         </Canvas>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -41,10 +41,10 @@
                 <ControlTemplate TargetType="{x:Type GridSplitter}">
                     <Border BorderThickness="{TemplateBinding BorderThickness}">
                         <Canvas x:Name="GridCanvas" RenderOptions.EdgeMode="Aliased" UseLayoutRounding="True" Height="50" VerticalAlignment="Center" Width="6" HorizontalAlignment="Center">
-                            <Line Y1="0" Y2="50" X1="0" X2="0" Stroke="White" StrokeThickness="1"/>
-                            <Line Y1="0" Y2="50" X1="1" X2="1" Stroke="#A0A0A0" StrokeThickness="1"/>
-                            <Line Y1="0" Y2="50" X1="4" X2="4" Stroke="White" StrokeThickness="1"/>
-                            <Line Y1="0" Y2="50" X1="5" X2="5" Stroke="#A0A0A0" StrokeThickness="1"/>
+                            <Line Y1="0" Y2="50" X1="0" X2="0" Stroke="{DynamicResource GridSplitter.Handle.Light}" StrokeThickness="1"/>
+                            <Line Y1="0" Y2="50" X1="1" X2="1" Stroke="{DynamicResource GridSplitter.Handle.Dark}" StrokeThickness="1"/>
+                            <Line Y1="0" Y2="50" X1="4" X2="4" Stroke="{DynamicResource GridSplitter.Handle.Light}" StrokeThickness="1"/>
+                            <Line Y1="0" Y2="50" X1="5" X2="5" Stroke="{DynamicResource GridSplitter.Handle.Dark}" StrokeThickness="1"/>
                         </Canvas>
                     </Border>
                     <ControlTemplate.Triggers>
