@@ -59,6 +59,14 @@ namespace Xceed.Wpf.AvalonDock.Controls
       this.Unloaded += new RoutedEventHandler( OnUnloaded );
       this.IsVisibleChanged += this.LayoutFloatingWindowControl_IsVisibleChanged;
       _model = model;
+
+      // Prevent the flash of an empty Win32 window before WPF content renders.
+      // SourceInitialized fires when the HWND is created (before any painting),
+      // so we make it fully transparent at the Win32/DWM level.  ContentRendered
+      // fires once the WPF content is measured, arranged, and painted — at that
+      // point we reveal the window.
+      this.SourceInitialized += OnSourceInitializedHideWindow;
+      this.ContentRendered += OnContentRendered;
     }
 
     protected LayoutFloatingWindowControl( ILayoutElement model, bool isContentImmutable )
@@ -597,6 +605,26 @@ namespace Xceed.Wpf.AvalonDock.Controls
     {
       if( ( bool )e.NewValue )
       {
+      }
+    }
+
+    private void OnSourceInitializedHideWindow( object sender, EventArgs e )
+    {
+      this.SourceInitialized -= OnSourceInitializedHideWindow;
+      var hwnd = new System.Windows.Interop.WindowInteropHelper( this ).Handle;
+      if( hwnd != IntPtr.Zero )
+      {
+        Win32Helper.CloakWindow( hwnd );
+      }
+    }
+
+    private void OnContentRendered( object sender, EventArgs e )
+    {
+      this.ContentRendered -= OnContentRendered;
+      var hwnd = new System.Windows.Interop.WindowInteropHelper( this ).Handle;
+      if( hwnd != IntPtr.Zero )
+      {
+        Win32Helper.UncloakWindow( hwnd );
       }
     }
 

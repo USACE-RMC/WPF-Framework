@@ -29,6 +29,7 @@
         <ResourceDictionary.MergedDictionaries>
             <ResourceDictionary Source="/Xceed.Wpf.AvalonDock.Themes.VS2013;component/OverlayButtons.xaml" />
             <ResourceDictionary Source="/Xceed.Wpf.AvalonDock.Themes.VS2013;component/Themes/Menu/MenuItem.xaml" />
+            <ResourceDictionary Source="/Xceed.Wpf.AvalonDock.Themes.VS2013;component/Themes/IconDictionary.xaml" />
         </ResourceDictionary.MergedDictionaries>
 
     <avalonDockConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -1298,10 +1299,26 @@
     </DataTemplate>
 
     <ContextMenu x:Key="AvalonDockThemeVs2013AnchorableContextMenu">
-        <MenuItem Command="{Binding Path=FloatCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_Float}" />
-        <MenuItem Command="{Binding Path=DockCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_Dock}" />
-        <MenuItem Command="{Binding Path=DockAsDocumentCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_DockAsDocument}" />
-        <MenuItem Command="{Binding Path=AutoHideCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_AutoHide}" />
+        <MenuItem Command="{Binding Path=FloatCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_Float}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_Float}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=DockCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_Dock}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_Dock}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=DockAsDocumentCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_DockAsDocument}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_DockAsDocument}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=AutoHideCommand}" Header="{x:Static avalonDockProperties:Resources.Anchorable_AutoHide}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_AutoHide}" />
+            </MenuItem.Icon>
+        </MenuItem>
         <MenuItem Command="{Binding Path=HideCommand}"
                   Header="{x:Static avalonDockProperties:Resources.Anchorable_Hide}"
                   Visibility="{Binding Path=IsEnabled,
@@ -1316,11 +1333,31 @@
                   Visibility="{Binding Path=IsEnabled,
                                        RelativeSource={RelativeSource Self},
                                        Mode=OneWay,
-                                       Converter={StaticResource BoolToVisibilityConverter}}" />
-        <MenuItem Command="{Binding Path=CloseAllButThisCommand}" Header="{x:Static avalonDockProperties:Resources.Document_CloseAllButThis}" />
-        <MenuItem Command="{Binding Path=CloseAllCommand}" Header="Document CloseAll" />
-        <MenuItem Command="{Binding Path=FloatCommand}" Header="{x:Static avalonDockProperties:Resources.Document_Float}" />
-        <MenuItem Command="{Binding Path=DockAsDocumentCommand}" Header="{x:Static avalonDockProperties:Resources.Document_DockAsDocument}" />
+                                       Converter={StaticResource BoolToVisibilityConverter}}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_Close}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=CloseAllButThisCommand}" Header="{x:Static avalonDockProperties:Resources.Document_CloseAllButThis}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_CloseAllButThis}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=CloseAllCommand}" Header="{x:Static avalonDockProperties:Resources.Document_CloseAll}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_CloseAll}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=FloatCommand}" Header="{x:Static avalonDockProperties:Resources.Document_Float}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_Float}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="{Binding Path=DockAsDocumentCommand}" Header="{x:Static avalonDockProperties:Resources.Document_DockAsDocument}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_DockAsDocument}" />
+            </MenuItem.Icon>
+        </MenuItem>
         <MenuItem Command="{Binding Path=NewHorizontalTabGroupCommand}"
                   Header="{x:Static avalonDockProperties:Resources.Document_NewHorizontalTabGroup}"
                   Visibility="{Binding Path=IsEnabled,
@@ -1328,12 +1365,9 @@
                                        Mode=OneWay,
                                        Converter={StaticResource BoolToVisibilityConverter}}">
             <MenuItem.Icon>
-                <Image Width="14"
-                       Source="/Images\HTabGroup.png"
-                       Stretch="Uniform" />
+                <ContentControl Content="{StaticResource AvalonDock_Icon_NewHorizontalTabGroup}" />
             </MenuItem.Icon>
         </MenuItem>
-
         <MenuItem Command="{Binding Path=NewVerticalTabGroupCommand}"
                   Header="{x:Static avalonDockProperties:Resources.Document_NewVerticalTabGroup}"
                   Visibility="{Binding Path=IsEnabled,
@@ -1341,9 +1375,7 @@
                                        Mode=OneWay,
                                        Converter={StaticResource BoolToVisibilityConverter}}">
             <MenuItem.Icon>
-                <Image Width="14"
-                       Source="../Images/VTabGroup.png"
-                       Stretch="Uniform" />
+                <ContentControl Content="{StaticResource AvalonDock_Icon_NewVerticalTabGroup}" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Command="{Binding Path=MoveToNextTabGroupCommand}"
@@ -1351,13 +1383,21 @@
                   Visibility="{Binding Path=IsEnabled,
                                        RelativeSource={RelativeSource Self},
                                        Mode=OneWay,
-                                       Converter={StaticResource BoolToVisibilityConverter}}" />
+                                       Converter={StaticResource BoolToVisibilityConverter}}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_MoveToNextTabGroup}" />
+            </MenuItem.Icon>
+        </MenuItem>
         <MenuItem Command="{Binding Path=MoveToPreviousTabGroupCommand}"
                   Header="{x:Static avalonDockProperties:Resources.Document_MoveToPreviousTabGroup}"
                   Visibility="{Binding Path=IsEnabled,
                                        RelativeSource={RelativeSource Self},
                                        Mode=OneWay,
-                                       Converter={StaticResource BoolToVisibilityConverter}}" />
+                                       Converter={StaticResource BoolToVisibilityConverter}}">
+            <MenuItem.Icon>
+                <ContentControl Content="{StaticResource AvalonDock_Icon_MoveToPreviousTabGroup}" />
+            </MenuItem.Icon>
+        </MenuItem>
     </ContextMenu>
 
     <!--  DockingManager  -->

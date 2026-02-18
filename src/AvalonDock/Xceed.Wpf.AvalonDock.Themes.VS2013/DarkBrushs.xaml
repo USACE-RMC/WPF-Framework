@@ -173,4 +173,9 @@
                      Opacity="0.5"
                      options:Freeze="true" />
 
+    <!-- Context Menu Icons -->
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ContextMenuIconHaloBrush}" Color="#00FFFFFF" options:Freeze="true" />
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ContextMenuIconForegroundBrush}" Color="#F1F1F1" options:Freeze="true" />
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ContextMenuIconContentFillBrush}" Color="#00FFFFFF" options:Freeze="true" />
+
 </ResourceDictionary>

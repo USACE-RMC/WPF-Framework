@@ -175,6 +175,11 @@ namespace Xceed.Wpf.AvalonDock.Themes.VS2013.Themes
         public static readonly ComponentResourceKey PreviewBoxBorderBrushKey     = new ComponentResourceKey(typeof(ResourceKeys), "PreviewBoxBorderBrushKey");
         public static readonly ComponentResourceKey PreviewBoxBackgroundBrushKey = new ComponentResourceKey(typeof(ResourceKeys), "PreviewBoxBackgroundBrushKey");
         #endregion DockingBrushKeys
+
+        // Context Menu Icons
+        public static readonly ComponentResourceKey ContextMenuIconHaloBrush       = new ComponentResourceKey(typeof(ResourceKeys), "ContextMenuIconHaloBrush");
+        public static readonly ComponentResourceKey ContextMenuIconForegroundBrush = new ComponentResourceKey(typeof(ResourceKeys), "ContextMenuIconForegroundBrush");
+        public static readonly ComponentResourceKey ContextMenuIconContentFillBrush = new ComponentResourceKey(typeof(ResourceKeys), "ContextMenuIconContentFillBrush");
         #endregion Brush Keys
     }
 }

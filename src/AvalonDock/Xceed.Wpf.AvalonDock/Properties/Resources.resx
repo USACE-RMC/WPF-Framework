@@ -133,7 +133,7 @@
     <value>Dock</value>
   </data>
   <data name="Anchorable_DockAsDocument" xml:space="preserve">
-    <value>Dock as Tabbed Document</value>
+    <value>Dock as Tabbed Window</value>
   </data>
   <data name="Anchorable_Float" xml:space="preserve">
     <value>Float</value>
@@ -157,7 +157,7 @@
     <value>Window Position</value>
   </data>
   <data name="Document_DockAsDocument" xml:space="preserve">
-    <value>Dock as Tabbed Document</value>
+    <value>Dock as Tabbed Window</value>
   </data>
   <data name="Document_Float" xml:space="preserve">
     <value>Float</value>

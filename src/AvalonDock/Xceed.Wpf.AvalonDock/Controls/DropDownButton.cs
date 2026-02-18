@@ -95,6 +95,8 @@ namespace Xceed.Wpf.AvalonDock.Controls
         //IsChecked = true;
         DropDownContextMenu.PlacementTarget = this;
         DropDownContextMenu.Placement = PlacementMode.Bottom;
+        DropDownContextMenu.HorizontalOffset = 0d;
+        DropDownContextMenu.VerticalOffset = 0d;
         DropDownContextMenu.DataContext = DropDownContextMenuDataContext;
         DropDownContextMenu.Closed += new RoutedEventHandler( OnContextMenuClosed );
         DropDownContextMenu.IsOpen = true;

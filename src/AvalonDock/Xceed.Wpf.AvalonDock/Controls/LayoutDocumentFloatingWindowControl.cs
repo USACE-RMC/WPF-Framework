@@ -180,8 +180,13 @@ namespace Xceed.Wpf.AvalonDock.Controls
       var ctxMenu = _model.Root.Manager.DocumentContextMenu;
       if( ctxMenu != null && RootDocumentLayoutItem != null )
       {
-        ctxMenu.PlacementTarget = null;
-        ctxMenu.Placement = PlacementMode.MousePoint;
+        // Use GetCursorPos for reliable screen coordinates — WPF's Mouse.GetPosition()
+        // is unreliable during WM_NCRBUTTONUP (non-client area messages).
+        var screenPos = this.TransformToDeviceDPI( Win32Helper.GetMousePosition() );
+        ctxMenu.PlacementTarget = Content as UIElement ?? this;
+        ctxMenu.Placement = PlacementMode.Absolute;
+        ctxMenu.HorizontalOffset = screenPos.X;
+        ctxMenu.VerticalOffset = screenPos.Y;
         ctxMenu.DataContext = RootDocumentLayoutItem;
         ctxMenu.IsOpen = true;
         return true;

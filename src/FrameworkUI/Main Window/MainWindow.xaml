@@ -199,7 +199,7 @@
             
             <!--Window Menu-->
             <MenuItem Header="Window" x:Name="WindowMenuItem">
-                <MenuItem Header="Close All Documents" Click="CloseAllDocuments_Click">
+                <MenuItem Header="Close All" Click="CloseAllDocuments_Click">
                     <MenuItem.Icon>
                         <Image Source="{DynamicResource CloseAllWindowsImage}" Stretch="UniformToFill"/>
                     </MenuItem.Icon>

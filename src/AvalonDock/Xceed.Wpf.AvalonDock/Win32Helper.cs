@@ -354,6 +354,11 @@ namespace Xceed.Wpf.AvalonDock
     [DllImport( "user32.dll", SetLastError = true )]
     static extern int GetWindowLong( IntPtr hWnd, int nIndex );
 
+    [DllImport( "dwmapi.dll" )]
+    static extern int DwmSetWindowAttribute( IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute );
+
+    private const int DWMWA_CLOAK = 13;
+
     public static void SetOwner( IntPtr childHandle, IntPtr ownerHandle )
     {
       SetWindowLong(
@@ -365,6 +370,25 @@ namespace Xceed.Wpf.AvalonDock
     public static IntPtr GetOwner( IntPtr childHandle )
     {
       return new IntPtr( GetWindowLong( childHandle, -8 ) );
+    }
+
+    /// <summary>
+    /// Cloaks a window via DWM, making it completely invisible (including chrome)
+    /// without changing window styles.  WPF layout and rendering proceed normally.
+    /// </summary>
+    internal static void CloakWindow( IntPtr hwnd )
+    {
+      int cloaked = 1;
+      DwmSetWindowAttribute( hwnd, DWMWA_CLOAK, ref cloaked, sizeof( int ) );
+    }
+
+    /// <summary>
+    /// Uncloaks a window previously hidden with <see cref="CloakWindow"/>.
+    /// </summary>
+    internal static void UncloakWindow( IntPtr hwnd )
+    {
+      int cloaked = 0;
+      DwmSetWindowAttribute( hwnd, DWMWA_CLOAK, ref cloaked, sizeof( int ) );
     }
 
 

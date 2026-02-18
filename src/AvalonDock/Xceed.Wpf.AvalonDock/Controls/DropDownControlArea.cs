@@ -93,7 +93,7 @@ namespace Xceed.Wpf.AvalonDock.Controls
       {
         if( DropDownContextMenu != null )
         {
-          DropDownContextMenu.PlacementTarget = null;
+          DropDownContextMenu.PlacementTarget = this;
           DropDownContextMenu.Placement = PlacementMode.MousePoint;
           DropDownContextMenu.HorizontalOffset = 0d;
           DropDownContextMenu.VerticalOffset = 0d;
