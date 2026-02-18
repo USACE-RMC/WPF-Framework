@@ -132,14 +132,14 @@ namespace OxyPlotControls
             // Verify input parameters
             if (saveFile == "")
             {
-                MessageBox.Show("File path that was specified for the image file is invalid.");
+                GenericControls.MessageBox.Show("File path that was specified for the image file is invalid.");
                 return;
             }
 
             string extension = Path.GetExtension(saveFile.ToLower());
             if (extension != ".png" && extension != ".svg" && extension != ".pdf")
             {
-                MessageBox.Show("File path that was specified for the export file is not a valid file type.");
+                GenericControls.MessageBox.Show("File path that was specified for the export file is not a valid file type.");
                 return;
             }
 
@@ -148,23 +148,23 @@ namespace OxyPlotControls
             {
                 if (!int.TryParse(WidthTextBox.Text, out imageWidth))
                 {
-                    MessageBox.Show("Image width is not a valid number.");
+                    GenericControls.MessageBox.Show("Image width is not a valid number.");
                     return;
                 }
                 else if (imageWidth <= 0)
                 {
-                    MessageBox.Show("Image width must be greater than zero.");
+                    GenericControls.MessageBox.Show("Image width must be greater than zero.");
                     return;
                 }
 
                 if (!int.TryParse(HeightTextBox.Text, out imageHeight))
                 {
-                    MessageBox.Show("Image height is not a valid number.");
+                    GenericControls.MessageBox.Show("Image height is not a valid number.");
                     return;
                 }
                 else if (imageHeight <= 0)
                 {
-                    MessageBox.Show("Image height must be greater than zero.");
+                    GenericControls.MessageBox.Show("Image height must be greater than zero.");
                     return;
                 }
             }
@@ -184,7 +184,7 @@ namespace OxyPlotControls
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Unable to delete image file " + Path.GetFileName(saveFile) + ". It may be in use by another program.");
+                    GenericControls.MessageBox.Show("Unable to delete image file " + Path.GetFileName(saveFile) + ". It may be in use by another program.");
                     return;
                 }
             }
@@ -214,7 +214,7 @@ namespace OxyPlotControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred attempting to save the image file: " + ex.Message);
+                GenericControls.MessageBox.Show("Error occurred attempting to save the image file: " + ex.Message);
             }
 
             Close();

@@ -57,8 +57,16 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// Managed internally by the control's Loaded/Unloaded lifecycle.
         /// </summary>
         private bool _suppressPlotChanged = true;
+
+        /// <summary>
+        /// Gets or sets whether PlotChanged events are externally suppressed.
+        /// When true, prevents PlotChanged from firing regardless of the internal suppression state.
+        /// Used by consumers to prevent feedback loops when programmatically loading plot settings.
+        /// </summary>
+        public bool SuppressPlotChanged { get; set; }
 
         /// <summary>
         /// Occurs when the plot has been modified by user interactions through the toolbar.
@@ -72,7 +80,7 @@ namespace OxyPlotControls
         /// </summary>
         protected virtual void OnPlotChanged()
         {
-            if (!_suppressPlotChanged)
+            if (!_suppressPlotChanged && !SuppressPlotChanged)
             {
                 PlotChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -3624,7 +3632,7 @@ namespace OxyPlotControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                GenericControls.MessageBox.Show(ex.Message);
             }
         }
 

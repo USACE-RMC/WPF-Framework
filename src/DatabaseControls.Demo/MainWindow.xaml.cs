@@ -141,7 +141,7 @@ namespace DatabaseControls.Demo
             switch (extension)
             {
                 case ".mdb":
-                    MessageBox.Show("MDB file support is not available in this .NET version.");
+                    GenericControls.MessageBox.Show("MDB file support is not available in this .NET version.");
                     break;
 
                 case ".dbf":

@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* ? Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* ? Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* ? The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -121,7 +121,7 @@ namespace FrameworkUI.Demo
             {
                 var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "FrameworkUI_Demo_Error.txt");
                 File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n{message}\n\n");
-                MessageBox.Show($"Exception logged to: {logPath}\n\n{ex?.Message}", source, MessageBoxButton.OK, MessageBoxImage.Error);
+                GenericControls.MessageBox.Show($"Exception logged to: {logPath}\n\n{ex?.Message}", source, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch { }
         }
@@ -297,7 +297,7 @@ namespace FrameworkUI.Demo
                                      $"You are currently running version {updateService.Options.CurrentVersion}.\n\n" +
                                      "Would you like to download and install the update now?";
 
-                        var msgResult = MessageBox.Show(
+                        var msgResult = GenericControls.MessageBox.Show(
                             mainWindow,
                             message,
                             "Update Available",
@@ -309,9 +309,9 @@ namespace FrameworkUI.Demo
                             // Trigger the same update flow as the menu item
                             // The MainWindow's CheckForUpdates_Click handler will show the full dialog
                             // For auto-update, we just notify - user can use menu to proceed
-                            MessageBox.Show(
+                            GenericControls.MessageBox.Show(
                                 mainWindow,
-                                $"Use Tools → Check for Updates to download version {result.Update.Version}.",
+                                $"Use Tools ? Check for Updates to download version {result.Update.Version}.",
                                 "Update Available",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);

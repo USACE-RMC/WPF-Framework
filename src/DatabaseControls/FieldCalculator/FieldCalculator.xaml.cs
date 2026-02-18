@@ -183,7 +183,7 @@ namespace DatabaseControls
         {
             if (_dbView.NumberOfRows == 0)
             {
-                MessageBox.Show("No rows exist. Cannot execute field calculator without data rows.", "No Rows Exist", MessageBoxButton.OK, MessageBoxImage.Error);
+                GenericControls.MessageBox.Show("No rows exist. Cannot execute field calculator without data rows.", "No Rows Exist", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -323,13 +323,13 @@ namespace DatabaseControls
             {
                 if (string.IsNullOrEmpty(NewFieldName.Text))
                 {
-                    MessageBox.Show("You have not named your new data field.");
+                    GenericControls.MessageBox.Show("You have not named your new data field.");
                     Mouse.OverrideCursor = null;
                     return;
                 }
                 else if (Array.IndexOf(_dbView.ColumnNames, NewFieldName.Text) >= 0)
                 {
-                    MessageBox.Show("The field name, " + NewFieldName.Text + ", already exists. Please define a new field name, or choose the option \"Update Existing Field\".");
+                    GenericControls.MessageBox.Show("The field name, " + NewFieldName.Text + ", already exists. Please define a new field name, or choose the option \"Update Existing Field\".");
                     Mouse.OverrideCursor = null;
                     return;
                 }
@@ -342,7 +342,7 @@ namespace DatabaseControls
                 ResultType fcType = ParseNodeResult.TypeToParserResultType(_dbView.ColumnTypes[columnIndex]);
                 if (fcType == ResultType.UnDeclared)
                 {
-                    MessageBox.Show("the type of the selected column is not supported for output");
+                    GenericControls.MessageBox.Show("the type of the selected column is not supported for output");
                     Mouse.OverrideCursor = null;
                     return;
                 }
@@ -363,7 +363,7 @@ namespace DatabaseControls
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error editing the table:  " + ex.Message);
+                        GenericControls.MessageBox.Show("Error editing the table:  " + ex.Message);
                         Mouse.OverrideCursor = null;
                         return;
                     }
@@ -376,7 +376,7 @@ namespace DatabaseControls
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error editing the table:  " + ex.Message);
+                        GenericControls.MessageBox.Show("Error editing the table:  " + ex.Message);
                         Mouse.OverrideCursor = null;
                         return;
                     }

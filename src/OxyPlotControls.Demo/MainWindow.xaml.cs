@@ -224,7 +224,7 @@ namespace OxyPlotControls.Demo
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error attempting to delete existing file '" + saveFile + "'.\n\n" + ex.Message);
+                GenericControls.MessageBox.Show("Error attempting to delete existing file '" + saveFile + "'.\n\n" + ex.Message);
                 return;
             }
 
@@ -576,7 +576,7 @@ namespace OxyPlotControls.Demo
 
         private void PropertiesControl_ClosePropertiesCalled(OxyPlotControls.OxyPlotPropertiesControl propertiesControl)
         {
-            MessageBox.Show("Close plot properties requested.");
+            GenericControls.MessageBox.Show("Close plot properties requested.", "Plot Properties", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         /// <summary>

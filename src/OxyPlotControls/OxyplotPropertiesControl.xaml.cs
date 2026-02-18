@@ -45,8 +45,16 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Flag to suppress PlotChanged events during initialization or programmatic updates.
+        /// Managed internally by the control's Loaded/Unloaded lifecycle.
         /// </summary>
         private bool _suppressPlotChanged = true;
+
+        /// <summary>
+        /// Gets or sets whether PlotChanged events are externally suppressed.
+        /// When true, prevents PlotChanged from firing regardless of the internal suppression state.
+        /// Used by consumers to prevent feedback loops when programmatically loading plot settings.
+        /// </summary>
+        public bool SuppressPlotChanged { get; set; }
 
         /// <summary>
         /// Occurs when any plot property in this control has been modified by the user.
@@ -59,7 +67,7 @@ namespace OxyPlotControls
         /// </summary>
         protected virtual void OnPlotChanged()
         {
-            if (!_suppressPlotChanged)
+            if (!_suppressPlotChanged && !SuppressPlotChanged)
             {
                 PlotChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -71,6 +79,36 @@ namespace OxyPlotControls
         private void ChildControl_PlotChanged(object? sender, EventArgs e)
         {
             OnPlotChanged();
+        }
+
+        /// <summary>
+        /// Forces all child controls to refresh their bindings to the current Plot object.
+        /// Call after <see cref="OxyPlotSettingsSerializer.FromXelement"/> or other operations
+        /// that modify Plot dependency properties without changing the Plot object reference.
+        /// </summary>
+        /// <remarks>
+        /// Temporarily clears and re-sets the Plot DP to trigger <c>OnPlotPropertyChanged</c>
+        /// on all child controls, causing their XAML property-path bindings to re-resolve.
+        /// PlotChanged events are suppressed during the refresh cycle.
+        /// </remarks>
+        public void RefreshPlotBindings()
+        {
+            var plot = Plot;
+            if (plot == null) return;
+
+            // Suppress PlotChanged events during the refresh cycle
+            _suppressPlotChanged = true;
+
+            // Clear and re-set the Plot DP to force OnPlotPropertyChanged on all
+            // child controls, which re-evaluates their bindings.
+            Plot = null;
+            Plot = plot;
+
+            // Defer re-enable to after bindings have settled
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
+            {
+                _suppressPlotChanged = false;
+            }));
         }
 
         #endregion

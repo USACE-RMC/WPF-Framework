@@ -82,6 +82,10 @@ namespace FrameworkUI
                         {
                             _Product = (AssemblyProductAttribute)attribute;
                         }
+                        if (type == typeof(AssemblyDescriptionAttribute))
+                        {
+                            _Description = (AssemblyDescriptionAttribute)attribute;
+                        }
                     }
                     _Version = Assembly.GetName().Version;
                 }
@@ -108,6 +112,10 @@ namespace FrameworkUI
         /// The assembly product attribute.
         /// </summary>
         private static readonly AssemblyProductAttribute? _Product = null;
+        /// <summary>
+        /// The assembly description attribute.
+        /// </summary>
+        private static readonly AssemblyDescriptionAttribute? _Description = null;
         /// <summary>
         /// The assembly version.
         /// </summary>
@@ -148,6 +156,14 @@ namespace FrameworkUI
         public static string ProductName
         {
             get { return _Product?.Product ?? string.Empty; }
+        }
+
+        /// <summary>
+        /// Gets the assembly description.
+        /// </summary>
+        public static string Description
+        {
+            get { return _Description?.Description ?? string.Empty; }
         }
 
         /// <summary>

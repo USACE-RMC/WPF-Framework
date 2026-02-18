@@ -182,32 +182,6 @@ namespace FrameworkUI.Demo.UI
 
         }
 
-        /// <summary>
-        /// Defines custom tool menu items for the main window's Tools menu.
-        /// Currently not implemented and returns immediately without adding any menu items.
-        /// </summary>
-        /// <remarks>
-        /// This method is provided as an override point for future extensibility. Custom tools
-        /// and utilities can be added to the Tools menu by implementing this method.
-        /// </remarks>
-        protected override void DefineToolsMenuItems()
-        {
-            // Add custom tool menu items
-            return;
-        }
-
-        /// <summary>
-        /// Defines and configures menu items for the main window's Help menu. Adds menu entries for
-        /// accessing the Quick Start Guide, Terms and Conditions, and About dialog.
-        /// </summary>
-        /// <remarks>
-        /// All menu items are configured with appropriate icons and event handlers.
-        /// </remarks>
-        protected override void DefineHelpMenuItems()
-        {
-            // Add custom help menu items
-            return;
-        }
 
         /// <summary>
         /// Creates a new hazard element with a user-specified name.

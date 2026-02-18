@@ -2216,7 +2216,7 @@ namespace DatabaseControls
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    GenericControls.MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -3383,7 +3383,7 @@ namespace DatabaseControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                GenericControls.MessageBox.Show(ex.Message);
             }
         }
         private void CopyWithHeaders(object sender, RoutedEventArgs e)
@@ -3394,7 +3394,7 @@ namespace DatabaseControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                GenericControls.MessageBox.Show(ex.Message);
             }
         }
 
@@ -3431,7 +3431,7 @@ namespace DatabaseControls
             if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
             {
                 var msgString = $"Operation will copy {DataView.NumberOfRows * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
-                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                if (GenericControls.MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                     return;
             }
 
@@ -3481,7 +3481,7 @@ namespace DatabaseControls
             if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
             {
                 var msgString = $"Operation will copy {_selectedColumnIndices.Count * DataView.NumberOfRows} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
-                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                if (GenericControls.MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                     return;
             }
 
@@ -3528,7 +3528,7 @@ namespace DatabaseControls
             if (_selectedDataRowIndices.Count * DataView.ColumnNames.Count() > 50000)
             {
                 var msgString = $"Operation will copy {_selectedDataRowIndices.Count * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
-                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                if (GenericControls.MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                     return;
             }
 
@@ -3595,7 +3595,7 @@ namespace DatabaseControls
             if (_selectedCellIndices.Count > 50000)
             {
                 var msgString = $"Operation will copy {_selectedCellIndices.Count} cell values to the clipboard.  It can take a long time to copy this much data, are you sure you want to copy that much data to the clipboard?";
-                if (MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                if (GenericControls.MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
                     return;
             }
 
@@ -3708,7 +3708,7 @@ namespace DatabaseControls
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                GenericControls.MessageBox.Show(ex.Message);
             }
         }
 
@@ -4019,7 +4019,7 @@ namespace DatabaseControls
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to save edits?", "Apply Edits", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            if (GenericControls.MessageBox.Show("Are you sure you want to save edits?", "Apply Edits", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 try
@@ -4030,7 +4030,7 @@ namespace DatabaseControls
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    GenericControls.MessageBox.Show(ex.Message);
                     Mouse.OverrideCursor = null;
                 }
             }

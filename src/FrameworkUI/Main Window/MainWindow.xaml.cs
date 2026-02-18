@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* ? Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* ? Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* ? The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -979,7 +979,7 @@ namespace FrameworkUI
         private void DeleteElement(IList<IElement> elements)
         {
             // Check if the user really wants to delete the element
-            if (MessageBox.Show("Are you sure you would like to delete the selected project elements? This action is permanent.", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
+            if (GenericControls.MessageBox.Show("Are you sure you would like to delete the selected project elements? This action is permanent.", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK)
             {
                 for (int i = 0; i < elements.Count; i++)
                 {
@@ -1459,7 +1459,7 @@ namespace FrameworkUI
                         }
                         else
                         {
-                            MessageBox.Show(Path.GetFileNameWithoutExtension(fullFileName) + " is already open in another instance of " + ShellPublicVariables.SoftwareName);
+                            GenericControls.MessageBox.Show(Path.GetFileNameWithoutExtension(fullFileName) + " is already open in another instance of " + ShellPublicVariables.SoftwareName);
                             return;
                         }
                     }
@@ -1752,7 +1752,7 @@ namespace FrameworkUI
 
                 if (isDirty == true)
                 {
-                    MessageBoxResult result = MessageBox.Show("The project has unsaved changes. Would you like to save before closing?", "Save Changes",
+                    MessageBoxResult result = GenericControls.MessageBox.Show("The project has unsaved changes. Would you like to save before closing?", "Save Changes",
                                                                 MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                     if (result == MessageBoxResult.Yes)
                     {
@@ -2303,13 +2303,13 @@ namespace FrameworkUI
         private void CompactProjectFile_Click(object sender, RoutedEventArgs e)
         {
             // Check if the user really wants to compact the file
-            if (MessageBox.Show("This action can take some time to execute depending on the file size. Are you sure you want to compact and optimize this project file?", "Compact & Optimize Project File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (GenericControls.MessageBox.Show("This action can take some time to execute depending on the file size. Are you sure you want to compact and optimize this project file?", "Compact & Optimize Project File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 // Check if there is enough available drive space
                 string? projectPathRoot = Path.GetPathRoot(Path.GetDirectoryName(ProjectNode.Project.FullFileName));
                 if (!string.IsNullOrEmpty(projectPathRoot) && UtilityFunctions.GetAvailableDriveSpace(projectPathRoot) < FileSizeManager.GetFileSize(ProjectNode.Project.FullFileName))
                 {
-                    MessageBox.Show("There is not enough available free space on the " + projectPathRoot + " drive to compact the project file. This action requires " + FileSizeManager.GetFileSizeText(ProjectNode.Project.FullFileName) + " of free space.", "Cannot Compact & Optimize Project!", MessageBoxButton.OK, MessageBoxImage.Stop);
+                    GenericControls.MessageBox.Show("There is not enough available free space on the " + projectPathRoot + " drive to compact the project file. This action requires " + FileSizeManager.GetFileSizeText(ProjectNode.Project.FullFileName) + " of free space.", "Cannot Compact & Optimize Project!", MessageBoxButton.OK, MessageBoxImage.Stop);
                     return;
                 }
                 try
@@ -2320,7 +2320,7 @@ namespace FrameworkUI
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.ToString());
-                    MessageBox.Show("There was an unexpected error when trying to compact and optimize the project file.", "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    GenericControls.MessageBox.Show("There was an unexpected error when trying to compact and optimize the project file.", "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
             }
@@ -2356,7 +2356,7 @@ namespace FrameworkUI
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.ToString());
-                    MessageBox.Show("There was an unexpected error when trying to zip the project file.", "Zip Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    GenericControls.MessageBox.Show("There was an unexpected error when trying to zip the project file.", "Zip Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
             }
@@ -2388,7 +2388,7 @@ namespace FrameworkUI
                 string newFileName = fullFileName.Replace(ShellPublicVariables.SoftwareExtension + ShellPublicVariables.BackupExtension, "_Restored" + ShellPublicVariables.SoftwareExtension);
                 if (newFileName.Length > 259)
                 {
-                    MessageBox.Show("The file name is too long. Please shorten the name to have less than 250 characters before trying to restore.", "File name error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    GenericControls.MessageBox.Show("The file name is too long. Please shorten the name to have less than 250 characters before trying to restore.", "File name error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
                 // Rename the backup file 
@@ -2431,7 +2431,7 @@ namespace FrameworkUI
 
                 if (result.Error != null)
                 {
-                    System.Windows.MessageBox.Show(
+                    GenericControls.MessageBox.Show(
                         $"Failed to check for updates:\n\n{result.Error.Message}",
                         "Update Check Failed",
                         MessageBoxButton.OK,
@@ -2446,7 +2446,7 @@ namespace FrameworkUI
                                   $"Published: {update.PublishedAt:d}\n\n" +
                                   $"Would you like to download and install the update?";
 
-                    var dialogResult = System.Windows.MessageBox.Show(
+                    var dialogResult = GenericControls.MessageBox.Show(
                         message,
                         "Update Available",
                         MessageBoxButton.YesNo,
@@ -2459,7 +2459,7 @@ namespace FrameworkUI
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show(
+                    GenericControls.MessageBox.Show(
                         $"You are running the latest version ({result.CurrentVersion}).",
                         "No Updates Available",
                         MessageBoxButton.OK,
@@ -2468,7 +2468,7 @@ namespace FrameworkUI
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(
+                GenericControls.MessageBox.Show(
                     $"An error occurred while checking for updates:\n\n{ex.Message}",
                     "Update Error",
                     MessageBoxButton.OK,
@@ -2529,7 +2529,7 @@ namespace FrameworkUI
 
                 if (downloadResult.Success)
                 {
-                    var confirmResult = System.Windows.MessageBox.Show(
+                    var confirmResult = GenericControls.MessageBox.Show(
                         "Update downloaded successfully.\n\n" +
                         "The application will now close to install the update and restart automatically.\n\n" +
                         "Do you want to continue?",
@@ -2544,7 +2544,7 @@ namespace FrameworkUI
                 }
                 else if (downloadResult.WasCancelled)
                 {
-                    System.Windows.MessageBox.Show(
+                    GenericControls.MessageBox.Show(
                         "Download was cancelled.",
                         "Download Cancelled",
                         MessageBoxButton.OK,
@@ -2552,7 +2552,7 @@ namespace FrameworkUI
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show(
+                    GenericControls.MessageBox.Show(
                         $"Failed to download update:\n\n{downloadResult.Error?.Message}",
                         "Download Failed",
                         MessageBoxButton.OK,
@@ -2561,7 +2561,7 @@ namespace FrameworkUI
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(
+                GenericControls.MessageBox.Show(
                     $"An error occurred while downloading the update:\n\n{ex.Message}",
                     "Download Error",
                     MessageBoxButton.OK,

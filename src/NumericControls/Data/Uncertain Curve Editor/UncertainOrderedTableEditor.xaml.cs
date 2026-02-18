@@ -572,11 +572,11 @@ namespace NumericControls
             for (int i = startRowIndex; i < startRowIndex + nRows; i++)
                 itemsToInsert.Add(new UncertainOrdinate(0d, UnivariateDistributionFactory.CreateDistribution(type)));
             // Let it update the UI since this is a preview event that is being canceled.
-            if (UncertainOrderedData.SupressCollectionChanged == true)
+            if (UncertainOrderedData.SuppressCollectionChanged == true)
             {
-                UncertainOrderedData.SupressCollectionChanged = false;
+                UncertainOrderedData.SuppressCollectionChanged = false;
                 UncertainOrderedData.InsertRange(startRowIndex, itemsToInsert);
-                UncertainOrderedData.SupressCollectionChanged = true;
+                UncertainOrderedData.SuppressCollectionChanged = true;
             }
             else
             {
@@ -594,11 +594,11 @@ namespace NumericControls
         {
             cancel = true;
             // Let it update the UI since this is a preview event that is being canceled.
-            if (UncertainOrderedData.SupressCollectionChanged == true)
+            if (UncertainOrderedData.SuppressCollectionChanged == true)
             {
-                UncertainOrderedData.SupressCollectionChanged = false;
+                UncertainOrderedData.SuppressCollectionChanged = false;
                 UncertainOrderedData.RemoveRange(rowindices.ToArray());
-                UncertainOrderedData.SupressCollectionChanged = true;
+                UncertainOrderedData.SuppressCollectionChanged = true;
             }
             else
             {
@@ -617,7 +617,7 @@ namespace NumericControls
         /// <param name="cancelPaste">Reference parameter to cancel the paste operation if needed.</param>
         private void ValidationGrid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
         {
-            UncertainOrderedData.SupressCollectionChanged = true;
+            UncertainOrderedData.SuppressCollectionChanged = true;
             Mouse.OverrideCursor = Cursors.Wait;
         }
 
@@ -627,7 +627,7 @@ namespace NumericControls
         /// </summary>
         private void ValidationGrid_DataPasted()
         {
-            UncertainOrderedData.SupressCollectionChanged = false;
+            UncertainOrderedData.SuppressCollectionChanged = false;
             UncertainOrderedData.Validate();
             UncertainOrderedData.RaiseCollectionChangedReset();
             if (UncertainOrderedData.Distribution == UnivariateDistributionType.PertPercentile || UncertainOrderedData.Distribution == UnivariateDistributionType.PertPercentileZ) { Refresh(); }

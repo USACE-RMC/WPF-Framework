@@ -271,6 +271,17 @@
     <Style TargetType="{x:Type local:NameDialog}" BasedOn="{StaticResource NameDialogStyle}"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- MESSAGE BOX WINDOW                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="MessageBoxWindowStyle" TargetType="{x:Type local:MessageBoxWindow}">
+        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:MessageBoxWindow}" BasedOn="{StaticResource MessageBoxWindowStyle}"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- PROPERTY CONTROLS                                                            -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 

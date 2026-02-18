@@ -6,6 +6,9 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>FrameworkUI.Demo</RootNamespace>
     <AssemblyName>FrameworkUI.Demo</AssemblyName>
+    <Description>A demonstration application for the FrameworkUI WPF framework, showcasing project management, AvalonDock layout, theming, and standard controls.</Description>
+    <Copyright>Copyright © 2026 U.S. Army Corps of Engineers</Copyright>
+    <Company>U.S. Army Corps of Engineers</Company>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>

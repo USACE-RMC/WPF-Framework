@@ -247,7 +247,7 @@ namespace DatabaseControls
                 else if (value == null)
                     _outputType = TypeEnum.UnDeclared;
                 else
-                    MessageBox.Show("The type of the selected header is not supported for output");
+                    GenericControls.MessageBox.Show("The type of the selected header is not supported for output");
             }
         }
 

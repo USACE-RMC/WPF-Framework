@@ -1085,7 +1085,7 @@ namespace OxyPlotControls
                 case 2: // Normal Probability
                     if (Axis.InternalAxis.DataMinimum < 0 || Axis.InternalAxis.DataMaximum > 1)
                     {
-                        MessageBox.Show("Axis cannot be converted to a Normal probability axis because the data is not between 0 and 1.",
+                        GenericControls.MessageBox.Show("Axis cannot be converted to a Normal probability axis because the data is not between 0 and 1.",
                             "Normal Probability Axis", MessageBoxButton.OK, MessageBoxImage.Error);
                         axisTypeComboBox.SelectedItem = e.RemovedItems[0];
                         e.Handled = true;
@@ -1109,7 +1109,7 @@ namespace OxyPlotControls
                 case 3: // Gumbel Probability
                     if (Axis.InternalAxis.DataMinimum < 0 || Axis.InternalAxis.DataMaximum > 1)
                     {
-                        MessageBox.Show("Axis cannot be converted to a Gumbel probability axis because the data is not between 0 and 1.",
+                        GenericControls.MessageBox.Show("Axis cannot be converted to a Gumbel probability axis because the data is not between 0 and 1.",
                             "Gumbel Probability Axis", MessageBoxButton.OK, MessageBoxImage.Error);
                         axisTypeComboBox.SelectedItem = e.RemovedItems[0];
                         e.Handled = true;

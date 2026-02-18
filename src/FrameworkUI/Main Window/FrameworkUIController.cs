@@ -138,18 +138,52 @@ namespace FrameworkUI
 
         /// <summary>
         /// This method is called in the base constructor and used to define the custom Project menu items set in the application menu bar.
+        /// Override this method to add custom project menu items.
         /// </summary>
-        protected abstract void DefineProjectMenuItems();
+        protected virtual void DefineProjectMenuItems() { }
 
         /// <summary>
         /// This method is called in the base constructor and used to define the custom Tools menu items set in the application menu bar.
+        /// Override this method to add custom tools menu items.
         /// </summary>
-        protected abstract void DefineToolsMenuItems();
+        protected virtual void DefineToolsMenuItems() { }
 
         /// <summary>
         /// This method is called in the base constructor and used to define the custom Help menu items set in the application menu bar.
+        /// The default implementation adds "Terms and Conditions for Use" and "About" menu items.
+        /// Override this method to add custom help menu items. Call base.DefineHelpMenuItems() to include the defaults.
         /// </summary>
-        protected abstract void DefineHelpMenuItems();
+        protected virtual void DefineHelpMenuItems()
+        {
+            // Terms & Conditions for Use
+            var tcuMenuItem = new MenuItem() { Header = "Terms & Conditions for Use", Icon = Application.Current.TryFindResource("TCUIcon") };
+            tcuMenuItem.Click += (s, e) =>
+            {
+                var window = new TermsAndConditionsWindow();
+                window.ShowButtons = false;
+                if (Application.Current?.MainWindow != null)
+                {
+                    window.Owner = Application.Current.MainWindow;
+                    window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                window.ShowDialog();
+            };
+            _helpMenuItems.Add(tcuMenuItem);
+
+            // About
+            var aboutMenuItem = new MenuItem() { Header = "About " + ApplicationAttributes.Title, Icon = Application.Current.TryFindResource("AboutIcon") };
+            aboutMenuItem.Click += (s, e) =>
+            {
+                var window = new AboutWindow();
+                if (Application.Current?.MainWindow != null)
+                {
+                    window.Owner = Application.Current.MainWindow;
+                    window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                window.ShowDialog();
+            };
+            _helpMenuItems.Add(aboutMenuItem);
+        }
 
         /// <summary>
         /// Get a new instance of the Document Control for a project element.

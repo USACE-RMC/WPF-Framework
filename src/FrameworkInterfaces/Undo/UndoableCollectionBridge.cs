@@ -211,6 +211,36 @@ namespace FrameworkInterfaces.Undo
         /// </value>
         public IList<T> Collection => _collection;
 
+        /// <summary>
+        /// Gets or sets an optional callback that wraps the Clear+Add restore loop
+        /// during undo/redo of Reset actions.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When a Reset action is undone or redone, the bridge must Clear the collection
+        /// and re-add all items from the captured state. Without this wrapper, each Clear
+        /// and Add call fires collection changed events, which may trigger expensive operations
+        /// (e.g., recalculating plotting positions on an empty collection during Clear).
+        /// </para>
+        /// <para>
+        /// Set this to a delegate that suppresses collection change events during the
+        /// restore operation and raises a single Reset event afterward. For example:
+        /// </para>
+        /// <code>
+        /// bridge.BulkRestoreWrapper = (restoreAction) =>
+        /// {
+        ///     collection.SuppressCollectionChanged = true;
+        ///     restoreAction();
+        ///     collection.SuppressCollectionChanged = false;
+        ///     collection.RaiseCollectionChangedReset();
+        /// };
+        /// </code>
+        /// <para>
+        /// If this property is null, the restore loop runs without wrapping.
+        /// </para>
+        /// </remarks>
+        public Action<Action>? BulkRestoreWrapper { get; set; }
+
         #endregion
 
         #region Event Handlers
@@ -500,21 +530,37 @@ namespace FrameworkInterfaces.Undo
                 {
                     // Restore the after state
                     // Use _dynamicCollection to ensure the runtime type's Clear/Add methods are called
-                    _dynamicCollection.Clear();
-                    foreach (var item in stateAfter)
+                    Action restore = () =>
                     {
-                        _dynamicCollection.Add(item);
-                    }
+                        _dynamicCollection.Clear();
+                        foreach (var item in stateAfter)
+                        {
+                            _dynamicCollection.Add(item);
+                        }
+                    };
+
+                    if (BulkRestoreWrapper != null)
+                        BulkRestoreWrapper(restore);
+                    else
+                        restore();
                 },
                 undo: () =>
                 {
                     // Restore the before state
                     // Use _dynamicCollection to ensure the runtime type's Clear/Add methods are called
-                    _dynamicCollection.Clear();
-                    foreach (var item in stateBefore)
+                    Action restore = () =>
                     {
-                        _dynamicCollection.Add(item);
-                    }
+                        _dynamicCollection.Clear();
+                        foreach (var item in stateBefore)
+                        {
+                            _dynamicCollection.Add(item);
+                        }
+                    };
+
+                    if (BulkRestoreWrapper != null)
+                        BulkRestoreWrapper(restore);
+                    else
+                        restore();
                 },
                 target: _target
             );

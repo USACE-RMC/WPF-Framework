@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -6,11 +6,11 @@
 * LIST OF CONDITIONS:
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
-* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* ? Redistributions of source code must retain the above notice, this list of conditions, and the
 * following disclaimer.
-* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* ? Redistributions in binary form must reproduce the above notice, this list of conditions, and
 * the following disclaimer in the documentation and/or other materials provided with the distribution.
-* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* ? The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
 * Resources, or the Risk Management Center may not be used to endorse or promote products derived
 * from this software without specific prior written permission. Nor may the names of its contributors
 * be used to endorse or promote products derived from this software without specific prior
@@ -103,7 +103,7 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private void ClearListButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to clear the Recent Files List? This action is permanent.", "Clear the Recent Files List?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (GenericControls.MessageBox.Show("Are you sure you want to clear the Recent Files List? This action is permanent.", "Clear the Recent Files List?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Files.ClearAll();
                 Close();

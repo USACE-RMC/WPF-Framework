@@ -148,7 +148,7 @@ namespace DatabaseControls
 
             if (!_foundInstance)
             {
-                MessageBox.Show("Search for: '" + FindText.Text + "' was not found.", "Find", MessageBoxButton.OK, MessageBoxImage.Information);
+                GenericControls.MessageBox.Show("Search for: '" + FindText.Text + "' was not found.", "Find", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -203,7 +203,7 @@ namespace DatabaseControls
 
             if (!_foundInstance)
             {
-                MessageBox.Show("Search for: '" + FindText.Text + "' was not found.", "Find", MessageBoxButton.OK, MessageBoxImage.Information);
+                GenericControls.MessageBox.Show("Search for: '" + FindText.Text + "' was not found.", "Find", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

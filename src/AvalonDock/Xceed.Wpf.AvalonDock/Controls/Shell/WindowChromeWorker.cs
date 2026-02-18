@@ -251,6 +251,11 @@ namespace Microsoft.Windows.Shell
         return;
       }
 
+      if( _hwndSource == null || _hwndSource.IsDisposed )
+      {
+        return;
+      }
+
       if( _chromeInfo == null )
       {
         _RestoreStandardChromeState( false );

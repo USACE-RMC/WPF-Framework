@@ -74,6 +74,8 @@ namespace NumericControls
         {
             InitializeComponent();
             _probabilityRowItems.CollectionChanged += ProbabilityRowItems_CollectionChanged;
+            DataGrid.PreviewPasteData += DataGrid_PreviewPasteData;
+            DataGrid.DataPasted += DataGrid_DataPasted;
         }
 
         /// <summary>
@@ -189,9 +191,16 @@ namespace NumericControls
         private void DataGrid_RowsAdded(int startRowIndex, int nRows)
         {
             _suppressUIUpdate = true;
+            bool wasSuppressed = ProbabilityOrdinates.SuppressCollectionChanged;
+            ProbabilityOrdinates.SuppressCollectionChanged = true;
             for (int i = 0; i < nRows; i++)
             {
                 ProbabilityOrdinates.Insert(startRowIndex + i, ((ProbabilityOrdinateRowItem)_probabilityRowItems[startRowIndex + i]).Probability);
+            }
+            ProbabilityOrdinates.SuppressCollectionChanged = wasSuppressed;
+            if (!wasSuppressed)
+            {
+                ProbabilityOrdinates.RaiseCollectionChangedReset();
             }
             _suppressUIUpdate = false;
         }
@@ -204,9 +213,16 @@ namespace NumericControls
         private void DataGrid_RowsDeleted(List<int> rowindices)
         {
             _suppressUIUpdate = true;
+            bool wasSuppressed = ProbabilityOrdinates.SuppressCollectionChanged;
+            ProbabilityOrdinates.SuppressCollectionChanged = true;
             for (int i = rowindices.Count - 1; i >= 0; i--)
             {
                 ProbabilityOrdinates.RemoveAt(rowindices[i]);
+            }
+            ProbabilityOrdinates.SuppressCollectionChanged = wasSuppressed;
+            if (!wasSuppressed)
+            {
+                ProbabilityOrdinates.RaiseCollectionChangedReset();
             }
             _suppressUIUpdate = false;
         }
@@ -288,7 +304,51 @@ namespace NumericControls
                     }
                     _suppressModelUpdate = false;
                 }
+                else if (e.Action == NotifyCollectionChangedAction.Reset)
+                {
+                    // Rebuild UI row items from the model state
+                    _suppressModelUpdate = true;
+                    _probabilityRowItems.Clear();
+                    if (ProbabilityOrdinates != null)
+                    {
+                        foreach (double ordinate in ProbabilityOrdinates)
+                        {
+                            _probabilityRowItems.Add(new ProbabilityOrdinateRowItem(_probabilityRowItems, ordinate));
+                        }
+                    }
+                    DataGrid.ItemsSource = _probabilityRowItems;
+                    _suppressModelUpdate = false;
+                }
             }
+        }
+
+        /// <summary>
+        /// Handles the preview paste data event from the data grid.
+        /// Suppresses collection changed events during the paste operation to prevent
+        /// individual events for each cell change.
+        /// </summary>
+        /// <param name="clipboardData">The clipboard data being pasted.</param>
+        /// <param name="cancelPaste">Reference parameter to cancel the paste operation if needed.</param>
+        private void DataGrid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
+        {
+            if (ProbabilityOrdinates != null)
+                ProbabilityOrdinates.SuppressCollectionChanged = true;
+            Mouse.OverrideCursor = Cursors.Wait;
+        }
+
+        /// <summary>
+        /// Handles the data pasted event from the data grid.
+        /// Re-enables collection changed events and raises a single Reset event to notify
+        /// listeners that the collection has been modified.
+        /// </summary>
+        private void DataGrid_DataPasted()
+        {
+            if (ProbabilityOrdinates != null)
+            {
+                ProbabilityOrdinates.SuppressCollectionChanged = false;
+                ProbabilityOrdinates.RaiseCollectionChangedReset();
+            }
+            Mouse.OverrideCursor = null;
         }
     }
 }
