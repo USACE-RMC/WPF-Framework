@@ -43,29 +43,6 @@ namespace OxyPlotControls
     /// </summary>
     public partial class LineSeriesControl : UserControl
     {
-        #region Fields
-
-        /// <summary>
-        /// Suppresses PlotChanged events during initial loading and series property updates.
-        /// </summary>
-        private bool _suppressPlotChanged = true;
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Occurs when a series property value changes through user interaction with the control.
-        /// </summary>
-        /// <remarks>
-        /// This event is raised when binding source updates occur, indicating that the plot
-        /// should be refreshed to reflect the property changes. The event is suppressed
-        /// during initial control loading and when the Series property is being set.
-        /// </remarks>
-        public event EventHandler? PlotChanged;
-
-        #endregion
-
         #region Static Properties
 
         /// <summary>
@@ -253,37 +230,6 @@ namespace OxyPlotControls
         public LineSeriesControl()
         {
             InitializeComponent();
-            Loaded += (s, e) => _suppressPlotChanged = false;
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PlotChanged"/> event.
-        /// </summary>
-        /// <remarks>
-        /// This method checks the <see cref="_suppressPlotChanged"/> flag before raising the event.
-        /// The event will not be raised during initial loading or when the Series property is being updated.
-        /// </remarks>
-        protected virtual void OnPlotChanged()
-        {
-            if (!_suppressPlotChanged)
-            {
-                PlotChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        /// Handles the SourceUpdated event for bindings in this control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data containing information about the binding that was updated.</param>
-        /// <remarks>
-        /// This method is called when any TwoWay binding with NotifyOnSourceUpdated=True
-        /// updates its source. It triggers the <see cref="PlotChanged"/> event to signal
-        /// that the plot should be refreshed.
-        /// </remarks>
-        private void OnBindingSourceUpdated(object sender, DataTransferEventArgs e)
-        {
-            OnPlotChanged();
         }
 
         /// <summary>
@@ -294,9 +240,6 @@ namespace OxyPlotControls
         {
             if (d is LineSeriesControl control)
             {
-                // Suppress PlotChanged events during series property updates
-                control._suppressPlotChanged = true;
-
                 // Reset visibility to defaults
                 control.ShowStandardColor = Visibility.Visible;
                 control.ShowTwoColorControls = Visibility.Collapsed;
@@ -334,14 +277,7 @@ namespace OxyPlotControls
                     control.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
                     {
                         control.UpdateLayout();
-                        // Re-enable PlotChanged events after layout is complete
-                        control._suppressPlotChanged = false;
                     }));
-                }
-                else
-                {
-                    // Re-enable PlotChanged events if no new value
-                    control._suppressPlotChanged = false;
                 }
             }
         }
@@ -544,6 +480,7 @@ namespace OxyPlotControls
 
     /// <summary>
     /// Converts line series marker fill color to/from a SolidColorBrush, handling automatic colors.
+    /// The third binding (Series.Color) is used only to trigger re-evaluation when line color changes.
     /// </summary>
     public class LineSeriesMarkerFillConverter : IMultiValueConverter
     {
@@ -565,6 +502,8 @@ namespace OxyPlotControls
             _series = ((OxyPlot.Wpf.LineSeries)values[1]).InternalSeries as OxyPlot.Series.LineSeries;
             if (_series == null) return new SolidColorBrush(c);
 
+            // values[2] is Series.Color — only used to trigger re-evaluation when line color changes
+
             // Convert
             if (oxyCol.IsAutomatic())
             {
@@ -580,24 +519,25 @@ namespace OxyPlotControls
         /// </summary>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            if (_series == null) return new object[] { Color.FromArgb(255, 0, 0, 0), null! };
+            if (_series == null) return new object[] { Color.FromArgb(255, 0, 0, 0), null!, Binding.DoNothing };
             // Get color value
-            if (value.GetType() != typeof(SolidColorBrush)) return new object[] { Color.FromArgb(255, 0, 0, 0), null! };
+            if (value.GetType() != typeof(SolidColorBrush)) return new object[] { Color.FromArgb(255, 0, 0, 0), null!, Binding.DoNothing };
             var c = ((SolidColorBrush)value).Color;
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
             if (OxyColor.ColorDifference(oxyCol, ((OxyPlot.Series.LineSeries)_series).ActualMarkerFill) == 0)
             {
                 var actualColor = _series.ActualMarkerFill;
-                return new object[] { Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B), _series };
+                return new object[] { Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B), _series, Binding.DoNothing };
             }
 
-            return new object[] { c, _series };
+            return new object[] { c, _series, Binding.DoNothing };
         }
     }
 
     /// <summary>
     /// Converts line series marker stroke color to/from a SolidColorBrush, handling automatic colors.
+    /// The third binding (Series.Color) is used only to trigger re-evaluation when line color changes.
     /// </summary>
     public class LineSeriesMarkerStrokeConverter : IMultiValueConverter
     {
@@ -619,7 +559,9 @@ namespace OxyPlotControls
             _series = ((OxyPlot.Wpf.LineSeries)values[1]).InternalSeries as OxyPlot.Series.LineSeries;
             if (_series == null) return new SolidColorBrush(c);
 
-            // Convert
+            // values[2] is Series.Color — only used to trigger re-evaluation when line color changes
+
+            // Convert - use ActualMarkerFill as the resolved automatic color for stroke too
             if (oxyCol.IsAutomatic())
             {
                 var actualColor = _series.ActualMarkerFill;
@@ -634,19 +576,53 @@ namespace OxyPlotControls
         /// </summary>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            if (_series == null) return new object[] { Color.FromArgb(255, 0, 0, 0), null! };
+            if (_series == null) return new object[] { Color.FromArgb(255, 0, 0, 0), null!, Binding.DoNothing };
             // Get color value
-            if (value.GetType() != typeof(SolidColorBrush)) return new object[] { Color.FromArgb(255, 0, 0, 0), null! };
+            if (value.GetType() != typeof(SolidColorBrush)) return new object[] { Color.FromArgb(255, 0, 0, 0), null!, Binding.DoNothing };
             var c = ((SolidColorBrush)value).Color;
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 
             if (OxyColor.ColorDifference(oxyCol, _series.ActualMarkerFill) == 0)
             {
                 var actualColor = _series.ActualMarkerFill;
-                return new object[] { Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B), _series };
+                return new object[] { Color.FromArgb(actualColor.A, actualColor.R, actualColor.G, actualColor.B), _series, Binding.DoNothing };
             }
 
-            return new object[] { c, _series };
+            return new object[] { c, _series, Binding.DoNothing };
+        }
+    }
+
+    /// <summary>
+    /// Converts StairStepSeries VerticalStrokeThickness for display, resolving NaN to StrokeThickness.
+    /// values[0] = VerticalStrokeThickness (double, may be NaN)
+    /// values[1] = StrokeThickness (double, fallback when NaN)
+    /// </summary>
+    public class VerticalStrokeThicknessConverter : IMultiValueConverter
+    {
+        /// <summary>
+        /// Converts VerticalStrokeThickness, returning StrokeThickness if NaN.
+        /// </summary>
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values[0] == null || values[0].GetType() != typeof(double)) return 0.0;
+            double verticalThickness = (double)values[0];
+            if (double.IsNaN(verticalThickness))
+            {
+                if (values[1] != null && values[1].GetType() == typeof(double))
+                    return (double)values[1];
+                return 0.0;
+            }
+            return verticalThickness;
+        }
+
+        /// <summary>
+        /// Converts back, returning NaN if the value matches StrokeThickness.
+        /// </summary>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            if (value == null || value.GetType() != typeof(double))
+                return new object[] { double.NaN, Binding.DoNothing };
+            return new object[] { (double)value, Binding.DoNothing };
         }
     }
 }

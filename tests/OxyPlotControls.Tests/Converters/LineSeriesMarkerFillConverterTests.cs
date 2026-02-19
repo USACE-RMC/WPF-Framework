@@ -139,7 +139,7 @@ public class LineSeriesMarkerFillConverterTests
         var result = _converter.ConvertBack(value, new[] { typeof(Color), typeof(object) }, null!, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal(2, result.Length);
+        Assert.Equal(3, result.Length);
         Assert.Equal(Color.FromArgb(255, 0, 0, 0), result[0]);
     }
 

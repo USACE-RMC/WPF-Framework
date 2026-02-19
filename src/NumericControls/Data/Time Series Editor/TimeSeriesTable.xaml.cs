@@ -30,6 +30,8 @@
 
 using GenericControls;
 using Numerics.Data;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,6 +63,95 @@ namespace NumericControls
     /// </remarks>
     public partial class TimeSeriesTable : UserControl
     {
+        #region Public Events
+
+        /// <summary>
+        /// Raised before data is pasted from the clipboard. Allows the consumer to suppress collection changed events.
+        /// </summary>
+        public event CopyPasteDataGrid.PreviewPasteDataEventHandler PreviewPasteData;
+
+        /// <summary>
+        /// Raised after data has been pasted from the clipboard. Allows the consumer to unsuppress and raise reset.
+        /// </summary>
+        public event CopyPasteDataGrid.DataPastedEventHandler DataPasted;
+
+        /// <summary>
+        /// Raised before rows are added to the grid. Allows the consumer to suppress collection changed events.
+        /// </summary>
+        public event CopyPasteDataGrid.PreviewAddRowsEventHandler PreviewAddRows;
+
+        /// <summary>
+        /// Raised after rows have been added to the grid. Allows the consumer to unsuppress and raise reset.
+        /// </summary>
+        public event CopyPasteDataGrid.RowsAddedEventHandler RowsAdded;
+
+        /// <summary>
+        /// Raised before rows are deleted from the grid. Allows the consumer to suppress collection changed events.
+        /// </summary>
+        public event CopyPasteDataGrid.PreviewDeleteRowsEventHandler PreviewDeleteRows;
+
+        /// <summary>
+        /// Raised after rows have been deleted from the grid. Allows the consumer to unsuppress and raise reset.
+        /// </summary>
+        public event CopyPasteDataGrid.RowsDeletedEventHandler RowsDeleted;
+
+        #endregion
+
+        #region RowItem Infrastructure
+
+        /// <summary>
+        /// The observable collection of <see cref="TimeSeriesRowItem"/> wrappers bound to the DataGrid.
+        /// </summary>
+        private ObservableCollection<object> _rowItems = new ObservableCollection<object>();
+
+        /// <summary>
+        /// Tracks the previously subscribed TimeSeries for CollectionChanged unsubscription.
+        /// </summary>
+        private TimeSeries _previousSeries;
+
+        /// <summary>
+        /// Rebuilds the <see cref="_rowItems"/> collection from the current <see cref="Series"/>.
+        /// </summary>
+        private void RebuildRowItems()
+        {
+            _rowItems.Clear();
+            if (Series == null) return;
+            for (int i = 0; i < Series.Count; i++)
+            {
+                _rowItems.Add(new TimeSeriesRowItem(_rowItems, Series[i], Series));
+            }
+        }
+
+        /// <summary>
+        /// Handles <see cref="TimeSeries.CollectionChanged"/> events to keep <see cref="_rowItems"/> in sync.
+        /// On Replace (from cell edit or undo replay): updates the RowItem via <see cref="TimeSeriesRowItem.SetOrdinate"/>.
+        /// On Reset (from bulk undo replay): rebuilds the entire RowItems collection and refreshes the DataGrid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments describing the collection change.</param>
+        private void Series_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                for (int i = 0; i < e.NewItems.Count; i++)
+                {
+                    int rowIndex = e.NewStartingIndex + i;
+                    if (rowIndex >= 0 && rowIndex < _rowItems.Count)
+                    {
+                        var rowItem = (TimeSeriesRowItem)_rowItems[rowIndex];
+                        rowItem.SetOrdinate((SeriesOrdinate<DateTime, double>)e.NewItems[i]);
+                    }
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                RebuildRowItems();
+                TimeSeriesDataGrid.Items.Refresh();
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Identifies the <see cref="Series"/> dependency property.
         /// </summary>
@@ -68,6 +159,7 @@ namespace NumericControls
 
         /// <summary>
         /// Handles changes to the Series property and configures the grid for the time interval type.
+        /// Builds the <see cref="_rowItems"/> collection and subscribes to <see cref="TimeSeries.CollectionChanged"/>.
         /// </summary>
         /// <param name="d">The dependency object that changed.</param>
         /// <param name="e">The property changed event arguments.</param>
@@ -77,17 +169,28 @@ namespace NumericControls
             if (d.GetType() != typeof(TimeSeriesTable)) return;
             TimeSeriesTable thisControl = (TimeSeriesTable)d;
 
+            // Unsubscribe from old series
+            if (thisControl._previousSeries != null)
+            {
+                thisControl._previousSeries.CollectionChanged -= thisControl.Series_CollectionChanged;
+                thisControl._previousSeries = null;
+            }
+
             thisControl.DateTimeColumn.IsReadOnly = true;
             thisControl.DateTimeSelectorColumn.Visibility = Visibility.Collapsed;
             thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("Right_CellStyleDisabled");
-            if (e.NewValue == null) { return; }
+            if (e.NewValue == null)
+            {
+                thisControl._rowItems.Clear();
+                return;
+            }
             TimeSeries newSeries = e.NewValue as TimeSeries;
             if (newSeries == null)
             {
+                thisControl._rowItems.Clear();
                 thisControl.TimeSeriesDataGrid.IsEnabled = false;
                 return;
             }
-
 
             if (newSeries.TimeInterval == TimeInterval.Irregular)
             {
@@ -95,6 +198,13 @@ namespace NumericControls
                 thisControl.DateTimeSelectorColumn.Visibility = Visibility.Visible;
                 thisControl.DateTimeColumn.IsReadOnly = false;
             }
+
+            // Build RowItems from the new series
+            thisControl.RebuildRowItems();
+
+            // Subscribe to CollectionChanged for undo replay sync
+            newSeries.CollectionChanged += thisControl.Series_CollectionChanged;
+            thisControl._previousSeries = newSeries;
         }
 
         /// <summary>
@@ -212,6 +322,7 @@ namespace NumericControls
             InitializeComponent();
             TimeSeriesDataGrid.RowType = typeof(SeriesOrdinate<DateTime, double>);
             TimeSeriesDataGrid.PasteAddsRows = true;
+            TimeSeriesDataGrid.ItemsSource = _rowItems;
 
             var HeaderBinding = new Binding(nameof(XColumnHeader)) { Source = this, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, FallbackValue = "Date Times", TargetNullValue = "Date Times" };
             BindingOperations.SetBinding((DateTimeColumn), DataGridTemplateColumn.HeaderProperty, HeaderBinding);
@@ -273,6 +384,9 @@ namespace NumericControls
 
         /// <summary>
         /// Handles calculator button clicks and applies mathematical operations to selected cells.
+        /// Fires the <see cref="PreviewPasteData"/> and <see cref="DataPasted"/> public events
+        /// (reusing the paste event pattern) to allow the consumer to suppress/unsuppress
+        /// collection changed notifications for undo/redo support of bulk math operations.
         /// </summary>
         /// <param name="sender">The menu item that was clicked.</param>
         /// <param name="e">The routed event arguments.</param>
@@ -289,8 +403,17 @@ namespace NumericControls
             foreach (DataGridCellInfo cellInfo in selectedCells)
             {
                 if (cellInfo.Column.DisplayIndex <= 1) { continue; }
-                SelectedRowIndices.Add(Series.IndexOf(cellInfo.Item));
+                var rowItem = cellInfo.Item as TimeSeriesRowItem;
+                if (rowItem != null)
+                {
+                    int idx = _rowItems.IndexOf(rowItem);
+                    if (idx >= 0)
+                        SelectedRowIndices.Add(idx);
+                }
             }
+
+            bool apply = false;
+            double operandValue = 0;
 
             if (HasOperand(FunctionType))
             {
@@ -329,11 +452,31 @@ namespace NumericControls
                         Dialog.NameLabel.Text = FunctionType.ToString(); break;
                 }
 
-                if (Dialog.ShowDialog() == true) { MathEditorControl.ApplyFunctionToSeries(Series, FunctionType, Dialog.ValueTextBox.Value, SelectedRowIndices); }
+                if (Dialog.ShowDialog() == true)
+                {
+                    apply = true;
+                    operandValue = Dialog.ValueTextBox.Value;
+                }
             }
             else
             {
-                MathEditorControl.ApplyFunctionToSeries(Series, FunctionType, 0, SelectedRowIndices);
+                apply = true;
+            }
+
+            if (apply)
+            {
+                // Use suppress/unsuppress pattern for bulk math operations
+                // Fire PreviewPasteData as a signal to suppress (reusing paste events for bulk ops)
+                bool cancelMath = false;
+                PreviewPasteData?.Invoke(null, ref cancelMath);
+
+                MathEditorControl.ApplyFunctionToSeries(Series, FunctionType, operandValue, SelectedRowIndices);
+
+                // Rebuild RowItems since values changed in-place
+                RebuildRowItems();
+
+                // Fire DataPasted as a signal to unsuppress and raise reset
+                DataPasted?.Invoke();
             }
 
             // Reselect cells
@@ -362,6 +505,8 @@ namespace NumericControls
 
         /// <summary>
         /// Handles preview add rows event to create new time series ordinates before they are added to the grid.
+        /// Fires the <see cref="PreviewAddRows"/> and <see cref="RowsAdded"/> public events to allow the consumer
+        /// to manage SuppressCollectionChanged for undo/redo support.
         /// </summary>
         /// <param name="startRowIndex">The starting row index for the new rows.</param>
         /// <param name="nRows">The number of rows to add.</param>
@@ -369,8 +514,11 @@ namespace NumericControls
         private void TimeSeriesDataGrid_PreviewAddRows(int startRowIndex, int nRows, ref bool cancelAddRows)
         {
             cancelAddRows = true;
-            bool _wasSuppressed = Series.SuppressCollectionChanged;
-            Series.SuppressCollectionChanged = true;
+
+            // Fire public event to allow consumer to suppress
+            bool cancel = false;
+            PreviewAddRows?.Invoke(startRowIndex, nRows, ref cancel);
+            if (cancel) return;
 
             // Start Time
             DateTime startTime = (Series == null || Series.Count == 0) ? new DateTime(2020, 1, 1, 0, 0, 0) : Series[0].Index;
@@ -386,8 +534,9 @@ namespace NumericControls
 
             if (Series.TimeInterval != TimeInterval.Irregular) { Series.ShiftAllDates(startTime); }
 
-            Series.SuppressCollectionChanged = _wasSuppressed;
-            if (Series.SuppressCollectionChanged == false) { TimeSeriesDataGrid.Items.Refresh(); }
+            // RebuildRowItems and Items.Refresh removed — Series_CollectionChanged(Reset) handles it
+            // when consumer calls RaiseCollectionChangedReset() in the RowsAdded handler.
+            RowsAdded?.Invoke(startRowIndex, nRows);
         }
 
         /// <summary>
@@ -416,6 +565,8 @@ namespace NumericControls
 
         /// <summary>
         /// Handles preview key down events to handle the Delete key for clearing cell values.
+        /// Uses the <see cref="TimeSeriesRowItem"/> setters which trigger clone-and-replace,
+        /// firing CollectionChanged(Replace) for undo/redo support.
         /// </summary>
         /// <param name="sender">The data grid.</param>
         /// <param name="e">The key event arguments.</param>
@@ -426,18 +577,18 @@ namespace NumericControls
             {
                 foreach (var cell in grid.SelectedCells)
                 {
-                    if (cell.Column.IsReadOnly == false) 
+                    if (cell.Column.IsReadOnly == false)
                     {
-                        var ord = cell.Item as SeriesOrdinate<DateTime, double>;
-                        if(ord != null) 
-                        { 
-                            if(cell.Column.DisplayIndex==1)
+                        var rowItem = cell.Item as TimeSeriesRowItem;
+                        if (rowItem != null)
+                        {
+                            if (cell.Column.DisplayIndex == 1)
                             {
-                                ord.Index = DateTime.MinValue;
+                                rowItem.DateTime = DateTime.MinValue;
                             }
-                            else if(cell.Column.DisplayIndex==2)
+                            else if (cell.Column.DisplayIndex == 2)
                             {
-                                ord.Value = double.NaN;
+                                rowItem.Value = double.NaN;
                             }
                         }
                     }
@@ -446,53 +597,83 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Handles rows added to the grid and re-enables collection changed notifications.
+        /// Handles rows added to the grid by the CopyPasteDataGrid.
+        /// Row addition is fully managed in <see cref="TimeSeriesDataGrid_PreviewAddRows"/>,
+        /// so this handler is intentionally empty.
         /// </summary>
         /// <param name="startRowIndex">The starting row index of added rows.</param>
         /// <param name="nRows">The number of rows added.</param>
         private void TimeSeriesDataGrid_RowsAdded(int startRowIndex, int nRows)
         {
-            Series.SuppressCollectionChanged = false;
-            Series.RaiseCollectionChangedReset();
+            // Intentionally empty — row addition and event firing is handled in PreviewAddRows.
         }
 
         /// <summary>
-        /// Handles preview delete rows event to suppress collection changed notifications during deletion.
+        /// Handles preview delete rows event. Cancels the CopyPasteDataGrid's default delete
+        /// (which only removes from _rowItems) and performs the delete on both <see cref="Series"/>
+        /// and <see cref="_rowItems"/> directly. Fires <see cref="PreviewDeleteRows"/> to allow the
+        /// consumer to suppress, then <see cref="RowsDeleted"/> to allow the consumer to unsuppress.
         /// </summary>
         /// <param name="rowindices">The indices of rows to be deleted.</param>
         /// <param name="cancel">Whether to cancel the delete operation.</param>
         private void TimeSeriesDataGrid_PreviewDeleteRows(List<int> rowindices, ref bool cancel)
         {
-            Series.SuppressCollectionChanged = true;
+            // Cancel CopyPasteDataGrid's own delete — we handle both collections ourselves
+            cancel = true;
+
+            // Fire public event to allow consumer to suppress
+            bool userCancel = false;
+            PreviewDeleteRows?.Invoke(rowindices, ref userCancel);
+            if (userCancel) return;
+
+            // Delete from both Series and RowItems (reverse order to maintain indices)
+            var sorted = rowindices.OrderByDescending(i => i).ToList();
+            foreach (int idx in sorted)
+            {
+                if (idx >= 0 && idx < Series.Count)
+                    Series.RemoveAt(idx);
+            }
+
+            // RebuildRowItems removed — Series_CollectionChanged(Reset) handles it
+            // when consumer calls RaiseCollectionChangedReset() in the RowsDeleted handler.
+            RowsDeleted?.Invoke(rowindices);
         }
 
         /// <summary>
-        /// Handles rows deleted from the grid and re-enables collection changed notifications.
+        /// Handles rows deleted from the grid by the CopyPasteDataGrid.
+        /// Row deletion is fully managed in <see cref="TimeSeriesDataGrid_PreviewDeleteRows"/>,
+        /// so this handler is intentionally empty.
         /// </summary>
         /// <param name="rowindices">The indices of deleted rows.</param>
         private void TimeSeriesDataGrid_RowsDeleted(List<int> rowindices)
         {
-            Series.SuppressCollectionChanged = false;
-            Series.RaiseCollectionChangedReset();
+            // Intentionally empty — row deletion and event firing is handled in PreviewDeleteRows.
         }
 
         /// <summary>
-        /// Handles preview paste data event to suppress collection changed notifications during paste.
+        /// Handles preview paste data event and fires the <see cref="PreviewPasteData"/> public event
+        /// to allow the consumer to suppress collection changed notifications for undo/redo support.
         /// </summary>
         /// <param name="clipboardData">The clipboard data being pasted.</param>
         /// <param name="cancelPaste">Whether to cancel the paste operation.</param>
         private void TimeSeriesDataGrid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
         {
-            Series.SuppressCollectionChanged = true;
+            // Suppress per-cell visual updates during paste — RebuildRowItems() at end creates fresh RowItems
+            foreach (var item in _rowItems)
+                ((TimeSeriesRowItem)item).SuppressNotify = true;
+            PreviewPasteData?.Invoke(clipboardData, ref cancelPaste);
         }
 
         /// <summary>
-        /// Handles data pasted into the grid and re-enables collection changed notifications.
+        /// Handles data pasted into the grid. Rebuilds the RowItems collection to include pasted data,
+        /// then fires the <see cref="DataPasted"/> public event to allow the consumer to unsuppress
+        /// and raise reset for undo/redo support.
         /// </summary>
         private void TimeSeriesDataGrid_DataPasted()
         {
-            Series.SuppressCollectionChanged = false;
-            Series.RaiseCollectionChangedReset();
+            // RebuildRowItems removed — Series_CollectionChanged(Reset) handles it
+            // when consumer calls RaiseCollectionChangedReset() in the DataPasted handler.
+            DataPasted?.Invoke();
         }
 
     }

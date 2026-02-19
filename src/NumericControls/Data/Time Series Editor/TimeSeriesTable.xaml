@@ -148,7 +148,6 @@
             Grid.Row="1"
             RowHeight="25"
             AutoGenerateColumns="False"
-            ItemsSource="{Binding Series}"
             IsReadOnly="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}"
             PreviewAddRows="TimeSeriesDataGrid_PreviewAddRows"
             RowsAdded="TimeSeriesDataGrid_RowsAdded"
@@ -212,7 +211,7 @@
                                             HasSeconds="True"
                                             SetToHoursOnLoad="True"
                                             Background="{DynamicResource EnvironmentWindowBackground}"
-                                            DateAndTime="{Binding Index, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            DateAndTime="{Binding DateTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             Is24Hour="True"/>
                                     </Border>
                                 </Popup>
@@ -225,7 +224,7 @@
                     x:Name="DateTimeColumn" 
                     Width="130" 
                     MinWidth="30"
-                    Binding="{Binding Index, NotifyOnTargetUpdated=True, Mode=TwoWay, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource DateConverter}}" 
+                    Binding="{Binding DateTime, NotifyOnTargetUpdated=True, Mode=TwoWay, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource DateConverter}}" 
                     HeaderStyle="{StaticResource WrappedColumnHeaderStyle}"
                     CellStyle="{StaticResource Right_CellStyleDisabled}"/>
 

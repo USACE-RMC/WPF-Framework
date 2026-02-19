@@ -29,6 +29,7 @@
 */
 
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -65,6 +66,11 @@ namespace GenericControls
         /// Gets a list of all possible <see cref="HorizontalAlignment"/> values.
         /// </summary>
         public static List<HorizontalAlignment> AlignmentOptions { get; private set; } = new List<HorizontalAlignment>((HorizontalAlignment[])Enum.GetValues(typeof(HorizontalAlignment)));
+
+        /// <summary>
+        /// A precomputed list of <see cref="HorizontalAlignment"/> values excluding <see cref="HorizontalAlignment.Stretch"/>.
+        /// </summary>
+        private static readonly List<HorizontalAlignment> _optionsWithoutStretch = AlignmentOptions.Where(a => a != HorizontalAlignment.Stretch).ToList();
 
         /// <summary>
         /// Identifies the <see cref="Alignment"/> dependency property.
@@ -179,6 +185,53 @@ namespace GenericControls
             {
                 this.SetValue(ShowLeaderLineProperty, value);
             }
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowStretch"/> dependency property.
+        /// </summary>
+        public static DependencyProperty ShowStretchProperty = DependencyProperty.Register(nameof(ShowStretch), typeof(bool), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(true, OnShowStretchChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the <see cref="HorizontalAlignment.Stretch"/> option
+        /// is included in the alignment dropdown. Default is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Set to <c>false</c> for contexts where Stretch has no meaning, such as OxyPlot annotation
+        /// and legend alignment controls.
+        /// </remarks>
+        public bool ShowStretch
+        {
+            get
+            {
+                return (bool)this.GetValue(ShowStretchProperty);
+            }
+            set
+            {
+                this.SetValue(ShowStretchProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Handles changes to the <see cref="ShowStretch"/> property by raising <see cref="PropertyChanged"/>
+        /// for <see cref="FilteredAlignmentOptions"/> so the ComboBox re-binds.
+        /// </summary>
+        /// <param name="d">The dependency object.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void OnShowStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is HorizontalAlignmentControl control)
+                control.PropertyChanged?.Invoke(control, new PropertyChangedEventArgs(nameof(FilteredAlignmentOptions)));
+        }
+
+        /// <summary>
+        /// Gets the list of alignment options filtered by the <see cref="ShowStretch"/> setting.
+        /// Returns the full list when <see cref="ShowStretch"/> is <c>true</c>, or a list excluding
+        /// <see cref="HorizontalAlignment.Stretch"/> when <c>false</c>.
+        /// </summary>
+        public List<HorizontalAlignment> FilteredAlignmentOptions
+        {
+            get { return ShowStretch ? AlignmentOptions : _optionsWithoutStretch; }
         }
 
         private double _actualWidth = 0d;

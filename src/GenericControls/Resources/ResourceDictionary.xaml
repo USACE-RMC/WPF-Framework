@@ -137,4 +137,34 @@
         <sys:Double>360</sys:Double>
     </x:Array>
 
+    <!--#region Toggle Styles-->
+
+    <Style x:Key="PlusMinusToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Width="11" Height="11" Background="Transparent">
+                        <Rectangle Fill="{DynamicResource primaryBackgroundBrush}" />
+                        <Border Name="ExpandBorder" RenderOptions.EdgeMode="Aliased" BorderBrush="{DynamicResource EnvironmentWindowText}" BorderThickness="1" CornerRadius="0">
+                            <Path RenderOptions.EdgeMode="Aliased" Name="ExpandPath" Stroke="{DynamicResource EnvironmentWindowText}" Margin="0" StrokeThickness="1" Data="M 4.5,1 V 8 M 1,4.5 H 8" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Data" TargetName="ExpandPath" Value="M 1,4.5 H 8"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ExpandBorder" Property="BorderBrush" Value="{DynamicResource Button.Disabled.Foreground}" />
+                            <Setter TargetName="ExpandPath" Property="Stroke" Value="{DynamicResource Button.Disabled.Foreground}" />
+                            <Setter Property="Data" TargetName="ExpandPath" Value=""/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--#endregion-->
+
 </ResourceDictionary>

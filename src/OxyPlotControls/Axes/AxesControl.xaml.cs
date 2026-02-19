@@ -31,7 +31,6 @@ using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 using Wpf = OxyPlot.Wpf;
 
 namespace OxyPlotControls
@@ -42,40 +41,6 @@ namespace OxyPlotControls
     /// </summary>
     public partial class AxesControl : UserControl
     {
-        #region Fields
-
-        /// <summary>
-        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
-        /// </summary>
-        private bool _suppressPlotChanged = true;
-
-        /// <summary>
-        /// Reference to the currently subscribed AxisControl for PlotChanged event management.
-        /// </summary>
-        private AxisControl? _subscribedAxisControl;
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Occurs when any axis property has been modified through user interaction.
-        /// </summary>
-        /// <remarks>
-        /// This event is raised when the child AxisControl's PlotChanged event fires,
-        /// bubbling up property changes from the currently selected axis.
-        /// Subscribe to this event to track unsaved changes and update dirty state.
-        /// The event is suppressed during control initialization.
-        /// </remarks>
-        public event EventHandler? PlotChanged;
-
-        #endregion
-
-        /// <summary>
-        /// The XML tag name used for serializing axes properties.
-        /// </summary>
-        public static readonly string AxesPropertiesTag = "Axes";
-
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
@@ -260,80 +225,7 @@ namespace OxyPlotControls
         public AxesControl()
         {
             InitializeComponent();
-
-            // Enable PlotChanged events after control is fully loaded
-            Loaded += (s, e) => _suppressPlotChanged = false;
-
-            // Subscribe to child AxisControl's PlotChanged event
-            SubscribeToAxisControl(AxisPropertiesControl);
-
-            // Clean up event subscriptions when control is unloaded
-            Unloaded += AxesControl_Unloaded;
         }
-
-        #region Protected Methods
-
-        /// <summary>
-        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
-        /// </summary>
-        protected virtual void OnPlotChanged()
-        {
-            if (!_suppressPlotChanged)
-            {
-                PlotChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Subscribes to a new AxisControl's PlotChanged event and unsubscribes from any previously subscribed control.
-        /// </summary>
-        /// <param name="axisControl">The AxisControl to subscribe to.</param>
-        private void SubscribeToAxisControl(AxisControl? axisControl)
-        {
-            // Unsubscribe from the old AxisControl if we were subscribed
-            if (_subscribedAxisControl != null)
-            {
-                _subscribedAxisControl.PlotChanged -= AxisPropertiesControl_PlotChanged;
-            }
-
-            // Subscribe to the new AxisControl
-            _subscribedAxisControl = axisControl;
-            if (_subscribedAxisControl != null)
-            {
-                _subscribedAxisControl.PlotChanged += AxisPropertiesControl_PlotChanged;
-            }
-        }
-
-        /// <summary>
-        /// Handles the PlotChanged event from the child AxisControl and bubbles it up.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event arguments.</param>
-        private void AxisPropertiesControl_PlotChanged(object? sender, EventArgs e)
-        {
-            OnPlotChanged();
-        }
-
-        /// <summary>
-        /// Handles the Unloaded event to clean up event subscriptions.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event arguments.</param>
-        private void AxesControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            // Unsubscribe from the AxisControl to prevent memory leaks
-            if (_subscribedAxisControl != null)
-            {
-                _subscribedAxisControl.PlotChanged -= AxisPropertiesControl_PlotChanged;
-                _subscribedAxisControl = null;
-            }
-        }
-
-        #endregion
 
         /// <summary>
         /// Handles selection changes in the axes combobox.
@@ -377,43 +269,6 @@ namespace OxyPlotControls
             AxesPropertyControlComboBox.SelectedIndex = index;
 
             AxisPropertiesControl.CloseExpanders();
-        }
-
-        /// <summary>
-        /// Serializes all axes properties to an XML element for persistence.
-        /// </summary>
-        /// <param name="plot">The OxyPlot Plot control containing the axes to serialize.</param>
-        /// <returns>An XElement containing all serialized axes properties.</returns>
-        public static XElement AxesPropertiesToXElement(Wpf.Plot plot)
-        {
-            var axesProperties = new XElement(AxesPropertiesTag);
-            foreach (var axis in plot.Axes)
-            {
-                axesProperties.Add(AxisControl.AxisPropertiesToXElement(axis));
-            }
-
-            return axesProperties;
-        }
-
-        /// <summary>
-        /// Deserializes axes properties from an XML element and applies them to the plot.
-        /// </summary>
-        /// <param name="plot">The OxyPlot Plot control to apply settings to.</param>
-        /// <param name="element">The XElement containing serialized axes properties.</param>
-        public static void XElementToAxesProperties(Wpf.Plot plot, XElement element)
-        {
-            // Early Exit
-            if (element.Name != AxesPropertiesTag) return;
-
-            // Set up the axes
-            plot.Axes.Clear();
-            Wpf.Axis? tempAxis;
-            foreach (var el in element.Elements(AxisControl.AxisPropertiesTag))
-            {
-                tempAxis = AxisControl.XElementToAxisProperties(el);
-                if (tempAxis == null) continue;
-                plot.Axes.Add(tempAxis);
-            }
         }
 
         /// <summary>

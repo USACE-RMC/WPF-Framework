@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Binding.SourceUpdated="OnBindingSourceUpdated">
+             >
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,6 +20,7 @@
                     <local:EmptyStringToNullConverter x:Key="EmptyToNullConverter"/>
                     <cntrls:TabSizeConverter x:Key="TabSizeConverter" />
                     <local:OxySeriesColorConverter x:Key="ColorConverter"/>
+                    <local:GenericSeriesFillConverter x:Key="FillColorConverter"/>
                     <local:OxySeriesMarkerFillConverter x:Key="MarkerFillConverter"/>
                     <local:OxySeriesMarkerStrokeConverter x:Key="MarkerStrokeConverter"/>
                     <local:OxyLineStyleToDashArrayConverter x:Key="LineStyleConverter"/>
@@ -195,13 +196,31 @@
                         SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.DecreasingColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowCandleStickColors}"/>
 
-                    <!--FillColor (BarSeries Only)-->
+                    <!--FillColor (HistogramSeries and other series with FillColor)-->
                     <cntrls:ColorPropertyControl
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Fill"
-                        SelectedColor="{Binding ElementName=SeriesProperties, Path=Series.FillColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, Converter={StaticResource OxyAutoColorConverter}}"
-                        Visibility="{Binding ElementName=SeriesProperties, Path=Series.FillColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
+                        Visibility="{Binding ElementName=SeriesProperties, Path=Series.FillColor, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}">
+                        <cntrls:ColorPropertyControl.SelectedColor>
+                            <MultiBinding
+                                Converter="{StaticResource FillColorConverter}"
+                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"
+                                NotifyOnSourceUpdated="True">
+                                <Binding
+                                    Path="Series.FillColor"
+                                    ElementName="SeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="TwoWay"
+                                    NotifyOnSourceUpdated="True"/>
+                                <Binding
+                                    Path="Series"
+                                    ElementName="SeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="OneWay"/>
+                            </MultiBinding>
+                        </cntrls:ColorPropertyControl.SelectedColor>
+                    </cntrls:ColorPropertyControl>
 
                     <!--LineStyle (LineSeries and BoxPlotSeries Only - hidden for StairStepSeries)-->
                     <cntrls:LineStyleSelectorControl
@@ -256,7 +275,7 @@
                         Title="Line Thickness"
                         WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.StrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
-                        Visibility="{Binding ElementName=SeriesProperties, Path=ShowStandardLineStyle}"/>
+                        Visibility="{Binding ElementName=SeriesProperties, Path=ShowStandardLineThickness}"/>
 
                     <!--StairStepSeries: Horizontal Line Thickness-->
                     <cntrls:LineWidthSelectorControl
@@ -560,14 +579,14 @@
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=Series.ErrorBarStrokeThickness, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
 
-                    <!--MinimumErrorSize (ScatterErrorSeries Only)-->
+                    <!--MinimumErrorSize (ScatterErrorSeries Only) - hidden, too niche for UI-->
                     <cntrls:NumericPropertyControl
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Minimum Error Size"
                         Number="{Binding ElementName=SeriesProperties, Path=Series.MinimumErrorSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
-                        Visibility="{Binding ElementName=SeriesProperties, Path=Series.MinimumErrorSize, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
+                        Visibility="Collapsed"/>
 
                 </DockPanel>
 

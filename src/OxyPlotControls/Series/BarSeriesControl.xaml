@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Binding.SourceUpdated="OnBindingSourceUpdated">
+             >
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -113,27 +113,16 @@
                         WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.StrokeThickness, ElementName=BarSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"/>
 
-                <!--BarWidth (BarSeries Only)-->
+                <!--GapWidth (CategoryAxis property controlling gap between bars/columns)-->
                 <cntrls:NumericPropertySelectorControl
                         Margin="0 2"
                         DockPanel.Dock="Top"
-                        Title="Bar Width"
+                        Title="Gap Width"
                         CanHaveNegative="False"
                         NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=BarSeriesProperties, Path=Series.BarWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                        SelectedNumber="{Binding ElementName=BarSeriesProperties, Path=CategoryAxis.GapWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
-                        Visibility="{Binding ElementName=BarSeriesProperties, Path=Series.BarWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
-
-                <!--ColumnWidth (ColumnSeries Only)-->
-                <cntrls:NumericPropertySelectorControl
-                        Margin="0 2"
-                        DockPanel.Dock="Top"
-                        Title="Column Width"
-                        CanHaveNegative="False"
-                        NumericOptions="{StaticResource LineWidthOptions}"
-                        SelectedNumber="{Binding ElementName=BarSeriesProperties, Path=Series.ColumnWidth, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
-                        PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
-                        Visibility="{Binding ElementName=BarSeriesProperties, Path=Series.ColumnWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
+                        Visibility="{Binding ElementName=BarSeriesProperties, Path=CategoryAxis.GapWidth, Converter={StaticResource AlwaysVisibleConverter}, FallbackValue=Collapsed}"/>
             </DockPanel>
         </Expander>
 

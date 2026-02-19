@@ -27,7 +27,7 @@
         <DataGrid x:Name="MyDataGrid" Margin="6" Height="250" Width="400" 
                   AutoGenerateColumns="False" 
                   IsReadOnly="True" 
-                  Background="{DynamicResource DynamicResource DataGrid.Static.Background}" 
+                  Background="{DynamicResource DataGrid.Static.Background}"  
                   BorderBrush="{DynamicResource SeparatorBorder}" 
                   BorderThickness="1"
                   GridLinesVisibility="None" 
@@ -38,7 +38,6 @@
                   SelectionChanged="MyDataGrid_SelectionChanged">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="Height" Value="18"/>
                     <Setter Property="Background" Value="Transparent"/>
                     <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowForeground}"/>
                     <Setter Property="ToolTip">
@@ -52,12 +51,33 @@
                 <DataGridTemplateColumn HeaderStyle="{DynamicResource Center_ColumnHeaderStyle_Modal}" Width="18" CanUserSort="False" CanUserReorder="False" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding ElementName=RFDialog, Path=FileImage}" />
+                            <Image Source="{Binding ElementName=RFDialog, Path=FileImage}" Width="16" Height="16" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" MaxWidth="200" Header="Project" Binding="{Binding Name}" CanUserSort="True" CanUserReorder="False" />
-                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" Width="*" Header="Location" Binding="{Binding DisplayLocation}" CanUserSort="True" CanUserReorder="False"/>
+                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" MaxWidth="200" Header="Project" Binding="{Binding Name}" CanUserSort="True" CanUserReorder="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="TextAlignment" Value="Left" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" Width="*" Header="Location" Binding="{Binding DisplayLocation}" CanUserSort="True" CanUserReorder="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="TextAlignment" Value="Left" />
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <TextBlock Text="{Binding FilePath}" TextWrapping="WrapWithOverflow"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 

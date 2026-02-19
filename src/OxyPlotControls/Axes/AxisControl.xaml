@@ -10,8 +10,7 @@
              MinWidth="200"
              MinHeight="100"
              d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Binding.SourceUpdated="OnBindingSourceUpdated">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

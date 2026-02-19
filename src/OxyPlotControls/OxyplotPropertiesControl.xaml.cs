@@ -41,46 +41,6 @@ namespace OxyPlotControls
     /// </summary>
     public partial class OxyPlotPropertiesControl : UserControl
     {
-        #region PlotChanged Event
-
-        /// <summary>
-        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
-        /// Managed internally by the control's Loaded/Unloaded lifecycle.
-        /// </summary>
-        private bool _suppressPlotChanged = true;
-
-        /// <summary>
-        /// Gets or sets whether PlotChanged events are externally suppressed.
-        /// When true, prevents PlotChanged from firing regardless of the internal suppression state.
-        /// Used by consumers to prevent feedback loops when programmatically loading plot settings.
-        /// </summary>
-        public bool SuppressPlotChanged { get; set; }
-
-        /// <summary>
-        /// Occurs when any plot property in this control has been modified by the user.
-        /// This event aggregates changes from all child property controls (General, Legend, Axes, Series, Annotations).
-        /// </summary>
-        public event EventHandler? PlotChanged;
-
-        /// <summary>
-        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
-        /// </summary>
-        protected virtual void OnPlotChanged()
-        {
-            if (!_suppressPlotChanged && !SuppressPlotChanged)
-            {
-                PlotChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        /// Handles PlotChanged events from child property controls.
-        /// </summary>
-        private void ChildControl_PlotChanged(object? sender, EventArgs e)
-        {
-            OnPlotChanged();
-        }
-
         /// <summary>
         /// Forces all child controls to refresh their bindings to the current Plot object.
         /// Call after <see cref="OxyPlotSettingsSerializer.FromXelement"/> or other operations
@@ -89,29 +49,17 @@ namespace OxyPlotControls
         /// <remarks>
         /// Temporarily clears and re-sets the Plot DP to trigger <c>OnPlotPropertyChanged</c>
         /// on all child controls, causing their XAML property-path bindings to re-resolve.
-        /// PlotChanged events are suppressed during the refresh cycle.
         /// </remarks>
         public void RefreshPlotBindings()
         {
             var plot = Plot;
             if (plot == null) return;
 
-            // Suppress PlotChanged events during the refresh cycle
-            _suppressPlotChanged = true;
-
             // Clear and re-set the Plot DP to force OnPlotPropertyChanged on all
             // child controls, which re-evaluates their bindings.
             Plot = null;
             Plot = plot;
-
-            // Defer re-enable to after bindings have settled
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
-            {
-                _suppressPlotChanged = false;
-            }));
         }
-
-        #endregion
 
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
@@ -271,50 +219,9 @@ namespace OxyPlotControls
 
             SetDefaultStyles();
 
-            Loaded += OxyPlotPropertiesControl_Loaded;
-            Unloaded += OxyPlotPropertiesControl_Unloaded;
-
             // Re-trigger the selection change now that bindings are ready
             // (the initial SelectionChanged fired during InitializeComponent was skipped)
             PropertyControlComboBox_SelectionChanged(PropertyControlComboBox, null!);
-        }
-
-        /// <summary>
-        /// Handles the Loaded event. Enables PlotChanged notifications.
-        /// </summary>
-        private void OxyPlotPropertiesControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            _suppressPlotChanged = false;
-        }
-
-        /// <summary>
-        /// Handles the Unloaded event. Unsubscribes from all child control events to prevent memory leaks.
-        /// </summary>
-        private void OxyPlotPropertiesControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            _suppressPlotChanged = true;
-
-            // Unsubscribe from any lazily-created child controls
-            if (_generalControls != null)
-            {
-                _generalControls.PlotChanged -= ChildControl_PlotChanged;
-            }
-            if (_legendControls != null)
-            {
-                _legendControls.PlotChanged -= ChildControl_PlotChanged;
-            }
-            if (_axesControls != null)
-            {
-                _axesControls.PlotChanged -= ChildControl_PlotChanged;
-            }
-            if (_seriesControls != null)
-            {
-                _seriesControls.PlotChanged -= ChildControl_PlotChanged;
-            }
-            if (_annotationsControls != null)
-            {
-                _annotationsControls.PlotChanged -= ChildControl_PlotChanged;
-            }
         }
 
         /// <summary>
@@ -543,7 +450,6 @@ namespace OxyPlotControls
                         BindingOperations.SetBinding(_generalControls, GeneralPlotControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_generalControls, GeneralPlotControl.ExpanderStyleProperty, _expanderBinding);
                         PropertyControlsGrid.Children.Add(_generalControls);
-                        _generalControls.PlotChanged += ChildControl_PlotChanged;
                     }
                     _generalControls.Visibility = Visibility.Visible;
                     break;
@@ -556,7 +462,6 @@ namespace OxyPlotControls
                         BindingOperations.SetBinding(_legendControls, LegendControl.PlotProperty, _plotBinding);
                         BindingOperations.SetBinding(_legendControls, LegendControl.ExpanderStyleProperty, _expanderBinding);
                         PropertyControlsGrid.Children.Add(_legendControls);
-                        _legendControls.PlotChanged += ChildControl_PlotChanged;
                     }
                     _legendControls.Visibility = Visibility.Visible;
                     break;
@@ -571,7 +476,6 @@ namespace OxyPlotControls
                         BindingOperations.SetBinding(_axesControls, AxesControl.TabItemStyleProperty, _tabItemStyleBinding);
                         BindingOperations.SetBinding(_axesControls, AxesControl.ComboBoxStyleProperty, _comboboxStyleBinding);
                         PropertyControlsGrid.Children.Add(_axesControls);
-                        _axesControls.PlotChanged += ChildControl_PlotChanged;
                     }
                     _axesControls.Visibility = Visibility.Visible;
                     break;
@@ -585,7 +489,6 @@ namespace OxyPlotControls
                         BindingOperations.SetBinding(_seriesControls, SeriesSelectorControl.ExpanderStyleProperty, _expanderBinding);
                         BindingOperations.SetBinding(_seriesControls, SeriesSelectorControl.ComboBoxStyleProperty, _comboboxStyleBinding);
                         PropertyControlsGrid.Children.Add(_seriesControls);
-                        _seriesControls.PlotChanged += ChildControl_PlotChanged;
                     }
                     _seriesControls.Visibility = Visibility.Visible;
                     break;
@@ -599,7 +502,6 @@ namespace OxyPlotControls
                         BindingOperations.SetBinding(_annotationsControls, AnnotationSelectorControl.ExpanderStyleProperty, _expanderBinding);
                         BindingOperations.SetBinding(_annotationsControls, AnnotationSelectorControl.ComboBoxStyleProperty, _comboboxStyleBinding);
                         PropertyControlsGrid.Children.Add(_annotationsControls);
-                        _annotationsControls.PlotChanged += ChildControl_PlotChanged;
                     }
                     _annotationsControls.Visibility = Visibility.Visible;
                     break;

@@ -27,41 +27,43 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System.Xml.Linq;
-using OxyPlot.Wpf;
-using OxyPlot.Wpf.Serialization;
+
+using OxyPlot;
 
 namespace OxyPlotControls
 {
     /// <summary>
-    /// Provides serialization and deserialization functionality for OxyPlot plot settings.
-    /// Delegates to <see cref="PlotSerializer"/> for the actual implementation.
+    /// Defines the color values for an OxyPlot chart theme.
+    /// Themes control chart infrastructure colors (background, axes, text, gridlines, legend, annotations)
+    /// while preserving user-controlled series colors.
     /// </summary>
-    public static class OxyPlotSettingsSerializer
+    public class OxyPlotTheme
     {
-        /// <summary>
-        /// The XML tag name used for the root element containing OxyPlot properties.
-        /// </summary>
-        public static readonly string OxyplotPropertiesTag = PlotSerializer.OxyplotPropertiesTag;
+        // General
+        public OxyColor Background { get; set; }
+        public OxyColor PlotAreaBackground { get; set; }
+        public OxyColor PlotAreaBorderColor { get; set; }
 
-        /// <summary>
-        /// Serializes all plot properties to an XElement for persistence.
-        /// </summary>
-        /// <param name="plot">The OxyPlot Plot control to serialize.</param>
-        /// <returns>An XElement containing all serialized plot properties including general settings, legend, axes, annotations, and series.</returns>
-        public static XElement ToXelement(Plot plot)
-        {
-            return PlotSerializer.ToXElement(plot);
-        }
+        // Title & Subtitle
+        public OxyColor TitleColor { get; set; }
+        public OxyColor SubtitleColor { get; set; }
 
-        /// <summary>
-        /// Deserializes plot properties from an XElement and applies them to the plot.
-        /// </summary>
-        /// <param name="plot">The OxyPlot Plot control to apply settings to.</param>
-        /// <param name="element">The XElement containing serialized plot properties.</param>
-        public static void FromXelement(Plot plot, XElement element)
-        {
-            PlotSerializer.FromXElement(plot, element);
-        }
+        // Axes
+        public OxyColor AxisTitleColor { get; set; }
+        public OxyColor AxisLineColor { get; set; }
+        public OxyColor AxisTextColor { get; set; }
+        public OxyColor AxisTickColor { get; set; }
+        public OxyColor MajorGridlineColor { get; set; }
+        public OxyColor MinorGridlineColor { get; set; }
+
+        // Legend
+        public OxyColor LegendTitleColor { get; set; }
+        public OxyColor LegendTextColor { get; set; }
+        public OxyColor LegendBackground { get; set; }
+        public OxyColor LegendBorderColor { get; set; }
+
+        // Annotations
+        public OxyColor AnnotationTextColor { get; set; }
+        public OxyColor AnnotationStrokeColor { get; set; }
     }
 }

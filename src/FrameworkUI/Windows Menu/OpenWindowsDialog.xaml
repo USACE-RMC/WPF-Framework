@@ -47,12 +47,28 @@
                 <DataGridTemplateColumn HeaderStyle="{DynamicResource Center_ColumnHeaderStyle_Modal}" Width="SizeToCells" CanUserSort="False" CanUserReorder="False" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding ImageSource}"/>
+                            <Image Source="{Binding ImageSource}" Width="16" Height="16" RenderOptions.EdgeMode="Aliased" RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" MaxWidth="200" Header="File Type" Binding="{Binding Element.ParentCollection.Name}" CanUserSort="True" CanUserReorder="False" />
-                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" Width="*" Header="Name" Binding="{Binding Element.DisplayName}" CanUserSort="True" CanUserReorder="False"/>
+                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" MaxWidth="200" Header="File Type" Binding="{Binding Element.ParentCollection.Name}" CanUserSort="True" CanUserReorder="False" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="TextAlignment" Value="Left" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn HeaderStyle="{DynamicResource Left_ColumnHeaderStyle_Modal}" MinWidth="100" Width="*" Header="Name" Binding="{Binding Element.DisplayName}" CanUserSort="True" CanUserReorder="False">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="TextAlignment" Value="Left" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 

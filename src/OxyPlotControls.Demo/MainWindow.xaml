@@ -181,8 +181,7 @@
             <!-- Plot Area -->
             <Border Grid.Column="0"
                     BorderBrush="{DynamicResource Button.Static.Border}"
-                    BorderThickness="1"
-                    Background="{DynamicResource PlotWindowBackground}">
+                    BorderThickness="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -193,8 +192,6 @@
 
                     <oxy:Plot Name="TestPlot"
                               Grid.Column="0"
-                              Background="Transparent"
-                              PlotAreaBackground="White"
                               BorderBrush="Transparent"
                               BorderThickness="0"
                               SnapsToDevicePixels="True"
@@ -276,8 +273,8 @@
                            Opacity="0.6"
                            FontSize="11"/>
 
-                <!-- PlotChanged Test Label -->
-                <TextBlock x:Name="PlotChangedLabel"
+
+                <TextBlock x:Name="PropertyChangedLabel"
                            Grid.Column="1"
                            HorizontalAlignment="Center"
                            FontSize="11"

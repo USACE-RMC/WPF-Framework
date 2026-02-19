@@ -111,10 +111,7 @@ namespace OxyPlotControls.Demo
         /// </summary>
         private readonly Dictionary<string, System.Collections.IEnumerable> _categoryAxisLabelsRegistry = new Dictionary<string, System.Collections.IEnumerable>();
 
-        /// <summary>
-        /// Counter to track the number of PlotChanged events for testing.
-        /// </summary>
-        private int _plotChangedCount = 0;
+        private int _propertyChangedCount;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -123,8 +120,6 @@ namespace OxyPlotControls.Demo
         {
             InitializeComponent();
 
-            // Subscribe to PlotChanged events for testing
-            // Note: Subscriptions moved to Loaded event to avoid potential initialization issues
             Loaded += MainWindow_Loaded;
 
             // Trigger line series in combobox (unbound)
@@ -132,16 +127,35 @@ namespace OxyPlotControls.Demo
         }
 
         /// <summary>
-        /// Handles the Loaded event. Subscribes to PlotChanged events after all controls are fully loaded.
+        /// Handles the Loaded event. Subscribes to theme changes after all controls are fully loaded.
         /// </summary>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            OxyPlotToolBar.PlotChanged += OnPlotChanged;
-            PropertiesControl.PlotChanged += OnPlotChanged;
+            // Subscribe to INPC on the Plot to verify PropertyChanged fires for appearance changes
+            TestPlot.PropertyChanged += OnPlotPropertyChanged;
+
+            // Subscribe to collection changes on Annotations, Series, and Axes
+            TestPlot.Annotations.CollectionChanged += OnPlotCollectionChanged;
+            TestPlot.Series.CollectionChanged += OnPlotCollectionChanged;
+            TestPlot.Axes.CollectionChanged += OnPlotCollectionChanged;
 
             // Subscribe to theme changes to refresh plot when theme changes
             // OxyPlot controls need explicit invalidation because they use a custom rendering pipeline
             ThemeService.Instance.ThemeChanged += OnThemeChanged;
+        }
+
+        private void OnPlotPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            _propertyChangedCount++;
+            PropertyChangedLabel.Text = $"INPC #{_propertyChangedCount}: {e.PropertyName} at {DateTime.Now:HH:mm:ss.fff}";
+        }
+
+        private void OnPlotCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            _propertyChangedCount++;
+            string collectionName = sender == TestPlot.Annotations ? "Annotations"
+                : sender == TestPlot.Series ? "Series" : "Axes";
+            PropertyChangedLabel.Text = $"Collection #{_propertyChangedCount}: {collectionName}.{e.Action} at {DateTime.Now:HH:mm:ss.fff}";
         }
 
         /// <summary>
@@ -162,17 +176,6 @@ namespace OxyPlotControls.Demo
                     TestPlot.InvalidatePlot(true);
                 }
             }));
-        }
-
-        /// <summary>
-        /// Handles PlotChanged events from the toolbar and properties control.
-        /// Updates the status bar label with the timestamp.
-        /// </summary>
-        private void OnPlotChanged(object? sender, EventArgs e)
-        {
-            _plotChangedCount++;
-            string source = sender?.GetType().Name ?? "Unknown";
-            PlotChangedLabel.Text = $"Plot Changed #{_plotChangedCount} from {source} at {DateTime.Now:HH:mm:ss.fff}";
         }
 
         private List<DataPoint> CreateNormalDist(double x0, double x1, double mean, double variance, int n = 1001)
@@ -262,6 +265,10 @@ namespace OxyPlotControls.Demo
 
                 // Repopulate category axis labels
                 RepopulateCategoryAxisLabels();
+
+                // Reapply the current theme after loading settings
+                var currentTheme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+                OxyPlotThemeManager.ApplyTheme(TestPlot, currentTheme);
 
                 TestPlot.ResetAllAxes();
                 TestPlot.InvalidatePlot(true);
@@ -686,6 +693,13 @@ namespace OxyPlotControls.Demo
                 case "Stem Series":
                     StemSeries_Create();
                     break;
+            }
+
+            // Reapply the current OxyPlot theme to newly created axes and plot properties
+            if (TestPlot != null)
+            {
+                var currentTheme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+                OxyPlotThemeManager.ApplyTheme(TestPlot, currentTheme);
             }
         }
 
@@ -1524,7 +1538,7 @@ namespace OxyPlotControls.Demo
             TestPlot.Axes.Add(xAxis);
             TestPlot.Axes.Add(yAxis);
 
-            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("Demo_OxyPlotControls.USGS_01134500.xml"))
+            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("OxyPlotControls.Demo.USGS_01134500.xml"))
             {
                 if (resource == null)
                 {

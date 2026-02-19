@@ -113,6 +113,8 @@
         <local:SeriesControl
             x:Name="SeriesPropertiesControl"
             Margin="0,5,0,0"
-            Grid.Row="1" ExpanderStyle="{Binding ElementName=SeriesSelectorRoot, Path=ExpanderStyle}"/>
+            Grid.Row="1"
+            Plot="{Binding ElementName=SeriesSelectorRoot, Path=Plot}"
+            ExpanderStyle="{Binding ElementName=SeriesSelectorRoot, Path=ExpanderStyle}"/>
     </Grid>
 </UserControl>

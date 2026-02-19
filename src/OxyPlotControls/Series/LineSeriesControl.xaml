@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             Binding.SourceUpdated="OnBindingSourceUpdated">
+             >
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -21,6 +21,7 @@
                     <local:AreaSeriesFillConverter x:Key="AreaFillConverter"/>
                     <local:LineSeriesMarkerFillConverter x:Key="MarkerFillConverter"/>
                     <local:LineSeriesMarkerStrokeConverter x:Key="MarkerStrokeConverter"/>
+                    <local:VerticalStrokeThicknessConverter x:Key="VerticalThicknessConverter"/>
                     <local:OxyLineStyleToDashArrayConverter x:Key="LineStyleConverter"/>
                     <local:OxyDefaultFontSizeConverter x:Key="DefaultFontSizeConverter"/>
                     <cntrls:DoubleToGridLengthConverter x:Key="ActualToLengthConverter" />
@@ -259,9 +260,19 @@
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Vertical Line Thickness"
-                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.VerticalStrokeThickness, ElementName=LineSeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                        WidthOptions="{StaticResource LineWidthOptions}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
-                        Visibility="{Binding ElementName=LineSeriesProperties, Path=ShowStairStepControls}"/>
+                        Visibility="{Binding ElementName=LineSeriesProperties, Path=ShowStairStepControls}">
+                    <cntrls:LineWidthSelectorControl.SelectedWidth>
+                        <MultiBinding Converter="{StaticResource VerticalThicknessConverter}"
+                            UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" NotifyOnSourceUpdated="True">
+                            <Binding Path="Series.VerticalStrokeThickness" ElementName="LineSeriesProperties"
+                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" NotifyOnSourceUpdated="True"/>
+                            <Binding Path="Series.StrokeThickness" ElementName="LineSeriesProperties"
+                                UpdateSourceTrigger="PropertyChanged" Mode="OneWay"/>
+                        </MultiBinding>
+                    </cntrls:LineWidthSelectorControl.SelectedWidth>
+                </cntrls:LineWidthSelectorControl>
 
             </DockPanel>
 
@@ -312,6 +323,11 @@
                                     ElementName="LineSeriesProperties"
                                     UpdateSourceTrigger="PropertyChanged"
                                     Mode="OneWay"/>
+                            <Binding
+                                    Path="Series.Color"
+                                    ElementName="LineSeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="OneWay"/>
                         </MultiBinding>
                     </cntrls:ColorPropertyControl.SelectedColor>
                 </cntrls:ColorPropertyControl>
@@ -344,6 +360,11 @@
                                     NotifyOnSourceUpdated="True"/>
                             <Binding
                                     Path="Series"
+                                    ElementName="LineSeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="OneWay"/>
+                            <Binding
+                                    Path="Series.Color"
                                     ElementName="LineSeriesProperties"
                                     UpdateSourceTrigger="PropertyChanged"
                                     Mode="OneWay"/>

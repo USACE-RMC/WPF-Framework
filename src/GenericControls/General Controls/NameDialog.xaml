@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Name="OKButton" IsDefault="True" Click="OKButton_Click" Content="OK" Grid.Column="0" Margin="4" Width="75" Height="24" Cursor="Hand"/>
-            <Button Name="CancelButton" IsCancel="True" Click="CancelButton_Click" Content="Cancel" Grid.Column="1" Margin="4" Width="75" Height="24" Cursor="Hand"/>
+            <Button Name="CancelButton" IsCancel="True" Click="CancelButton_Click" Content="Cancel" Grid.Column="1" Margin="4, 4, 0, 4" Width="75" Height="24" Cursor="Hand"/>
         </Grid>
     </Grid>
 </local:MetroDialogWindow>

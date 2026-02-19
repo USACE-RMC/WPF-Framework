@@ -43,6 +43,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using OxyPlot;
+using Themes;
 using Wpf = OxyPlot.Wpf;
 
 namespace OxyPlotControls
@@ -53,40 +54,11 @@ namespace OxyPlotControls
     public partial class OxyPlotToolbar : UserControl, IDisposable
     {
         private bool _disposed = false;
-        #region PlotChanged Event
-
         /// <summary>
-        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
-        /// Managed internally by the control's Loaded/Unloaded lifecycle.
+        /// Tracks whether the initial theme has been applied on first load.
+        /// Prevents redundant ApplyTheme calls when the control is re-loaded (e.g., tab switching).
         /// </summary>
-        private bool _suppressPlotChanged = true;
-
-        /// <summary>
-        /// Gets or sets whether PlotChanged events are externally suppressed.
-        /// When true, prevents PlotChanged from firing regardless of the internal suppression state.
-        /// Used by consumers to prevent feedback loops when programmatically loading plot settings.
-        /// </summary>
-        public bool SuppressPlotChanged { get; set; }
-
-        /// <summary>
-        /// Occurs when the plot has been modified by user interactions through the toolbar.
-        /// This includes adding/moving annotations, editing text directly on the chart,
-        /// and other direct plot modifications.
-        /// </summary>
-        public event EventHandler? PlotChanged;
-
-        /// <summary>
-        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
-        /// </summary>
-        protected virtual void OnPlotChanged()
-        {
-            if (!_suppressPlotChanged && !SuppressPlotChanged)
-            {
-                PlotChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        #endregion
+        private bool _initialThemeApplied;
 
         #region Construction
 
@@ -132,20 +104,49 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Handles the Loaded event. Enables PlotChanged notifications.
+        /// Handles the Loaded event. Subscribes to theme changes.
         /// </summary>
         private void OxyPlotToolbar_Loaded(object sender, RoutedEventArgs e)
         {
-            _suppressPlotChanged = false;
+            // Prevent stacking duplicate subscriptions (defensive against re-entrant Loaded)
+            ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
+            ThemeService.Instance.ThemeChanged += OnAppThemeChanged;
+
+            // Apply the current theme only on first load (not on every tab switch)
+            if (!_initialThemeApplied && Plot != null)
+            {
+                _initialThemeApplied = true;
+                Plot.SuppressPropertyChanged = true;
+                var theme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+                OxyPlotThemeManager.ApplyTheme(Plot, theme);
+                Plot.SuppressPropertyChanged = false;
+            }
         }
 
         /// <summary>
-        /// Handles the Unloaded event. Disables PlotChanged notifications and disposes resources.
+        /// Handles the Unloaded event. Unsubscribes from theme changes and disposes resources.
         /// </summary>
         private void OxyPlotToolbar_Unloaded(object sender, RoutedEventArgs e)
         {
-            _suppressPlotChanged = true;
+            ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
             Dispose();
+        }
+
+        /// <summary>
+        /// Handles the ThemeService.ThemeChanged event. Applies the new theme to the connected plot
+        /// after confirming with the user (unless the warning has been suppressed).
+        /// </summary>
+        private void OnAppThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            if (Plot == null) return;
+
+            if (!OxyPlotThemeManager.ConfirmThemeChange(Window.GetWindow(this)))
+                return;
+
+            Plot.SuppressPropertyChanged = true;
+            var theme = OxyPlotThemeManager.GetThemeFor(e.NewTheme);
+            OxyPlotThemeManager.ApplyTheme(Plot, theme);
+            Plot.SuppressPropertyChanged = false;
         }
 
         #endregion
@@ -223,6 +224,16 @@ namespace OxyPlotControls
 
                 // Set up leader line for adding polyline and polygon annotations
                 newPlot.grid.Children.Add(oxyToolBar._c);
+
+                // Apply current theme to the newly connected plot (only if toolbar is already loaded;
+                // during initial construction, the Loaded handler will apply the theme instead)
+                if (oxyToolBar.IsLoaded)
+                {
+                    newPlot.SuppressPropertyChanged = true;
+                    var theme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+                    OxyPlotThemeManager.ApplyTheme(newPlot, theme);
+                    newPlot.SuppressPropertyChanged = false;
+                }
             }
         }
 
@@ -624,7 +635,6 @@ namespace OxyPlotControls
         {
             if (_addAnnotationToolMode != AddToolMode.None)
             {
-                // Fire PlotChanged if an annotation was actually created
                 bool annotationWasCreated = _targetAddAnnotation != null;
 
                 if (_addAnnotationToolMode == AddToolMode.AddPolygonAnnotation || _addAnnotationToolMode == AddToolMode.AddPolylineAnnotation)
@@ -637,12 +647,6 @@ namespace OxyPlotControls
                 _doubleClicked = false;
                 _addAnnotationToolMode = AddToolMode.None;
                 _targetAddAnnotation = null!;
-
-                // Notify that the plot has changed (annotation was added)
-                if (annotationWasCreated)
-                {
-                    OnPlotChanged();
-                }
 
                 if (PanButton.IsChecked == true)
                 {
@@ -715,7 +719,6 @@ namespace OxyPlotControls
                     {
                         if (!newArrow.IsEnabled) return;
                         newArrow.Color = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.TextAnnotation)
@@ -759,7 +762,6 @@ namespace OxyPlotControls
                     {
                         if (!newText.IsEnabled) return;
                         newText.Background = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.RectangleAnnotation)
@@ -831,7 +833,6 @@ namespace OxyPlotControls
                     {
                         if (!newRect.IsEnabled) return;
                         newRect.Fill = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.EllipseAnnotation)
@@ -903,7 +904,6 @@ namespace OxyPlotControls
                     {
                         if (!newEllipse.IsEnabled) return;
                         newEllipse.Fill = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.PointAnnotation)
@@ -951,7 +951,6 @@ namespace OxyPlotControls
                     {
                         if (!newPoint.IsEnabled) return;
                         newPoint.Fill = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.PolygonAnnotation)
@@ -1053,7 +1052,6 @@ namespace OxyPlotControls
                     {
                         if (!newPolygon.IsEnabled) return;
                         newPolygon.Fill = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.PolylineAnnotation)
@@ -1141,7 +1139,6 @@ namespace OxyPlotControls
                     {
                         if (!newPolyline.IsEnabled) return;
                         newPolyline.Color = _originalColor;
-                        OnPlotChanged();
                     };
                 }
                 else if (item is Wpf.LineAnnotation)
@@ -1210,7 +1207,6 @@ namespace OxyPlotControls
                         if (!newLine.IsEnabled) return;
                         newLine.Color = _originalColor;
                         CloseLineAnnotationTooltip(newLine);
-                        OnPlotChanged();
                     };
                 }
             }
@@ -1348,6 +1344,7 @@ namespace OxyPlotControls
                 {
                     case AddToolMode.AddArrowAnnotation:
                         var newArrow = new Wpf.ArrowAnnotation { Text = "Arrow Annotation" };
+                        ApplyThemeToNewAnnotation(newArrow);
                         Plot.Annotations.Add(newArrow);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newArrow);
@@ -1358,6 +1355,7 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddTextAnnotation:
                         var newText = new Wpf.TextAnnotation { Text = "Text Annotation" };
+                        ApplyThemeToNewAnnotation(newText);
                         Plot.Annotations.Add(newText);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newText);
@@ -1367,6 +1365,7 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddVerticalLineAnnotation:
                         var newVLine = new Wpf.LineAnnotation { Text = "Vertical Line Annotation" };
+                        ApplyThemeToNewAnnotation(newVLine);
                         Plot.Annotations.Add(newVLine);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newVLine);
@@ -1402,6 +1401,7 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddHorizontalLineAnnotation:
                         var newHLine = new Wpf.LineAnnotation { Text = "Horizontal Line Annotation" };
+                        ApplyThemeToNewAnnotation(newHLine);
                         Plot.Annotations.Add(newHLine);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newHLine);
@@ -1437,6 +1437,7 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddRectangleAnnotation:
                         var newRectangle = new Wpf.RectangleAnnotation { Text = "Rectangle Annotation" };
+                        ApplyThemeToNewAnnotation(newRectangle);
                         Plot.Annotations.Add(newRectangle);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newRectangle);
@@ -1452,6 +1453,7 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddEllipseAnnotation:
                         var newEllipse = new Wpf.EllipseAnnotation { Text = "Ellipse Annotation" };
+                        ApplyThemeToNewAnnotation(newEllipse);
                         Plot.Annotations.Add(newEllipse);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newEllipse);
@@ -1467,6 +1469,7 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddPointAnnotation:
                         var newPoint = new Wpf.PointAnnotation { Text = "Point Annotation", Size = 5 };
+                        ApplyThemeToNewAnnotation(newPoint);
                         Plot.Annotations.Add(newPoint);
                         Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newPoint);
@@ -1487,6 +1490,7 @@ namespace OxyPlotControls
                         if (_targetAddAnnotation == null)
                         {
                             var newPolygon = new Wpf.PolygonAnnotation { Text = "Polygon Annotation" };
+                            ApplyThemeToNewAnnotation(newPolygon);
                             newPolygon.Points = new System.Collections.Generic.List<DataPoint>();
                             var dataPointClicked = ConvertScreenPointToDataPoint(e.Position);
                             newPolygon.Points.Add(dataPointClicked);
@@ -1515,6 +1519,7 @@ namespace OxyPlotControls
                         if (_targetAddAnnotation == null)
                         {
                             var newPolyline = new Wpf.PolylineAnnotation { Text = "Polyline Annotation" };
+                            ApplyThemeToNewAnnotation(newPolyline);
                             newPolyline.Points = new System.Collections.Generic.List<DataPoint>();
                             Plot.Annotations.Add(newPolyline);
                             PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newPolyline);
@@ -2327,7 +2332,6 @@ namespace OxyPlotControls
                             {
                                 Plot.Annotations.Remove(wpfAnno);
                                 Plot.InvalidatePlot(false);
-                                OnPlotChanged();
                             };
 
                             _contextMenu.Items.Add(editAnnoItem);
@@ -2761,8 +2765,6 @@ namespace OxyPlotControls
                     Plot.TitleColor = currentTextColor;
                 }
 
-                // Notify that the plot has changed (text was edited)
-                OnPlotChanged();
             };
         }
 
@@ -3924,6 +3926,51 @@ namespace OxyPlotControls
             foreach (var p in pnts)
             {
                 dps.Points.Add(new OxyPlot.Series.ScatterErrorPoint(p.Y, p.X, p.LowerErrorX, p.UpperErrorX, p.LowerErrorY, p.UpperErrorY, p.Size, p.Value, p.Tag));
+            }
+        }
+
+        #endregion
+
+        #region Theme Helpers
+
+        /// <summary>
+        /// Applies theme-aware default colors to a newly created annotation based on the current app theme.
+        /// </summary>
+        private void ApplyThemeToNewAnnotation(Wpf.Annotation annotation)
+        {
+            var theme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+            var textColor = Color.FromArgb(theme.AnnotationTextColor.A, theme.AnnotationTextColor.R, theme.AnnotationTextColor.G, theme.AnnotationTextColor.B);
+            var strokeColor = Color.FromArgb(theme.AnnotationStrokeColor.A, theme.AnnotationStrokeColor.R, theme.AnnotationStrokeColor.G, theme.AnnotationStrokeColor.B);
+
+            switch (annotation)
+            {
+                case Wpf.ArrowAnnotation arrow:
+                    arrow.TextColor = textColor;
+                    arrow.Color = strokeColor;
+                    break;
+                case Wpf.TextAnnotation text:
+                    text.TextColor = textColor;
+                    break;
+                case Wpf.LineAnnotation line:
+                    line.TextColor = textColor;
+                    line.Color = strokeColor;
+                    break;
+                case Wpf.RectangleAnnotation rect:
+                    rect.TextColor = textColor;
+                    break;
+                case Wpf.EllipseAnnotation ellipse:
+                    ellipse.TextColor = textColor;
+                    break;
+                case Wpf.PointAnnotation point:
+                    point.TextColor = textColor;
+                    break;
+                case Wpf.PolygonAnnotation polygon:
+                    polygon.TextColor = textColor;
+                    break;
+                case Wpf.PolylineAnnotation polyline:
+                    polyline.TextColor = textColor;
+                    polyline.Color = strokeColor;
+                    break;
             }
         }
 

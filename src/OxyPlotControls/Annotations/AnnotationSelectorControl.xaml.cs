@@ -1,4 +1,4 @@
-/*
+﻿/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -32,7 +32,6 @@ using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 using OxyPlot;
 using OxyPlot.Wpf;
 
@@ -44,30 +43,6 @@ namespace OxyPlotControls
     /// </summary>
     public partial class AnnotationSelectorControl : UserControl
     {
-        #region Fields
-
-        /// <summary>
-        /// Flag to suppress PlotChanged events during initialization or programmatic updates.
-        /// </summary>
-        private bool _suppressPlotChanged = true;
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Occurs when any annotation property has been modified through user interaction.
-        /// </summary>
-        /// <remarks>
-        /// This event is raised when the child AnnotationControl's PlotChanged event fires,
-        /// indicating that annotation properties have been modified by the user.
-        /// Subscribe to this event to track unsaved changes and update dirty state.
-        /// The event is suppressed during control initialization.
-        /// </remarks>
-        public event EventHandler? PlotChanged;
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
@@ -78,49 +53,11 @@ namespace OxyPlotControls
             InitializeComponent();
             SetDefaultComboboxStyle();
 
-            // Subscribe to child AnnotationControl's PlotChanged event to bubble it up
-            AnnotationPropertiesControl.PlotChanged += AnnotationPropertiesControl_PlotChanged;
-
-            // Enable PlotChanged events after control is fully loaded
-            Loaded += (s, e) => _suppressPlotChanged = false;
         }
 
         #endregion
 
-        #region Protected Methods
 
-        /// <summary>
-        /// Raises the <see cref="PlotChanged"/> event if not suppressed.
-        /// </summary>
-        protected virtual void OnPlotChanged()
-        {
-            if (!_suppressPlotChanged)
-            {
-                PlotChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Handles the PlotChanged event from the child AnnotationControl.
-        /// Bubbles up the event by raising our own PlotChanged event.
-        /// </summary>
-        /// <param name="sender">The source of the event (child AnnotationControl).</param>
-        /// <param name="e">The event arguments.</param>
-        private void AnnotationPropertiesControl_PlotChanged(object? sender, EventArgs e)
-        {
-            OnPlotChanged();
-        }
-
-        #endregion
-
-        /// <summary>
-        /// The XML tag name used for serializing annotations properties.
-        /// </summary>
-        public static readonly string AnnotationsPropertiesTag = "Annotations";
 
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
@@ -477,44 +414,6 @@ namespace OxyPlotControls
             if (Plot.Annotations.Count == 0) AnnotationPropertyControlComboBox.IsDropDownOpen = false;
         }
 
-        /// <summary>
-        /// Serializes all annotations properties to an XML element for persistence.
-        /// </summary>
-        /// <param name="plot">The OxyPlot Plot control containing the annotations to serialize.</param>
-        /// <returns>An XElement containing all serialized annotations properties.</returns>
-        public static XElement AnnotationsPropertiesToXElement(Plot plot)
-        {
-            var annotationProperties = new XElement(AnnotationsPropertiesTag);
-            foreach (var annotation in plot.Annotations)
-            {
-                var textualAnnotation = annotation as TextualAnnotation;
-                if (textualAnnotation == null) continue;
-                annotationProperties.Add(AnnotationControl.AnnotationPropertiesToXElement(textualAnnotation));
-            }
-
-            return annotationProperties;
-        }
-
-        /// <summary>
-        /// Deserializes annotations properties from an XML element and applies them to the plot.
-        /// </summary>
-        /// <param name="plot">The OxyPlot Plot control to apply settings to.</param>
-        /// <param name="element">The XElement containing serialized annotations properties.</param>
-        public static void XElementToAnnotationsProperties(Plot plot, XElement element)
-        {
-            // Early Exit
-            if (element.Name != AnnotationsPropertiesTag) return;
-
-            // Set up the annotations
-            plot.Annotations.Clear();
-            Annotation? tempAnnotation;
-            foreach (var el in element.Elements(AnnotationControl.AnnotationPropertiesTag))
-            {
-                tempAnnotation = AnnotationControl.XElementToAnnotationProperties(el);
-                if (tempAnnotation == null) continue;
-                plot.Annotations.Add(tempAnnotation);
-            }
-        }
 
         /// <summary>
         /// Finds a child element of the specified type and name in the visual tree.

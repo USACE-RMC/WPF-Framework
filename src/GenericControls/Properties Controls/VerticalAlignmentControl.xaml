@@ -33,7 +33,7 @@
 
         <ComboBox Grid.Column="2"  SizeChanged="ControlSizeChanged"
                   HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
-                  ItemsSource="{Binding ElementName=VAlignment, Path=AlignmentOptions}" 
+                  ItemsSource="{Binding ElementName=VAlignment, Path=FilteredAlignmentOptions}"
                   SelectedValue="{Binding Path=Alignment, ElementName=VAlignment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
     </Grid>
 </UserControl>
