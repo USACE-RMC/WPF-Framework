@@ -39,7 +39,7 @@
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowForeground}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
                     <Setter Property="ToolTip">
                         <Setter.Value>
                             <TextBlock Text="{Binding FilePath}" TextWrapping="Wrap"/>

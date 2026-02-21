@@ -583,75 +583,80 @@ namespace FrameworkInterfaces.Tests.Undo
 
         #endregion
 
-        #region UseDetailedDescriptions Tests
+        #region OnActionRecorded Callback Tests
 
         /// <summary>
-        /// Verifies that UseDetailedDescriptions defaults to true.
+        /// Verifies that the onActionRecorded callback is invoked when a property change is recorded.
         /// </summary>
         [Fact]
-        public void UseDetailedDescriptions_DefaultIsTrue()
+        public void OnActionRecorded_InvokedOnPropertyChange()
         {
-            var source = new TestNotifyObject();
+            var source = new TestNotifyObject { Name = "Initial" };
+            var undoManager = new UndoManager();
+            int callbackCount = 0;
+            var bridge = new UndoableStateBridge(source, () => undoManager, onActionRecorded: () => callbackCount++);
+
+            source.Name = "Changed";
+
+            Assert.Equal(1, callbackCount);
+        }
+
+        /// <summary>
+        /// Verifies that the onActionRecorded callback is not invoked during undo/redo replay.
+        /// </summary>
+        [Fact]
+        public void OnActionRecorded_NotInvokedDuringUndoRedo()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
+            var undoManager = new UndoManager();
+            int callbackCount = 0;
+            var bridge = new UndoableStateBridge(source, () => undoManager, onActionRecorded: () => callbackCount++);
+
+            source.Name = "Changed";
+            Assert.Equal(1, callbackCount);
+
+            // Undo should NOT invoke the callback
+            undoManager.Undo();
+            Assert.Equal(1, callbackCount);
+
+            // Redo should NOT invoke the callback
+            undoManager.Redo();
+            Assert.Equal(1, callbackCount);
+        }
+
+        /// <summary>
+        /// Verifies that the onActionRecorded callback is not invoked when recording is suspended.
+        /// </summary>
+        [Fact]
+        public void OnActionRecorded_NotInvokedWhenSuspended()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
+            var undoManager = new UndoManager();
+            int callbackCount = 0;
+            var bridge = new UndoableStateBridge(source, () => undoManager, onActionRecorded: () => callbackCount++);
+
+            using (bridge.SuspendRecording())
+            {
+                source.Name = "Changed";
+            }
+
+            Assert.Equal(0, callbackCount);
+        }
+
+        /// <summary>
+        /// Verifies that the bridge works correctly when onActionRecorded is null (default behavior).
+        /// </summary>
+        [Fact]
+        public void OnActionRecorded_NullCallback_DoesNotThrow()
+        {
+            var source = new TestNotifyObject { Name = "Initial" };
             var undoManager = new UndoManager();
             var bridge = new UndoableStateBridge(source, () => undoManager);
 
-            Assert.True(bridge.UseDetailedDescriptions);
-        }
+            var exception = Record.Exception(() => source.Name = "Changed");
 
-        /// <summary>
-        /// Verifies that UseDetailedDescriptions can be set to false.
-        /// </summary>
-        [Fact]
-        public void UseDetailedDescriptions_CanBeSetToFalse()
-        {
-            var source = new TestNotifyObject();
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, () => undoManager);
-
-            bridge.UseDetailedDescriptions = false;
-
-            Assert.False(bridge.UseDetailedDescriptions);
-        }
-
-        /// <summary>
-        /// Verifies that when UseDetailedDescriptions is true, action descriptions include property values.
-        /// </summary>
-        [Fact]
-        public void UseDetailedDescriptions_WhenTrue_IncludesValuesInDescription()
-        {
-            var source = new TestNotifyObject { Name = "Before" };
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, () => undoManager)
-            {
-                UseDetailedDescriptions = true
-            };
-
-            source.Name = "After";
-
-            var description = undoManager.UndoDescription;
-            Assert.NotNull(description);
-            // Description should mention property name at least
-            Assert.Contains("Name", description, StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Verifies that when UseDetailedDescriptions is false, action descriptions are simple.
-        /// </summary>
-        [Fact]
-        public void UseDetailedDescriptions_WhenFalse_UsesSimpleDescription()
-        {
-            var source = new TestNotifyObject { Name = "Before" };
-            var undoManager = new UndoManager();
-            var bridge = new UndoableStateBridge(source, () => undoManager, "test settings")
-            {
-                UseDetailedDescriptions = false
-            };
-
-            source.Name = "After";
-
-            var description = undoManager.UndoDescription;
-            Assert.NotNull(description);
-            Assert.Contains("test settings", description);
+            Assert.Null(exception);
+            Assert.True(undoManager.CanUndo);
         }
 
         #endregion

@@ -34,15 +34,13 @@
         <!--Buttons-->
         <Grid Grid.Row="2" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Name="OKButton" IsEnabled="False" Click="OKButton_Click" Content="OK"
-                    VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
-                    Grid.Column="0" Width="83" Height="24" Cursor="Hand" Margin="6,0,0,6"/>
+                    Grid.Column="0" Width="75" Height="24" Cursor="Hand" Margin="6,0,0,6"/>
             <Button Name="CancelButton" IsCancel="True" Content="Cancel"
-                    Width="83" Height="24" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
-                    Grid.Column="1" Margin="6,0,6,6" Cursor="Hand"/>
+                    Grid.Column="1" Width="75" Height="24" Cursor="Hand" Margin="6,0,6,6"/>
         </Grid>
     </Grid>
 </cntrls:MetroWindow>

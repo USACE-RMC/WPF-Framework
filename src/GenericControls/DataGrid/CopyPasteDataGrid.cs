@@ -33,6 +33,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -661,9 +662,14 @@ namespace GenericControls
                                         {
                                             y.SetValue(Items[rowIndex + i], Convert.ChangeType(double.PositiveInfinity, y.PropertyType), null);
                                         }
+                                        else if (double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.CurrentCulture, out double parsed) ||
+                                                 double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.InvariantCulture, out parsed))
+                                        {
+                                            y.SetValue(Items[rowIndex + i], parsed, null);
+                                        }
                                         else
                                         {
-                                            y.SetValue(Items[rowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType), null);
+                                            y.SetValue(Items[rowIndex + i], double.NaN, null);
                                         }
                                     }
                                     else
@@ -757,9 +763,14 @@ namespace GenericControls
                                         {
                                             y.SetValue(Items[rowIndex + i], Convert.ChangeType(double.PositiveInfinity, y.PropertyType), null);
                                         }
+                                        else if (double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.CurrentCulture, out double parsed) ||
+                                                 double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.InvariantCulture, out parsed))
+                                        {
+                                            y.SetValue(Items[rowIndex + i], parsed, null);
+                                        }
                                         else
                                         {
-                                            y.SetValue(Items[rowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType), null);
+                                            y.SetValue(Items[rowIndex + i], double.NaN, null);
                                         }
                                     }
                                     else

@@ -232,7 +232,7 @@
                     x:Name="ValueColumn" 
                     MinWidth="30" 
                     Width="*"
-                    Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource NAConverter}}" 
+                    Binding="{Binding Value, UpdateSourceTrigger=LostFocus, Mode=TwoWay, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource NAConverter}}" 
                     HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" 
                     CellStyle="{StaticResource Right_CellStyle}"/>
 

@@ -154,6 +154,7 @@ namespace FrameworkUI
             _progressControl.ProgressBar.Minimum = 0d;
             _progressControl.ProgressBar.Maximum = 100d;
             _progressControl.ProgressBar.Value = 0d;
+            _progressControl.Closing += ProgressControl_Closing;
             _progressControl.ShowDialog();
         }
 
@@ -230,7 +231,11 @@ namespace FrameworkUI
                 _backgroundWorker = null;
             }
 
-            _progressControl?.Close();
+            if (_progressControl != null)
+            {
+                _progressControl.Closing -= ProgressControl_Closing;
+                _progressControl.Close();
+            }
             ShellPublicVariables.CompactionInProgress = false;
 
             if (_project == null) return;
@@ -250,6 +255,17 @@ namespace FrameworkUI
             }
 
             ReportProgress?.Invoke(message);
+        }
+
+        /// <summary>
+        /// Handles the progress control window closing event.
+        /// Cancels the background worker when the user closes the window.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void ProgressControl_Closing(object? sender, CancelEventArgs e)
+        {
+            _backgroundWorker?.CancelAsync();
         }
 
         /// <summary>

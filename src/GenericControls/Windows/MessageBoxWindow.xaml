@@ -57,12 +57,12 @@
         <!-- Button bar -->
         <Grid Grid.Row="2"
             Background="{DynamicResource EnvironmentWindowBackground}"
-            MinHeight="40">
+            MinHeight="30">
             <StackPanel x:Name="ButtonPanel"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Margin="0,0,4,0"/>
+                Margin="0"/>
         </Grid>
     </Grid>
 </local:MetroDialogWindow>

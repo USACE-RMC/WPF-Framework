@@ -24,7 +24,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Label for the numeric input -->
-        <TextBlock Margin="4,4,0,4"
+        <TextBlock Margin="6,6,0,6"
                    Name="NameLabel"
                    Text="Name"
                    TextAlignment="Right"
@@ -48,7 +48,7 @@
                 IsDefault="True"
                 Click="OKButton_Click"
                 Content="Apply"
-                Margin="4"
+                Margin="2,6,6,6"
                 Cursor="Hand"
                 Grid.Row="0"
                 Grid.Column="2"

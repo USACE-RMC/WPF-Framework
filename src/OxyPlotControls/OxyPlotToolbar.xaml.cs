@@ -55,10 +55,10 @@ namespace OxyPlotControls
     {
         private bool _disposed = false;
         /// <summary>
-        /// Tracks whether the initial theme has been applied on first load.
-        /// Prevents redundant ApplyTheme calls when the control is re-loaded (e.g., tab switching).
+        /// Tracks which theme was last applied to the plot. Used to detect when the theme changed
+        /// while the toolbar was unloaded (inactive tab) so it can be reapplied on next load.
         /// </summary>
-        private bool _initialThemeApplied;
+        private Themes.Theme? _lastAppliedTheme;
 
         #region Construction
 
@@ -112,12 +112,13 @@ namespace OxyPlotControls
             ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
             ThemeService.Instance.ThemeChanged += OnAppThemeChanged;
 
-            // Apply the current theme only on first load (not on every tab switch)
-            if (!_initialThemeApplied && Plot != null)
+            // Apply theme if it changed while the toolbar was unloaded (inactive tab)
+            var currentTheme = ThemeService.Instance.CurrentTheme;
+            if (Plot != null && _lastAppliedTheme != currentTheme)
             {
-                _initialThemeApplied = true;
+                _lastAppliedTheme = currentTheme;
                 Plot.SuppressPropertyChanged = true;
-                var theme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+                var theme = OxyPlotThemeManager.GetThemeFor(currentTheme);
                 OxyPlotThemeManager.ApplyTheme(Plot, theme);
                 Plot.SuppressPropertyChanged = false;
             }
@@ -143,6 +144,7 @@ namespace OxyPlotControls
             if (!OxyPlotThemeManager.ConfirmThemeChange(Window.GetWindow(this)))
                 return;
 
+            _lastAppliedTheme = e.NewTheme;
             Plot.SuppressPropertyChanged = true;
             var theme = OxyPlotThemeManager.GetThemeFor(e.NewTheme);
             OxyPlotThemeManager.ApplyTheme(Plot, theme);
@@ -636,6 +638,14 @@ namespace OxyPlotControls
             if (_addAnnotationToolMode != AddToolMode.None)
             {
                 bool annotationWasCreated = _targetAddAnnotation != null;
+
+                // Unsuppress PropertyChanged and notify the plot so undo bridges
+                // can rebuild their shadow state to match the final property values.
+                if (_targetAddAnnotation != null)
+                {
+                    _targetAddAnnotation.SuppressPropertyChanged = false;
+                    Plot.NotifyAnnotationsModified();
+                }
 
                 if (_addAnnotationToolMode == AddToolMode.AddPolygonAnnotation || _addAnnotationToolMode == AddToolMode.AddPolylineAnnotation)
                 {
@@ -1343,7 +1353,9 @@ namespace OxyPlotControls
                 switch (_addAnnotationToolMode)
                 {
                     case AddToolMode.AddArrowAnnotation:
-                        var newArrow = new Wpf.ArrowAnnotation { Text = "Arrow Annotation" };
+                        var newArrow = new Wpf.ArrowAnnotation();
+                        newArrow.SuppressPropertyChanged = true;
+                        newArrow.Text = "Arrow Annotation";
                         ApplyThemeToNewAnnotation(newArrow);
                         Plot.Annotations.Add(newArrow);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1354,7 +1366,9 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddTextAnnotation:
-                        var newText = new Wpf.TextAnnotation { Text = "Text Annotation" };
+                        var newText = new Wpf.TextAnnotation();
+                        newText.SuppressPropertyChanged = true;
+                        newText.Text = "Text Annotation";
                         ApplyThemeToNewAnnotation(newText);
                         Plot.Annotations.Add(newText);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1364,7 +1378,9 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
-                        var newVLine = new Wpf.LineAnnotation { Text = "Vertical Line Annotation" };
+                        var newVLine = new Wpf.LineAnnotation();
+                        newVLine.SuppressPropertyChanged = true;
+                        newVLine.Text = "Vertical Line Annotation";
                         ApplyThemeToNewAnnotation(newVLine);
                         Plot.Annotations.Add(newVLine);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1400,7 +1416,9 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddHorizontalLineAnnotation:
-                        var newHLine = new Wpf.LineAnnotation { Text = "Horizontal Line Annotation" };
+                        var newHLine = new Wpf.LineAnnotation();
+                        newHLine.SuppressPropertyChanged = true;
+                        newHLine.Text = "Horizontal Line Annotation";
                         ApplyThemeToNewAnnotation(newHLine);
                         Plot.Annotations.Add(newHLine);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1436,7 +1454,9 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddRectangleAnnotation:
-                        var newRectangle = new Wpf.RectangleAnnotation { Text = "Rectangle Annotation" };
+                        var newRectangle = new Wpf.RectangleAnnotation();
+                        newRectangle.SuppressPropertyChanged = true;
+                        newRectangle.Text = "Rectangle Annotation";
                         ApplyThemeToNewAnnotation(newRectangle);
                         Plot.Annotations.Add(newRectangle);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1452,7 +1472,9 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddEllipseAnnotation:
-                        var newEllipse = new Wpf.EllipseAnnotation { Text = "Ellipse Annotation" };
+                        var newEllipse = new Wpf.EllipseAnnotation();
+                        newEllipse.SuppressPropertyChanged = true;
+                        newEllipse.Text = "Ellipse Annotation";
                         ApplyThemeToNewAnnotation(newEllipse);
                         Plot.Annotations.Add(newEllipse);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1468,7 +1490,10 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddPointAnnotation:
-                        var newPoint = new Wpf.PointAnnotation { Text = "Point Annotation", Size = 5 };
+                        var newPoint = new Wpf.PointAnnotation();
+                        newPoint.SuppressPropertyChanged = true;
+                        newPoint.Text = "Point Annotation";
+                        newPoint.Size = 5;
                         ApplyThemeToNewAnnotation(newPoint);
                         Plot.Annotations.Add(newPoint);
                         Plot.ActualModel.InvalidatePlot(false);
@@ -1489,7 +1514,9 @@ namespace OxyPlotControls
                     case AddToolMode.AddPolygonAnnotation:
                         if (_targetAddAnnotation == null)
                         {
-                            var newPolygon = new Wpf.PolygonAnnotation { Text = "Polygon Annotation" };
+                            var newPolygon = new Wpf.PolygonAnnotation();
+                            newPolygon.SuppressPropertyChanged = true;
+                            newPolygon.Text = "Polygon Annotation";
                             ApplyThemeToNewAnnotation(newPolygon);
                             newPolygon.Points = new System.Collections.Generic.List<DataPoint>();
                             var dataPointClicked = ConvertScreenPointToDataPoint(e.Position);
@@ -1518,7 +1545,9 @@ namespace OxyPlotControls
                     case AddToolMode.AddPolylineAnnotation:
                         if (_targetAddAnnotation == null)
                         {
-                            var newPolyline = new Wpf.PolylineAnnotation { Text = "Polyline Annotation" };
+                            var newPolyline = new Wpf.PolylineAnnotation();
+                            newPolyline.SuppressPropertyChanged = true;
+                            newPolyline.Text = "Polyline Annotation";
                             ApplyThemeToNewAnnotation(newPolyline);
                             newPolyline.Points = new System.Collections.Generic.List<DataPoint>();
                             Plot.Annotations.Add(newPolyline);
@@ -1539,6 +1568,7 @@ namespace OxyPlotControls
                         }
                         break;
                 }
+
                 return;
             }
 

@@ -46,8 +46,10 @@ namespace FrameworkInterfaces.Undo
     /// requiring modifications to those objects.
     /// </para>
     /// <para>
-    /// The bridge captures property values before and after changes, creating <see cref="DelegateAction"/>
+    /// The bridge captures property values before and after changes, creating <see cref="PropertyChangeAction"/>
     /// instances that restore the previous value on undo and re-apply the new value on redo.
+    /// <see cref="PropertyChangeAction"/> supports time-window merging (500ms) so that rapid changes
+    /// to the same property (e.g., typing in a TextBox) are coalesced into a single undo entry.
     /// </para>
     /// <para>
     /// <b>Property Filtering:</b> You can control which properties are monitored by providing
@@ -163,9 +165,10 @@ namespace FrameworkInterfaces.Undo
         private bool _disposed;
 
         /// <summary>
-        /// Indicates whether detailed property descriptions should be used.
+        /// Optional callback invoked when a new forward action is recorded to the undo manager.
+        /// Not called during undo/redo replay.
         /// </summary>
-        private bool _useDetailedDescriptions = true;
+        private readonly Action? _onActionRecorded;
 
         #endregion
 
@@ -197,6 +200,11 @@ namespace FrameworkInterfaces.Undo
         /// Optional. Property names to exclude from monitoring. Common exclusions include
         /// "IsSelected", "IsDirty", or other transient state properties.
         /// </param>
+        /// <param name="onActionRecorded">
+        /// Optional. A callback invoked each time a new forward action is recorded to the undo manager.
+        /// This is NOT called during undo/redo replay. Use this to notify the owning element
+        /// (e.g., to call <c>SetIsDirty(true)</c>) when a monitored property changes.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="source"/> or <paramref name="getUndoManager"/> is null.
         /// </exception>
@@ -210,7 +218,8 @@ namespace FrameworkInterfaces.Undo
             string sourceDescription = "settings",
             object? target = null,
             IEnumerable<string>? includedProperties = null,
-            IEnumerable<string>? excludedProperties = null)
+            IEnumerable<string>? excludedProperties = null,
+            Action? onActionRecorded = null)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _sourceObject = source;
@@ -233,6 +242,8 @@ namespace FrameworkInterfaces.Undo
             _excludedProperties = excludedProperties != null
                 ? new HashSet<string>(excludedProperties, StringComparer.Ordinal)
                 : new HashSet<string>(StringComparer.Ordinal);
+
+            _onActionRecorded = onActionRecorded;
 
             // Build property cache for the source type
             _propertyCache = new Dictionary<string, PropertyInfo>(StringComparer.Ordinal);
@@ -280,25 +291,6 @@ namespace FrameworkInterfaces.Undo
         /// </value>
         public bool IsDisposed => _disposed;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether detailed property descriptions should be used
-        /// in undo action descriptions.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> to include property names and values in descriptions (e.g., "Change maximum Value from 100 to 200");
-        /// <c>false</c> to use simple descriptions based on the source description (e.g., "Change plot settings").
-        /// The default is <c>true</c>.
-        /// </value>
-        /// <remarks>
-        /// Set this to <c>false</c> when monitoring objects where individual property changes
-        /// are less important than knowing which object changed, such as chart/plot settings.
-        /// </remarks>
-        public bool UseDetailedDescriptions
-        {
-            get => _useDetailedDescriptions;
-            set => _useDetailedDescriptions = value;
-        }
-
         #endregion
 
         #region Event Handlers
@@ -334,6 +326,7 @@ namespace FrameworkInterfaces.Undo
             if (action != null)
             {
                 undoManager.RecordAction(action);
+                _onActionRecorded?.Invoke();
             }
 
             // Update shadow value to reflect the new state
@@ -371,8 +364,11 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         /// <param name="propertyName">The name of the property that changed.</param>
         /// <returns>
-        /// A <see cref="DelegateAction"/> that restores the old value on undo and applies
+        /// A <see cref="PropertyChangeAction"/> that restores the old value on undo and applies
         /// the new value on redo, or null if the values are equal or the property is invalid.
+        /// <see cref="PropertyChangeAction"/> supports time-window merging (500ms) so that rapid
+        /// changes to the same property (e.g., typing in a TextBox) are coalesced into a single
+        /// undo entry.
         /// </returns>
         private IUndoableAction? CreatePropertyChangeAction(string propertyName)
         {
@@ -401,133 +397,9 @@ namespace FrameworkInterfaces.Undo
                 return null;
             }
 
-            // Create human-readable description
-            string description = CreateDescription(propertyName, oldValue, newValue);
-
-            // Capture values for the closure
-            var capturedOldValue = oldValue;
-            var capturedNewValue = newValue;
-            var capturedPropertyInfo = propertyInfo;
-
-            return new DelegateAction(
-                description,
-                execute: () =>
-                {
-                    // Restore the new value (redo)
-                    try
-                    {
-                        capturedPropertyInfo.SetValue(_sourceObject, capturedNewValue);
-                    }
-                    catch
-                    {
-                        // Property setter may throw; ignore during undo/redo
-                    }
-                },
-                undo: () =>
-                {
-                    // Restore the old value (undo)
-                    try
-                    {
-                        capturedPropertyInfo.SetValue(_sourceObject, capturedOldValue);
-                    }
-                    catch
-                    {
-                        // Property setter may throw; ignore during undo/redo
-                    }
-                },
-                target: _target
-            );
-        }
-
-        /// <summary>
-        /// Creates a human-readable description for a property change action.
-        /// </summary>
-        /// <param name="propertyName">The name of the property that changed.</param>
-        /// <param name="oldValue">The previous value of the property.</param>
-        /// <param name="newValue">The new value of the property.</param>
-        /// <returns>A description string for the undo action.</returns>
-        private string CreateDescription(string propertyName, object? oldValue, object? newValue)
-        {
-            // Use simple description if detailed descriptions are disabled
-            if (!_useDetailedDescriptions)
-            {
-                return $"Change {_sourceDescription}";
-            }
-
-            // For simple types, include the value in the description
-            if (newValue is bool boolValue)
-            {
-                string friendlyName = ToFriendlyName(propertyName);
-                return boolValue
-                    ? $"Enable {friendlyName}"
-                    : $"Disable {friendlyName}";
-            }
-
-            if (IsSimpleType(newValue?.GetType()))
-            {
-                string oldStr = FormatValue(oldValue);
-                string newStr = FormatValue(newValue);
-                return $"Change {ToFriendlyName(propertyName)} from {oldStr} to {newStr}";
-            }
-
-            // For complex types, use a generic description
-            return $"Change {ToFriendlyName(propertyName)}";
-        }
-
-        /// <summary>
-        /// Converts a property name to a more human-readable format.
-        /// </summary>
-        /// <param name="propertyName">The property name in PascalCase.</param>
-        /// <returns>A human-readable version of the property name.</returns>
-        private string ToFriendlyName(string propertyName)
-        {
-            if (string.IsNullOrEmpty(propertyName)) return propertyName;
-
-            // Insert spaces before capital letters (simple approach)
-            var result = new System.Text.StringBuilder();
-            for (int i = 0; i < propertyName.Length; i++)
-            {
-                char c = propertyName[i];
-                if (i > 0 && char.IsUpper(c) && !char.IsUpper(propertyName[i - 1]))
-                {
-                    result.Append(' ');
-                }
-                result.Append(i == 0 ? char.ToLower(c) : c);
-            }
-            return result.ToString();
-        }
-
-        /// <summary>
-        /// Determines whether a type is a simple/primitive type suitable for value display.
-        /// </summary>
-        /// <param name="type">The type to check.</param>
-        /// <returns><c>true</c> if the type is simple; otherwise, <c>false</c>.</returns>
-        private static bool IsSimpleType(Type? type)
-        {
-            if (type == null) return true; // null is "simple"
-            return type.IsPrimitive
-                || type.IsEnum
-                || type == typeof(string)
-                || type == typeof(decimal)
-                || type == typeof(DateTime)
-                || type == typeof(DateTimeOffset)
-                || type == typeof(TimeSpan)
-                || type == typeof(Guid);
-        }
-
-        /// <summary>
-        /// Formats a value for display in an undo action description.
-        /// </summary>
-        /// <param name="value">The value to format.</param>
-        /// <returns>A string representation of the value.</returns>
-        private static string FormatValue(object? value)
-        {
-            if (value == null) return "null";
-            if (value is string s) return $"\"{s}\"";
-            if (value is bool b) return b ? "true" : "false";
-            if (value is double d) return d.ToString("G4");
-            if (value is float f) return f.ToString("G4");
-            return value.ToString() ?? "null";
+            // Use PropertyChangeAction which supports time-window merging (500ms)
+            // for coalescing rapid changes like typing in a TextBox.
+            return new PropertyChangeAction(_sourceObject, propertyName, oldValue, newValue);
         }
 
         /// <summary>

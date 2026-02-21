@@ -26,6 +26,7 @@
                     <local:OxyLineStyleToDashArrayConverter x:Key="LineStyleConverter"/>
                     <cntrls:VisibilityToBooleanConverter x:Key="VisibilityToBoolConverter" VisibleValue="True" CollapsedValue="False" HiddenValue="False"/>
                     <local:OxyDefaultFontSizeConverter x:Key="DefaultFontSizeConverter"/>
+                    <local:StairStepVerticalThicknessConverter x:Key="VerticalThicknessConverter"/>
                     <cntrls:DoubleToGridLengthConverter x:Key="ActualToLengthConverter" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -286,14 +287,32 @@
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
                         Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}"/>
 
-                    <!--StairStepSeries: Vertical Line Thickness-->
+                    <!--StairStepSeries: Vertical Line Thickness (NaN means "use same as horizontal")-->
                     <cntrls:LineWidthSelectorControl
                         Margin="0 2"
                         DockPanel.Dock="Top"
                         Title="Vertical Line Thickness"
-                        WidthOptions="{StaticResource LineWidthOptions}" SelectedWidth="{Binding Series.VerticalStrokeThickness, ElementName=SeriesProperties, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True}"
+                        WidthOptions="{StaticResource LineWidthOptions}"
                         PropertyWidth="{Binding ElementName=DummyPropertyControl, Path=ActualPropertyWidth, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ActualToLengthConverter}}"
-                        Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}"/>
+                        Visibility="{Binding ElementName=SeriesProperties, Path=ShowStairStepControls}">
+                        <cntrls:LineWidthSelectorControl.SelectedWidth>
+                            <MultiBinding
+                                Converter="{StaticResource VerticalThicknessConverter}"
+                                UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                                <Binding
+                                    Path="Series.VerticalStrokeThickness"
+                                    ElementName="SeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="TwoWay"
+                                    NotifyOnSourceUpdated="True"/>
+                                <Binding
+                                    Path="Series.StrokeThickness"
+                                    ElementName="SeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="OneWay"/>
+                            </MultiBinding>
+                        </cntrls:LineWidthSelectorControl.SelectedWidth>
+                    </cntrls:LineWidthSelectorControl>
 
                     <!--BarWidth (BarSeries Only)-->
                     <cntrls:NumericPropertySelectorControl
@@ -353,6 +372,11 @@
                                     ElementName="SeriesProperties"
                                     UpdateSourceTrigger="PropertyChanged"
                                     Mode="OneWay"/>
+                                <Binding
+                                    Path="Series.Color"
+                                    ElementName="SeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="OneWay"/>
                             </MultiBinding>
                         </cntrls:ColorPropertyControl.SelectedColor>
                     </cntrls:ColorPropertyControl>
@@ -396,6 +420,11 @@
                                     Mode="TwoWay"/>
                                 <Binding
                                     Path="Series"
+                                    ElementName="SeriesProperties"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    Mode="OneWay"/>
+                                <Binding
+                                    Path="Series.Color"
                                     ElementName="SeriesProperties"
                                     UpdateSourceTrigger="PropertyChanged"
                                     Mode="OneWay"/>

@@ -25,7 +25,8 @@
             x:Name="DateTimeTextBox"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            VerticalContentAlignment="Center">
+            VerticalContentAlignment="Center"
+            KeyUp="Textbox_KeyUp">
             <TextBox.Style>
                 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Style.Triggers>

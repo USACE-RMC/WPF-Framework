@@ -63,10 +63,12 @@ namespace NumericControls
         /// <param name="observableCollection">The observable collection that contains this row item.</param>
         /// <param name="ordinate">The time series ordinate to be wrapped by this row item.</param>
         /// <param name="series">The time series collection that contains the ordinate, used for clone-and-replace on edits.</param>
-        public TimeSeriesRowItem(ObservableCollection<object> observableCollection, SeriesOrdinate<DateTime, double> ordinate, TimeSeries series) : base(observableCollection)
+        /// <param name="index">The positional index of this ordinate within the series, used for O(1) replacement.</param>
+        public TimeSeriesRowItem(ObservableCollection<object> observableCollection, SeriesOrdinate<DateTime, double> ordinate, TimeSeries series, int index) : base(observableCollection)
         {
             _ordinate = ordinate;
             _series = series;
+            _index = index;
         }
 
         /// <summary>
@@ -78,6 +80,14 @@ namespace NumericControls
         /// The time series collection containing the ordinate, used for the clone-and-replace pattern.
         /// </summary>
         private TimeSeries _series;
+
+        /// <summary>
+        /// The positional index of this ordinate within the series.
+        /// Used for O(1) replacement instead of <see cref="TimeSeries.IndexOf"/> which uses value equality
+        /// and can return the wrong index when duplicate entries exist.
+        /// Stable because RowItems are rebuilt from scratch on every Reset event.
+        /// </summary>
+        private int _index;
 
         /// <summary>
         /// When true, suppresses <see cref="DataGridRowItem.NotifyPropertyChanged"/> calls in property setters.
@@ -140,17 +150,18 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Replaces the current ordinate in the time series with a new clone.
+        /// Replaces the current ordinate in the time series with a new clone using the stored positional index.
         /// This fires a CollectionChanged Replace event which the UndoableCollectionBridge records.
+        /// Uses <see cref="_index"/> instead of <see cref="TimeSeries.IndexOf"/> to avoid O(n) lookup
+        /// and value-equality ambiguity when duplicate entries exist.
         /// </summary>
         /// <param name="newOrdinate">The cloned and modified ordinate to replace the current one.</param>
         private void ReplaceOrdinate(SeriesOrdinate<DateTime, double> newOrdinate)
         {
             if (_series == null) return;
-            int idx = _series.IndexOf(_ordinate);
-            if (idx >= 0)
+            if (_index >= 0 && _index < _series.Count)
             {
-                _series[idx] = newOrdinate;
+                _series[_index] = newOrdinate;
                 _ordinate = newOrdinate;
             }
         }

@@ -271,6 +271,26 @@ namespace OxyPlotControls
             set => SetValue(ShowStandardLineStyleProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ShowStandardLineThickness"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowStandardLineThicknessProperty = DependencyProperty.Register(
+            nameof(ShowStandardLineThickness),
+            typeof(Visibility),
+            typeof(GenericSeriesControl),
+            new PropertyMetadata(Visibility.Visible));
+
+        /// <summary>
+        /// Gets or sets the visibility for the standard line thickness control.
+        /// Hidden for series that don't use StrokeThickness (PieSeries, HeatMapSeries, ScatterErrorSeries).
+        /// Separate from ShowStandardLineStyle so CandleStickSeries can hide line style but keep thickness.
+        /// </summary>
+        public Visibility ShowStandardLineThickness
+        {
+            get => (Visibility)GetValue(ShowStandardLineThicknessProperty);
+            set => SetValue(ShowStandardLineThicknessProperty, value);
+        }
+
         #endregion
 
         /// <summary>
@@ -366,6 +386,7 @@ namespace OxyPlotControls
             ShowCandleStickColors = Visibility.Collapsed;
             ShowStairStepControls = Visibility.Collapsed;
             ShowStandardLineStyle = Visibility.Visible;
+            ShowStandardLineThickness = Visibility.Visible;
         }
 
         /// <summary>
@@ -390,12 +411,13 @@ namespace OxyPlotControls
                 ShowStandardColor = Visibility.Collapsed;
                 ShowThreeColorControls = Visibility.Visible;
             }
-            // CandleStickSeries
+            // CandleStickSeries - line style hidden (doesn't affect rendering), thickness stays visible
             else if (seriesType == typeof(OxyPlot.Wpf.CandleStickSeries))
             {
                 ShowSpecializedSettings = Visibility.Visible;
                 ShowStandardColor = Visibility.Collapsed;
                 ShowCandleStickColors = Visibility.Visible;
+                ShowStandardLineStyle = Visibility.Collapsed;
             }
             // StairStepSeries - specialized controls in Display section (no Specialized Settings needed)
             else if (seriesType == typeof(OxyPlot.Wpf.StairStepSeries))
@@ -403,10 +425,25 @@ namespace OxyPlotControls
                 ShowStairStepControls = Visibility.Visible;
                 ShowStandardLineStyle = Visibility.Collapsed;
             }
-            // PieSeries - hide color control
+            // PieSeries - hide color, line style, line thickness
             else if (seriesType == typeof(OxyPlot.Wpf.PieSeries))
             {
                 ShowStandardColor = Visibility.Collapsed;
+                ShowStandardLineStyle = Visibility.Collapsed;
+                ShowStandardLineThickness = Visibility.Collapsed;
+            }
+            // HeatMapSeries - hide color, line style, line thickness
+            else if (seriesType == typeof(OxyPlot.Wpf.HeatMapSeries))
+            {
+                ShowStandardColor = Visibility.Collapsed;
+                ShowStandardLineStyle = Visibility.Collapsed;
+                ShowStandardLineThickness = Visibility.Collapsed;
+            }
+            // ScatterErrorSeries - hide line style, line thickness (color stays visible)
+            else if (seriesType == typeof(OxyPlot.Wpf.ScatterErrorSeries))
+            {
+                ShowStandardLineStyle = Visibility.Collapsed;
+                ShowStandardLineThickness = Visibility.Collapsed;
             }
         }
 
@@ -760,6 +797,39 @@ namespace OxyPlotControls
             }
 
             return new object[] { c, _series };
+        }
+    }
+
+    /// <summary>
+    /// Converts StairStepSeries VerticalStrokeThickness (which defaults to NaN) to a display value.
+    /// When NaN, returns the horizontal StrokeThickness as the resolved value.
+    /// </summary>
+    public class StairStepVerticalThicknessConverter : IMultiValueConverter
+    {
+        /// <summary>
+        /// Converts VerticalStrokeThickness and StrokeThickness to a display value.
+        /// Returns StrokeThickness when VerticalStrokeThickness is NaN.
+        /// </summary>
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length < 2) return 1.0;
+            if (values[0] is double vertical && values[1] is double horizontal)
+            {
+                return double.IsNaN(vertical) ? horizontal : vertical;
+            }
+            return 1.0;
+        }
+
+        /// <summary>
+        /// Converts the display value back to VerticalStrokeThickness.
+        /// </summary>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            if (value is double d)
+            {
+                return new object[] { d, Binding.DoNothing };
+            }
+            return new object[] { double.NaN, Binding.DoNothing };
         }
     }
 

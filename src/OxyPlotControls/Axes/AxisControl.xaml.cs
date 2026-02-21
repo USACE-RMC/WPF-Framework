@@ -125,7 +125,7 @@ namespace OxyPlotControls
             var oldAxis = e.OldValue as Wpf.Axis;
             if (oldAxis != null)
             {
-                // Clean up old axis if needed
+                oldAxis.PropertyChanged -= thisControl.OnAxisPropertyChanged;
             }
 
             var newAxis = e.NewValue as Wpf.Axis;
@@ -143,6 +143,9 @@ namespace OxyPlotControls
             bool isSupportedType = true;
 
             axisTypeComboBox.SelectionChanged -= thisControl.AxisTypeComboBox_SelectionChanged;
+
+            // Reset axis type selector to visible (CategoryAxis and DateTimeAxis will collapse it)
+            thisControl.AxisTypeSelector.Visibility = Visibility.Visible;
 
             // Hide axis specific properties and clear bindings
             thisControl.PowerPaddingControl.Visibility = Visibility.Collapsed;
@@ -294,57 +297,12 @@ namespace OxyPlotControls
                 axisTypeComboBox.Visibility = Visibility.Collapsed;
             }
 
-            var labelTypeComboBox = thisControl.LabelTypeSelector.InnerContent as ComboBox;
-            if (labelTypeComboBox == null)
+            if (newAxis.GetType() != typeof(Wpf.DateTimeAxis) && newAxis.GetType() != typeof(Wpf.CategoryAxis))
             {
-                return;
-            }
-            labelTypeComboBox.SelectionChanged -= thisControl.LabelType_SelectionChanged;
-            if (newAxis.GetType() == typeof(Wpf.DateTimeAxis) || newAxis.GetType() == typeof(Wpf.CategoryAxis))
-            {
-                return;
+                thisControl.SyncLabelTypeFromStringFormat();
             }
 
-            string stringFormatCategory = "";
-            string stringFormatDecimal = "";
-            if (newAxis.StringFormat != null && newAxis.StringFormat.Length > 0)
-            {
-                stringFormatCategory = newAxis.StringFormat.Substring(0, 1);
-                if (stringFormatCategory == "C" || stringFormatCategory == "c")
-                    labelTypeComboBox.SelectedIndex = 0;
-                else if (stringFormatCategory == "G" || stringFormatCategory == "g")
-                    labelTypeComboBox.SelectedIndex = 1;
-                else if (stringFormatCategory == "N" || stringFormatCategory == "n")
-                    labelTypeComboBox.SelectedIndex = 2;
-                else if (stringFormatCategory == "P" || stringFormatCategory == "p")
-                    labelTypeComboBox.SelectedIndex = 3;
-                else if (stringFormatCategory == "E" || stringFormatCategory == "e")
-                    labelTypeComboBox.SelectedIndex = 4;
-                else
-                {
-                    labelTypeComboBox.SelectedIndex = 1;
-                    stringFormatCategory = "G";
-                }
-            }
-            else
-            {
-                labelTypeComboBox.SelectedIndex = 1;
-                stringFormatCategory = "G";
-            }
-
-            if (newAxis.StringFormat != null && newAxis.StringFormat.Length > 1)
-            {
-                stringFormatDecimal = newAxis.StringFormat.Substring(1, newAxis.StringFormat.Length - 1);
-                if (double.TryParse(stringFormatDecimal, out double decimals))
-                {
-                    thisControl.DecimalPlaces.Number = decimals;
-                }
-            }
-
-            if (stringFormatDecimal == "") thisControl.DecimalPlaces.Number = double.NaN;
-            thisControl._stringFormatCategory = stringFormatCategory;
-            thisControl._stringFormatDecimals = stringFormatDecimal;
-            labelTypeComboBox.SelectionChanged += thisControl.LabelType_SelectionChanged;
+            newAxis.PropertyChanged += thisControl.OnAxisPropertyChanged;
 
             // Force layout update to sync bindings after axis change
             thisControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
@@ -590,8 +548,7 @@ namespace OxyPlotControls
                     return;
             }
 
-            thePlot.Axes.Remove(Axis);
-            thePlot.Axes.Add(newAxis);
+            thePlot.ReplaceAxis(Axis, newAxis);
             Axis = newAxis;
 
             AxisTypeChanged?.Invoke(Axis, newAxis);
@@ -670,6 +627,7 @@ namespace OxyPlotControls
 
         private string _stringFormatCategory = "";
         private string _stringFormatDecimals = "";
+        private bool _isSyncingFromStringFormat;
 
         /// <summary>
         /// Handles the label type selection change event.
@@ -679,6 +637,7 @@ namespace OxyPlotControls
         /// <param name="e">The selection changed event args.</param>
         private void LabelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_isSyncingFromStringFormat) return;
             if (sender == null) return;
             var comboBox = sender as ComboBox;
             if (comboBox == null) return;
@@ -715,6 +674,7 @@ namespace OxyPlotControls
         /// <param name="e">The property changed event args.</param>
         private void DecimalPlaces_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (_isSyncingFromStringFormat) return;
             if (e.PropertyName == nameof(GenericControls.NumericAutoPropertyControl.Number))
             {
                 if (DecimalPlaces.Number.ToString() == "NaN")
@@ -742,6 +702,94 @@ namespace OxyPlotControls
                 newNumber = (double)newValue;
             }
             DecimalPlaces.Number = Math.Floor(newNumber);
+        }
+
+        /// <summary>
+        /// Handles property changes on the current axis to keep the label type and decimal places
+        /// controls in sync when <c>StringFormat</c> changes externally (e.g. via undo/redo).
+        /// </summary>
+        /// <param name="sender">The axis whose property changed.</param>
+        /// <param name="e">The property changed event args.</param>
+        private void OnAxisPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "StringFormat")
+            {
+                _isSyncingFromStringFormat = true;
+                try
+                {
+                    SyncLabelTypeFromStringFormat();
+                }
+                finally
+                {
+                    _isSyncingFromStringFormat = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Synchronizes the Label Type ComboBox and Decimal Places control from the current
+        /// <see cref="Axis"/>.<c>StringFormat</c> value.
+        /// </summary>
+        /// <remarks>
+        /// Parses the <c>StringFormat</c> string (e.g. "N2", "E4", "G") into its category
+        /// prefix and decimal suffix, sets the appropriate ComboBox selection and decimal
+        /// places number, and updates the backing fields <see cref="_stringFormatCategory"/>
+        /// and <see cref="_stringFormatDecimals"/>. The <c>LabelType_SelectionChanged</c>
+        /// handler is temporarily unsubscribed to prevent re-entrant writes back to
+        /// <c>StringFormat</c>.
+        /// </remarks>
+        private void SyncLabelTypeFromStringFormat()
+        {
+            var labelTypeComboBox = LabelTypeSelector.InnerContent as ComboBox;
+            if (labelTypeComboBox == null || Axis == null) return;
+
+            labelTypeComboBox.SelectionChanged -= LabelType_SelectionChanged;
+            try
+            {
+                string stringFormatCategory = "G";
+                string stringFormatDecimal = "";
+
+                if (Axis.StringFormat != null && Axis.StringFormat.Length > 0)
+                {
+                    stringFormatCategory = Axis.StringFormat.Substring(0, 1);
+                    if (stringFormatCategory == "C" || stringFormatCategory == "c")
+                        labelTypeComboBox.SelectedIndex = 0;
+                    else if (stringFormatCategory == "G" || stringFormatCategory == "g")
+                        labelTypeComboBox.SelectedIndex = 1;
+                    else if (stringFormatCategory == "N" || stringFormatCategory == "n")
+                        labelTypeComboBox.SelectedIndex = 2;
+                    else if (stringFormatCategory == "P" || stringFormatCategory == "p")
+                        labelTypeComboBox.SelectedIndex = 3;
+                    else if (stringFormatCategory == "E" || stringFormatCategory == "e")
+                        labelTypeComboBox.SelectedIndex = 4;
+                    else
+                    {
+                        labelTypeComboBox.SelectedIndex = 1;
+                        stringFormatCategory = "G";
+                    }
+                }
+                else
+                {
+                    labelTypeComboBox.SelectedIndex = 1;
+                }
+
+                if (Axis.StringFormat != null && Axis.StringFormat.Length > 1)
+                {
+                    stringFormatDecimal = Axis.StringFormat.Substring(1);
+                    if (double.TryParse(stringFormatDecimal, out double decimals))
+                    {
+                        DecimalPlaces.Number = decimals;
+                    }
+                }
+
+                if (stringFormatDecimal == "") DecimalPlaces.Number = double.NaN;
+                _stringFormatCategory = stringFormatCategory;
+                _stringFormatDecimals = stringFormatDecimal;
+            }
+            finally
+            {
+                labelTypeComboBox.SelectionChanged += LabelType_SelectionChanged;
+            }
         }
     }
 

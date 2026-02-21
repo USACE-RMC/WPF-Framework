@@ -28,7 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Windows;
+using GenericControls;
 
 namespace FrameworkUI
 {
@@ -43,7 +43,7 @@ namespace FrameworkUI
     /// </list>
     /// </para>
     /// </remarks>
-    public partial class CompactProgressControl : Window
+    public partial class CompactProgressControl : MetroDialogWindow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompactProgressControl"/> class.

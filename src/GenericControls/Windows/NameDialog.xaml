@@ -14,29 +14,29 @@
         <!--Add Rows-->
         <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
-            <RowDefinition Height="32"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Margin="4,0,4,0" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-        
-        <local:NameTextBox x:Name="NameTBox" Grid.Row="1" HorizontalAlignment="Stretch" Margin="4" VerticalAlignment="Stretch" 
+        <TextBlock Grid.Row="0" Margin="6,0,6,0" Text="Name:" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+
+        <local:NameTextBox x:Name="NameTBox" Grid.Row="1" HorizontalAlignment="Stretch" Height="24" Margin="6" VerticalAlignment="Stretch"
                             Text="{Binding ElementName=NewNameDialog, Path=Text, Mode=TwoWay}"/>
 
         <!--Custom Content-->
-        <ContentControl Grid.Row="2" Margin="4,0,4,0" Name="CustomContentUserControl"
+        <ContentControl Grid.Row="2" Margin="6,0,6,0" Name="CustomContentUserControl"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                         Content="{Binding InnerContent, ElementName=NewNameDialog}"/>
-        
+
         <!--Ok and Cancel buttons-->
-        <Grid Grid.Row="3" Height="32" HorizontalAlignment="Right" Margin="0,0,4,0">
+        <Grid Grid.Row="3" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Name="OKButton" IsDefault="True" Click="OKButton_Click" Content="OK" Grid.Column="0" Margin="4" Width="75" Height="24" Cursor="Hand"/>
-            <Button Name="CancelButton" IsCancel="True" Click="CancelButton_Click" Content="Cancel" Grid.Column="1" Margin="4, 4, 0, 4" Width="75" Height="24" Cursor="Hand"/>
+            <Button Name="OKButton" IsDefault="True" Click="OKButton_Click" Content="OK" Grid.Column="0" Width="75" Height="24" Cursor="Hand" Margin="6,0,0,6"/>
+            <Button Name="CancelButton" IsCancel="True" Click="CancelButton_Click" Content="Cancel" Grid.Column="1" Width="75" Height="24" Cursor="Hand" Margin="6,0,6,6"/>
         </Grid>
     </Grid>
 </local:MetroDialogWindow>

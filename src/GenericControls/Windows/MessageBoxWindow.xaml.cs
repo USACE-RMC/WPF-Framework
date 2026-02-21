@@ -200,6 +200,10 @@ namespace GenericControls
                         isDefault: defaultResult == MessageBoxResult.Cancel);
                     break;
             }
+
+            // Set 6px right margin on the last button so it sits flush with the 6px window border
+            if (ButtonPanel.Children.Count > 0 && ButtonPanel.Children[ButtonPanel.Children.Count - 1] is Button lastBtn)
+                lastBtn.Margin = new Thickness(6, 0, 6, 6);
         }
 
         /// <summary>
@@ -217,7 +221,7 @@ namespace GenericControls
                 Content = content,
                 Width = 75,
                 Height = 24,
-                Margin = new Thickness(4),
+                Margin = new Thickness(6, 0, 0, 6),
                 Cursor = Cursors.Hand,
                 IsDefault = isDefault,
                 IsCancel = isCancel

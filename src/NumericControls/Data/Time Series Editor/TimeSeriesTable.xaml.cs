@@ -111,6 +111,7 @@ namespace NumericControls
 
         /// <summary>
         /// Rebuilds the <see cref="_rowItems"/> collection from the current <see cref="Series"/>.
+        /// Passes the positional index to each <see cref="TimeSeriesRowItem"/> for O(1) replacement.
         /// </summary>
         private void RebuildRowItems()
         {
@@ -118,7 +119,7 @@ namespace NumericControls
             if (Series == null) return;
             for (int i = 0; i < Series.Count; i++)
             {
-                _rowItems.Add(new TimeSeriesRowItem(_rowItems, Series[i], Series));
+                _rowItems.Add(new TimeSeriesRowItem(_rowItems, Series[i], Series, i));
             }
         }
 
@@ -527,15 +528,21 @@ namespace NumericControls
                 for (int i = 0; i < nRows; i++) { startTime = TimeSeries.SubtractTimeInterval(startTime, Series.TimeInterval); }
             }
 
+            // Insert into both Series and _rowItems so CopyPasteDataGrid.PasteClipboard() can
+            // immediately access the new rows via Items[index] when setting pasted values.
             for (int i = startRowIndex; i < startRowIndex + nRows; i++)
             {
-                Series.Insert(i, new SeriesOrdinate<DateTime, double>(startTime, double.NaN));
+                var ordinate = new SeriesOrdinate<DateTime, double>(startTime, double.NaN);
+                Series.Insert(i, ordinate);
             }
 
             if (Series.TimeInterval != TimeInterval.Irregular) { Series.ShiftAllDates(startTime); }
 
-            // RebuildRowItems and Items.Refresh removed — Series_CollectionChanged(Reset) handles it
-            // when consumer calls RaiseCollectionChangedReset() in the RowsAdded handler.
+            // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
+            // Must happen before PasteClipboard resumes so Items[rowIndex + i] finds the new rows.
+            RebuildRowItems();
+            TimeSeriesDataGrid.Items.Refresh();
+
             RowsAdded?.Invoke(startRowIndex, nRows);
         }
 
@@ -626,7 +633,7 @@ namespace NumericControls
             PreviewDeleteRows?.Invoke(rowindices, ref userCancel);
             if (userCancel) return;
 
-            // Delete from both Series and RowItems (reverse order to maintain indices)
+            // Delete from Series in reverse order to maintain indices
             var sorted = rowindices.OrderByDescending(i => i).ToList();
             foreach (int idx in sorted)
             {
@@ -634,8 +641,10 @@ namespace NumericControls
                     Series.RemoveAt(idx);
             }
 
-            // RebuildRowItems removed — Series_CollectionChanged(Reset) handles it
-            // when consumer calls RaiseCollectionChangedReset() in the RowsDeleted handler.
+            // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
+            RebuildRowItems();
+            TimeSeriesDataGrid.Items.Refresh();
+
             RowsDeleted?.Invoke(rowindices);
         }
 

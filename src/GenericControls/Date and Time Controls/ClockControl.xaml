@@ -89,7 +89,7 @@
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=TimePicker, Path=IsHours}" Value="True">
                                     <Setter Property="FontSize" Value="{Binding ElementName=TimePicker, Path=SelectedTimeFontSize}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowForeground}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding ElementName=TimePicker, Path=IsHours}" Value="False">
                                     <Setter Property="FontSize" Value="{Binding ElementName=TimePicker, Path=TimeFontSize}"/>

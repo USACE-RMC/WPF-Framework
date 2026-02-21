@@ -11,7 +11,7 @@
         Style="{DynamicResource MetroDialogStyle}"
         Background="{DynamicResource EnvironmentWindowBackground}">
 
-    <DockPanel Margin="10" LastChildFill="True">
+    <DockPanel Margin="6" LastChildFill="True">
 
         <!-- ═══ TOP: Image Size, Dimensions & Report Theme ═══ -->
         <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
@@ -86,7 +86,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="32"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -127,10 +127,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Button Name="SaveButton" Content="Save" IsDefault="True" Grid.Column="0"
-                        Width="75" Height="24" Margin="4" Cursor="Hand"
+                        Width="75" Height="24" Margin="6,0,0,0" Cursor="Hand"
                         Click="SaveButton_Click"/>
                 <Button Name="CancelButton" Content="Cancel" IsCancel="True" Grid.Column="1"
-                        Width="75" Height="24" Margin="4, 4, 0, 4" Cursor="Hand"
+                        Width="75" Height="24" Margin="6,0,0,0" Cursor="Hand"
                         Click="CancelButton_Click"/>
             </Grid>
         </Grid>
