@@ -67,10 +67,18 @@ namespace OxyPlotControls
         /// <returns>True if a binding was found and copied; otherwise, false.</returns>
         public static bool CopyBinding(this DependencyObject fromTarget, DependencyObject toTarget, DependencyProperty dp)
         {
+            if (fromTarget == null || toTarget == null || dp == null) return false;
             var te = BindingOperations.GetBinding(fromTarget, dp);
             if (te == null) return false;
-            BindingOperations.SetBinding(toTarget, dp, te);
-            return true;
+            try
+            {
+                BindingOperations.SetBinding(toTarget, dp, te);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>

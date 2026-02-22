@@ -29,20 +29,17 @@
 */
 
 using System.Globalization;
-using OxyPlot;
+using System.Windows;
 using Xunit;
 
 namespace OxyPlotControls.Tests.Converters;
 
 /// <summary>
 /// Tests for OxyHorizontalAlignmentConverter.
-/// Verifies proper conversion between OxyPlot HorizontalAlignment and WPF HorizontalAlignment enums.
+/// Verifies pass-through and swap behavior for WPF HorizontalAlignment values.
 /// </summary>
 public class OxyHorizontalAlignmentConverterTests
 {
-    /// <summary>
-    /// The converter instance being tested.
-    /// </summary>
     private readonly OxyHorizontalAlignmentConverter _converter = new();
 
     #region Convert Tests
@@ -50,66 +47,68 @@ public class OxyHorizontalAlignmentConverterTests
     [Fact]
     public void Convert_NullValue_ReturnsCenter()
     {
-        // Arrange
-        object? value = null;
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.HorizontalAlignment.Center, result);
+        var result = _converter.Convert(null, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Center, result);
     }
 
     [Fact]
     public void Convert_WrongType_ReturnsCenter()
     {
-        // Arrange
-        var value = "not an alignment";
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.HorizontalAlignment.Center, result);
+        var result = _converter.Convert("not an alignment", typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Center, result);
     }
 
     [Fact]
-    public void Convert_OxyLeft_ReturnsWpfLeft()
+    public void Convert_Left_ReturnsLeft()
     {
-        // Arrange
-        var value = OxyPlot.HorizontalAlignment.Left;
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.HorizontalAlignment.Left, result);
+        var result = _converter.Convert(HorizontalAlignment.Left, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Left, result);
     }
 
     [Fact]
-    public void Convert_OxyCenter_ReturnsWpfCenter()
+    public void Convert_Center_ReturnsCenter()
     {
-        // Arrange
-        var value = OxyPlot.HorizontalAlignment.Center;
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.HorizontalAlignment.Center, result);
+        var result = _converter.Convert(HorizontalAlignment.Center, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Center, result);
     }
 
     [Fact]
-    public void Convert_OxyRight_ReturnsWpfRight()
+    public void Convert_Right_ReturnsRight()
     {
-        // Arrange
-        var value = OxyPlot.HorizontalAlignment.Right;
+        var result = _converter.Convert(HorizontalAlignment.Right, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Right, result);
+    }
 
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
+    [Fact]
+    public void Convert_Stretch_ReturnsStretch()
+    {
+        var result = _converter.Convert(HorizontalAlignment.Stretch, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Stretch, result);
+    }
 
-        // Assert
-        Assert.Equal(System.Windows.HorizontalAlignment.Right, result);
+    #endregion
+
+    #region Convert with Swap Tests
+
+    [Fact]
+    public void Convert_SwapLeft_ReturnsRight()
+    {
+        var result = _converter.Convert(HorizontalAlignment.Left, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Right, result);
+    }
+
+    [Fact]
+    public void Convert_SwapRight_ReturnsLeft()
+    {
+        var result = _converter.Convert(HorizontalAlignment.Right, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Left, result);
+    }
+
+    [Fact]
+    public void Convert_SwapCenter_ReturnsCenter()
+    {
+        var result = _converter.Convert(HorizontalAlignment.Center, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Center, result);
     }
 
     #endregion
@@ -119,125 +118,70 @@ public class OxyHorizontalAlignmentConverterTests
     [Fact]
     public void ConvertBack_NullValue_ReturnsCenter()
     {
-        // Arrange
-        object? value = null;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.HorizontalAlignment.Center, result);
+        var result = _converter.ConvertBack(null, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Center, result);
     }
 
     [Fact]
     public void ConvertBack_WrongType_ReturnsCenter()
     {
-        // Arrange
-        var value = "not an alignment";
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.HorizontalAlignment.Center, result);
+        var result = _converter.ConvertBack("not an alignment", typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Center, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfLeft_ReturnsOxyLeft()
+    public void ConvertBack_Left_ReturnsLeft()
     {
-        // Arrange
-        var value = System.Windows.HorizontalAlignment.Left;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.HorizontalAlignment.Left, result);
+        var result = _converter.ConvertBack(HorizontalAlignment.Left, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Left, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfCenter_ReturnsOxyCenter()
+    public void ConvertBack_Right_ReturnsRight()
     {
-        // Arrange
-        var value = System.Windows.HorizontalAlignment.Center;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.HorizontalAlignment.Center, result);
+        var result = _converter.ConvertBack(HorizontalAlignment.Right, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Right, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfRight_ReturnsOxyRight()
+    public void ConvertBack_SwapLeft_ReturnsRight()
     {
-        // Arrange
-        var value = System.Windows.HorizontalAlignment.Right;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.HorizontalAlignment.Right, result);
+        var result = _converter.ConvertBack(HorizontalAlignment.Left, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Right, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfStretch_ReturnsOxyCenter()
+    public void ConvertBack_SwapRight_ReturnsLeft()
     {
-        // Arrange - Stretch is not supported in OxyPlot, should map to Center
-        var value = System.Windows.HorizontalAlignment.Stretch;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.HorizontalAlignment.Center, result);
+        var result = _converter.ConvertBack(HorizontalAlignment.Right, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(HorizontalAlignment.Left, result);
     }
 
     #endregion
 
     #region Round Trip Tests
 
-    [Fact]
-    public void Convert_ConvertBack_RoundTrip_Left()
+    [Theory]
+    [InlineData(HorizontalAlignment.Left)]
+    [InlineData(HorizontalAlignment.Center)]
+    [InlineData(HorizontalAlignment.Right)]
+    [InlineData(HorizontalAlignment.Stretch)]
+    public void Convert_ConvertBack_RoundTrip(HorizontalAlignment alignment)
     {
-        // Arrange
-        var original = OxyPlot.HorizontalAlignment.Left;
-
-        // Act
-        var converted = _converter.Convert(original, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-        var roundTripped = _converter.ConvertBack(converted, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(original, roundTripped);
+        var converted = _converter.Convert(alignment, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        var roundTripped = _converter.ConvertBack(converted, typeof(HorizontalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(alignment, roundTripped);
     }
 
-    [Fact]
-    public void Convert_ConvertBack_RoundTrip_Center()
+    [Theory]
+    [InlineData(HorizontalAlignment.Left)]
+    [InlineData(HorizontalAlignment.Center)]
+    [InlineData(HorizontalAlignment.Right)]
+    public void Convert_ConvertBack_SwapRoundTrip(HorizontalAlignment alignment)
     {
-        // Arrange
-        var original = OxyPlot.HorizontalAlignment.Center;
-
-        // Act
-        var converted = _converter.Convert(original, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-        var roundTripped = _converter.ConvertBack(converted, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(original, roundTripped);
-    }
-
-    [Fact]
-    public void Convert_ConvertBack_RoundTrip_Right()
-    {
-        // Arrange
-        var original = OxyPlot.HorizontalAlignment.Right;
-
-        // Act
-        var converted = _converter.Convert(original, typeof(System.Windows.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-        var roundTripped = _converter.ConvertBack(converted, typeof(OxyPlot.HorizontalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(original, roundTripped);
+        var converted = _converter.Convert(alignment, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        var roundTripped = _converter.ConvertBack(converted, typeof(HorizontalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(alignment, roundTripped);
     }
 
     #endregion

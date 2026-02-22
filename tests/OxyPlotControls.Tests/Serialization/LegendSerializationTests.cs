@@ -33,7 +33,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot.Legends;
 using OxyPlot.Wpf;
-using OxyPlotControls;
+using OxyPlot.Wpf.Serialization;
 using Xunit;
 
 namespace OxyPlotControls.Tests.Serialization;
@@ -50,7 +50,7 @@ public class LegendSerializationTests
     public void LegendPropertiesTag_HasExpectedValue()
     {
         // Assert
-        Assert.Equal("Legend", LegendControl.LegendPropertiesTag);
+        Assert.Equal("Legend", PlotSerializer.LegendPropertiesTag);
     }
 
     #endregion
@@ -71,11 +71,11 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(plot);
+        var element = PlotSerializer.LegendPropertiesToXElement(plot);
 
         // Assert
         Assert.NotNull(element);
-        Assert.Equal(LegendControl.LegendPropertiesTag, element.Name.LocalName);
+        Assert.Equal(PlotSerializer.LegendPropertiesTag, element.Name.LocalName);
 
         var areaElement = element.Element("Area");
         Assert.NotNull(areaElement);
@@ -89,7 +89,7 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Area",
                 new XAttribute("IsLegendVisible", "True"),
                 new XAttribute("LegendBackground", "#FFFFFFFF"),
@@ -98,7 +98,7 @@ public class LegendSerializationTests
                 new XAttribute("LegendPadding", "10")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.True(plot.IsLegendVisible);
@@ -122,9 +122,9 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.LegendPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        LegendControl.XElementToLegendProperties(deserializedPlot, element);
+        PlotSerializer.XElementToLegendProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.IsLegendVisible, deserializedPlot.IsLegendVisible);
@@ -150,7 +150,7 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(plot);
+        var element = PlotSerializer.LegendPropertiesToXElement(plot);
 
         // Assert
         var positionElement = element.Element("Position");
@@ -165,14 +165,14 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Position",
                 new XAttribute("LegendPlacement", "Outside"),
                 new XAttribute("LegendPosition", "BottomLeft"),
                 new XAttribute("LegendOrientation", "Horizontal")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal(LegendPlacement.Outside, plot.LegendPlacement);
@@ -192,9 +192,9 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.LegendPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        LegendControl.XElementToLegendProperties(deserializedPlot, element);
+        PlotSerializer.XElementToLegendProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.LegendPlacement, deserializedPlot.LegendPlacement);
@@ -221,9 +221,9 @@ public class LegendSerializationTests
         var originalPlot = new Plot { LegendPosition = position };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.LegendPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        LegendControl.XElementToLegendProperties(deserializedPlot, element);
+        PlotSerializer.XElementToLegendProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(position, deserializedPlot.LegendPosition);
@@ -247,7 +247,7 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(plot);
+        var element = PlotSerializer.LegendPropertiesToXElement(plot);
 
         // Assert
         var titleElement = element.Element("Title");
@@ -262,7 +262,7 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Title",
                 new XAttribute("LegendTitle", "Deserialized Legend"),
                 new XAttribute("LegendTitleColor", "#FF000080"),
@@ -271,7 +271,7 @@ public class LegendSerializationTests
                 new XAttribute("LegendTitleFontWeight", "Bold")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal("Deserialized Legend", plot.LegendTitle);
@@ -295,9 +295,9 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.LegendPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        LegendControl.XElementToLegendProperties(deserializedPlot, element);
+        PlotSerializer.XElementToLegendProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.LegendTitle, deserializedPlot.LegendTitle);
@@ -329,7 +329,7 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(plot);
+        var element = PlotSerializer.LegendPropertiesToXElement(plot);
 
         // Assert
         var itemsElement = element.Element("Items");
@@ -349,7 +349,7 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Items",
                 new XAttribute("LegendTextColor", "#FF000000"),
                 new XAttribute("LegendSymbolLength", "30"),
@@ -362,7 +362,7 @@ public class LegendSerializationTests
                 new XAttribute("LegendLineSpacing", "5")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal(Colors.Black, plot.LegendTextColor);
@@ -394,9 +394,9 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.LegendPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        LegendControl.XElementToLegendProperties(deserializedPlot, element);
+        PlotSerializer.XElementToLegendProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.LegendTextColor, deserializedPlot.LegendTextColor);
@@ -419,10 +419,10 @@ public class LegendSerializationTests
     {
         // Arrange
         Plot? plot = null;
-        var element = new XElement(LegendControl.LegendPropertiesTag);
+        var element = new XElement(PlotSerializer.LegendPropertiesTag);
 
         // Act & Assert
-        var exception = Record.Exception(() => LegendControl.XElementToLegendProperties(plot!, element));
+        var exception = Record.Exception(() => PlotSerializer.XElementToLegendProperties(plot!, element));
         Assert.Null(exception);
     }
 
@@ -436,7 +436,7 @@ public class LegendSerializationTests
                 new XAttribute("LegendTitle", "Changed Legend")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal("Original Legend", plot.LegendTitle);
@@ -451,10 +451,10 @@ public class LegendSerializationTests
             LegendTitle = "Original Legend",
             IsLegendVisible = true
         };
-        var element = new XElement(LegendControl.LegendPropertiesTag);
+        var element = new XElement(PlotSerializer.LegendPropertiesTag);
 
         // Act
-        var exception = Record.Exception(() => LegendControl.XElementToLegendProperties(plot, element));
+        var exception = Record.Exception(() => PlotSerializer.XElementToLegendProperties(plot, element));
 
         // Assert
         Assert.Null(exception);
@@ -473,7 +473,7 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(plot);
+        var element = PlotSerializer.LegendPropertiesToXElement(plot);
 
         // Assert
         Assert.NotNull(element);
@@ -490,7 +490,7 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Area",
                 new XAttribute("LegendVisible", "True"),
                 new XAttribute("BackgroundColor", "#FFFFFFFF"),
@@ -499,7 +499,7 @@ public class LegendSerializationTests
                 new XAttribute("Padding", "5")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.True(plot.IsLegendVisible);
@@ -514,14 +514,14 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Position",
                 new XAttribute("Placement", "Inside"),
                 new XAttribute("Position", "TopLeft"),
                 new XAttribute("Orientation", "Vertical")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal(LegendPlacement.Inside, plot.LegendPlacement);
@@ -534,7 +534,7 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Title",
                 new XAttribute("Title", "Old Format Legend"),
                 new XAttribute("Color", "#FF800000"),
@@ -543,7 +543,7 @@ public class LegendSerializationTests
                 new XAttribute("Weight", "Normal")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal("Old Format Legend", plot.LegendTitle);
@@ -558,7 +558,7 @@ public class LegendSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(LegendControl.LegendPropertiesTag,
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
             new XElement("Items",
                 new XAttribute("Color", "#FF333333"),
                 new XAttribute("SymbolLength", "20"),
@@ -571,7 +571,7 @@ public class LegendSerializationTests
                 new XAttribute("LineSpacing", "3")));
 
         // Act
-        LegendControl.XElementToLegendProperties(plot, element);
+        PlotSerializer.XElementToLegendProperties(plot, element);
 
         // Assert
         Assert.Equal(Color.FromRgb(0x33, 0x33, 0x33), plot.LegendTextColor);
@@ -620,9 +620,9 @@ public class LegendSerializationTests
         };
 
         // Act
-        var element = LegendControl.LegendPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.LegendPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        LegendControl.XElementToLegendProperties(deserializedPlot, element);
+        PlotSerializer.XElementToLegendProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.IsLegendVisible, deserializedPlot.IsLegendVisible);

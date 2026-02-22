@@ -397,6 +397,11 @@ namespace OxyPlotControls
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (_sourcePlot == null) return;
+            if (_sourcePlot.ActualModel == null)
+            {
+                GenericControls.MessageBox.Show("The plot has no model to export.", "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             // Validate folder
             string folderPath = FolderPathControl.Text?.Trim() ?? "";

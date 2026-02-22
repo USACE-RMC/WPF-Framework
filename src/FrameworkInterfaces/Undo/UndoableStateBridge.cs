@@ -603,6 +603,18 @@ namespace FrameworkInterfaces.Undo
             }
 
             /// <summary>
+            /// Finalizer to re-subscribe if Dispose was not called, preventing
+            /// permanent loss of undo recording.
+            /// </summary>
+            ~RecordingSuspension()
+            {
+                if (!_disposed)
+                {
+                    _bridge._source.PropertyChanged += _bridge.OnPropertyChanged;
+                }
+            }
+
+            /// <summary>
             /// Resumes undo recording and updates shadow values.
             /// </summary>
             public void Dispose()
@@ -616,6 +628,7 @@ namespace FrameworkInterfaces.Undo
                     _bridge._source.PropertyChanged += _bridge.OnPropertyChanged;
 
                     _disposed = true;
+                    GC.SuppressFinalize(this);
                 }
             }
         }

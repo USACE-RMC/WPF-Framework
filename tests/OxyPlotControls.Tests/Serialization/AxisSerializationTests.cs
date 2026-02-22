@@ -34,8 +34,8 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Wpf.Serialization;
 using Wpf = OxyPlot.Wpf;
-using OxyPlotControls;
 using Xunit;
 
 namespace OxyPlotControls.Tests.Serialization;
@@ -52,7 +52,7 @@ public class AxisSerializationTests
     public void AxisPropertiesTag_HasExpectedValue()
     {
         // Assert
-        Assert.Equal("Axis", AxisControl.AxisPropertiesTag);
+        Assert.Equal("Axis", PlotSerializer.AxisPropertiesTag);
     }
 
     #endregion
@@ -75,8 +75,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -104,8 +104,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -129,8 +129,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -153,8 +153,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -181,8 +181,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -212,8 +212,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -246,8 +246,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -274,8 +274,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -293,8 +293,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -320,8 +320,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LogarithmicAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LogarithmicAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -345,8 +345,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LogarithmicAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LogarithmicAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -363,8 +363,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LogarithmicAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LogarithmicAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -387,8 +387,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.DateTimeAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.DateTimeAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -407,8 +407,8 @@ public class AxisSerializationTests
         var originalAxis = new Wpf.DateTimeAxis { CalendarWeekRule = weekRule };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.DateTimeAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.DateTimeAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -432,8 +432,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.NormalProbabilityAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.NormalProbabilityAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -457,8 +457,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.NormalProbabilityAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.NormalProbabilityAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -486,8 +486,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.GumbelProbabilityAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.GumbelProbabilityAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -511,8 +511,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.GumbelProbabilityAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.GumbelProbabilityAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -540,8 +540,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.CategoryAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.CategoryAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -567,8 +567,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.AngleAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.AngleAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -595,8 +595,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearColorAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearColorAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -622,8 +622,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.MagnitudeAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.MagnitudeAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -646,8 +646,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.TimeSpanAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.TimeSpanAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -671,8 +671,8 @@ public class AxisSerializationTests
         var originalAxis = new Wpf.LinearAxis { Position = position };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -694,8 +694,8 @@ public class AxisSerializationTests
         var originalAxis = new Wpf.LinearAxis { TickStyle = tickStyle };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -724,8 +724,8 @@ public class AxisSerializationTests
         var originalAxis = new Wpf.LinearAxis { MajorGridlineStyle = lineStyle };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -743,7 +743,7 @@ public class AxisSerializationTests
         var element = new XElement("WrongName");
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element);
+        var result = AxisSerializer.XElementToAxis(element);
 
         // Assert
         Assert.Null(result);
@@ -753,11 +753,11 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_UnknownAxisType_ReturnsLinearAxis()
     {
         // Arrange
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", "UnknownAxisType"));
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element);
+        var result = AxisSerializer.XElementToAxis(element);
 
         // Assert
         Assert.NotNull(result);
@@ -768,14 +768,14 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_WithTargetAxis_AppliesPropertiesToTarget()
     {
         // Arrange
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", typeof(LinearAxis).ToString()),
             new XElement("Title",
                 new XAttribute("Title", "Updated Title")));
         var targetAxis = new Wpf.LinearAxis { Title = "Original Title" };
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element, targetAxis);
+        var result = AxisSerializer.XElementToAxis(element, targetAxis);
 
         // Assert
         Assert.Same(targetAxis, result);
@@ -793,8 +793,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -809,8 +809,8 @@ public class AxisSerializationTests
         var originalAxis = new Wpf.LinearAxis { Title = null };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);
@@ -824,7 +824,7 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_OldGeneralFormat_DeserializesCorrectly()
     {
         // Arrange
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", typeof(LinearAxis).ToString()),
             new XElement("General",
                 new XAttribute("AxisVisible", "True"),
@@ -832,7 +832,7 @@ public class AxisSerializationTests
                 new XAttribute("CanZoom", "True")));
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var result = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(result);
@@ -845,7 +845,7 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_OldStyleFormat_DeserializesCorrectly()
     {
         // Arrange
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", typeof(LinearAxis).ToString()),
             new XElement("Style",
                 new XAttribute("Color", "#FFFF0000"),
@@ -853,7 +853,7 @@ public class AxisSerializationTests
                 new XAttribute("Thickness", "2")));
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var result = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(result);
@@ -866,7 +866,7 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_OldPositionFormat_DeserializesCorrectly()
     {
         // Arrange
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", typeof(LinearAxis).ToString()),
             new XElement("Position",
                 new XAttribute("Distance", "5"),
@@ -875,7 +875,7 @@ public class AxisSerializationTests
                 new XAttribute("Tier", "1")));
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var result = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(result);
@@ -889,13 +889,13 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_OldLinearAxisFormat_DeserializesCorrectly()
     {
         // Arrange
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", typeof(LinearAxis).ToString()),
             new XElement("LinearAxis",
                 new XAttribute("FractionFormat", "True")));
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var result = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(result);
@@ -906,13 +906,13 @@ public class AxisSerializationTests
     public void XElementToAxisProperties_OldLogAxisFormat_DeserializesCorrectly()
     {
         // Arrange - Use Wpf.LogarithmicAxis type (implementation only recognizes Wpf types)
-        var element = new XElement(AxisControl.AxisPropertiesTag,
+        var element = new XElement(PlotSerializer.AxisPropertiesTag,
             new XAttribute("AxisType", typeof(Wpf.LogarithmicAxis).ToString()),
             new XElement("LogarithmicAxis",
                 new XAttribute("LogBase", "2")));
 
         // Act
-        var result = AxisControl.XElementToAxisProperties(element) as Wpf.LogarithmicAxis;
+        var result = AxisSerializer.XElementToAxis(element) as Wpf.LogarithmicAxis;
 
         // Assert
         Assert.NotNull(result);
@@ -981,8 +981,8 @@ public class AxisSerializationTests
         };
 
         // Act
-        var element = AxisControl.AxisPropertiesToXElement(originalAxis);
-        var deserializedAxis = AxisControl.XElementToAxisProperties(element) as Wpf.LinearAxis;
+        var element = AxisSerializer.AxisToXElement(originalAxis);
+        var deserializedAxis = AxisSerializer.XElementToAxis(element) as Wpf.LinearAxis;
 
         // Assert
         Assert.NotNull(deserializedAxis);

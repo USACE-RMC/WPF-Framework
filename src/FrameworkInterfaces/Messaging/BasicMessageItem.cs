@@ -293,6 +293,7 @@ namespace FrameworkInterfaces
         /// <param name="propertyName">The name of the property that changed.</param>
         public void RaisePropertyChange(string propertyName)
         {
+            if (string.IsNullOrEmpty(propertyName)) return;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 

@@ -48,6 +48,20 @@ namespace OxyPlotControls
         private const string ThemeChangeWarningKey = "ThemeChangeWarning";
 
         /// <summary>
+        /// Gets or sets whether the theme change warning dialog is suppressed.
+        /// </summary>
+        /// <remarks>
+        /// When true, theme changes are applied without showing the confirmation dialog.
+        /// Set this from persisted user settings at application startup to remember the
+        /// user's "Don't show this message again" preference across sessions.
+        /// </remarks>
+        public static bool SuppressThemeChangeWarning
+        {
+            get => _suppressionStore.TryGetValue(ThemeChangeWarningKey, out bool val) && val;
+            set => _suppressionStore[ThemeChangeWarningKey] = value;
+        }
+
+        /// <summary>
         /// Light theme: white plot area, dark text. Used for Light and Blue app themes.
         /// </summary>
         public static OxyPlotTheme LightTheme { get; } = new OxyPlotTheme

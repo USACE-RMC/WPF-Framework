@@ -38,6 +38,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
+using System.Diagnostics;
 using System.Windows.Threading;
 using GenericControls;
 using OxyPlot;
@@ -606,6 +607,168 @@ namespace OxyPlotControls.Demo
 
                 ThemeService.Instance.SetTheme(theme);
             }
+        }
+
+        /// <summary>
+        /// Handles the rendering backend ComboBox selection change.
+        /// Recreates the Plot control with the selected rendering backend.
+        /// </summary>
+        private void BackendComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+
+            var selectedItem = BackendComboBox.SelectedItem as ComboBoxItem;
+            if (selectedItem?.Content == null) return;
+
+            var backend = selectedItem.Content.ToString() == "DrawingVisual"
+                ? RenderingBackend.DrawingVisual
+                : RenderingBackend.Canvas;
+
+            RecreateTestPlot(backend);
+        }
+
+        /// <summary>
+        /// Recreates the TestPlot control with the specified rendering backend.
+        /// The RenderingBackend must be set before the control enters the visual tree.
+        /// </summary>
+        private void RecreateTestPlot(RenderingBackend backend)
+        {
+            // Unsubscribe from old plot events
+            TestPlot.PropertyChanged -= OnPlotPropertyChanged;
+            TestPlot.Annotations.CollectionChanged -= OnPlotCollectionChanged;
+            TestPlot.Series.CollectionChanged -= OnPlotCollectionChanged;
+            TestPlot.Axes.CollectionChanged -= OnPlotCollectionChanged;
+
+            // Remove old plot from grid
+            PlotHostGrid.Children.Remove(TestPlot);
+
+            // Create new plot with the selected backend
+            var newPlot = new OxyPlot.Wpf.Plot
+            {
+                Name = "TestPlot",
+                RenderingBackend = backend,
+                BorderBrush = System.Windows.Media.Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                SnapsToDevicePixels = true,
+                Title = "Test Title",
+                IsLegendVisible = true,
+                LegendPosition = OxyPlot.Legends.LegendPosition.RightBottom,
+                Margin = new Thickness(5)
+            };
+            Grid.SetColumn(newPlot, 0);
+
+            // Insert into grid (after TestCanvas, before toolbar)
+            PlotHostGrid.Children.Insert(1, newPlot);
+            TestPlot = newPlot;
+
+            // Re-bind toolbar and properties panel
+            OxyPlotToolBar.Plot = TestPlot;
+            PropertiesControl.Plot = TestPlot;
+
+            // Re-subscribe to events
+            TestPlot.PropertyChanged += OnPlotPropertyChanged;
+            TestPlot.Annotations.CollectionChanged += OnPlotCollectionChanged;
+            TestPlot.Series.CollectionChanged += OnPlotCollectionChanged;
+            TestPlot.Axes.CollectionChanged += OnPlotCollectionChanged;
+
+            // Re-trigger current series selection to repopulate data
+            var currentIndex = Combobox1.SelectedIndex;
+            if (currentIndex >= 0)
+            {
+                Combobox1.SelectedIndex = -1;
+                Combobox1.SelectedIndex = currentIndex;
+            }
+
+            RenderTimeLabel.Text = $"Backend: {backend}";
+        }
+
+        /// <summary>
+        /// Handles the 100K Benchmark button click.
+        /// Generates 100,000 random data points and measures render time.
+        /// </summary>
+        private void BenchmarkButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Clear existing plot
+            TestPlot.Series.Clear();
+            TestPlot.Axes.Clear();
+            TestPlot.ActualModel.Series.Clear();
+            TestPlot.ActualModel.Axes.Clear();
+
+            TestPlot.Title = "100K Benchmark";
+
+            var yAxis = new OxyPlot.Wpf.LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "Value",
+                Key = "y"
+            };
+
+            var xAxis = new OxyPlot.Wpf.LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Index",
+                Key = "x"
+            };
+
+            TestPlot.Axes.Add(xAxis);
+            TestPlot.Axes.Add(yAxis);
+
+            // Generate 100,000 random points
+            var lineSeries = new OxyPlot.Wpf.LineSeries
+            {
+                Title = "100K Random Data",
+                MinimumSegmentLength = 1.0,
+                EdgeRenderingMode = EdgeRenderingMode.PreferSpeed
+            };
+
+            // Apply decimation if checked
+            if (DecimationCheckBox.IsChecked == true)
+            {
+                lineSeries.Decimator = OxyPlot.Decimator.Decimate;
+            }
+
+            var internalSeries = (OxyPlot.Series.LineSeries)lineSeries.InternalSeries;
+            var rng = new Random(42);
+            for (int i = 0; i < 100_000; i++)
+            {
+                internalSeries.Points.Add(new DataPoint(i, rng.NextDouble() * 100));
+            }
+
+            TestPlot.Series.Add(lineSeries);
+            TestPlot.ResetAllAxes();
+
+            // Measure render time
+            var sw = Stopwatch.StartNew();
+            TestPlot.InvalidatePlot(true);
+            // Force WPF to complete the render pass synchronously
+            Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
+            sw.Stop();
+
+            var decimated = DecimationCheckBox.IsChecked == true ? " + Decimation" : "";
+            var backendName = TestPlot.RenderingBackend.ToString();
+            RenderTimeLabel.Text = $"{backendName}{decimated} | 100K points rendered in {sw.ElapsedMilliseconds} ms";
+        }
+
+        /// <summary>
+        /// Re-renders the current plot without changing data.
+        /// Isolates pure rendering cost from data generation and axis computation.
+        /// </summary>
+        private void ReRenderButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TestPlot.ActualModel == null || TestPlot.ActualModel.Series.Count == 0)
+            {
+                RenderTimeLabel.Text = "Load data first (use 100K Benchmark or select a series type)";
+                return;
+            }
+
+            var sw = Stopwatch.StartNew();
+            TestPlot.InvalidatePlot(false);
+            Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
+            sw.Stop();
+
+            var backendName = TestPlot.RenderingBackend.ToString();
+            var decimated = DecimationCheckBox.IsChecked == true ? " + Decimation" : "";
+            RenderTimeLabel.Text = $"{backendName}{decimated} | Re-render in {sw.ElapsedMilliseconds} ms";
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

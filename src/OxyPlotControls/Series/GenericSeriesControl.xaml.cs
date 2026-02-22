@@ -299,8 +299,12 @@ namespace OxyPlotControls
         public GenericSeriesControl()
         {
             InitializeComponent();
-            Loaded += (s, e) => _suppressPlotChanged = false;
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
+
+        private void OnLoaded(object sender, RoutedEventArgs e) => _suppressPlotChanged = false;
+        private void OnUnloaded(object sender, RoutedEventArgs e) { Loaded -= OnLoaded; }
 
         /// <summary>
         /// Raises the <see cref="PlotChanged"/> event.

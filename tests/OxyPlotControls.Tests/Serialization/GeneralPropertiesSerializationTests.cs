@@ -32,7 +32,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot.Wpf;
-using OxyPlotControls;
+using OxyPlot.Wpf.Serialization;
 using Xunit;
 
 namespace OxyPlotControls.Tests.Serialization;
@@ -49,7 +49,7 @@ public class GeneralPropertiesSerializationTests
     public void GeneralPropertiesTag_HasExpectedValue()
     {
         // Assert
-        Assert.Equal("General", GeneralPlotControl.GeneralPropertiesTag);
+        Assert.Equal("General", PlotSerializer.GeneralPropertiesTag);
     }
 
     #endregion
@@ -71,11 +71,11 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(plot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(plot);
 
         // Assert
         Assert.NotNull(element);
-        Assert.Equal(GeneralPlotControl.GeneralPropertiesTag, element.Name.LocalName);
+        Assert.Equal(PlotSerializer.GeneralPropertiesTag, element.Name.LocalName);
 
         var titleElement = element.Element("Title");
         Assert.NotNull(titleElement);
@@ -90,7 +90,7 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Title",
                 new XAttribute("Title", "Deserialized Title"),
@@ -101,7 +101,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("TitlePadding", "15")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.Equal("Deserialized Title", plot.Title);
@@ -127,9 +127,9 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        GeneralPlotControl.XElementToGeneralProperties(deserializedPlot, element);
+        PlotSerializer.XElementToGeneralProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.Title, deserializedPlot.Title);
@@ -158,7 +158,7 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(plot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(plot);
 
         // Assert
         var subtitleElement = element.Element("Subtitle");
@@ -173,7 +173,7 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Subtitle",
                 new XAttribute("Subtitle", "Deserialized Subtitle"),
@@ -183,7 +183,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("SubtitleFontWeight", "Normal")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.Equal("Deserialized Subtitle", plot.Subtitle);
@@ -207,9 +207,9 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        GeneralPlotControl.XElementToGeneralProperties(deserializedPlot, element);
+        PlotSerializer.XElementToGeneralProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.Subtitle, deserializedPlot.Subtitle);
@@ -235,7 +235,7 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(plot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(plot);
 
         // Assert
         var chartElement = element.Element("Chart");
@@ -250,7 +250,7 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Chart",
                 new XAttribute("Background", "#FFD3D3D3"),
@@ -258,7 +258,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("BorderThickness", "3,3,3,3")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.IsType<SolidColorBrush>(plot.Background);
@@ -279,9 +279,9 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        GeneralPlotControl.XElementToGeneralProperties(deserializedPlot, element);
+        PlotSerializer.XElementToGeneralProperties(deserializedPlot, element);
 
         // Assert
         Assert.IsType<SolidColorBrush>(deserializedPlot.Background);
@@ -307,7 +307,7 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(plot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(plot);
 
         // Assert
         var plotAreaElement = element.Element("Plot");
@@ -321,7 +321,7 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Plot",
                 new XAttribute("PlotAreaBackground", "#FFF0F8FF"),
@@ -329,7 +329,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("PlotAreaBorderThickness", "2,2,2,2")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.IsType<SolidColorBrush>(plot.PlotAreaBackground);
@@ -349,9 +349,9 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        GeneralPlotControl.XElementToGeneralProperties(deserializedPlot, element);
+        PlotSerializer.XElementToGeneralProperties(deserializedPlot, element);
 
         // Assert
         Assert.IsType<SolidColorBrush>(deserializedPlot.PlotAreaBackground);
@@ -374,8 +374,8 @@ public class GeneralPropertiesSerializationTests
         var plotDisabled = new Plot { IsEnabled = false };
 
         // Act
-        var elementEnabled = GeneralPlotControl.GeneralPropertiesToXElement(plotEnabled);
-        var elementDisabled = GeneralPlotControl.GeneralPropertiesToXElement(plotDisabled);
+        var elementEnabled = PlotSerializer.GeneralPropertiesToXElement(plotEnabled);
+        var elementDisabled = PlotSerializer.GeneralPropertiesToXElement(plotDisabled);
 
         // Assert
         Assert.Equal("True", elementEnabled.Attribute("IsEnabled")?.Value);
@@ -388,14 +388,14 @@ public class GeneralPropertiesSerializationTests
         // Arrange
         var plotTrue = new Plot { IsEnabled = false };
         var plotFalse = new Plot { IsEnabled = true };
-        var elementTrue = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var elementTrue = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"));
-        var elementFalse = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var elementFalse = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "False"));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plotTrue, elementTrue);
-        GeneralPlotControl.XElementToGeneralProperties(plotFalse, elementFalse);
+        PlotSerializer.XElementToGeneralProperties(plotTrue, elementTrue);
+        PlotSerializer.XElementToGeneralProperties(plotFalse, elementFalse);
 
         // Assert
         Assert.True(plotTrue.IsEnabled);
@@ -411,10 +411,10 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         Plot? plot = null;
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag);
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag);
 
         // Act & Assert
-        var exception = Record.Exception(() => GeneralPlotControl.XElementToGeneralProperties(plot!, element));
+        var exception = Record.Exception(() => PlotSerializer.XElementToGeneralProperties(plot!, element));
         Assert.Null(exception);
     }
 
@@ -428,7 +428,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("Title", "Changed Title")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.Equal("Original Title", plot.Title);
@@ -443,11 +443,11 @@ public class GeneralPropertiesSerializationTests
             Title = "Original Title",
             Subtitle = "Original Subtitle"
         };
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"));
 
         // Act
-        var exception = Record.Exception(() => GeneralPlotControl.XElementToGeneralProperties(plot, element));
+        var exception = Record.Exception(() => PlotSerializer.XElementToGeneralProperties(plot, element));
 
         // Assert
         Assert.Null(exception);
@@ -467,7 +467,7 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(plot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(plot);
 
         // Assert
         Assert.NotNull(element);
@@ -484,7 +484,7 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Title",
                 new XAttribute("Title", "Test Title"),
@@ -495,7 +495,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("Padding", "8")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.Equal("Test Title", plot.Title);
@@ -511,7 +511,7 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Subtitle",
                 new XAttribute("Title", "Test Subtitle"),
@@ -521,7 +521,7 @@ public class GeneralPropertiesSerializationTests
                 new XAttribute("Weight", "Normal")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.Equal("Test Subtitle", plot.Subtitle);
@@ -536,14 +536,14 @@ public class GeneralPropertiesSerializationTests
     {
         // Arrange
         var plot = new Plot();
-        var element = new XElement(GeneralPlotControl.GeneralPropertiesTag,
+        var element = new XElement(PlotSerializer.GeneralPropertiesTag,
             new XAttribute("IsEnabled", "True"),
             new XElement("Plot",
                 new XAttribute("BorderColor", "#FF800000"),
                 new XAttribute("BorderThickness", "1,1,1,1")));
 
         // Act
-        GeneralPlotControl.XElementToGeneralProperties(plot, element);
+        PlotSerializer.XElementToGeneralProperties(plot, element);
 
         // Assert
         Assert.Equal(Colors.Maroon, plot.PlotAreaBorderColor);
@@ -581,9 +581,9 @@ public class GeneralPropertiesSerializationTests
         };
 
         // Act
-        var element = GeneralPlotControl.GeneralPropertiesToXElement(originalPlot);
+        var element = PlotSerializer.GeneralPropertiesToXElement(originalPlot);
         var deserializedPlot = new Plot();
-        GeneralPlotControl.XElementToGeneralProperties(deserializedPlot, element);
+        PlotSerializer.XElementToGeneralProperties(deserializedPlot, element);
 
         // Assert
         Assert.Equal(originalPlot.IsEnabled, deserializedPlot.IsEnabled);

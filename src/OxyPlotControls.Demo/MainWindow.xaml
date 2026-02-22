@@ -167,6 +167,37 @@
                         <ComboBoxItem>Stem Series</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
+
+                <!-- Rendering Backend & Benchmark -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Backend:" VerticalAlignment="Center" Margin="0,0,8,0"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
+                    <ComboBox x:Name="BackendComboBox"
+                              Width="140" VerticalContentAlignment="Center"
+                              SelectionChanged="BackendComboBox_SelectionChanged"
+                              Style="{DynamicResource OxyComboBoxStyle}">
+                        <ComboBoxItem IsSelected="True">Canvas</ComboBoxItem>
+                        <ComboBoxItem>DrawingVisual</ComboBoxItem>
+                    </ComboBox>
+                    <Button Name="BenchmarkButton"
+                            Style="{StaticResource ToolbarButtonStyle}"
+                            Click="BenchmarkButton_Click"
+                            Margin="12,0,0,0">
+                        <TextBlock Text="100K Benchmark" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Name="ReRenderButton"
+                            Style="{StaticResource ToolbarButtonStyle}"
+                            Click="ReRenderButton_Click"
+                            Margin="4,0,0,0">
+                        <TextBlock Text="Re-render" VerticalAlignment="Center"/>
+                    </Button>
+                    <CheckBox x:Name="DecimationCheckBox"
+                              Content="Decimation"
+                              IsChecked="True"
+                              VerticalAlignment="Center"
+                              Margin="12,0,0,0"
+                              Foreground="{DynamicResource EnvironmentWindowText}"/>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -182,7 +213,7 @@
             <Border Grid.Column="0"
                     BorderBrush="{DynamicResource Button.Static.Border}"
                     BorderThickness="1">
-                <Grid>
+                <Grid x:Name="PlotHostGrid">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -274,18 +305,19 @@
                            FontSize="11"/>
 
 
-                <TextBlock x:Name="PropertyChangedLabel"
+                <TextBlock x:Name="RenderTimeLabel"
                            Grid.Column="1"
                            HorizontalAlignment="Center"
+                           FontSize="12"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource AccentBrush}"/>
+
+                <TextBlock x:Name="PropertyChangedLabel"
+                           Grid.Column="2"
+                           HorizontalAlignment="Right"
                            FontSize="11"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource AccentBrush}"/>
-
-                <TextBlock Grid.Column="2"
-                           Text="Select a series type from the dropdown to see different chart types"
-                           Foreground="{DynamicResource EnvironmentWindowText}"
-                           Opacity="0.6"
-                           FontSize="11"/>
             </Grid>
         </Border>
     </Grid>

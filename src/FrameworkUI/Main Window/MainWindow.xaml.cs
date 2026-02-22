@@ -175,6 +175,12 @@ namespace FrameworkUI
             {
                 _avalonDockThemeDictionary.Source = new Uri(lightString, UriKind.RelativeOrAbsolute);
             }
+            else
+            {
+                // Unknown theme — re-add dictionary without changing Source
+                Resources.MergedDictionaries.Add(_avalonDockThemeDictionary);
+                return;
+            }
 
             // Reset the theme dictionary
             Resources.MergedDictionaries.Add(_avalonDockThemeDictionary);
@@ -369,6 +375,7 @@ namespace FrameworkUI
         /// </summary>
         private void LoadProjectNode()
         {
+            if (ProjectNode == null) return;
             // Remove handlers
             ProjectNode.OnClick -= Project_Click;
             ProjectNode.SetPropertiesControl -= SetPropertiesRequested;
@@ -1810,6 +1817,12 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void MainWindow_Closed(object sender, EventArgs e)
         {
+            MouseMove -= Me_MouseMove;
+            var messenger = FrameworkInterfaces.Messaging.Messenger.GetInstance();
+            messenger.MessagesAdded -= ProjectMessageAdded;
+            FileSizeManager.ReportProgress -= FileSizeManager_ReportProgress;
+            AutoBackup.ReportProgress -= AutoBackup_ReportProgress;
+            ThemeManager.ThemeChanged -= ThemeChanged;
             Application.Current.Shutdown();
         }
 
@@ -2332,6 +2345,7 @@ namespace FrameworkUI
         /// <param name="message">The message to report.</param>
         private void FileSizeManager_ReportProgress(string message)
         {
+            if (ProjectNode?.Project == null) return;
             FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(new BasicMessageItem(MessageType.Event, message, ProjectNode.Project, "Project", ProjectNode.Project.Name, "CompactProjectFile"));
         }
 
@@ -2368,6 +2382,7 @@ namespace FrameworkUI
         /// <param name="message">The message to report.</param>
         private void AutoBackup_ReportProgress(string message)
         {
+            if (ProjectNode?.Project == null) return;
             FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(new BasicMessageItem(MessageType.Event, message, ProjectNode.Project, "Project", ProjectNode.Project.Name, "AutoBackup"));
         }
 

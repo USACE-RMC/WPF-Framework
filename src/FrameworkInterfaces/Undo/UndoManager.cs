@@ -61,7 +61,7 @@ namespace FrameworkInterfaces.Undo
         private int _savePointIndex = 0;
         private int _currentIndex = 0;
         private int _maxUndoLevels = 100;
-        private bool _isExecutingAction = false;
+        private volatile bool _isExecutingAction = false;
         private CompositeAction? _currentTransaction = null;
         private readonly object _lockObject = new object();
 

@@ -296,7 +296,7 @@ namespace OxyPlotControls
         {
             if (_series == null) return new object?[] { Color.FromArgb(255, 0, 0, 0), null };
             // Get color value
-            if (value.GetType() != typeof(SolidColorBrush)) return new object?[] { Color.FromArgb(255, 0, 0, 0), null };
+            if (value == null || value.GetType() != typeof(SolidColorBrush)) return new object?[] { Color.FromArgb(255, 0, 0, 0), null };
             var c = ((SolidColorBrush)value).Color;
             var oxyCol = OxyColor.FromArgb(c.A, c.R, c.G, c.B);
 

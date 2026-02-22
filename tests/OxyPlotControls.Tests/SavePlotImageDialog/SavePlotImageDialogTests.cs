@@ -215,7 +215,7 @@ public class SavePlotImageDialogTests
         var dialog = new OxyPlotControls.SavePlotImageDialog(plot);
 
         // Act
-        var panel = (System.Windows.Controls.StackPanel)dialog.FindName("CustomDimensionsPanel");
+        var panel = (System.Windows.Controls.Grid)dialog.FindName("CustomDimensionsPanel");
 
         // Assert
         Assert.NotNull(panel);

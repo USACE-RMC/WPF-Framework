@@ -235,7 +235,9 @@ namespace FrameworkUI
             {
                 _progressControl.Closing -= ProgressControl_Closing;
                 _progressControl.Close();
+                _progressControl = null;
             }
+            if (_timer != null) { _timer.Stop(); _timer.Tick -= Timer_Tick; _timer = null; }
             ShellPublicVariables.CompactionInProgress = false;
 
             if (_project == null) return;
@@ -266,6 +268,7 @@ namespace FrameworkUI
         private static void ProgressControl_Closing(object? sender, CancelEventArgs e)
         {
             _backgroundWorker?.CancelAsync();
+            if (_timer != null) { _timer.Stop(); _timer.Tick -= Timer_Tick; _timer = null; }
         }
 
         /// <summary>
@@ -294,7 +297,7 @@ namespace FrameworkUI
                     : _fileSizeBefore ?? string.Empty;
 
                 _progressControl.ProgressBar.IsIndeterminate = false;
-                _progressControl.ProgressText.Text = "Compacting " + tempFileSizeText + " of " + _fileSizeBefore;
+                _progressControl.ProgressText.Text = "Compacting " + tempFileSizeText + " of " + (_fileSizeBefore ?? string.Empty);
                 if (originalFileSize > 0)
                 {
                     _progressControl.ProgressBar.Value = (1d - (originalFileSize - tempFileSize) / (double)originalFileSize) * _progressControl.ProgressBar.Maximum;

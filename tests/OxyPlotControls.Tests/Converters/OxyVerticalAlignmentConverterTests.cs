@@ -29,20 +29,17 @@
 */
 
 using System.Globalization;
-using OxyPlot;
+using System.Windows;
 using Xunit;
 
 namespace OxyPlotControls.Tests.Converters;
 
 /// <summary>
 /// Tests for OxyVerticalAlignmentConverter.
-/// Verifies proper conversion between OxyPlot VerticalAlignment and WPF VerticalAlignment enums.
+/// Verifies pass-through and swap behavior for WPF VerticalAlignment values.
 /// </summary>
 public class OxyVerticalAlignmentConverterTests
 {
-    /// <summary>
-    /// The converter instance being tested.
-    /// </summary>
     private readonly OxyVerticalAlignmentConverter _converter = new();
 
     #region Convert Tests
@@ -50,66 +47,68 @@ public class OxyVerticalAlignmentConverterTests
     [Fact]
     public void Convert_NullValue_ReturnsCenter()
     {
-        // Arrange
-        object? value = null;
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.VerticalAlignment.Center, result);
+        var result = _converter.Convert(null, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Center, result);
     }
 
     [Fact]
     public void Convert_WrongType_ReturnsCenter()
     {
-        // Arrange
-        var value = "not an alignment";
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.VerticalAlignment.Center, result);
+        var result = _converter.Convert("not an alignment", typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Center, result);
     }
 
     [Fact]
-    public void Convert_OxyTop_ReturnsWpfTop()
+    public void Convert_Top_ReturnsTop()
     {
-        // Arrange
-        var value = OxyPlot.VerticalAlignment.Top;
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.VerticalAlignment.Top, result);
+        var result = _converter.Convert(VerticalAlignment.Top, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Top, result);
     }
 
     [Fact]
-    public void Convert_OxyMiddle_ReturnsWpfCenter()
+    public void Convert_Center_ReturnsCenter()
     {
-        // Arrange
-        var value = OxyPlot.VerticalAlignment.Middle;
-
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(System.Windows.VerticalAlignment.Center, result);
+        var result = _converter.Convert(VerticalAlignment.Center, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Center, result);
     }
 
     [Fact]
-    public void Convert_OxyBottom_ReturnsWpfBottom()
+    public void Convert_Bottom_ReturnsBottom()
     {
-        // Arrange
-        var value = OxyPlot.VerticalAlignment.Bottom;
+        var result = _converter.Convert(VerticalAlignment.Bottom, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Bottom, result);
+    }
 
-        // Act
-        var result = _converter.Convert(value, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
+    [Fact]
+    public void Convert_Stretch_ReturnsStretch()
+    {
+        var result = _converter.Convert(VerticalAlignment.Stretch, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Stretch, result);
+    }
 
-        // Assert
-        Assert.Equal(System.Windows.VerticalAlignment.Bottom, result);
+    #endregion
+
+    #region Convert with Swap Tests
+
+    [Fact]
+    public void Convert_SwapTop_ReturnsBottom()
+    {
+        var result = _converter.Convert(VerticalAlignment.Top, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Bottom, result);
+    }
+
+    [Fact]
+    public void Convert_SwapBottom_ReturnsTop()
+    {
+        var result = _converter.Convert(VerticalAlignment.Bottom, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Top, result);
+    }
+
+    [Fact]
+    public void Convert_SwapCenter_ReturnsCenter()
+    {
+        var result = _converter.Convert(VerticalAlignment.Center, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Center, result);
     }
 
     #endregion
@@ -117,127 +116,72 @@ public class OxyVerticalAlignmentConverterTests
     #region ConvertBack Tests
 
     [Fact]
-    public void ConvertBack_NullValue_ReturnsMiddle()
+    public void ConvertBack_NullValue_ReturnsCenter()
     {
-        // Arrange
-        object? value = null;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.VerticalAlignment.Middle, result);
+        var result = _converter.ConvertBack(null, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Center, result);
     }
 
     [Fact]
-    public void ConvertBack_WrongType_ReturnsMiddle()
+    public void ConvertBack_WrongType_ReturnsCenter()
     {
-        // Arrange
-        var value = "not an alignment";
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.VerticalAlignment.Middle, result);
+        var result = _converter.ConvertBack("not an alignment", typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Center, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfTop_ReturnsOxyTop()
+    public void ConvertBack_Top_ReturnsTop()
     {
-        // Arrange
-        var value = System.Windows.VerticalAlignment.Top;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.VerticalAlignment.Top, result);
+        var result = _converter.ConvertBack(VerticalAlignment.Top, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Top, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfCenter_ReturnsOxyMiddle()
+    public void ConvertBack_Bottom_ReturnsBottom()
     {
-        // Arrange
-        var value = System.Windows.VerticalAlignment.Center;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.VerticalAlignment.Middle, result);
+        var result = _converter.ConvertBack(VerticalAlignment.Bottom, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Bottom, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfBottom_ReturnsOxyBottom()
+    public void ConvertBack_SwapTop_ReturnsBottom()
     {
-        // Arrange
-        var value = System.Windows.VerticalAlignment.Bottom;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.VerticalAlignment.Bottom, result);
+        var result = _converter.ConvertBack(VerticalAlignment.Top, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Bottom, result);
     }
 
     [Fact]
-    public void ConvertBack_WpfStretch_ReturnsOxyMiddle()
+    public void ConvertBack_SwapBottom_ReturnsTop()
     {
-        // Arrange - Stretch is not supported in OxyPlot, should map to Middle
-        var value = System.Windows.VerticalAlignment.Stretch;
-
-        // Act
-        var result = _converter.ConvertBack(value, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(OxyPlot.VerticalAlignment.Middle, result);
+        var result = _converter.ConvertBack(VerticalAlignment.Bottom, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(VerticalAlignment.Top, result);
     }
 
     #endregion
 
     #region Round Trip Tests
 
-    [Fact]
-    public void Convert_ConvertBack_RoundTrip_Top()
+    [Theory]
+    [InlineData(VerticalAlignment.Top)]
+    [InlineData(VerticalAlignment.Center)]
+    [InlineData(VerticalAlignment.Bottom)]
+    [InlineData(VerticalAlignment.Stretch)]
+    public void Convert_ConvertBack_RoundTrip(VerticalAlignment alignment)
     {
-        // Arrange
-        var original = OxyPlot.VerticalAlignment.Top;
-
-        // Act
-        var converted = _converter.Convert(original, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-        var roundTripped = _converter.ConvertBack(converted, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(original, roundTripped);
+        var converted = _converter.Convert(alignment, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        var roundTripped = _converter.ConvertBack(converted, typeof(VerticalAlignment), null, CultureInfo.InvariantCulture);
+        Assert.Equal(alignment, roundTripped);
     }
 
-    [Fact]
-    public void Convert_ConvertBack_RoundTrip_Middle()
+    [Theory]
+    [InlineData(VerticalAlignment.Top)]
+    [InlineData(VerticalAlignment.Center)]
+    [InlineData(VerticalAlignment.Bottom)]
+    public void Convert_ConvertBack_SwapRoundTrip(VerticalAlignment alignment)
     {
-        // Arrange
-        var original = OxyPlot.VerticalAlignment.Middle;
-
-        // Act
-        var converted = _converter.Convert(original, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-        var roundTripped = _converter.ConvertBack(converted, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(original, roundTripped);
-    }
-
-    [Fact]
-    public void Convert_ConvertBack_RoundTrip_Bottom()
-    {
-        // Arrange
-        var original = OxyPlot.VerticalAlignment.Bottom;
-
-        // Act
-        var converted = _converter.Convert(original, typeof(System.Windows.VerticalAlignment), null, CultureInfo.InvariantCulture);
-        var roundTripped = _converter.ConvertBack(converted, typeof(OxyPlot.VerticalAlignment), null, CultureInfo.InvariantCulture);
-
-        // Assert
-        Assert.Equal(original, roundTripped);
+        var converted = _converter.Convert(alignment, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        var roundTripped = _converter.ConvertBack(converted, typeof(VerticalAlignment), "Swap", CultureInfo.InvariantCulture);
+        Assert.Equal(alignment, roundTripped);
     }
 
     #endregion

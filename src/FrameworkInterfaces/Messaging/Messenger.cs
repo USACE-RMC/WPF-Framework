@@ -92,6 +92,7 @@ namespace FrameworkInterfaces.Messaging
         /// while preventing duplicate codes from the same source.
         /// </summary>
         private readonly Dictionary<object, Dictionary<string, IMessageItem>> _messagesBySource = new Dictionary<object, Dictionary<string, IMessageItem>>();
+        private readonly object _lockObject = new object();
 
         private bool _writeToFile = false;
         private string _textFileName = string.Empty;
@@ -409,47 +410,50 @@ namespace FrameworkInterfaces.Messaging
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            // If it's an event then need to ensure the item code is unique
-            if (item.Type == MessageType.Event)
+            lock (_lockObject)
             {
-                if (item.Source == null) return;
-                if (!_messagesBySource.ContainsKey(item.Source))
+                // If it's an event then need to ensure the item code is unique
+                if (item.Type == MessageType.Event)
                 {
-                    _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                    if (item.Source == null) return;
+                    if (!_messagesBySource.ContainsKey(item.Source))
+                    {
+                        _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                    }
+
+                    // Ensure that the event code is unique by appending counter if needed
+                    var srcMsgs = _messagesBySource[item.Source];
+                    string originalCode = item.Code;
+                    string code = originalCode;
+                    int counter = 1;
+
+                    while (srcMsgs.ContainsKey(code))
+                    {
+                        code = $"{originalCode}{counter}";
+                        counter++;
+                    }
+                    item.Code = code;
+
+                    srcMsgs.Add(item.Code, item);
+                    MessagesAdded?.Invoke(new IMessageItem[] { item });
                 }
-
-                // Ensure that the event code is unique by appending counter if needed
-                var srcMsgs = _messagesBySource[item.Source];
-                string originalCode = item.Code;
-                string code = originalCode;
-                int counter = 1;
-
-                while (srcMsgs.ContainsKey(code))
+                else
                 {
-                    code = $"{originalCode}{counter}";
-                    counter++;
-                }
-                item.Code = code;
+                    if (item.Source == null) return;
+                    // For non-event messages, ignore duplicates
+                    if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
+                    {
+                        return;
+                    }
 
-                srcMsgs.Add(item.Code, item);
-                MessagesAdded?.Invoke(new IMessageItem[] { item });
-            }
-            else
-            {
-                if (item.Source == null) return;
-                // For non-event messages, ignore duplicates
-                if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
-                {
-                    return;
-                }
+                    if (!_messagesBySource.ContainsKey(item.Source))
+                    {
+                        _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                    }
 
-                if (!_messagesBySource.ContainsKey(item.Source))
-                {
-                    _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                    _messagesBySource[item.Source].Add(item.Code, item);
+                    MessagesAdded?.Invoke(new IMessageItem[] { item });
                 }
-
-                _messagesBySource[item.Source].Add(item.Code, item);
-                MessagesAdded?.Invoke(new IMessageItem[] { item });
             }
         }
 
@@ -466,28 +470,31 @@ namespace FrameworkInterfaces.Messaging
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
 
-            var newMessages = new List<IMessageItem>();
-            foreach (IMessageItem item in items)
+            lock (_lockObject)
             {
-                if (item == null || item.Source == null) continue;
-
-                if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
+                var newMessages = new List<IMessageItem>();
+                foreach (IMessageItem item in items)
                 {
-                    continue;
+                    if (item == null || item.Source == null) continue;
+
+                    if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
+                    {
+                        continue;
+                    }
+
+                    if (!_messagesBySource.ContainsKey(item.Source))
+                    {
+                        _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                    }
+
+                    _messagesBySource[item.Source].Add(item.Code, item);
+                    newMessages.Add(item);
                 }
 
-                if (!_messagesBySource.ContainsKey(item.Source))
+                if (newMessages.Count > 0)
                 {
-                    _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                    MessagesAdded?.Invoke(newMessages.ToArray());
                 }
-
-                _messagesBySource[item.Source].Add(item.Code, item);
-                newMessages.Add(item);
-            }
-
-            if (newMessages.Count > 0)
-            {
-                MessagesAdded?.Invoke(newMessages.ToArray());
             }
         }
 
@@ -502,15 +509,18 @@ namespace FrameworkInterfaces.Messaging
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (message.Source == null) return false;
 
-            if (!_messagesBySource.ContainsKey(message.Source)) { return false; }
-            if (!_messagesBySource[message.Source].ContainsKey(message.Code)) { return false; }
-
-            bool removed = _messagesBySource[message.Source].Remove(message.Code);
-            if (removed)
+            lock (_lockObject)
             {
-                MessagesRemoved?.Invoke(new IMessageItem[] { message });
+                if (!_messagesBySource.ContainsKey(message.Source)) { return false; }
+                if (!_messagesBySource[message.Source].ContainsKey(message.Code)) { return false; }
+
+                bool removed = _messagesBySource[message.Source].Remove(message.Code);
+                if (removed)
+                {
+                    MessagesRemoved?.Invoke(new IMessageItem[] { message });
+                }
+                return removed;
             }
-            return removed;
         }
 
         /// <summary>
@@ -518,9 +528,12 @@ namespace FrameworkInterfaces.Messaging
         /// </summary>
         public void Clear()
         {
-            List<IMessageItem> allMessages = AllMessageItems();
-            _messagesBySource.Clear();
-            MessagesRemoved?.Invoke(allMessages.ToArray());
+            lock (_lockObject)
+            {
+                List<IMessageItem> allMessages = AllMessageItems();
+                _messagesBySource.Clear();
+                MessagesRemoved?.Invoke(allMessages.ToArray());
+            }
         }
 
         /// <summary>
@@ -532,11 +545,14 @@ namespace FrameworkInterfaces.Messaging
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            if (!_messagesBySource.ContainsKey(source)) { return; }
+            lock (_lockObject)
+            {
+                if (!_messagesBySource.ContainsKey(source)) { return; }
 
-            IMessageItem[] allMessages = _messagesBySource[source].Values.ToArray();
-            _messagesBySource[source].Clear();
-            MessagesRemoved?.Invoke(allMessages);
+                IMessageItem[] allMessages = _messagesBySource[source].Values.ToArray();
+                _messagesBySource[source].Clear();
+                MessagesRemoved?.Invoke(allMessages);
+            }
         }
 
         /// <summary>
@@ -545,12 +561,15 @@ namespace FrameworkInterfaces.Messaging
         /// <returns>A list of all message items from all sources.</returns>
         public List<IMessageItem> AllMessageItems()
         {
-            var allMessages = new List<IMessageItem>();
-            foreach (var source in _messagesBySource)
+            lock (_lockObject)
             {
-                allMessages.AddRange(source.Value.Values);
+                var allMessages = new List<IMessageItem>();
+                foreach (var source in _messagesBySource)
+                {
+                    allMessages.AddRange(source.Value.Values);
+                }
+                return allMessages;
             }
-            return allMessages;
         }
 
         /// <summary>

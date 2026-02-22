@@ -335,6 +335,7 @@ namespace GenericControls
         /// <param name="window">The message box window to set the icon on.</param>
         private static void SetWindowIcon(MessageBoxWindow window)
         {
+            if (window == null) return;
             // Try to get the icon from the owner window first, then fall back to main window
             ImageSource icon = null;
 

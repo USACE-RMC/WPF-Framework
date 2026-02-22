@@ -385,10 +385,10 @@ namespace NumericControls
         private bool SetDistribution()
         {
             var newParams = new double[_distribution.NumberOfParameters];
-            newParams[0] = P1;
-            if (_propertyNames.Count() >= 2) { newParams[1] = P2; }
-            if (_propertyNames.Count() >= 3) { newParams[2] = P3; }
-            if (_propertyNames.Count() >= 4) { newParams[3] = P4; }
+            if (_distribution.NumberOfParameters >= 1) { newParams[0] = P1; }
+            if (_distribution.NumberOfParameters >= 2) { newParams[1] = P2; }
+            if (_distribution.NumberOfParameters >= 3) { newParams[2] = P3; }
+            if (_distribution.NumberOfParameters >= 4) { newParams[3] = P4; }
             _distribution.SetParameters(newParams);
 
             if (_distribution.ParametersValid == false)
@@ -416,8 +416,8 @@ namespace NumericControls
             {
                 AddRule(nameof(X), () => OrderRule<double, DistributionRowItem>(o => o.X, nameof(X), XOrder == SortOrder.Ascending, !IsStrictX), "X values must be in " + XOrder.ToString() + " order.");
             }
-            AddRule(nameof(X), () => X < MinXValue, "X values must be greater than or equal to " + MinXValue + ".");
-            AddRule(nameof(X), () => X > MaxXValue, "X values must be less than or equal to " + MaxXValue + ".");
+            AddRule(nameof(X), () => double.IsNaN(X) || X < MinXValue, "X values must be greater than or equal to " + MinXValue + ".");
+            AddRule(nameof(X), () => double.IsNaN(X) || X > MaxXValue, "X values must be less than or equal to " + MaxXValue + ".");
 
             // These need to be before the min, max, and mean validation rules. I think so that the distribution parameters can be set so that the mean, min, and max can be updated.
             AddRule(nameof(P1), SetDistribution, null);

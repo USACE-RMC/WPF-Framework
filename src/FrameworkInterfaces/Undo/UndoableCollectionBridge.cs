@@ -265,6 +265,7 @@ namespace FrameworkInterfaces.Undo
         /// </remarks>
         private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            if (_disposed) return;
             var undoManager = _getUndoManager();
 
             // If undo is disabled or we're executing an undo/redo, just update the shadow and return

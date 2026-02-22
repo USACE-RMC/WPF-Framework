@@ -33,6 +33,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
 using OxyPlot;
+using OxyPlot.Wpf.Serialization;
 using OxyPlotControls;
 using Xunit;
 
@@ -53,7 +54,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Color", "#FF0000"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetColorAttribute(element, "Color", out Color color);
+        bool result = PlotSerializer.GetColorAttribute(element, "Color", out Color color);
 
         // Assert
         Assert.True(result);
@@ -69,7 +70,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Color", "Blue"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetColorAttribute(element, "Color", out Color color);
+        bool result = PlotSerializer.GetColorAttribute(element, "Color", out Color color);
 
         // Assert
         Assert.True(result);
@@ -83,7 +84,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetColorAttribute(element, "Color", out Color color);
+        bool result = PlotSerializer.GetColorAttribute(element, "Color", out Color color);
 
         // Assert
         Assert.False(result);
@@ -97,7 +98,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Color", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetColorAttribute(element, "Color", out Color color);
+        bool result = PlotSerializer.GetColorAttribute(element, "Color", out Color color);
 
         // Assert
         Assert.False(result);
@@ -110,7 +111,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Color", "#80FF0000"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetColorAttribute(element, "Color", out Color color);
+        bool result = PlotSerializer.GetColorAttribute(element, "Color", out Color color);
 
         // Assert
         Assert.True(result);
@@ -132,7 +133,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new BrushConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
+        bool result = PlotSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
 
         // Assert
         Assert.True(result);
@@ -150,7 +151,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new BrushConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
+        bool result = PlotSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
 
         // Assert
         Assert.True(result);
@@ -165,7 +166,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new BrushConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
+        bool result = PlotSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
 
         // Assert
         Assert.False(result);
@@ -180,7 +181,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new BrushConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
+        bool result = PlotSerializer.GetBrushAttribute(element, "Brush", converter, out Brush? brush);
 
         // Assert
         Assert.False(result);
@@ -197,7 +198,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Name", "TestValue"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetStringAttribute(element, "Name", out string? value);
+        bool result = PlotSerializer.GetStringAttribute(element, "Name", out string? value);
 
         // Assert
         Assert.True(result);
@@ -211,7 +212,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Name", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetStringAttribute(element, "Name", out string? value);
+        bool result = PlotSerializer.GetStringAttribute(element, "Name", out string? value);
 
         // Assert
         Assert.True(result);
@@ -225,7 +226,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetStringAttribute(element, "Name", out string? value);
+        bool result = PlotSerializer.GetStringAttribute(element, "Name", out string? value);
 
         // Assert
         Assert.False(result);
@@ -239,7 +240,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Name", "Value with spaces & special <chars>"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetStringAttribute(element, "Name", out string? value);
+        bool result = PlotSerializer.GetStringAttribute(element, "Name", out string? value);
 
         // Assert
         Assert.True(result);
@@ -257,7 +258,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", "42"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -271,7 +272,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", "3.14159"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -285,7 +286,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", "-123.456"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -299,7 +300,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", "1.23E+10"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -313,7 +314,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", "NaN"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -327,7 +328,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", double.PositiveInfinity.ToString(CultureInfo.InvariantCulture)));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -341,7 +342,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.False(result);
@@ -355,7 +356,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.False(result);
@@ -368,7 +369,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", "not a number"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.False(result);
@@ -382,7 +383,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Value", originalValue.ToString("G17", CultureInfo.InvariantCulture)));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDoubleAttribute(element, "Value", out double value);
+        bool result = PlotSerializer.GetDoubleAttribute(element, "Value", out double value);
 
         // Assert
         Assert.True(result);
@@ -400,7 +401,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Count", "42"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.True(result);
@@ -414,7 +415,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Count", "-100"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.True(result);
@@ -428,7 +429,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Count", "0"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.True(result);
@@ -442,7 +443,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.False(result);
@@ -456,7 +457,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Count", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.False(result);
@@ -469,7 +470,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Count", "3.14"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.False(result);
@@ -482,7 +483,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Count", "not an integer"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetIntegerAttribute(element, "Count", out int value);
+        bool result = PlotSerializer.GetIntegerAttribute(element, "Count", out int value);
 
         // Assert
         Assert.False(result);
@@ -499,7 +500,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Enabled", "True"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.True(result);
@@ -513,7 +514,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Enabled", "False"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.True(result);
@@ -527,7 +528,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Enabled", "true"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.True(result);
@@ -541,7 +542,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Enabled", "false"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.True(result);
@@ -555,7 +556,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.False(result);
@@ -569,7 +570,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Enabled", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.False(result);
@@ -582,7 +583,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Enabled", "yes"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
+        bool result = PlotSerializer.GetBooleanAttribute(element, "Enabled", out bool value);
 
         // Assert
         Assert.False(result);
@@ -600,7 +601,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontFamilyConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
+        bool result = PlotSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
 
         // Assert
         Assert.True(result);
@@ -616,7 +617,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontFamilyConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
+        bool result = PlotSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
 
         // Assert
         Assert.True(result);
@@ -632,7 +633,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontFamilyConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
+        bool result = PlotSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
 
         // Assert
         Assert.False(result);
@@ -647,7 +648,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontFamilyConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
+        bool result = PlotSerializer.GetFontFamilyAttribute(element, "Font", converter, out FontFamily? fontFamily);
 
         // Assert
         Assert.False(result);
@@ -665,7 +666,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontWeightConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
+        bool result = PlotSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
 
         // Assert
         Assert.True(result);
@@ -680,7 +681,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontWeightConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
+        bool result = PlotSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
 
         // Assert
         Assert.True(result);
@@ -695,7 +696,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontWeightConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
+        bool result = PlotSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
 
         // Assert
         Assert.True(result);
@@ -710,7 +711,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontWeightConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
+        bool result = PlotSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
 
         // Assert
         Assert.False(result);
@@ -725,7 +726,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new FontWeightConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
+        bool result = PlotSerializer.GetFontWeightAttribute(element, "Weight", converter, out FontWeight fontWeight);
 
         // Assert
         Assert.False(result);
@@ -743,7 +744,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new ThicknessConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
+        bool result = PlotSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
 
         // Assert
         Assert.True(result);
@@ -761,7 +762,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new ThicknessConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
+        bool result = PlotSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
 
         // Assert
         Assert.True(result);
@@ -779,7 +780,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new ThicknessConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
+        bool result = PlotSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
 
         // Assert
         Assert.True(result);
@@ -797,7 +798,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new ThicknessConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
+        bool result = PlotSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
 
         // Assert
         Assert.False(result);
@@ -812,7 +813,7 @@ public class OxyPlotSettingsSerializerTests
         var converter = new ThicknessConverter();
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
+        bool result = PlotSerializer.GetThicknessAttribute(element, "Thickness", converter, out Thickness thickness);
 
         // Assert
         Assert.False(result);
@@ -829,7 +830,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Style", "Dash"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
 
         // Assert
         Assert.True(result);
@@ -843,7 +844,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Position", "Left"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Position", out OxyPlot.Axes.AxisPosition position);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Position", out OxyPlot.Axes.AxisPosition position);
 
         // Assert
         Assert.True(result);
@@ -857,7 +858,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("TickStyle", "Inside"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "TickStyle", out OxyPlot.Axes.TickStyle tickStyle);
+        bool result = PlotSerializer.GetEnumAttribute(element, "TickStyle", out OxyPlot.Axes.TickStyle tickStyle);
 
         // Assert
         Assert.True(result);
@@ -871,7 +872,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Position", "TopRight"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Position", out OxyPlot.Legends.LegendPosition position);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Position", out OxyPlot.Legends.LegendPosition position);
 
         // Assert
         Assert.True(result);
@@ -885,7 +886,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Placement", "Inside"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Placement", out OxyPlot.Legends.LegendPlacement placement);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Placement", out OxyPlot.Legends.LegendPlacement placement);
 
         // Assert
         Assert.True(result);
@@ -899,7 +900,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Orientation", "Horizontal"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Orientation", out OxyPlot.Legends.LegendOrientation orientation);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Orientation", out OxyPlot.Legends.LegendOrientation orientation);
 
         // Assert
         Assert.True(result);
@@ -913,7 +914,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Alignment", "Center"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Alignment", out System.Windows.HorizontalAlignment alignment);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Alignment", out System.Windows.HorizontalAlignment alignment);
 
         // Assert
         Assert.True(result);
@@ -927,7 +928,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("WeekRule", "FirstDay"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "WeekRule", out CalendarWeekRule weekRule);
+        bool result = PlotSerializer.GetEnumAttribute(element, "WeekRule", out CalendarWeekRule weekRule);
 
         // Assert
         Assert.True(result);
@@ -941,7 +942,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
 
         // Assert
         Assert.False(result);
@@ -955,7 +956,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Style", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
 
         // Assert
         Assert.False(result);
@@ -968,7 +969,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Style", "InvalidStyle"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
+        bool result = PlotSerializer.GetEnumAttribute(element, "Style", out LineStyle style);
 
         // Assert
         Assert.False(result);
@@ -985,7 +986,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", "10.5, 20.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
+        bool result = PlotSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
 
         // Assert
         Assert.True(result);
@@ -1000,7 +1001,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", "-5.5, -10.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
+        bool result = PlotSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
 
         // Assert
         Assert.True(result);
@@ -1015,7 +1016,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", "0, 0"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
+        bool result = PlotSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
 
         // Assert
         Assert.True(result);
@@ -1030,7 +1031,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
+        bool result = PlotSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
 
         // Assert
         Assert.False(result);
@@ -1044,7 +1045,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
+        bool result = PlotSerializer.GetDataPointAttribute(element, "Point", out DataPoint dp);
 
         // Assert
         Assert.False(result);
@@ -1061,7 +1062,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", "100.5, 200.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
+        bool result = PlotSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
 
         // Assert
         Assert.True(result);
@@ -1076,7 +1077,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", "-50.5, -75.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
+        bool result = PlotSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
 
         // Assert
         Assert.True(result);
@@ -1091,7 +1092,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
+        bool result = PlotSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
 
         // Assert
         Assert.False(result);
@@ -1105,7 +1106,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
+        bool result = PlotSerializer.GetScreenVectorAttribute(element, "Vector", out ScreenVector sv);
 
         // Assert
         Assert.False(result);
@@ -1122,7 +1123,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", "150.5, 250.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
+        bool result = PlotSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
 
         // Assert
         Assert.True(result);
@@ -1137,7 +1138,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", "0, 0"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
+        bool result = PlotSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
 
         // Assert
         Assert.True(result);
@@ -1152,7 +1153,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
+        bool result = PlotSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
 
         // Assert
         Assert.False(result);
@@ -1166,7 +1167,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Point", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
+        bool result = PlotSerializer.GetScreenPointAttribute(element, "Point", out ScreenPoint sp);
 
         // Assert
         Assert.False(result);
@@ -1183,7 +1184,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", "30.5, 40.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetVectorAttribute(element, "Vector", out Vector v);
+        bool result = PlotSerializer.GetVectorAttribute(element, "Vector", out Vector v);
 
         // Assert
         Assert.True(result);
@@ -1198,7 +1199,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", "-15.5, -25.5"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetVectorAttribute(element, "Vector", out Vector v);
+        bool result = PlotSerializer.GetVectorAttribute(element, "Vector", out Vector v);
 
         // Assert
         Assert.True(result);
@@ -1213,7 +1214,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", "0, 0"));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetVectorAttribute(element, "Vector", out Vector v);
+        bool result = PlotSerializer.GetVectorAttribute(element, "Vector", out Vector v);
 
         // Assert
         Assert.True(result);
@@ -1228,7 +1229,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test");
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetVectorAttribute(element, "Vector", out Vector v);
+        bool result = PlotSerializer.GetVectorAttribute(element, "Vector", out Vector v);
 
         // Assert
         Assert.False(result);
@@ -1242,7 +1243,7 @@ public class OxyPlotSettingsSerializerTests
         var element = new XElement("Test", new XAttribute("Vector", ""));
 
         // Act
-        bool result = OxyPlotSettingsSerializer.GetVectorAttribute(element, "Vector", out Vector v);
+        bool result = PlotSerializer.GetVectorAttribute(element, "Vector", out Vector v);
 
         // Assert
         Assert.False(result);

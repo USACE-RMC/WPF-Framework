@@ -91,7 +91,7 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MyDataGrid.SelectedItem == null) return;
+            if (MyDataGrid.SelectedItem == null || Files == null) return;
             Files.OpenItem(((RecentFileItem)MyDataGrid.SelectedItem).FilePath);
             Close();
         }
@@ -103,6 +103,7 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private void ClearListButton_Click(object sender, RoutedEventArgs e)
         {
+            if (Files == null) return;
             if (GenericControls.MessageBox.Show("Are you sure you want to clear the Recent Files List? This action is permanent.", "Clear the Recent Files List?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 Files.ClearAll();

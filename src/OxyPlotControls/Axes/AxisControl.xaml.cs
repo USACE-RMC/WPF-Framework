@@ -129,7 +129,9 @@ namespace OxyPlotControls
             }
 
             var newAxis = e.NewValue as Wpf.Axis;
-            if (newAxis == null || thisControl.Content == null)
+            if (newAxis == null) return;
+            newAxis.PropertyChanged += thisControl.OnAxisPropertyChanged;
+            if (thisControl.Content == null)
             {
                 return;
             }
@@ -302,8 +304,6 @@ namespace OxyPlotControls
                 thisControl.SyncLabelTypeFromStringFormat();
             }
 
-            newAxis.PropertyChanged += thisControl.OnAxisPropertyChanged;
-
             // Force layout update to sync bindings after axis change
             thisControl.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
             {
@@ -394,7 +394,7 @@ namespace OxyPlotControls
         {
             var newAxis = new Wpf.NormalProbabilityAxis();
             newAxis.FromAxisProperties(wpfAxis);
-            if (newAxis.Minimum < 0.0000000000000001) newAxis.Minimum = 0.0000001;
+            if (newAxis.Minimum < Epsilon) newAxis.Minimum = 0.0000001;
             if (newAxis.Maximum > 0.999 || double.IsNaN(newAxis.Maximum)) newAxis.Maximum = 0.999;
             newAxis.StartPosition = wpfAxis.StartPosition;
             newAxis.EndPosition = wpfAxis.EndPosition;
@@ -410,7 +410,7 @@ namespace OxyPlotControls
         {
             var newAxis = new Wpf.GumbelProbabilityAxis();
             newAxis.FromAxisProperties(wpfAxis);
-            if (newAxis.Minimum < 0.0000000000000001) newAxis.Minimum = 0.0000001;
+            if (newAxis.Minimum < Epsilon) newAxis.Minimum = 0.0000001;
             if (newAxis.Maximum > 0.99 || double.IsNaN(newAxis.Maximum)) newAxis.Maximum = 0.99;
             newAxis.StartPosition = wpfAxis.StartPosition;
             newAxis.EndPosition = wpfAxis.EndPosition;

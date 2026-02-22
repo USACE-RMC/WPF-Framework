@@ -29,6 +29,7 @@
 */
 
 using OxyPlot;
+using OxyPlot.Wpf.Serialization;
 using Xunit;
 
 namespace OxyPlotControls.Tests.Extensions;

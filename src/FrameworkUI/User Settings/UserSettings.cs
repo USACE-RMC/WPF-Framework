@@ -100,6 +100,11 @@ namespace FrameworkUI
         public static bool KeepLastBackupVersion { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets whether the plot theme change warning dialog is suppressed.
+        /// </summary>
+        public static bool SuppressThemeChangeWarning { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets whether error messages beep.
         /// </summary>
         public static bool ErrorBeep { get; set; } = false;
@@ -203,6 +208,12 @@ namespace FrameworkUI
         private static event PropertyChangedEventHandler? GlobalPropertyChanged;
 
         /// <summary>
+        /// Raised at the start of <see cref="Save"/> before settings are written to disk.
+        /// Subscribe to sync external state into UserSettings properties before persistence.
+        /// </summary>
+        public static event Action? Saving;
+
+        /// <summary>
         /// Raises the global property changed event.
         /// </summary>
         /// <param name="propertyName">The name of the property that changed.</param>
@@ -230,6 +241,7 @@ namespace FrameworkUI
             CreateAutoRecoverBackup = true;
             AutoRecoverInterval = 30;
             KeepLastBackupVersion = true;
+            SuppressThemeChangeWarning = false;
             // Message window
             ErrorBeep = false;
             WarningBeep = false;
@@ -335,6 +347,12 @@ namespace FrameworkUI
                             if (bool.TryParse(innerXml, out bool keepBackup))
                                 KeepLastBackupVersion = keepBackup;
                         }
+                        else if (elementName == nameof(SuppressThemeChangeWarning))
+                        {
+                            innerXml = xmlReader.ReadInnerXml();
+                            if (bool.TryParse(innerXml, out bool suppress))
+                                SuppressThemeChangeWarning = suppress;
+                        }
                         // Message Window
                         else if (elementName == nameof(ErrorBeep))
                         {
@@ -411,6 +429,9 @@ namespace FrameworkUI
         /// <param name="xmlFilePath">The XML file path for storing the user settings.</param>
         public static void Save(string xmlFilePath)
         {
+            // Allow subscribers to sync external state before writing to disk.
+            Saving?.Invoke();
+
             // Create the settings directory if it doesn't already exist.
             var directoryPath = Path.GetDirectoryName(xmlFilePath);
             if (directoryPath != null && Directory.Exists(directoryPath) == false)
@@ -477,7 +498,11 @@ namespace FrameworkUI
                 xmlWriter.WriteStartElement(nameof(KeepLastBackupVersion));
                 xmlWriter.WriteString(KeepLastBackupVersion.ToString());
                 xmlWriter.WriteEndElement();
-                // 
+                //
+                xmlWriter.WriteStartElement(nameof(SuppressThemeChangeWarning));
+                xmlWriter.WriteString(SuppressThemeChangeWarning.ToString());
+                xmlWriter.WriteEndElement();
+                //
                 // Message Window
                 // 
                 xmlWriter.WriteStartElement(nameof(ErrorBeep));

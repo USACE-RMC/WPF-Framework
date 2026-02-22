@@ -432,43 +432,43 @@ namespace FrameworkInterfaces.Tests.Messaging
         }
 
         /// <summary>
-        /// Verifies that the ErrorColor property defaults to Red.
+        /// Verifies that the ErrorColor property defaults to the custom red.
         /// </summary>
         [Fact]
         public void ErrorColor_DefaultRed()
         {
             var messenger = Messenger.GetInstance();
-            Assert.Equal(Colors.Red, messenger.ErrorColor.Color);
+            Assert.Equal(Color.FromRgb(228, 20, 0), messenger.ErrorColor.Color);
         }
 
         /// <summary>
-        /// Verifies that the WarningColor property defaults to DarkOrange.
+        /// Verifies that the WarningColor property defaults to the custom orange.
         /// </summary>
         [Fact]
         public void WarningColor_DefaultDarkOrange()
         {
             var messenger = Messenger.GetInstance();
-            Assert.Equal(Colors.DarkOrange, messenger.WarningColor.Color);
+            Assert.Equal(Color.FromRgb(229, 160, 0), messenger.WarningColor.Color);
         }
 
         /// <summary>
-        /// Verifies that the MessageColor property defaults to Blue.
+        /// Verifies that the MessageColor property defaults to the custom blue.
         /// </summary>
         [Fact]
         public void MessageColor_DefaultBlue()
         {
             var messenger = Messenger.GetInstance();
-            Assert.Equal(Colors.Blue, messenger.MessageColor.Color);
+            Assert.Equal(Color.FromRgb(26, 161, 226), messenger.MessageColor.Color);
         }
 
         /// <summary>
-        /// Verifies that the EventColor property defaults to Black.
+        /// Verifies that the EventColor property defaults to dark turquoise.
         /// </summary>
         [Fact]
         public void EventColor_DefaultBlack()
         {
             var messenger = Messenger.GetInstance();
-            Assert.Equal(Colors.Black, messenger.EventColor.Color);
+            Assert.Equal(Color.FromRgb(0, 206, 209), messenger.EventColor.Color);
         }
 
         /// <summary>

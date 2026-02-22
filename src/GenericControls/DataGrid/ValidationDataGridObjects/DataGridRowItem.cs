@@ -237,17 +237,19 @@ namespace GenericControls
             bool @bool = false;
             if (_parentList.Count >= 1)
             {
+                var prop = GetType().GetProperty(propertyName);
+                if (prop == null) return false;
                 for (int i = 0, loopTo = _parentList.Count - 1; i <= loopTo; i++)
                 {
                     DataGridRowItem iRowItem = (DataGridRowItem)_parentList[i];
-                    string iValue = GetType().GetProperty(propertyName).GetValue(iRowItem, null).ToString();
+                    string iValue = prop.GetValue(iRowItem, null)?.ToString() ?? string.Empty;
                     bool hasDuplicate = false;
-                    // 
+                    //
                     // Check for duplicates
                     for (int j = 0, loopTo1 = _parentList.Count - 1; j <= loopTo1; j++)
                     {
                         DataGridRowItem jRowItem = (DataGridRowItem)_parentList[j];
-                        string jValue = GetType().GetProperty(propertyName).GetValue(jRowItem, null).ToString();
+                        string jValue = prop.GetValue(jRowItem, null)?.ToString() ?? string.Empty;
                         if (jRowItem.Equals(iRowItem))
                             continue;
                         // 

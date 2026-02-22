@@ -48,7 +48,11 @@ namespace FrameworkUI
         public AboutWindow()
         {
             InitializeComponent();
+            Loaded += AboutWindow_Loaded;
+        }
 
+        private void AboutWindow_Loaded(object sender, RoutedEventArgs e)
+        {
             // Measure the software name and widen the name column if needed
             var formattedText = new FormattedText(
                 SoftwareName ?? string.Empty,
@@ -62,11 +66,6 @@ namespace FrameworkUI
             if (nameWidth > 250 && FindName("NameColumn") is System.Windows.Controls.ColumnDefinition nameColumn)
                 nameColumn.Width = new GridLength(nameWidth);
 
-            Loaded += AboutWindow_Loaded;
-        }
-
-        private void AboutWindow_Loaded(object sender, RoutedEventArgs e)
-        {
             // Auto-populate window icon from owner or main window
             if (Icon == null)
             {

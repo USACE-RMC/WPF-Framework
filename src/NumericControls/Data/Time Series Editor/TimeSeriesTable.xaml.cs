@@ -132,7 +132,7 @@ namespace NumericControls
         /// <param name="e">The event arguments describing the collection change.</param>
         private void Series_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Replace)
+            if (e.Action == NotifyCollectionChangedAction.Replace && e.NewItems != null)
             {
                 for (int i = 0; i < e.NewItems.Count; i++)
                 {
@@ -466,6 +466,12 @@ namespace NumericControls
 
             if (apply)
             {
+                if (FunctionType == MathFunctionType.Divide && operandValue == 0)
+                {
+                    GenericControls.MessageBox.Show("Cannot divide by zero.", "Invalid Operand", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 // Use suppress/unsuppress pattern for bulk math operations
                 // Fire PreviewPasteData as a signal to suppress (reusing paste events for bulk ops)
                 bool cancelMath = false;
@@ -536,7 +542,7 @@ namespace NumericControls
                 Series.Insert(i, ordinate);
             }
 
-            if (Series.TimeInterval != TimeInterval.Irregular) { Series.ShiftAllDates(startTime); }
+            if (Series.TimeInterval != TimeInterval.Irregular && startRowIndex == 0) { Series.ShiftAllDates(startTime); }
 
             // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
             // Must happen before PasteClipboard resumes so Items[rowIndex + i] finds the new rows.

@@ -70,25 +70,37 @@ namespace OxyPlotControls
             InitializeComponent();
 
             // Set up custom cursors from embedded resources
-            using (var ms = new MemoryStream(Properties.Resources.SelectPointCursor))
+            try
             {
-                _movePointsCursor = new Cursor(ms);
+                using (var ms = new MemoryStream(Properties.Resources.SelectPointCursor))
+                {
+                    _movePointsCursor = new Cursor(ms);
+                }
+                using (var ms = new MemoryStream(Properties.Resources.AddPointCursor))
+                {
+                    _addPointCursor = new Cursor(ms);
+                }
+                using (var ms = new MemoryStream(Properties.Resources.Pan_Hand))
+                {
+                    _panHandCursor = new Cursor(ms);
+                }
+                using (var ms = new MemoryStream(Properties.Resources.Pan_Hand_Closed))
+                {
+                    _panHandClosedCursor = new Cursor(ms);
+                }
+                using (var ms = new MemoryStream(Properties.Resources.ZoomIn))
+                {
+                    _zoomCursor = new Cursor(ms);
+                }
             }
-            using (var ms = new MemoryStream(Properties.Resources.AddPointCursor))
+            catch
             {
-                _addPointCursor = new Cursor(ms);
-            }
-            using (var ms = new MemoryStream(Properties.Resources.Pan_Hand))
-            {
-                _panHandCursor = new Cursor(ms);
-            }
-            using (var ms = new MemoryStream(Properties.Resources.Pan_Hand_Closed))
-            {
-                _panHandClosedCursor = new Cursor(ms);
-            }
-            using (var ms = new MemoryStream(Properties.Resources.ZoomIn))
-            {
-                _zoomCursor = new Cursor(ms);
+                _movePointsCursor?.Dispose();
+                _addPointCursor?.Dispose();
+                _panHandCursor?.Dispose();
+                _panHandClosedCursor?.Dispose();
+                _zoomCursor?.Dispose();
+                throw;
             }
 
             // Create leader line canvas and leader line
@@ -361,6 +373,9 @@ namespace OxyPlotControls
         private AddToolMode _addAnnotationToolMode = AddToolMode.None;
         private Wpf.Annotation _targetAddAnnotation = null!;
 
+        // Annotation marker overlays (WPF elements drawn on the overlay canvas for hit-point markers)
+        private readonly List<UIElement> _markerOverlays = new();
+
         /// <summary>
         /// Delegate for the PropertiesCalled event.
         /// </summary>
@@ -631,6 +646,21 @@ namespace OxyPlotControls
         }
 
         /// <summary>
+        /// Removes all WPF marker overlay elements from the plot canvas and clears the tracking list.
+        /// </summary>
+        private void ClearMarkerOverlays()
+        {
+            if (_markerOverlays.Count > 0)
+            {
+                foreach (var overlay in _markerOverlays)
+                {
+                    Plot.canvas.Children.Remove(overlay);
+                }
+                _markerOverlays.Clear();
+            }
+        }
+
+        /// <summary>
         /// Stop adding the annotation.
         /// </summary>
         private void StopAddAnnotation()
@@ -639,12 +669,15 @@ namespace OxyPlotControls
             {
                 bool annotationWasCreated = _targetAddAnnotation != null;
 
+                ClearMarkerOverlays();
+
                 // Unsuppress PropertyChanged and notify the plot so undo bridges
                 // can rebuild their shadow state to match the final property values.
                 if (_targetAddAnnotation != null)
                 {
                     _targetAddAnnotation.SuppressPropertyChanged = false;
                     Plot.NotifyAnnotationsModified();
+                    Plot.InvalidatePlot(false);
                 }
 
                 if (_addAnnotationToolMode == AddToolMode.AddPolygonAnnotation || _addAnnotationToolMode == AddToolMode.AddPolylineAnnotation)
@@ -692,6 +725,7 @@ namespace OxyPlotControls
                         if (!newArrow.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index != 2;
@@ -740,6 +774,7 @@ namespace OxyPlotControls
                         if (!newText.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
@@ -783,6 +818,7 @@ namespace OxyPlotControls
                         if (!newRect.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         var upperRight = newRect.InternalAnnotation.Transform(newRect.MaximumX, newRect.MaximumY);
@@ -854,6 +890,7 @@ namespace OxyPlotControls
                         if (!newEllipse.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         var upperRight = newEllipse.InternalAnnotation.Transform(newEllipse.MaximumX, newEllipse.MaximumY);
@@ -925,6 +962,7 @@ namespace OxyPlotControls
                         if (!newPoint.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
@@ -972,6 +1010,7 @@ namespace OxyPlotControls
                         if (!newPolygon.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         var screenToData = newPolygon.InternalAnnotation.InverseTransform(ae.Position);
@@ -1073,6 +1112,7 @@ namespace OxyPlotControls
                         if (!newPolyline.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         var screenToData = newPolyline.InternalAnnotation.InverseTransform(ae.Position);
@@ -1160,6 +1200,7 @@ namespace OxyPlotControls
                         if (!newLine.IsEnabled) return;
                         if (_addAnnotationToolMode != AddToolMode.None) return;
                         if (ae.ChangedButton != OxyMouseButton.Left) return;
+                        ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
@@ -1358,11 +1399,11 @@ namespace OxyPlotControls
                         newArrow.Text = "Arrow Annotation";
                         ApplyThemeToNewAnnotation(newArrow);
                         Plot.Annotations.Add(newArrow);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newArrow);
                         newArrow.StartPoint = newArrow.InternalAnnotation.InverseTransform(e.Position);
                         newArrow.EndPoint = newArrow.StartPoint;
                         _targetAddAnnotation = newArrow;
+                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddTextAnnotation:
@@ -1371,10 +1412,10 @@ namespace OxyPlotControls
                         newText.Text = "Text Annotation";
                         ApplyThemeToNewAnnotation(newText);
                         Plot.Annotations.Add(newText);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newText);
                         newText.TextPosition = newText.InternalAnnotation.InverseTransform(e.Position);
                         _targetAddAnnotation = newText;
+                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
@@ -1383,7 +1424,6 @@ namespace OxyPlotControls
                         newVLine.Text = "Vertical Line Annotation";
                         ApplyThemeToNewAnnotation(newVLine);
                         Plot.Annotations.Add(newVLine);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newVLine);
 
                         if (newVLine.InternalAnnotation.YAxis!.IsReversed == false)
@@ -1421,7 +1461,6 @@ namespace OxyPlotControls
                         newHLine.Text = "Horizontal Line Annotation";
                         ApplyThemeToNewAnnotation(newHLine);
                         Plot.Annotations.Add(newHLine);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newHLine);
 
                         if (newHLine.InternalAnnotation.XAxis!.IsReversed == false)
@@ -1459,7 +1498,6 @@ namespace OxyPlotControls
                         newRectangle.Text = "Rectangle Annotation";
                         ApplyThemeToNewAnnotation(newRectangle);
                         Plot.Annotations.Add(newRectangle);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newRectangle);
                         {
                             var dataPointClicked = newRectangle.InternalAnnotation.InverseTransform(e.Position);
@@ -1469,6 +1507,7 @@ namespace OxyPlotControls
                             newRectangle.MaximumY = dataPointClicked.Y;
                             _targetAddAnnotation = newRectangle;
                         }
+                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddEllipseAnnotation:
@@ -1477,7 +1516,6 @@ namespace OxyPlotControls
                         newEllipse.Text = "Ellipse Annotation";
                         ApplyThemeToNewAnnotation(newEllipse);
                         Plot.Annotations.Add(newEllipse);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newEllipse);
                         {
                             var dataPointClicked = newEllipse.InternalAnnotation.InverseTransform(e.Position);
@@ -1487,6 +1525,7 @@ namespace OxyPlotControls
                             newEllipse.MaximumY = dataPointClicked.Y;
                             _targetAddAnnotation = newEllipse;
                         }
+                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddPointAnnotation:
@@ -1496,7 +1535,6 @@ namespace OxyPlotControls
                         newPoint.Size = 5;
                         ApplyThemeToNewAnnotation(newPoint);
                         Plot.Annotations.Add(newPoint);
-                        Plot.ActualModel.InvalidatePlot(false);
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newPoint);
                         {
                             var dataPointClicked = newPoint.InternalAnnotation.InverseTransform(e.Position);
@@ -1509,6 +1547,7 @@ namespace OxyPlotControls
                             newPoint.Y = dataPointClicked.Y;
                             _targetAddAnnotation = newPoint;
                         }
+                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddPolygonAnnotation:
@@ -1557,6 +1596,7 @@ namespace OxyPlotControls
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
                             _targetAddAnnotation = newPolyline;
+                            Plot.ActualModel.InvalidatePlot(false);
                         }
                         else
                         {
@@ -1604,20 +1644,24 @@ namespace OxyPlotControls
                 {
                     case AddToolMode.AddArrowAnnotation:
                         ((Wpf.ArrowAnnotation)_targetAddAnnotation).EndPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddTextAnnotation:
                         ((Wpf.TextAnnotation)_targetAddAnnotation).TextPosition = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
                         ((Wpf.LineAnnotation)_targetAddAnnotation).X = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).X;
                         UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
+                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddHorizontalLineAnnotation:
                         ((Wpf.LineAnnotation)_targetAddAnnotation).Y = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).Y;
                         UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
+                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddRectangleAnnotation:
@@ -1626,6 +1670,7 @@ namespace OxyPlotControls
                             var rect = (Wpf.RectangleAnnotation)_targetAddAnnotation;
                             rect.MaximumX = mouseDataPoint.X;
                             rect.MaximumY = mouseDataPoint.Y;
+                            Plot.InvalidatePlot(false);
                         }
                         break;
 
@@ -1635,6 +1680,7 @@ namespace OxyPlotControls
                             var ellipse = (Wpf.EllipseAnnotation)_targetAddAnnotation;
                             ellipse.MaximumX = mouseDataPoint.X;
                             ellipse.MaximumY = mouseDataPoint.Y;
+                            Plot.InvalidatePlot(false);
                         }
                         break;
 
@@ -1644,6 +1690,7 @@ namespace OxyPlotControls
                             var point = (Wpf.PointAnnotation)_targetAddAnnotation;
                             point.X = mouseDataPoint.X;
                             point.Y = mouseDataPoint.Y;
+                            Plot.InvalidatePlot(false);
                         }
                         break;
 
@@ -1858,10 +1905,28 @@ namespace OxyPlotControls
                 }
             }
 
+            ClearMarkerOverlays();
             if (markerPoints.Count > 0)
             {
                 _showPoints = true;
-                RenderingExtensions.DrawMarkers(Plot.RenderContext, markerPoints, MarkerType.Square, null, markerSizes, OxyColors.White, OxyColors.Black, 2, EdgeRenderingMode.Automatic);
+                for (int i = 0; i < markerPoints.Count; i++)
+                {
+                    var mp = markerPoints[i];
+                    var size = markerSizes[i] * 2;
+                    var rect = new System.Windows.Shapes.Rectangle
+                    {
+                        Width = size,
+                        Height = size,
+                        Fill = System.Windows.Media.Brushes.White,
+                        Stroke = System.Windows.Media.Brushes.Black,
+                        StrokeThickness = 1,
+                        IsHitTestVisible = false
+                    };
+                    Canvas.SetLeft(rect, mp.X - size / 2);
+                    Canvas.SetTop(rect, mp.Y - size / 2);
+                    Plot.canvas.Children.Add(rect);
+                    _markerOverlays.Add(rect);
+                }
             }
             else
             {
@@ -2034,20 +2099,32 @@ namespace OxyPlotControls
             }
 
             // TEXT HIT TEST
-            var textResult = Plot.canvas.InputHitTest(new Point(e.Position.X, e.Position.Y));
+            var textResult = Plot.HitTestRenderedText(new Point(e.Position.X, e.Position.Y));
             if (textResult != null)
             {
-                if (textResult is TextBlock)
+                string clickedText = null;
+                TextBlock txtblock = null;
+                if (textResult is TextBlock tb)
                 {
-                    var txtblock = (TextBlock)textResult;
+                    clickedText = tb.Text;
+                    txtblock = tb;
+                }
+                else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thr)
+                {
+                    clickedText = thr.Text;
+                }
+
+                if (clickedText != null)
+                {
 
                     // CHART TITLE SELECTED
-                    if (Plot.Title == txtblock.Text && Plot.ActualModel.TitleArea.Contains(new ScreenPoint(e.Position.X, e.Position.Y)))
+                    if (Plot.Title == clickedText && Plot.ActualModel.TitleArea.Contains(new ScreenPoint(e.Position.X, e.Position.Y)))
                     {
                         if (leftClickBool)
                         {
                             PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.General_PlotTitle, Plot.ActualModel.TitleArea);
-                            CreateEditTBX(txtblock, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
+                            if (txtblock != null) CreateEditTBX(txtblock, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
+                            else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thrTitle) CreateEditTBXFromBounds(thrTitle.Bounds, thrTitle.FontSize, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
                             return;
                         }
                         else
@@ -2056,7 +2133,8 @@ namespace OxyPlotControls
                             editTitleItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.General_PlotTitle, Plot.ActualModel.TitleArea);
-                                CreateEditTBX(txtblock, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
+                                if (txtblock != null) CreateEditTBX(txtblock, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
+                                else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thrTitleCtx) CreateEditTBXFromBounds(thrTitleCtx.Bounds, thrTitleCtx.FontSize, Plot, Wpf.Plot.TitleProperty, 0, Plot.canvas);
                             };
                             var formatTitleItem = new MenuItem { Header = "Format Plot Title", Icon = CreateMenuIcon("Format") };
                             formatTitleItem.Click += (s, args) =>
@@ -2070,12 +2148,13 @@ namespace OxyPlotControls
                     }
 
                     // CHART SUBTITLE SELECTED
-                    if (Plot.Subtitle == txtblock.Text && Plot.ActualModel.TitleArea.Contains(new ScreenPoint(e.Position.X, e.Position.Y)))
+                    if (Plot.Subtitle == clickedText && Plot.ActualModel.TitleArea.Contains(new ScreenPoint(e.Position.X, e.Position.Y)))
                     {
                         if (leftClickBool)
                         {
                             PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.General_PlotSubtitle, Plot.ActualModel.TitleArea);
-                            CreateEditTBX(txtblock, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
+                            if (txtblock != null) CreateEditTBX(txtblock, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
+                            else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thrSub) CreateEditTBXFromBounds(thrSub.Bounds, thrSub.FontSize, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
                             return;
                         }
                         else
@@ -2084,7 +2163,8 @@ namespace OxyPlotControls
                             editSubtitleItem.Click += (s, args) =>
                             {
                                 PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.General_PlotSubtitle, Plot.ActualModel.TitleArea);
-                                CreateEditTBX(txtblock, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
+                                if (txtblock != null) CreateEditTBX(txtblock, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
+                                else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thrSubCtx) CreateEditTBXFromBounds(thrSubCtx.Bounds, thrSubCtx.FontSize, Plot, Wpf.Plot.SubtitleProperty, 0, Plot.canvas);
                             };
                             var formatSubtitleItem = new MenuItem { Header = "Format Plot Subtitle", Icon = CreateMenuIcon("Format") };
                             formatSubtitleItem.Click += (s, args) =>
@@ -2099,7 +2179,7 @@ namespace OxyPlotControls
                     // AXES TITLES SELECTED
                     if (Plot.ActualModel.PlotAndAxisArea.Contains(new ScreenPoint(e.Position.X, e.Position.Y)))
                     {
-                        var axes = Plot.Axes.Where(x => x.Title != null && txtblock.Text.Contains(x.Title)).ToList();
+                        var axes = Plot.Axes.Where(x => x.Title != null && clickedText.Contains(x.Title)).ToList();
 
                         if (axes.Count > 1)
                         {
@@ -2110,7 +2190,7 @@ namespace OxyPlotControls
                             {
                                 var dummyCanvas = new Canvas();
                                 var crc = new Wpf.CanvasRenderContext(dummyCanvas);
-                                var size = new Size(Plot.canvas.ActualWidth, Plot.canvas.ActualHeight);
+                                var size = new Size(Plot.ActualWidth, Plot.ActualHeight);
                                 dummyCanvas.Measure(size);
                                 dummyCanvas.Arrange(new Rect(size));
                                 dummyCanvas.UpdateLayout();
@@ -2163,13 +2243,21 @@ namespace OxyPlotControls
                             if (leftClickBool)
                             {
                                 PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.Axes_Title, ax);
-                                if (ax.InternalAxis.IsVertical())
+                                if (txtblock != null)
                                 {
-                                    CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, -90, Plot.canvas);
+                                    if (ax.InternalAxis.IsVertical())
+                                    {
+                                        CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, -90, Plot.canvas);
+                                    }
+                                    else
+                                    {
+                                        CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, 0, Plot.canvas);
+                                    }
                                 }
-                                else
+                                else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thrAxis)
                                 {
-                                    CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, 0, Plot.canvas);
+                                    double axAngle = ax.InternalAxis.IsVertical() ? -90 : 0;
+                                    CreateEditTBXFromBounds(thrAxis.Bounds, thrAxis.FontSize, ax, Wpf.Axis.TitleProperty, axAngle, Plot.canvas);
                                 }
                                 return;
                             }
@@ -2179,13 +2267,21 @@ namespace OxyPlotControls
                                 editAxisItem.Click += (s, args) =>
                                 {
                                     PropertiesCalled?.Invoke(Plot, false, OxyPlotPropertiesControl.PropertyEXP.Axes_Title, ax);
-                                    if (ax.InternalAxis.IsVertical())
+                                    if (txtblock != null)
                                     {
-                                        CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, -90, Plot.canvas);
+                                        if (ax.InternalAxis.IsVertical())
+                                        {
+                                            CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, -90, Plot.canvas);
+                                        }
+                                        else
+                                        {
+                                            CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, 0, Plot.canvas);
+                                        }
                                     }
-                                    else
+                                    else if (textResult is Wpf.DrawingVisualRenderContext.TextHitResult thrAxisCtx)
                                     {
-                                        CreateEditTBX(txtblock, ax, Wpf.Axis.TitleProperty, 0, Plot.canvas);
+                                        double axAngleCtx = ax.InternalAxis.IsVertical() ? -90 : 0;
+                                        CreateEditTBXFromBounds(thrAxisCtx.Bounds, thrAxisCtx.FontSize, ax, Wpf.Axis.TitleProperty, axAngleCtx, Plot.canvas);
                                     }
                                 };
                                 _contextMenu.Items.Add(editAxisItem);
@@ -2277,7 +2373,7 @@ namespace OxyPlotControls
                                 // Dummy canvas is used to render the item
                                 var dummyCanvas = new Canvas();
                                 var crc = new Wpf.CanvasRenderContext(dummyCanvas);
-                                var size = new Size(Plot.canvas.ActualWidth, Plot.canvas.ActualHeight);
+                                var size = new Size(Plot.ActualWidth, Plot.ActualHeight);
                                 dummyCanvas.Measure(size);
                                 dummyCanvas.Arrange(new Rect(size));
                                 dummyCanvas.UpdateLayout();
@@ -2795,6 +2891,178 @@ namespace OxyPlotControls
                     Plot.TitleColor = currentTextColor;
                 }
 
+            };
+        }
+
+        /// <summary>
+        /// Creates an in-place text box for editing titles and axis titles when using the DrawingVisual backend.
+        /// Uses bounds from <see cref="Wpf.DrawingVisualRenderContext.TextHitResult"/> instead of a TextBlock.
+        /// </summary>
+        /// <param name="bounds">The bounding rectangle of the rendered text in screen coordinates.</param>
+        /// <param name="fontSize">The font size of the rendered text.</param>
+        /// <param name="dependencyObj">The dependency object containing the text property (Plot or Axis).</param>
+        /// <param name="dependencyProp">The dependency property to bind the text to.</param>
+        /// <param name="angle">The rotation angle for the text box.</param>
+        /// <param name="canvas">The canvas for positioning.</param>
+        private void CreateEditTBXFromBounds(OxyRect bounds, double fontSize, DependencyObject dependencyObj, DependencyProperty dependencyProp, double angle, Canvas canvas)
+        {
+            Color currentTextColor = Colors.Black;
+            double left = bounds.Left;
+            double top = bounds.Top;
+            double width = bounds.Width;
+            double height = bounds.Height;
+
+            // Resolve font properties from the target dependency object
+            string fontFamilyName = "Segoe UI";
+            FontWeight fontWeight = System.Windows.FontWeights.Normal;
+            Brush foreColor = System.Windows.Media.Brushes.Black;
+
+            var depObjType = dependencyObj.GetType();
+            if (depObjType == typeof(Wpf.Plot))
+            {
+                var plot = (Wpf.Plot)dependencyObj;
+                if (dependencyProp == Wpf.Plot.TitleProperty)
+                {
+                    if (!string.IsNullOrEmpty(plot.TitleFont)) fontFamilyName = plot.TitleFont;
+                    fontWeight = plot.TitleFontWeight;
+                    currentTextColor = plot.TitleColor;
+                    foreColor = new SolidColorBrush(currentTextColor == Wpf.MoreColors.Automatic ? Colors.Black : currentTextColor);
+                }
+                else // Subtitle
+                {
+                    if (!string.IsNullOrEmpty(plot.SubtitleFont)) fontFamilyName = plot.SubtitleFont;
+                    fontWeight = plot.SubtitleFontWeight;
+                    if (plot.SubtitleFontSize > 0) fontSize = plot.SubtitleFontSize;
+                    currentTextColor = plot.SubtitleColor;
+                    foreColor = new SolidColorBrush(currentTextColor == Wpf.MoreColors.Automatic ? Colors.Black : currentTextColor);
+                }
+            }
+            else if (dependencyObj is Wpf.Axis ax)
+            {
+                if (!string.IsNullOrEmpty(ax.TitleFont)) fontFamilyName = ax.TitleFont;
+                fontWeight = ax.TitleFontWeight;
+                currentTextColor = ax.TitleColor;
+                foreColor = new SolidColorBrush(currentTextColor == Wpf.MoreColors.Automatic ? Colors.Black : currentTextColor);
+            }
+
+            // Create canvas for the textbox overlay
+            var canvasOverlay = new Canvas { Name = "TextBoxCanvas" };
+            canvasOverlay.Background = new SolidColorBrush(Colors.Transparent);
+            var dockPanel = new DockPanel();
+            var plotParent = (Grid)Plot.canvas.Parent;
+            plotParent.Children.Add(canvasOverlay);
+
+            // Set initial text box settings
+            _textBox = new TextBox();
+            _textBox.Background = Plot.Background;
+            _textBox.TextAlignment = TextAlignment.Center;
+            _textBox.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
+            _textBox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            _textBox.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Stretch;
+            _textBox.VerticalContentAlignment = System.Windows.VerticalAlignment.Stretch;
+            _textBox.Padding = new Thickness(-2);
+            _textBox.FontSize = fontSize;
+            _textBox.FontFamily = new FontFamily(fontFamilyName);
+            _textBox.FontWeight = fontWeight;
+            _textBox.Foreground = foreColor;
+            TextOptions.SetTextFormattingMode(_textBox, TextFormattingMode.Display);
+
+            // Normalize angle
+            if (angle < 0 || angle >= 360)
+            {
+                angle = angle % 360;
+                if (angle < 0) angle += 360;
+            }
+
+            if (depObjType == typeof(Wpf.Plot))
+            {
+                // Title or subtitle — span the plot area width
+                dockPanel.RenderTransform = new RotateTransform(angle, 0, 0);
+                dockPanel.Width = Plot.ActualModel.PlotArea.Width;
+                dockPanel.Height = height;
+                Canvas.SetLeft(dockPanel, Plot.ActualModel.PlotArea.Left);
+                Canvas.SetTop(dockPanel, top);
+
+                string title = (string)dependencyObj.GetValue(dependencyProp);
+                Plot.TitleColor = Colors.Transparent;
+                if (dependencyProp == Wpf.Plot.SubtitleProperty)
+                    Plot.SubtitleColor = Colors.Transparent;
+                _textBox.Text = title;
+            }
+            else if (dependencyObj is Wpf.Axis axis)
+            {
+                if (angle == 0)
+                {
+                    dockPanel.RenderTransform = new RotateTransform(0, 0, 0);
+                    dockPanel.Width = Plot.ActualModel.PlotArea.Width;
+                    dockPanel.Height = height;
+                    Canvas.SetLeft(dockPanel, Plot.ActualModel.PlotArea.Left);
+                    Canvas.SetTop(dockPanel, top);
+                }
+                else if (angle == 270)
+                {
+                    // For -90° rotated text, the AABB bounds are swapped:
+                    // bounds.Width = font line height, bounds.Height = string width.
+                    // dockPanel.Height becomes visual width after 270° rotation,
+                    // so use bounds.Width (font line height) to match CreateEditTBX behavior.
+                    dockPanel.RenderTransform = new RotateTransform(270, 0, 0);
+                    dockPanel.Width = Plot.ActualModel.PlotArea.Height;
+                    dockPanel.Height = bounds.Width;
+                    Canvas.SetTop(dockPanel, Plot.ActualModel.PlotArea.Bottom);
+                    Canvas.SetLeft(dockPanel, left);
+                }
+
+                currentTextColor = axis.TitleColor;
+                axis.TitleColor = Colors.Transparent;
+                _textBox.Text = axis.Title;
+            }
+
+            // Add the textbox to the dock panel and canvas
+            dockPanel.Children.Add(_textBox);
+            canvasOverlay.Children.Add(dockPanel);
+            _textBox.BorderThickness = new Thickness(1);
+            _textBox.Focus();
+
+            // Set up binding
+            var binding = new Binding { Mode = BindingMode.OneWay, Source = _textBox, Path = new PropertyPath("Text") };
+
+            // Put the cursor at the end of the textbox
+            if (_textBox.Text != null && _textBox.Text.Length > 0)
+            {
+                _textBox.SelectionStart = _textBox.Text.Length;
+            }
+            BindingOperations.SetBinding(dependencyObj, dependencyProp, binding);
+
+            // If the plot size changes, remove the textbox overlay
+            Plot.SizeChanged += (s, args) =>
+            {
+                plotParent.Children.Remove(canvasOverlay);
+            };
+
+            // On key enter, remove the textbox overlay
+            _textBox.PreviewKeyDown += (s, args) =>
+            {
+                if (args.Key == Key.Enter)
+                {
+                    plotParent.Children.Remove(canvasOverlay);
+                }
+            };
+
+            // On lost focus, remove the textbox overlay and restore text color
+            _textBox.LostFocus += (s, args) =>
+            {
+                plotParent.Children.Remove(canvasOverlay);
+
+                if (depObjType == typeof(Wpf.Plot))
+                {
+                    Plot.TitleColor = currentTextColor;
+                    if (dependencyProp == Wpf.Plot.SubtitleProperty)
+                        Plot.SubtitleColor = currentTextColor;
+                }
+                else if (dependencyObj is Wpf.Axis axRestore)
+                {
+                    axRestore.TitleColor = currentTextColor;
+                }
             };
         }
 
