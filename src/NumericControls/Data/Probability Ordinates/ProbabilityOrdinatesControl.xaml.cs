@@ -131,6 +131,8 @@ namespace NumericControls
                 }
                 // Set data grid
                 thisControl.DataGrid.ItemsSource = thisControl._probabilityRowItems;
+                // Set RowType so the grid can create new rows even when empty
+                thisControl.DataGrid.RowType = typeof(ProbabilityOrdinateRowItem);
                 // Add handlers
                 newOrdinates.CollectionChanged += thisControl.ProbabilityOrdinates_CollectionChanged;
             }
