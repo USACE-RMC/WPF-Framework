@@ -31,10 +31,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace GenericControls
 {
@@ -197,9 +199,35 @@ namespace GenericControls
                 DeleteRowsButton.IsEnabled = true;
                 CopyButton.IsEnabled = true;
                 CopyWithHeadersButton.IsEnabled = true;
-                PasteButton.IsEnabled = !grid.IsReadOnly;
+                if (grid.IsReadOnly)
+                {
+                    PasteButton.IsEnabled = false;
+                }
+                else
+                {
+                    // Defer clipboard check so it doesn't block the UI thread
+                    // during selection changes, hover transitions, etc.
+                    Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+                    {
+                        try
+                        {
+                            PasteButton.IsEnabled = CountClipboardFormats() != 0L;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex);
+                            PasteButton.IsEnabled = false;
+                        }
+                    });
+                }
             }
         }
+
+        /// <summary>
+        /// Retrieves the number of different data formats currently on the clipboard.
+        /// </summary>
+        [DllImport("user32")]
+        private static extern long CountClipboardFormats();
 
         /// <summary>
         /// Handles changes to data grid properties and updates toolbar visibility accordingly.
