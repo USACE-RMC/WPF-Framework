@@ -60,7 +60,7 @@ namespace OxyPlotControls
         private const double DialogHorizontalPadding = 40;
         private const double MinPreviewWidth = 280;
         private const double MinPreviewHeight = 180;
-        private const double ScreenUsageFraction = 0.85;
+        private const double ScreenUsageFraction = 0.95;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SavePlotImageDialog"/> class.
