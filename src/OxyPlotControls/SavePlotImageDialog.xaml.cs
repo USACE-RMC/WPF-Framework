@@ -53,11 +53,16 @@ namespace OxyPlotControls
         private bool _isInitialized;
         private bool _useReportTheme = true;
         private static string _lastUsedFolderPath = "";
+        private double _desiredPreviewWidth;
+        private double _desiredPreviewHeight;
 
-        // Layout constants for dialog sizing calculations
-        private const double ControlsPanelHeight = 220;
-        private const double DialogChromeHeight = 70;
-        private const double DialogHorizontalPadding = 40;
+        // Layout constants for dialog sizing calculations.
+        // These estimate the non-preview space (controls, chrome, margins) so the dialog
+        // is sized appropriately. The preview itself uses explicit dimensions and does not
+        // depend on these constants being pixel-perfect.
+        private const double ControlsPanelHeight = 190;
+        private const double DialogChromeHeight = 50;
+        private const double DialogHorizontalPadding = 36;
         private const double MinPreviewWidth = 280;
         private const double MinPreviewHeight = 180;
         private const double ScreenUsageFraction = 0.95;
@@ -86,9 +91,11 @@ namespace OxyPlotControls
             ParseDimensionsFromComboBox();
             if (TryGetExportDimensions(out int initWidth, out int initHeight))
             {
-                var (w, h) = ComputeDialogSize(initWidth, initHeight);
+                var (w, h, pw, ph) = ComputeDialogSize(initWidth, initHeight);
                 Width = w;
                 Height = h;
+                _desiredPreviewWidth = pw;
+                _desiredPreviewHeight = ph;
             }
 
             ContentRendered += SavePlotImageDialog_ContentRendered;
@@ -258,7 +265,7 @@ namespace OxyPlotControls
         /// Computes the optimal dialog dimensions for the given export size.
         /// Used both for initial sizing (before the window is shown) and subsequent resizes.
         /// </summary>
-        private static (double width, double height) ComputeDialogSize(int exportWidth, int exportHeight)
+        private static (double dialogWidth, double dialogHeight, double previewWidth, double previewHeight) ComputeDialogSize(int exportWidth, int exportHeight)
         {
             // Get available screen space
             var workArea = SystemParameters.WorkArea;
@@ -269,7 +276,7 @@ namespace OxyPlotControls
             double availablePreviewWidth = maxDialogWidth - DialogHorizontalPadding;
             double availablePreviewHeight = maxDialogHeight - ControlsPanelHeight - DialogChromeHeight;
 
-            // Scale to fit
+            // Scale to fit — never upscale beyond the export dimensions
             double scaleX = availablePreviewWidth / exportWidth;
             double scaleY = availablePreviewHeight / exportHeight;
             double scale = Math.Min(scaleX, scaleY);
@@ -286,21 +293,23 @@ namespace OxyPlotControls
             dialogWidth = Math.Clamp(dialogWidth, 500, maxDialogWidth);
             dialogHeight = Math.Clamp(dialogHeight, 450, maxDialogHeight);
 
-            return (dialogWidth, dialogHeight);
+            return (dialogWidth, dialogHeight, previewWidth, previewHeight);
         }
 
         /// <summary>
         /// Resizes the dialog to reflect the selected export dimensions while maintaining aspect ratio.
-        /// The dialog is capped at 85% of the screen working area.
+        /// The dialog is capped at 95% of the screen working area.
         /// </summary>
         private void UpdateDialogSize()
         {
             if (!_isInitialized) return;
             if (!TryGetExportDimensions(out int exportWidth, out int exportHeight)) return;
 
-            var (dialogWidth, dialogHeight) = ComputeDialogSize(exportWidth, exportHeight);
+            var (dialogWidth, dialogHeight, previewWidth, previewHeight) = ComputeDialogSize(exportWidth, exportHeight);
             Width = dialogWidth;
             Height = dialogHeight;
+            _desiredPreviewWidth = previewWidth;
+            _desiredPreviewHeight = previewHeight;
 
             // Re-center on owner, clamped to the work area
             if (Owner != null)
@@ -325,13 +334,17 @@ namespace OxyPlotControls
             if (_sourcePlot?.ActualModel == null) return;
             if (!TryGetExportDimensions(out int exportWidth, out int exportHeight)) return;
 
-            double containerWidth = PreviewContainer.ActualWidth;
-            double containerHeight = PreviewContainer.ActualHeight;
-            if (containerWidth <= 0 || containerHeight <= 0) return;
+            if (_desiredPreviewWidth <= 0 || _desiredPreviewHeight <= 0) return;
 
-            // Render at container size to fill the preview area completely
-            int previewWidth = Math.Max((int)containerWidth, 100);
-            int previewHeight = Math.Max((int)containerHeight, 100);
+            // Render at exactly the desired preview dimensions so the preview
+            // is always the correct size, regardless of how much space the container has.
+            int previewWidth = Math.Max((int)_desiredPreviewWidth, 100);
+            int previewHeight = Math.Max((int)_desiredPreviewHeight, 100);
+
+            // Set explicit dimensions on the Image — with Stretch="None" and Center alignment,
+            // the preview is always exactly the right size even if the container is slightly larger.
+            PreviewImage.Width = previewWidth;
+            PreviewImage.Height = previewHeight;
 
             try
             {

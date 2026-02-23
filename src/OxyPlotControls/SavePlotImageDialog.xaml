@@ -139,8 +139,8 @@
         <Border BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1"
                 Margin="0,2,0,0" Background="{DynamicResource EnvironmentWindowBackground}">
             <Grid Name="PreviewContainer" SizeChanged="PreviewContainer_SizeChanged">
-                <Image Name="PreviewImage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                       Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality"/>
+                <Image Name="PreviewImage" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Stretch="None" RenderOptions.BitmapScalingMode="HighQuality"/>
             </Grid>
         </Border>
 

@@ -101,9 +101,9 @@ public class SavePlotImageDialogTests
         var dialog = new OxyPlotControls.SavePlotImageDialog(plot);
 
         // Assert — initial size computed from default 600x480 preset:
-        // width = 600 + 40 (padding) = 640, height = 480 + 220 (controls) + 70 (chrome) = 770
-        Assert.Equal(640, dialog.Width);
-        Assert.Equal(770, dialog.Height);
+        // width = 600 + 36 (padding) = 636, height = 480 + 190 (controls) + 50 (chrome) = 720
+        Assert.Equal(636, dialog.Width);
+        Assert.Equal(720, dialog.Height);
     }
 
     /// <summary>
