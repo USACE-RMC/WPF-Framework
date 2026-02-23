@@ -39,6 +39,12 @@ dotnet test WPF-Framework.sln
 - **.NET 9 ContentPresenter**: Causes visual parent conflicts. Use `ContentControl` for `LayoutItem.View` bindings in AvalonDock templates.
 - **DatabaseControls.Demo**: External DLLs (Numerics, OxyPlot) must exist at HintPath locations.
 
+## Git Workflow
+
+- Commit after completing each logical unit of work
+- Use conventional commit messages (e.g. `feat:`, `fix:`, `refactor:`)
+- Do not push unless explicitly asked
+
 ## VB Projects
 
 Legacy VB.NET projects exist in `src/` but are NOT part of the solution. Ignore them.

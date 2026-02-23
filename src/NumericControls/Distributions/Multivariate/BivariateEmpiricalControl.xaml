@@ -164,33 +164,31 @@
 
             <!-- Plot tab -->
             <TabItem Header="Plot" Style="{DynamicResource HorizontalTabItemStyle}">
-                <Grid Background="{DynamicResource PlotWindowBackground}">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <oxy:Plot x:Name="Plot" Grid.Column="0" Background="Transparent" PlotAreaBackground="White" PlotAreaBorderThickness="1" LegendBackground="#8CFFFFFF" LegendBorder="DarkGray" LegendPosition="TopLeft" LegendOrientation="Vertical" LegendPlacement="Inside">
+                    <oxy:Plot x:Name="Plot" Grid.Column="0" PlotAreaBorderThickness="1" LegendPosition="TopLeft" LegendOrientation="Vertical" LegendPlacement="Inside">
                         <oxy:Plot.Axes>
-                            <oxy:LinearAxis Position="Left" 
-                                            Title="Probability" 
-                                            AxisTitleDistance="15" 
-                                            TitleFontSize="16" 
-                                            MajorGridlineStyle="Solid" 
-                                            MinorGridlineStyle="Dash" 
-                                            AxislineColor="Black" 
-                                            AxislineThickness="1" 
-                                            AxislineStyle="Solid" 
+                            <oxy:LinearAxis Position="Left"
+                                            Title="Probability"
+                                            AxisTitleDistance="15"
+                                            TitleFontSize="16"
+                                            MajorGridlineStyle="Solid"
+                                            MinorGridlineStyle="Dash"
+                                            AxislineThickness="1"
+                                            AxislineStyle="Solid"
                                             StringFormat="N2"/>
-                            <oxy:LinearAxis Position="Bottom" 
-                                            Title="{Binding ElementName=BivariateEmpericalCDFControl, Path=X1Header}" 
-                                            AxisTitleDistance="15" 
-                                            TitleFontSize="16" 
-                                            MajorGridlineStyle="Solid" 
-                                            MinorGridlineStyle="Dash" 
-                                            AxislineColor="Black" 
-                                            AxislineThickness="1" 
-                                            AxislineStyle="Solid" 
+                            <oxy:LinearAxis Position="Bottom"
+                                            Title="{Binding ElementName=BivariateEmpericalCDFControl, Path=X1Header}"
+                                            AxisTitleDistance="15"
+                                            TitleFontSize="16"
+                                            MajorGridlineStyle="Solid"
+                                            MinorGridlineStyle="Dash"
+                                            AxislineThickness="1"
+                                            AxislineStyle="Solid"
                                             StringFormat="N2"/>
                         </oxy:Plot.Axes>
                     </oxy:Plot>

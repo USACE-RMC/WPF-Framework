@@ -15,7 +15,7 @@
         <cntrls:BooleanToTextConverter x:Key="BoolToXAxisTextConverter" TrueValue="X Value" FalseValue=""/>
         <cntrls:BooleanToDoubleConverter x:Key="BoolToLabelDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="5"/>
         <cntrls:BooleanToDoubleConverter x:Key="BoolToTitleDoubleConverter" TrueValue="{x:Static sys:Double.NaN}" FalseValue="8"/>
-        <cntrls:BooleanToColorConverter x:Key="BoolToColorConverter" TrueValue="Black" FalseValue="Transparent"/>
+
         <SolidColorBrush x:Key="ReadOnlyBackGround" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
         <Style x:Key="Left_ColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="ContentTemplate">
@@ -432,31 +432,27 @@
                   Visibility="{Binding ElementName=DistributionSelector, Path=ShowPlot, Converter={StaticResource BoolToVisConverter}}" 
                   Style="{Binding ElementName=DistributionSelector, Path=ExpanderStyle}">
             <Grid>
-                <oxy:Plot x:Name="Plot" Margin="2,2,0,0" Height="250" PlotAreaBackground="White" IsHitTestVisible="False" Padding="0" Background="{Binding ElementName=DistributionSelector, Path=BackgroundColor}">
+                <oxy:Plot x:Name="Plot" Margin="2,2,0,0" Height="250" IsHitTestVisible="False" Padding="0">
                     <oxy:Plot.Axes>
-                        <oxy:LinearAxis x:Name="Yaxis" 
-                                    MaximumPadding="0.1" 
-                                    MinimumPadding="0.0"    
-                                    AbsoluteMinimum="0" 
-                                    Position="Left" 
-                                    Title="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToYAxisTextConverter}}"  
+                        <oxy:LinearAxis x:Name="Yaxis"
+                                    MaximumPadding="0.1"
+                                    MinimumPadding="0.0"
+                                    AbsoluteMinimum="0"
+                                    Position="Left"
+                                    Title="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToYAxisTextConverter}}"
                                     AxisTitleDistance="10"
-                                    IsAxisVisible="{Binding ElementName=DistributionSelector, Path=ShowAxis, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" 
+                                    IsAxisVisible="{Binding ElementName=DistributionSelector, Path=ShowAxis, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
                                     TitleFontSize="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToTitleDoubleConverter}}"
-                                    TitleColor="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}"
-                                    TextColor="{Binding ElementName=DistributionSelector, Path=ShowAxisLabel, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}"
                                     FontSize="{Binding ElementName=DistributionSelector, Path=ShowAxisLabel, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToLabelDoubleConverter}}"/>
-                        <oxy:LinearAxis x:Name="Xaxis" 
-                                    MaximumPadding="0.0" 
-                                    MinimumPadding="0.0" 
-                                    Position="Bottom" 
-                                    Title="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToXAxisTextConverter}}" 
+                        <oxy:LinearAxis x:Name="Xaxis"
+                                    MaximumPadding="0.0"
+                                    MinimumPadding="0.0"
+                                    Position="Bottom"
+                                    Title="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToXAxisTextConverter}}"
                                     AxisTitleDistance="10"
                                     PositionAtZeroCrossing="True"
-                                    IsAxisVisible="{Binding ElementName=DistributionSelector, Path=ShowAxis, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" 
+                                    IsAxisVisible="{Binding ElementName=DistributionSelector, Path=ShowAxis, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
                                     TitleFontSize="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToTitleDoubleConverter}}"
-                                    TitleColor="{Binding ElementName=DistributionSelector, Path=ShowAxisTitle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}"
-                                    TextColor="{Binding ElementName=DistributionSelector, Path=ShowAxisLabel, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}"
                                     FontSize="{Binding ElementName=DistributionSelector, Path=ShowAxisLabel, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, Converter={StaticResource BoolToLabelDoubleConverter}}"/>
                     </oxy:Plot.Axes>
                     <oxy:Plot.Series>

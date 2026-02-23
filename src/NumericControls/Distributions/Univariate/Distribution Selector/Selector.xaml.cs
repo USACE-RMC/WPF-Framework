@@ -33,11 +33,13 @@ using Numerics.Data.Statistics;
 using Numerics.Distributions;
 using Numerics.Sampling;
 using OxyPlot.Wpf;
+using OxyPlotControls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Themes;
 
 namespace NumericControls.Distributions.Univariate
 {
@@ -60,6 +62,7 @@ namespace NumericControls.Distributions.Univariate
     /// </remarks>
     public partial class Selector : UserControl, INotifyPropertyChanged
     {
+        private Theme? _lastAppliedTheme;
 
         private HistogramSeries _histogramSeries = new HistogramSeries()
         {
@@ -110,6 +113,55 @@ namespace NumericControls.Distributions.Univariate
 
             // OxyPlot
             Plot.ActualController.UnbindAll();
+
+            Loaded += Selector_Loaded;
+            Unloaded += Selector_Unloaded;
+        }
+
+        private void Selector_Loaded(object sender, RoutedEventArgs e)
+        {
+            ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
+            ThemeService.Instance.ThemeChanged += OnAppThemeChanged;
+
+            var currentTheme = ThemeService.Instance.CurrentTheme;
+            if (Plot != null && _lastAppliedTheme != currentTheme)
+            {
+                _lastAppliedTheme = currentTheme;
+                var theme = OxyPlotThemeManager.GetThemeFor(currentTheme);
+                OxyPlotThemeManager.ApplyTheme(Plot, theme);
+                ApplyAxisVisibilityOverrides();
+            }
+        }
+
+        private void Selector_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
+        }
+
+        private void OnAppThemeChanged(object? sender, ThemeChangedEventArgs e)
+        {
+            if (Plot == null) return;
+            _lastAppliedTheme = e.NewTheme;
+            var theme = OxyPlotThemeManager.GetThemeFor(e.NewTheme);
+            OxyPlotThemeManager.ApplyTheme(Plot, theme);
+            ApplyAxisVisibilityOverrides();
+        }
+
+        private void ApplyAxisVisibilityOverrides()
+        {
+            var transparentColor = Color.FromArgb(0, 0, 0, 0);
+
+            if (!ShowAxisTitle)
+            {
+                Yaxis.TitleColor = transparentColor;
+                Xaxis.TitleColor = transparentColor;
+            }
+            if (!ShowAxisLabel)
+            {
+                Yaxis.TextColor = transparentColor;
+                Xaxis.TextColor = transparentColor;
+            }
+            Plot.InvalidatePlot(false);
         }
 
         /// <summary>
@@ -187,7 +239,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property to show the plot axis title.
         /// </summary>
-        public static DependencyProperty ShowAxisTitleProperty = DependencyProperty.Register(nameof(ShowAxisTitle), typeof(bool), typeof(Selector), new FrameworkPropertyMetadata(true));
+        public static DependencyProperty ShowAxisTitleProperty = DependencyProperty.Register(nameof(ShowAxisTitle), typeof(bool), typeof(Selector), new FrameworkPropertyMetadata(true, OnShowAxisPropertyChanged));
 
         /// <summary>
         /// Get and set the distribution selector plot axis title visibility.
@@ -201,7 +253,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property to show the plot label title.
         /// </summary>
-        public static DependencyProperty ShowAxisLabelProperty = DependencyProperty.Register(nameof(ShowAxisLabel), typeof(bool), typeof(Selector), new FrameworkPropertyMetadata(false));
+        public static DependencyProperty ShowAxisLabelProperty = DependencyProperty.Register(nameof(ShowAxisLabel), typeof(bool), typeof(Selector), new FrameworkPropertyMetadata(false, OnShowAxisPropertyChanged));
 
         /// <summary>
         /// Get and set the distribution selector plot axis label visibility.
@@ -210,6 +262,12 @@ namespace NumericControls.Distributions.Univariate
         {
             get => (bool)GetValue(ShowAxisLabelProperty);
             set => SetValue(ShowAxisLabelProperty, value);
+        }
+
+        private static void OnShowAxisPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Selector control && control._lastAppliedTheme != null)
+                control.ApplyAxisVisibilityOverrides();
         }
 
         private bool _showTickLines = true;
