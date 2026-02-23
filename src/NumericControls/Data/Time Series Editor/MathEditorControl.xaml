@@ -52,6 +52,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Click="Button_Click"
+                                Cursor="Hand"
                                 Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                             <Button.ToolTip>
                                 <ToolTip>
@@ -92,6 +93,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Click="Button_Click"
+                                Cursor="Hand"
                                 Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                             <Button.ToolTip>
                                 <ToolTip>
