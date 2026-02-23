@@ -66,7 +66,7 @@ namespace FrameworkInterfaces
     /// }
     /// </code>
     /// </example>
-    public abstract class ElementBase : IElement
+    public abstract class ElementBase : IElement, IUndoableElement
     {
         #region Fields
 

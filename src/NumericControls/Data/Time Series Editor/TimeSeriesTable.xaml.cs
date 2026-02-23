@@ -542,7 +542,7 @@ namespace NumericControls
                 Series.Insert(i, ordinate);
             }
 
-            if (Series.TimeInterval != TimeInterval.Irregular && startRowIndex == 0) { Series.ShiftAllDates(startTime); }
+            if (Series.TimeInterval != TimeInterval.Irregular) { Series.ShiftAllDates(startTime); }
 
             // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
             // Must happen before PasteClipboard resumes so Items[rowIndex + i] finds the new rows.
@@ -639,6 +639,9 @@ namespace NumericControls
             PreviewDeleteRows?.Invoke(rowindices, ref userCancel);
             if (userCancel) return;
 
+            // Start Time
+            DateTime startTime = (Series == null || Series.Count == 0) ? new DateTime(2020, 1, 1, 0, 0, 0) : Series[0].Index;
+
             // Delete from Series in reverse order to maintain indices
             var sorted = rowindices.OrderByDescending(i => i).ToList();
             foreach (int idx in sorted)
@@ -646,6 +649,8 @@ namespace NumericControls
                 if (idx >= 0 && idx < Series.Count)
                     Series.RemoveAt(idx);
             }
+
+            if (Series.TimeInterval != TimeInterval.Irregular) { Series.ShiftAllDates(startTime); }
 
             // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
             RebuildRowItems();
