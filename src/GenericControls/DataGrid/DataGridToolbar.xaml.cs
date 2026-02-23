@@ -31,7 +31,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -144,7 +143,10 @@ namespace GenericControls
             {
                 CopyPasteDataGrid oldGrid = e.OldValue as CopyPasteDataGrid;
                 if (oldGrid is not null)
+                {
                     oldGrid.PropertyChanged -= thisControl.DataGridPropertyChanged;
+                    oldGrid.SelectedCellsChanged -= thisControl.DataGrid_SelectedCellsChanged;
+                }
             }
 
             if (e.NewValue == null)
@@ -169,25 +171,34 @@ namespace GenericControls
             }
             thisControl.PasteButton.IsEnabled = !newGrid.IsReadOnly;
 
-            newGrid.SelectedCellsChanged += (sender, et) => { if (newGrid.SelectedCells.Count <= 0) { thisControl.InsertRowsButton.IsEnabled = false; thisControl.DeleteRowsButton.IsEnabled = false; thisControl.CopyButton.IsEnabled = false; thisControl.CopyWithHeadersButton.IsEnabled = false; thisControl.PasteButton.IsEnabled = false; } else { thisControl.InsertRowsButton.IsEnabled = true; thisControl.DeleteRowsButton.IsEnabled = true; thisControl.CopyButton.IsEnabled = true; thisControl.CopyWithHeadersButton.IsEnabled = true; if (newGrid.IsReadOnly == true) return; try { if (thisControl.IsClipboardEmpty()) { thisControl.PasteButton.IsEnabled = false; } else { thisControl.PasteButton.IsEnabled = true; } } catch (Exception ex) { Debug.WriteLine(ex); thisControl.PasteButton.IsEnabled = false; } } };
-
-
+            newGrid.SelectedCellsChanged += thisControl.DataGrid_SelectedCellsChanged;
         }
 
         /// <summary>
-        /// Retrieves the number of different data formats currently on the clipboard.
+        /// Handles the SelectedCellsChanged event on the associated DataGrid,
+        /// enabling or disabling toolbar buttons based on the current selection.
         /// </summary>
-        /// <returns>The number of clipboard formats currently registered.</returns>
-        [DllImport("user32")]
-        public static extern long CountClipboardFormats();
-
-        /// <summary>
-        /// Returns true if the clipboard contains no data in any registered format.
-        /// </summary>
-        /// <returns>True if the clipboard is empty; otherwise, false.</returns>
-        public bool IsClipboardEmpty()
+        private void DataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            return CountClipboardFormats() == 0L;
+            var grid = DataGrid;
+            if (grid == null) return;
+
+            if (grid.SelectedCells.Count <= 0)
+            {
+                InsertRowsButton.IsEnabled = false;
+                DeleteRowsButton.IsEnabled = false;
+                CopyButton.IsEnabled = false;
+                CopyWithHeadersButton.IsEnabled = false;
+                PasteButton.IsEnabled = false;
+            }
+            else
+            {
+                InsertRowsButton.IsEnabled = true;
+                DeleteRowsButton.IsEnabled = true;
+                CopyButton.IsEnabled = true;
+                CopyWithHeadersButton.IsEnabled = true;
+                PasteButton.IsEnabled = !grid.IsReadOnly;
+            }
         }
 
         /// <summary>
@@ -315,20 +326,24 @@ namespace GenericControls
 
         /// <summary>
         /// Returns the default style for toolbar buttons in a stack panel layout.
+        /// Cached after first creation to avoid repeated resource lookups.
         /// </summary>
         /// <returns>The default <see cref="Style"/> for toolbar buttons.</returns>
+        private static Style _cachedDefaultButtonStyle;
         private static Style DefaultStackPanelButtonStyle()
         {
-            var s = new Style(typeof(Button), (Style)Application.Current.FindResource(ToolBar.ButtonStyleKey)); // CType(Application.Current.FindResource(ToolBar.ButtonStyleKey), Style)
-                                                                                                                // 
+            if (_cachedDefaultButtonStyle != null)
+                return _cachedDefaultButtonStyle;
+
+            var s = new Style(typeof(Button), (Style)Application.Current.FindResource(ToolBar.ButtonStyleKey));
             s.Setters.Add(new Setter(FrameworkElement.HeightProperty, 24d));
             s.Setters.Add(new Setter(FrameworkElement.WidthProperty, 24d));
             s.Setters.Add(new Setter(FrameworkElement.CursorProperty, Cursors.Hand));
             var disabledShadeTrigger = new Trigger() { Property = UIElement.IsEnabledProperty, Value = false };
             disabledShadeTrigger.Setters.Add(new Setter(UIElement.OpacityProperty, 0.5d));
-
             s.Triggers.Add(disabledShadeTrigger);
 
+            _cachedDefaultButtonStyle = s;
             return s;
         }
 
