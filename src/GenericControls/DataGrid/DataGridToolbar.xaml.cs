@@ -31,7 +31,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -211,7 +210,7 @@ namespace GenericControls
                     {
                         try
                         {
-                            PasteButton.IsEnabled = CountClipboardFormats() != 0L;
+                            PasteButton.IsEnabled = Clipboard.ContainsText();
                         }
                         catch (Exception ex)
                         {
@@ -222,12 +221,6 @@ namespace GenericControls
                 }
             }
         }
-
-        /// <summary>
-        /// Retrieves the number of different data formats currently on the clipboard.
-        /// </summary>
-        [DllImport("user32")]
-        private static extern long CountClipboardFormats();
 
         /// <summary>
         /// Handles changes to data grid properties and updates toolbar visibility accordingly.
