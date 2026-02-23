@@ -170,8 +170,6 @@ namespace GenericControls
                 thisControl.InsertRowsButton.Visibility = Visibility.Collapsed;
                 thisControl.DeleteRowsButton.Visibility = Visibility.Collapsed;
             }
-            thisControl.PasteButton.IsEnabled = !newGrid.IsReadOnly;
-
             newGrid.SelectedCellsChanged += thisControl.DataGrid_SelectedCellsChanged;
         }
 
