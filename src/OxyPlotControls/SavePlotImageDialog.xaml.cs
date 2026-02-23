@@ -81,6 +81,16 @@ namespace OxyPlotControls
             };
             _resizeDebounceTimer.Tick += ResizeDebounceTimer_Tick;
 
+            // Compute correct initial size from the default combo selection before the window is shown,
+            // so WindowStartupLocation="CenterOwner" centers at the right size with no flash/shift.
+            ParseDimensionsFromComboBox();
+            if (TryGetExportDimensions(out int initWidth, out int initHeight))
+            {
+                var (w, h) = ComputeDialogSize(initWidth, initHeight);
+                Width = w;
+                Height = h;
+            }
+
             ContentRendered += SavePlotImageDialog_ContentRendered;
             Closing += SavePlotImageDialog_Closing;
         }
@@ -111,10 +121,6 @@ namespace OxyPlotControls
             UpdateExistingFileNames();
 
             _isInitialized = true;
-
-            // Parse initial dimensions from the default combo selection and update
-            ParseDimensionsFromComboBox();
-            UpdateDialogSize();
 
             // Defer first preview render until layout is complete
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(UpdatePreview));
@@ -249,14 +255,11 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Resizes the dialog to reflect the selected export dimensions while maintaining aspect ratio.
-        /// The dialog is capped at 85% of the screen working area.
+        /// Computes the optimal dialog dimensions for the given export size.
+        /// Used both for initial sizing (before the window is shown) and subsequent resizes.
         /// </summary>
-        private void UpdateDialogSize()
+        private static (double width, double height) ComputeDialogSize(int exportWidth, int exportHeight)
         {
-            if (!_isInitialized) return;
-            if (!TryGetExportDimensions(out int exportWidth, out int exportHeight)) return;
-
             // Get available screen space
             var workArea = SystemParameters.WorkArea;
             double maxDialogWidth = workArea.Width * ScreenUsageFraction;
@@ -279,20 +282,30 @@ namespace OxyPlotControls
             double dialogWidth = previewWidth + DialogHorizontalPadding;
             double dialogHeight = previewHeight + ControlsPanelHeight + DialogChromeHeight;
 
-            // Enforce minimums
-            dialogWidth = Math.Max(dialogWidth, MinWidth);
-            dialogHeight = Math.Max(dialogHeight, MinHeight);
+            // Enforce min/max
+            dialogWidth = Math.Clamp(dialogWidth, 500, maxDialogWidth);
+            dialogHeight = Math.Clamp(dialogHeight, 450, maxDialogHeight);
 
-            // Enforce maximums
-            dialogWidth = Math.Min(dialogWidth, maxDialogWidth);
-            dialogHeight = Math.Min(dialogHeight, maxDialogHeight);
+            return (dialogWidth, dialogHeight);
+        }
 
+        /// <summary>
+        /// Resizes the dialog to reflect the selected export dimensions while maintaining aspect ratio.
+        /// The dialog is capped at 85% of the screen working area.
+        /// </summary>
+        private void UpdateDialogSize()
+        {
+            if (!_isInitialized) return;
+            if (!TryGetExportDimensions(out int exportWidth, out int exportHeight)) return;
+
+            var (dialogWidth, dialogHeight) = ComputeDialogSize(exportWidth, exportHeight);
             Width = dialogWidth;
             Height = dialogHeight;
 
             // Re-center on owner, clamped to the work area
             if (Owner != null)
             {
+                var workArea = SystemParameters.WorkArea;
                 double newLeft = Owner.Left + (Owner.ActualWidth - Width) / 2;
                 double newTop = Owner.Top + (Owner.ActualHeight - Height) / 2;
 
