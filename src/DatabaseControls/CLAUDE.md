@@ -25,7 +25,7 @@ WPF controls for viewing, editing, searching, and analyzing database tables back
 - **OxyPlotControls** (project reference) - Plot integration
 - **Themes** (project reference) - Theme colors
 - **Numerics.dll** (external) - Statistical functions for column stats
-- **OxyPlot.dll / OxyPlot.Wpf.dll** (external) - Chart rendering
+- **OxyPlot / OxyPlot.Wpf** (project reference) - Chart rendering
 
 ## Patterns
 - TableViewer uses its own virtualized rendering (not WPF DataGrid) with custom selection modes (cell, row, column, all, edit)

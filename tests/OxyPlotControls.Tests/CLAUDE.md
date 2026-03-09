@@ -20,4 +20,4 @@ xUnit 2.9.2 with **Xunit.StaFact** 1.1.11 (for STA thread tests required by WPF)
 dotnet test tests/OxyPlotControls.Tests/OxyPlotControls.Tests.csproj
 ```
 
-Requires external OxyPlot DLLs from the sibling `oxyplot` repo.
+OxyPlot is vendored in this solution at `src/OxyPlot/` (project references).

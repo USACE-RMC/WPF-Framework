@@ -12,7 +12,7 @@ Demonstrates OxyPlot charting integration with WPF, including plot toolbars, plo
 dotnet run --project src/OxyPlotControls.Demo/OxyPlotControls.Demo.csproj
 ```
 
-Requires external DLL references for OxyPlot, Numerics, and DatabaseManager from sibling repos.
+Requires external DLL references for Numerics and DatabaseManager from sibling repos. OxyPlot is vendored in-solution.
 
 ## What It Demonstrates
 

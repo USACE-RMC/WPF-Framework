@@ -25,8 +25,8 @@ WPF controls for configuring and interacting with OxyPlot charts, providing prop
 ## Dependencies
 - **GenericControls** (project reference) - ColorPicker, NumericTextBox, property controls
 - **Themes** (project reference) - Theme colors and styles
-- **OxyPlot.dll** (external) - Core OxyPlot library
-- **OxyPlot.Wpf.dll / OxyPlot.Wpf.Shared.dll** (external) - WPF integration
+- **OxyPlot** (project reference) - Core OxyPlot library
+- **OxyPlot.Wpf / OxyPlot.Wpf.Shared** (project reference) - WPF integration
 - **DatabaseManager.dll** (external) - Data table support for plot data
 
 ## Patterns
@@ -36,8 +36,7 @@ WPF controls for configuring and interacting with OxyPlot charts, providing prop
 - Expander style defined in `Expander/ExpanderStyle.xaml` for property panels
 
 ## Gotchas
-- Serialization lives in the oxyplot repo (`OxyPlot.Wpf.Serialization` namespace), NOT in this project; `OxyPlotSettingsSerializer` is just a pass-through wrapper
-- OxyPlot DLLs are referenced from sibling repo (`../../../oxyplot/`) -- must be built first
+- Serialization lives in the vendored OxyPlot.Wpf project (`OxyPlot.Wpf.Serialization` namespace at `src/OxyPlot/OxyPlot.Wpf/Serialization/`), NOT in this project; `OxyPlotSettingsSerializer` is just a pass-through wrapper
 - OxyPlotToolbar implements IDisposable for cursor cleanup -- callers should dispose or use in `using`
 - Theme changes on inactive tabs are deferred; `_lastAppliedTheme` comparison catches missed updates on next load
 - Nullable is enabled (`<Nullable>enable</Nullable>`) unlike most other projects in this framework

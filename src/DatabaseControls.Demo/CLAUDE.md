@@ -12,7 +12,7 @@ Demonstrates WPF controls for database table viewing and editing, including SQLi
 dotnet run --project src/DatabaseControls.Demo/DatabaseControls.Demo.csproj
 ```
 
-Requires external DLL references for OxyPlot and Numerics from sibling repos.
+Requires external DLL reference for Numerics from sibling repo. OxyPlot is vendored in-solution.
 
 ## What It Demonstrates
 

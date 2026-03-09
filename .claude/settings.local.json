@@ -36,7 +36,10 @@
       "Bash(/tmp/fix_axes2.ps1 << 'PSEOF'\n$file = 'C:\\\\GIT\\\\wpf-framework\\\\src\\\\OxyPlotControls\\\\Axes\\\\AxesControl.xaml.cs'\n$content = [System.IO.File]::ReadAllText\\($file\\)\n\n# Normalize\n$content = $content -replace \"`r`n\", \"`n\"\n\n# Remove empty Fields region\n$content = $content.Replace\\(\n    \"        #region Fields`n`n        #endregion`n`n\",\n    \"\"\\)\n\n# Clean up multiple blank lines\nwhile \\($content.Contains\\(\"`n`n`n\"\\)\\) {\n    $content = $content.Replace\\(\"`n`n`n\", \"`n`n\"\\)\n}\n\n# Convert back to CRLF\n$content = $content -replace \"\\(?<!\\\\r\\)\\\\n\", \"`r`n\"\n\n[System.IO.File]::WriteAllText\\($file, $content\\)\nWrite-Host \"Done\"\nPSEOF)",
       "Bash(/tmp/fix_axes3.ps1 << 'PSEOF'\n$file = 'C:\\\\GIT\\\\wpf-framework\\\\src\\\\OxyPlotControls\\\\Axes\\\\AxesControl.xaml.cs'\n$content = [System.IO.File]::ReadAllText\\($file\\)\n$content = $content -replace \"`r`n\", \"`n\"\n\n# Fix constructor blank line\n$content = $content.Replace\\(\n    \"            InitializeComponent\\(\\);`n`n        }\",\n    \"            InitializeComponent\\(\\);`n        }\"\\)\n\n# Remove empty Private Methods region\n$content = $content.Replace\\(\n    \"`n        #region Private Methods`n`n        #endregion`n\",\n    \"\"\\)\n\n# Clean up multiple blank lines\nwhile \\($content.Contains\\(\"`n`n`n\"\\)\\) {\n    $content = $content.Replace\\(\"`n`n`n\", \"`n`n\"\\)\n}\n\n# Convert back to CRLF\n$content = $content -replace \"\\(?<!\\\\r\\)\\\\n\", \"`r`n\"\n[System.IO.File]::WriteAllText\\($file, $content\\)\nWrite-Host \"Done\"\nPSEOF)",
       "Bash(dotnet clean:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot/OxyPlot.csproj --solution-folder \"Core Framework\")",
+      "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot.Wpf/OxyPlot.Wpf.csproj --solution-folder \"Core Framework\")",
+      "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot.Wpf.Shared/OxyPlot.Wpf.Shared.csproj --solution-folder \"Core Framework\")"
     ]
   }
 }

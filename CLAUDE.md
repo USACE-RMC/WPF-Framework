@@ -10,7 +10,6 @@ dotnet test WPF-Framework.sln
 ```
 
 **External dependencies** (must be built separately):
-- `C:\GIT\oxyplot\` - Custom OxyPlot fork with `OxyPlot.Wpf.Serialization` namespace
 - `C:\GIT\numerics\` - Numerics library for statistical distributions
 
 ## Solution Structure
@@ -22,6 +21,7 @@ dotnet test WPF-Framework.sln
 | Models | DatabaseManager, ExpressionParser |
 | Support | SoftwareUpdate, SoftwareUpdate.Updater |
 | AvalonDock | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 |
+| OxyPlot | OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared |
 | Demos | One demo per control library |
 | Tests | 9 test projects (xunit + MSTest) |
 
@@ -30,14 +30,14 @@ dotnet test WPF-Framework.sln
 - **Theme system**: Colors in `src/Themes/Resources/Colors/` (Blue/Dark/LightColors.xaml). Themes applied via `ThemeService.Instance.SetTheme()`. Uses `DynamicResource` bindings throughout.
 - **Undo/Redo**: `UndoableStateBridge` and `UndoableCollectionBridge` in FrameworkInterfaces automatically record property/collection changes.
 - **AvalonDock**: Modified Xceed AvalonDock with VS2013 theme. Floating windows are separate Win32 windows - they don't inherit MainWindow's visual tree. Theme dictionaries added to `MainWindow.Resources.MergedDictionaries`.
-- **Serialization**: OxyPlot plot serialization lives in `OxyPlot.Wpf.Serialization` namespace (PlotSerializer, AxisSerializer, SerializerExtensions) in the oxyplot repo, NOT in this repo.
+- **OxyPlot**: Vendored fork of oxyplot/oxyplot at `src/OxyPlot/` (same pattern as AvalonDock). Includes custom serialization in `OxyPlot.Wpf.Serialization` namespace (PlotSerializer, AxisSerializer, SerializerExtensions).
 
 ## Critical Gotchas
 
 - **DynamicResource in Freezables**: `DynamicResource` does NOT work inside `DrawingBrush > DrawingGroup > GeometryDrawing.Brush`. Use `Canvas > Path` with `Fill="{DynamicResource ...}"` instead.
 - **Global implicit TextBlock style**: Overrides `TextBlock.Foreground` set via triggers. Use named styles (`x:Key="BasicTextBlockStyle"`) instead.
 - **.NET 9 ContentPresenter**: Causes visual parent conflicts. Use `ContentControl` for `LayoutItem.View` bindings in AvalonDock templates.
-- **DatabaseControls.Demo**: External DLLs (Numerics, OxyPlot) must exist at HintPath locations.
+- **DatabaseControls.Demo**: External Numerics DLL must exist at HintPath location.
 
 ## Git Workflow
 
