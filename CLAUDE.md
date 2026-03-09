@@ -17,12 +17,12 @@ dotnet test WPF-Framework.sln
 | Folder | Projects |
 |--------|----------|
 | Core | FrameworkInterfaces, FrameworkUI, Themes |
-| Controls | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls |
-| Models | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared |
+| Controls | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls |
+| Models | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared, DAG |
 | Support | SoftwareUpdate, SoftwareUpdate.Updater |
 | AvalonDock | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 |
-| Demos | One demo per control library |
-| Tests | 12 test projects (xunit, MSTest, NUnit) + ExampleLibrary |
+| Demos | One demo per control library (includes DAG.Demo) |
+| Tests | 13 test projects (xunit, MSTest, NUnit) + ExampleLibrary |
 
 ## Key Architecture Patterns
 

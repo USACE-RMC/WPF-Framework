@@ -43,7 +43,12 @@
       "Bash(dotnet sln WPF-Framework.sln add tests/ExampleLibrary/ExampleLibrary.csproj --solution-folder \"Tests\")",
       "Bash(dotnet sln WPF-Framework.sln add tests/OxyPlot.Tests/OxyPlot.Tests.csproj --solution-folder \"Tests\")",
       "Bash(dotnet sln WPF-Framework.sln add tests/OxyPlot.Wpf.Tests/OxyPlot.Wpf.Tests.csproj --solution-folder \"Tests\")",
-      "Bash(dotnet --list-sdks)"
+      "Bash(dotnet --list-sdks)",
+      "Bash(wc -l FlowGraph/*.cs FlowGraphUI/*.xaml.cs Test_DAG/*.cs Test_FlowGraph/*.cs)",
+      "Bash(dotnet sln WPF-Framework.sln add src/DAG/DAG.csproj --solution-folder Models)",
+      "Bash(dotnet sln WPF-Framework.sln add src/DAGControls/DAGControls.csproj --solution-folder Controls)",
+      "Bash(dotnet sln WPF-Framework.sln add src/DAG.Demo/DAG.Demo.csproj --solution-folder Demos)",
+      "Bash(dotnet sln WPF-Framework.sln add tests/DAG.Tests/DAG.Tests.csproj --solution-folder Tests)"
     ]
   }
 }
