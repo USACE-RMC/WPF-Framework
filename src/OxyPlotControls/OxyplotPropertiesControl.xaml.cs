@@ -86,9 +86,9 @@ namespace OxyPlotControls
         /// <summary>
         /// Gets or sets the OxyPlot Plot control that this control edits.
         /// </summary>
-        public Plot Plot
+        public Plot? Plot
         {
-            get { return (Plot)GetValue(PlotProperty); }
+            get { return (Plot?)GetValue(PlotProperty); }
             set { SetValue(PlotProperty, value); }
         }
 

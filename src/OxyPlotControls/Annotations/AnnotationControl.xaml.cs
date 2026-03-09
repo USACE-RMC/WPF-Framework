@@ -338,8 +338,8 @@ namespace OxyPlotControls
     /// WPF may skip the source update when it detects no type change is needed.
     /// </description></item>
     /// <item><description>
-    /// When <c>ConverterParameter</c> is <c>"Swap"</c>, it swaps <see cref="HorizontalAlignment.Left"/>
-    /// and <see cref="HorizontalAlignment.Right"/> to correct the semantic mismatch between OxyPlot's
+    /// When <c>ConverterParameter</c> is <c>"Swap"</c>, it swaps <see cref="System.Windows.HorizontalAlignment.Left"/>
+    /// and <see cref="System.Windows.HorizontalAlignment.Right"/> to correct the semantic mismatch between OxyPlot's
     /// anchor-based alignment (Left = anchor at left edge, text extends right) and the user's expectation
     /// (Left = position text to the left).
     /// </description></item>
@@ -350,7 +350,7 @@ namespace OxyPlotControls
     {
         /// <summary>
         /// Converts the source value. When <paramref name="parameter"/> is <c>"Swap"</c>,
-        /// swaps <see cref="HorizontalAlignment.Left"/> and <see cref="HorizontalAlignment.Right"/>.
+        /// swaps <see cref="System.Windows.HorizontalAlignment.Left"/> and <see cref="System.Windows.HorizontalAlignment.Right"/>.
         /// </summary>
         /// <param name="value">The source <see cref="System.Windows.HorizontalAlignment"/> value.</param>
         /// <param name="targetType">The target type (unused).</param>
@@ -370,7 +370,7 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Converts the target value back to the source. When <paramref name="parameter"/> is <c>"Swap"</c>,
-        /// swaps <see cref="HorizontalAlignment.Left"/> and <see cref="HorizontalAlignment.Right"/>.
+        /// swaps <see cref="System.Windows.HorizontalAlignment.Left"/> and <see cref="System.Windows.HorizontalAlignment.Right"/>.
         /// </summary>
         /// <param name="value">The target <see cref="System.Windows.HorizontalAlignment"/> value.</param>
         /// <param name="targetType">The source type (unused).</param>
@@ -389,7 +389,7 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Swaps <see cref="HorizontalAlignment.Left"/> and <see cref="HorizontalAlignment.Right"/>;
+        /// Swaps <see cref="System.Windows.HorizontalAlignment.Left"/> and <see cref="System.Windows.HorizontalAlignment.Right"/>;
         /// all other values pass through unchanged.
         /// </summary>
         /// <param name="alignment">The alignment to swap.</param>
@@ -424,8 +424,8 @@ namespace OxyPlotControls
     /// which is required for <c>Binding.SourceUpdated</c> to fire reliably.
     /// </description></item>
     /// <item><description>
-    /// When <c>ConverterParameter</c> is <c>"Swap"</c>, it swaps <see cref="VerticalAlignment.Top"/>
-    /// and <see cref="VerticalAlignment.Bottom"/> to correct the semantic mismatch between OxyPlot's
+    /// When <c>ConverterParameter</c> is <c>"Swap"</c>, it swaps <see cref="System.Windows.VerticalAlignment.Top"/>
+    /// and <see cref="System.Windows.VerticalAlignment.Bottom"/> to correct the semantic mismatch between OxyPlot's
     /// anchor-based alignment (Top = anchor at top edge, text extends down) and the user's expectation
     /// (Top = position text toward the top).
     /// </description></item>
@@ -436,7 +436,7 @@ namespace OxyPlotControls
     {
         /// <summary>
         /// Converts the source value. When <paramref name="parameter"/> is <c>"Swap"</c>,
-        /// swaps <see cref="VerticalAlignment.Top"/> and <see cref="VerticalAlignment.Bottom"/>.
+        /// swaps <see cref="System.Windows.VerticalAlignment.Top"/> and <see cref="System.Windows.VerticalAlignment.Bottom"/>.
         /// </summary>
         /// <param name="value">The source <see cref="System.Windows.VerticalAlignment"/> value.</param>
         /// <param name="targetType">The target type (unused).</param>
@@ -456,7 +456,7 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Converts the target value back to the source. When <paramref name="parameter"/> is <c>"Swap"</c>,
-        /// swaps <see cref="VerticalAlignment.Top"/> and <see cref="VerticalAlignment.Bottom"/>.
+        /// swaps <see cref="System.Windows.VerticalAlignment.Top"/> and <see cref="System.Windows.VerticalAlignment.Bottom"/>.
         /// </summary>
         /// <param name="value">The target <see cref="System.Windows.VerticalAlignment"/> value.</param>
         /// <param name="targetType">The source type (unused).</param>
@@ -475,7 +475,7 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Swaps <see cref="VerticalAlignment.Top"/> and <see cref="VerticalAlignment.Bottom"/>;
+        /// Swaps <see cref="System.Windows.VerticalAlignment.Top"/> and <see cref="System.Windows.VerticalAlignment.Bottom"/>;
         /// all other values pass through unchanged.
         /// </summary>
         /// <param name="alignment">The alignment to swap.</param>

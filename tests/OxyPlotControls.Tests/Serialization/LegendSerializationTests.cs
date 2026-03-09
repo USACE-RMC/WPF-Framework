@@ -469,7 +469,7 @@ public class LegendSerializationTests
         // Arrange
         var plot = new Plot
         {
-            LegendTitle = null
+            LegendTitle = null!
         };
 
         // Act

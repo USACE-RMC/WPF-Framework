@@ -34,7 +34,6 @@ WPF controls for viewing, editing, searching, and analyzing database tables back
 - Nullable is enabled in this project
 
 ## Gotchas
-- DatabaseControls.Demo has a pre-existing build error (missing MainWindow.xaml) -- ignore it
 - TableViewer is NOT built on CopyPasteDataGrid; it has its own completely custom grid rendering and selection
 - FieldCalculator can operate in two modes: column creation/update OR "select by attribute" (row filtering)
 - `ExpressionTextBox.cs` and `SelectByAttribute.xaml.cs` are explicitly excluded from compilation in the csproj

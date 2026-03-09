@@ -462,8 +462,8 @@ public class GeneralPropertiesSerializationTests
         // Arrange
         var plot = new Plot
         {
-            Title = null,
-            Subtitle = null
+            Title = null!,
+            Subtitle = null!
         };
 
         // Act

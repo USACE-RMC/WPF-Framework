@@ -489,7 +489,7 @@ namespace OxyPlotControls
         /// Resolves the EnvironmentWindowBackground brush from the application's theme resources.
         /// Returns null if the resource cannot be found.
         /// </summary>
-        private static SolidColorBrush ResolveEnvironmentWindowBackground()
+        private static SolidColorBrush? ResolveEnvironmentWindowBackground()
         {
             try
             {

@@ -106,7 +106,6 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Context menu items.
         /// </summary>
-        //private readonly MenuItem _groupMenuItem = new MenuItem() { Header = "Group", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Group) } };
         private readonly MenuItem _editMenuItem = new MenuItem() { Header = "Edit...", InputGestureText = "Ctrl+E" };
         private readonly MenuItem _copyMenuItem = new MenuItem() { Header = "Copy...", InputGestureText = "Ctrl+C" };
         private readonly MenuItem _renameMenuItem = new MenuItem() { Header = "Rename...", InputGestureText = "F2" };

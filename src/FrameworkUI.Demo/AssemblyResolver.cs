@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#nullable enable
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;

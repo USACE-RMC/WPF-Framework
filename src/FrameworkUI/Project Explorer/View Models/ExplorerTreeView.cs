@@ -68,10 +68,6 @@ namespace FrameworkUI.ProjectExplorer
             AllowMultiSelect = true;
         }
 
-        //public event UserClickedNonElementNodeEventHandler UserClickedNonElementNode;
-
-        //public delegate void UserClickedNonElementNodeEventHandler();
-
         /// <summary>
         /// Private variables used for drag and drop.
         /// </summary>
@@ -459,12 +455,6 @@ namespace FrameworkUI.ProjectExplorer
                     if (lyr != null) { _insertionAdorner = new InsertionAdorner(true, IsInTopHalf(dropTarget, e.GetPosition(dropTarget)), dropTarget.NodeHeader, lyr); }
                 }
 
-                //else if (ProjectNode.Items.IndexOf(dragParentCollection) > ProjectNode.Items.IndexOf(dropParentCollection))
-                //{
-                //    if (_insertionAdorner != null) { _insertionAdorner.Detach(); }
-                //    AdornerLayer lyr = AdornerLayer.GetAdornerLayer(dragParentCollection.NodeHeader);
-                //    if (lyr != null) { _insertionAdorner = new InsertionAdorner(true, false, dragParentCollection.NodeHeader, lyr); }
-                //}
                 else
                 {
                     if (_insertionAdorner != null) { _insertionAdorner.Detach(); }
@@ -655,17 +645,6 @@ namespace FrameworkUI.ProjectExplorer
             while (current != null);
             return null;
         }
-
-        ///// <summary>
-        ///// Helper method to search for parent tree view item.
-        ///// </summary>
-        //public TreeViewItem FindTreeViewItem(DependencyObject dependencyObject)
-        //{
-        //    if (!(dependencyObject is Visual || dependencyObject is Visual3D)) return null;
-        //    TreeViewItem treeViewItem = dependencyObject as TreeViewItem;
-        //    if (treeViewItem != null) return treeViewItem;
-        //    return FindTreeViewItem(VisualTreeHelper.GetParent(dependencyObject));
-        //}
 
         /// <summary>
         /// Helper method to search for parent tree view item.

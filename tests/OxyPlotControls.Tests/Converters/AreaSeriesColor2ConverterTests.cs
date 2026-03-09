@@ -55,7 +55,7 @@ public class AreaSeriesColor2ConverterTests
     public void Convert_NullColor_ReturnsNull()
     {
         // Arrange
-        object[] values = { null!, null };
+        object[] values = { null!, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -71,7 +71,7 @@ public class AreaSeriesColor2ConverterTests
     public void Convert_WrongColorType_ReturnsNull()
     {
         // Arrange
-        object[] values = { "not a color", null };
+        object[] values = { "not a color", null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -88,7 +88,7 @@ public class AreaSeriesColor2ConverterTests
     {
         // Arrange
         var color = Color.FromArgb(255, 100, 150, 200);
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -107,7 +107,7 @@ public class AreaSeriesColor2ConverterTests
     {
         // Arrange
         var color = Colors.Green;
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -130,7 +130,7 @@ public class AreaSeriesColor2ConverterTests
     {
         // Arrange
         var color = Colors.Green;
-        object[] values = { color, null };
+        object[] values = { color, null! };
         _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
 
         var value = "not a brush";

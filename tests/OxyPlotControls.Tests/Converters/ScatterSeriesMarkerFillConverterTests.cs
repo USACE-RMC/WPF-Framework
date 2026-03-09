@@ -55,7 +55,7 @@ public class ScatterSeriesMarkerFillConverterTests
     public void Convert_NullColor_ReturnsNull()
     {
         // Arrange
-        object[] values = { null!, null };
+        object[] values = { null!, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -71,7 +71,7 @@ public class ScatterSeriesMarkerFillConverterTests
     public void Convert_WrongColorType_ReturnsNull()
     {
         // Arrange
-        object[] values = { "not a color", null };
+        object[] values = { "not a color", null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -88,7 +88,7 @@ public class ScatterSeriesMarkerFillConverterTests
     {
         // Arrange
         var color = Color.FromArgb(255, 45, 90, 135);
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -107,7 +107,7 @@ public class ScatterSeriesMarkerFillConverterTests
     {
         // Arrange
         var color = Colors.Gold;
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -130,7 +130,7 @@ public class ScatterSeriesMarkerFillConverterTests
     {
         // Arrange
         var color = Colors.Silver;
-        object[] values = { color, null };
+        object[] values = { color, null! };
         _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
 
         var value = new object();

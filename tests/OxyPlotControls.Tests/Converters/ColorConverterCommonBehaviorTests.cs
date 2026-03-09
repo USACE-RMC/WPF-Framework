@@ -49,7 +49,7 @@ public class ColorConverterCommonBehaviorTests
     {
         // Arrange - OxyPlot uses ARGB(0,0,0,1) to represent automatic color
         var automaticColor = Color.FromArgb(0, 0, 0, 1);
-        object[] values = { automaticColor, null };
+        object[] values = { automaticColor, null! };
 
         // Test LineSeriesColorConverter
         var lineConverter = new LineSeriesColorConverter();
@@ -94,7 +94,7 @@ public class ColorConverterCommonBehaviorTests
     public void AllConverters_ReturnNull_ForNullColor()
     {
         // Arrange
-        object[] values = { null!, null };
+        object[] values = { null!, null! };
 
         // Test all converters
         Assert.Null(new LineSeriesColorConverter().Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture));
@@ -115,7 +115,7 @@ public class ColorConverterCommonBehaviorTests
     public void AllConverters_ReturnNull_ForWrongType()
     {
         // Arrange
-        object[] values = { "not a color", null };
+        object[] values = { "not a color", null! };
 
         // Test all converters
         Assert.Null(new LineSeriesColorConverter().Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture));

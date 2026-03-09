@@ -449,10 +449,8 @@ namespace FrameworkUI.ProjectExplorer
             // Add custom items
             if (_customContextItems != null && _customContextItems.Count > 0)
             {
-                //if (ContextMenu.Items.Count > 0) { ContextMenu.Items.Add(_customContentSeparator); }
                 foreach (var item in _customContextItems) { ContextMenu.Items.Add(item); }
             }
-            //
             if (_collectionContextItems != null && _collectionContextItems.Count > 0)
             {
                 if (_customContextItems != null && _customContextItems.Count > 0) { ContextMenu.Items.Add(_collectionContentSeparator); }
@@ -627,14 +625,6 @@ namespace FrameworkUI.ProjectExplorer
             e.Handled = true; // handled to keep from bubbling up to parent nodes.
         }
 
-        ///// <summary>
-        ///// On Un-selection, update rename text box.
-        ///// </summary>
-        //protected virtual void Me_Unselected(object sender, RoutedEventArgs e)
-        //{
-        //    // 
-        //}
-
         /// <summary>
         /// On preview mouse left click, if node is not selected, then left click is handled.
         /// </summary>
@@ -672,67 +662,10 @@ namespace FrameworkUI.ProjectExplorer
                 ParentTreeView.SelectedNodes.Add(this);
             }
 
-            //int selectedCount = 0;
-            //if (pTree != null)
-            //{
-            //    var tItem = ExplorerTreeView.FindTreeViewItem(pTree,e.OriginalSource as DependencyObject);
-            //    if (tItem != null && tItem.Equals(this) == false) { return; }
-            //    selectedCount = pTree.SelectedNodes.Count;
-
-            //    if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
-            //    {
-            //        if (pTree.SelectedNodes.Contains(this) == false)
-            //        {
-            //            IsNodeSelected = true;
-            //            pTree.SelectedNodes.Add(this);
-            //        }
-            //    }
-            //    if (pTree.SelectedNodes.Contains(this) == false)
-            //    {
-            //        pTree.ClearSelection();
-            //        IsNodeSelected = true;
-            //        pTree.SelectedNodes.Add(this);
-            //    }
-            //}
-            //else
-            //{
-            //    var pjTree = ParentTreeView as ProjectExplorerTreeView;
-            //    if (pjTree != null)
-            //    {
-            //        var tItem = pjTree.FindTreeViewItem(e.OriginalSource as DependencyObject);
-            //        if (tItem != null && tItem.Equals(this) == false) { return; }
-            //        selectedCount = pjTree.SelectedElementNodes.Count;
-
-            //        if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
-            //        {
-            //            if (pjTree.SelectedElementNodes.Contains(this) == false)
-            //            {
-            //                IsNodeSelected = true;
-            //                pjTree.SelectedElementNodes.Add((ElementNode)this);
-            //            }
-            //        }
-            //        if (pjTree.SelectedElementNodes.Contains(this) == false)
-            //        {
-            //            pjTree.ClearSelection();
-            //            IsNodeSelected = true;
-            //            pjTree.SelectedElementNodes.Add((ElementNode)this);
-            //        }
-            //    }
-
-            //}
-
-
-
             if (selectedCount > 1)
             {
                 // If multiple nodes are selected, limit context menu options
                 _groupMenuItem.Visibility = Visibility.Visible;
-                // _editMenuItem.Visibility = Visibility.Visible;
-                // _copyMenuItem.Visibility = Visibility.Collapsed;
-                // _renameMenuItem.Visibility = Visibility.Collapsed;
-                // _deleteMenuItem.Visibility = Visibility.Visible;
-
-                //_customContentSeparator.Visibility = Visibility.Collapsed;
                 foreach (var item in _customContextItems) { item.Visibility = Visibility.Collapsed; }
                 foreach (var item in _collectionContextItems) { item.Visibility = Visibility.Collapsed; }
 

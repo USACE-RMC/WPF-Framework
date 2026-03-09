@@ -58,8 +58,8 @@ namespace FrameworkInterfaces.Undo.Actions
 
         private readonly object _target;
         private readonly string _propertyName;
-        private readonly object _oldValue;
-        private object _newValue;
+        private readonly object? _oldValue;
+        private object? _newValue;
         private readonly PropertyInfo _propertyInfo;
         private readonly object _syncLock = new object();
 
@@ -85,7 +85,7 @@ namespace FrameworkInterfaces.Undo.Actions
         /// <exception cref="ArgumentException">
         /// Thrown when the property is not found on the target object.
         /// </exception>
-        public PropertyChangeAction(object target, string propertyName, object oldValue, object newValue)
+        public PropertyChangeAction(object target, string propertyName, object? oldValue, object? newValue)
         {
             _target = target ?? throw new ArgumentNullException(nameof(target));
             _propertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
@@ -145,12 +145,12 @@ namespace FrameworkInterfaces.Undo.Actions
         /// <summary>
         /// Gets the old value of the property.
         /// </summary>
-        public object OldValue => _oldValue;
+        public object? OldValue => _oldValue;
 
         /// <summary>
         /// Gets the new value of the property.
         /// </summary>
-        public object NewValue => _newValue;
+        public object? NewValue => _newValue;
 
         #endregion
 

@@ -271,6 +271,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the DBF file.</param>
         private void LoadDbfFile(string filePath)
         {
+            _databaseManager?.Close();
             _databaseManager = new DbfReader(filePath);
 
             TableComboBox.Items.Clear();
@@ -285,6 +286,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the SQLite file.</param>
         private void LoadSqliteFile(string filePath)
         {
+            _databaseManager?.Close();
             var tableReader = new DatabaseManager.SQLiteManager(filePath);
 
             TableComboBox.IsEnabled = true;
@@ -310,6 +312,7 @@ namespace DatabaseControls.Demo
         /// <param name="filePath">The path to the CSV file.</param>
         private void LoadCsvFile(string filePath)
         {
+            _databaseManager?.Close();
             _databaseManager = new CsvReader(filePath, true, 1, false);
 
             TableComboBox.Items.Clear();
@@ -336,5 +339,12 @@ namespace DatabaseControls.Demo
         }
 
         #endregion
+
+        /// <inheritdoc/>
+        protected override void OnClosed(EventArgs e)
+        {
+            _databaseManager?.Close();
+            base.OnClosed(e);
+        }
     }
 }

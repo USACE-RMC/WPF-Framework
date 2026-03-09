@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#nullable enable
 using GenericControls;
 using Numerics.Data.Statistics;
 using Numerics.Distributions;
@@ -240,7 +241,8 @@ namespace NumericControls.Distributions.Univariate
             if (e.NewValue == null) { thisControl.DistributionCombobox.SelectedIndex = -1; }
             else if (thisControl._distributionChanging == false)
             {
-                UnivariateDistributionBase newDistribution = e.NewValue as UnivariateDistributionBase;
+                UnivariateDistributionBase? newDistribution = e.NewValue as UnivariateDistributionBase;
+                if (newDistribution is null) { thisControl.DistributionCombobox.SelectedIndex = -1; return; }
                 bool isContained = false;
                 for (int i = 0; i < thisControl.Distributions.Count; i++)
                 {
@@ -262,7 +264,7 @@ namespace NumericControls.Distributions.Univariate
                     }
                 }
                 //
-                if (isContained == false) { thisControl.SelectedDistribution = null; }
+                if (isContained == false) { thisControl.SelectedDistribution = null!; }
             }
         }
 
@@ -481,7 +483,7 @@ namespace NumericControls.Distributions.Univariate
                     if (distributionType == UnivariateDistributionType.UserDefined) { continue; }
                     // 
                     UnivariateDistributionBase distributionToAdd = UnivariateDistributionFactory.CreateDistribution(distributionType);
-                    if (distributionToAdd != null) { distributions.Add(distributionToAdd); }
+                    if (distributionToAdd is not null) { distributions.Add(distributionToAdd); }
                 }
                 // 
                 return distributions;
@@ -669,7 +671,7 @@ namespace NumericControls.Distributions.Univariate
         /// <returns><c>true</c> if the distribution implements parameter estimation; otherwise, <c>false</c>.</returns>
         private bool DistributionCanBeEstimated()
         {
-            if (SelectedDistribution != null)
+            if (SelectedDistribution is not null)
             {
                 if (SelectedDistribution.Type == UnivariateDistributionType.Deterministic) { return true; }
                 if (SelectedDistribution.Type == UnivariateDistributionType.Normal) { return true; }
@@ -687,7 +689,7 @@ namespace NumericControls.Distributions.Univariate
         /// </summary>
         /// <param name="sender">The parameter that raised the event.</param>
         /// <param name="e">Event arguments containing the property name.</param>
-        private void ParameterPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ParameterPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Parameter.Value)) { SetDistributionParameters(true); }
         }
@@ -700,7 +702,7 @@ namespace NumericControls.Distributions.Univariate
             if (DistributionCombobox.SelectedIndex == -1) { return; }
             ClearValidation();
 
-            UnivariateDistributionBase currentDistribution = null;
+            UnivariateDistributionBase? currentDistribution = null;
             try
             {
                 // Get the selected distribution and set the parameters from the parameter list
@@ -717,20 +719,20 @@ namespace NumericControls.Distributions.Univariate
                     if (setParameters) { currentDistribution.SetParameters(ParameterList.Select(o => o.Value).ToArray()); }
                     if (currentDistribution.ParametersValid == false)
                     {
-                        ArgumentOutOfRangeException ex = currentDistribution.ValidateParameters(ParameterList.Select(o => o.Value).ToArray(), false);
-                        SetInvalidParameter(ex.ParamName, ex.Message);
+                        ArgumentOutOfRangeException? ex = currentDistribution.ValidateParameters(ParameterList.Select(o => o.Value).ToArray(), false);
+                        if (ex?.ParamName != null) { SetInvalidParameter(ex.ParamName, ex.Message); }
                     }
                 }
             }
             catch (Exception ex)
             {
-                if (ex.GetType() == typeof(ArgumentOutOfRangeException))
+                if (ex is ArgumentOutOfRangeException argEx && argEx.ParamName != null)
                 {
-                    SetInvalidParameter(((ArgumentOutOfRangeException)ex).ParamName, ((ArgumentOutOfRangeException)ex).Message);
+                    SetInvalidParameter(argEx.ParamName, argEx.Message);
                 }
             }
-            // 
-            if (_propertyChanging == false)
+            //
+            if (_propertyChanging == false && currentDistribution is not null)
             {
                 _distributionChanging = true;
                 SelectedDistribution = currentDistribution.Clone();
@@ -750,7 +752,7 @@ namespace NumericControls.Distributions.Univariate
             foreach (Parameter p in ParameterList)
             {
                 p.IsValid = true;
-                p.ErrorMessage = null;
+                p.ErrorMessage = null!;
             }
         }
 
@@ -761,7 +763,7 @@ namespace NumericControls.Distributions.Univariate
         /// <param name="errorMessage">The validation error message to display.</param>
         private void SetInvalidParameter(string parameterName, string errorMessage)
         {
-            Parameter param = ParameterList.FirstOrDefault(o => string.Equals(o.Name, parameterName, StringComparison.OrdinalIgnoreCase));
+            Parameter? param = ParameterList.FirstOrDefault(o => string.Equals(o.Name, parameterName, StringComparison.OrdinalIgnoreCase));
             if (param == null) { return; }
             param.IsValid = false;
             param.ErrorMessage = errorMessage;
@@ -781,7 +783,7 @@ namespace NumericControls.Distributions.Univariate
 
             areaSeries.Points.Clear();
             areaSeries.Points2.Clear();
-            if ((SelectedDistribution != null) && SelectedDistribution.ParametersValid)
+            if ((SelectedDistribution is not null) && SelectedDistribution.ParametersValid)
             {
                 InvalidDistributionTextBlock.Visibility = Visibility.Collapsed;
                 Plot.Visibility = Visibility.Visible;
@@ -821,7 +823,7 @@ namespace NumericControls.Distributions.Univariate
             {
                 InvalidDistributionTextBlock.Visibility = Visibility.Visible;
                 Plot.Visibility = Visibility.Hidden;
-                InvalidDistributionTextBlock.Text = SelectedDistribution == null ? "No distribution has been selected." : "Selected distribution has invalid parameters.";
+                InvalidDistributionTextBlock.Text = SelectedDistribution is null ? "No distribution has been selected." : "Selected distribution has invalid parameters.";
             }
             // 
             Plot.InvalidatePlot();
@@ -833,7 +835,7 @@ namespace NumericControls.Distributions.Univariate
         private void UpdateDistributionStats()
         {
             // Distribution
-            if ((SelectedDistribution == null) || (SelectedDistribution.ParametersValid == false))
+            if ((SelectedDistribution is null) || (SelectedDistribution.ParametersValid == false))
             {
                 // Use culture-aware formatting for NaN values
                 string nanValue = NumberFormatHelper.FormatDouble(double.NaN, 4, false);
@@ -931,7 +933,7 @@ namespace NumericControls.Distributions.Univariate
                 else if (estimatedDistribution.Type == UnivariateDistributionType.Empirical)
                 {
                     var pp = PlottingPositions.Weibull(SampleData.Length);
-                    var x = SampleData.Clone() as double[];
+                    var x = (double[])SampleData.Clone();
                     Array.Sort(x);
                     ((EmpiricalDistribution)estimatedDistribution).SetParameters(x, pp);
                 }

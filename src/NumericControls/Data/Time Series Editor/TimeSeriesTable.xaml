@@ -114,7 +114,7 @@
                     Width="16" Height="16"/>
             </ToggleButton>
 
-            <!--PLACEMENT HACK-->
+            <!-- Invisible anchor element for popup placement -->
             <Rectangle 
                 x:Name="PART_PopPlacer" 
                 Fill="Transparent" 

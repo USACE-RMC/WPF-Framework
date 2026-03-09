@@ -835,8 +835,6 @@ namespace ExampleLibrary
             const double CENTER_X = RADIUS_X * 1.2;
             const double CENTER_Y = RADIUS_Y * 1.2;
 
-            var radiusXSquare = RADIUS_X * RADIUS_X;
-            var radiusYSquare = RADIUS_Y * RADIUS_Y;
             var n = 200;
 
             var model = new PlotModel();

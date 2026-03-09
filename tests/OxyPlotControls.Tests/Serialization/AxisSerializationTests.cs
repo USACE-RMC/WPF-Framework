@@ -806,7 +806,7 @@ public class AxisSerializationTests
     public void Axis_EmptyTitle_RoundTrip_PreservesValues()
     {
         // Arrange
-        var originalAxis = new Wpf.LinearAxis { Title = null };
+        var originalAxis = new Wpf.LinearAxis { Title = null! };
 
         // Act
         var element = AxisSerializer.AxisToXElement(originalAxis);

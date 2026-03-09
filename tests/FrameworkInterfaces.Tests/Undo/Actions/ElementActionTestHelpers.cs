@@ -74,7 +74,7 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         /// <summary>
         /// Gets or sets the description of the element.
         /// </summary>
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the file name associated with this element.
@@ -117,17 +117,19 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         /// <summary>
         /// Occurs before the element is saved.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+#pragma warning disable CS0067 // Event is never used (mock implementation satisfies interface)
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Occurs when the element has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
+#pragma warning restore CS0067
 
         /// <summary>
         /// Creates a copy of this element.
@@ -231,17 +233,19 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         /// <summary>
         /// Occurs before the collection is saved.
         /// </summary>
-        public event PreviewObjectSavedEventHandler PreviewObjectSaved;
+#pragma warning disable CS0067 // Event is never used (mock implementation satisfies interface)
+        public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
         /// Occurs when the collection has been saved.
         /// </summary>
-        public event ObjectSavedEventHandler ObjectSaved;
+        public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
+#pragma warning restore CS0067
 
         /// <summary>
         /// Gets the number of elements in the collection.

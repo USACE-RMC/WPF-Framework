@@ -112,7 +112,7 @@
 
         </ToggleButton>
 
-        <!--POPUP PLACEMENT HACK-->
+        <!-- Invisible anchor element for popup placement relative to the toggle button's bottom-right corner -->
         <Rectangle x:Name="PART_PopPlacer" Fill="Transparent" Width="0" Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                    Focusable="False" Visibility="Hidden" IsHitTestVisible="False"/>
 

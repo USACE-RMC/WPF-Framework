@@ -55,7 +55,7 @@ public class LineSeriesColorConverterTests
     public void Convert_NullColor_ReturnsNull()
     {
         // Arrange
-        object[] values = { null!, null };
+        object[] values = { null!, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -71,7 +71,7 @@ public class LineSeriesColorConverterTests
     public void Convert_WrongColorType_ReturnsNull()
     {
         // Arrange
-        object[] values = { "not a color", null };
+        object[] values = { "not a color", null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -88,7 +88,7 @@ public class LineSeriesColorConverterTests
     {
         // Arrange
         var color = Color.FromArgb(255, 100, 150, 200);
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -107,7 +107,7 @@ public class LineSeriesColorConverterTests
     {
         // Arrange
         var color = Colors.Red;
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -126,7 +126,7 @@ public class LineSeriesColorConverterTests
     {
         // Arrange
         var color = Colors.Blue;
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -145,7 +145,7 @@ public class LineSeriesColorConverterTests
     {
         // Arrange
         var color = Color.FromArgb(0, 255, 0, 0);
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -168,7 +168,7 @@ public class LineSeriesColorConverterTests
     {
         // Arrange - need to first call Convert to set internal series
         var color = Colors.Green;
-        object[] values = { color, null };
+        object[] values = { color, null! };
         _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
 
         var value = "not a brush";
@@ -189,7 +189,7 @@ public class LineSeriesColorConverterTests
     {
         // Arrange - need to first call Convert to set internal series
         var color = Colors.Green;
-        object[] values = { color, null };
+        object[] values = { color, null! };
         _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
 
         var brush = new SolidColorBrush(Colors.Purple);

@@ -55,7 +55,7 @@ public class LineSeriesMarkerStrokeConverterTests
     public void Convert_NullColor_ReturnsNull()
     {
         // Arrange
-        object[] values = { null!, null };
+        object[] values = { null!, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -71,7 +71,7 @@ public class LineSeriesMarkerStrokeConverterTests
     public void Convert_WrongColorType_ReturnsNull()
     {
         // Arrange
-        object[] values = { "not a color", null };
+        object[] values = { "not a color", null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -88,7 +88,7 @@ public class LineSeriesMarkerStrokeConverterTests
     {
         // Arrange
         var color = Color.FromArgb(255, 200, 100, 50);
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -107,7 +107,7 @@ public class LineSeriesMarkerStrokeConverterTests
     {
         // Arrange
         var color = Colors.Magenta;
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -130,7 +130,7 @@ public class LineSeriesMarkerStrokeConverterTests
     {
         // Arrange
         var color = Colors.Lime;
-        object[] values = { color, null };
+        object[] values = { color, null! };
         _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
 
         var value = 456.78;

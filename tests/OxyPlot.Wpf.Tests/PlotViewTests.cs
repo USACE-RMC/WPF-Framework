@@ -28,7 +28,7 @@ namespace OxyPlot.Wpf.Tests
             /// <summary>
             /// Gets the actual model when model is not set.
             /// </summary>
-            [Test, Ignore("")] // TODO: add ignore reason.
+            [Test, Ignore("Requires STA thread and visible window; fails in CI")]
             public void GetDefault()
             {
                 var w = new Window();

@@ -124,7 +124,7 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Handles <see cref="TimeSeries.CollectionChanged"/> events to keep <see cref="_rowItems"/> in sync.
+        /// Handles CollectionChanged events to keep <see cref="_rowItems"/> in sync.
         /// On Replace (from cell edit or undo replay): updates the RowItem via <see cref="TimeSeriesRowItem.SetOrdinate"/>.
         /// On Reset (from bulk undo replay): rebuilds the entire RowItems collection and refreshes the DataGrid.
         /// </summary>
@@ -160,7 +160,7 @@ namespace NumericControls
 
         /// <summary>
         /// Handles changes to the Series property and configures the grid for the time interval type.
-        /// Builds the <see cref="_rowItems"/> collection and subscribes to <see cref="TimeSeries.CollectionChanged"/>.
+        /// Builds the <see cref="_rowItems"/> collection and subscribes to CollectionChanged.
         /// </summary>
         /// <param name="d">The dependency object that changed.</param>
         /// <param name="e">The property changed event arguments.</param>

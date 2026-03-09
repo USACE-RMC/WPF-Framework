@@ -34,7 +34,7 @@
                             <Setter Property="BorderBrush" TargetName="splitBorder" Value="{DynamicResource ComboBox.MouseOver.Button.Border}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="true">
-                            <!-- TODO: This seems to not update at the point where the button is pressed but after the combo box closes again -->
+                            <!-- Note: Visual update occurs when the popup closes rather than on button press due to ToggleButton behavior -->
                             <Setter Property="Fill" TargetName="arrow" Value="{DynamicResource ComboBox.Pressed.Glyph}"/>
                             <Setter Property="Background" TargetName="templateRoot" Value="{DynamicResource ComboBox.Pressed.Background}"/>
                             <Setter Property="BorderBrush" TargetName="templateRoot" Value="{DynamicResource ComboBox.Pressed.Border}"/>

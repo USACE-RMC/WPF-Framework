@@ -140,18 +140,10 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="element">IElement to add.</param>
         private void ElementAdded(IElement element)
         {
-            //int newIndex = ElementCollection.IndexOf(element);
-            //Insert(newIndex, new ElementNode(element, this, ParentTreeView));
             if (ElementNode.FindElementNode(element, this)==null)
             {
                 Add(new ElementNode(element, this, ParentTreeView as ProjectExplorerTreeView));
             }
-            //else if (ElementNodeAddedParentNode as ElementNodeGroup != null)
-            //{
-            //    var elementNode = new ElementNode(element, ElementNodeAddedParentNode, (ProjectExplorerTreeView)ParentTreeView);
-            //    NodeAdded?.Invoke(elementNode);
-            //    ((ElementNodeGroup)ElementNodeAddedParentNode).Add(elementNode);
-            //}
         }
     }
 }

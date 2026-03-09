@@ -386,7 +386,11 @@ namespace FrameworkInterfaces.Undo
             {
                 newValue = propertyInfo.GetValue(_sourceObject);
             }
-            catch
+            catch (System.Reflection.TargetInvocationException)
+            {
+                return null;
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or ObjectDisposedException)
             {
                 return null;
             }

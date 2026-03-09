@@ -55,7 +55,7 @@ namespace OxyPlot.Tests
             test("1 00 00000   1100000000000000 0011111111111111   10100000 00101000 11000100", "05 14 23");
         }
 
-        [Test, Ignore("")] // TODO: add ignore reason.
+        [Test, Ignore("Multi-block uncompressed deflate not supported by current implementation")]
         public void testUncompressedTwoBlocks()
         {
             // Uncompressed block len=1: 05
@@ -63,7 +63,7 @@ namespace OxyPlot.Tests
             test("0 00 00000   0100000000000000 1011111111111111   10100000 00101000   1 00 00000   1000000000000000 0111111111111111   11000100", "05 14 23");
         }
 
-        [Test, Ignore("")] // TODO: add ignore reason.
+        [Test, Ignore("EOF-before-length error handling not implemented")]
         public void testUncompressedEofBeforeLength()
         {
             // Uncompressed block (partial padding) (no length)
@@ -84,7 +84,7 @@ namespace OxyPlot.Tests
             Assert.Throws<FormatException>(() => test("1 00 00000 0010000000010000 1111100100110101", string.Empty));
         }
 
-        [Test, Ignore("")] // TODO: add ignore reason.
+        [Test, Ignore("Missing final block detection not implemented")]
         public void testUncompressedBlockNoFinalBlock()
         {
             // Uncompressed block len=0: (empty)

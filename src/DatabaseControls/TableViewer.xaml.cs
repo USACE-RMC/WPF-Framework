@@ -631,6 +631,9 @@ namespace DatabaseControls
         /// </summary>
         public event SelectedRowIndicesChangedEventHandler? SelectedRowIndicesChanged;
 
+        /// <summary>
+        /// Occurs when the active cell location changes.
+        /// </summary>
         public event Action? ActiveCellLocationChanged;
 
         /// <summary>
@@ -1624,9 +1627,15 @@ namespace DatabaseControls
                 ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + _activeCellDataColumnIndex]).Foreground = ActiveCellForeground;
             }
         }
+
+        /// <summary>
+        /// Sets the active cell to the specified data row and column, optionally scrolling to bring the row into view.
+        /// </summary>
+        /// <param name="newDataRowIndex">The zero-based data row index of the cell to activate.</param>
+        /// <param name="newDataColumnIndex">The zero-based data column index of the cell to activate.</param>
+        /// <param name="scrollToRow">If true, scrolls the view to make the active cell's row visible.</param>
         public void SetActiveCell(int newDataRowIndex, int newDataColumnIndex, bool scrollToRow = false)
         {
-            //
             _activeCellDataColumnIndex = newDataColumnIndex;
             _activeCellVirtualRowIndex = _rowOffset![newDataRowIndex];
             if (scrollToRow) VerticalScrollbar.Value = _activeCellVirtualRowIndex;
@@ -2684,7 +2693,7 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="sender">The source of the event, or null if called programmatically.</param>
         /// <param name="e">The event arguments, or null if called programmatically.</param>
-        private void ShowAll_Checked(object sender, RoutedEventArgs e)
+        private void ShowAll_Checked(object? sender, RoutedEventArgs? e)
         {
 
             _selectedRowsOnly = false;
@@ -2773,7 +2782,7 @@ namespace DatabaseControls
 
         private void SelectByAttribute_Click(object sender, RoutedEventArgs e)
         {
-            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, null, null, true);
+            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, new HashSet<int>(), null, true);
             attributeSelector.ContentRendered += SelectorRendered;
 
             if (attributeSelector.ShowDialog() == true)
@@ -2815,14 +2824,16 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
-        private void SelectorRendered(object sender, EventArgs e)
+        private void SelectorRendered(object? sender, EventArgs e)
         {
-            ((FieldCalculator)sender).ExpressionCalculator.SetExpressionText(_attributeSelectorString);
+            if (sender is FieldCalculator fc)
+                fc.ExpressionCalculator.SetExpressionText(_attributeSelectorString);
         }
 
-        private void CalculatorRendered(object sender, EventArgs e)
+        private void CalculatorRendered(object? sender, EventArgs e)
         {
-            ((FieldCalculator)sender).ExpressionCalculator.SetExpressionText(_fieldCalculatorString);
+            if (sender is FieldCalculator fc)
+                fc.ExpressionCalculator.SetExpressionText(_fieldCalculatorString);
         }
 
         /// <summary>
@@ -3075,13 +3086,7 @@ namespace DatabaseControls
             //
             if (_selectedColumnIndices.BinarySearch(_mouseDownColumnIndex) < 0)
             {
-                // I want to select the column but I don't want to de-select the rows because I don't want to lose
-                // the ability to apply to selected records only in the field calculator.
-                //
-                // If _selectedDataRowIndices.Count > 0 Then
-                //     _selectedDataRowIndices.Clear()
-                //     RaiseEvent SelectedRowIndicesChanged(_selectedDataRowIndices)
-                // End If
+                // Select the column but preserve row selection for the field calculator's "apply to selected records" feature.
                 _selectedCellIndices.Clear();
                 _selectedColumnIndices.Clear();
                 _selectedColumnIndices.Add(_mouseDownColumnIndex);
@@ -3247,7 +3252,6 @@ namespace DatabaseControls
                     idx = sortedUShort.Select(x => x.Value).ToList();
                     break;
                 case Type t when t == typeof(int):
-                    // Dim sorted As List(Of KeyValuePair(Of Int32, Int32))
                     var sortedInt = columnData.ToList().Select((x, i) => new KeyValuePair<int, int>(Convert.IsDBNull(x) ? int.MinValue : Convert.ToInt32(x), i)).OrderBy(x => x.Key).ToList();
                     idx = sortedInt.Select(x => x.Value).ToList();
                     break;

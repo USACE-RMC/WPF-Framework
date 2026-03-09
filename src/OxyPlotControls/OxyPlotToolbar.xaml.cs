@@ -256,6 +256,7 @@ namespace OxyPlotControls
         /// </summary>
         private void ToolBarLayoutUpdated(object? sender, EventArgs eventArgs)
         {
+            if (Plot?.ActualModel == null) return;
             var model = Plot.ActualModel;
             if (!string.IsNullOrEmpty(Plot.Title))
             {
@@ -2102,8 +2103,8 @@ namespace OxyPlotControls
             var textResult = Plot.HitTestRenderedText(new Point(e.Position.X, e.Position.Y));
             if (textResult != null)
             {
-                string clickedText = null;
-                TextBlock txtblock = null;
+                string? clickedText = null;
+                TextBlock? txtblock = null;
                 if (textResult is TextBlock tb)
                 {
                     clickedText = tb.Text;
@@ -4286,6 +4287,14 @@ namespace OxyPlotControls
             {
                 if (disposing)
                 {
+                    // Unsubscribe from events to prevent memory leaks
+                    ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
+                    if (Plot != null)
+                    {
+                        Plot.Annotations.CollectionChanged -= PlotModelAnnotationCollectionChanged;
+                        Plot.LayoutUpdated -= ToolBarLayoutUpdated;
+                    }
+
                     // Dispose managed resources (cursors)
                     _movePointsCursor?.Dispose();
                     _addPointCursor?.Dispose();

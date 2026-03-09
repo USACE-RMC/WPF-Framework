@@ -7,6 +7,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+#nullable enable annotations
+#nullable disable warnings
+
 namespace OxyPlot.Wpf
 {
     using System.ComponentModel;

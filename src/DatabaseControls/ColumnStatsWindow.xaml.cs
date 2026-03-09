@@ -163,7 +163,8 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="CancelEventArgs"/> instance containing the event data.</param>
         private void ColumnStatsWindow_Closing(object sender, CancelEventArgs e)
         {
-            _viewer.SelectedRowIndicesChanged -= ViewerSelectionChanged;
+            if (_viewer != null)
+                _viewer.SelectedRowIndicesChanged -= ViewerSelectionChanged;
         }
 
         /// <summary>
@@ -174,6 +175,8 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void SelectedOnlyCheckbox_Checked(object sender, RoutedEventArgs e)
         {
+            if (_viewer == null) return;
+
             object[] fieldData;
 
             object[] tempData = _viewer.DataView.GetColumn(_viewer.DataView.ColumnNames[_columnIndex]);
@@ -211,6 +214,8 @@ namespace DatabaseControls
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void SelectedOnlyCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
+            if (_viewer == null) return;
+
             object[] fieldData = _viewer.DataView.GetColumn(_viewer.DataView.ColumnNames[_columnIndex]);
 
             if (_isNumeric)

@@ -357,7 +357,7 @@ namespace FrameworkInterfaces.Tests.Messaging
             BasicMessageItem? item1 = null;
             BasicMessageItem? item2 = null;
 
-            Assert.True(item1 == item2);
+            Assert.True(item1! == item2!);
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace FrameworkInterfaces.Tests.Messaging
             var item1 = new BasicMessageItem();
             BasicMessageItem? item2 = null;
 
-            Assert.False(item1 == item2);
+            Assert.False(item1 == item2!);
         }
 
         /// <summary>

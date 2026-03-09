@@ -301,7 +301,7 @@ namespace NumericControls.Demo
             var ordinates = new Ordinate[81];
             uncertainOrdinates[0] = new UncertainOrdinate(0.25d, new Deterministic(Math.Sqrt(1112.412d / 0.25d)));
             ordinates[0] = new Ordinate(0.25d, Math.Sqrt(1112.412d / 0.25d));
-            for (int i = 1, loopTo = uncertainOrdinates.Count() - 1; i <= loopTo; i++)
+            for (int i = 1, loopTo = uncertainOrdinates.Length - 1; i <= loopTo; i++)
             {
                 uncertainOrdinates[i] = new UncertainOrdinate(i * 0.5d, new Deterministic(Math.Max(Math.Sqrt(1112.412d / (i * 0.5d)), 5.4d)));
                 ordinates[i] = new Ordinate(i * 0.5d, Math.Max(Math.Sqrt(1112.412d / (i * 0.5d)), 5.4d));

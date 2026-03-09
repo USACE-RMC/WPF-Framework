@@ -87,8 +87,10 @@ namespace ExpressionParserControls.Demo
                 {
                     this.ResultTextBlock.Text = "Error defining variables";
                 }
-
-                this.ResultTextBlock.Text = "Example: result equal to '" + result.Evaluate().Result?.ToString() + "'";
+                else
+                {
+                    this.ResultTextBlock.Text = "Example: result equal to '" + result.Evaluate().Result?.ToString() + "'";
+                }
             } // ExpressionWindow.GetResult & "'"
         }
     }

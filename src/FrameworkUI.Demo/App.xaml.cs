@@ -236,7 +236,7 @@ namespace FrameworkUI.Demo
                 if (result.IsUpdateAvailable)
                 {
                     System.Diagnostics.Debug.WriteLine(
-                        $"Update available: {result.Update.Version}");
+                        $"Update available: {result.Update?.Version}");
                 }
             };
 

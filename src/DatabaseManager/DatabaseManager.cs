@@ -230,6 +230,10 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown when file format is invalid or table already exists.</exception>
         public static void ConvertCsvToSqLite(string inputFile, string outputFile, string outputtableName, bool hasHeaders, int dataLineStartIndex, bool fieldsEnclosedInQuotes)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(inputFile);
+            ArgumentException.ThrowIfNullOrWhiteSpace(outputFile);
+            ArgumentException.ThrowIfNullOrWhiteSpace(outputtableName);
+
             if (Path.GetExtension(inputFile).ToLower() != ".csv")
             {
                 throw new Exception("Provided input file, " + Path.GetFileName(inputFile) + " is not a comma separated (.csv) file.");
@@ -244,7 +248,7 @@ namespace DatabaseManager
             {
                 sqLiteEdit.Open();
                 string[] tableNames = sqLiteEdit.GetTableNames();
-                for (int i = 0; i < tableNames.Count(); i++)
+                for (int i = 0; i < tableNames.Length; i++)
                 {
                     if ((outputtableName ?? "") == (tableNames[i] ?? ""))
                     {
@@ -280,7 +284,7 @@ namespace DatabaseManager
                     }
                     else
                     {
-                        for (int i = 0; i < lineArray.Count(); i++)
+                        for (int i = 0; i < lineArray.Length; i++)
                         {
                             tempDataTable.Columns.Add("Column_" + (i + 1), typeof(string));
                             columnHeaders.Add("Column_" + (i + 1));
@@ -298,7 +302,7 @@ namespace DatabaseManager
                     int lineCounter = 0;
                     while (!csvParser.EndOfData)
                     {
-                        if (lineArray.Count() != columnHeaders.Count) { continue; }
+                        if (lineArray.Length != columnHeaders.Count) { continue; }
                         tempDataTable.Rows.Add(lineArray);
 
                         lineCounter += 1;

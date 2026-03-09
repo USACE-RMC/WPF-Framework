@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#nullable enable
 using GenericControls;
 using Numerics.Data.Statistics;
 using Numerics.Distributions;
@@ -73,7 +74,7 @@ namespace NumericControls.Distributions.Univariate
             StrokeThickness = 1,
             RenderInLegend = false
         };
-        private UnivariateDistributionBase _selectedDistribution = null;
+        private UnivariateDistributionBase? _selectedDistribution = null;
         private ObservableCollection<Parameter> ParameterList { get; set; } = new ObservableCollection<Parameter>();
         private List<SummaryStatistic> SummaryStatisticsList { get; set; } = new List<SummaryStatistic>();
 
@@ -167,14 +168,14 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Gets or sets the currently selected univariate distribution.
         /// </summary>
-        public UnivariateDistributionBase SelectedDistribution
+        public UnivariateDistributionBase? SelectedDistribution
         {
             get => _selectedDistribution;
             set
             {
-                if (_selectedDistribution == null && value == null) { return; }
+                if (_selectedDistribution is null && value is null) { return; }
 
-                if (_selectedDistribution == null || _selectedDistribution.Equals(value) == false)
+                if (_selectedDistribution is null || _selectedDistribution.Equals(value) == false)
                 {
                     _selectedDistribution = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedDistribution)));
@@ -184,21 +185,24 @@ namespace NumericControls.Distributions.Univariate
                 {
                     _propertySetting = true;
                     bool isContained = false;
-                    for (int i = 0; i < _distributions.Count; i++)
+                    if (_selectedDistribution is not null)
                     {
-                        if (_distributions[i].Type == _selectedDistribution.Type)
+                        for (int i = 0; i < _distributions.Count; i++)
                         {
-                            isContained = true;
-                            if (_distributions[i].Equals(_selectedDistribution) == false)
+                            if (_distributions[i].Type == _selectedDistribution.Type)
                             {
-                                _distributions[i] = _selectedDistribution.Clone();
-                                DistributionCombobox.Items.Refresh();
+                                isContained = true;
+                                if (_distributions[i].Equals(_selectedDistribution) == false)
+                                {
+                                    _distributions[i] = _selectedDistribution.Clone();
+                                    DistributionCombobox.Items.Refresh();
+                                }
+                                //
+                                DistributionCombobox.SelectedIndex = i;
+                                UpdatePDFPlot();
+                                UpdateDistributionStats();
+                                break;
                             }
-                            //
-                            DistributionCombobox.SelectedIndex = i;
-                            UpdatePDFPlot();
-                            UpdateDistributionStats();
-                            break;
                         }
                     }
                     //
@@ -410,7 +414,7 @@ namespace NumericControls.Distributions.Univariate
                     if (distributionType == UnivariateDistributionType.UserDefined) { continue; }
                     // 
                     UnivariateDistributionBase distributionToAdd = UnivariateDistributionFactory.CreateDistribution(distributionType);
-                    if (distributionToAdd != null) { distributions.Add(distributionToAdd); }
+                    if (distributionToAdd is not null) { distributions.Add(distributionToAdd); }
                 }
                 // 
                 return distributions;
@@ -536,7 +540,7 @@ namespace NumericControls.Distributions.Univariate
         /// <returns><c>true</c> if the distribution implements parameter estimation; otherwise, <c>false</c>.</returns>
         private bool DistributionCanEstimate()
         {
-            if (SelectedDistribution != null)
+            if (SelectedDistribution is not null)
             {
                 if (SelectedDistribution.Type == UnivariateDistributionType.Deterministic) { return true; }
                 if (SelectedDistribution.Type == UnivariateDistributionType.Normal) { return true; }
@@ -554,7 +558,7 @@ namespace NumericControls.Distributions.Univariate
         /// </summary>
         /// <param name="sender">The parameter that raised the event.</param>
         /// <param name="e">Event arguments containing the property name.</param>
-        private void ParameterPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ParameterPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Parameter.Value)) { SetDistributionParameters(true); }
         }
@@ -567,7 +571,7 @@ namespace NumericControls.Distributions.Univariate
             if (DistributionCombobox.SelectedIndex == -1) { return; }
             ClearValidation();
 
-            UnivariateDistributionBase currentDistribution = null;
+            UnivariateDistributionBase? currentDistribution = null;
             try
             {
                 // Get the selected distribution and set the parameters from the parameter list
@@ -582,20 +586,20 @@ namespace NumericControls.Distributions.Univariate
                     if (setParameters) { currentDistribution.SetParameters(ParameterList.Select(o => o.Value).ToArray()); }
                     if (currentDistribution.ParametersValid == false)
                     {
-                        ArgumentOutOfRangeException ex = currentDistribution.ValidateParameters(ParameterList.Select(o => o.Value).ToArray(), false);
-                        SetInvalidParameter(ex.ParamName, ex.Message);
+                        ArgumentOutOfRangeException? ex = currentDistribution.ValidateParameters(ParameterList.Select(o => o.Value).ToArray(), false);
+                        if (ex?.ParamName != null) { SetInvalidParameter(ex.ParamName, ex.Message); }
                     }
                 }
             }
             catch (Exception ex)
             {
-                if (ex.GetType() == typeof(ArgumentOutOfRangeException))
+                if (ex is ArgumentOutOfRangeException argEx && argEx.ParamName != null)
                 {
-                    SetInvalidParameter(((ArgumentOutOfRangeException)ex).ParamName, ((ArgumentOutOfRangeException)ex).Message);
+                    SetInvalidParameter(argEx.ParamName, argEx.Message);
                 }
             }
-            // 
-            if (_propertySetting == false)
+            //
+            if (_propertySetting == false && currentDistribution is not null)
             {
                 _distributionChanging = true;
                 SelectedDistribution = currentDistribution.Clone();
@@ -608,7 +612,7 @@ namespace NumericControls.Distributions.Univariate
         private bool _distributionChanging = false;
 
         /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Clears validation errors from all parameters in the parameter list.
@@ -618,7 +622,7 @@ namespace NumericControls.Distributions.Univariate
             foreach (Parameter p in ParameterList)
             {
                 p.IsValid = true;
-                p.ErrorMessage = null;
+                p.ErrorMessage = null!;
             }
         }
 
@@ -629,8 +633,8 @@ namespace NumericControls.Distributions.Univariate
         /// <param name="errorMessage">The validation error message to display.</param>
         private void SetInvalidParameter(string parameterName, string errorMessage)
         {
-            Parameter param = ParameterList.FirstOrDefault(o => string.Equals(o.Name, parameterName, StringComparison.OrdinalIgnoreCase));
-            if (param == null) { return; }
+            Parameter? param = ParameterList.FirstOrDefault(o => string.Equals(o.Name, parameterName, StringComparison.OrdinalIgnoreCase));
+            if (param is null) { return; }
             param.IsValid = false;
             param.ErrorMessage = errorMessage;
         }
@@ -646,7 +650,7 @@ namespace NumericControls.Distributions.Univariate
             _distributions.Clear();
             foreach (var d in univariateTypes)
             {
-                if (_selectedDistribution != null && d == _selectedDistribution.Type)
+                if (_selectedDistribution is not null && d == _selectedDistribution.Type)
                 {
                     _distributions.Add(_selectedDistribution);
                 }
@@ -674,11 +678,11 @@ namespace NumericControls.Distributions.Univariate
 
             areaSeries.Points.Clear();
             areaSeries.Points2.Clear();
-            if ((SelectedDistribution != null) && SelectedDistribution.ParametersValid)
+            if ((SelectedDistribution is not null) && SelectedDistribution.ParametersValid)
             {
                 InvalidDistributionTextBlock.Visibility = Visibility.Collapsed;
                 Plot.Visibility = Visibility.Visible;
-                double[,] PDFgraph;
+                double[,]? PDFgraph;
 
                 if (SelectedDistribution.Type == UnivariateDistributionType.Empirical)
                 {
@@ -708,22 +712,25 @@ namespace NumericControls.Distributions.Univariate
                     List<StratificationBin> range = Stratify.XValues(new StratificationOptions(SelectedDistribution.InverseCDF(0.001d), SelectedDistribution.InverseCDF(0.999d), 500));
                     PDFgraph = SelectedDistribution.CreatePDFGraph(range);
                 }
-                // 
+                //
                 // Create PDF Plot
                 OxyPlot.Series.AreaSeries arSeries = (OxyPlot.Series.AreaSeries)PDF.InternalSeries;
                 arSeries.Points.Clear();
                 arSeries.Points2.Clear();
-                for (int i = 0; i < PDFgraph.GetLength(0); i++)
+                if (PDFgraph is not null)
                 {
-                    arSeries.Points.Add(new OxyPlot.DataPoint(PDFgraph[i, 0], PDFgraph[i, 1]));
-                    arSeries.Points2.Add(new OxyPlot.DataPoint(PDFgraph[i, 0], 0d));
+                    for (int i = 0; i < PDFgraph.GetLength(0); i++)
+                    {
+                        arSeries.Points.Add(new OxyPlot.DataPoint(PDFgraph[i, 0], PDFgraph[i, 1]));
+                        arSeries.Points2.Add(new OxyPlot.DataPoint(PDFgraph[i, 0], 0d));
+                    }
                 }
             }
             else
             {
                 InvalidDistributionTextBlock.Visibility = Visibility.Visible;
                 Plot.Visibility = Visibility.Hidden;
-                InvalidDistributionTextBlock.Text = SelectedDistribution == null ? "No distribution has been selected." : "Selected distribution has invalid parameters.";
+                InvalidDistributionTextBlock.Text = SelectedDistribution is null ? "No distribution has been selected." : "Selected distribution has invalid parameters.";
             }
             // 
             Plot.InvalidatePlot();
@@ -735,7 +742,7 @@ namespace NumericControls.Distributions.Univariate
         private void UpdateDistributionStats()
         {
             // Distribution
-            if ((SelectedDistribution == null) || (SelectedDistribution.ParametersValid == false))
+            if ((SelectedDistribution is null) || (SelectedDistribution.ParametersValid == false))
             {
                 SummaryStatisticsList[0].DistStat = double.NaN.ToString("N4");
                 SummaryStatisticsList[1].DistStat = double.NaN.ToString("N4");
@@ -794,7 +801,7 @@ namespace NumericControls.Distributions.Univariate
         /// <param name="e">Event arguments.</param>
         private void EstimateParametersButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DistributionCanEstimate() == true)
+            if (DistributionCanEstimate() == true && SelectedDistribution is not null)
             {
                 var estimatedDistribution = SelectedDistribution.Clone();
                 if (estimatedDistribution.Type == UnivariateDistributionType.Pert)

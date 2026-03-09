@@ -79,22 +79,22 @@ namespace DAG.Demo
             AddNode(new Point(p.X - 20, p.Y - 20));
         }
 
+        private static readonly Random _random = new();
+
         private void AddNode(Point p)
         {
             var newNode = new TestNode() { LeftPosition = p.X, TopPosition = p.Y };
             GraphCanvas.Graph.Nodes.Add(newNode);
             DAGControls.NodeControl cntrl = GraphCanvas.GetNodeControl(newNode);
-            var i = (DrawingImage)FindResource("HazardIcon");
-
-            cntrl.NodeIcon = i;
+            if (FindResource("HazardIcon") is DrawingImage icon)
+                cntrl.NodeIcon = icon;
 
             ComboBox c = new ComboBox() { Margin = new Thickness(5) };
             _ = c.Items.Add(new ComboBoxItem() { Content = "Option 1" });
             _ = c.Items.Add(new ComboBoxItem() { Content = "Option 2" });
             cntrl.NodeContent = c;
 
-            Random randy = new Random();
-            double r = randy.NextDouble();
+            double r = _random.NextDouble();
             if (r < .33)
             {
                 cntrl.HeaderColor = new SolidColorBrush(Colors.LightSeaGreen);
@@ -121,7 +121,7 @@ namespace DAG.Demo
         {
             ConnectionText.TextDecorations = null;
             ConnectionText.Text = $"Create node and connection from {fromConnector.Parent.Name} - '{fromConnector.Name}'";
-            ((Storyboard)FindResource("animate")).Begin(ConnectionText);
+            if (FindResource("animate") is Storyboard sb1) sb1.Begin(ConnectionText);
             //AddNodeButton_Click(null, null);
         }
 
@@ -166,7 +166,7 @@ namespace DAG.Demo
                 _ = sb.AppendLine($"{connection.Item1.Parent.Name} - '{connection.Item1.Name}' to '{connection.Item2.Name}' - {connection.Item2.Parent.Name}");
             }
             ConnectionText.Text = sb.ToString();
-            ((Storyboard)FindResource("animate")).Begin(ConnectionText);
+            if (FindResource("animate") is Storyboard sb2) sb2.Begin(ConnectionText);
         }
 
         private void Graph_ConnectionsAdded(Tuple<OutConnector, InConnector>[] connections)
@@ -179,7 +179,14 @@ namespace DAG.Demo
                 _ = sb.AppendLine($"{connection.Item1.Parent.Name} - '{connection.Item1.Name}' to '{connection.Item2.Name}' - {connection.Item2.Parent.Name}");
             }
             ConnectionText.Text = sb.ToString();
-            ((Storyboard)FindResource("animate")).Begin(ConnectionText);
+            if (FindResource("animate") is Storyboard sb3) sb3.Begin(ConnectionText);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            GraphCanvas.Graph.ConnectionsAdded -= Graph_ConnectionsAdded;
+            GraphCanvas.Graph.ConnectionsRemoved -= Graph_ConnectionsRemoved;
+            base.OnClosed(e);
         }
 
     }

@@ -180,8 +180,7 @@ namespace GenericControls
             if (ItemsSource == null)
                 return;
             IList<object> il = (IList<object>)ItemsSource;
-            DataGridRowItem d = (DataGridRowItem)il.FirstOrDefault();
-            if (d == null)
+            if (il.FirstOrDefault() is not DataGridRowItem d)
                 return;
             e.Cancel = !d.IsGridDisplayable(e.PropertyName);
             if (e.Cancel)

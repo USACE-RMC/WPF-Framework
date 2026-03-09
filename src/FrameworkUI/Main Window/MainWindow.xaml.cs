@@ -137,10 +137,7 @@ namespace FrameworkUI
             {
                 ThemeManager.SetTheme(ThemeColor.Light);
             }
-            // 
             // Dummy call using Avalon Themes method so that the dlls will be copied with the ProjectUI control.
-            // Note: OxyplotControls reference removed - external dependency not included in this repository
-            // var oxyDummy = new OxyplotControls.OxySeriesColorConverter();
             var avalonDummy = new Xceed.Wpf.AvalonDock.Themes.Vs2013BlueTheme();
         }
 
@@ -196,7 +193,6 @@ namespace FrameworkUI
         /// Layout anchorable for the project explorer dock.
         /// </summary>
         private LayoutAnchorable? _projectExplorerDock;
-        //private LayoutAnchorable _mapExplorerDock;
         /// <summary>
         /// Layout anchorable for the message window dock.
         /// </summary>
@@ -209,7 +205,6 @@ namespace FrameworkUI
         /// The project explorer tree view control.
         /// </summary>
         private ProjectExplorerTreeView _projectExplorerTreeView;
-        //private ExplorerTreeView _mapExplorerTreeView;
         /// <summary>
         /// The message window control.
         /// </summary>
@@ -592,24 +587,6 @@ namespace FrameworkUI
             if (_projectExplorerDock != null)
                 _projectExplorerDock.IsActive = true;
         }
-
-        ///// <summary>
-        ///// Build the project explorer.
-        ///// </summary>
-        //private void BuildMapExplorer()
-        //{
-        //    var LayoutAnchorableList = MainDock.Layout.Descendents().OfType<LayoutAnchorable>().ToList();
-        //    for (int i = 0; i < LayoutAnchorableList.Count; i++)
-        //    {
-        //        if (LayoutAnchorableList[i].Title == ShellPublicVariables.MapExplorerTitle)
-        //        {
-        //            _mapExplorerDock = LayoutAnchorableList[i];
-        //            _mapExplorerDock.Content = _mapExplorerTreeView;
-        //            break;
-        //        }
-        //    }
-        //    _mapExplorerDock.IsActive = true;
-        //}
 
         /// <summary>
         /// Build the message window.
@@ -2176,15 +2153,6 @@ namespace FrameworkUI
             BuildProjectExplorer();
             ShowAnchorable(_projectExplorerDock, AnchorableShowStrategy.Left);
         }
-
-        ///// <summary>
-        ///// Show map explorer docking panel.
-        ///// </summary>
-        //private void MapExplorer_Click(object sender, RoutedEventArgs e)
-        //{
-        //    _mapExplorerDock.Show();
-        //    _mapExplorerDock.IsActive = true;
-        //}
 
         /// <summary>
         /// Show message window docking panel and make it active.

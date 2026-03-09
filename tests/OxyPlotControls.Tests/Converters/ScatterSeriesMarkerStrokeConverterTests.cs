@@ -55,7 +55,7 @@ public class ScatterSeriesMarkerStrokeConverterTests
     public void Convert_NullColor_ReturnsNull()
     {
         // Arrange
-        object[] values = { null!, null };
+        object[] values = { null!, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -71,7 +71,7 @@ public class ScatterSeriesMarkerStrokeConverterTests
     public void Convert_WrongColorType_ReturnsNull()
     {
         // Arrange
-        object[] values = { "not a color", null };
+        object[] values = { "not a color", null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -88,7 +88,7 @@ public class ScatterSeriesMarkerStrokeConverterTests
     {
         // Arrange
         var color = Color.FromArgb(255, 60, 120, 180);
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -107,7 +107,7 @@ public class ScatterSeriesMarkerStrokeConverterTests
     {
         // Arrange
         var color = Colors.IndianRed;
-        object[] values = { color, null };
+        object[] values = { color, null! };
 
         // Act
         var result = _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
@@ -130,7 +130,7 @@ public class ScatterSeriesMarkerStrokeConverterTests
     {
         // Arrange
         var color = Colors.MediumPurple;
-        object[] values = { color, null };
+        object[] values = { color, null! };
         _converter.Convert(values, typeof(SolidColorBrush), null!, CultureInfo.InvariantCulture);
 
         var value = new[] { 1, 2, 3 };

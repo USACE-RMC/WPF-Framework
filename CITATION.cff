@@ -3,7 +3,7 @@ message: "If you use this software, please cite it as below."
 type: software
 title: "WPF Framework"
 version: "1.0.0"
-date-released: "2026-01-01"
+date-released: "2026-03-09"
 license: BSD-3-Clause
 repository-code: "https://github.com/USACE-RMC/WPF-Framework"
 url: "https://github.com/USACE-RMC/WPF-Framework"

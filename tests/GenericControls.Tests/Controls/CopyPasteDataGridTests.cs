@@ -501,6 +501,7 @@ public class CopyPasteDataGridTests
     /// <summary>
     /// Custom test struct for testing type checking methods.
     /// </summary>
+#pragma warning disable CS0649 // Field is never assigned to (used for type-checking tests)
     private struct CustomTestStruct
     {
         /// <summary>
@@ -508,6 +509,7 @@ public class CopyPasteDataGridTests
         /// </summary>
         public int Value;
     }
+#pragma warning restore CS0649
 
     #endregion
 }

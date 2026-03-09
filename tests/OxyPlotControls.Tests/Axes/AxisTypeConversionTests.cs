@@ -972,9 +972,9 @@ public class AxisTypeConversionTests
         // Arrange
         var linearAxis = new Wpf.LinearAxis
         {
-            Title = null,
-            Key = null,
-            Unit = null
+            Title = null!,
+            Key = null!,
+            Unit = null!
         };
 
         // Act & Assert - No exceptions should be thrown

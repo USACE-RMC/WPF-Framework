@@ -10,7 +10,7 @@ dotnet test WPF-Framework.sln
 ```
 
 **External dependencies** (must be built separately):
-- `C:\GIT\numerics\` - Numerics library for statistical distributions
+- [Numerics](https://github.com/USACE-RMC/Numerics) - Library for statistical distributions. Clone and build adjacent to this repo, or update HintPath references in the csproj files.
 
 ## Solution Structure
 

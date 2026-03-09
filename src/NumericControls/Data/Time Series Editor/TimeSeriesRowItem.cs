@@ -40,7 +40,7 @@ namespace NumericControls
     /// </summary>
     /// <remarks>
     /// <para>
-    /// When a cell edit occurs, the setter clones the underlying <see cref="SeriesOrdinate{DateTime, double}"/>,
+    /// When a cell edit occurs, the setter clones the underlying SeriesOrdinate,
     /// modifies the clone, and replaces the original in the <see cref="TimeSeries"/> collection via the indexer.
     /// This fires a <see cref="System.Collections.Specialized.NotifyCollectionChangedAction.Replace"/> event
     /// which the undo bridge records.
@@ -83,7 +83,7 @@ namespace NumericControls
 
         /// <summary>
         /// The positional index of this ordinate within the series.
-        /// Used for O(1) replacement instead of <see cref="TimeSeries.IndexOf"/> which uses value equality
+        /// Used for O(1) replacement instead of IndexOf which uses value equality
         /// and can return the wrong index when duplicate entries exist.
         /// Stable because RowItems are rebuilt from scratch on every Reset event.
         /// </summary>
@@ -152,7 +152,7 @@ namespace NumericControls
         /// <summary>
         /// Replaces the current ordinate in the time series with a new clone using the stored positional index.
         /// This fires a CollectionChanged Replace event which the UndoableCollectionBridge records.
-        /// Uses <see cref="_index"/> instead of <see cref="TimeSeries.IndexOf"/> to avoid O(n) lookup
+        /// Uses <see cref="_index"/> instead of IndexOf to avoid O(n) lookup
         /// and value-equality ambiguity when duplicate entries exist.
         /// </summary>
         /// <param name="newOrdinate">The cloned and modified ordinate to replace the current one.</param>

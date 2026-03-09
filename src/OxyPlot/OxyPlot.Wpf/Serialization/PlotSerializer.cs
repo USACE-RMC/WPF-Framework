@@ -8,6 +8,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+#nullable enable annotations
+#nullable disable warnings
+
 namespace OxyPlot.Wpf.Serialization
 {
     using System;

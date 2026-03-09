@@ -48,7 +48,9 @@
       "Bash(dotnet sln WPF-Framework.sln add src/DAG/DAG.csproj --solution-folder Models)",
       "Bash(dotnet sln WPF-Framework.sln add src/DAGControls/DAGControls.csproj --solution-folder Controls)",
       "Bash(dotnet sln WPF-Framework.sln add src/DAG.Demo/DAG.Demo.csproj --solution-folder Demos)",
-      "Bash(dotnet sln WPF-Framework.sln add tests/DAG.Tests/DAG.Tests.csproj --solution-folder Tests)"
+      "Bash(dotnet sln WPF-Framework.sln add tests/DAG.Tests/DAG.Tests.csproj --solution-folder Tests)",
+      "Bash(done)",
+      "Bash(sed 's/\\\\:.*//')"
     ]
   }
 }
