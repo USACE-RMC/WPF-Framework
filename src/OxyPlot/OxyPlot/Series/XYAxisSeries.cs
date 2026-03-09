@@ -828,8 +828,32 @@ namespace OxyPlot.Series
                 curGuess = Math.Max(start + 1, Math.Min(curGuess, end));
             }
 
-            while (start > 0 && (xgetter(items[start]) > targetX))
-                start -= 1;
+            // Post-search adjustment: the binary search may be imprecise because
+            // GetX() skips NaN values, creating index/value mismatches. Do a linear
+            // fixup that properly handles NaN values in both directions.
+
+            // Walk backward past NaN and values > targetX
+            while (start > 0)
+            {
+                double val = xgetter(items[start]);
+                if (double.IsNaN(val) || val > targetX)
+                    start -= 1;
+                else
+                    break;
+            }
+
+            // Walk forward past NaN to find the tightest position
+            // (binary search may have stopped too early due to NaN-skipping)
+            for (int i = start + 1; i < items.Count; i++)
+            {
+                double val = xgetter(items[i]);
+                if (double.IsNaN(val))
+                    continue;
+                if (val <= targetX)
+                    start = i;
+                else
+                    break;
+            }
 
             return start;
         }

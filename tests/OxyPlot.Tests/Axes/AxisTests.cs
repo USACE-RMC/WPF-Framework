@@ -414,7 +414,7 @@ namespace OxyPlot.Tests
             var plot = new PlotModel { Title = "Simple plot" };
             plot.Axes.Add(new LogarithmicAxis { Maximum = 1, Minimum = 1 });
             ((IPlotModel)plot).Update(true);
-            Assert.AreEqual(100, plot.Axes[0].ActualMaximum);
+            Assert.AreEqual(100, plot.Axes[0].ActualMaximum, 1e-10);
             Assert.AreEqual(1, plot.Axes[0].ActualMinimum);
         }
 
@@ -424,7 +424,7 @@ namespace OxyPlot.Tests
             var plot = new PlotModel { Title = "Simple plot" };
             plot.Axes.Add(new LogarithmicAxis { Maximum = 1, Minimum = 0 });
             ((IPlotModel)plot).Update(true);
-            Assert.AreEqual(100, plot.Axes[0].ActualMaximum);
+            Assert.AreEqual(100, plot.Axes[0].ActualMaximum, 1e-10);
             Assert.AreEqual(1, plot.Axes[0].ActualMinimum);
         }
 

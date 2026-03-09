@@ -112,7 +112,7 @@ namespace OxyPlot.Tests
 
             double? NextNonNan(int index)
             {
-                while (index >= 0)
+                while (index < testData.Count)
                 {
                     if (double.IsNaN(testData[index]) == false)
                         return testData[index];
