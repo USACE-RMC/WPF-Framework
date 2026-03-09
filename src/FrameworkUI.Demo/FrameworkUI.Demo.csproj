@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <RootNamespace>FrameworkUI.Demo</RootNamespace>
     <AssemblyName>FrameworkUI.Demo</AssemblyName>
     <Description>A demonstration application for the FrameworkUI WPF framework, showcasing project management, AvalonDock layout, theming, and standard controls.</Description>
@@ -51,36 +51,13 @@
     <Resource Include="Resources\*.png" />
   </ItemGroup>
 
-  <!-- Debug references -->
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+  <ItemGroup>
     <Reference Include="Numerics">
-      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net10.0\Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="OxyPlot">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf.Shared">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <!-- Release references -->
-  <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <Reference Include="Numerics">
-      <HintPath>..\..\..\numerics\Numerics\bin\Release\net9.0\Numerics.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Release\net9.0-windows\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Release\net9.0-windows\OxyPlot.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf.Shared">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Release\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf.Shared\OxyPlot.Wpf.Shared.csproj" />
   </ItemGroup>
 
   <!-- Post-build: Move supporting files to libraries subfolder and clean up -->

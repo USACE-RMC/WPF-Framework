@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <RootNamespace>NumericControls</RootNamespace>
     <AssemblyName>NumericControls</AssemblyName>
     <Nullable>disable</Nullable>
@@ -43,17 +43,11 @@
 
   <ItemGroup>
     <Reference Include="Numerics">
-      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net10.0\Numerics.dll</HintPath>
     </Reference>
-    <Reference Include="OxyPlot">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="OxyPlot.Wpf.Shared">
-      <HintPath>..\..\..\oxyplot\Source\OxyPlot.Wpf\bin\Debug\net9.0-windows\OxyPlot.Wpf.Shared.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf.Shared\OxyPlot.Wpf.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 # WPF Framework
 
-USACE-RMC WPF application framework built on .NET 9.0. Provides a complete desktop application shell with docking layout, theming, undo/redo, and specialized controls.
+USACE-RMC WPF application framework built on .NET 10.0. Provides a complete desktop application shell with docking layout, theming, undo/redo, and specialized controls.
 
 ## Build & Test
 
@@ -18,12 +18,11 @@ dotnet test WPF-Framework.sln
 |--------|----------|
 | Core | FrameworkInterfaces, FrameworkUI, Themes |
 | Controls | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls |
-| Models | DatabaseManager, ExpressionParser |
+| Models | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared |
 | Support | SoftwareUpdate, SoftwareUpdate.Updater |
 | AvalonDock | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 |
-| OxyPlot | OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared |
 | Demos | One demo per control library |
-| Tests | 9 test projects (xunit + MSTest) |
+| Tests | 12 test projects (xunit, MSTest, NUnit) + ExampleLibrary |
 
 ## Key Architecture Patterns
 
@@ -36,7 +35,7 @@ dotnet test WPF-Framework.sln
 
 - **DynamicResource in Freezables**: `DynamicResource` does NOT work inside `DrawingBrush > DrawingGroup > GeometryDrawing.Brush`. Use `Canvas > Path` with `Fill="{DynamicResource ...}"` instead.
 - **Global implicit TextBlock style**: Overrides `TextBlock.Foreground` set via triggers. Use named styles (`x:Key="BasicTextBlockStyle"`) instead.
-- **.NET 9 ContentPresenter**: Causes visual parent conflicts. Use `ContentControl` for `LayoutItem.View` bindings in AvalonDock templates.
+- **ContentPresenter in AvalonDock**: Causes visual parent conflicts. Use `ContentControl` for `LayoutItem.View` bindings in AvalonDock templates.
 - **DatabaseControls.Demo**: External Numerics DLL must exist at HintPath location.
 
 ## Git Workflow

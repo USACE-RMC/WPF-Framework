@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>8</LangVersion>
     <Description>OxyPlot is a plotting library for .NET. This package is the base for WPF PlotView implementations.</Description>

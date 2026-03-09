@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <RootNamespace>DatabaseControls.Demo</RootNamespace>
     <AssemblyName>DatabaseControls.Demo</AssemblyName>
     <Nullable>enable</Nullable>
@@ -27,7 +27,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Reference Include="Numerics">
-	    <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+	    <HintPath>..\..\..\numerics\Numerics\bin\Debug\net10.0\Numerics.dll</HintPath>
 	  </Reference>
 	  <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
 	  <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />

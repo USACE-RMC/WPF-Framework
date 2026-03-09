@@ -6,9 +6,9 @@ Vendored fork of [oxyplot/oxyplot](https://github.com/oxyplot/oxyplot) with sign
 
 | Project | Target | Purpose |
 |---------|--------|---------|
-| OxyPlot | net9.0 | Core plotting library (platform-agnostic) |
-| OxyPlot.Wpf | net9.0-windows | WPF PlotView control and rendering + serialization |
-| OxyPlot.Wpf.Shared | net9.0-windows | Shared WPF base classes |
+| OxyPlot | net10.0 | Core plotting library (platform-agnostic) |
+| OxyPlot.Wpf | net10.0-windows | WPF PlotView control and rendering + serialization |
+| OxyPlot.Wpf.Shared | net10.0-windows | Shared WPF base classes |
 
 ## Key Custom Additions (vs upstream OxyPlot)
 

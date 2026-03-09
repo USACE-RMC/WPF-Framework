@@ -1,7 +1,7 @@
 ﻿<!-- OxyPlotControls.Demo - Demo application for OxyPlotControls -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
@@ -25,11 +25,9 @@
     <EmbeddedResource Include="USGS_01134500.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DatabaseManager">
-      <HintPath>..\..\..\database-management\DatabaseManager\bin\Debug\net9.0\DatabaseManager.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
     <Reference Include="Numerics">
-      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net9.0\Numerics.dll</HintPath>
+      <HintPath>..\..\..\numerics\Numerics\bin\Debug\net10.0\Numerics.dll</HintPath>
     </Reference>
     <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
     <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />

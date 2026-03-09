@@ -39,7 +39,11 @@
       "Bash(test:*)",
       "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot/OxyPlot.csproj --solution-folder \"Core Framework\")",
       "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot.Wpf/OxyPlot.Wpf.csproj --solution-folder \"Core Framework\")",
-      "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot.Wpf.Shared/OxyPlot.Wpf.Shared.csproj --solution-folder \"Core Framework\")"
+      "Bash(dotnet sln WPF-Framework.sln add src/OxyPlot/OxyPlot.Wpf.Shared/OxyPlot.Wpf.Shared.csproj --solution-folder \"Core Framework\")",
+      "Bash(dotnet sln WPF-Framework.sln add tests/ExampleLibrary/ExampleLibrary.csproj --solution-folder \"Tests\")",
+      "Bash(dotnet sln WPF-Framework.sln add tests/OxyPlot.Tests/OxyPlot.Tests.csproj --solution-folder \"Tests\")",
+      "Bash(dotnet sln WPF-Framework.sln add tests/OxyPlot.Wpf.Tests/OxyPlot.Wpf.Tests.csproj --solution-folder \"Tests\")",
+      "Bash(dotnet --list-sdks)"
     ]
   }
 }
