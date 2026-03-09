@@ -1003,31 +1003,68 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Refreshes the view by adjusting visible rows based on the control's size.
+        /// Refreshes the view by incrementally adjusting visible rows based on the control's size.
+        /// Adds or removes rows as needed rather than rebuilding the entire grid.
         /// </summary>
         public void RefreshView()
         {
             if (!_isLoaded || DataView == null) return;
+
             int newNumberRows = GetMaxRows();
-            if (newNumberRows != _visibleRowCount)
+            int nDataRows = DataView.NumberOfRows;
+            if (_selectedRowsOnly) nDataRows = _selectedDataRowIndices.Count;
+            if (newNumberRows > nDataRows) newNumberRows = nDataRows;
+            if (newNumberRows != _visibleRowCount && GridPanel.Children.Contains(_cellEditTextBox)) GridPanel.Focus();
+            int offset = newNumberRows - _visibleRowCount;
+            if (offset > (VerticalScrollbar.Maximum - Math.Floor(VerticalScrollbar.Value))) VerticalScrollbar.Value = VerticalScrollbar.Maximum;
+
+            if (newNumberRows < _visibleRowCount)
             {
-                _visibleRowCount = newNumberRows;
-                if (_selectedRowsOnly)
+                // Remove rows incrementally
+                do
                 {
-                    if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
-                    VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
+                    for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                        GridPanel.Children.RemoveAt(GridPanel.Children.Count - 1);
+                    GridPanel.RowDefinitions.RemoveAt(GridPanel.RowDefinitions.Count - 1);
+                    RowColorGrid.Children.RemoveAt(RowColorGrid.Children.Count - 1);
+                    RowColorGrid.RowDefinitions.RemoveAt(RowColorGrid.RowDefinitions.Count - 1);
+                    RowHeadersGrid.Children.RemoveAt(RowHeadersGrid.Children.Count - 1);
+                    RowHeadersGrid.RowDefinitions.RemoveAt(RowHeadersGrid.RowDefinitions.Count - 1);
+                    GridLinesCanvas.Children.RemoveAt(GridLinesCanvas.Children.Count - 1);
+                    _visibleRowCount -= 1;
+                } while (_visibleRowCount != newNumberRows);
+
+                if ((int)Math.Floor(VerticalScrollbar.Value) == (int)VerticalScrollbar.Maximum)
+                {
+                    VerticalScrollbar.Maximum = nDataRows - _visibleRowCount;
+                    VerticalScrollbar.Value = VerticalScrollbar.Maximum;
                 }
                 else
                 {
-                    if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
-                    VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
+                    VerticalScrollbar.Maximum = nDataRows - _visibleRowCount;
                 }
-                VerticalScrollbar.ViewportSize = _visibleRowCount;
-                LoadRows();
-                SetSelectedCells();
+            }
+            else if (newNumberRows > _visibleRowCount)
+            {
+                // Add rows incrementally
+                do
+                {
+                    AddRow();
+                    if (_selectedRowsOnly)
+                    {
+                        for (int i = 0; i < DataView.ColumnNames.Count(); i++)
+                            SelectCell(i, _visibleRowCount);
+                    }
+                    _visibleRowCount += 1;
+                } while (_visibleRowCount != newNumberRows);
+                VerticalScrollbar.Maximum = nDataRows - newNumberRows;
                 UpdateRowHeaders();
             }
-            RefreshColumnWidths();
+
+            RefreshColumnWidths(false);
+
+            if (!_selectedRowsOnly) SetSelectedCells();
+            VerticalScrollbar.ViewportSize = _visibleRowCount;
         }
 
         /// <summary>
@@ -2714,7 +2751,7 @@ namespace DatabaseControls
             LoadRows();
             SetSelectedCells();
             UpdateRowHeaders();
-            ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             ShowAll.IsEnabled = false;
             GridPanel.Focus();
         }
@@ -2739,7 +2776,7 @@ namespace DatabaseControls
                 }
 
                 _selectedRowsOnly = true;
-                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ShowAllIcon_22x22.png"));
+                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowAllIcon_22x22.png"));
                 ShowAll.IsEnabled = true;
                 if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
                 VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
@@ -2763,9 +2800,9 @@ namespace DatabaseControls
             DeSelectAllCells();
             SetSelectedCells();
             ShowSelected.IsEnabled = false;
-            ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             DeSelectAll.IsEnabled = false;
-            ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+            ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             if (_selectedRowsOnly == true)
             {
                 _selectedRowsOnly = false;
@@ -2774,7 +2811,7 @@ namespace DatabaseControls
                 VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
                 LoadRows();
                 SetSelectedCells();
-                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 ShowAll.IsEnabled = false;
             }
             GridPanel.Focus();
@@ -2806,16 +2843,16 @@ namespace DatabaseControls
                 if (_selectedDataRowIndices.Count > 0 && _selectedRowsOnly == false)
                 {
                     ShowSelected.IsEnabled = true;
-                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ShowSelectedIcon_22x22.png"));
+                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowSelectedIcon_22x22.png"));
                     DeSelectAll.IsEnabled = true;
-                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIcon_22x22.png"));
+                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"));
                 }
                 else
                 {
                     ShowSelected.IsEnabled = false;
-                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                     DeSelectAll.IsEnabled = false;
-                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 }
                 SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
                 _attributeSelectorString = attributeSelector.ExpressionCalculator.GetExpressionText();
@@ -3110,12 +3147,12 @@ namespace DatabaseControls
             if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.None) columnMenuItem.IsEnabled = false;
             columnMenu.Items.Add(columnMenuItem);
             //
-            columnMenuItem = new MenuItem { Header = "Summary Statistics...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/SummaryStatistics_16x.png")) } };
+            columnMenuItem = new MenuItem { Header = "Summary Statistics...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SummaryStatistics_16x.png")) } };
             columnMenuItem.Click += CalcColumnStatistics;
             if (DataView.ColumnTypes[_mouseDownColumnIndex] == typeof(object)) columnMenuItem.IsEnabled = false;
             columnMenu.Items.Add(columnMenuItem);
             //
-            columnMenuItem = new MenuItem { Header = "Find...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/QuickFind_16x.png")) } };
+            columnMenuItem = new MenuItem { Header = "Find...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/QuickFind_16x.png")) } };
             columnMenuItem.Click += SearchText;
             if (_selectedRowsOnly == true) columnMenuItem.IsEnabled = false;
             if (DataView.NumberOfRows == 0) columnMenuItem.IsEnabled = false;
@@ -3123,7 +3160,7 @@ namespace DatabaseControls
 
             if (Editable == true && _readOnlyColumns.Contains(_mouseDownColumnIndex) == false)
             {
-                columnMenuItem = new MenuItem { Header = "Field Calculator...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/calculator_16x.png")) } };
+                columnMenuItem = new MenuItem { Header = "Field Calculator...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png")) } };
                 columnMenuItem.Click += OpenFcForSpecificColumn;
                 columnMenu.Items.Add(columnMenuItem);
             }
@@ -3960,19 +3997,40 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Opens a save dialog and exports the table data to CSV or Excel format.
+        /// Opens a save dialog and exports the table data to the selected file format.
+        /// Supports CSV, DBF, Excel (XLSX), and SQLite formats.
         /// </summary>
         private void ExportTable()
         {
-            var dialog = new SaveFileDialog
+            if (DataView == null) return;
+            string filters = "comma delimited(*.csv) |*.csv|database(*.dbf) |*.dbf|Excel(*.xlsx) |*.xlsx|Sqlite(*.sqlite) |*.sqlite";
+            try
             {
-                Filter = "CSV Files (*.csv)|*.csv|Excel Files (*.xlsx)|*.xlsx",
-                DefaultExt = ".csv"
-            };
-
-            if (dialog.ShowDialog() == true)
+                var saveFileBrowser = new SaveFileDialog { Filter = filters, FilterIndex = 3 };
+                if (saveFileBrowser.ShowDialog() == true)
+                {
+                    switch (System.IO.Path.GetExtension(saveFileBrowser.FileName))
+                    {
+                        case ".csv":
+                            DataView.ExportToCsv(saveFileBrowser.FileName);
+                            break;
+                        case ".dbf":
+                            DataView.ExportToDbf(saveFileBrowser.FileName);
+                            break;
+                        case ".xlsx":
+                            DataView.ExportToXlsx(saveFileBrowser.FileName);
+                            break;
+                        case ".sqlite":
+                            DataView.ExportToSqlite(saveFileBrowser.FileName, DataView.TableName);
+                            break;
+                        default:
+                            throw new Exception("selected file format extension '" + System.IO.Path.GetExtension(saveFileBrowser.FileName) + "' is not supported for export.");
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-                // TODO: Implement export
+                GenericControls.MessageBox.Show(ex.Message);
             }
         }
 
@@ -3986,28 +4044,28 @@ namespace DatabaseControls
             {
                 Undo.IsEnabled = true;
                 SaveButton.IsEnabled = true;
-                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Undo.png"));
-                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Save.ico"));
+                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Undo.png"));
+                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Save.ico"));
             }
             else
             {
                 // Disable undo button
                 Undo.IsEnabled = false;
                 SaveButton.IsEnabled = false;
-                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Undodisabled.png"));
-                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Savedisabled.ico"));
+                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Undodisabled.png"));
+                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Savedisabled.ico"));
             }
             // Disable Redo if no more edits to redo
             if (DataView.CanRedo() == false)
             {
                 Redo.IsEnabled = false;
-                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/RedoDisabled.png"));
+                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/RedoDisabled.png"));
             }
             else
             {
                 // Enable Redo
                 Redo.IsEnabled = true;
-                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/Redo.png"));
+                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Redo.png"));
             }
         }
 
@@ -4087,9 +4145,9 @@ namespace DatabaseControls
             if (_selectedDataRowIndices.Count > 0 && !_selectedRowsOnly)
             {
                 ShowSelected.IsEnabled = true;
-                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ShowSelectedIcon_22x22.png"));
+                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowSelectedIcon_22x22.png"));
                 DeSelectAll.IsEnabled = true;
-                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIcon_22x22.png"));
+                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"));
             }
             else if (_selectedDataRowIndices.Count <= 0 && _selectedRowsOnly)
             {
@@ -4102,9 +4160,9 @@ namespace DatabaseControls
             else
             {
                 ShowSelected.IsEnabled = false;
-                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 DeSelectAll.IsEnabled = false;
-                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DataTableViewControl;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             }
         }
 
