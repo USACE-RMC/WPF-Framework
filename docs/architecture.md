@@ -1,312 +1,214 @@
-# Architecture Overview
+[<- Previous: Getting Started](getting-started.md) | [Back to Index](index.md) | [Next: Themes ->](themes.md)
 
-This document describes the architecture of the WPF-Framework, including project dependencies, design patterns, and key components.
+# Architecture
 
-## Project Dependencies
+This document describes the solution structure, dependency graph, design patterns, and key architectural decisions in the WPF Framework.
+
+## 1. Solution Overview
+
+The solution contains 39 projects organized into seven solution folders:
+
+| Folder | Projects | Purpose |
+|--------|----------|---------|
+| **Core** | FrameworkInterfaces, FrameworkUI, Themes | Application shell, contracts, and theme system |
+| **Controls** | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls | Reusable WPF control libraries |
+| **Models** | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared, DAG | Non-UI logic and vendored forks |
+| **Support** | SoftwareUpdate, SoftwareUpdate.Updater | Auto-update from GitHub Releases |
+| **AvalonDock** | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Modified docking layout engine |
+| **Demos** | FrameworkUI.Demo, GenericControls.Demo, NumericControls.Demo, OxyPlotControls.Demo, DatabaseControls.Demo, ExpressionParserControls.Demo, DAG.Demo | Standalone demo applications |
+| **Tests** | 13 test projects + ExampleLibrary | Unit and integration tests |
+
+## 2. Dependency Diagram
+
+The following diagram shows the dependency relationships between the main library projects. Arrows point from dependent to dependency.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Demo_FrameworkUI                        │
-│                    (Example Application)                     │
-└─────────────────────────────────────────────────────────────┘
-                              │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-┌─────────────────┐  ┌─────────────┐  ┌─────────────┐
-│   FrameworkUI   │  │   Themes    │  │ GenericCtrls│
-│  (WPF UI Lib)   │  │ (Theming)   │  │  (Controls) │
-└─────────────────┘  └─────────────┘  └─────────────┘
-         │                   │
-         ▼                   │
-┌─────────────────┐          │
-│FrameworkInterfaces│◄─────────┘
-│ (Core Abstracts)│
-└─────────────────┘
+                          External
+                        +-----------+
+                        | Numerics  |
+                        +-----+-----+
+                              |
+          +-------------------+-------------------+
+          |                                       |
+          v                                       v
+  +----------------+                     +------------------+
+  | NumericControls|                     | DatabaseControls |
+  +-------+--------+                     +--------+---------+
+          |                                       |
+          |  +-----------------+                  |  +----------------------+
+          +->| OxyPlotControls |                  +->| ExpressionParser-    |
+          |  +--------+--------+                  |  | Controls             |
+          |           |                           |  +----------+-----------+
+          |           +-> OxyPlot.Wpf             |             |
+          |           |    +-> OxyPlot            |             +-> ExpressionParser
+          |           |                           |
+          |           +-> GenericControls         +-> DatabaseManager
+          |           |    +-> Themes             |
+          |           |                           +-> GenericControls
+          +-----------)---------------------------+
+          |           |                           +-> OxyPlotControls
+          v           v                           |
+  +----------------+  |                           +-> Themes
+  | GenericControls|<-+
+  +-------+--------+
+          |
+          v
+  +-------+--------+
+  |     Themes     |  (leaf -- no internal dependencies)
+  +----------------+
+
+  +------------------+      +-----+
+  |FrameworkInterfaces| <--- | DAG |  (both are leaf dependencies)
+  +--------+---------+      +--+--+
+           |                    |
+           v                    v
+  +--------+---------+  +------+------+
+  |   FrameworkUI    |  | DAGControls |
+  +--------+---------+  +-------------+
+           |
+           +-> FrameworkInterfaces
+           +-> Themes
+           +-> Xceed.Wpf.AvalonDock
+           +-> Xceed.Wpf.AvalonDock.Themes.VS2013
 ```
 
-### Dependency Rules
+**Leaf dependencies** (no internal project references): FrameworkInterfaces, Themes, DAG, ExpressionParser, OxyPlot.
 
-1. **FrameworkInterfaces** - No dependencies on other WPF-Framework libraries
-2. **Themes** - No dependencies (fully independent)
-3. **FrameworkUI** - Depends on FrameworkInterfaces and Themes
-4. **Demo_FrameworkUI** - Depends on all libraries (for demonstration)
-
-## Design Patterns
-
-### Singleton Pattern
-
-Several core services use the singleton pattern for application-wide state:
-
-| Class | Access Method | Thread-Safe |
-|-------|---------------|-------------|
-| `Messenger` | `Messenger.GetInstance()` | Yes (Lazy<T>) |
-| `ThemeService` | `ThemeService.Instance` | Yes (Lazy<T>) |
-
-```csharp
-// Thread-safe singleton implementation
-private static readonly Lazy<ThemeService> _instance =
-    new Lazy<ThemeService>(() => new ThemeService(),
-        LazyThreadSafetyMode.ExecutionAndPublication);
-
-public static ThemeService Instance => _instance.Value;
-```
-
-### Model-View-Controller (MVC)
-
-The framework follows an MVC-like pattern:
-
-- **Model**: `IProject`, `IElement`, `IElementCollection`
-- **View**: WPF controls, `MainWindow`, document editors
-- **Controller**: `FrameworkUIController` subclasses
-
-### Command Pattern
-
-The undo/redo system uses the Command pattern:
-
-```csharp
-// IUndoableAction represents a reversible command
-public interface IUndoableAction
-{
-    string Description { get; }
-    void Execute();
-    void Undo();
-}
-
-// UndoManager maintains stacks of commands
-public class UndoManager : IUndoManager
-{
-    private Stack<IUndoableAction> _undoStack;
-    private Stack<IUndoableAction> _redoStack;
-}
-```
-
-### Observer Pattern
-
-Property change notifications use `INotifyPropertyChanged`:
-
-```csharp
-public abstract class ElementBase : IElement, INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void NotifyPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}
-```
-
-## Core Components
+## 3. Core Framework
 
 ### FrameworkInterfaces
 
-The foundation layer containing:
+The lowest-level project. Defines all contracts and base classes with zero internal dependencies.
 
-| Component | Purpose |
-|-----------|---------|
-| `IProject` | Root project interface |
-| `IElement` | Individual element interface |
-| `IElementCollection` | Collection of elements |
-| `ElementBase` | Abstract base with common functionality |
-| `Messenger` | Centralized messaging system |
-| `UndoManager` | Undo/redo stack management |
+| Type | Purpose |
+|------|---------|
+| `IProject` | Root data model. Extends `IMetaData` and `ISave`. Owns `ElementCollections`, `AvalonDockLayout`, `ProjectImage`. |
+| `ProjectBase` | Abstract base implementing `IProject` with undo support, dirty tracking, `SaveAs`, and `ZipProject`. |
+| `IElement` | Single project item. Properties: `DisplayName`, `ParentCollection`, `ElementImage`, `IsValid`, `CanCopyFromExternal`. Methods: `Copy`, `CopyFromExternal`, `Delete`. |
+| `ElementBase` | Abstract base implementing `IElement` with per-element `UndoManager`, `RecordPropertyChange`, `ValidateName`, and dirty state tracking. |
+| `IElementCollection` | `IList<IElement>` with `ParentProject`, `ElementAdded`/`ElementRemoved` events, `Sort`, `MoveElement`, `InsertFromExternalProject`. |
+| `ElementCollectionBase` | Abstract base implementing `IElementCollection` with undo-aware `RecordAddElement`, `RecordRemoveElement`, `RecordMoveElement`. |
+| `IMetaData` | Name, Description, CreationDate, LastModified. |
+| `ISave` | IsDirty, NameOnDisk, Open, Save, PreviewObjectSaved, ObjectSaved. Extends `INotifyPropertyChanged`. |
+| `Messenger` | Singleton message hub. Messages keyed by (source, code) to prevent duplicates. Thread-safe lazy initialization. |
+| `UndoManager` | Per-document undo/redo stacks (100 max levels). Supports transactions (`BeginTransaction`) and action merging. |
+| `UndoableStateBridge` | Monitors `INotifyPropertyChanged` via reflection, auto-creates `PropertyChangeAction` records with shadow values. |
+| `UndoableCollectionBridge<T>` | Monitors `INotifyCollectionChanged`, maintains shadow copy for Reset events, uses dynamic dispatch. |
 
 ### FrameworkUI
 
-The WPF UI layer containing:
+The application shell. Depends on FrameworkInterfaces, Themes, and AvalonDock.
 
-| Component | Purpose |
-|-----------|---------|
-| `MainWindow` | Application shell with docking |
-| `FrameworkUIController` | Bridge between model and UI |
-| `Node` hierarchy | Tree view representation |
-| `ThemeManager` | Theme bridge to Themes library |
-| `UserSettings` | Persistent preferences |
+| Type | Purpose |
+|------|---------|
+| `MainWindow` | Metro-style window with AvalonDock layout, project explorer, message window, properties panel, menu bar, toolbar, and recent files. `ProjectNode` dependency property accepts a `FrameworkUIController`. |
+| `FrameworkUIController` | Abstract class extending `ProjectNode`. Six abstract methods: `GetDocumentControl`, `DocumentClosed`, `PropertiesClosed`, `GetPropertiesControl(UIElement)`, `GetPropertiesControl(IElement)`, `GetControlElement`. Three virtual menu methods: `DefineProjectMenuItems`, `DefineToolsMenuItems`, `DefineHelpMenuItems`. |
+| `ProjectNode` | Abstract class extending `Node`. Builds the project explorer tree from `IProject.ElementCollections`. Abstract method: `DefineProjectExplorerMenuItems`. Virtual method: `Load`. |
+| `ThemeManager` | Static bridge to `Themes.ThemeService`. `SetTheme(ThemeColor)` initializes ThemeService, loads FrameworkUI-specific XAML resources, raises `ThemeChanged`. |
+| `ThemeColor` | Enum: `Blue`, `Dark`, `Light`. |
+| `UserSettings` | Static properties persisted to XML. Categories: General, File Management, Message Window, Defaults. |
+| `ShellPublicVariables` | Static configuration: `SoftwareName`, `SoftwareExtension`, `SoftwareVersionDate`. |
 
 ### Themes
 
-Independent theming library:
+Standalone theme resource library with no internal dependencies.
 
-| Component | Purpose |
-|-----------|---------|
-| `ThemeService` | Singleton theme manager |
-| `Theme` enum | Light, Blue, Dark |
-| Color dictionaries | Theme color definitions |
-| Control templates | Styled WPF controls |
+| Type | Purpose |
+|------|---------|
+| `ThemeService` | Singleton. `Initialize(Theme)` loads color dictionaries from `Resources/Colors/`. `SetTheme(Theme)` swaps palettes at runtime. Auto-marshals to UI thread. |
+| `Theme` | Enum: `Blue`, `Dark`, `Light`. |
+| Color XAML files | `BlueColors.xaml`, `DarkColors.xaml`, `LightColors.xaml` in `Resources/Colors/`. Define `SolidColorBrush` resources using `x:Key` names consumed via `DynamicResource`. |
 
-## Data Flow
+## 4. Control Libraries
 
-### Project Loading
+| Library | Key Controls | Dependencies |
+|---------|-------------|--------------|
+| **GenericControls** | `NumericTextBox`, `NameTextBox`, `ColorPicker`, `CopyPasteDataGrid`, `MessageBox`, `NameDialog`, `ExplorerTreeView` | Themes |
+| **NumericControls** | `DistributionSelector`, `ParameterControl`, `ProbabilityCurveEditor`, `TimeSeriesDataGrid` | GenericControls, OxyPlotControls, Themes, Numerics (external) |
+| **OxyPlotControls** | `OxyPlotToolbar`, `OxyPlotPropertiesControl`, `PlotSeriesEditor`, `AxisPropertiesControl` | GenericControls, Themes, OxyPlot, OxyPlot.Wpf |
+| **DatabaseControls** | `DatabaseTableViewer`, `FieldCalculator`, `ExpressionEditorControl` | DatabaseManager, ExpressionParser, ExpressionParserControls, GenericControls, OxyPlotControls, Themes, Numerics (external) |
+| **ExpressionParserControls** | `ExpressionEditorControl`, `FunctionBrowser`, `SyntaxHighlighter` | ExpressionParser, GenericControls, Themes |
+| **DAGControls** | `FlowGraphCanvas`, `NodeView`, `ConnectorView`, `ConnectionView` | DAG |
 
-```
-User opens file
-       │
-       ▼
-┌──────────────────┐
-│  MainWindow      │ ── Calls ──▶ ProjectNode.Load()
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│FrameworkUIController│ ── Deserializes ──▶ IProject
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│  ElementNodes    │ ◀── Created for each ── IElement
-└──────────────────┘
-```
+## 5. Model Libraries
 
-### Theme Switching
+| Library | Purpose |
+|---------|---------|
+| **DatabaseManager** | SQLite database abstraction. Table creation, queries, field management. Wraps `System.Data.SQLite`. |
+| **ExpressionParser** | Mathematical expression parsing and evaluation. Variables, functions, operators. |
+| **OxyPlot** | Vendored fork of [oxyplot/oxyplot](https://github.com/oxyplot/oxyplot). Core plotting model: `PlotModel`, `Series`, `Axis`, `Annotation`. No WPF dependency. |
+| **OxyPlot.Wpf** | WPF rendering for OxyPlot. `Plot` control, `PlotView`. Custom serialization in `OxyPlot.Wpf.Serialization` namespace (`PlotSerializer`, `AxisSerializer`, `SerializerExtensions`). |
+| **OxyPlot.Wpf.Shared** | Shared source between OxyPlot.Wpf targets. |
+| **DAG** | Directed acyclic graph model. `NodeBase`, `Connector`, `Connection`. Serialization stores connections by connector index. |
 
-```
-User selects theme
-       │
-       ▼
-┌──────────────────┐
-│  ThemeManager    │ ── Calls ──▶ ThemeService.SetTheme()
-│   (FrameworkUI)    │
-└──────────────────┘
-       │
-       ├──▶ Removes old color dictionary
-       ├──▶ Adds new color dictionary
-       └──▶ Raises ThemeChanged event
-              │
-              ▼
-       All DynamicResource bindings update automatically
-```
+## 6. Support Libraries
 
-### Undo/Redo Flow
+| Library | Purpose |
+|---------|---------|
+| **SoftwareUpdate** | `IUpdateService` interface, `GitHubUpdateService`, `UpdateOptions`, `SemanticVersion`. Checks GitHub Releases for newer versions, downloads and extracts update assets. |
+| **SoftwareUpdate.Updater** | Standalone executable that applies updates. Waits for the parent process to exit, replaces files, and restarts the application. |
+| **Xceed.Wpf.AvalonDock** | Modified fork of Xceed AvalonDock. Key modifications: `ContentPresenter` replaced with `ContentControl` for `LayoutItem.View` bindings (.NET 9+ fix), last `LayoutDocumentPane` protection in `CreateFloatingWindowCore`. |
+| **Xceed.Wpf.AvalonDock.Themes.VS2013** | Visual Studio 2013 theme for AvalonDock. Blue, Dark, and Light variants. Uses `DynamicResource` bindings to the Themes color keys. |
 
-```
-User changes property
-       │
-       ▼
-┌──────────────────┐
-│SetPropertyWithUndo│ ── Creates ──▶ PropertyChangeAction
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│   UndoManager    │ ── Pushes to ──▶ Undo Stack
-└──────────────────┘
-       │
-User presses Ctrl+Z
-       │
-       ▼
-┌──────────────────┐
-│   UndoManager    │ ── Pops and calls ──▶ action.Undo()
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│PropertyChangeAction│ ── Restores ──▶ Original value
-└──────────────────┘
-```
+## 7. Design Patterns
 
-## Node Hierarchy
+### Singleton
 
-The project explorer uses a hierarchical node system:
+- **`Messenger`** -- `Messenger.GetInstance()` with lazy thread-safe initialization. Single application-wide message hub for validation errors, warnings, and status messages.
+- **`ThemeService`** -- `ThemeService.Instance` provides centralized theme state. Initializes once, subsequent `SetTheme` calls swap resources.
 
-```
-Node (abstract base)
-├── ProjectNode         - Root project node
-├── ElementNode         - Represents an IElement
-├── NodeCollection      - Container for elements
-├── NodeGroup           - User-created grouping
-└── SimpleNode          - Basic custom node
-```
+### MVC
 
-### Node Responsibilities
+The framework follows a Model-View-Controller pattern:
+- **Model**: `IProject` / `ProjectBase`, `IElement` / `ElementBase`, `IElementCollection` / `ElementCollectionBase`
+- **View**: `MainWindow` (application shell with AvalonDock layout)
+- **Controller**: `FrameworkUIController` (maps elements to document/properties controls, defines menus)
 
-| Node Type | Responsibilities |
-|-----------|------------------|
-| `Node` | Selection, rename, drag-drop, context menu |
-| `ProjectNode` | Project-level operations, child loading |
-| `ElementNode` | Element binding, document opening |
-| `NodeCollection` | Add/remove elements, group management |
-| `NodeGroup` | Grouping, expand/collapse |
+### Command
 
-## Message System
+- **`IUndoableAction`** -- encapsulates a reversible operation with `Execute` and `Undo` methods.
+- **`UndoManager`** -- maintains undo/redo stacks, executes actions, supports transactions via `BeginTransaction`.
+- **`PropertyChangeAction`** -- records a property value change. Supports 500ms merge window for rapid successive edits to the same property.
+- **`CompositeAction`** -- groups multiple actions from a transaction into a single undoable unit.
 
-The messaging system provides application-wide notifications:
+### Observer
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────────┐
-│   Source    │────▶│  Messenger  │────▶│ MessageWindow   │
-│  (Element)  │     │ (Singleton) │     │   (Display)     │
-└─────────────┘     └─────────────┘     └─────────────────┘
-                           │
-                           ▼
-                    Keyed by Source + Code
-                    (prevents duplicates)
-```
+- **`INotifyPropertyChanged`** -- used throughout for data binding. `ISave` extends it directly.
+- **`UndoableStateBridge`** -- subscribes to `PropertyChanged` events and automatically records undo actions.
+- **`UndoableCollectionBridge<T>`** -- subscribes to `CollectionChanged` events for observable collections.
 
-### Message Types
+## 8. Vendored Dependencies
 
-| Type | Purpose | Default Color |
-|------|---------|---------------|
-| `Error` | Critical issues | Red |
-| `Warning` | Potential problems | Orange |
-| `Message` | Informational | Blue |
-| `Event` | User actions | Green |
+### AvalonDock
 
-## Threading Considerations
+The solution includes a modified fork of [Xceed AvalonDock](https://github.com/xceedsoftware/wpftoolkit) in `src/AvalonDock/`. Two projects: the core layout engine and the VS2013 theme.
 
-### UI Thread Requirements
+Key modifications from upstream:
+- **`ContentPresenter` to `ContentControl`**: In both `generic.xaml` (base) and `Themes/Generic.xaml` (VS2013), `ContentPresenter` elements used for `LayoutItem.View` bindings were replaced with `ContentControl` to resolve visual parent conflicts in .NET 9+.
+- **Last DocumentPane protection**: `CreateFloatingWindowCore()` has a while loop that removes empty parent containers. A guard was added to protect the last remaining `LayoutDocumentPane`, and `GetVisibility()` was updated to return true for the last empty pane.
+- **Theme resource loading**: Floating windows are separate Win32 windows outside MainWindow's visual tree. Theme dictionaries are added to `Application.Current.Resources.MergedDictionaries` so floating windows inherit them.
 
-- All WPF UI updates must occur on the UI thread
-- `ThemeService.SetTheme()` automatically marshals to UI thread
-- Use `Dispatcher.Invoke()` for cross-thread UI updates
+### OxyPlot
 
-### Thread-Safe Components
+The solution includes a vendored fork of [oxyplot/oxyplot](https://github.com/oxyplot/oxyplot) in `src/OxyPlot/`. Three projects: OxyPlot (core model), OxyPlot.Wpf (WPF rendering), and OxyPlot.Wpf.Shared.
 
-| Component | Thread Safety |
-|-----------|---------------|
-| `ThemeService` | Full (lock-based) |
-| `Messenger` | Lazy initialization only |
-| `UndoManager` | Not thread-safe (UI thread only) |
+Key additions beyond upstream:
+- **Custom serialization**: `PlotSerializer`, `AxisSerializer`, and `SerializerExtensions` in the `OxyPlot.Wpf.Serialization` namespace provide XML-based plot configuration persistence. Methods include `GeneralPropertiesToXElement`, `LegendPropertiesToXElement`, `AxisToXElement`, `XElementToAxis`, `ToPrettyText`, and `FromPrettyDataText`.
 
-## Extension Points
+## 9. External Dependencies
 
-### Custom Elements
+| Dependency | Source | Purpose |
+|-----------|--------|---------|
+| **Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) at `C:\GIT\numerics\` | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. Must be built separately. |
 
-Extend `ElementBase` to create new element types:
+All other dependencies are either vendored into the solution (AvalonDock, OxyPlot) or available as NuGet packages (System.Data.SQLite, DocumentFormat.OpenXml, etc.).
 
-```csharp
-public class CustomElement : ElementBase, IUndoableElement
-{
-    // Add custom properties and behavior
-}
-```
+## 10. Threading
 
-### Custom Controllers
+The WPF Framework follows standard WPF threading rules with a few framework-specific considerations:
 
-Extend `FrameworkUIController` to customize:
-
-- Menu items
-- Context menus
-- Document editors
-- Properties panels
-
-### Custom Themes
-
-Add new color dictionaries following the existing pattern in `Themes/Resources/Colors/`.
-
-## File Formats
-
-### User Settings (XML)
-
-```xml
-<UserSettings>
-    <ColorTheme>Light</ColorTheme>
-    <SaveWindowLayout>true</SaveWindowLayout>
-    <MaxRecentFileItems>10</MaxRecentFileItems>
-    <ShowUndoRedoButtons>true</ShowUndoRedoButtons>
-    <!-- ... -->
-</UserSettings>
-```
-
-### Window Layout (AvalonDock XML)
-
-Persisted automatically by Xceed.Wpf.AvalonDock for docking state restoration.
+- **UI thread only**: All WPF controls, `MainWindow`, `FrameworkUIController`, and the project explorer must be accessed from the UI thread.
+- **`ThemeService` auto-marshaling**: `ThemeService.SetTheme()` automatically dispatches to the UI thread if called from a background thread.
+- **`UndoManager` is UI-thread only**: `RecordAction`, `Undo`, and `Redo` must be called on the UI thread. The `UndoableStateBridge` and `UndoableCollectionBridge` subscribe to property/collection changed events that fire on the thread that modified the property -- ensure model changes happen on the UI thread if undo is enabled.
+- **`Messenger` thread safety**: `Messenger.GetInstance()` uses lazy thread-safe initialization. However, `MessageWindowControl` uses `Dispatcher.Invoke` to marshal message additions to the UI thread, so `Messenger.Add()` can be called from any thread.
+- **Long-running operations**: Disable undo recording (`IsUndoEnabled = false`) before background computation, then re-enable and raise property changes on the UI thread when complete.

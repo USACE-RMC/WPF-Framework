@@ -1,289 +1,478 @@
-# Undo/Redo System Guide
+# Undo/Redo System
 
-The WPF-Framework framework includes a comprehensive undo/redo system that tracks property changes and collection operations, allowing users to reverse their actions.
+[<- Previous: Themes](themes.md) | [Back to Index](index.md) | [Next: Generic Controls ->](generic-controls.md)
 
 ## Overview
 
-The undo system is built on:
+The WPF Framework provides a per-element undo/redo system in the `FrameworkInterfaces.Undo` namespace. Each element maintains its own undo stack, enabling Visual Studio-style per-document undo where Ctrl+Z operates on the active document.
 
-- **IUndoManager** - Interface for undo/redo stack management
-- **IUndoableAction** - Interface for reversible actions
-- **IUndoableElement** - Interface for elements that support undo
-- **UndoManager** - Default implementation with configurable limits
+The system is built on three core abstractions:
+
+- **`IUndoManager`** -- Manages undo and redo stacks for a specific scope (element, collection, or project). Supports action merging, transactions, and save-point tracking.
+- **`IUndoableAction`** -- Represents a single reversible operation with `Execute()`, `Undo()`, and merge support.
+- **Bridge classes** -- `UndoableStateBridge` and `UndoableCollectionBridge` automatically record property and collection changes from `INotifyPropertyChanged` / `INotifyCollectionChanged` objects.
 
 ## Quick Start
 
-### Enable Undo for an Element
+### Record a property change
+
+The simplest way to add undo support is to use `RecordPropertyChange` in your `ElementBase` subclass:
 
 ```csharp
-using FrameworkInterfaces;
-using FrameworkInterfaces.Undo;
-
-public class MyElement : ElementBase, IUndoableElement
+public class MyElement : ElementBase
 {
-    private string _customValue;
+    private string _title = "";
 
-    public MyElement(string name, IElementCollection parent)
-        : base(name, parent)
+    public string Title
     {
+        get => _title;
+        set
+        {
+            if (_title != value)
+            {
+                var oldValue = _title;
+                _title = value;
+                RecordPropertyChange(nameof(Title), oldValue, value);
+            }
+        }
     }
-
-    public string CustomValue
-    {
-        get => _customValue;
-        set => SetPropertyWithUndo(ref _customValue, value, nameof(CustomValue));
-    }
-
-    // IUndoableElement is already implemented by ElementBase
-    // UndoManager property is automatically available
 }
 ```
 
-That's it! The `SetPropertyWithUndo` method (inherited from `ElementBase`) automatically:
-1. Creates a `PropertyChangeAction`
-2. Pushes it to the undo stack
-3. Sets the property value
-4. Notifies property changed
+`RecordPropertyChange` handles everything: it creates a `PropertyChangeAction`, records it with the element's `UndoManager`, raises `PropertyChanged`, and sets `IsDirty = true`.
 
-### Keyboard Shortcuts
+### Undo and redo
 
-When using `MainWindow`, these shortcuts work automatically:
-- **Ctrl+Z** - Undo
-- **Ctrl+Y** - Redo
+```csharp
+element.UndoManager.Undo();   // Reverts the most recent action
+element.UndoManager.Redo();   // Re-applies the most recently undone action
+```
 
 ## Core Concepts
 
-### UndoManager
+### UndoManager API
 
-Each undoable element has its own `UndoManager`:
+`UndoManager` is the default implementation of `IUndoManager`. Each `ElementBase` lazily creates its own instance.
 
-```csharp
-// Access the undo manager
-IUndoManager undoManager = myElement.UndoManager;
+| Member | Type | Description |
+|--------|------|-------------|
+| `CanUndo` | `bool` | Whether the undo stack has any actions |
+| `CanRedo` | `bool` | Whether the redo stack has any actions |
+| `UndoDescription` | `string?` | Description of the next undo action (for tooltips) |
+| `RedoDescription` | `string?` | Description of the next redo action (for tooltips) |
+| `UndoStack` | `IReadOnlyList<IUndoableAction>` | All undoable actions, most recent first |
+| `RedoStack` | `IReadOnlyList<IUndoableAction>` | All redoable actions, most recent first |
+| `MaxUndoLevels` | `int` | Maximum undo depth. Default: **100** |
+| `IsExecutingAction` | `bool` | True during undo/redo execution (prevents re-recording) |
+| `HasChangedSinceSave` | `bool` | Whether state differs from the last save point |
+| `ExecuteAction(action)` | `void` | Executes an action and records it |
+| `RecordAction(action)` | `void` | Records an already-executed action |
+| `Undo()` | `void` | Undoes the most recent action |
+| `UndoTo(action)` | `void` | Undoes multiple actions up to a specific action |
+| `Redo()` | `void` | Redoes the most recently undone action |
+| `RedoTo(action)` | `void` | Redoes multiple actions up to a specific action |
+| `Clear()` | `void` | Clears both stacks |
+| `MarkSavePoint()` | `void` | Marks the current state as saved |
+| `BeginTransaction(desc)` | `IDisposable` | Groups multiple actions into one undo operation |
+| `StateChanged` | `event` | Raised when undo/redo state changes |
 
-// Check if undo/redo is available
-bool canUndo = undoManager.CanUndo;
-bool canRedo = undoManager.CanRedo;
+`UndoManager` implements `INotifyPropertyChanged` and raises property change notifications for `CanUndo`, `CanRedo`, `UndoDescription`, `RedoDescription`, and `HasChangedSinceSave` whenever the stacks change.
 
-// Perform undo/redo
-undoManager.Undo();
-undoManager.Redo();
+### Action types
 
-// Clear history
-undoManager.Clear();
-```
-
-### Action Types
-
-| Action | Purpose |
-|--------|---------|
-| `PropertyChangeAction` | Single property change |
-| `CompositeAction` | Group of related actions |
-| `AddElementAction` | Element added to collection |
-| `RemoveElementAction` | Element removed from collection |
-| `MoveElementAction` | Element moved within/between collections |
+| Class | Namespace | Description |
+|-------|-----------|-------------|
+| `PropertyChangeAction` | `Undo.Actions` | Records a property value change via reflection. Supports 500ms merge window for rapid successive changes to the same property on the same target. |
+| `DelegateAction` | `Undo.Actions` | Accepts `Action` delegates for execute and undo. Does not support merging. |
+| `CompositeAction` | `Undo.Actions` | Groups multiple actions from `BeginTransaction` into a single undoable unit. Created automatically by the transaction system. |
 
 ## Property Change Tracking
 
-### Using SetPropertyWithUndo
+### Using RecordPropertyChange (ElementBase)
 
-The simplest way to track property changes:
-
-```csharp
-private int _count;
-
-public int Count
-{
-    get => _count;
-    set => SetPropertyWithUndo(ref _count, value, nameof(Count));
-}
-```
-
-### Manual Property Tracking
-
-For more control, create actions manually:
+For properties on your `ElementBase` subclass, `RecordPropertyChange` is the recommended approach:
 
 ```csharp
-private string _name;
-
-public string Name
+public override string Description
 {
-    get => _name;
+    get => _description;
     set
     {
-        if (_name == value) return;
-
-        var action = new PropertyChangeAction(
-            this,
-            nameof(Name),
-            _name,      // old value
-            value,      // new value
-            v => _name = (string)v,  // setter
-            () => NotifyPropertyChanged(nameof(Name))
-        );
-
-        if (IsUndoEnabled)
+        if (_description != value)
         {
-            UndoManager.Execute(action);
-        }
-        else
-        {
-            action.Execute();
+            var oldValue = _description;
+            _description = value;
+            RecordPropertyChange(nameof(Description), oldValue, value);
         }
     }
 }
 ```
 
-## Composite Actions (Batch Operations)
+`RecordPropertyChange` checks `IsUndoEnabled` and `UndoManager.IsExecutingAction` before recording. It always raises `PropertyChanged` and calls `SetIsDirty(true)`.
 
-Group multiple changes into a single undoable action:
+### Using PropertyChangeAction manually
+
+For finer control, create a `PropertyChangeAction` directly:
 
 ```csharp
-// Start a batch
-UndoManager.BeginBatch("Update Element Properties");
-
-// Make multiple changes - each tracked separately
-element.Name = "New Name";
-element.Description = "New Description";
-element.Value = 42;
-
-// End batch - all changes become one undo action
-UndoManager.EndBatch();
-
-// Now Ctrl+Z undoes ALL three changes at once
+var action = new PropertyChangeAction(
+    target: myObject,           // The object whose property changed
+    propertyName: "Score",      // Property name (must exist on target)
+    oldValue: 10,               // Previous value
+    newValue: 20                // New value
+);
+undoManager.RecordAction(action);
 ```
 
-### Nested Batches
+`PropertyChangeAction` uses reflection to set property values during undo/redo. It supports time-window merging: two `PropertyChangeAction` instances for the same target and property are merged if they occur within 500ms of each other. This coalesces rapid typing into a single undo entry. The merge window is configurable via the static field `PropertyChangeAction.MergeWindowMilliseconds`.
 
-Batches can be nested:
+### Using DelegateAction
+
+For operations that cannot be expressed as simple property changes:
 
 ```csharp
-UndoManager.BeginBatch("Outer Operation");
-
-    element.Name = "Name 1";
-
-    UndoManager.BeginBatch("Inner Operation");
-        element.Value = 100;
-        element.Value = 200;
-    UndoManager.EndBatch();
-
-    element.Description = "Done";
-
-UndoManager.EndBatch();  // Single undo for everything
+var item = new DataPoint(x, y);
+var action = new DelegateAction(
+    description: "Add data point",
+    execute: () => collection.Add(item),
+    undo: () => collection.Remove(item),
+    target: myElement
+);
+undoManager.ExecuteAction(action);  // Executes the action AND records it
 ```
 
-## Collection Operations
+`DelegateAction` does not support merging. For merge support, implement `IUndoableAction` directly.
 
-### Tracking Add/Remove
+## UndoableStateBridge
+
+`UndoableStateBridge` monitors an `INotifyPropertyChanged` object and automatically creates `PropertyChangeAction` entries for every property change. This is the primary mechanism for integrating third-party objects or model classes with the undo system without modifying those classes.
+
+### Basic usage
 
 ```csharp
-public class MyCollection : ElementCollectionBase<MyElement>
+public class MyElement : ElementBase
 {
-    public override void Add(MyElement element)
-    {
-        if (IsUndoEnabled)
-        {
-            var action = new AddElementAction(element, this, Count);
-            UndoManager.Execute(action);
-        }
-        else
-        {
-            base.Add(element);
-        }
-    }
+    private readonly ExternalModel _model;
+    private readonly UndoableStateBridge _modelBridge;
 
-    public override void Remove(MyElement element)
+    public MyElement(string name, IElementCollection parent) : base(name, parent)
     {
-        if (IsUndoEnabled)
-        {
-            int index = IndexOf(element);
-            var action = new RemoveElementAction(element, this, index);
-            UndoManager.Execute(action);
-        }
-        else
-        {
-            base.Remove(element);
-        }
+        _model = new ExternalModel();
+
+        _modelBridge = new UndoableStateBridge(
+            source: _model,
+            getUndoManager: () => IsUndoEnabled ? UndoManager : null,
+            sourceDescription: "model settings",
+            target: this
+        );
     }
 }
 ```
+
+### Constructor parameters
+
+```csharp
+public UndoableStateBridge(
+    INotifyPropertyChanged source,
+    Func<IUndoManager?> getUndoManager,
+    string sourceDescription = "settings",
+    object? target = null,
+    IEnumerable<string>? includedProperties = null,
+    IEnumerable<string>? excludedProperties = null,
+    Action? onActionRecorded = null)
+```
+
+| Parameter | Description |
+|-----------|-------------|
+| `source` | The object to monitor. Must implement `INotifyPropertyChanged`. |
+| `getUndoManager` | Factory function returning the current `IUndoManager`, or `null` to disable recording. Called on every property change, allowing dynamic enable/disable. |
+| `sourceDescription` | Human-readable label for undo descriptions (e.g., "Change model settings"). Default: `"settings"`. |
+| `target` | Optional owner object for action association. |
+| `includedProperties` | If specified, only these properties are monitored. Cannot be used with `excludedProperties`. |
+| `excludedProperties` | Properties to exclude from monitoring. Cannot be used with `includedProperties`. |
+| `onActionRecorded` | Optional callback invoked each time a new forward action is recorded (not during undo/redo). Useful for calling `SetIsDirty(true)`. |
+
+### Property filtering
+
+Monitor only specific properties:
+
+```csharp
+var bridge = new UndoableStateBridge(
+    _model,
+    () => IsUndoEnabled ? UndoManager : null,
+    "plot options",
+    this,
+    includedProperties: new[] { "Title", "XAxisLabel", "YAxisLabel" }
+);
+```
+
+Exclude transient properties:
+
+```csharp
+var bridge = new UndoableStateBridge(
+    _model,
+    () => IsUndoEnabled ? UndoManager : null,
+    "chart settings",
+    this,
+    excludedProperties: new[] { "IsSelected", "IsDirty", "IsExpanded" }
+);
+```
+
+You can also modify the exclusion list at runtime:
+
+```csharp
+bridge.ExcludeProperty("TransientProperty");  // Stop monitoring
+bridge.IncludeProperty("TransientProperty");   // Resume monitoring
+```
+
+Both methods throw `InvalidOperationException` if the bridge was constructed with an inclusion list.
+
+### Suspending recording
+
+Use `SuspendRecording()` to temporarily disable undo recording during bulk operations, initialization, or data loading. It returns an `IDisposable` that resumes recording and updates shadow values when disposed:
+
+```csharp
+using (bridge.SuspendRecording())
+{
+    model.Property1 = loadedValue1;
+    model.Property2 = loadedValue2;
+    model.Property3 = loadedValue3;
+}
+// Recording resumes; shadow values reflect the new state
+```
+
+### Merge behavior
+
+`UndoableStateBridge` creates `PropertyChangeAction` instances, which support time-window merging. Rapid changes to the same property within 500ms are coalesced into a single undo entry. For example, typing in a `TextBox` bound to a monitored property produces one undo entry instead of one per keystroke.
+
+### Disposal
+
+`UndoableStateBridge` implements `IDisposable`. Call `Dispose()` to unsubscribe from the source's `PropertyChanged` event:
+
+```csharp
+_modelBridge.Dispose();
+```
+
+## UndoableCollectionBridge
+
+`UndoableCollectionBridge<T>` monitors an `IList<T>` that also implements `INotifyCollectionChanged` and automatically creates undo actions for Add, Remove, Replace, Move, and Reset operations.
+
+### Basic usage
+
+```csharp
+public class MyElement : ElementBase
+{
+    private readonly ObservableCollection<double> _values;
+    private readonly UndoableCollectionBridge<double> _valuesBridge;
+
+    public MyElement(string name, IElementCollection parent) : base(name, parent)
+    {
+        _values = new ObservableCollection<double>();
+
+        _valuesBridge = new UndoableCollectionBridge<double>(
+            collection: _values,
+            getUndoManager: () => IsUndoEnabled ? UndoManager : null,
+            collectionDescription: "values",
+            target: this
+        );
+    }
+}
+```
+
+### Constructor parameters
+
+```csharp
+public UndoableCollectionBridge(
+    IList<T> collection,
+    Func<IUndoManager?> getUndoManager,
+    string collectionDescription = "collection",
+    object? target = null)
+```
+
+| Parameter | Description |
+|-----------|-------------|
+| `collection` | The collection to monitor. Must implement both `IList<T>` and `INotifyCollectionChanged`. |
+| `getUndoManager` | Factory function returning the current `IUndoManager`, or `null` to disable recording. |
+| `collectionDescription` | Label used in undo descriptions (e.g., "Add to values", "Clear values"). |
+| `target` | Optional owner object for action association. |
+
+### Supported operations
+
+| Collection Change | Undo Action | Redo Action |
+|-------------------|-------------|-------------|
+| Add | Remove the added items | Re-insert at original indices |
+| Remove | Re-insert at original indices | Remove again |
+| Replace | Restore old values | Apply new values |
+| Reset (Clear) | Restore the full pre-clear state from shadow copy | Re-apply the post-clear state |
+| Move | Move item back to original index | Move item to new index |
+
+### BulkRestoreWrapper
+
+When a Reset action is undone or redone, the bridge must clear the collection and re-add all items. Without wrapping, each individual Clear and Add call fires `CollectionChanged`, potentially triggering expensive operations on intermediate states.
+
+Set `BulkRestoreWrapper` to suppress events during the restore:
+
+```csharp
+_valuesBridge.BulkRestoreWrapper = (restoreAction) =>
+{
+    _values.SuppressCollectionChanged = true;
+    restoreAction();
+    _values.SuppressCollectionChanged = false;
+    _values.RaiseCollectionChangedReset();
+};
+```
+
+If `BulkRestoreWrapper` is `null` (the default), the restore loop runs without wrapping.
+
+### Disposal
+
+`UndoableCollectionBridge<T>` implements `IDisposable`. Always dispose when the collection is no longer needed:
+
+```csharp
+_valuesBridge.Dispose();
+```
+
+## Composite Actions (Transactions)
+
+Use `BeginTransaction` to group multiple operations into a single undo entry:
+
+```csharp
+using (undoManager.BeginTransaction("Delete selected elements"))
+{
+    foreach (var element in selectedElements)
+    {
+        element.Delete();
+    }
+}
+// All deletes are now a single undo operation
+```
+
+`BeginTransaction` returns an `IDisposable`. When disposed, it commits all recorded actions as a single `CompositeAction` on the undo stack.
+
+### Nested transactions
+
+Nested calls to `BeginTransaction` are supported. Inner transactions return a no-op disposable; all actions accumulate in the outermost transaction:
+
+```csharp
+using (undoManager.BeginTransaction("Outer operation"))
+{
+    // ... some changes ...
+
+    using (undoManager.BeginTransaction("Inner operation"))
+    {
+        // ... more changes ...
+    }
+    // Inner dispose is a no-op
+
+    // ... even more changes ...
+}
+// All changes committed as one CompositeAction
+```
+
+### Transaction rollback
+
+To cancel a transaction and undo all changes made within it, call `RollbackTransaction()` on the concrete `UndoManager` before the scope disposes:
+
+```csharp
+var manager = (UndoManager)undoManager;
+var transaction = manager.BeginTransaction("Risky operation");
+try
+{
+    // Perform changes...
+    manager.CommitTransaction();  // Explicit commit
+}
+catch
+{
+    manager.RollbackTransaction();  // Undo all changes
+    throw;
+}
+```
+
+Note that if using a `using` block, the automatic dispose calls `CommitTransaction()`. Call `RollbackTransaction()` before dispose to prevent the commit.
 
 ## Temporarily Disabling Undo
 
-Disable undo recording during bulk operations or loading:
+### Via IsUndoEnabled on ElementBase
+
+Toggle `IsUndoEnabled` on the element to prevent recording:
 
 ```csharp
-// Disable undo recording
 element.IsUndoEnabled = false;
-
-// Make changes without tracking
-element.Name = "Loaded Name";
-element.Value = loadedValue;
-
-// Re-enable undo
-element.IsUndoEnabled = true;
-```
-
-### During Undo/Redo Operations
-
-The undo system automatically disables recording during undo/redo to prevent recursive tracking.
-
-## UI Integration
-
-### MainWindow Integration
-
-`MainWindow` automatically:
-- Binds Ctrl+Z to Undo
-- Binds Ctrl+Y to Redo
-- Shows undo/redo buttons (configurable via `UserSettings.ShowUndoRedoButtons`)
-
-### Custom UI
-
-Create your own undo/redo buttons:
-
-```csharp
-// In your ViewModel or code-behind
-public ICommand UndoCommand => new RelayCommand(
-    () => _element.UndoManager.Undo(),
-    () => _element.UndoManager.CanUndo);
-
-public ICommand RedoCommand => new RelayCommand(
-    () => _element.UndoManager.Redo(),
-    () => _element.UndoManager.CanRedo);
-```
-
-### Displaying Undo History
-
-```csharp
-// Get descriptions of pending undo actions
-foreach (var description in undoManager.UndoDescriptions)
+try
 {
-    Console.WriteLine($"Undo: {description}");
+    element.Name = "Loading...";  // Not recorded
+    element.Description = "...";  // Not recorded
 }
-
-// Get descriptions of pending redo actions
-foreach (var description in undoManager.RedoDescriptions)
+finally
 {
-    Console.WriteLine($"Redo: {description}");
+    element.IsUndoEnabled = true;
 }
 ```
+
+### Via the UndoManager factory function
+
+Both bridge classes accept a `Func<IUndoManager?>` that returns `null` to disable recording:
+
+```csharp
+// Recording is disabled when getUndoManager returns null
+new UndoableStateBridge(
+    _model,
+    () => IsUndoEnabled ? UndoManager : null,  // null disables recording
+    "settings"
+);
+```
+
+### Via UndoableStateBridge.SuspendRecording
+
+For targeted suspension on a specific bridge:
+
+```csharp
+using (bridge.SuspendRecording())
+{
+    // Changes are not recorded
+    // Shadow values update on resume
+}
+```
+
+### Via IsExecutingAction
+
+`UndoManager.IsExecutingAction` is `true` during undo/redo execution. All recording mechanisms (bridges, `RecordPropertyChange`, `RecordAction`) check this flag and skip recording to prevent infinite recursion.
 
 ## Configuration
 
-### Stack Size Limits
+### MaxUndoLevels
+
+Control the maximum depth of the undo stack:
 
 ```csharp
-// Set maximum undo stack size (default is unlimited)
-undoManager.MaxUndoLevels = 100;
+undoManager.MaxUndoLevels = 50;  // Default is 100
+```
+
+When the stack exceeds this limit, the oldest actions are trimmed.
+
+### Save point tracking
+
+Mark the current state as saved to track unsaved changes:
+
+```csharp
+// After saving
+undoManager.MarkSavePoint();
+
+// Check for unsaved changes
+if (undoManager.HasChangedSinceSave)
+{
+    // Prompt to save
+}
 ```
 
 ### Events
 
+Subscribe to `StateChanged` for any undo/redo state change:
+
 ```csharp
-// Subscribe to state changes
 undoManager.StateChanged += (sender, e) =>
 {
-    // Update UI button states
+    saveButton.IsEnabled = undoManager.HasChangedSinceSave;
     undoButton.IsEnabled = undoManager.CanUndo;
     redoButton.IsEnabled = undoManager.CanRedo;
 };
@@ -291,91 +480,91 @@ undoManager.StateChanged += (sender, e) =>
 
 ## Creating Custom Actions
 
-Implement `IUndoableAction` for custom undo behavior:
+Implement `IUndoableAction` for specialized undo behavior:
 
 ```csharp
-public class CustomAction : IUndoableAction
+public class SwapColumnsAction : IUndoableAction
 {
-    private readonly MyObject _target;
-    private readonly object _oldState;
-    private readonly object _newState;
+    private readonly DataTable _table;
+    private readonly int _colA;
+    private readonly int _colB;
 
-    public CustomAction(MyObject target, object oldState, object newState)
+    public SwapColumnsAction(DataTable table, int colA, int colB)
     {
-        _target = target;
-        _oldState = oldState;
-        _newState = newState;
+        _table = table;
+        _colA = colA;
+        _colB = colB;
+        Timestamp = DateTime.Now;
     }
 
-    public string Description => "Custom Operation";
+    public string Description => $"Swap columns {_colA} and {_colB}";
+    public DateTime Timestamp { get; }
+    public object? Target => _table;
 
-    public void Execute()
-    {
-        _target.ApplyState(_newState);
-    }
+    public void Execute() => _table.SwapColumns(_colA, _colB);
+    public void Undo() => _table.SwapColumns(_colB, _colA);  // Same operation reverses itself
 
-    public void Undo()
-    {
-        _target.ApplyState(_oldState);
-    }
+    public bool CanMergeWith(IUndoableAction other) => false;
+    public IUndoableAction MergeWith(IUndoableAction other) => this;
+}
+```
+
+### IUndoableAction interface
+
+| Member | Description |
+|--------|-------------|
+| `Description` | Human-readable label for UI display |
+| `Timestamp` | When the action was created |
+| `Target` | The object this action applies to (for stack association) |
+| `Execute()` | Performs the action (called for initial execution and redo) |
+| `Undo()` | Reverses the action |
+| `CanMergeWith(other)` | Whether this action can be merged with another |
+| `MergeWith(other)` | Returns a merged action combining both |
+
+### Implementing merge support
+
+To support merging (coalescing rapid changes), implement `CanMergeWith` and `MergeWith`:
+
+```csharp
+public bool CanMergeWith(IUndoableAction other)
+{
+    if (other is not SwapColumnsAction sca) return false;
+    if (!ReferenceEquals(sca._table, _table)) return false;
+
+    // Merge within 500ms
+    var timeDiff = (sca.Timestamp - Timestamp).TotalMilliseconds;
+    return timeDiff >= 0 && timeDiff <= 500;
 }
 
-// Use it
-var action = new CustomAction(myObject, oldState, newState);
-undoManager.Execute(action);
+public IUndoableAction MergeWith(IUndoableAction other)
+{
+    // Return a new action that captures the combined effect
+    return new SwapColumnsAction(_table, _colA, ((SwapColumnsAction)other)._colB);
+}
 ```
 
-## Best Practices
+The `UndoManager` calls `CanMergeWith` on the top of the undo stack whenever a new action is recorded. If it returns `true`, the manager pops the existing action and pushes the result of `MergeWith`.
 
-### DO
+## Best Practices and Troubleshooting
 
-- Use `SetPropertyWithUndo` for simple properties
-- Group related changes with `BeginBatch`/`EndBatch`
-- Disable undo during file loading
-- Provide meaningful action descriptions
-- Clear undo history after saving (optional)
+**DO:**
+- Use `RecordPropertyChange` for properties on `ElementBase` subclasses.
+- Use `UndoableStateBridge` for third-party or external model objects.
+- Use `UndoableCollectionBridge` for observable collections.
+- Disable undo (`IsUndoEnabled = false`) during deserialization and bulk loading.
+- Call `ClearUndoHistory()` after loading data from disk.
+- Call `MarkUndoSavePoint()` after saving.
+- Dispose bridge objects when they are no longer needed.
 
-### DON'T
+**DO NOT:**
+- Record actions inside property setters that are called during undo/redo -- check `UndoManager.IsExecutingAction` first (bridges and `RecordPropertyChange` do this automatically).
+- Call `ExecuteAction` from inside another `ExecuteAction` -- the inner call is ignored because `IsExecutingAction` is `true`.
+- Mix `ExecuteAction` and `RecordAction` for the same operation -- use `ExecuteAction` when you want the manager to call `Execute()`, and `RecordAction` when you have already performed the change.
 
-- Track every tiny change (use batching)
-- Forget to call `EndBatch` after `BeginBatch`
-- Manually manipulate undo stacks
-- Track changes during undo/redo operations
-
-## Demo Application
-
-See `Demo_FrameworkUI/UI/UndoDemoControl.xaml` for a complete working example that demonstrates:
-
-- Property change tracking
-- Batch operations
-- Undo/redo stack visualization
-- Keyboard shortcuts
-
-## Troubleshooting
-
-### Undo not working
-
-1. Verify element implements `IUndoableElement`
-2. Check `IsUndoEnabled` is `true`
-3. Ensure using `SetPropertyWithUndo` or manual action tracking
-4. Verify `MainWindow` is using `GetControlElement` correctly
-
-### Undo undoes too much/too little
-
-Use batching to control granularity:
-
-```csharp
-// Too granular - each keystroke is separate undo
-textBox.TextChanged += (s, e) => element.Text = textBox.Text;
-
-// Better - batch on focus lost
-textBox.LostFocus += (s, e) => element.Text = textBox.Text;
-```
-
-### Memory issues with large undo history
-
-Set a reasonable limit:
-
-```csharp
-undoManager.MaxUndoLevels = 50;
-```
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Property changes not recorded | `IsUndoEnabled` is `false` or `getUndoManager` returns `null` | Verify the undo manager factory returns a non-null value |
+| Undo causes infinite loop | Action's `Undo()` triggers `PropertyChanged`, which records another action | Check `IsExecutingAction` in your property setter, or use `RecordPropertyChange` which handles this |
+| Typing produces one undo entry per keystroke | Not using `PropertyChangeAction` or merge window has expired | Ensure the bridge creates `PropertyChangeAction` (default behavior); check `MergeWindowMilliseconds` |
+| Undo restores wrong value | Shadow values out of sync after un-monitored changes | Call `RefreshShadowValues()` on the bridge after un-recorded changes |
+| Collection undo fires too many events | Reset undo triggers individual Add events | Set `BulkRestoreWrapper` on the collection bridge |

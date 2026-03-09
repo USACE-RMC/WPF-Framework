@@ -1,42 +1,43 @@
-# NumericControls Library
+[<- Previous: Generic Controls](generic-controls.md) | [Back to Index](index.md) | [Next: OxyPlot Controls ->](oxyplot-controls.md)
 
-The NumericControls library provides specialized WPF controls for statistical and numeric data management. It builds on GenericControls and is designed for applications requiring probability distribution configuration, curve editing, and time series management.
+# NumericControls Library
 
 ## Overview
 
-NumericControls offers controls for:
-- **Distribution selection** with PDF visualization and parameter estimation
-- **Curve editors** for ordered and uncertain paired data
-- **Time series tables** for temporal data management
-- **Stratification binning** for sampling configuration
-- **Bivariate distributions** for two-dimensional empirical data
+The NumericControls library (`NumericControls` namespace) provides specialized WPF controls for statistical and numeric data management. It is designed for engineering and risk analysis applications requiring probability distribution configuration, ordered curve editing, uncertain data entry, time series management, and stratified sampling.
 
-## Target Framework
-
-The library targets:
-- .NET 9.0 (Windows)
-
-## Installation
-
-### Project Reference
-
+**Project reference:**
 ```xml
 <ProjectReference Include="..\NumericControls\NumericControls.csproj" />
 ```
 
-### Required Dependencies
+**XAML namespace:**
+```xml
+xmlns:nc="clr-namespace:NumericControls;assembly=NumericControls"
+xmlns:uni="clr-namespace:NumericControls.Distributions.Univariate;assembly=NumericControls"
+```
 
-NumericControls requires:
-- GenericControls (for NumberFormatHelper and utilities)
-- Themes (for theme support)
-- Numerics library (for probability distributions)
-- OxyPlot.Wpf (for plotting)
+---
 
-## Distribution Selector Controls
+## Dependencies
 
-### DistributionSelectorControl
+NumericControls depends on several framework libraries and one external dependency:
 
-A comprehensive control for selecting, configuring, and visualizing univariate probability distributions.
+| Dependency | Type | Description |
+|------------|------|-------------|
+| **GenericControls** | Project reference | `ValidationDataGrid`, `NumericTextBox`, property controls |
+| **OxyPlotControls** | Project reference | Plot integration for distribution and curve visualization |
+| **Themes** | Project reference | Theme-aware styling and runtime theme switching |
+| **OxyPlot / OxyPlot.Wpf** | Project reference | Chart rendering for PDF plots and curve previews |
+| **[Numerics](https://github.com/USACE-RMC/Numerics)** | External DLL | Statistical distribution types, ordered data structures, time series, and sampling utilities. Must be built separately from `C:\GIT\numerics\`. |
+
+---
+
+## DistributionSelectorControl
+
+A comprehensive control for selecting, configuring, and visualizing univariate probability distributions. Provides a distribution type dropdown, interactive parameter editing, PDF plot, summary statistics, and optional parameter estimation from sample data.
+
+### XAML Usage
 
 ```xml
 <uni:DistributionSelectorControl
@@ -44,393 +45,235 @@ A comprehensive control for selecting, configuring, and visualizing univariate p
     SampleData="{Binding MySampleData}"
     ShowPlot="True"
     ShowStatistics="True"
+    ShowAxis="True"
     ShowAxisTitle="True"
-    DistributionTitle="My Distribution"/>
+    ExpandPlot="True"
+    DistributionTitle="Annual Peak Flow" />
 ```
 
-**Key Properties:**
+### Key Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `SelectedDistribution` | UnivariateDistributionBase | The currently selected distribution |
-| `Distributions` | IList&lt;UnivariateDistributionBase&gt; | Available distributions to choose from |
-| `SampleData` | double[] | Optional sample data for comparison |
-| `ShowPlot` | bool | Show/hide the PDF plot |
-| `ShowStatistics` | bool | Show/hide the summary statistics table |
-| `ExpandPlot` | bool | Whether the plot expander is expanded |
-| `ShowAxisTitle` | bool | Show/hide axis titles on the plot |
-| `ShowAxisLabel` | bool | Show/hide axis labels on the plot |
-| `BackgroundColor` | Brush | Control background color |
-| `DistributionTitle` | string | Optional title for the distribution |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `SelectedDistribution` | `UnivariateDistributionBase` (DP) | `null` | The currently selected and configured distribution. Two-way bindable. |
+| `Distributions` | `IList<UnivariateDistributionBase>` (DP) | All continuous types | The list of available distribution options. |
+| `SampleData` | `double[]` (DP) | `null` | Sample data for histogram overlay and parameter estimation. |
+| `BackgroundColor` | `Brush` (DP) | `White` | Control background color. |
+| `ShowPlot` | `bool` (DP) | `true` | Whether the PDF plot is visible. |
+| `ExpandPlot` | `bool` (DP) | `true` | Whether the plot expander is initially expanded. |
+| `ShowAxis` | `bool` (DP) | `true` | Whether plot axes are visible. |
+| `ShowAxisTitle` | `bool` (DP) | `true` | Whether axis titles are displayed. |
+| `ShowAxisLabel` | `bool` (DP) | `false` | Whether axis tick labels are displayed. |
+| `ShowStatistics` | `bool` (DP) | `true` | Whether the summary statistics table is visible. |
+| `DistributionTitle` | `string` (DP) | `""` | Title text displayed above the distribution selector. |
+| `ExpanderStyle` | `Style` (DP) | `null` | Custom style for the plot expander. |
 
-**Features:**
-- Dropdown selection from available distribution types
-- Interactive parameter grid with real-time validation
-- PDF (Probability Density Function) plot with OxyPlot
-- Histogram overlay when sample data is provided
-- Summary statistics table comparing distribution vs. data
-- Automatic parameter estimation (Fit to Data button)
-- Goodness-of-fit statistics (RMSE, Chi-Squared, K-S)
+### Features
 
-**Supported Distributions:**
-- Deterministic
-- Normal
-- Log-Normal
-- Truncated Normal
-- Triangular
-- PERT
-- And all other distributions from the Numerics library
+- **Distribution selection:** Dropdown populated from `Distributions` property, defaulting to all continuous distribution types from the Numerics library.
+- **Parameter editing:** Parameters displayed in a data grid with real-time validation. Invalid parameters are highlighted.
+- **PDF visualization:** Interactive OxyPlot chart showing the probability density function. Automatically updates as parameters change.
+- **Sample data overlay:** When `SampleData` is provided, a histogram of the sample data is plotted behind the PDF curve.
+- **Parameter estimation:** When sample data is available and the selected distribution supports it, parameters can be estimated automatically.
+- **Summary statistics:** Table comparing distribution statistics (mean, std dev, skewness, kurtosis, percentiles) with sample data statistics.
+- **Goodness-of-fit:** Displays RMSE, Chi-Squared, and Kolmogorov-Smirnov test results when sample data is present.
+- **Theme support:** Subscribes to `ThemeService.Instance.ThemeChanged` and applies matching OxyPlot themes automatically.
 
-### DistributionWithSelectorControl
+### Related Controls
 
-A compact control that shows the distribution parameters with a popup selector.
+- `DistributionWithSelectorControl` -- A combined view with a selector panel and a linked `DistributionSelectorControl`.
+- `DistributionSelectorPopup` -- A popup version for inline distribution selection.
+- `Selector` -- The standalone distribution type dropdown.
 
-```xml
-<uni:DistributionWithSelectorControl
-    SelectedDistribution="{Binding MyDistribution, Mode=TwoWay}"
-    ShowPlot="False"
-    ShowStatistics="False"/>
-```
-
-### DistributionSelectorPopup
-
-A button that opens a distribution selector popup.
-
-```xml
-<uni:DistributionSelectorPopup
-    SelectedDistribution="{Binding MyDistribution, Mode=TwoWay}"
-    ShowPlot="True"
-    ShowStatistics="False"/>
-```
+---
 
 ## Curve Editor Controls
 
 ### OrderedDataSelectorControl
 
-A control for editing ordered paired data (X, Y curves).
+A control that combines a `ValidationDataGrid` table editor with an OxyPlot chart for editing ordered X-Y paired data. Changes to the data grid automatically update the plot and vice versa.
 
 ```xml
-<ds:OrderedDataSelectorControl
+<nc:OrderedDataSelectorControl
     SelectedOrderedData="{Binding MyCurve, Mode=TwoWay}"
-    OrderY="Descending"
-    XColumnHeader="Depth"
-    YColumnHeader="Velocity"
-    XAxisLabel="Depth (ft)"
-    YAxisLabel="Velocity (ft/s)"/>
+    XAxisLabel="Discharge (cfs)"
+    YAxisLabel="Stage (ft)"
+    XColumnHeader="Discharge"
+    YColumnHeader="Stage"
+    OrderX="Ascending"
+    IsStrictX="True"
+    MinimumX="0"
+    MaximumX="100000" />
 ```
 
-**Key Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `SelectedOrderedData` | OrderedPairedData | The curve data |
-| `OrderY` | SortOrder | Ascending, Descending, or None |
-| `XColumnHeader` | string | Header for X column |
-| `YColumnHeader` | string | Header for Y column |
-| `XAxisLabel` | string | Label for X axis |
-| `YAxisLabel` | string | Label for Y axis |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `SelectedOrderedData` | `OrderedPairedData` (DP) | Empty | The ordered paired data collection. Two-way bindable. |
+| `XAxisLabel` / `YAxisLabel` | `string` (DP) | `"X Axis"` / `"Y Axis"` | Plot axis labels. |
+| `XColumnHeader` / `YColumnHeader` | `string` (DP) | `"X Data"` / `"Y Data"` | Data grid column headers. |
+| `PlotTitle` | `string` (DP) | `null` | Plot title text. |
+| `PlotLegendPosition` | `LegendPosition` (DP) | `BottomRight` | Legend placement on the plot. |
+| `OrderX` / `OrderY` | `SortOrder` (DP) | `Ascending` | Sort order enforcement for each axis. |
+| `IsStrictX` / `IsStrictY` | `bool` (DP) | `false` | Whether duplicate values are forbidden. |
+| `MinimumX` / `MaximumX` | `double` (DP) | `double.MinValue` / `double.MaxValue` | Value bounds for X data. |
+| `MinimumY` / `MaximumY` | `double` (DP) | `double.MinValue` / `double.MaxValue` | Value bounds for Y data. |
+| `XAxisMinimum` / `XAxisMaximum` | `double` (DP) | `double.MinValue` / `double.MaxValue` | Plot axis range for X. |
+| `YAxisMinimum` / `YAxisMaximum` | `double` (DP) | `double.MinValue` / `double.MaxValue` | Plot axis range for Y. |
+| `IsReadOnly` | `bool` (DP) | `false` | Disables editing. |
+| `TableWidth` | `GridLength` (DP) | `1*` | Width of the table portion in the split layout. |
 
 ### UncertainOrderedDataSelectorControl
 
-A control for editing ordered paired data with uncertainty (distribution on each Y value).
+Extends the curve editor concept for uncertain data, where each Y value is represented by a probability distribution rather than a single deterministic value. The control adds a distribution type selector and plots uncertainty bounds (min, max, mean, median, mode lines) around the curve.
 
 ```xml
-<ds:UncertainOrderedDataSelectorControl
+<nc:UncertainOrderedDataSelectorControl
     SelectedUncertainOrderedData="{Binding MyUncertainCurve, Mode=TwoWay}"
-    OrderY="Descending"
-    XColumnHeader="Depth"
-    YColumnHeader="Velocity"/>
+    XAxisLabel="Exceedance Probability"
+    YAxisLabel="Discharge (cfs)"
+    XColumnHeader="Probability"
+    YColumnHeader="Flow" />
 ```
 
-**Key Properties:**
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `SelectedUncertainOrderedData` | `UncertainOrderedPairedData` (DP) | Default instance | The uncertain ordered data. Two-way bindable. |
+| `DistributionOptions` | `List<UnivariateDistributionType>` (DP) | Most continuous types | Available distribution types for uncertainty specification. |
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `SelectedUncertainOrderedData` | UncertainOrderedPairedData | The uncertain curve data |
-| `OrderY` | SortOrder | Ascending, Descending, or None |
+The control shares the same axis, column header, ordering, and bounds properties as `OrderedDataSelectorControl`.
 
-### UncertainOrderedDataTableEditor
+### UncertainOrderedDataTableEditor / UncertainTableEditor
 
-An editable data table for uncertain ordered data with add/remove functionality.
+Table-only editors for uncertain ordered data without the accompanying plot. Use these when plot visualization is handled separately.
 
-```xml
-<ds:UncertainOrderedDataTableEditor
-    SelectedUncertainOrderedData="{Binding MyUncertainCurve, Mode=TwoWay}"
-    AddRemoveRows="True"
-    OrderY="None"
-    IsStrictY="False"
-    IsStrictX="False"
-    XColumnHeader="Depth"
-    YColumnHeader="Velocity"/>
-```
+---
 
-**Key Properties:**
+## TimeSeriesTable
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `AddRemoveRows` | bool | Enable row add/remove |
-| `IsStrictX` | bool | Enforce strict X ordering |
-| `IsStrictY` | bool | Enforce strict Y ordering |
+A control for displaying and editing time series data in a tabular format. Supports regular and irregular time intervals, date/time and value editing, and built-in mathematical operations on selected values.
 
-## Time Series Controls
-
-### TimeSeriesTable
-
-A table control for displaying and editing time series data.
+### XAML Usage
 
 ```xml
-<ds:TimeSeriesTable
-    Series="{Binding MyTimeSeries}"
-    IsReadOnly="False"
+<nc:TimeSeriesTable
+    Series="{Binding MyTimeSeries, Mode=TwoWay}"
     XColumnHeader="Date"
-    YColumnHeader="Flow"/>
+    YColumnHeader="Discharge (cfs)"
+    IsReadOnly="False"
+    MinimumY="0"
+    MaximumY="500000" />
 ```
 
-**Key Properties:**
+### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `Series` | TimeSeries | The time series data |
-| `IsReadOnly` | bool | Whether the table is editable |
-| `XColumnHeader` | string | Header for the date/time column |
-| `YColumnHeader` | string | Header for the value column |
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `Series` | `TimeSeries` (DP) | Empty | The time series data. |
+| `XColumnHeader` | `string` (DP) | `"X Data"` | Header for the date/time column. |
+| `YColumnHeader` | `string` (DP) | `"Y Data"` | Header for the value column. |
+| `IsReadOnly` | `bool` (DP) | `false` | Disables editing. |
+| `MinimumX` / `MaximumX` | `DateTime` (DP) | `DateTime.MinValue` / `DateTime.MaxValue` | Date range bounds. |
+| `MinimumY` / `MaximumY` | `double` (DP) | `double.MinValue` / `double.MaxValue` | Value range bounds. |
 
-**Supported Time Intervals:**
-- Irregular (arbitrary timestamps)
-- One Minute
-- One Hour
-- One Day
-- Custom intervals
+### Events
 
-### NumericEntry
+| Event | Description |
+|-------|-------------|
+| `PreviewPasteData` | Raised before clipboard paste. Allows suppression for undo/redo batching. |
+| `DataPasted` | Raised after paste completes. |
+| `PreviewAddRows` | Raised before rows are added. |
+| `RowsAdded` | Raised after rows are added. |
+| `PreviewDeleteRows` | Raised before rows are deleted. |
+| `RowsDeleted` | Raised after rows are deleted. |
 
-A simple numeric entry control for inline editing.
+### Features
+
+- **Regular and irregular intervals:** For regular intervals (daily, monthly, etc.), dates are auto-calculated. For irregular intervals, dates are editable.
+- **Math operations:** Right-click context menu provides mathematical functions (Add, Subtract, Multiply, Divide, Log, Exponentiate, Replace, Negate, Absolute Value, etc.) that can be applied to selected cells.
+- **Undo/redo integration:** Events follow the suppress/unsuppress pattern for batching collection changes with the framework's undo/redo system.
+
+---
+
+## BinDefinitionControl
+
+A control for defining stratified sampling bins. Displays a data grid where each row represents a stratification option with configurable parameters.
+
+### XAML Usage
 
 ```xml
-<ds:NumericEntry Value="{Binding MyValue}"/>
+<nc:BinDefinitionControl
+    StratificationOptionsCollection="{Binding Bins, Mode=TwoWay}" />
 ```
 
-## Stratification Controls
+### Properties
 
-### BinDefinitionControl
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `StratificationOptionsCollection` | `List<StratificationOptions>` (DP) | `null` | The collection of stratification bin definitions. |
+| `ColumnHeaderStyle` | `Style` (DP) | `null` | Custom style for column headers. |
+| `CellStyle` | `Style` (DP) | `null` | Custom style for data cells. |
 
-A control for defining stratification bins for sampling.
+---
+
+## BivariateEmpiricalControl
+
+A control for editing bivariate empirical cumulative distribution functions. Provides a two-dimensional data grid with row/column management, real-time validation, and plotting.
+
+### XAML Usage
 
 ```xml
-<ds:BinDefinitionControl
-    StratificationOptionsCollection="{Binding MyBins, Mode=TwoWay}"/>
+<nc:BivariateEmpiricalControl
+    BivariateCDF="{Binding MyBivariateCDF, Mode=TwoWay}" />
 ```
 
-**Features:**
-- Define multiple bin ranges
-- Set minimum and maximum values
-- Configure number of samples per bin
-- Visual validation of overlapping ranges
+### Properties
 
-## Multivariate Controls
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `BivariateCDF` | `BivariateEmpirical` (DP) | `null` | The bivariate empirical distribution data. |
 
-### BivariateEmpiricalControl
+### Features
 
-A control for editing bivariate empirical cumulative distribution functions.
+- **Row and column operations:** Add, insert, and delete both rows (X1 values) and columns (X2 values).
+- **Toolbar buttons and context menu items** for column management are included alongside the standard row operations from `CopyPasteDataGrid`.
+- **Validation:** Probabilities must be in [0, 1] range and X1/X2 values must be properly ordered.
 
-```xml
-<ds:BivariateEmpiricalControl
-    BivariateCDF="{Binding MyBivariateCDF, Mode=TwoWay}"
-    X1Header="Primary Hazard"
-    X2Header="Secondary Hazard"/>
-```
-
-**Key Properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `BivariateCDF` | BivariateEmpirical | The bivariate CDF data |
-| `X1Header` | string | Header for primary variable |
-| `X2Header` | string | Header for secondary variable |
-
-## Data Classes
-
-### Parameter
-
-Represents a distribution parameter with validation support.
-
-```csharp
-var meanParam = new Parameter("Mean", "μ (Mean)", 100.0);
-meanParam.PropertyChanged += (s, e) => {
-    if (e.PropertyName == nameof(Parameter.Value))
-        UpdateDistribution();
-};
-```
-
-**Properties:**
-- `Name` - Internal parameter name
-- `DisplayName` - Display name (may include symbols)
-- `Value` - Numeric value
-- `IsValid` - Validation state
-- `ErrorMessage` - Validation error message
-
-### SummaryStatistic
-
-Holds summary statistics for distribution/data comparison.
-
-```csharp
-var stat = new SummaryStatistic("Mean", "100.0000", "98.5432");
-```
-
-**Properties:**
-- `StatName` - Statistic name (e.g., "Mean", "5%")
-- `DistStat` - Value from distribution
-- `DataStat` - Value from sample data
+---
 
 ## Theming
 
-NumericControls supports the Themes library for runtime theme switching.
+NumericControls participates in the framework's theme system. All controls use `DynamicResource` bindings to respond to runtime theme changes. The `DistributionSelectorControl` additionally subscribes to `ThemeService.Instance.ThemeChanged` to update its OxyPlot chart colors.
 
-### Theme Resource Dictionary
-
-Include the theme dictionary in your window or app:
+To include the NumericControls theme dictionary:
 
 ```xml
-<ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/NumericControls;Component/Themes/NumericControlsTheme.xaml"/>
-</ResourceDictionary.MergedDictionaries>
+<ResourceDictionary Source="pack://application:,,,/NumericControls;component/Resources/ResourceDictionary.xaml" />
 ```
 
-### Initialize Themes
-
-In App.xaml.cs:
-
-```csharp
-private void Application_Startup(object sender, StartupEventArgs e)
-{
-    ThemeService.Instance.Initialize(Theme.Light);
-    var mainWindow = new MainWindow();
-    mainWindow.Show();
-}
-```
-
-### Switch Themes at Runtime
-
-```csharp
-ThemeService.Instance.SetTheme(Theme.Dark);
-```
-
-### Available Styles
-
-The NumericControlsTheme.xaml provides:
-
-| Style | Description |
-|-------|-------------|
-| `NumericControlsDataGridStyle` | Base DataGrid styling |
-| `Left_ColumnHeaderStyle` | Left-aligned column header |
-| `Right_ColumnHeaderStyle` | Right-aligned column header |
-| `WrappedColumnHeaderStyle` | Centered, wrapped header |
-| `ReadOnlyTextBackgroundCellStyle` | Read-only text cell |
-| `ReadOnlyValueBackgroundCellStyle` | Read-only numeric cell |
-| `Right_CellStyle` | Right-aligned editable cell |
-| `ParameterValueCellStyle` | Parameter cell with validation |
-| `NumericControlsUserControlStyle` | Base UserControl style |
-
-## Internationalization (I18N)
-
-NumericControls uses `NumberFormatHelper` from GenericControls for culture-aware number formatting.
-
-### Features
-- Automatic decimal separator detection (`.` vs `,`)
-- Thousands separator handling
-- Scientific notation support (`1.5e-10`)
-- Negative number formatting per culture
-- Right-to-left text support
-
-### Example
-
-```csharp
-// Culture-aware parsing
-if (NumberFormatHelper.TryParseDouble(userInput, out double value))
-{
-    // value is parsed using current culture
-}
-
-// Culture-aware formatting
-string formatted = NumberFormatHelper.FormatDouble(value, 4, false);
-```
-
-## Best Practices
-
-### 1. Initialize Themes Before Creating Windows
-
-Always initialize the theme service before creating any UI elements:
-
-```csharp
-private void Application_Startup(object sender, StartupEventArgs e)
-{
-    ThemeService.Instance.Initialize(Theme.Light);
-    // Now create windows
-}
-```
-
-### 2. Use Two-Way Binding for Distribution Properties
-
-```xml
-<uni:DistributionSelectorControl
-    SelectedDistribution="{Binding MyDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-```
-
-### 3. Provide Sample Data for Better User Experience
-
-When sample data is available, the control can:
-- Show a histogram overlay
-- Enable "Fit to Data" button
-- Display goodness-of-fit statistics
-
-```xml
-<uni:DistributionSelectorControl
-    SelectedDistribution="{Binding MyDist}"
-    SampleData="{Binding MySampleData}"/>
-```
-
-### 4. Use SortOrder.None for User-Defined Order
-
-When users should control row order manually:
-
-```xml
-<ds:UncertainOrderedDataTableEditor OrderY="None" IsStrictY="False"/>
-```
+---
 
 ## Demo Application
 
-See the `Demo_NumericControls` project for working examples of all controls. Run the demo to:
-- Test distribution selection and parameter editing
-- Edit uncertain and standard curves
-- Work with time series data
-- Configure stratification bins
-- See theme switching in action
+The **NumericControls.Demo** project (`src/NumericControls.Demo/`) provides a working showcase of all controls in the library:
 
-## Troubleshooting
-
-### Distribution Parameters Not Updating
-
-Ensure you're using `Mode=TwoWay` and `UpdateSourceTrigger=PropertyChanged`:
-
-```xml
-SelectedDistribution="{Binding Path=..., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+```bash
+dotnet run --project src/NumericControls.Demo/NumericControls.Demo.csproj
 ```
 
-### Theme Not Applying
+> **Note:** The NumericControls.Demo requires the external Numerics DLL to be built and available at its HintPath location. Build the Numerics solution at `C:\GIT\numerics\` first.
 
-1. Verify ThemeService.Instance.Initialize() is called before window creation
-2. Check that the theme dictionary is merged in Window.Resources or App.Resources
-3. Ensure DynamicResource (not StaticResource) is used for theme-aware bindings
+---
 
-### Culture-Specific Number Parsing Fails
+## Best Practices and Troubleshooting
 
-The controls use `NumberFormatHelper.TryParseDouble()` which handles most cultures. If issues persist:
+1. **Build Numerics first.** NumericControls depends on the external Numerics library. If the Numerics DLL is missing, distribution selectors will have empty dropdowns and curve editors will not function.
 
-```csharp
-// Force invariant culture for specific parsing
-double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out value);
-```
+2. **Use two-way binding** on `SelectedDistribution`, `SelectedOrderedData`, `SelectedUncertainOrderedData`, and `Series` properties to ensure the control writes changes back to your view model.
 
-### Summary Statistics Show Duplicates
+3. **Handle events for undo/redo.** The `PreviewPasteData`/`DataPasted` and `PreviewAddRows`/`RowsAdded` event pairs follow a suppress/unsuppress pattern. Use `PreviewPasteData` to suppress collection change events, and `DataPasted` to unsuppress and raise a collection reset -- this enables atomic undo/redo of bulk operations.
 
-This was a known bug fixed in the current version. Ensure you're using the latest code where statistics are initialized once in `InitializeControl()` rather than being re-added on each histogram update.
+4. **Configure validation bounds.** Set `MinimumX`, `MaximumX`, `MinimumY`, `MaximumY` on curve editor controls to enforce domain-specific constraints. Combine with `IsStrictX`/`IsStrictY` and `OrderX`/`OrderY` for complete ordering validation.
+
+5. **The `DistributionSelectorControl` namespace is `NumericControls.Distributions.Univariate`**, not the base `NumericControls` namespace. Use the `uni:` prefix in XAML for this control.
+
+6. **Time series date editing.** The date/time column in `TimeSeriesTable` is only editable when the time series uses `TimeInterval.Irregular`. For regular intervals, dates are computed automatically from the start date and interval.

@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "WPF Framework"
+version: "1.0.0"
+date-released: "2026-01-01"
+license: BSD-3-Clause
+repository-code: "https://github.com/USACE-RMC/WPF-Framework"
+url: "https://github.com/USACE-RMC/WPF-Framework"
+abstract: >-
+  WPF Framework is a free and open-source .NET application framework for
+  building desktop project management applications with docking layout,
+  theming, undo/redo, charting, database management, and specialized controls
+  for water resources engineering software. Developed by the U.S. Army Corps
+  of Engineers Risk Management Center (USACE-RMC).
+keywords:
+  - WPF
+  - desktop application
+  - docking layout
+  - theming
+  - undo redo
+  - charting
+  - OxyPlot
+  - database
+  - .NET
+  - C#
+authors:
+  - family-names: "Smith"
+    given-names: "C. Haden"
+    email: "cole.h.smith@usace.army.mil"
+    affiliation: "U.S. Army Corps of Engineers, Risk Management Center"
+    orcid: "https://orcid.org/0000-0002-4651-9890"
+  - family-names: "Fields"
+    given-names: "Woodrow L."
+    affiliation: "U.S. Army Corps of Engineers, Risk Management Center"
+  - family-names: "Gonzalez"
+    given-names: "Julian"
+    affiliation: "U.S. Army Corps of Engineers, Risk Management Center"

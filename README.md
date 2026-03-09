@@ -1,236 +1,153 @@
-# WPF-Framework
+# WPF Framework
 
-A WPF (Windows Presentation Foundation) framework for building project management applications with hierarchical tree structures, messaging systems, undo/redo support, software updates, and extensible UI components.
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
-## Overview
+WPF Framework is a free and open-source .NET 10.0 application framework for building desktop project management applications, developed by the U.S. Army Corps of Engineers Risk Management Center ([USACE-RMC](https://www.rmc.usace.army.mil/)). It provides a complete application shell with docking layout, project explorer, theme switching, undo/redo, and specialized controls for charting, databases, expression parsing, and directed acyclic graphs.
 
-WPF-Framework provides a foundation for creating Windows desktop applications that manage projects containing hierarchical elements. It includes:
+## Supported Frameworks
 
-- **FrameworkUI**: Main application shell with docking windows, project explorer, and messaging
-- **FrameworkInterfaces**: Core interfaces for projects, elements, and undo/redo support
-- **Themes**: Independent theming system with VS2013-style themes (Light, Dark, Blue)
-- **GenericControls**: Reusable WPF controls (ColorPicker, NumericTextBox, etc.)
-- **NumericControls**: Specialized controls for numeric data visualization
-- **SoftwareUpdate**: GitHub-based automatic update system
+| Platform | Version |
+|----------|---------|
+| .NET | 10.0 |
+| OS | Windows 10+ |
 
-## Project Structure
+## Solution Structure
 
-```
-WPF-Framework/
-├── src/
-│   ├── FrameworkInterfaces/      # Core interfaces and base classes
-│   │   ├── Messaging/            # Messenger, IMessageItem, BasicMessageItem
-│   │   ├── Project/              # IProject, IElement, ElementBase
-│   │   ├── Undo/                 # IUndoManager, UndoManager, action classes
-│   │   └── Utilities/            # Extension methods and utilities
-│   ├── FrameworkUI/              # Main WPF UI library
-│   │   ├── Main Window/          # MainWindow, FrameworkUIController
-│   │   ├── Project Explorer/     # Tree view nodes and view models
-│   │   ├── Message Window/       # Message display control
-│   │   ├── Recent Files/         # Recent files menu functionality
-│   │   ├── Themes/               # ThemeManager bridging to Themes library
-│   │   ├── Tools Menu/           # Auto-backup and file management
-│   │   └── User Settings/        # User preferences management
-│   ├── Themes/                   # Independent theming library
-│   │   ├── Core/                 # ThemeService, Theme enum, interfaces
-│   │   └── Resources/            # Color palettes and control templates
-│   ├── GenericControls/          # Reusable WPF controls
-│   ├── NumericControls/          # Numeric data visualization controls
-│   ├── SoftwareUpdate/           # GitHub-based update system
-│   ├── Demo_FrameworkUI/         # FrameworkUI demo application
-│   ├── Demo_GenericControls/     # GenericControls demo application
-│   └── Demo_NumericControls/     # NumericControls demo application
-└── docs/                         # Documentation
-```
-
-## Requirements
-
-- .NET 9.0 (Windows)
-- Visual Studio 2022 or later
-- Windows 10 or later
-
-## Dependencies
-
-- **Xceed.Wpf.AvalonDock** - Docking window management
-- **System.Drawing.Common** (v9.0.0) - Drawing support for .NET
+| Folder | Projects | Description |
+|--------|----------|-------------|
+| **Core** | FrameworkInterfaces, FrameworkUI, Themes | Core contracts, application shell, and theming engine |
+| **Controls** | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls | Reusable WPF control libraries |
+| **Models** | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared, DAG | Platform-agnostic model and engine libraries |
+| **Support** | SoftwareUpdate, SoftwareUpdate.Updater | GitHub Releases-based auto-update system |
+| **AvalonDock** | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Modified VS2013-themed docking layout (vendored fork) |
+| **Demos** | FrameworkUI.Demo, GenericControls.Demo, NumericControls.Demo, OxyPlotControls.Demo, DatabaseControls.Demo, ExpressionParserControls.Demo, DAG.Demo | Interactive demo applications |
+| **Tests** | 13 test projects + ExampleLibrary | xunit, MSTest, and NUnit test suites |
 
 ## Quick Start
 
-### Building the Solution
+### Prerequisites
 
-1. Open `WPF-Framework.sln` in Visual Studio
-2. Restore NuGet packages
-3. Build the solution (F6 or Build > Build Solution)
-4. Run `Demo_FrameworkUI` to see the framework in action
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
+- Visual Studio 2022 (17.12 or later)
+- Windows 10 or later
 
-### Basic Usage
+### Build and Test
+
+```bash
+dotnet build WPF-Framework.sln
+dotnet test WPF-Framework.sln
+```
+
+### Minimal Application
 
 ```csharp
-// Initialize theming (do this before creating UI)
+// In App.xaml.cs — initialize theme before creating any UI
 FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Light);
 
-// Create your project and controller
+// Create project and controller
 var project = new MyProject();
 var controller = new MyProjectController(project);
 
-// Create and show the main window
+// Show the main window
 var mainWindow = new FrameworkUI.MainWindow();
 mainWindow.ProjectNode = controller;
 mainWindow.Show();
 ```
 
-### Creating a Project Controller
-
-```csharp
-public class MyProjectController : FrameworkUIController
-{
-    public MyProjectController(IProject project) : base(project) { }
-
-    protected override void DefineProjectMenuItems() { }
-    protected override void DefineToolsMenuItems() { }
-    protected override void DefineHelpMenuItems() { }
-
-    public override Control GetDocumentControl(IElement element)
-    {
-        return new MyDocumentControl { DataContext = element };
-    }
-
-    public override Control GetPropertiesControl(IElement element)
-    {
-        return new MyPropertiesControl { DataContext = element };
-    }
-
-    // ... implement other abstract methods
-}
-```
+Run `FrameworkUI.Demo` for a complete working example.
 
 ## Documentation
 
-Comprehensive documentation is available in the [docs/](docs/) folder:
+Comprehensive documentation is available in the [docs/](docs/index.md) folder:
 
 | Document | Description |
 |----------|-------------|
 | [Getting Started](docs/getting-started.md) | Step-by-step guide to building your first application |
-| [Architecture](docs/architecture.md) | System architecture and project dependencies |
-| [Themes](docs/themes.md) | Using the Themes library for runtime theme switching |
-| [Undo/Redo](docs/undo-redo.md) | Implementing undo/redo in your elements |
-| [Generic Controls](docs/generic-controls.md) | Using the GenericControls library |
-| [Numeric Controls](docs/numeric-controls.md) | Using the NumericControls library |
-| [Software Update](docs/software-update.md) | Implementing automatic updates |
+| [Architecture](docs/architecture.md) | Solution structure, dependencies, and design patterns |
+| [Themes](docs/themes.md) | Runtime theme switching with Light, Dark, and Blue themes |
+| [Undo/Redo](docs/undo-redo.md) | Property and collection change tracking with undo support |
+| [Generic Controls](docs/generic-controls.md) | NumericTextBox, ColorPicker, CopyPasteDataGrid, and more |
+| [Numeric Controls](docs/numeric-controls.md) | Distribution selectors, curve editors, and time series tables |
+| [OxyPlot Controls](docs/oxyplot-controls.md) | Interactive charting with toolbar, property editors, and serialization |
+| [Database Controls](docs/database-controls.md) | Table viewing, field calculation, and expression parsing |
+| [DAG Controls](docs/dag-controls.md) | Directed acyclic graph editing with visual flow canvas |
+| [Software Update](docs/software-update.md) | Automatic updates from GitHub Releases |
 | [Migration Guide](docs/migration-guide.md) | Upgrading from previous versions |
 
 ## Key Features
 
-### Theme Support
+### Theme Switching
 
-Runtime theme switching with three built-in themes:
+Three built-in themes with runtime switching — all controls update automatically via `DynamicResource` bindings:
 
 ```csharp
-// Switch themes at runtime - all controls update automatically
 FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Dark);
-
-// Or use ThemeService directly
-Themes.ThemeService.Instance.SetTheme(Themes.Theme.Dark);
-
-// Subscribe to theme changes
-Themes.ThemeService.Instance.ThemeChanged += (sender, args) => {
-    Console.WriteLine($"Theme changed to: {args.NewTheme}");
-};
 ```
 
-### Undo/Redo System
+### Undo/Redo
 
-Built-in undo/redo for element properties:
+Built-in undo/redo for element properties with automatic change tracking:
 
 ```csharp
-public class MyElement : ElementBase, IUndoableElement
+public string CustomValue
 {
-    private string _customValue;
-
-    public string CustomValue
+    get => _customValue;
+    set
     {
-        get => _customValue;
-        set => SetPropertyWithUndo(ref _customValue, value, nameof(CustomValue));
+        if (_customValue != value)
+        {
+            var oldValue = _customValue;
+            _customValue = value;
+            RecordPropertyChange(nameof(CustomValue), oldValue, value);
+        }
     }
-
-    // Ctrl+Z and Ctrl+Y work automatically in MainWindow
 }
 ```
 
-### Software Update System
+### Docking Layout
 
-Automatic updates from GitHub releases:
+VS2013-style docking with tabbed documents, auto-hide panels, and floating windows powered by a vendored AvalonDock fork.
 
-```csharp
-var updateOptions = new UpdateOptions
-{
-    GitHubOwner = "USACE-RMC",
-    GitHubRepo = "MyApp",
-    CurrentVersion = new SemanticVersion(1, 0, 0),
-    AssetNamePattern = "MyApp.*.zip"
-};
+### Charting
 
-var updateService = new GitHubUpdateService(updateOptions);
-mainWindow.UpdateService = updateService;
-```
+Vendored OxyPlot fork with a full toolbar (pan, zoom, annotation, export), property editors, theme integration, and XML serialization.
 
-### Messaging System
+### Database Management
 
-Centralized application-wide messaging:
+Multi-format database abstraction supporting SQLite, CSV, DBF, and in-memory tables with undo/redo edit tracking and Excel/CSV export.
 
-```csharp
-var messenger = Messenger.GetInstance();
+### Software Updates
 
-messenger.Add(new BasicMessageItem(
-    MessageType.Error,
-    "Validation failed",
-    sourceElement,
-    "Elements",
-    "MyElement",
-    "PropertyName",
-    "ERR-001"));
-```
+Automatic update checking and installation from GitHub Releases with SemVer 2.0, SHA256 checksum validation, and backup/recovery.
 
-## API Reference
+## Applications
 
-### Key Interfaces
+WPF Framework powers the following USACE-RMC desktop applications:
 
-| Interface | Description |
-|-----------|-------------|
-| `IProject` | Represents a project with element collections |
-| `IElement` | Represents an element within a project |
-| `IElementCollection` | Collection of elements |
-| `IMessageItem` | Message item for the messaging system |
-| `IUndoManager` | Manages undo/redo operations |
-| `IUndoableElement` | Element that supports undo/redo |
-| `IThemeService` | Theme management service |
-| `IUpdateService` | Software update service |
+- [RMC-BestFit](https://github.com/USACE-RMC/RMC-BestFit) — Bayesian estimation and fitting for flood frequency analysis
+- [RMC-RFA](https://github.com/USACE-RMC/RMC-RFA) — Reservoir frequency analysis for flood hazard assessments
+- [RMC-TotalRisk](https://github.com/USACE-RMC/RMC-TotalRisk) — Quantitative risk analysis for dam and levee safety
+- [LifeSim](https://github.com/USACE-RMC/LifeSim) — Life loss consequence estimation and evacuation simulation
 
-### Key Classes
+## Related Libraries
 
-| Class | Description |
-|-------|-------------|
-| `ElementBase` | Abstract base class for elements with undo support |
-| `FrameworkUIController` | Abstract controller for project UI |
-| `Messenger` | Singleton messaging system |
-| `UndoManager` | Undo/redo stack management |
-| `ThemeService` | Singleton theme management |
-| `ThemeManager` | FrameworkUI theme bridge |
-| `GitHubUpdateService` | GitHub-based update service |
-| `Node` | Base class for tree view nodes |
+- [Numerics](https://github.com/USACE-RMC/Numerics) — .NET library for numerical computing, statistical analysis, and Bayesian inference (required dependency for NumericControls and DatabaseControls)
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-This project is developed by the U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC).
-
-See the license header in source files for terms and conditions.
+This project is licensed under a BSD-3-Clause license. See [LICENSE](LICENSE) for details.
 
 ## Authors
 
-- **Haden Smith** - USACE Risk Management Center
-- **Woodrow Fields** - USACE Risk Management Center
+- **Haden Smith** — USACE Risk Management Center
+- **Woodrow Fields** — USACE Risk Management Center
+- **Julian Gonzalez** — USACE Risk Management Center
 
 ## Acknowledgments
 
-- Xceed for the AvalonDock library
-- Microsoft for the WPF framework
+- [Xceed](https://github.com/xceedsoftware/wpftoolkit) for the AvalonDock docking library (vendored and modified)
+- [OxyPlot](https://github.com/oxyplot/oxyplot) contributors for the charting library (vendored fork with custom serialization)
