@@ -21,7 +21,7 @@ WPF Framework is a free and open-source .NET 10.0 application framework for buil
 | **Support** | SoftwareUpdate, SoftwareUpdate.Updater | GitHub Releases-based auto-update system |
 | **AvalonDock** | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Modified VS2013-themed docking layout (vendored fork) |
 | **Demos** | FrameworkUI.Demo, GenericControls.Demo, NumericControls.Demo, OxyPlotControls.Demo, DatabaseControls.Demo, ExpressionParserControls.Demo, DAG.Demo | Interactive demo applications |
-| **Tests** | 13 test projects + ExampleLibrary | xunit, MSTest, and NUnit test suites |
+| **Tests** | OxyPlot.ExampleLibrary + 13 test projects | Example chart models and xunit, MSTest, and NUnit test suites |
 
 ## Quick Start
 

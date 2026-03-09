@@ -22,7 +22,7 @@ dotnet test WPF-Framework.sln
 | Support | SoftwareUpdate, SoftwareUpdate.Updater |
 | AvalonDock | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 |
 | Demos | One demo per control library (includes DAG.Demo) |
-| Tests | 13 test projects (xunit, MSTest, NUnit) + ExampleLibrary |
+| Tests | OxyPlot.ExampleLibrary + 13 test projects (xunit, MSTest, NUnit) |
 
 ## Key Architecture Patterns
 

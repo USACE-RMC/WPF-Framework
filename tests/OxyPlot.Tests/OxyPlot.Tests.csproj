@@ -9,7 +9,7 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExampleLibrary\ExampleLibrary.csproj" />
+    <ProjectReference Include="..\OxyPlot.ExampleLibrary\OxyPlot.ExampleLibrary.csproj" />
     <ProjectReference Include="..\..\src\OxyPlot\OxyPlot\OxyPlot.csproj" />
   </ItemGroup>
   <ItemGroup>

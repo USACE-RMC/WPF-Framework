@@ -16,7 +16,7 @@ The solution contains 39 projects organized into seven solution folders:
 | **Support** | SoftwareUpdate, SoftwareUpdate.Updater | Auto-update from GitHub Releases |
 | **AvalonDock** | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Modified docking layout engine |
 | **Demos** | FrameworkUI.Demo, GenericControls.Demo, NumericControls.Demo, OxyPlotControls.Demo, DatabaseControls.Demo, ExpressionParserControls.Demo, DAG.Demo | Standalone demo applications |
-| **Tests** | 13 test projects + ExampleLibrary | Unit and integration tests |
+| **Tests** | OxyPlot.ExampleLibrary + 13 test projects | Example chart models and unit/integration tests |
 
 ## 2. Dependency Diagram
 

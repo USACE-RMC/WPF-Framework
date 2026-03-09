@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>OxyPlot.ExampleLibrary</AssemblyName>
+    <RootNamespace>ExampleLibrary</RootNamespace>
     <Description>Example models for OxyPlot.</Description>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>11</LangVersion>
