@@ -230,9 +230,8 @@ namespace DatabaseControls
         /// </remarks>
         private void Plot()
         {
-            if (Data == null || Data.Length == 0)
+            if (Data == null)
             {
-                // Data is empty, nothing to display
                 return;
             }
 

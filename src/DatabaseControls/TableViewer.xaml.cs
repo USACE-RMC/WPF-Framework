@@ -4143,7 +4143,7 @@ namespace DatabaseControls
                 }
                 catch (Exception ex)
                 {
-                    GenericControls.MessageBox.Show(ex.Message);
+                    GenericControls.MessageBox.Show(ex.Message, "Error Saving Edits", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     Mouse.OverrideCursor = null;
                 }
             }
@@ -4214,6 +4214,7 @@ namespace DatabaseControls
                 ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 DeSelectAll.IsEnabled = false;
                 ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
+                ShowAll_Checked(null, null);
             }
         }
 
@@ -4289,7 +4290,18 @@ namespace DatabaseControls
                 Child = g;
                 Text = columnName;
 
-                string typeName = columnType.Name;
+                string typeName = columnType switch
+                {
+                    Type t when t == typeof(byte) => "Byte",
+                    Type t when t == typeof(short) || t == typeof(ushort) => "Short Integer",
+                    Type t when t == typeof(int) || t == typeof(uint) => "Integer",
+                    Type t when t == typeof(long) || t == typeof(ulong) => "Long Integer",
+                    Type t when t == typeof(float) => "Single",
+                    Type t when t == typeof(double) => "Double",
+                    Type t when t == typeof(string) => "String",
+                    Type t when t == typeof(bool) => "Boolean",
+                    _ => "Unknown"
+                };
                 ToolTip = $"{columnName}\nType: {typeName}";
             }
 
@@ -4448,6 +4460,10 @@ namespace DatabaseControls
             var mouseOverTrigger = new Trigger { Property = IsMouseOverProperty, Value = true };
             mouseOverTrigger.Setters.Add(new Setter(Border.BackgroundProperty, new SolidColorBrush(Color.FromRgb(201, 222, 245))));
             s.Triggers.Add(mouseOverTrigger);
+
+            var keyboardFocusTrigger = new Trigger { Property = IsKeyboardFocusWithinProperty, Value = true };
+            keyboardFocusTrigger.Setters.Add(new Setter(Border.BackgroundProperty, new SolidColorBrush(Color.FromRgb(201, 222, 245))));
+            s.Triggers.Add(keyboardFocusTrigger);
 
             return s;
         }

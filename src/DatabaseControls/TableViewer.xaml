@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DatabaseControls"
+             xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              mc:Ignorable="d"
              UseLayoutRounding="False"
              d:DesignHeight="400" d:DesignWidth="600"
@@ -15,7 +16,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/TableViewerResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+            <cntrls:BooleanToVisibilityConverter x:Key="BooleanToVisibility" TrueValue="Visible" FalseValue="Collapsed"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -131,7 +132,7 @@
 
             </StackPanel>
 
-            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="16" VerticalAlignment="Center" Visibility="{Binding RowSelectable, Converter={StaticResource BooleanToVisibility}}"/>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="16" VerticalAlignment="Center" Visibility="{Binding RowSelectable, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"/>
 
             <!--Attribution Row Select-->
             <StackPanel
@@ -142,7 +143,7 @@
                 Orientation="Horizontal"
                 VerticalAlignment="Bottom"
                 IsEnabled="False"
-                Visibility="{Binding RowSelectable, Converter={StaticResource BooleanToVisibility}}">
+                Visibility="{Binding RowSelectable, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}">
 
                 <Button
                     x:Name="SelectByAttribute"
@@ -217,7 +218,7 @@
 
             </StackPanel>
 
-            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="16" VerticalAlignment="Center" Visibility="{Binding Editable, Converter={StaticResource BooleanToVisibility}}"/>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="16" VerticalAlignment="Center" Visibility="{Binding Editable, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"/>
 
             <!--Editing-->
             <StackPanel
@@ -228,7 +229,7 @@
                 ToolTipService.ShowOnDisabled="True"
                 VerticalAlignment="Bottom"
                 Orientation="Horizontal"
-                Visibility="{Binding Editable, Converter={StaticResource BooleanToVisibility}}">
+                Visibility="{Binding Editable, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}">
 
                 <Button
                     x:Name="OpenFC"
@@ -236,7 +237,7 @@
                     ToolTipService.ShowOnDisabled="True"
                     Click="OpenFC_Click"
                     Height="24" Width="24"
-                    Visibility="{Binding HasFieldCalculator, Converter={StaticResource BooleanToVisibility}}"
+                    Visibility="{Binding HasFieldCalculator, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 
                     <Image
@@ -254,7 +255,7 @@
                     Click="Undo_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
-                    Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}}"
+                    Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 
                     <Image
@@ -274,7 +275,7 @@
                     Click="Redo_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
-                    Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}}"
+                    Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 
                     <Image
@@ -294,7 +295,7 @@
                     Click="Save_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
-                    Visibility="{Binding HasSaveButton, Converter={StaticResource BooleanToVisibility}}"
+                    Visibility="{Binding HasSaveButton, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
 
                     <Image
@@ -329,7 +330,7 @@
                     BorderThickness="1"
                     MouseLeftButtonDown="SelectAllLeftMouseDown"
                     MouseLeftButtonUp="SelectAllLeftMouseUp"
-                    Visibility="{Binding ShowRowHeaders, Converter={StaticResource BooleanToVisibility}}"/>
+                    Visibility="{Binding ShowRowHeaders, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"/>
 
             <Grid
                 x:Name="RowHeadersGrid"
@@ -342,7 +343,7 @@
                 MouseMove="RowsGrid_MouseMove"
                 MouseRightButtonUp="RowsGrid_MouseRightButtonUp"
                 MouseWheel="RowsGrid_MouseWheel"
-                Visibility="{Binding ShowRowHeaders, Converter={StaticResource BooleanToVisibility}}"/>
+                Visibility="{Binding ShowRowHeaders, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"/>
 
             <ScrollViewer
                 x:Name="HorizontalScrollViewer"
