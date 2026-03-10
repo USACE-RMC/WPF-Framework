@@ -1342,9 +1342,10 @@ namespace DatabaseControls
             GridPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
 
             // Create new row Cells
+            var fg = DeSelectedForegroundColor;
             for (int j = 0; j < DataView.ColumnTypes.Count(); j++)
             {
-                var newCell = new Cell { CellStyle = CellTextblockStyle };
+                var newCell = new Cell { CellStyle = CellTextblockStyle, Foreground = fg };
                 Grid.SetRow(newCell, GridPanel.RowDefinitions.Count - 1);
                 Grid.SetColumn(newCell, j);
                 GridPanel.Children.Add(newCell);
