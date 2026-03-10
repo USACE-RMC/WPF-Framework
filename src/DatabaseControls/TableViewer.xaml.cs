@@ -684,12 +684,19 @@ namespace DatabaseControls
                         if (tv.GridLinesCanvas.Children[i] is Line colLine)
                             colLine.Stroke = tv.ColumnLineColor;
                     }
-                    // Update column header border brushes (not recreated by LoadRows)
+                    // Update column header border brushes and top boundary line (not recreated by LoadRows)
                     var headerBorderBrush = (Brush)tv.FindResource("DataGrid.Header.Border");
                     foreach (UIElement child in tv.ColumnHeadersGrid.Children)
                     {
                         if (child is ColumnHeader header)
                             header.BorderBrush = headerBorderBrush;
+                    }
+                    // Update the initial row line (top boundary between headers and cells)
+                    int topLineIndex = tv.DataView.ColumnNames.Count() + 1;
+                    if (topLineIndex < tv.GridLinesCanvas.Children.Count &&
+                        tv.GridLinesCanvas.Children[topLineIndex] is Line topLine)
+                    {
+                        topLine.Stroke = headerBorderBrush;
                     }
                     tv.DeSelectAllCells();
                     tv.SetSelectedCells();
@@ -1024,7 +1031,7 @@ namespace DatabaseControls
             var rowLine = new Line
             {
                 SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                StrokeThickness = RowLineThickness, Stroke = (Brush)FindResource("DataGrid.Header.Border")
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
@@ -1194,7 +1201,7 @@ namespace DatabaseControls
             var rowLine = new Line
             {
                 SnapsToDevicePixels = true, X1 = 0, Y1 = rowDistanceFromTop, Y2 = rowDistanceFromTop,
-                StrokeThickness = RowLineThickness, Stroke = RowLineColor
+                StrokeThickness = RowLineThickness, Stroke = (Brush)FindResource("DataGrid.Header.Border")
             };
             BindingOperations.SetBinding(rowLine, Line.X2Property, lengthBinding);
             GridLinesCanvas.Children.Add(rowLine);
