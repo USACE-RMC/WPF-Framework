@@ -10,16 +10,14 @@
         <RichTextBox x:Name="ExpressionTextBox" TextChanged="ExpressionTextBox_TextChanged" SelectionChanged="ExpressionTextBox_SelectionChanged" AcceptsReturn="False" AcceptsTab="False">
             <RichTextBox.Resources>
                 <Style TargetType="Hyperlink">
+                    <Setter Property="Foreground" Value="{DynamicResource ExpressionControl.Function.Foreground}" />
+                    <EventSetter Event="MouseLeftButtonDown" Handler="HyperlinkMouseLeftButtonDown"/>
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="Red" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpressionControl.Function.Hover}" />
                             <Setter Property="Cursor" Value="Hand" />
                         </Trigger>
-                        <Trigger Property="IsMouseOver" Value="False">
-                            <Setter Property="Foreground" Value="Blue" />
-                        </Trigger>
                     </Style.Triggers>
-                    <EventSetter Event="MouseLeftButtonDown" Handler="HyperlinkMouseLeftButtonDown"/>
                 </Style>
             </RichTextBox.Resources>
             <FlowDocument>

@@ -40,7 +40,7 @@ namespace DatabaseControls
     /// A window that displays a list of errors encountered during expression parsing or evaluation.
     /// Implements <see cref="INotifyPropertyChanged"/> for data binding support.
     /// </summary>
-    public partial class ErrorWindow : Window, INotifyPropertyChanged
+    public partial class ErrorWindow : GenericControls.MetroDialogWindow, INotifyPropertyChanged
     {
         /// <summary>
         /// Occurs when a property value changes.

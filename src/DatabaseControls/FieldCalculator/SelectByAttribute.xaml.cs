@@ -42,7 +42,7 @@ namespace DatabaseControls
     /// Allows users to select rows in a data table based on boolean expression criteria.
     /// This window uses the expression parser to evaluate conditions and return matching row indices.
     /// </summary>
-    public partial class SelectByAttribute : Window
+    public partial class SelectByAttribute : GenericControls.MetroWindow
     {
         //Private _firstparts As String
         //Private _secondparts As String
@@ -93,7 +93,7 @@ namespace DatabaseControls
             //Next
 
             var vars = new Dictionary<string, ResultType>();
-            for (int i = 0; i < _dbView.ColumnNames.Count; i++)
+            for (int i = 0; i < _dbView.ColumnNames.Length; i++)
             {
                 if (vars.ContainsKey(_dbView.ColumnNames[i])) continue;
                 vars.Add(_dbView.ColumnNames[i], Parser.TypeToResultType(_dbView.ColumnTypes[i]));

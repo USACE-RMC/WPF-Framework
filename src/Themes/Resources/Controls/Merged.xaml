@@ -74,6 +74,7 @@
         <ResourceDictionary Source="GridSplitter.xaml"/>
         <ResourceDictionary Source="GroupBox.xaml"/>
         <ResourceDictionary Source="Label.xaml"/>
+        <ResourceDictionary Source="ListBox.xaml"/>
         <ResourceDictionary Source="ListView.xaml"/>
         <ResourceDictionary Source="Menu.xaml"/>
         <ResourceDictionary Source="MetroWindowStyle.xaml"/>

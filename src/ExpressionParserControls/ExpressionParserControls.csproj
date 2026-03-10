@@ -46,6 +46,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExpressionParser\ExpressionParser.csproj" />
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
   </ItemGroup>
   
 </Project>

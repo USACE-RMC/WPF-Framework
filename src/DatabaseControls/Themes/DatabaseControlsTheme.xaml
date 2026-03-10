@@ -251,4 +251,26 @@
 
     <Style TargetType="{x:Type local:ErrorWindow}" BasedOn="{StaticResource ErrorWindowStyle}"/>
 
+    <!-- =============================================================================== -->
+    <!-- SELECT BY ATTRIBUTE STYLES                                                       -->
+    <!-- =============================================================================== -->
+
+    <Style x:Key="SelectByAttributeStyle" TargetType="{x:Type local:SelectByAttribute}">
+        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:SelectByAttribute}" BasedOn="{StaticResource SelectByAttributeStyle}"/>
+
+    <!-- =============================================================================== -->
+    <!-- CALCULATOR HELP WINDOW STYLES                                                    -->
+    <!-- =============================================================================== -->
+
+    <Style x:Key="CalculatorHelpWindowStyle" TargetType="{x:Type local:CalculatorHelpWindow}">
+        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
+    </Style>
+
+    <Style TargetType="{x:Type local:CalculatorHelpWindow}" BasedOn="{StaticResource CalculatorHelpWindowStyle}"/>
+
 </ResourceDictionary>

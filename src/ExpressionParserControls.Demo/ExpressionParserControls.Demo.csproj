@@ -22,5 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ExpressionParserControls\ExpressionParserControls.csproj" />
     <ProjectReference Include="..\ExpressionParser\ExpressionParser.csproj" />
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
+    <ProjectReference Include="..\Themes\Themes.csproj" />
   </ItemGroup>
 </Project>

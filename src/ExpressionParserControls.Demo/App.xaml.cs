@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -27,17 +27,23 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+using System.Windows;
+using Themes;
+
 namespace ExpressionParserControls.Demo
 {
     /// <summary>
     /// Represents the WPF application for testing the Expression Parser library.
-    /// Provides application-level event handling for startup, exit, and unhandled exceptions.
     /// </summary>
-    public partial class App
+    public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            ThemeService.Instance.Initialize(Theme.Light);
 
-        // Application-level events, such as Startup, Exit, and DispatcherUnhandledException
-        // can be handled in this file.
-
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
     }
 }

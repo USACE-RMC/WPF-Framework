@@ -1,11 +1,16 @@
-<Window x:Class="DatabaseControls.FieldCalculator"
+<cntrls:MetroWindow x:Class="DatabaseControls.FieldCalculator"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:parser="clr-namespace:ExpressionParserControls;assembly=ExpressionParserControls"
-    Title="Field Calculator" Height="400" Width="600" MinHeight="305" ResizeMode="CanResize" Icon="pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png">
-    <Grid Background="WhiteSmoke">
+    xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
+    Title="Field Calculator" Height="400" Width="600" MinHeight="305" ResizeMode="CanResize"
+    Icon="pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png"
+    Style="{DynamicResource MetroWindowStyle}"
+    Background="{DynamicResource EnvironmentWindowBackground}"
+    Foreground="{DynamicResource EnvironmentWindowText}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -100,4 +105,4 @@
         </StackPanel>
 
     </Grid>
-</Window>
+</cntrls:MetroWindow>

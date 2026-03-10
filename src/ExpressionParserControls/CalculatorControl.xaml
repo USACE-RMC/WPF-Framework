@@ -17,22 +17,22 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,3,0,0">
             <Button Name="AddButton" Height="24" Width="24" Padding="0" SnapsToDevicePixels="True" ToolTip="Insert Plus Sign" Click="AddButton_Click">
-                <Path Data="M 0,8 H 16 M 8,0 V 16" Stroke="Black" StrokeThickness="2"/>
+                <Path Data="M 0,8 H 16 M 8,0 V 16" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="2"/>
             </Button>
             <Button Name="SubtractButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Insert Minus Sign" Click="SubtractButton_Click">
-                <Path Data="M 0,1 H 16" Stroke="Black" StrokeThickness="2"/>
+                <Path Data="M 0,1 H 16" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="2"/>
             </Button>
             <Button Name="MultiplyButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Insert Multiplication Sign" Click="MultiplyButton_Click">
-                <Path Data="M 2,2 L 14,14 M 2,14 L 14,2" Stroke="Black" StrokeThickness="2"/>
+                <Path Data="M 2,2 L 14,14 M 2,14 L 14,2" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="2"/>
             </Button>
             <Button Name="DivideButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Insert Division Sign" Click="DivideButton_Click">
-                <Path Data="M 0,6 H 16 M 6,11 L 10,11 M 6,1 L 10,1" Stroke="Black" StrokeThickness="2"/>
+                <Path Data="M 0,6 H 16 M 6,11 L 10,11 M 6,1 L 10,1" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="2"/>
             </Button>
             <Button Name="ExponentButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Insert Exponent Sign" Click="ExponentButton_Click">
-                <Path Data="M 3,8 L 9,0 M 7,0 L 13,8" Stroke="Black" StrokeThickness="2" StrokeLineJoin="Round"/>
+                <Path Data="M 3,8 L 9,0 M 7,0 L 13,8" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="2" StrokeLineJoin="Round"/>
             </Button>
             <Button Name="EqualsButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Insert Equals Sign" Click="EqualsButton_Click">
-                <Path Data="M 1,8 H 15 M 1,2 H 15" Stroke="Black" StrokeThickness="2"/>
+                <Path Data="M 1,8 H 15 M 1,2 H 15" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="2"/>
             </Button>
 
             <Button Name="FunctionsButton" Height="24" Width="60" Margin="3,0,0,0" ToolTip="List of available expression functions" Click="FunctionsButton_Click">Functions</Button>

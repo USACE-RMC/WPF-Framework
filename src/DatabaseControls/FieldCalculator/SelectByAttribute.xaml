@@ -1,19 +1,23 @@
-<Window x:Class="DatabaseControls.SelectByAttribute"
+<cntrls:MetroWindow x:Class="DatabaseControls.SelectByAttribute"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:parser="clr-namespace:ExpressionParserControls;assembly=ExpressionParserControls"
     xmlns:local="clr-namespace:DatabaseControls"
-    xmlns:QH="clr-namespace:QuickHelp;assembly=QuickHelp"
-    Title="Select By Attribute" Height="606" Width="511" ResizeMode="NoResize" Icon="pack://application:,,,/DatabaseControls;component/Resources/SelectByAttribute.png">
-    <Grid x:Name="MAINGRID" Background="WhiteSmoke">
+    xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
+    Title="Select By Attribute" Height="606" Width="511" ResizeMode="NoResize"
+    Icon="pack://application:,,,/DatabaseControls;component/Resources/SelectByAttribute.png"
+    Style="{DynamicResource MetroWindowStyle}"
+    Background="{DynamicResource EnvironmentWindowBackground}"
+    Foreground="{DynamicResource EnvironmentWindowText}">
+    <Grid x:Name="MAINGRID">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <QH:HelpButton x:Name="HelpButton" HorizontalAlignment="Right" VerticalAlignment="Top" Height="20" Width="20" Margin="2" PathIsEmbeddedResource="True" AssemblyName="DatabaseControls" RootNamespace="DatabaseControls" xmlPATH="SelectByAttribute.xml" ToolTip="Help on Select By Attribute"/>
+        <!-- Help button placeholder (QuickHelp not yet ported) -->
         <parser:CalculatorControl x:Name="ExpressionCalculator" Grid.Row="1"/>
         <!--<Border Margin="5,22,5,0" Grid.Row="0" Name="LogicOperatorsBorder" HorizontalAlignment="Stretch" >
             <Grid Name="ExpressionGrid" >
@@ -79,4 +83,4 @@
             <Button Content="Execute" Margin="5,0,0,0" x:Name="ExecuteButton" IsEnabled="False" IsDefault="True" />
         </StackPanel>
     </Grid>
-</Window>
+</cntrls:MetroWindow>

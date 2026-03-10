@@ -186,33 +186,70 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
+        /// Creates a themed MetroWindow for the Available Functions popup.
+        /// Uses DynamicResource for theme-aware styling with fallbacks.
+        /// </summary>
+        private GenericControls.MetroWindow CreateAvailableFunctionsWindow()
+        {
+            var window = new GenericControls.MetroWindow()
+            {
+                Name = "AvailableFunctionsWindow",
+                Title = "Available Functions",
+                Content = new AvailableFunctions() { ExpressionText = LexTextBox, Margin = new Thickness(5d) },
+                ResizeMode = ResizeMode.CanResize,
+                Width = 700d,
+                Height = 500d,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            // Apply theme resources if available
+            if (TryFindResource("MetroWindowStyle") is Style metroStyle)
+                window.Style = metroStyle;
+            if (TryFindResource("EnvironmentWindowBackground") is System.Windows.Media.Brush bg)
+                window.Background = bg;
+            if (TryFindResource("EnvironmentWindowText") is System.Windows.Media.Brush fg)
+                window.Foreground = fg;
+
+            // Set owner to keep popup with parent window
+            var ownerWindow = Window.GetWindow(this);
+            if (ownerWindow != null)
+                window.Owner = ownerWindow;
+
+            return window;
+        }
+
+        /// <summary>
+        /// Finds an already-open AvailableFunctions window, if one exists.
+        /// </summary>
+        private Window? FindAvailableFunctionsWindow()
+        {
+            foreach (Window w in Application.Current.Windows)
+            {
+                if (w.Name == "AvailableFunctionsWindow")
+                    return w;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Handles navigation to a help document from within the LexTextBox.
         /// Opens or focuses the AvailableFunctions window and selects the appropriate help topic.
         /// </summary>
         /// <param name="helpDocumentPath">The path to the help document.</param>
         private void LexTextBox_HelpDocumentCalled(string helpDocumentPath)
         {
-            foreach (Window w in Application.Current.Windows)
+            var existing = FindAvailableFunctionsWindow();
+            if (existing != null)
             {
-                if (w.Name == "AvailableFunctionsWindow")
-                {
-                    w.Activate();
-                    // Need to select the appropriate item from the list of available functions.
-                    foreach (TreeViewItem item in ((AvailableFunctions)w.Content).AvailableFunctionsProp.Items)
-                    {
-                        if ((new Uri(item.Tag?.ToString() ?? "").AbsolutePath ?? "") == (helpDocumentPath ?? ""))
-                            item.IsSelected = true;
-                    }
-                    return;
-                }
+                existing.Activate();
+                var availFunctions = existing.Content as AvailableFunctions;
+                availFunctions?.SelectFunctionByHelpPath(helpDocumentPath);
+                return;
             }
-            //
-            var availFunctionsWindow = new Window() { Name = "AvailableFunctionsWindow", Title = "Available Functions", Content = new AvailableFunctions() { ExpressionText = LexTextBox, Margin = new Thickness(5d) }, ResizeMode = ResizeMode.CanResize, Width = 600d, Height = 400d };
-            foreach (TreeViewItem item in ((AvailableFunctions)availFunctionsWindow.Content).AvailableFunctionsProp.Items)
-            {
-                if ((new Uri(item.Tag?.ToString() ?? "").AbsolutePath ?? "") == (helpDocumentPath ?? ""))
-                    item.IsSelected = true;
-            }
+
+            var availFunctionsWindow = CreateAvailableFunctionsWindow();
+            var content = (AvailableFunctions)availFunctionsWindow.Content;
+            content.SelectFunctionByHelpPath(helpDocumentPath);
             availFunctionsWindow.Show();
         }
 
@@ -233,17 +270,14 @@ namespace ExpressionParserControls
         /// <param name="e">Routed event arguments.</param>
         private void FunctionsButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Window w in Application.Current.Windows)
+            var existing = FindAvailableFunctionsWindow();
+            if (existing != null)
             {
-                if (w.Name == "AvailableFunctionsWindow")
-                {
-                    w.Activate();
-                    return;
-                }
+                existing.Activate();
+                return;
             }
-            //
-            var availFunctionsWindow = new Window() { Name = "AvailableFunctionsWindow", Title = "Available Functions", Content = new AvailableFunctions() { ExpressionText = LexTextBox, Margin = new Thickness(5d) }, ResizeMode = ResizeMode.CanResize, Width = 600d, Height = 400d };
-            ((TreeViewItem)((AvailableFunctions)availFunctionsWindow.Content).AvailableFunctionsProp.Items[0]).IsSelected = true;
+
+            var availFunctionsWindow = CreateAvailableFunctionsWindow();
             availFunctionsWindow.Show();
         }
     }

@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -30,122 +30,263 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using ExpressionParser;
+using System.Windows.Input;
 
 namespace ExpressionParserControls
 {
     /// <summary>
-    /// Represents a control that displays a list of available functions for the expression parser.
-    /// Provides function selection, insertion, and navigation to help documentation.
+    /// Displays available expression parser functions grouped by category with
+    /// a searchable TreeView and a detail panel showing syntax, description, and examples.
     /// </summary>
     public partial class AvailableFunctions
     {
-
         /// <summary>
-        /// Dependency property backing the <see cref="ExpressionText"/> property.
+        /// The expression control to insert function text into.
         /// </summary>
-        public static DependencyProperty ExpressionTextProperty = DependencyProperty.Register(nameof(ExpressionText), typeof(ExpressionControl), typeof(AvailableFunctions), new FrameworkPropertyMetadata(null)); // , AddressOf RichTextChanged))
+        public static DependencyProperty ExpressionTextProperty = DependencyProperty.Register(
+            nameof(ExpressionText), typeof(ExpressionControl), typeof(AvailableFunctions));
 
         /// <summary>
-        /// Gets/sets the bound <see cref="ExpressionControl"/> instance associated with this control.
+        /// Gets or sets the target ExpressionControl for function insertion.
         /// </summary>
         public ExpressionControl ExpressionText
         {
-            get
-            {
-                return (ExpressionControl)this.GetValue(ExpressionTextProperty);
-            }
-            set
-            {
-                this.SetValue(ExpressionTextProperty, value);
-            }
+            get => (ExpressionControl)GetValue(ExpressionTextProperty);
+            set => SetValue(ExpressionTextProperty, value);
         }
 
         /// <summary>
-        /// Event raised when a function is selected an inserted into the expression.
+        /// Maps TreeViewItem to its FunctionDescriptor for quick lookup.
         /// </summary>
-        public event InsertCalledEventHandler InsertCalled;
+        private readonly Dictionary<TreeViewItem, FunctionDescriptor> _itemToFunction = new Dictionary<TreeViewItem, FunctionDescriptor>();
 
         /// <summary>
-        /// Delegate for the <see cref="InsertCalled"/> event, sending the inserted function text.
+        /// All category TreeViewItems for search filtering.
         /// </summary>
-        /// <param name="stringToInsert">The function text to insert into the expression.</param>
-        public delegate void InsertCalledEventHandler(string stringToInsert);
+        private readonly List<TreeViewItem> _categoryItems = new List<TreeViewItem>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AvailableFunctions"/> class and populates available functions.
+        /// All function TreeViewItems for search filtering.
         /// </summary>
+        private readonly List<TreeViewItem> _functionItems = new List<TreeViewItem>();
+
         public AvailableFunctions()
         {
+            InitializeComponent();
+            PopulateTreeView();
+        }
 
-            // This call is required by the designer.
-            this.InitializeComponent();
+        /// <summary>
+        /// Populates the TreeView with functions grouped by category.
+        /// </summary>
+        private void PopulateTreeView()
+        {
+            var grouped = FunctionInfo.GetGroupedFunctions();
 
-            // Add any initialization after the InitializeComponent() call.
-            TreeViewItem availableFunction;
-            var helpDocs = new HashSet<string>();
-            foreach (var functionKey in Lexer.Keywords)
+            foreach (var category in FunctionInfo.Categories)
             {
-                if (functionKey.Value.Item4 != TokenClass.Function)
+                if (!grouped.ContainsKey(category) || grouped[category].Count == 0)
                     continue;
-                if (helpDocs.Contains(functionKey.Value.Item1))
-                    continue;
-                string helpDocumentPath = Environment.CurrentDirectory + "/" + functionKey.Value.Item1;
-                var headerText = new TextBlock() { Text = functionKey.Key, FontWeight = FontWeights.Bold, Margin = new Thickness(0d, 1d, 0d, 1d), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch };
-                availableFunction = new TreeViewItem() { Header = headerText, Tag = helpDocumentPath, VerticalContentAlignment = VerticalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-                availableFunction.Selected += (sender,e) =>
+
+                var categoryItem = new TreeViewItem
+                {
+                    Header = new TextBlock { Text = category, FontWeight = FontWeights.Bold },
+                    IsExpanded = true,
+                    Style = (Style)FindResource("TreeViewItemStyle")
+                };
+
+                foreach (var func in grouped[category])
+                {
+                    var funcItem = new TreeViewItem
                     {
-                        if (System.IO.File.Exists(helpDocumentPath) == false)
-                            this.HelpBrowser.Navigate("about:blank");
-                        try
-                        {
-                            this.HelpBrowser.Navigate(new Uri(helpDocumentPath));
-                        }
-                        catch (Exception)
-                        {
-                            this.HelpBrowser.Navigate("about:blank");
-                        }
-                    };
-                availableFunction.MouseDoubleClick += (sender,e) =>
-                    {
-                        if (!(ExpressionText == null))
-                            ExpressionText.InsertText(functionKey.Key + "(");
-                        InsertCalled?.Invoke(functionKey.Key + "(");
+                        Header = new TextBlock { Text = func.Name },
+                        Tag = func,
+                        Style = (Style)FindResource("TreeViewItemStyle")
                     };
 
-                this.AvailableFunctionsProp.Items.Add(availableFunction);
-                helpDocs.Add(functionKey.Value.Item1);
+                    funcItem.MouseDoubleClick += FunctionItem_MouseDoubleClick;
+                    _itemToFunction[funcItem] = func;
+                    _functionItems.Add(funcItem);
+                    categoryItem.Items.Add(funcItem);
+                }
+
+                _categoryItems.Add(categoryItem);
+                AvailableFunctionsProp.Items.Add(categoryItem);
             }
         }
 
         /// <summary>
-        /// Enables or disables the insert button depending on whether a function is selected.
+        /// Handles selection changes in the TreeView to update the detail panel.
         /// </summary>
-        /// <param name="sender">The sender object.</param>
-        /// <param name="e">Event arguments.</param>
         private void AvailableFunctions_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            this.InsertFunctionButton.IsEnabled = !(this.AvailableFunctionsProp.SelectedItem == null);
+            if (e.NewValue is TreeViewItem item && _itemToFunction.TryGetValue(item, out var func))
+            {
+                ShowFunctionDetail(func);
+                InsertFunctionButton.IsEnabled = true;
+            }
+            else
+            {
+                DetailPanel.Visibility = Visibility.Collapsed;
+                InsertFunctionButton.IsEnabled = false;
+            }
         }
 
         /// <summary>
-        /// Inserts the selected function into the expression text when the insert button is clicked.
+        /// Displays the detail panel for a given function.
         /// </summary>
-        /// <param name="sender">The sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ShowFunctionDetail(FunctionDescriptor func)
         {
-            if (this.AvailableFunctionsProp.SelectedItem == null)
-                return;
-            if (this.AvailableFunctionsProp.SelectedItem.GetType() != typeof(TreeViewItem))
-                return;
-            string functionText = ((TextBlock)((TreeViewItem)this.AvailableFunctionsProp.SelectedItem).Header).Text;
-            if (!(ExpressionText == null))
-                ExpressionText.InsertText(functionText + "(");
-            InsertCalled?.Invoke(functionText + "(");
+            DetailFunctionName.Text = func.Name;
+            DetailSyntax.Text = func.Syntax;
+            DetailReturns.Text = func.Returns;
+            DetailDescription.Text = func.Description;
+            DetailExample.Text = func.Example;
+
+            if (func.Aliases.Length > 0)
+            {
+                DetailAliases.Text = string.Join(", ", func.Aliases);
+                AliasesPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AliasesPanel.Visibility = Visibility.Collapsed;
+            }
+
+            DetailPanel.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Inserts the selected function into the expression on double-click.
+        /// </summary>
+        private void FunctionItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TreeViewItem item && _itemToFunction.TryGetValue(item, out var func))
+            {
+                InsertFunction(func);
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Handles the Insert button click.
+        /// </summary>
+        private void InsertButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (AvailableFunctionsProp.SelectedItem is TreeViewItem item && _itemToFunction.TryGetValue(item, out var func))
+            {
+                InsertFunction(func);
+            }
+        }
+
+        /// <summary>
+        /// Inserts a function's text into the bound ExpressionControl.
+        /// </summary>
+        private void InsertFunction(FunctionDescriptor func)
+        {
+            ExpressionText?.InsertText(func.InsertText);
+        }
+
+        /// <summary>
+        /// Filters the TreeView based on search text.
+        /// </summary>
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filter = SearchTextBox.Text.Trim();
+            bool hasFilter = !string.IsNullOrEmpty(filter);
+
+            foreach (var categoryItem in _categoryItems)
+            {
+                bool anyCategoryMatch = false;
+
+                foreach (var funcItem in _functionItems)
+                {
+                    if (funcItem.Parent != categoryItem)
+                        continue;
+
+                    var func = _itemToFunction[funcItem];
+                    bool matches = !hasFilter ||
+                        func.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                        func.Category.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                        func.Description.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                        func.Aliases.Any(a => a.Contains(filter, StringComparison.OrdinalIgnoreCase));
+
+                    funcItem.Visibility = matches ? Visibility.Visible : Visibility.Collapsed;
+                    if (matches) anyCategoryMatch = true;
+                }
+
+                categoryItem.Visibility = anyCategoryMatch ? Visibility.Visible : Visibility.Collapsed;
+                if (hasFilter && anyCategoryMatch)
+                    categoryItem.IsExpanded = true;
+            }
+        }
+
+        /// <summary>
+        /// Selects a function item that matches the given help document path.
+        /// Used by CalculatorControl when a function hyperlink is clicked.
+        /// </summary>
+        public void SelectFunctionByHelpPath(string helpDocumentPath)
+        {
+            // Match by comparing the help path from Lexer.Keywords against function names
+            // The helpDocumentPath contains the full absolute path, so we extract the function name
+            foreach (var kvp in _itemToFunction)
+            {
+                var func = kvp.Value;
+                // Check if the help path ends with a pattern matching this function
+                string expectedPath = $"Parser Help/{func.Name}Help.html";
+                if (helpDocumentPath?.EndsWith(expectedPath, StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    kvp.Key.IsSelected = true;
+                    kvp.Key.BringIntoView();
+                    return;
+                }
+            }
+
+            // Fallback: try matching any function whose help path is in the helpDocumentPath
+            foreach (var keyword in ExpressionParser.Lexer.Keywords)
+            {
+                if (keyword.Value.Item4 != ExpressionParser.TokenClass.Function)
+                    continue;
+
+                string helpPath = keyword.Value.Item1;
+                if (string.IsNullOrEmpty(helpPath))
+                    continue;
+
+                string fullPath = Environment.CurrentDirectory + "/" + helpPath;
+                if (!string.Equals(new Uri(fullPath).AbsolutePath, helpDocumentPath, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                // Found the keyword, now find the matching function item
+                foreach (var kvp in _itemToFunction)
+                {
+                    if (string.Equals(kvp.Value.Name, keyword.Key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        kvp.Key.IsSelected = true;
+                        kvp.Key.BringIntoView();
+                        return;
+                    }
+
+                    // Check aliases
+                    foreach (var alias in kvp.Value.Aliases)
+                    {
+                        if (string.Equals(alias, keyword.Key, StringComparison.OrdinalIgnoreCase))
+                        {
+                            kvp.Key.IsSelected = true;
+                            kvp.Key.BringIntoView();
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // If nothing matched, select the first function
+            if (_functionItems.Count > 0)
+            {
+                _functionItems[0].IsSelected = true;
+            }
+        }
     }
 }

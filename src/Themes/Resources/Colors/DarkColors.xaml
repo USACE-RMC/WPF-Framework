@@ -432,4 +432,24 @@
     <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Fill" Color="#007ACC"/>
     <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Stroke" Color="#007ACC"/>
 
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!-- EXPRESSION PARSER CONTROLS                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color0" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color1" Color="#57A64A"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color2" Color="#C586C0"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color3" Color="#FF6347"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color4" Color="#569CD6"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color5" Color="#DCDCAA"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Color6" Color="#F44747"/>
+    <SolidColorBrush x:Key="ExpressionControl.Parenthesis.Overflow" Color="#808080"/>
+    <SolidColorBrush x:Key="ExpressionControl.Function.Foreground" Color="#569CD6"/>
+    <SolidColorBrush x:Key="ExpressionControl.Function.Hover" Color="#FF6347"/>
+    <SolidColorBrush x:Key="CalculatorControl.OperatorGlyph" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="AvailableFunctions.DetailHeader" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="AvailableFunctions.DetailLabel" Color="#9A9A9A"/>
+    <SolidColorBrush x:Key="AvailableFunctions.SyntaxText" Color="#569CD6"/>
+    <SolidColorBrush x:Key="AvailableFunctions.ExampleText" Color="#57A64A"/>
+    <SolidColorBrush x:Key="AvailableFunctions.CategoryHeader" Color="#F1F1F1"/>
+
 </ResourceDictionary>

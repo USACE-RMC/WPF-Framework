@@ -47,9 +47,15 @@ namespace ExpressionParserControls
     public partial class ExpressionControl
     {
         /// <summary>
-        /// Predefined colors for highlighting parentheses in the expression.
+        /// Default parenthesis colors used when theme resources are not available.
         /// </summary>
-        private SolidColorBrush[] _parenthesisColors = new[] { Brushes.Black, Brushes.Green, Brushes.Purple, Brushes.OrangeRed, Brushes.CornflowerBlue, Brushes.GreenYellow, Brushes.Red };
+        private static readonly SolidColorBrush[] DefaultParenthesisColors = new[] { Brushes.Black, Brushes.Green, Brushes.Purple, Brushes.OrangeRed, Brushes.CornflowerBlue, Brushes.DarkGoldenrod, Brushes.Red };
+
+        /// <summary>
+        /// Predefined colors for highlighting parentheses in the expression.
+        /// Resolved from theme DynamicResources at load time, with hardcoded fallbacks.
+        /// </summary>
+        private SolidColorBrush[] _parenthesisColors = DefaultParenthesisColors;
 
         /// <summary>
         /// Flag indicating whether the expression is currently being formatted.
@@ -106,13 +112,33 @@ namespace ExpressionParserControls
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionControl"/> class.
         /// </summary>
+        /// <summary>
+        /// Overflow color used when parenthesis nesting exceeds the color array length.
+        /// </summary>
+        private SolidColorBrush _overflowColor = Brushes.Gray;
+
         public ExpressionControl()
         {
-
             // This call is required by the designer.
             this.InitializeComponent();
 
-            // Add any initialization after the InitializeComponent() call.
+            // Resolve theme-aware parenthesis colors after the control is loaded
+            // so that DynamicResource keys from the application's merged dictionaries are available.
+            this.Loaded += (s, e) => ResolveThemeColors();
+        }
+
+        /// <summary>
+        /// Resolves parenthesis and overflow colors from theme DynamicResources, falling back to defaults.
+        /// </summary>
+        private void ResolveThemeColors()
+        {
+            var colors = new SolidColorBrush[7];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = TryFindResource($"ExpressionControl.Parenthesis.Color{i}") as SolidColorBrush ?? DefaultParenthesisColors[i];
+            }
+            _parenthesisColors = colors;
+            _overflowColor = TryFindResource("ExpressionControl.Parenthesis.Overflow") as SolidColorBrush ?? Brushes.Gray;
         }
 
         /// <summary>
@@ -177,7 +203,7 @@ namespace ExpressionParserControls
                 r = new Run(t.TokenString) { FontSize = FontSize, FontWeight = FontWeight, FontStyle = FontStyle, FontFamily = FontFamily, FontStretch = FontStretch };
                 if (t.Type == TokenType.LeftParenthesis)
                 {
-                    r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? new SolidColorBrush(Colors.Gray) : _parenthesisColors[parenthesisColorPosition];
+                    r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? _overflowColor : _parenthesisColors[parenthesisColorPosition];
                     p.Inlines.Add(r);
                     parenthesisColorPosition += 1;
                 }
@@ -186,7 +212,7 @@ namespace ExpressionParserControls
                     parenthesisColorPosition -= 1;
                     if (parenthesisColorPosition < 0)
                         parenthesisColorPosition = 0;
-                    r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? new SolidColorBrush(Colors.Gray) : _parenthesisColors[parenthesisColorPosition];
+                    r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? _overflowColor : _parenthesisColors[parenthesisColorPosition];
                     p.Inlines.Add(r);
                 }
                 else if (t.TokenGroup == TokenClass.Function)

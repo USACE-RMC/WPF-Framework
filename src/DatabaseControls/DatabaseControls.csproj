@@ -30,11 +30,11 @@
 
   <ItemGroup>
     <Compile Remove="FieldCalculator\ExpressionTextBox.cs" />
-    <Compile Remove="FieldCalculator\SelectByAttribute.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="FieldCalculator\SelectByAttribute.xaml" />
+    <EmbeddedResource Include="Resources\Help\FieldCalculator\*" />
+    <EmbeddedResource Include="Resources\Help\SelectByAttribute\*" />
   </ItemGroup>
 
   <ItemGroup>

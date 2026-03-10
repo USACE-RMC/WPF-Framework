@@ -44,7 +44,7 @@ namespace DatabaseControls
     /// Allows users to create new columns or update existing columns using mathematical expressions.
     /// Can also be used for selecting records by attribute conditions.
     /// </summary>
-    public partial class FieldCalculator : Window
+    public partial class FieldCalculator : GenericControls.MetroWindow
     {
         /// <summary>
         /// Reference to the data table view being operated on.
