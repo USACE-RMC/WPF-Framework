@@ -1634,20 +1634,34 @@ namespace DatabaseControls
         /// </summary>
         private void DeSelectAllCells()
         {
-            for (int i = 0; i < DataView.ColumnNames.Count(); i++)
-                for (int j = 0; j < GridPanel.RowDefinitions.Count; j++)
-                    DeSelectCell(i, j);
+            var bg = DeSelectedColor;
+            var fg = DeSelectedForegroundColor;
+            int colCount = DataView.ColumnNames.Count();
+            int rowCount = GridPanel.RowDefinitions.Count;
+            var children = GridPanel.Children;
+            for (int j = 0; j < rowCount; j++)
+            {
+                int rowOffset = j * colCount;
+                for (int i = 0; i < colCount; i++)
+                {
+                    var cell = (Cell)children[rowOffset + i];
+                    cell.Background = bg;
+                    cell.Foreground = fg;
+                }
+            }
         }
 
         private void SelectCell(int columnIndex, int rowIndex)
         {
-            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Background = SelectedColor;
-            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Foreground = SelectedForegroundColor;
+            var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
+            cell.Background = SelectedColor;
+            cell.Foreground = SelectedForegroundColor;
         }
         private void DeSelectCell(int columnIndex, int rowIndex)
         {
-            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Background = DeSelectedColor;
-            ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Foreground = DeSelectedForegroundColor;
+            var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
+            cell.Background = DeSelectedColor;
+            cell.Foreground = DeSelectedForegroundColor;
         }
 
         private void SetActiveCell()
@@ -1658,8 +1672,9 @@ namespace DatabaseControls
             if (_activeCellVirtualRowIndex >= firstRowTableIndex && _activeCellVirtualRowIndex <= lastRowTableIndex)
             {
                 int rowIndex = _activeCellVirtualRowIndex - firstRowTableIndex;
-                ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + _activeCellDataColumnIndex]).Background = ActiveCellBackground;
-                ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + _activeCellDataColumnIndex]).Foreground = ActiveCellForeground;
+                var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + _activeCellDataColumnIndex];
+                cell.Background = ActiveCellBackground;
+                cell.Foreground = ActiveCellForeground;
             }
         }
 
@@ -2451,7 +2466,7 @@ namespace DatabaseControls
                 {
                     Header = headerText,
                     IsEnabled = Editable,
-                    Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/delete_row.png")) }
+                    Icon = FindResource("DeleteRowIcon")
                 };
                 rowMenuItem.Click += DeleteRows;
                 rowMenu.Items.Add(rowMenuItem);
@@ -2763,7 +2778,6 @@ namespace DatabaseControls
             LoadRows();
             SetSelectedCells();
             UpdateRowHeaders();
-            ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             ShowAll.IsEnabled = false;
             GridPanel.Focus();
         }
@@ -2788,7 +2802,6 @@ namespace DatabaseControls
                 }
 
                 _selectedRowsOnly = true;
-                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowAllIcon_22x22.png"));
                 ShowAll.IsEnabled = true;
                 if (_visibleRowCount > _selectedDataRowIndices.Count) _visibleRowCount = _selectedDataRowIndices.Count;
                 VerticalScrollbar.Maximum = _selectedDataRowIndices.Count - _visibleRowCount;
@@ -2812,9 +2825,7 @@ namespace DatabaseControls
             DeSelectAllCells();
             SetSelectedCells();
             ShowSelected.IsEnabled = false;
-            ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             DeSelectAll.IsEnabled = false;
-            ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             if (_selectedRowsOnly == true)
             {
                 _selectedRowsOnly = false;
@@ -2823,7 +2834,6 @@ namespace DatabaseControls
                 VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
                 LoadRows();
                 SetSelectedCells();
-                ((Image)ShowAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 ShowAll.IsEnabled = false;
             }
             GridPanel.Focus();
@@ -2855,16 +2865,12 @@ namespace DatabaseControls
                 if (_selectedDataRowIndices.Count > 0 && _selectedRowsOnly == false)
                 {
                     ShowSelected.IsEnabled = true;
-                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowSelectedIcon_22x22.png"));
                     DeSelectAll.IsEnabled = true;
-                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"));
                 }
                 else
                 {
                     ShowSelected.IsEnabled = false;
-                    ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                     DeSelectAll.IsEnabled = false;
-                    ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 }
                 SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
                 _attributeSelectorString = attributeSelector.ExpressionCalculator.GetExpressionText();
@@ -3145,27 +3151,27 @@ namespace DatabaseControls
             }
             //
             var columnMenu = new ContextMenu();
-            var columnMenuItem = new MenuItem { Header = "Sort Ascending", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortASCFilter.png")) } };
+            var columnMenuItem = new MenuItem { Header = "Sort Ascending", Icon = FindResource("SortAscFilterIcon") };
             columnMenuItem.Click += SortColumnAscending;
             if (_columnsSortedOrder![_mouseDownColumnIndex] == SortOrder.Ascending) columnMenuItem.IsEnabled = false;
             columnMenu.Items.Add(columnMenuItem);
             //
-            columnMenuItem = new MenuItem { Header = "Sort Descending", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/SortDSCFilter.png")) } };
+            columnMenuItem = new MenuItem { Header = "Sort Descending", Icon = FindResource("SortDescFilterIcon") };
             columnMenuItem.Click += SortColumnDescending;
             if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.Descending) columnMenuItem.IsEnabled = false;
             columnMenu.Items.Add(columnMenuItem);
             //
-            columnMenuItem = new MenuItem { Header = "Remove Sort", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/ClearFilter.png")) } };
+            columnMenuItem = new MenuItem { Header = "Remove Sort", Icon = FindResource("ClearFilterIcon") };
             columnMenuItem.Click += RemoveSort;
             if (_columnsSortedOrder[_mouseDownColumnIndex] == SortOrder.None) columnMenuItem.IsEnabled = false;
             columnMenu.Items.Add(columnMenuItem);
             //
-            columnMenuItem = new MenuItem { Header = "Summary Statistics...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/SummaryStatistics_16x.png")) } };
+            columnMenuItem = new MenuItem { Header = "Summary Statistics...", Icon = FindResource("StatisticsIcon") };
             columnMenuItem.Click += CalcColumnStatistics;
             if (DataView.ColumnTypes[_mouseDownColumnIndex] == typeof(object)) columnMenuItem.IsEnabled = false;
             columnMenu.Items.Add(columnMenuItem);
             //
-            columnMenuItem = new MenuItem { Header = "Find...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/QuickFind_16x.png")) } };
+            columnMenuItem = new MenuItem { Header = "Find...", Icon = FindResource("FindIcon") };
             columnMenuItem.Click += SearchText;
             if (_selectedRowsOnly == true) columnMenuItem.IsEnabled = false;
             if (DataView.NumberOfRows == 0) columnMenuItem.IsEnabled = false;
@@ -3173,14 +3179,14 @@ namespace DatabaseControls
 
             if (Editable == true && _readOnlyColumns.Contains(_mouseDownColumnIndex) == false)
             {
-                columnMenuItem = new MenuItem { Header = "Field Calculator...", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png")) } };
+                columnMenuItem = new MenuItem { Header = "Field Calculator...", Icon = FindResource("CalculatorIcon") };
                 columnMenuItem.Click += OpenFcForSpecificColumn;
                 columnMenu.Items.Add(columnMenuItem);
             }
 
             if (Editable == true && _readOnlyColumns.Contains(_mouseDownColumnIndex) == false)
             {
-                columnMenuItem = new MenuItem { Header = "Delete Columns", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/delete_column.png")) } };
+                columnMenuItem = new MenuItem { Header = "Delete Columns", Icon = FindResource("DeleteColumnIcon") };
                 if (_selectedColumnIndices.Count == 1) columnMenuItem.Header = "Delete Column";
                 columnMenuItem.Click += DeleteColumn;
                 columnMenu.Items.Add(columnMenuItem);
@@ -3411,17 +3417,17 @@ namespace DatabaseControls
             }
             //
             var gridMenu = new ContextMenu();
-            var gridMenuItem = new MenuItem { IsEnabled = enableCopy, Header = "Copy", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/copy.png")) } };
+            var gridMenuItem = new MenuItem { IsEnabled = enableCopy, Header = "Copy", Icon = FindResource("CopyIcon") };
             gridMenuItem.Click += Copy;
             gridMenu.Items.Add(gridMenuItem);
             //
-            gridMenuItem = new MenuItem { IsEnabled = enableCopy, Header = "Copy with Headers", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/copy_w_headers.png")) } };
+            gridMenuItem = new MenuItem { IsEnabled = enableCopy, Header = "Copy with Headers", Icon = FindResource("CopyWithHeadersIcon") };
             gridMenuItem.Click += CopyWithHeaders;
             gridMenu.Items.Add(gridMenuItem);
             //
             if (Editable == true)
             {
-                gridMenuItem = new MenuItem { Header = "Paste", Icon = new Image { Source = new BitmapImage(new Uri("pack://application:,,/GenericControls;component/Resources/paste.png")) } };
+                gridMenuItem = new MenuItem { Header = "Paste", Icon = FindResource("PasteIcon") };
                 gridMenuItem.Click += Paste;
                 if (Clipboard.ContainsText() == false || _selectedRowsOnly == true) gridMenuItem.IsEnabled = false;
                 gridMenu.Items.Add(gridMenuItem);
@@ -4067,33 +4073,10 @@ namespace DatabaseControls
 
         private void UpdateUndoRedoButtons()
         {
-            if (DataView.CanUndo())
-            {
-                Undo.IsEnabled = true;
-                SaveButton.IsEnabled = true;
-                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Undo.png"));
-                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Save.ico"));
-            }
-            else
-            {
-                // Disable undo button
-                Undo.IsEnabled = false;
-                SaveButton.IsEnabled = false;
-                ((Image)Undo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Undodisabled.png"));
-                ((Image)SaveButton.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Savedisabled.ico"));
-            }
-            // Disable Redo if no more edits to redo
-            if (DataView.CanRedo() == false)
-            {
-                Redo.IsEnabled = false;
-                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/RedoDisabled.png"));
-            }
-            else
-            {
-                // Enable Redo
-                Redo.IsEnabled = true;
-                ((Image)Redo.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/Redo.png"));
-            }
+            bool canUndo = DataView.CanUndo();
+            Undo.IsEnabled = canUndo;
+            SaveButton.IsEnabled = canUndo;
+            Redo.IsEnabled = DataView.CanRedo();
         }
 
         /// <summary>
@@ -4172,9 +4155,7 @@ namespace DatabaseControls
             if (_selectedDataRowIndices.Count > 0 && !_selectedRowsOnly)
             {
                 ShowSelected.IsEnabled = true;
-                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ShowSelectedIcon_22x22.png"));
                 DeSelectAll.IsEnabled = true;
-                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"));
             }
             else if (_selectedDataRowIndices.Count <= 0 && _selectedRowsOnly)
             {
@@ -4187,9 +4168,7 @@ namespace DatabaseControls
             else
             {
                 ShowSelected.IsEnabled = false;
-                ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 DeSelectAll.IsEnabled = false;
-                ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
             }
         }
 
@@ -4240,11 +4219,13 @@ namespace DatabaseControls
                 g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
                 g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                var downArrow = new Polygon { Points = new PointCollection { new Point(0, 0), new Point(8, 0), new Point(4, 6) }, Fill = Brushes.Black };
+                var downArrow = new Polygon { Points = new PointCollection { new Point(0, 0), new Point(8, 0), new Point(4, 6) } };
+                downArrow.SetResourceReference(Shape.FillProperty, "DataGrid.Header.Foreground");
                 _sortDownViewBox.Child = downArrow;
                 g.Children.Add(_sortDownViewBox);
 
-                var upArrow = new Polygon { Points = new PointCollection { new Point(4, 0), new Point(8, 6), new Point(0, 6) }, Fill = Brushes.Black };
+                var upArrow = new Polygon { Points = new PointCollection { new Point(4, 0), new Point(8, 6), new Point(0, 6) } };
+                upArrow.SetResourceReference(Shape.FillProperty, "DataGrid.Header.Foreground");
                 _sortUpViewBox.Child = upArrow;
                 g.Children.Add(_sortUpViewBox);
 

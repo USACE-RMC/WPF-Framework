@@ -15,6 +15,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/TableViewerResources.xaml"/>
+                <ResourceDictionary Source="/GenericControls;component/Resources/IconDictionary.xaml"/>
+                <ResourceDictionary Source="/DatabaseControls;component/Resources/IconDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <cntrls:BooleanToVisibilityConverter x:Key="BooleanToVisibility" TrueValue="Visible" FalseValue="Collapsed"/>
         </ResourceDictionary>
@@ -42,33 +44,37 @@
 
                 <Button
                     x:Name="SelectAllButton"
-                    ToolTip="Select All Cells"
                     Height="24"
                     Width="24"
-                    Padding="0"
+                    Padding="2"
                     Click="SelectAllButton_Click"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image>
-                        <Image.Style>
-                            <Style TargetType="{x:Type Image}">
-                                <Setter Property="Stretch" Value="None"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Button.ToolTip>
+                        <ToolTip>
+                            <ToolTip.Style>
+                                <Style TargetType="ToolTip">
+                                    <Setter Property="Content" Value="Select All Cells"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AllCellsSelected, ElementName=TableViewerControl}" Value="True">
+                                            <Setter Property="Content" Value="Deselect All Cells"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToolTip.Style>
+                        </ToolTip>
+                    </Button.ToolTip>
+                    <ContentControl>
+                        <ContentControl.Style>
+                            <Style TargetType="ContentControl">
+                                <Setter Property="Content" Value="{StaticResource DeselectAllIcon}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding AllCellsSelected, ElementName=TableViewerControl}" Value="True">
-                                        <Setter Property="Source" Value="/DatabaseControls;component/Resources/deselect_all_cells_16x.png"/>
-                                        <Setter Property="ToolTip" Value="Deselect all cells"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AllCellsSelected, ElementName=TableViewerControl}" Value="False">
-                                        <Setter Property="Source" Value="/DatabaseControls;component/Resources/ClearSelectionIcon_22x22.png"/>
-                                        <Setter Property="ToolTip" Value="Select all cells"/>
+                                        <Setter Property="Content" Value="{StaticResource SelectAllIcon}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Image.Style>
-                    </Image>
-
+                        </ContentControl.Style>
+                    </ContentControl>
                 </Button>
 
                 <Button
@@ -76,44 +82,30 @@
                     ToolTip="Copy Selected Cells"
                     ToolTipService.ShowOnDisabled="True"
                     Height="24" Width="24"
+                    Padding="2"
                     Click="CopyButton_Click"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Viewbox Width="16" Height="16" Stretch="Uniform">
-                        <ContentControl Content="{StaticResource CopyIcon}" />
-                    </Viewbox>
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource CopyIcon}"/>
 
                 <Button
                     x:Name="CopyWithHeadersButton"
                     ToolTip="Copy Selected Cells with Table Headers"
                     ToolTipService.ShowOnDisabled="True"
                     Height="24" Width="24"
+                    Padding="2"
                     Click="CopyWithHeadersButton_Click"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Viewbox Width="16" Height="16" Stretch="Uniform">
-                        <ContentControl Content="{StaticResource CopyWithHeadersIcon}" />
-                    </Viewbox>
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource CopyWithHeadersIcon}"/>
 
                 <Button
                     x:Name="PasteButton"
                     ToolTip="Paste from the Clipboard into the Table"
                     ToolTipService.ShowOnDisabled="True"
                     Height="24" Width="24"
+                    Padding="2"
                     Click="PasteButton_Click"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="None"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/GenericControls;component/Resources/paste.png" />
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource PasteIcon}"/>
 
                 <Button
                     x:Name="ExportTableButton"
@@ -150,16 +142,10 @@
                     ToolTip="Select Rows By Attribute"
                     ToolTipService.ShowOnDisabled="True"
                     Height="24" Width="24"
+                    Padding="2"
                     Click="SelectByAttribute_Click"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="None"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/SelectByAttribute_16x.png" />
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource SelectByAttributeIcon}"/>
 
                 <Button
                     x:Name="ShowAll"
@@ -168,16 +154,9 @@
                     Click="ShowAll_Checked"
                     IsEnabled="False"
                     Height="24" Width="24"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="Uniform"
-                        Width="16"
-                        Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png" />
-                </Button>
+                    Padding="2"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource ShowAllIcon}"/>
 
                 <Button
                     x:Name="ShowSelected"
@@ -186,16 +165,9 @@
                     Click="ShowSelected_Checked"
                     IsEnabled="False"
                     Height="24" Width="24"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="Uniform"
-                        Width="16"
-                        Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png" />
-                </Button>
+                    Padding="2"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource ShowSelectedIcon}"/>
 
                 <Button
                     x:Name="DeSelectAll"
@@ -204,17 +176,9 @@
                     Click="DeSelectAll_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="Uniform"
-                        Width="16"
-                        Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png" />
-
-                </Button>
+                    Padding="2"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource ClearSelectionIcon}"/>
 
             </StackPanel>
 
@@ -237,16 +201,10 @@
                     ToolTipService.ShowOnDisabled="True"
                     Click="OpenFC_Click"
                     Height="24" Width="24"
+                    Padding="2"
                     Visibility="{Binding HasFieldCalculator, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="None"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/calculator_16x.png" />
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource CalculatorIcon}"/>
 
                 <Button
                     x:Name="Undo"
@@ -255,18 +213,10 @@
                     Click="Undo_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
+                    Padding="2"
                     Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="Uniform"
-                        Width="16"
-                        Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/UndoDisabled.png" />
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource UndoIcon}"/>
 
                 <Button
                     x:Name="Redo"
@@ -275,18 +225,10 @@
                     Click="Redo_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
+                    Padding="2"
                     Visibility="{Binding HasUndoRedoButtons, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="Uniform"
-                        Width="16"
-                        Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/RedoDisabled.png" />
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource RedoIcon}"/>
 
                 <Button
                     x:Name="SaveButton"
@@ -295,24 +237,16 @@
                     Click="Save_Click"
                     IsEnabled="False"
                     Height="24" Width="24"
+                    Padding="2"
                     Visibility="{Binding HasSaveButton, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-
-                    <Image
-                        Stretch="Uniform"
-                        Width="16"
-                        Height="16"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/DatabaseControls;component/Resources/SaveDisabled.ico" />
-
-                </Button>
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                    Content="{StaticResource SaveIcon}"/>
 
             </StackPanel>
 
         </StackPanel>
 
-        <Grid x:Name="TableControlGrid" Grid.Row="1" Grid.IsSharedSizeScope="True">
+        <Grid x:Name="TableControlGrid" Grid.Row="1" Grid.IsSharedSizeScope="True" Background="{Binding Background, ElementName=TableViewerControl}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" x:Name="ColumnHeadersRowDefinition" SharedSizeGroup="A"/>
                 <RowDefinition Height="1*" x:Name="RowsRowDefinition"/>

@@ -49,90 +49,7 @@
         </Path>
     </Canvas>
 
-    <!-- =============================================================================== -->
-    <!-- COPY ICON                                                                        -->
-    <!-- =============================================================================== -->
-
-    <Canvas x:Key="CopyIcon" Width="16" Height="16" x:Shared="False">
-        <Path StrokeThickness="1.5" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 3.5 11.75 H 2.375 C 1.47475 11.75 0.75 11.02525 0.75 10.125 V 2.375 C 0.75 1.47475 1.47475 0.75 2.375 0.75 h 6.75 c 0.90025 0 1.625 0.72475 1.625 1.625 V 2.5" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 2.75 3.5 H 5" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 2.75 6.25 H 3.5" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 2.75 8.9999996 H 3.5" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1.5" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 6.875 4.25 H 11.5 L 15.25 8 v 5.625 c 0 0.90025 -0.72475 1.625 -1.625 1.625 H 6.875 C 5.97475 15.25 5.25 14.52525 5.25 13.625 V 5.875 C 5.25 4.97475 5.97475 4.25 6.875 4.25 Z" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 7.25 7 H 11.5" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="m 7.25 9.75 c 6 0 6 0 6 0" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="m 7.25 12.5 c 6 0 6 0 6 0" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 11.5 4.25 V 8 h 3.75" FillRule="EvenOdd"/>
-            </Path.Data>
-        </Path>
-    </Canvas>
-
-    <!-- =============================================================================== -->
-    <!-- COPY WITH HEADERS ICON                                                           -->
-    <!-- =============================================================================== -->
-
-    <Canvas x:Key="CopyWithHeadersIcon" Width="16" Height="16" x:Shared="False">
-        <Path StrokeThickness="1.5" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="m 5.0517241 12.956896 h -0.737069 c -0.589819 0 -1.0646552 -0.474836 -1.0646552 -1.064655 V 6.8146548 c 0 -0.589819 0.4748362 -1.0646552 1.0646552 -1.0646552 h 4.4224138 c 0.589819 0 1.0646552 0.4748362 1.0646552 1.0646552 v 0.081897" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1.5" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="m 7.262931 8.0431031 h 3.030172 L 12.75 10.5 v 3.685345 C 12.75 14.775163 12.275164 15.25 11.685345 15.25 H 7.262931 c -0.589819 0 -1.0646552 -0.474837 -1.0646552 -1.064655 V 9.1077583 c 0 -0.589819 0.4748362 -1.0646552 1.0646552 -1.0646552 z" FillRule="NonZero"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 10.293103 8.0431031 V 10.5 H 12.75" FillRule="EvenOdd"/>
-            </Path.Data>
-        </Path>
-        <Rectangle Canvas.Left="0" Canvas.Top="0" Width="16" Height="3.5" RadiusX="0.25" RadiusY="0.25" Fill="{DynamicResource ToolbarIconAccent}" StrokeThickness="0.75" Stroke="{DynamicResource ToolbarIconForeground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 4.5 0.25 V 3.5" FillRule="EvenOdd"/>
-            </Path.Data>
-        </Path>
-        <Path StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat">
-            <Path.Data>
-                <PathGeometry Figures="M 11.5 0.25 V 3.5" FillRule="EvenOdd"/>
-            </Path.Data>
-        </Path>
-    </Canvas>
+    <!-- NOTE: CopyIcon, CopyWithHeadersIcon sourced from GenericControls IconDictionary -->
 
     <!-- =============================================================================== -->
     <!-- SAVE ICON                                                                        -->
@@ -173,20 +90,7 @@
         </Path>
     </Canvas>
 
-    <!-- =============================================================================== -->
-    <!-- SELECT ALL ICON                                                                  -->
-    <!-- =============================================================================== -->
-
-    <Canvas x:Key="SelectAllIcon" Width="16" Height="16" x:Shared="False">
-        <Rectangle Canvas.Left="1" Canvas.Top="1" Width="14" Height="14"
-                   StrokeThickness="1.5" Stroke="{DynamicResource ToolbarIconForeground}"
-                   Fill="{DynamicResource ToolbarIconAccent}" RadiusX="1" RadiusY="1"/>
-        <Path Stroke="{DynamicResource ToolbarIconForeground}" StrokeThickness="1.5">
-            <Path.Data>
-                <PathGeometry Figures="M 4 8 L 7 11 L 12 5"/>
-            </Path.Data>
-        </Path>
-    </Canvas>
+    <!-- NOTE: SelectAllIcon sourced from GenericControls IconDictionary -->
 
     <!-- =============================================================================== -->
     <!-- DESELECT ALL ICON                                                                -->
@@ -242,20 +146,52 @@
         <Rectangle Canvas.Left="13" Canvas.Top="1" Width="2" Height="14" Fill="{DynamicResource ToolbarIconAccent}"/>
     </Canvas>
 
+    <!-- NOTE: PasteIcon sourced from GenericControls IconDictionary -->
+
     <!-- =============================================================================== -->
-    <!-- PASTE ICON                                                                       -->
+    <!-- SHOW ALL ROWS ICON                                                              -->
     <!-- =============================================================================== -->
 
-    <Canvas x:Key="PasteIcon" Width="16" Height="16" x:Shared="False">
-        <Rectangle Canvas.Left="3" Canvas.Top="3" Width="10" Height="12"
-                   StrokeThickness="1.5" Stroke="{DynamicResource ToolbarIconForeground}"
-                   Fill="Transparent" RadiusX="1" RadiusY="1"/>
-        <Rectangle Canvas.Left="5" Canvas.Top="0" Width="6" Height="4"
-                   StrokeThickness="1" Stroke="{DynamicResource ToolbarIconForeground}"
-                   Fill="{DynamicResource ToolbarIconAccent}" RadiusX="0.5" RadiusY="0.5"/>
-        <Rectangle Canvas.Left="5" Canvas.Top="7" Width="6" Height="1" Fill="{DynamicResource ToolbarIconForeground}"/>
-        <Rectangle Canvas.Left="5" Canvas.Top="9" Width="6" Height="1" Fill="{DynamicResource ToolbarIconForeground}"/>
-        <Rectangle Canvas.Left="5" Canvas.Top="11" Width="4" Height="1" Fill="{DynamicResource ToolbarIconForeground}"/>
+    <Canvas x:Key="ShowAllIcon" Width="16" Height="16" x:Shared="False">
+        <!-- Three horizontal bars representing all rows visible -->
+        <Rectangle Canvas.Left="1" Canvas.Top="2" Width="14" Height="2" Fill="{DynamicResource ToolbarIconForeground}"/>
+        <Rectangle Canvas.Left="1" Canvas.Top="7" Width="14" Height="2" Fill="{DynamicResource ToolbarIconForeground}"/>
+        <Rectangle Canvas.Left="1" Canvas.Top="12" Width="14" Height="2" Fill="{DynamicResource ToolbarIconForeground}"/>
+    </Canvas>
+
+    <!-- =============================================================================== -->
+    <!-- SHOW SELECTED ROWS ICON                                                         -->
+    <!-- =============================================================================== -->
+
+    <Canvas x:Key="ShowSelectedIcon" Width="16" Height="16" x:Shared="False">
+        <!-- Two accented bars (selected) with one dim bar (unselected) -->
+        <Rectangle Canvas.Left="1" Canvas.Top="2" Width="14" Height="2" Fill="{DynamicResource ToolbarIconAccent}"/>
+        <Rectangle Canvas.Left="1" Canvas.Top="7" Width="14" Height="2" Fill="{DynamicResource ToolbarIconForeground}" Opacity="0.3"/>
+        <Rectangle Canvas.Left="1" Canvas.Top="12" Width="14" Height="2" Fill="{DynamicResource ToolbarIconAccent}"/>
+    </Canvas>
+
+    <!-- =============================================================================== -->
+    <!-- CLEAR SELECTION ICON                                                            -->
+    <!-- =============================================================================== -->
+
+    <Canvas x:Key="ClearSelectionIcon" Width="16" Height="16" x:Shared="False">
+        <Path Stroke="{DynamicResource ToolbarIconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+            <Path.Data>
+                <PathGeometry Figures="M 3 3 L 13 13 M 13 3 L 3 13"/>
+            </Path.Data>
+        </Path>
+    </Canvas>
+
+    <!-- =============================================================================== -->
+    <!-- SELECT BY ATTRIBUTE ICON (funnel/filter)                                        -->
+    <!-- =============================================================================== -->
+
+    <Canvas x:Key="SelectByAttributeIcon" Width="16" Height="16" x:Shared="False">
+        <Path Fill="{DynamicResource ToolbarIconForeground}">
+            <Path.Data>
+                <PathGeometry Figures="M 1 1 H 15 L 10 7 V 12 L 6 14 V 7 Z" FillRule="NonZero"/>
+            </Path.Data>
+        </Path>
     </Canvas>
 
 </ResourceDictionary>

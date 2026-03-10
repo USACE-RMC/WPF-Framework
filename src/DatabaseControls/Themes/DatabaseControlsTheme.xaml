@@ -171,7 +171,6 @@
     <!-- TABLEVIEWER MAIN STYLE                                                           -->
     <!-- =============================================================================== -->
 
-    <!-- DIAGNOSTIC: Style with NO DynamicResource to test if that's the scroll issue -->
     <Style x:Key="TableViewerStyle" TargetType="{x:Type local:TableViewer}">
         <!-- Header Styles -->
         <Setter Property="ColumnHeaderTextblockStyle" Value="{StaticResource ColumnHeaderTextStyle}"/>
@@ -179,32 +178,31 @@
         <Setter Property="RowHeaderTextblockStyle" Value="{StaticResource RowHeaderTextStyle}"/>
         <Setter Property="RowHeaderBorderStyle" Value="{StaticResource RowHeaderBorderStyle}"/>
         <Setter Property="CellTextblockStyle" Value="{StaticResource CellTextStyle}"/>
-        <!-- Fixed colors (no DynamicResource) for testing -->
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="Background" Value="White"/>
-        <Setter Property="BorderBrush" Value="#FFABADB3"/>
+        <!-- Theme-aware colors -->
+        <Setter Property="Foreground" Value="{DynamicResource DataGrid.Static.Foreground}"/>
+        <Setter Property="Background" Value="{DynamicResource DataGrid.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Static.Border}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <!-- Row Colors - fixed -->
-        <Setter Property="RowColor" Value="White"/>
-        <Setter Property="AlternateRowColor" Value="#FFF3F9F7"/>
-        <!-- Grid Line Colors - fixed -->
-        <Setter Property="RowLineColor" Value="#FF353B7A"/>
-        <Setter Property="ColumnLineColor" Value="#FF353B7A"/>
+        <!-- Row Colors -->
+        <Setter Property="RowColor" Value="{DynamicResource DataGrid.Row.Background}"/>
+        <Setter Property="AlternateRowColor" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+        <!-- Grid Line Colors -->
+        <Setter Property="RowLineColor" Value="{DynamicResource DataGrid.GridLines}"/>
+        <Setter Property="ColumnLineColor" Value="{DynamicResource DataGrid.GridLines}"/>
         <Setter Property="RowLineThickness" Value="1"/>
         <Setter Property="ColumnLineThickness" Value="1"/>
-        <!-- Selection Colors - fixed -->
-        <Setter Property="SelectedColor" Value="#FF0078D7"/>
-        <Setter Property="SelectedForegroundColor" Value="White"/>
-        <Setter Property="DeSelectedColor" Value="#FFCCCEDB"/>
-        <Setter Property="DeSelectedForegroundColor" Value="Black"/>
-        <Setter Property="ActiveCellBackground" Value="#FF0078D7"/>
-        <Setter Property="ActiveCellForeground" Value="White"/>
+        <!-- Selection Colors -->
+        <Setter Property="SelectedColor" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+        <Setter Property="SelectedForegroundColor" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+        <Setter Property="DeSelectedColor" Value="Transparent"/>
+        <Setter Property="DeSelectedForegroundColor" Value="{DynamicResource DataGrid.Static.Foreground}"/>
+        <Setter Property="ActiveCellBackground" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
+        <Setter Property="ActiveCellForeground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
         <!-- Default Row Height -->
         <Setter Property="RowHeight" Value="22"/>
     </Style>
 
-    <!-- NOTE: Implicit style removed - causes scroll rendering issues when applied implicitly.
-         Use Style="{StaticResource TableViewerStyle}" explicitly on TableViewer instances instead. -->
+    <Style TargetType="{x:Type local:TableViewer}" BasedOn="{StaticResource TableViewerStyle}"/>
 
     <!-- =============================================================================== -->
     <!-- FIND AND REPLACE WINDOW STYLES                                                   -->
