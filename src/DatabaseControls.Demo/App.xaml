@@ -42,6 +42,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <!-- GenericControls Theme Resources -->
                 <ResourceDictionary Source="pack://application:,,,/GenericControls;component/Themes/GenericControlsTheme.xaml"/>
 
+                <!-- OxyPlotControls Theme Resources -->
+                <ResourceDictionary Source="pack://application:,,,/OxyPlotControls;component/Themes/OxyPlotControlsTheme.xaml"/>
+
                 <!-- DatabaseControls Theme Resources -->
                 <ResourceDictionary Source="pack://application:,,,/DatabaseControls;component/Themes/DatabaseControlsTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
