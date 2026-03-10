@@ -129,7 +129,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="TreeColumn" Width="200" MinWidth="140"/>
+            <ColumnDefinition x:Name="TreeColumn" Width="200" MinWidth="100"/>
             <ColumnDefinition x:Name="SplitterColumn" Width="Auto"/>
             <ColumnDefinition x:Name="DetailColumn" Width="*"/>
         </Grid.ColumnDefinitions>

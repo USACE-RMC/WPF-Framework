@@ -73,6 +73,12 @@ namespace DatabaseControls
         private readonly bool _isSelectByAttribute;
 
         /// <summary>
+        /// Tracks whether the errors expander is currently contributing to the window height.
+        /// Used to avoid double-growing or double-shrinking.
+        /// </summary>
+        private bool _errorsExpanderOpen;
+
+        /// <summary>
         /// List of row indices that match the selection criteria when using "Select By Attribute" mode.
         /// </summary>
         private List<int> _rowsToSelect = new List<int>();
@@ -464,7 +470,7 @@ namespace DatabaseControls
 
             if (ExpressionCalculator.HasErrors)
             {
-                resultTextBlock.Text = "Errors found in expression";
+                // Errors are displayed in the errors expander — no need for result text
             }
             else
             {
@@ -581,7 +587,7 @@ namespace DatabaseControls
         {
             if (show)
             {
-                FunctionsColumn.Width = new GridLength(140);
+                FunctionsColumn.Width = new GridLength(160);
                 FunctionsColumn.MinWidth = 100;
                 FunctionsLabel.Visibility = Visibility.Visible;
                 FunctionsPanel.Visibility = Visibility.Visible;
@@ -643,8 +649,14 @@ namespace DatabaseControls
         #region Error Display
 
         /// <summary>
+        /// The height added to the window when the errors expander opens.
+        /// </summary>
+        private const double ErrorsExpanderHeight = 130;
+
+        /// <summary>
         /// Updates the errors expander with parse errors from the expression.
         /// Auto-opens when errors exist, collapses when expression is error-free.
+        /// Grows/shrinks the window height to accommodate the expander.
         /// </summary>
         private void UpdateErrorDisplay()
         {
@@ -656,12 +668,24 @@ namespace DatabaseControls
                 ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
                 ErrorsExpander.Visibility = Visibility.Visible;
                 ErrorsExpander.IsExpanded = true;
+
+                if (!_errorsExpanderOpen)
+                {
+                    _errorsExpanderOpen = true;
+                    this.Height += ErrorsExpanderHeight;
+                }
             }
             else
             {
                 ErrorsExpander.Visibility = Visibility.Collapsed;
                 ErrorsExpander.IsExpanded = false;
                 ErrorsList.ItemsSource = null;
+
+                if (_errorsExpanderOpen)
+                {
+                    _errorsExpanderOpen = false;
+                    this.Height -= ErrorsExpanderHeight;
+                }
             }
         }
 

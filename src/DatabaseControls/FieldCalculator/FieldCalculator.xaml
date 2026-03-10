@@ -29,17 +29,17 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="0" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
-            <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}" TextChanged="NewFieldName_TextChanged"/>
-            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
-            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
+            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Margin="5, 0, 0,0" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
+            <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0" Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}" TextChanged="NewFieldName_TextChanged"/>
+            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
+            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
         </Grid>
 
         <!-- Row 1: Main Content — 3-column layout (Data Columns | Functions | Expression) -->
         <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
                 <!-- Data Columns (fixed width) -->
-                <ColumnDefinition x:Name="DataColumnsColumn" Width="140" MinWidth="100"/>
+                <ColumnDefinition x:Name="DataColumnsColumn" Width="160" MinWidth="100"/>
                 <!-- Functions column (toggled, matches Data Columns width) -->
                 <ColumnDefinition x:Name="FunctionsColumn" Width="0"/>
                 <!-- Expression column (fills remaining space) -->
@@ -142,7 +142,7 @@
                 IsEnabled="False"
                 VerticalAlignment="Center"
                 Grid.Column="0"/>
-            <Button Content="Execute" Grid.Column="1" Name="ExecuteButton" IsEnabled="False" IsDefault="True" Width="80" Height="24" Click="ExecuteButton_Click"/>
+            <Button Content="Execute" Grid.Column="1" Name="ExecuteButton" IsEnabled="False" IsDefault="True" Width="75" Height="24" Click="ExecuteButton_Click"/>
         </Grid>
     </Grid>
 </cntrls:MetroWindow>
