@@ -684,6 +684,13 @@ namespace DatabaseControls
                         if (tv.GridLinesCanvas.Children[i] is Line colLine)
                             colLine.Stroke = tv.ColumnLineColor;
                     }
+                    // Update column header border brushes (not recreated by LoadRows)
+                    var headerBorderBrush = (Brush)tv.FindResource("DataGrid.Header.Border");
+                    foreach (UIElement child in tv.ColumnHeadersGrid.Children)
+                    {
+                        if (child is ColumnHeader header)
+                            header.BorderBrush = headerBorderBrush;
+                    }
                     tv.DeSelectAllCells();
                     tv.SetSelectedCells();
                     tv.UpdateRowHeaders();
