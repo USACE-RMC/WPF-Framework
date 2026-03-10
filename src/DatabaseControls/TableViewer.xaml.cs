@@ -85,6 +85,7 @@ namespace DatabaseControls
         private List<int> _selectedColumnIndices = new List<int>();
         private SortedDictionary<int, SortedSet<int>> _selectedCellIndices = new SortedDictionary<int, SortedSet<int>>();
         private bool _selectedRowsOnly = false;
+        private bool _visualRefreshPending = false;
         private string _attributeSelectorString = "";
         private int[]? _rowOffset;
         private int[]? _rowId;
@@ -195,73 +196,73 @@ namespace DatabaseControls
         /// Identifies the <see cref="SelectedColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(
-            nameof(SelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(240, 0, 120, 215))));
+            nameof(SelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(240, 0, 120, 215)), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ActiveCellForeground"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ActiveCellForegroundProperty = DependencyProperty.Register(
-            nameof(ActiveCellForeground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White)));
+            nameof(ActiveCellForeground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ActiveCellBackground"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ActiveCellBackgroundProperty = DependencyProperty.Register(
-            nameof(ActiveCellBackground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 21, 107, 176))));
+            nameof(ActiveCellBackground), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 21, 107, 176)), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="DeSelectedColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty DeSelectedColorProperty = DependencyProperty.Register(
-            nameof(DeSelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Transparent));
+            nameof(DeSelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Transparent, OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="SelectedForegroundColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SelectedForegroundColorProperty = DependencyProperty.Register(
-            nameof(SelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White)));
+            nameof(SelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="DeSelectedForegroundColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty DeSelectedForegroundColorProperty = DependencyProperty.Register(
-            nameof(DeSelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Black));
+            nameof(DeSelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.Black, OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RowColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowColorProperty = DependencyProperty.Register(
-            nameof(RowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.White));
+            nameof(RowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(Brushes.White, OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="AlternateRowColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty AlternateRowColorProperty = DependencyProperty.Register(
-            nameof(AlternateRowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 243, 249, 247))));
+            nameof(AlternateRowColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 243, 249, 247)), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RowLineColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowLineColorProperty = DependencyProperty.Register(
-            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
+            nameof(RowLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122)), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RowLineThickness"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty RowLineThicknessProperty = DependencyProperty.Register(
-            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
+            nameof(RowLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ColumnLineColor"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnLineColorProperty = DependencyProperty.Register(
-            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122))));
+            nameof(ColumnLineColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 53, 59, 122)), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ColumnLineThickness"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnLineThicknessProperty = DependencyProperty.Register(
-            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0));
+            nameof(ColumnLineThickness), typeof(double), typeof(TableViewer), new UIPropertyMetadata(1.0, OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ColumnSelectable"/> dependency property.
@@ -661,6 +662,26 @@ namespace DatabaseControls
         #endregion
 
         #region Loading
+
+        private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not TableViewer tv) return;
+            if (tv.DataView == null || tv.GridPanel.Children.Count == 0) return;
+            // Coalesce multiple DP changes (e.g. theme switch updates many colors at once)
+            // into a single visual refresh via dispatcher.
+            if (!tv._visualRefreshPending)
+            {
+                tv._visualRefreshPending = true;
+                tv.Dispatcher.InvokeAsync(() =>
+                {
+                    tv._visualRefreshPending = false;
+                    if (tv.DataView == null || tv.GridPanel.Children.Count == 0) return;
+                    tv.LoadRows();
+                    tv.SetSelectedCells();
+                    tv.UpdateRowHeaders();
+                }, System.Windows.Threading.DispatcherPriority.Render);
+            }
+        }
 
         private static void LoadView(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
