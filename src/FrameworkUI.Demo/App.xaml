@@ -17,6 +17,9 @@
 
                 <!-- OxyPlotControls Theme Resources (for PropertyExpanderStyle, PropertiesTabItemStyle, etc.) -->
                 <ResourceDictionary Source="pack://application:,,,/OxyPlotControls;component/Themes/OxyPlotControlsTheme.xaml"/>
+
+                <!-- DatabaseControls Theme Resources (for TableViewer styles) -->
+                <ResourceDictionary Source="pack://application:,,,/DatabaseControls;component/Themes/DatabaseControlsTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
