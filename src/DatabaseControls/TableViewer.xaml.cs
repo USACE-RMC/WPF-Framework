@@ -1498,13 +1498,13 @@ namespace DatabaseControls
             {
                 if (_columnSortOrder == SortOrder.None)
                 {
-                    int selectedIndex = firstRowIndex + tableRowIndex;
-                    return selectedIndex < _selectedDataRowIndices.Count ? _selectedDataRowIndices[selectedIndex] : -1;
+                    int selectedIndex = Math.Min(firstRowIndex + tableRowIndex, _selectedDataRowIndices.Count - 1);
+                    return _selectedDataRowIndices[selectedIndex];
                 }
                 else
                 {
-                    int sortedIndex = firstRowIndex + tableRowIndex;
-                    return sortedIndex < _sortedSelectedRowOffsets!.Length ? _rowId![_sortedSelectedRowOffsets[sortedIndex]] : -1;
+                    int sortedIndex = Math.Min(firstRowIndex + tableRowIndex, _sortedSelectedRowOffsets!.Length - 1);
+                    return _rowId![_sortedSelectedRowOffsets[sortedIndex]];
                 }
             }
             return _rowId![firstRowIndex + tableRowIndex];
@@ -2557,26 +2557,15 @@ namespace DatabaseControls
                 }
                 else if (_mouseSelectionMode == SelectionMode.CellSelect)
                 {
-                    int mouseColumnIndex = GetTableColumnIndex(gridPosition);
                     int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
-                    _selectedCellIndices.Clear();
-                    _selectedDataRowIndices.Clear();
-                    _selectedColumnIndices.Clear();
+                    int mouseMoveDataRowIndex = verticalScrollBarValue;
+                    int mouseMoveColumnIndex = GetTableColumnIndex(gridPosition);
+                    int rowStep = mouseMoveDataRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
+                    int columnStep = mouseMoveColumnIndex >= _mouseDownColumnIndex ? 1 : -1;
 
-                    int columnStep = _mouseDownColumnIndex < mouseColumnIndex ? 1 : -1;
-                    int rowStep = _mouseDownVirtualRowIndex < verticalScrollBarValue ? 1 : -1;
-
-                    for (int i = _mouseDownVirtualRowIndex; ; i += rowStep)
-                    {
-                        var columnSet = new SortedSet<int>();
-                        for (int j = _mouseDownColumnIndex; ; j += columnStep)
-                        {
-                            columnSet.Add(j);
-                            if (j == mouseColumnIndex) break;
-                        }
-                        _selectedCellIndices.Add(_rowId![i], columnSet);
-                        if (i == verticalScrollBarValue) break;
-                    }
+                    for (int i = _mouseDownColumnIndex; columnStep > 0 ? i <= mouseMoveColumnIndex : i >= mouseMoveColumnIndex; i += columnStep)
+                        for (int j = _mouseDownVirtualRowIndex - verticalScrollBarValue; rowStep > 0 ? j <= mouseMoveDataRowIndex - verticalScrollBarValue : j >= mouseMoveDataRowIndex - verticalScrollBarValue; j += rowStep)
+                            SelectCell(i, j);
                 }
                 SetActiveCell();
             }
@@ -2607,35 +2596,29 @@ namespace DatabaseControls
 
                 if (_mouseDownVirtualRowIndex == mouseUpDataRowIndex && _mouseDownColumnIndex == mouseUpColumnIndex)
                 {
-                    // Single cell selection
-                    _selectedCellIndices.Clear();
-                    _selectedDataRowIndices.Clear();
-                    _selectedColumnIndices.Clear();
-                    var columnSet = new SortedSet<int> { _mouseDownColumnIndex };
-                    _selectedCellIndices.Add(_rowId![_mouseDownVirtualRowIndex], columnSet);
+                    // Single cell selection — accumulate (match VB behavior)
+                    int dataRowKey = _rowId![mouseUpDataRowIndex];
+                    if (!_selectedCellIndices.ContainsKey(dataRowKey))
+                        _selectedCellIndices.Add(dataRowKey, new SortedSet<int>());
+                    _selectedCellIndices[dataRowKey].Add(mouseUpColumnIndex);
+                    SelectCell(mouseUpColumnIndex, mouseUpDataRowIndex - verticalScrollBarValue);
                 }
                 else
                 {
-                    // Range of cells
-                    int columnStep = _mouseDownColumnIndex < mouseUpColumnIndex ? 1 : -1;
-                    int rowStep = _mouseDownVirtualRowIndex < mouseUpDataRowIndex ? 1 : -1;
-                    _selectedCellIndices.Clear();
-                    _selectedDataRowIndices.Clear();
-                    _selectedColumnIndices.Clear();
+                    // Range of cells — accumulate (match VB behavior)
+                    int rowStep = mouseUpDataRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
+                    int columnStep = mouseUpColumnIndex >= _mouseDownColumnIndex ? 1 : -1;
 
-                    for (int i = _mouseDownVirtualRowIndex; ; i += rowStep)
+                    for (int i = _mouseDownVirtualRowIndex; rowStep > 0 ? i <= mouseUpDataRowIndex : i >= mouseUpDataRowIndex; i += rowStep)
                     {
-                        var columnSet = new SortedSet<int>();
-                        for (int j = _mouseDownColumnIndex; ; j += columnStep)
-                        {
-                            columnSet.Add(j);
-                            if (j == mouseUpColumnIndex) break;
-                        }
-                        _selectedCellIndices.Add(_rowId![i], columnSet);
-                        if (i == mouseUpDataRowIndex) break;
+                        int dataRowKey = _rowId![i];
+                        if (!_selectedCellIndices.ContainsKey(dataRowKey))
+                            _selectedCellIndices.Add(dataRowKey, new SortedSet<int>());
+                        for (int j = _mouseDownColumnIndex; columnStep > 0 ? j <= mouseUpColumnIndex : j >= mouseUpColumnIndex; j += columnStep)
+                            _selectedCellIndices[dataRowKey].Add(j);
                     }
+                    SetSelectedCells();
                 }
-                SetSelectedCells();
             }
 
             UpdateSelectionButtonStates();

@@ -52,7 +52,10 @@
       "Bash(done)",
       "Bash(sed 's/\\\\:.*//')",
       "Bash(xargs -I {} basename {})",
-      "Bash(wc -l C:GITwpf-frameworksrcDataBase_Reader_VB/*.vb)"
+      "Bash(wc -l C:GITwpf-frameworksrcDataBase_Reader_VB/*.vb)",
+      "Bash(wc -l \"C:\\\\GIT\\\\wpf-framework\\\\src\\\\DataTable_Viewer_VB\"/*.vb \"C:\\\\GIT\\\\wpf-framework\\\\src\\\\DataTable_Viewer_VB\"/**/*.vb)",
+      "Bash(sort -k1 -n)",
+      "Bash(xargs -0 grep -l \"class ParseTreeNode\")"
     ]
   }
 }

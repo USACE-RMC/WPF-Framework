@@ -384,8 +384,8 @@ namespace DatabaseControls
             // Guard against empty array access
             if (thisControl._sortedData.Length == 0)
             {
-                thisControl.DefaultR = 1.0;
-                thisControl.DefaultIntervalSize = 1.0;
+                thisControl.DefaultR = 1.08;
+                thisControl.DefaultIntervalSize = 10.0;
                 thisControl.UpdateDataView();
                 return;
             }
@@ -557,6 +557,7 @@ namespace DatabaseControls
             if (_sortedData == null || _sortedData.Length == 0)
             {
                 columnData = new double[StatsTable.DataView.NumberOfRows];
+                Array.Fill(columnData, double.NaN);
             }
             else
             {
@@ -699,19 +700,23 @@ namespace DatabaseControls
                 return;
             }
 
-            rangeCounts = new int[breaks.Length];
-            int binIdx = 0;
-            for (int i = 0; i < _sortedData.Length; i++)
+            // Use Jenks-computed rangeCounts if available; otherwise count manually
+            if (rangeCounts == null || rangeCounts.Length != breaks.Length)
             {
-                if (_sortedData[i] <= breaks[binIdx])
+                rangeCounts = new int[breaks.Length];
+                int binIdx = 0;
+                for (int i = 0; i < _sortedData.Length; i++)
                 {
-                    rangeCounts[binIdx] += 1;
-                }
-                else
-                {
-                    i -= 1;
-                    binIdx += 1;
-                    if (binIdx >= breaks.Length) break;
+                    if (_sortedData[i] <= breaks[binIdx])
+                    {
+                        rangeCounts[binIdx] += 1;
+                    }
+                    else
+                    {
+                        i -= 1;
+                        binIdx += 1;
+                        if (binIdx >= breaks.Length) break;
+                    }
                 }
             }
 
