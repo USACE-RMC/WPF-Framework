@@ -100,6 +100,7 @@ namespace ExpressionParserControls
                 DetailBorder.Visibility = Visibility.Collapsed;
                 InsertFunctionButton.Visibility = Visibility.Collapsed;
                 TreeColumn.Width = new GridLength(1, GridUnitType.Star);
+                DetailColumn.Width = new GridLength(0);
             }
             else
             {
@@ -107,6 +108,7 @@ namespace ExpressionParserControls
                 DetailBorder.Visibility = Visibility.Visible;
                 InsertFunctionButton.Visibility = Visibility.Visible;
                 TreeColumn.Width = new GridLength(200);
+                DetailColumn.Width = new GridLength(1, GridUnitType.Star);
             }
         }
 

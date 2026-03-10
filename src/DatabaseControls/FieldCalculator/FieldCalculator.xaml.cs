@@ -672,7 +672,7 @@ namespace DatabaseControls
                 if (!_errorsExpanderOpen)
                 {
                     _errorsExpanderOpen = true;
-                    this.Height += ErrorsExpanderHeight;
+                    this.Height = this.ActualHeight + ErrorsExpanderHeight;
                 }
             }
             else
@@ -684,7 +684,7 @@ namespace DatabaseControls
                 if (_errorsExpanderOpen)
                 {
                     _errorsExpanderOpen = false;
-                    this.Height -= ErrorsExpanderHeight;
+                    this.Height = this.ActualHeight - ErrorsExpanderHeight;
                 }
             }
         }
