@@ -140,9 +140,6 @@ namespace DatabaseControls
                 return;
             }
 
-            if (_viewer.GetSelectedRows.Count > 0)
-                SelectedOnlyCheckbox.IsEnabled = true;
-
             object[] fieldData = _viewer.DataView.GetColumn(_viewer.DataView.ColumnNames[_columnIndex]);
 
             if (_isNumeric)
@@ -152,6 +149,13 @@ namespace DatabaseControls
             else
             {
                 AlphabeticColumnViewer.Data = fieldData;
+            }
+
+            // Auto-check "Selected Rows Only" if rows are selected; the Checked handler will reload with filtered data
+            if (_viewer.GetSelectedRows.Count > 0)
+            {
+                SelectedOnlyCheckbox.IsEnabled = true;
+                SelectedOnlyCheckbox.IsChecked = true;
             }
         }
 

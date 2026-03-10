@@ -194,18 +194,19 @@ namespace DatabaseControls
             // Set the summary statistics table
             DataTable statsDataTable = new DataTable("StatsDataTable");
             statsDataTable.Columns.Add(new DataColumn("Statistic", typeof(string)));
-            statsDataTable.Columns.Add(new DataColumn("Value", typeof(double)));
-            statsDataTable.Rows.Add("Count", double.NaN);
-            statsDataTable.Rows.Add("Minimum", double.NaN);
-            statsDataTable.Rows.Add("Maximum", double.NaN);
-            statsDataTable.Rows.Add("Sum", double.NaN);
-            statsDataTable.Rows.Add("Mean", double.NaN);
-            statsDataTable.Rows.Add("Std. Deviation", double.NaN);
-            statsDataTable.Rows.Add("5th %-ile", double.NaN);
-            statsDataTable.Rows.Add("25th %-ile", double.NaN);
-            statsDataTable.Rows.Add("50th %-ile", double.NaN);
-            statsDataTable.Rows.Add("75th %-ile", double.NaN);
-            statsDataTable.Rows.Add("95th %-ile", double.NaN);
+            statsDataTable.Columns.Add(new DataColumn("Value", typeof(string)));
+            statsDataTable.Rows.Add("Count", "");
+            statsDataTable.Rows.Add("Minimum", "");
+            statsDataTable.Rows.Add("Maximum", "");
+            statsDataTable.Rows.Add("Sum", "");
+            statsDataTable.Rows.Add("Mean", "");
+            statsDataTable.Rows.Add("Std. Deviation", "");
+            statsDataTable.Rows.Add("Skewness", "");
+            statsDataTable.Rows.Add("5th %-ile", "");
+            statsDataTable.Rows.Add("25th %-ile", "");
+            statsDataTable.Rows.Add("50th %-ile", "");
+            statsDataTable.Rows.Add("75th %-ile", "");
+            statsDataTable.Rows.Add("95th %-ile", "");
 
             InMemoryReader statsDataView = new InMemoryReader(statsDataTable);
             StatsTable.DataView = statsDataView.GetTableManager(statsDataTable.TableName);
@@ -225,6 +226,7 @@ namespace DatabaseControls
 
             HistogramSeries.FillColor = Color.FromArgb(75, 220, 20, 60);
             HistogramSeries.StrokeColor = Color.FromArgb(255, 255, 0, 0);
+            BackGroundHistogramSeries.Visibility = Visibility.Collapsed;
         }
 
         #endregion
@@ -357,6 +359,11 @@ namespace DatabaseControls
         /// <value>An observable collection of <see cref="OxyPlot.Series.HistogramItem"/> objects.</value>
         public ObservableCollection<OxyPlot.Series.HistogramItem> HistogramData { get; } = new ObservableCollection<OxyPlot.Series.HistogramItem>();
 
+        /// <summary>
+        /// Gets the collection of histogram items for the background histogram (50 equal-interval bins).
+        /// </summary>
+        public ObservableCollection<OxyPlot.Series.HistogramItem> BackgroundHistogramData { get; } = new ObservableCollection<OxyPlot.Series.HistogramItem>();
+
         #endregion
 
         #region Dependency Property Callbacks
@@ -423,7 +430,8 @@ namespace DatabaseControls
         {
             if (edit.GetType() == typeof(CellEdit))
             {
-                double[] breaks = Array.ConvertAll(BreaksTable.DataView.GetColumn(0), o => o is DBNull ? 0 : Convert.ToDouble(o));
+                double[] breaks = Array.ConvertAll(BreaksTable.DataView.GetColumn(0),
+                    o => o is DBNull || (o is string s && string.IsNullOrWhiteSpace(s)) ? 0 : Convert.ToDouble(o));
 
                 bool update = false;
                 for (int i = ((CellEdit)edit).RowIndex; i >= 1; i--)
@@ -445,7 +453,8 @@ namespace DatabaseControls
 
                 if (update)
                 {
-                    BreaksTable.DataView.EditColumn(0, breaks);
+                    object[] formattedBreaks = breaks.Select(b => (object)b.ToString("F15")).ToArray();
+                    BreaksTable.DataView.EditColumn(0, formattedBreaks);
                 }
 
                 if (ManualIntervalItem.IsSelected)
@@ -509,6 +518,15 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Toggles the visibility of the background histogram series.
+        /// </summary>
+        private void ShowBackgroundCheckbox_Changed(object sender, RoutedEventArgs e)
+        {
+            BackGroundHistogramSeries.Visibility = ShowBackgroundCheckbox.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            StatsPlot.InvalidatePlot(true);
+        }
+
+        /// <summary>
         /// Handles the selection change in the classification method combo box.
         /// </summary>
         /// <param name="sender">The combo box that raised the event.</param>
@@ -525,6 +543,7 @@ namespace DatabaseControls
             if (JenksBreaksItem.IsSelected || QuantilesItem.IsSelected || EqualIntervalItem.IsSelected || ManualIntervalItem.IsSelected)
             {
                 ClassCountControl.Visibility = Visibility.Visible;
+                ClassCountControl.MaxValue = ManualIntervalItem.IsSelected ? 50 : 12;
             }
             else if (HeadTailsItem.IsSelected)
             {
@@ -553,16 +572,15 @@ namespace DatabaseControls
         {
             if (StatsTable == null || StatsTable.DataView == null) return;
 
-            double[] columnData;
+            string[] columnStrings = new string[StatsTable.DataView.NumberOfRows];
             if (_sortedData == null || _sortedData.Length == 0)
             {
-                columnData = new double[StatsTable.DataView.NumberOfRows];
-                Array.Fill(columnData, double.NaN);
+                Array.Fill(columnStrings, "");
             }
             else
             {
                 double[] prodMoments = Statistics.ProductMoments(_sortedData);
-                columnData = new double[]
+                double[] columnData = new double[]
                 {
                     _sortedData.Length,
                     _sortedData[0],
@@ -570,12 +588,16 @@ namespace DatabaseControls
                     _sortedData.Sum(),
                     prodMoments[0],
                     prodMoments[1],
+                    prodMoments[2],
                     Statistics.Percentile(_sortedData, 0.05, true),
                     Statistics.Percentile(_sortedData, 0.25, true),
                     Statistics.Percentile(_sortedData, 0.5, true),
                     Statistics.Percentile(_sortedData, 0.75, true),
                     Statistics.Percentile(_sortedData, 0.95, true)
                 };
+
+                for (int i = 0; i < columnData.Length; i++)
+                    columnStrings[i] = double.IsNaN(columnData[i]) ? "" : columnData[i].ToString("F15");
 
                 if (_sortedData.Length != Data.Length)
                 {
@@ -587,7 +609,7 @@ namespace DatabaseControls
                 }
             }
 
-            StatsTable.DataView.EditColumn(1, columnData);
+            StatsTable.DataView.EditColumn(1, columnStrings);
             StatsTable.UpdateVisibleRows();
 
             // Update histogram numeric output format (only if data exists)
@@ -614,6 +636,43 @@ namespace DatabaseControls
 
                 HistogramSeries.LabelFormatString = _stringFormat;
             }
+
+            // Generate background histogram (50 equal-interval bins)
+            BackgroundHistogramData.Clear();
+            if (_sortedData != null && _sortedData.Length > 1)
+            {
+                double[] bgBreaks = Classification.EqualInterval(_sortedData, 50, true);
+                if (bgBreaks.Length > 0)
+                {
+                    int[] bgCounts = new int[bgBreaks.Length];
+                    int binIdx = 0;
+                    for (int i = 0; i < _sortedData.Length; i++)
+                    {
+                        if (_sortedData[i] <= bgBreaks[binIdx])
+                        {
+                            bgCounts[binIdx]++;
+                        }
+                        else
+                        {
+                            i--;
+                            binIdx++;
+                            if (binIdx >= bgBreaks.Length) break;
+                        }
+                    }
+
+                    double prev = _sortedData[0];
+                    for (int i = 0; i < bgBreaks.Length; i++)
+                    {
+                        double lo = prev, hi = bgBreaks[i];
+                        if (hi != lo)
+                            BackgroundHistogramData.Add(new OxyPlot.Series.HistogramItem(lo, hi, bgCounts[i] * (hi - lo)));
+                        else
+                            BackgroundHistogramData.Add(new OxyPlot.Series.HistogramItem(lo - 0.000001, hi + 0.000001, bgCounts[i] * 0.000002));
+                        prev = hi;
+                    }
+                }
+            }
+
             Plot();
         }
 
@@ -672,15 +731,16 @@ namespace DatabaseControls
             }
             else if (ManualIntervalItem.IsSelected)
             {
-                breaks = Array.ConvertAll(BreaksTable.DataView.GetColumn(0), o => o is DBNull ? 0 : Convert.ToDouble(o));
-                if (breaks.Length < ClassCount)
+                if (BreaksTable.DataView != null && BreaksTable.DataView.NumberOfRows == ClassCount)
                 {
-                    int oldCount = breaks.Length;
-                    Array.Resize(ref breaks, ClassCount);
-                    for (int i = oldCount; i < ClassCount; i++)
-                    {
-                        breaks[i] = breaks[i - 1];
-                    }
+                    // Table row count matches ClassCount — read existing/edited breaks
+                    breaks = Array.ConvertAll(BreaksTable.DataView.GetColumn(0),
+                        o => o is DBNull || (o is string s && string.IsNullOrWhiteSpace(s)) ? 0 : Convert.ToDouble(o));
+                }
+                else
+                {
+                    // Count mismatch — regenerate equal-interval breaks at new ClassCount
+                    breaks = Classification.EqualInterval(_sortedData, ClassCount, true);
                 }
             }
 
@@ -730,13 +790,13 @@ namespace DatabaseControls
             HistogramData.Clear();
 
             DataTable breaksDataTable = new DataTable("BreaksTable");
-            breaksDataTable.Columns.Add(new DataColumn("Less Than", typeof(double)));
+            breaksDataTable.Columns.Add(new DataColumn("Less Than", typeof(string)));
             breaksDataTable.Columns.Add(new DataColumn("Count", typeof(int)));
 
             for (int i = 0; i < ranges.Count; i++)
             {
                 // Set breaks table
-                breaksDataTable.Rows.Add(ranges[i].Item2, rangeCounts[i]);
+                breaksDataTable.Rows.Add(ranges[i].Item2.ToString("F15"), rangeCounts[i]);
 
                 if (ranges[i].Item2 == ranges[i].Item1)
                 {

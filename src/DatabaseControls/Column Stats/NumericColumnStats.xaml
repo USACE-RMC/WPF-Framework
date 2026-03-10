@@ -36,7 +36,7 @@
                 x:Name="StatsTable"
                 Editable="False"
                 Margin="0"
-                Height="290"
+                Height="313"
                 DockPanel.Dock="Top"
                 RowSelectable="False"
                 ColumnSelectable="True"
@@ -198,13 +198,13 @@
                   PlotAreaBackground="White">
             <oxy:Plot.Series>
 
-                <!--<oxy:HistogramSeries
+                <oxy:HistogramSeries
                     Name="BackGroundHistogramSeries"
                     Title="Background Histogram"
                     FillColor="#FFB4B9B5"
                     StrokeThickness="1"
-                    Visibility="{Binding IsChecked, ElementName=ShowBackgroundCheckbox, Converter={StaticResource Bool2VisConverter}}"
-                    ItemsSource="{Binding BackgroundHistogramData, ElementName=NumericStats}"/>-->
+                    LabelFormatString=""
+                    ItemsSource="{Binding BackgroundHistogramData, ElementName=NumericStats}"/>
 
                 <oxy:HistogramSeries
                     Name="HistogramSeries"
@@ -258,7 +258,14 @@
             Grid.Column="3"
             Margin="5,0,0,0"/>
 
-        <!--<CheckBox x:Name="ShowBackgroundCheckbox" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">Background Histogram</CheckBox>-->
+        <CheckBox x:Name="ShowBackgroundCheckbox"
+            Grid.Column="1"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Margin="5"
+            Content="Background Histogram"
+            Checked="ShowBackgroundCheckbox_Changed"
+            Unchecked="ShowBackgroundCheckbox_Changed"/>
 
     </Grid>
 </UserControl>

@@ -29,7 +29,7 @@
     <Grid Margin="5" Background="Transparent">
         <TabControl Grid.Row="0" TabStripPlacement="Top" Background="Transparent" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Graphical Results" Style="{DynamicResource HorizontalTabItemStyle}">
-                <Grid Background ="{DynamicResource PlotWindowBackground}">
+                <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
