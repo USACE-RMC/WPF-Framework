@@ -596,7 +596,9 @@ namespace DatabaseControls
                     Statistics.Percentile(_sortedData, 0.95, true)
                 };
 
-                for (int i = 0; i < columnData.Length; i++)
+                // Format Count (index 0) as integer, all others as F15
+                columnStrings[0] = ((int)columnData[0]).ToString();
+                for (int i = 1; i < columnData.Length; i++)
                     columnStrings[i] = double.IsNaN(columnData[i]) ? "" : columnData[i].ToString("F15");
 
                 if (_sortedData.Length != Data.Length)

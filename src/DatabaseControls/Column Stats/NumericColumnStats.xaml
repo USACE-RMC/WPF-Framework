@@ -88,7 +88,6 @@
                 MinValue="1"
                 MaxValue="12"
                 Increment="1"
-                MaxPropertyWidth="30"
                 Visibility="Collapsed"
                 Number="{Binding ClassCount, ElementName=NumericStats, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
