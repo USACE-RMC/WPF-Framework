@@ -433,30 +433,13 @@ namespace DatabaseControls
         }
 
         /// <summary>
-        /// Handles the click event for the Error Log button.
-        /// Opens a window displaying any errors found in the expression.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void ErrorLogButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ExpressionCalculator.GetParseTree().ContainsErrors)
-            {
-                return;
-            }
-            var errors = ExpressionCalculator.GetParseTree().GetErrors;
-            var errorWindow = new ErrorWindow(errors, "Errors Encountered in Expression");
-            errorWindow.Show();
-        }
-
-        /// <summary>
         /// Handles the expression changed event from the calculator control.
         /// Validates the expression and updates the result preview.
+        /// Uses CalculatorControl.HasErrors for error state instead of manual checking.
         /// </summary>
         private void ExpressionCalculator_ExpressionChanged()
         {
             resultTextBlock.Text = "";
-            ErrorLogButton.IsEnabled = false;
 
             // Check for parse errors
             IParserNode parseNode = ExpressionCalculator.GetParseTree();
@@ -465,13 +448,10 @@ namespace DatabaseControls
                 return;
             }
 
-            List<ParseError> errorList = parseNode.GetErrors;
+            // Use the CalculatorControl's HasErrors property (errors are displayed inline)
+            ExecuteButton.IsEnabled = !ExpressionCalculator.HasErrors;
 
-            // Check that output type is correct
-            ErrorLogButton.IsEnabled = errorList.Count > 0;
-            ExecuteButton.IsEnabled = errorList.Count == 0;
-
-            if (errorList.Count > 0)
+            if (ExpressionCalculator.HasErrors)
             {
                 resultTextBlock.Text = "Errors found in expression";
             }

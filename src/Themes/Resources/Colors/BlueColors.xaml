@@ -118,6 +118,10 @@
     <SolidColorBrush x:Key="DataGrid.Cell.Error.Border" Color="#FF0000"/>
     <SolidColorBrush x:Key="DataGrid.Cell.Error.Background" Color="#FFF7B6AF"/>
 
+    <!-- Expression Error Expander Colors -->
+    <SolidColorBrush x:Key="ExpressionError.Text" Color="#D32F2F"/>
+    <SolidColorBrush x:Key="ExpressionError.Glyph" Color="#D32F2F"/>
+
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EXPANDER                                                                     -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->

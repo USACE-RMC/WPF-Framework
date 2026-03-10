@@ -146,9 +146,9 @@
         <!-- Main Content: TreeView + Detail Panel -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" MinWidth="140"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition x:Name="TreeColumn" Width="200" MinWidth="140"/>
+                <ColumnDefinition x:Name="SplitterColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="DetailColumn" Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!-- Function List -->
@@ -162,10 +162,10 @@
             </Grid>
 
             <!-- Splitter -->
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Background="{DynamicResource EnvironmentWindowBackground}"/>
+            <GridSplitter x:Name="DetailSplitter" Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Background="{DynamicResource EnvironmentWindowBackground}"/>
 
             <!-- Detail Panel -->
-            <Border Grid.Column="2" Margin="5,0,0,0" BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1" Background="{DynamicResource TextBox.Static.Background}">
+            <Border x:Name="DetailBorder" Grid.Column="2" Margin="5,0,0,0" BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1" Background="{DynamicResource TextBox.Static.Background}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12">
                     <StackPanel x:Name="DetailPanel" Visibility="Collapsed">
 

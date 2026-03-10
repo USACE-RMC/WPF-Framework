@@ -1,4 +1,4 @@
-﻿/*
+/*
 * NOTICE:
 * The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
 * the results, or appropriateness of outputs, obtained from this software.
@@ -39,15 +39,20 @@ using ExpressionParser;
 namespace ExpressionParserControls
 {
     /// <summary>
-    /// A WPF UserControl that provides an interactive expression editor with buttons for arithmetic operations
-    /// and integration with a parser for generating a parse tree.
+    /// A WPF UserControl that provides an interactive expression editor with operator buttons,
+    /// an inline functions panel, a function help expander, and an auto-opening errors expander.
     /// </summary>
-    public partial class CalculatorControl:UserControl
+    public partial class CalculatorControl : UserControl
     {
         /// <summary>
         /// Dictionary containing variable names and their associated result types for expression parsing.
         /// </summary>
         private Dictionary<string, ResultType> _variables;
+
+        /// <summary>
+        /// Tracks the currently displayed function in the help expander.
+        /// </summary>
+        private FunctionDescriptor? _currentHelpFunction;
 
         /// <summary>
         /// Raised when the expression in the LexTextBox has changed.
@@ -59,20 +64,60 @@ namespace ExpressionParserControls
         /// </summary>
         public delegate void ExpressionChangedEventHandler();
 
+        #region Dependency Properties
+
+        /// <summary>
+        /// Identifies the HasErrors dependency property.
+        /// True when the current expression contains parse errors.
+        /// </summary>
+        public static readonly DependencyProperty HasErrorsProperty = DependencyProperty.Register(
+            nameof(HasErrors), typeof(bool), typeof(CalculatorControl),
+            new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets whether the current expression contains parse errors.
+        /// </summary>
+        public bool HasErrors
+        {
+            get => (bool)GetValue(HasErrorsProperty);
+            private set => SetValue(HasErrorsProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the ErrorCount dependency property.
+        /// The number of parse errors in the current expression.
+        /// </summary>
+        public static readonly DependencyProperty ErrorCountProperty = DependencyProperty.Register(
+            nameof(ErrorCount), typeof(int), typeof(CalculatorControl),
+            new PropertyMetadata(0));
+
+        /// <summary>
+        /// Gets the number of parse errors in the current expression.
+        /// </summary>
+        public int ErrorCount
+        {
+            get => (int)GetValue(ErrorCountProperty);
+            private set => SetValue(ErrorCountProperty, value);
+        }
+
+        #endregion
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CalculatorControl"/> class.
         /// </summary>
         public CalculatorControl()
         {
-
-            // This call is required by the designer.
             this.InitializeComponent();
 
-            // Add any initialization after the InitializeComponent() call.
+            // Wire up the functions panel to the expression control
+            FunctionsPanel.ExpressionText = LexTextBox;
+            FunctionsPanel.SelectedFunctionChanged += OnFunctionsPanelSelectedFunctionChanged;
         }
 
+        #region Public API
+
         /// <summary>
-        /// Sets the expression text from the LexTextBox.
+        /// Sets the expression text in the LexTextBox.
         /// </summary>
         /// <param name="expressionText">The expression to display.</param>
         public void SetExpressionText(string expressionText)
@@ -99,67 +144,7 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
-        /// Inserts the plus operator into the LexTextBox.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.LexTextBox.InsertText("+");
-        }
-
-        /// <summary>
-        /// Inserts the minus operator into the LexTextBox.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void SubtractButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.LexTextBox.InsertText("-");
-        }
-
-        /// <summary>
-        /// Inserts the multiplication operator into the LexTextBox.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void MultiplyButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.LexTextBox.InsertText("*");
-        }
-
-        /// <summary>
-        /// Inserts the division operator into the LextTextBox.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void DivideButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.LexTextBox.InsertText("/");
-        }
-
-        /// <summary>
-        /// Inserts the exponent operator into the LextTextBox.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void ExponentButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.LexTextBox.InsertText("^");
-        }
-
-        /// <summary>
-        /// Inserts an equals sign into the LexTextBox.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void EqualsButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.LexTextBox.InsertText("=");
-        }
-
-        /// <summary>
-        /// Inserts a custom string of text into the LextTextBox.
+        /// Inserts a custom string of text into the LexTextBox.
         /// </summary>
         /// <param name="textToInsert">The text to insert.</param>
         public void InsertText(string textToInsert)
@@ -176,125 +161,234 @@ namespace ExpressionParserControls
             return ExpressionParser.Parser.Parser.Parse(this.LexTextBox.GetTokenList, !(this.IsCaseSensitiveCheckbox.IsChecked ?? false), _variables);
         }
 
+        #endregion
+
+        #region Operator Button Handlers
+
+        /// <summary>
+        /// Inserts the plus operator into the LexTextBox.
+        /// </summary>
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("+");
+        }
+
+        /// <summary>
+        /// Inserts the minus operator into the LexTextBox.
+        /// </summary>
+        private void SubtractButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("-");
+        }
+
+        /// <summary>
+        /// Inserts the multiplication operator into the LexTextBox.
+        /// </summary>
+        private void MultiplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("*");
+        }
+
+        /// <summary>
+        /// Inserts the division operator into the LexTextBox.
+        /// </summary>
+        private void DivideButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("/");
+        }
+
+        /// <summary>
+        /// Inserts the exponent operator into the LexTextBox.
+        /// </summary>
+        private void ExponentButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("^");
+        }
+
+        /// <summary>
+        /// Inserts the equals sign into the LexTextBox.
+        /// </summary>
+        private void EqualsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("=");
+        }
+
+        /// <summary>
+        /// Inserts the less-than operator into the LexTextBox.
+        /// </summary>
+        private void LessThanButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText("<");
+        }
+
+        /// <summary>
+        /// Inserts the greater-than operator into the LexTextBox.
+        /// </summary>
+        private void GreaterThanButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.LexTextBox.InsertText(">");
+        }
+
+        #endregion
+
+        #region Expression Changed & Error Display
+
         /// <summary>
         /// Called when the expression in the LexTextBox changes.
+        /// Updates the error display and fires the ExpressionChanged event.
         /// </summary>
-        /// <param name="tokenList">The updated token list.</param>
         private void LexTextBox_ExpressionChanged(List<Token> tokenList)
         {
+            UpdateErrorDisplay();
             ExpressionChanged?.Invoke();
-        }
-
-        /// <summary>
-        /// Creates a themed MetroWindow for the Available Functions popup.
-        /// Uses DynamicResource for theme-aware styling with fallbacks.
-        /// </summary>
-        private GenericControls.MetroWindow CreateAvailableFunctionsWindow()
-        {
-            var window = new GenericControls.MetroWindow()
-            {
-                Name = "AvailableFunctionsWindow",
-                Title = "Available Functions",
-                Content = new AvailableFunctions() { ExpressionText = LexTextBox, Margin = new Thickness(5d) },
-                ResizeMode = ResizeMode.CanResize,
-                Width = 700d,
-                Height = 500d,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            // Apply theme resources if available
-            if (TryFindResource("MetroWindowStyle") is Style metroStyle)
-                window.Style = metroStyle;
-            if (TryFindResource("EnvironmentWindowBackground") is System.Windows.Media.Brush bg)
-                window.Background = bg;
-            if (TryFindResource("EnvironmentWindowText") is System.Windows.Media.Brush fg)
-                window.Foreground = fg;
-
-            // Set owner to keep popup with parent window
-            var ownerWindow = Window.GetWindow(this);
-            if (ownerWindow != null)
-                window.Owner = ownerWindow;
-
-            return window;
-        }
-
-        /// <summary>
-        /// Finds an already-open AvailableFunctions window, if one exists.
-        /// </summary>
-        private Window? FindAvailableFunctionsWindow()
-        {
-            foreach (Window w in Application.Current.Windows)
-            {
-                if (w.Name == "AvailableFunctionsWindow")
-                    return w;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Handles navigation to a help document from within the LexTextBox.
-        /// Opens or focuses the AvailableFunctions window and selects the appropriate help topic.
-        /// </summary>
-        /// <param name="helpDocumentPath">The path to the help document.</param>
-        private void LexTextBox_HelpDocumentCalled(string helpDocumentPath)
-        {
-            var existing = FindAvailableFunctionsWindow();
-            if (existing != null)
-            {
-                existing.Activate();
-                var availFunctions = existing.Content as AvailableFunctions;
-                availFunctions?.SelectFunctionByHelpPath(helpDocumentPath);
-                return;
-            }
-
-            var availFunctionsWindow = CreateAvailableFunctionsWindow();
-            var content = (AvailableFunctions)availFunctionsWindow.Content;
-            content.SelectFunctionByHelpPath(helpDocumentPath);
-            availFunctionsWindow.Show();
         }
 
         /// <summary>
         /// Re-parses the expression when the case-sensitivity setting is changed.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
         private void IsCaseSensitiveCheckbox_Checked(object sender, RoutedEventArgs e)
         {
             this.LexTextBox_ExpressionChanged(this.LexTextBox.GetTokenList);
         }
 
         /// <summary>
-        /// Displays the Available Functions window or activates it if already open.
+        /// Parses the current expression, updates the errors expander with any parse errors,
+        /// and sets HasErrors/ErrorCount properties.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Routed event arguments.</param>
-        private void FunctionsButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateErrorDisplay()
         {
-            var existing = FindAvailableFunctionsWindow();
-            if (existing != null)
+            IParserNode parseNode = null;
+            try
             {
-                existing.Activate();
+                parseNode = GetParseTree();
+            }
+            catch
+            {
+                // Parse failed entirely
+            }
+
+            if (parseNode == null)
+            {
+                HasErrors = false;
+                ErrorCount = 0;
+                ErrorsExpander.Visibility = Visibility.Collapsed;
+                ErrorsExpander.IsExpanded = false;
                 return;
             }
 
-            var availFunctionsWindow = CreateAvailableFunctionsWindow();
-            availFunctionsWindow.Show();
+            var errors = parseNode.GetErrors;
+            HasErrors = errors.Count > 0;
+            ErrorCount = errors.Count;
+
+            if (errors.Count > 0)
+            {
+                ErrorsList.ItemsSource = errors;
+                ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
+                ErrorsExpander.Visibility = Visibility.Visible;
+                ErrorsExpander.IsExpanded = true;
+            }
+            else
+            {
+                ErrorsExpander.Visibility = Visibility.Collapsed;
+                ErrorsExpander.IsExpanded = false;
+                ErrorsList.ItemsSource = null;
+            }
         }
+
+        #endregion
+
+        #region Functions Panel
+
+        /// <summary>
+        /// Shows the functions panel and sets the column width when the toggle is checked.
+        /// </summary>
+        private void FunctionsToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            FunctionsPanelColumn.Width = new GridLength(200);
+            FunctionsPanelColumn.MinWidth = 140;
+        }
+
+        /// <summary>
+        /// Hides the functions panel and collapses the column when the toggle is unchecked.
+        /// </summary>
+        private void FunctionsToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            FunctionsPanelColumn.Width = new GridLength(0);
+            FunctionsPanelColumn.MinWidth = 0;
+        }
+
+        /// <summary>
+        /// Handles function selection changes from the inline functions panel.
+        /// Updates the function help expander with the selected function's details.
+        /// </summary>
+        private void OnFunctionsPanelSelectedFunctionChanged(FunctionDescriptor? func)
+        {
+            if (func != null)
+            {
+                ShowFunctionHelp(func);
+            }
+        }
+
+        #endregion
+
+        #region Function Help Expander
+
+        /// <summary>
+        /// Displays the function help expander with details for the given function.
+        /// </summary>
+        /// <param name="func">The function descriptor to display.</param>
+        private void ShowFunctionHelp(FunctionDescriptor func)
+        {
+            _currentHelpFunction = func;
+
+            HelpFunctionName.Text = func.Name;
+            HelpSyntax.Text = func.Syntax;
+            HelpReturns.Text = func.Returns;
+            HelpDescription.Text = func.Description;
+            HelpExample.Text = func.Example;
+            FunctionHelpHeader.Text = $"Function: {func.Name}";
+            HelpInsertButton.IsEnabled = true;
+
+            FunctionHelpExpander.Visibility = Visibility.Visible;
+            FunctionHelpExpander.IsExpanded = true;
+        }
+
+        /// <summary>
+        /// Inserts the current help function's text into the expression.
+        /// </summary>
+        private void HelpInsertButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentHelpFunction != null)
+            {
+                this.LexTextBox.InsertText(_currentHelpFunction.InsertText);
+            }
+        }
+
+        /// <summary>
+        /// Handles navigation to a help document from within the LexTextBox.
+        /// Opens the functions panel inline and selects the appropriate function.
+        /// </summary>
+        /// <param name="helpDocumentPath">The path to the help document.</param>
+        private void LexTextBox_HelpDocumentCalled(string helpDocumentPath)
+        {
+            // Open the functions panel if not already open
+            FunctionsToggleButton.IsChecked = true;
+
+            // Select the function in the tree
+            FunctionsPanel.SelectFunctionByHelpPath(helpDocumentPath);
+        }
+
+        #endregion
     }
 
     /// <summary>
-    /// Converts a boolean value to a Visibility enumeration. True becomes Visible, false becomes collapsed.
+    /// Converts a boolean value to a Visibility enumeration. True becomes Visible, false becomes Collapsed.
     /// </summary>
     public class BoolToVisibilityConverter : IValueConverter
     {
         /// <summary>
-        /// Converts a boolean value to Visibility
+        /// Converts a boolean value to Visibility.
         /// </summary>
-        /// <param name="value">The source boolean value.</param>
-        /// <param name="targetType">The target type.</param>
-        /// <param name="parameter">Optional parameter (unused).</param>
-        /// <param name="culture">Culture information.</param>
-        /// <returns>Visibility.Visible if the value is true, otherwise Visibility.Collapsed.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -306,14 +400,8 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
-        /// Not implemented. Converts back from Visibility to boolean
+        /// Not implemented.
         /// </summary>
-        /// <param name="value">The source value.</param>
-        /// <param name="targetType">The target type.</param>
-        /// <param name="parameter">Optional parameter.</param>
-        /// <param name="culture">Culture information.</param>
-        /// <returns>Not applicable - this method always throws NotImplementedException.</returns>
-        /// <exception cref="NotImplementedException">This method is not implemented.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

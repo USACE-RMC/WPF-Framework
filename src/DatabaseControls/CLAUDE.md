@@ -12,8 +12,7 @@ WPF controls for viewing, editing, searching, and analyzing database tables back
 - `Column Stats/Classification.cs` - Data classification helper for statistics
 - `FieldCalculator/FieldCalculator.xaml.cs` - Expression-based field calculator window; create/update columns or select rows by attribute
 - `FieldCalculator/CalculatorHelpWindow.xaml.cs` - Help documentation for calculator expressions
-- `FieldCalculator/ErrorWindow.xaml.cs` - Expression evaluation error display
-- `FieldCalculator/ErrorItem.cs` - Error item model for field calculator errors
+- `FieldCalculator/SelectByAttribute.xaml.cs` - Select rows by attribute expression
 - `Resources/TableViewerResources.xaml` - Styles and templates for the table viewer
 - `Themes/DatabaseControlsTheme.xaml` - Theme resource dictionary
 
@@ -36,4 +35,4 @@ WPF controls for viewing, editing, searching, and analyzing database tables back
 ## Gotchas
 - TableViewer is NOT built on CopyPasteDataGrid; it has its own completely custom grid rendering and selection
 - FieldCalculator can operate in two modes: column creation/update OR "select by attribute" (row filtering)
-- `ExpressionTextBox.cs` and `SelectByAttribute.xaml.cs` are explicitly excluded from compilation in the csproj
+- `ExpressionTextBox.cs` is explicitly excluded from compilation in the csproj (legacy VB port artifact)

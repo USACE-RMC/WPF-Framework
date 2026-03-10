@@ -59,6 +59,57 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
+        /// Identifies the CompactMode dependency property.
+        /// When true, hides the detail panel and splitter so the control shows only the tree + search + insert.
+        /// </summary>
+        public static readonly DependencyProperty CompactModeProperty = DependencyProperty.Register(
+            nameof(CompactMode), typeof(bool), typeof(AvailableFunctions),
+            new PropertyMetadata(false, OnCompactModeChanged));
+
+        /// <summary>
+        /// Gets or sets whether the control is in compact mode (tree only, no detail panel).
+        /// </summary>
+        public bool CompactMode
+        {
+            get => (bool)GetValue(CompactModeProperty);
+            set => SetValue(CompactModeProperty, value);
+        }
+
+        /// <summary>
+        /// Raised when the selected function changes. Provides the FunctionDescriptor of the newly selected function.
+        /// </summary>
+        public event Action<FunctionDescriptor?>? SelectedFunctionChanged;
+
+        /// <summary>
+        /// Handles changes to the CompactMode property by showing or hiding the detail panel.
+        /// </summary>
+        private static void OnCompactModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is AvailableFunctions af)
+                af.ApplyCompactMode((bool)e.NewValue);
+        }
+
+        /// <summary>
+        /// Shows or hides the detail panel and splitter based on compact mode.
+        /// In compact mode, the tree column fills the entire width.
+        /// </summary>
+        private void ApplyCompactMode(bool compact)
+        {
+            if (compact)
+            {
+                DetailSplitter.Visibility = Visibility.Collapsed;
+                DetailBorder.Visibility = Visibility.Collapsed;
+                TreeColumn.Width = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                DetailSplitter.Visibility = Visibility.Visible;
+                DetailBorder.Visibility = Visibility.Visible;
+                TreeColumn.Width = new GridLength(200);
+            }
+        }
+
+        /// <summary>
         /// Maps TreeViewItem to its FunctionDescriptor for quick lookup.
         /// </summary>
         private readonly Dictionary<TreeViewItem, FunctionDescriptor> _itemToFunction = new Dictionary<TreeViewItem, FunctionDescriptor>();
@@ -77,6 +128,7 @@ namespace ExpressionParserControls
         {
             InitializeComponent();
             PopulateTreeView();
+            Loaded += (_, _) => ApplyCompactMode(CompactMode);
         }
 
         /// <summary>
@@ -119,7 +171,7 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
-        /// Handles selection changes in the TreeView to update the detail panel.
+        /// Handles selection changes in the TreeView to update the detail panel and raise SelectedFunctionChanged.
         /// </summary>
         private void AvailableFunctions_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
@@ -127,11 +179,13 @@ namespace ExpressionParserControls
             {
                 ShowFunctionDetail(func);
                 InsertFunctionButton.IsEnabled = true;
+                SelectedFunctionChanged?.Invoke(func);
             }
             else
             {
                 DetailPanel.Visibility = Visibility.Collapsed;
                 InsertFunctionButton.IsEnabled = false;
+                SelectedFunctionChanged?.Invoke(null);
             }
         }
 

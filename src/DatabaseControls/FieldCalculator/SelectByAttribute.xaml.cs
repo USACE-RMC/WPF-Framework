@@ -102,7 +102,6 @@ namespace DatabaseControls
 
             // Wire up event handlers
             ExecuteButton.Click += ExecuteButton_Click;
-            ErrorLogButton.Click += ErrorLogButton_Click;
             ContentRendered += SelectByAttribute_ContentRendered;
         }
 
@@ -253,20 +252,7 @@ namespace DatabaseControls
         //    UpdateTextbox("[" & AvailableFields.SelectedItem & "]")
         //End Sub
 
-        /// <summary>
-        /// Handles the Click event of the ErrorLogButton control.
-        /// Displays any parse errors encountered during expression evaluation.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void ErrorLogButton_Click(object sender, RoutedEventArgs e)
-        {
-            //If _parseerrors.Count = 0 Then
-            //Else
-            //    Dim errorwindow As New ErrorWindow(_parseerrors, "Errors Encountered in Expression")
-            //    errorwindow.Show()
-            //End If
-        }
+        // ErrorLogButton removed — errors are now displayed inline by CalculatorControl's error expander.
 
         /// <summary>
         /// Handles the ContentRendered event of the SelectByAttribute window.

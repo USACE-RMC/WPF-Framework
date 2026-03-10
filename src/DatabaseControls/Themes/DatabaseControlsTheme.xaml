@@ -241,17 +241,6 @@
     <Style TargetType="{x:Type local:FieldCalculator}" BasedOn="{StaticResource FieldCalculatorStyle}"/>
 
     <!-- =============================================================================== -->
-    <!-- ERROR WINDOW STYLES                                                              -->
-    <!-- =============================================================================== -->
-
-    <Style x:Key="ErrorWindowStyle" TargetType="{x:Type local:ErrorWindow}">
-        <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
-        <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
-    </Style>
-
-    <Style TargetType="{x:Type local:ErrorWindow}" BasedOn="{StaticResource ErrorWindowStyle}"/>
-
-    <!-- =============================================================================== -->
     <!-- SELECT BY ATTRIBUTE STYLES                                                       -->
     <!-- =============================================================================== -->
 

@@ -79,8 +79,7 @@
             </Grid>
         </Border>-->
         <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Orientation="Horizontal">
-            <Button x:Name="ErrorLogButton" Content="ErrorLog" IsEnabled="False"/>
-            <Button Content="Execute" Margin="5,0,0,0" x:Name="ExecuteButton" IsEnabled="False" IsDefault="True" />
+            <Button Content="Execute" x:Name="ExecuteButton" IsEnabled="False" IsDefault="True" Width="80" Height="24"/>
         </StackPanel>
     </Grid>
 </cntrls:MetroWindow>
