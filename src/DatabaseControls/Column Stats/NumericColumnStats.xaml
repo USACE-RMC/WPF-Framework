@@ -36,7 +36,7 @@
                 x:Name="StatsTable"
                 Editable="False"
                 Margin="0"
-                Height="313"
+                Height="311"
                 DockPanel.Dock="Top"
                 RowSelectable="False"
                 ColumnSelectable="True"
@@ -83,11 +83,12 @@
             <cntrls:NumericSliderPropertyControl
                 Name="ClassCountControl"
                 DockPanel.Dock="Top"
-                Margin="0 5"
+                Margin="0, 0, 0, 5"
                 Title="Class Count"
                 MinValue="1"
                 MaxValue="12"
                 Increment="1"
+                TextPropertyWidth="100"
                 Visibility="Collapsed"
                 Number="{Binding ClassCount, ElementName=NumericStats, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
@@ -96,7 +97,7 @@
                 Title="R Value"
                 ToolTip="R value for geometric progression."
                 DockPanel.Dock="Top"
-                Margin="0 5"
+                Margin="0, 0, 0, 5"
                 MinValue="1"
                 MaxPropertyWidth="90"
                 CanHaveNegative="False"
@@ -109,7 +110,7 @@
                 Title="Mirror"
                 ToolTip="Mirror geometric progression from the mean."
                 DockPanel.Dock="Top"
-                Margin="0 5"
+                Margin="0, 0, 0, 5"
                 Visibility="Collapsed"
                 IsSelected="{Binding GeometricMirror, ElementName=NumericStats, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
@@ -117,7 +118,7 @@
                 Name="IntervalSizeControl"
                 Title="Interval Size"
                 DockPanel.Dock="Top"
-                Margin="0 5"
+                Margin="0, 0, 0, 5"
                 MinValue="0"
                 CanHaveNegative="False"
                 Visibility="Collapsed"
@@ -126,12 +127,12 @@
 
             <cntrls:NumericSliderPropertyControl
                 Name="HeadTailThresholdControl"
-                Margin="0 5"
+                Margin="0, 0, 0, 5"
                 DockPanel.Dock="Top"
                 Increment=".05"
                 MinValue=".1"
                 MaxValue="1"
-                MaxPropertyWidth="30"
+                TextPropertyWidth="100"
                 Visibility="Collapsed"
                 Title="Threshold"
                 ToolTip="Proportion of the last bin to stop the iterative classification process."
@@ -139,12 +140,12 @@
 
             <cntrls:NumericSliderPropertyControl
                 Name="DeviationsControl"
-                Margin="0 5"
+                Margin="0, 0, 0, 5"
                 DockPanel.Dock="Top"
                 Increment=".25"
                 MinValue=".25"
                 MaxValue="4"
-                MaxPropertyWidth="30"
+                TextPropertyWidth="100"
                 Visibility="Collapsed"
                 VerticalAlignment="Top"
                 Title="Deviations"
@@ -253,7 +254,7 @@
             Plot="{Binding ElementName=StatsPlot, Mode=OneWay}"
             ClosePropertiesCalled="PropertiesControl_ClosePropertiesCalled"
             Visibility="Collapsed"
-            Width="230"
+            Width="300"
             Grid.Column="3"
             Margin="5,0,0,0"/>
 

@@ -29,7 +29,7 @@
         </Grid.RowDefinitions>
 
         <!--Toolbar tray is made public to allow developer to add custom tools-->
-        <StackPanel x:Name="TableToolbarTray" x:FieldModifier="public" Orientation="Horizontal" Grid.Row="0" Background="Transparent">
+        <StackPanel x:Name="TableToolbarTray" x:FieldModifier="public" Orientation="Horizontal" Grid.Row="0" Background="{DynamicResource EnvironmentWindowBackground}">
 
             <!--Cell Select/Copy/Paste-->
             <StackPanel
@@ -246,7 +246,7 @@
 
         </StackPanel>
 
-        <Grid x:Name="TableControlGrid" Grid.Row="1" Grid.IsSharedSizeScope="True" Background="{Binding Background, ElementName=TableViewerControl}">
+        <Grid x:Name="TableControlGrid" Grid.Row="1" Grid.IsSharedSizeScope="True" Background="{DynamicResource EnvironmentWindowBackground}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" x:Name="ColumnHeadersRowDefinition" SharedSizeGroup="A"/>
                 <RowDefinition Height="1*" x:Name="RowsRowDefinition"/>

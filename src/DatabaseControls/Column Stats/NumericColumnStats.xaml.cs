@@ -202,6 +202,7 @@ namespace DatabaseControls
             statsDataTable.Rows.Add("Mean", "");
             statsDataTable.Rows.Add("Std. Deviation", "");
             statsDataTable.Rows.Add("Skewness", "");
+            statsDataTable.Rows.Add("Kurtosis", "");
             statsDataTable.Rows.Add("5th %-ile", "");
             statsDataTable.Rows.Add("25th %-ile", "");
             statsDataTable.Rows.Add("50th %-ile", "");
@@ -589,6 +590,7 @@ namespace DatabaseControls
                     prodMoments[0],
                     prodMoments[1],
                     prodMoments[2],
+                    prodMoments[3],
                     Statistics.Percentile(_sortedData, 0.05, true),
                     Statistics.Percentile(_sortedData, 0.25, true),
                     Statistics.Percentile(_sortedData, 0.5, true),
