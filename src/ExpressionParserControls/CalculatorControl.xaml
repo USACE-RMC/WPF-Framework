@@ -6,52 +6,78 @@
              xmlns:local="clr-namespace:ExpressionParserControls"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <!-- Row 0: Expression Editor (fills available space, shrinks when help opens) -->
+            <RowDefinition Height="*" MinHeight="40"/>
+            <!-- Row 1: Function Help Expander (between expression and toolbar) -->
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <!-- Row 2: Toolbar (always at bottom, aligned with Insert buttons) -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Row 0: Expression Editor + optional Functions panel -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="FunctionsPanelColumn" Width="0"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Row 0: Expression Editor -->
+        <local:ExpressionControl Grid.Row="0" x:Name="LexTextBox" FontWeight="Normal" Text=""
+                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="15"
+                                 ExpressionChanged="LexTextBox_ExpressionChanged"
+                                 HelpDocumentCalled="LexTextBox_HelpDocumentCalled"/>
 
-            <!-- Functions Panel (hidden by default, shown when fx is toggled) -->
-            <Grid Grid.Column="0" x:Name="FunctionsPanelContainer"
-                  Visibility="{Binding IsChecked, ElementName=FunctionsToggleButton, Converter={StaticResource BoolToVisibilityConverter}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="Functions" Grid.Row="0" FontWeight="SemiBold" Margin="0,0,0,3"
+        <!-- Row 1: Function Help Expander (opens between expression and toolbar) -->
+        <Expander x:Name="FunctionHelpExpander" Grid.Row="1"
+                  Style="{DynamicResource PropertyExpanderStyle}"
+                  Visibility="Collapsed" IsExpanded="False"
+                  Margin="0,3,0,0">
+            <Expander.Header>
+                <TextBlock x:Name="FunctionHelpHeader" Text="Function Help" FontWeight="SemiBold"
                            Foreground="{DynamicResource EnvironmentWindowText}"/>
-                <local:AvailableFunctions x:Name="FunctionsPanel" Grid.Row="1" CompactMode="True"
-                                          Margin="0,0,3,0"/>
-            </Grid>
+            </Expander.Header>
+            <Border BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1"
+                    Background="{DynamicResource TextBox.Static.Background}" Margin="0,3,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="160" Padding="8">
+                    <StackPanel x:Name="HelpDetailPanel">
+                        <!-- Function Name -->
+                        <TextBlock x:Name="HelpFunctionName" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"
+                                   Foreground="{DynamicResource AvailableFunctions.DetailHeader}"/>
 
-            <!-- GridSplitter between Functions and Expression -->
-            <GridSplitter x:Name="FunctionsSplitter" Grid.Column="0" Width="3"
-                          HorizontalAlignment="Right" VerticalAlignment="Stretch"
-                          Background="{DynamicResource EnvironmentWindowBackground}"
-                          Visibility="{Binding IsChecked, ElementName=FunctionsToggleButton, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <!-- Syntax -->
+                        <TextBlock Text="SYNTAX" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
+                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                        <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="6,4" Margin="0,0,0,6">
+                            <TextBlock x:Name="HelpSyntax" FontFamily="Consolas" FontSize="12"
+                                       Foreground="{DynamicResource AvailableFunctions.SyntaxText}" TextWrapping="Wrap"/>
+                        </Border>
 
-            <!-- Expression Editor -->
-            <local:ExpressionControl Grid.Column="1" x:Name="LexTextBox" FontWeight="Normal" Text=""
-                                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="15"
-                                     ExpressionChanged="LexTextBox_ExpressionChanged"
-                                     HelpDocumentCalled="LexTextBox_HelpDocumentCalled"/>
-        </Grid>
+                        <!-- Returns -->
+                        <TextBlock Text="RETURNS" FontSize="10" FontWeight="Bold" Margin="0,2,0,2"
+                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                        <TextBlock x:Name="HelpReturns" Margin="0,0,0,6" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource EnvironmentWindowText}"/>
 
-        <!-- Row 1: Toolbar -->
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,3,0,0">
+                        <!-- Description -->
+                        <TextBlock Text="DESCRIPTION" FontSize="10" FontWeight="Bold" Margin="0,2,0,2"
+                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                        <TextBlock x:Name="HelpDescription" Margin="0,0,0,6" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource EnvironmentWindowText}"/>
+
+                        <!-- Example -->
+                        <TextBlock Text="EXAMPLE" FontSize="10" FontWeight="Bold" Margin="0,2,0,2"
+                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                        <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="6,4" Margin="0,0,0,4">
+                            <TextBlock x:Name="HelpExample" FontFamily="Consolas" FontSize="12"
+                                       Foreground="{DynamicResource AvailableFunctions.ExampleText}" TextWrapping="Wrap"/>
+                        </Border>
+
+                        <!-- Insert button -->
+                        <Button x:Name="HelpInsertButton" Content="Insert Function" Height="24" Width="120"
+                                HorizontalAlignment="Right" Margin="0,4,0,0"
+                                Click="HelpInsertButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Expander>
+
+        <!-- Row 2: Toolbar (always bottom-aligned, horizontally aligned with Insert buttons) -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,3,0,0">
             <!-- Functions Toggle Button -->
             <ToggleButton x:Name="FunctionsToggleButton" Height="24" Width="28" Padding="0"
                           SnapsToDevicePixels="True" ToolTip="More functions"
@@ -105,85 +131,5 @@
                 Unchecked="IsCaseSensitiveCheckbox_Checked"
                 VerticalAlignment="Center"/>
         </StackPanel>
-
-        <!-- Row 2: Function Help Expander (under toolbar) -->
-        <Expander x:Name="FunctionHelpExpander" Grid.Row="2"
-                  Style="{DynamicResource PropertyExpanderStyle}"
-                  Visibility="Collapsed" IsExpanded="False"
-                  Margin="0,3,0,0">
-            <Expander.Header>
-                <TextBlock x:Name="FunctionHelpHeader" Text="Function Help" FontWeight="SemiBold"
-                           Foreground="{DynamicResource EnvironmentWindowText}"/>
-            </Expander.Header>
-            <Border BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1"
-                    Background="{DynamicResource TextBox.Static.Background}" Margin="0,3,0,0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="160" Padding="8">
-                    <StackPanel x:Name="HelpDetailPanel">
-                        <!-- Function Name -->
-                        <TextBlock x:Name="HelpFunctionName" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailHeader}"/>
-
-                        <!-- Syntax -->
-                        <TextBlock Text="SYNTAX" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="6,4" Margin="0,0,0,6">
-                            <TextBlock x:Name="HelpSyntax" FontFamily="Consolas" FontSize="12"
-                                       Foreground="{DynamicResource AvailableFunctions.SyntaxText}" TextWrapping="Wrap"/>
-                        </Border>
-
-                        <!-- Returns -->
-                        <TextBlock Text="RETURNS" FontSize="10" FontWeight="Bold" Margin="0,2,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <TextBlock x:Name="HelpReturns" Margin="0,0,0,6" TextWrapping="Wrap"
-                                   Foreground="{DynamicResource EnvironmentWindowText}"/>
-
-                        <!-- Description -->
-                        <TextBlock Text="DESCRIPTION" FontSize="10" FontWeight="Bold" Margin="0,2,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <TextBlock x:Name="HelpDescription" Margin="0,0,0,6" TextWrapping="Wrap"
-                                   Foreground="{DynamicResource EnvironmentWindowText}"/>
-
-                        <!-- Example -->
-                        <TextBlock Text="EXAMPLE" FontSize="10" FontWeight="Bold" Margin="0,2,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="6,4" Margin="0,0,0,4">
-                            <TextBlock x:Name="HelpExample" FontFamily="Consolas" FontSize="12"
-                                       Foreground="{DynamicResource AvailableFunctions.ExampleText}" TextWrapping="Wrap"/>
-                        </Border>
-
-                        <!-- Insert button -->
-                        <Button x:Name="HelpInsertButton" Content="Insert Function" Height="24" Width="120"
-                                HorizontalAlignment="Right" Margin="0,4,0,0"
-                                Click="HelpInsertButton_Click" IsEnabled="False"/>
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
-        </Expander>
-
-        <!-- Row 3: Expression Errors Expander (red text, auto-opens) -->
-        <Expander x:Name="ErrorsExpander" Grid.Row="3"
-                  Style="{DynamicResource PropertyExpanderStyle}"
-                  Visibility="Collapsed" IsExpanded="False"
-                  Margin="0,3,0,0">
-            <Expander.Header>
-                <TextBlock x:Name="ErrorsExpanderHeader" Text="Expression Errors"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource ExpressionError.Text}"/>
-            </Expander.Header>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120" Margin="0,3,0,0">
-                <ItemsControl x:Name="ErrorsList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0,1,0,1">
-                                <TextBlock Text="&#x2022;" Margin="4,0,6,0" FontWeight="Bold"
-                                           Foreground="{DynamicResource ExpressionError.Text}"/>
-                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
-                                           Foreground="{DynamicResource ExpressionError.Text}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Expander>
     </Grid>
 </UserControl>

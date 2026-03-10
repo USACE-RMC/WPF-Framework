@@ -128,89 +128,71 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="TreeColumn" Width="200" MinWidth="140"/>
+            <ColumnDefinition x:Name="SplitterColumn" Width="Auto"/>
+            <ColumnDefinition x:Name="DetailColumn" Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <!-- Search Bar -->
-        <Grid Grid.Row="0" Margin="0,0,0,5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Search:" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="{DynamicResource EnvironmentWindowText}"/>
-            <TextBox x:Name="SearchTextBox" Grid.Column="1" TextChanged="SearchTextBox_TextChanged" VerticalContentAlignment="Center"/>
+        <!-- Function List -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TreeView x:Name="AvailableFunctionsProp" Grid.Row="0" SelectedItemChanged="AvailableFunctions_SelectedItemChanged"/>
+            <Button Name="InsertFunctionButton" Grid.Row="1" Margin="0,5,0,0" IsEnabled="False" Click="InsertButton_Click" Height="24">Insert</Button>
         </Grid>
 
-        <!-- Main Content: TreeView + Detail Panel -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="TreeColumn" Width="200" MinWidth="140"/>
-                <ColumnDefinition x:Name="SplitterColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="DetailColumn" Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Splitter -->
+        <GridSplitter x:Name="DetailSplitter" Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Background="{DynamicResource EnvironmentWindowBackground}"/>
 
-            <!-- Function List -->
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TreeView x:Name="AvailableFunctionsProp" Grid.Row="0" SelectedItemChanged="AvailableFunctions_SelectedItemChanged"/>
-                <Button Name="InsertFunctionButton" Grid.Row="1" Margin="0,5,0,0" IsEnabled="False" Click="InsertButton_Click" Height="24">Insert</Button>
-            </Grid>
+        <!-- Detail Panel -->
+        <Border x:Name="DetailBorder" Grid.Column="2" Margin="5,0,0,0" BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1" Background="{DynamicResource TextBox.Static.Background}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12">
+                <StackPanel x:Name="DetailPanel" Visibility="Collapsed">
 
-            <!-- Splitter -->
-            <GridSplitter x:Name="DetailSplitter" Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Background="{DynamicResource EnvironmentWindowBackground}"/>
+                    <!-- Function Name Header -->
+                    <TextBlock x:Name="DetailFunctionName" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"
+                               Foreground="{DynamicResource AvailableFunctions.DetailHeader}"/>
 
-            <!-- Detail Panel -->
-            <Border x:Name="DetailBorder" Grid.Column="2" Margin="5,0,0,0" BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1" Background="{DynamicResource TextBox.Static.Background}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12">
-                    <StackPanel x:Name="DetailPanel" Visibility="Collapsed">
+                    <!-- Syntax -->
+                    <TextBlock Text="SYNTAX" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
+                               Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                    <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="8,6" Margin="0,0,0,8">
+                        <TextBlock x:Name="DetailSyntax" FontFamily="Consolas" FontSize="13"
+                                   Foreground="{DynamicResource AvailableFunctions.SyntaxText}" TextWrapping="Wrap"/>
+                    </Border>
 
-                        <!-- Function Name Header -->
-                        <TextBlock x:Name="DetailFunctionName" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailHeader}"/>
+                    <!-- Returns -->
+                    <TextBlock Text="RETURNS" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
+                               Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                    <TextBlock x:Name="DetailReturns" Margin="0,0,0,8" TextWrapping="Wrap"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
 
-                        <!-- Syntax -->
-                        <TextBlock Text="SYNTAX" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
+                    <!-- Description -->
+                    <TextBlock Text="DESCRIPTION" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
+                               Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                    <TextBlock x:Name="DetailDescription" Margin="0,0,0,8" TextWrapping="Wrap"
+                               Foreground="{DynamicResource EnvironmentWindowText}"/>
+
+                    <!-- Example -->
+                    <TextBlock Text="EXAMPLE" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
+                               Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
+                    <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="8,6" Margin="0,0,0,8">
+                        <TextBlock x:Name="DetailExample" FontFamily="Consolas" FontSize="13"
+                                   Foreground="{DynamicResource AvailableFunctions.ExampleText}" TextWrapping="Wrap"/>
+                    </Border>
+
+                    <!-- Aliases -->
+                    <StackPanel x:Name="AliasesPanel" Margin="0,4,0,0">
+                        <TextBlock Text="ALIASES" FontSize="10" FontWeight="Bold" Margin="0,0,0,2"
                                    Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="8,6" Margin="0,0,0,8">
-                            <TextBlock x:Name="DetailSyntax" FontFamily="Consolas" FontSize="13"
-                                       Foreground="{DynamicResource AvailableFunctions.SyntaxText}" TextWrapping="Wrap"/>
-                        </Border>
-
-                        <!-- Returns -->
-                        <TextBlock Text="RETURNS" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <TextBlock x:Name="DetailReturns" Margin="0,0,0,8" TextWrapping="Wrap"
-                                   Foreground="{DynamicResource EnvironmentWindowText}"/>
-
-                        <!-- Description -->
-                        <TextBlock Text="DESCRIPTION" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <TextBlock x:Name="DetailDescription" Margin="0,0,0,8" TextWrapping="Wrap"
-                                   Foreground="{DynamicResource EnvironmentWindowText}"/>
-
-                        <!-- Example -->
-                        <TextBlock Text="EXAMPLE" FontSize="10" FontWeight="Bold" Margin="0,4,0,2"
-                                   Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                        <Border Background="{DynamicResource EnvironmentWindowBackground}" CornerRadius="3" Padding="8,6" Margin="0,0,0,8">
-                            <TextBlock x:Name="DetailExample" FontFamily="Consolas" FontSize="13"
-                                       Foreground="{DynamicResource AvailableFunctions.ExampleText}" TextWrapping="Wrap"/>
-                        </Border>
-
-                        <!-- Aliases -->
-                        <StackPanel x:Name="AliasesPanel" Margin="0,4,0,0">
-                            <TextBlock Text="ALIASES" FontSize="10" FontWeight="Bold" Margin="0,0,0,2"
-                                       Foreground="{DynamicResource AvailableFunctions.DetailLabel}"/>
-                            <TextBlock x:Name="DetailAliases" Foreground="{DynamicResource EnvironmentWindowText}" TextWrapping="Wrap"/>
-                        </StackPanel>
-
+                        <TextBlock x:Name="DetailAliases" Foreground="{DynamicResource EnvironmentWindowText}" TextWrapping="Wrap"/>
                     </StackPanel>
-                </ScrollViewer>
-            </Border>
-        </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </UserControl>

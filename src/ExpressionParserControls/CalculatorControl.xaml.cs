@@ -40,7 +40,8 @@ namespace ExpressionParserControls
 {
     /// <summary>
     /// A WPF UserControl that provides an interactive expression editor with operator buttons,
-    /// an inline functions panel, a function help expander, and an auto-opening errors expander.
+    /// a function help expander, and toolbar. The functions panel and errors expander are
+    /// managed externally by the host (e.g., FieldCalculator).
     /// </summary>
     public partial class CalculatorControl : UserControl
     {
@@ -63,6 +64,19 @@ namespace ExpressionParserControls
         /// Delegate for expression change notifications.
         /// </summary>
         public delegate void ExpressionChangedEventHandler();
+
+        /// <summary>
+        /// Raised when the f(x) toggle button is checked or unchecked.
+        /// The bool parameter is true when checked (show functions), false when unchecked (hide functions).
+        /// Hosts like FieldCalculator subscribe to this to show/hide an external functions panel.
+        /// </summary>
+        public event Action<bool>? FunctionsToggleChanged;
+
+        /// <summary>
+        /// Raised when a function hyperlink is clicked in the expression editor.
+        /// The host should open the functions panel and select the function matching this help path.
+        /// </summary>
+        public event Action<string>? HelpDocumentRequested;
 
         #region Dependency Properties
 
@@ -108,13 +122,14 @@ namespace ExpressionParserControls
         public CalculatorControl()
         {
             this.InitializeComponent();
-
-            // Wire up the functions panel to the expression control
-            FunctionsPanel.ExpressionText = LexTextBox;
-            FunctionsPanel.SelectedFunctionChanged += OnFunctionsPanelSelectedFunctionChanged;
         }
 
         #region Public API
+
+        /// <summary>
+        /// Gets the internal ExpressionControl for external wiring (e.g., linking to an AvailableFunctions panel).
+        /// </summary>
+        public ExpressionControl ExpressionEditor => LexTextBox;
 
         /// <summary>
         /// Sets the expression text in the LexTextBox.
@@ -159,6 +174,61 @@ namespace ExpressionParserControls
         public IParserNode GetParseTree()
         {
             return ExpressionParser.Parser.Parser.Parse(this.LexTextBox.GetTokenList, !(this.IsCaseSensitiveCheckbox.IsChecked ?? false), _variables);
+        }
+
+        /// <summary>
+        /// Gets the current list of parse errors from the expression.
+        /// Returns an empty list if the expression is valid or cannot be parsed.
+        /// </summary>
+        /// <returns>List of parse errors.</returns>
+        public IList<ParseError> GetErrors()
+        {
+            IParserNode parseNode = null;
+            try
+            {
+                parseNode = GetParseTree();
+            }
+            catch
+            {
+                // Parse failed entirely
+            }
+
+            if (parseNode == null)
+                return Array.Empty<ParseError>();
+
+            return parseNode.GetErrors;
+        }
+
+        /// <summary>
+        /// Shows the function help expander with details for the given function descriptor.
+        /// Called by external hosts (e.g., FieldCalculator) when a function is selected
+        /// in the functions panel.
+        /// </summary>
+        /// <param name="func">The function descriptor to display help for.</param>
+        public void ShowFunctionHelp(FunctionDescriptor func)
+        {
+            _currentHelpFunction = func;
+
+            HelpFunctionName.Text = func.Name;
+            HelpSyntax.Text = func.Syntax;
+            HelpReturns.Text = func.Returns;
+            HelpDescription.Text = func.Description;
+            HelpExample.Text = func.Example;
+            FunctionHelpHeader.Text = $"Function: {func.Name}";
+            HelpInsertButton.IsEnabled = true;
+
+            FunctionHelpExpander.Visibility = Visibility.Visible;
+            FunctionHelpExpander.IsExpanded = true;
+        }
+
+        /// <summary>
+        /// Sets the f(x) toggle button state without firing the FunctionsToggleChanged event.
+        /// Used by the host to sync the toggle state.
+        /// </summary>
+        /// <param name="isChecked">True to check, false to uncheck.</param>
+        public void SetFunctionsToggle(bool isChecked)
+        {
+            FunctionsToggleButton.IsChecked = isChecked;
         }
 
         #endregion
@@ -235,11 +305,11 @@ namespace ExpressionParserControls
 
         /// <summary>
         /// Called when the expression in the LexTextBox changes.
-        /// Updates the error display and fires the ExpressionChanged event.
+        /// Updates error state properties and fires the ExpressionChanged event.
         /// </summary>
         private void LexTextBox_ExpressionChanged(List<Token> tokenList)
         {
-            UpdateErrorDisplay();
+            UpdateErrorState();
             ExpressionChanged?.Invoke();
         }
 
@@ -252,10 +322,10 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
-        /// Parses the current expression, updates the errors expander with any parse errors,
-        /// and sets HasErrors/ErrorCount properties.
+        /// Parses the current expression and updates HasErrors/ErrorCount properties.
+        /// The actual error display is handled by the host (e.g., FieldCalculator's errors expander).
         /// </summary>
-        private void UpdateErrorDisplay()
+        private void UpdateErrorState()
         {
             IParserNode parseNode = null;
             try
@@ -271,87 +341,37 @@ namespace ExpressionParserControls
             {
                 HasErrors = false;
                 ErrorCount = 0;
-                ErrorsExpander.Visibility = Visibility.Collapsed;
-                ErrorsExpander.IsExpanded = false;
                 return;
             }
 
             var errors = parseNode.GetErrors;
             HasErrors = errors.Count > 0;
             ErrorCount = errors.Count;
-
-            if (errors.Count > 0)
-            {
-                ErrorsList.ItemsSource = errors;
-                ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
-                ErrorsExpander.Visibility = Visibility.Visible;
-                ErrorsExpander.IsExpanded = true;
-            }
-            else
-            {
-                ErrorsExpander.Visibility = Visibility.Collapsed;
-                ErrorsExpander.IsExpanded = false;
-                ErrorsList.ItemsSource = null;
-            }
         }
 
         #endregion
 
-        #region Functions Panel
+        #region Functions Toggle
 
         /// <summary>
-        /// Shows the functions panel and sets the column width when the toggle is checked.
+        /// Fires FunctionsToggleChanged when the toggle is checked.
         /// </summary>
         private void FunctionsToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-            FunctionsPanelColumn.Width = new GridLength(200);
-            FunctionsPanelColumn.MinWidth = 140;
+            FunctionsToggleChanged?.Invoke(true);
         }
 
         /// <summary>
-        /// Hides the functions panel and collapses the column when the toggle is unchecked.
+        /// Fires FunctionsToggleChanged when the toggle is unchecked.
         /// </summary>
         private void FunctionsToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
-            FunctionsPanelColumn.Width = new GridLength(0);
-            FunctionsPanelColumn.MinWidth = 0;
-        }
-
-        /// <summary>
-        /// Handles function selection changes from the inline functions panel.
-        /// Updates the function help expander with the selected function's details.
-        /// </summary>
-        private void OnFunctionsPanelSelectedFunctionChanged(FunctionDescriptor? func)
-        {
-            if (func != null)
-            {
-                ShowFunctionHelp(func);
-            }
+            FunctionsToggleChanged?.Invoke(false);
         }
 
         #endregion
 
         #region Function Help Expander
-
-        /// <summary>
-        /// Displays the function help expander with details for the given function.
-        /// </summary>
-        /// <param name="func">The function descriptor to display.</param>
-        private void ShowFunctionHelp(FunctionDescriptor func)
-        {
-            _currentHelpFunction = func;
-
-            HelpFunctionName.Text = func.Name;
-            HelpSyntax.Text = func.Syntax;
-            HelpReturns.Text = func.Returns;
-            HelpDescription.Text = func.Description;
-            HelpExample.Text = func.Example;
-            FunctionHelpHeader.Text = $"Function: {func.Name}";
-            HelpInsertButton.IsEnabled = true;
-
-            FunctionHelpExpander.Visibility = Visibility.Visible;
-            FunctionHelpExpander.IsExpanded = true;
-        }
 
         /// <summary>
         /// Inserts the current help function's text into the expression.
@@ -366,16 +386,13 @@ namespace ExpressionParserControls
 
         /// <summary>
         /// Handles navigation to a help document from within the LexTextBox.
-        /// Opens the functions panel inline and selects the appropriate function.
+        /// Fires HelpDocumentRequested so the host can open the functions panel
+        /// and select the appropriate function.
         /// </summary>
         /// <param name="helpDocumentPath">The path to the help document.</param>
         private void LexTextBox_HelpDocumentCalled(string helpDocumentPath)
         {
-            // Open the functions panel if not already open
-            FunctionsToggleButton.IsChecked = true;
-
-            // Select the function in the tree
-            FunctionsPanel.SelectFunctionByHelpPath(helpDocumentPath);
+            HelpDocumentRequested?.Invoke(helpDocumentPath);
         }
 
         #endregion

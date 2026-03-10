@@ -30,7 +30,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -99,12 +98,14 @@ namespace ExpressionParserControls
             {
                 DetailSplitter.Visibility = Visibility.Collapsed;
                 DetailBorder.Visibility = Visibility.Collapsed;
+                InsertFunctionButton.Visibility = Visibility.Collapsed;
                 TreeColumn.Width = new GridLength(1, GridUnitType.Star);
             }
             else
             {
                 DetailSplitter.Visibility = Visibility.Visible;
                 DetailBorder.Visibility = Visibility.Visible;
+                InsertFunctionButton.Visibility = Visibility.Visible;
                 TreeColumn.Width = new GridLength(200);
             }
         }
@@ -245,38 +246,17 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
-        /// Filters the TreeView based on search text.
+        /// Inserts the currently selected function into the bound ExpressionControl.
+        /// Used by external hosts that have their own Insert button for the functions panel.
         /// </summary>
-        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        public void InsertSelectedFunction()
         {
-            string filter = SearchTextBox.Text.Trim();
-            bool hasFilter = !string.IsNullOrEmpty(filter);
-
-            foreach (var categoryItem in _categoryItems)
+            if (AvailableFunctionsProp.SelectedItem is TreeViewItem item && _itemToFunction.TryGetValue(item, out var func))
             {
-                bool anyCategoryMatch = false;
-
-                foreach (var funcItem in _functionItems)
-                {
-                    if (funcItem.Parent != categoryItem)
-                        continue;
-
-                    var func = _itemToFunction[funcItem];
-                    bool matches = !hasFilter ||
-                        func.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
-                        func.Category.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
-                        func.Description.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
-                        func.Aliases.Any(a => a.Contains(filter, StringComparison.OrdinalIgnoreCase));
-
-                    funcItem.Visibility = matches ? Visibility.Visible : Visibility.Collapsed;
-                    if (matches) anyCategoryMatch = true;
-                }
-
-                categoryItem.Visibility = anyCategoryMatch ? Visibility.Visible : Visibility.Collapsed;
-                if (hasFilter && anyCategoryMatch)
-                    categoryItem.IsExpanded = true;
+                InsertFunction(func);
             }
         }
+
 
         /// <summary>
         /// Selects a function item that matches the given help document path.

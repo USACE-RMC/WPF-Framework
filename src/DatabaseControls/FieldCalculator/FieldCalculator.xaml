@@ -16,6 +16,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Row 0: Field Selection -->
@@ -34,63 +35,102 @@
             <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
         </Grid>
 
-        <!-- Row 1: Main Content — Data Columns + Expression (CalculatorControl) -->
+        <!-- Row 1: Main Content — 3-column layout (Data Columns | Functions | Expression) -->
         <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="120"/>
+                <!-- Data Columns (fixed width) -->
+                <ColumnDefinition x:Name="DataColumnsColumn" Width="140" MinWidth="100"/>
+                <!-- Functions column (toggled, matches Data Columns width) -->
+                <ColumnDefinition x:Name="FunctionsColumn" Width="0"/>
+                <!-- Expression column (fills remaining space) -->
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <!-- Labels row -->
+                <RowDefinition Height="Auto"/>
+                <!-- Content area (fills) -->
+                <RowDefinition Height="*"/>
+                <!-- Insert buttons / toolbar row (aligned horizontally) -->
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <!-- Data Columns Panel -->
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="Data Columns" Grid.Row="0" Margin="0,0,0,3"/>
-                <ListBox
-                    Grid.Row="1"
-                    Margin="0,0,5,0"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"
-                    x:Name="VariablesListBox"
-                    ToolTip="List of available data columns. Double click to insert into expression."
-                    MouseDoubleClick="VariablesListBox_MouseDoubleClick"
-                    SelectionChanged="VariablesListBox_SelectionChanged"/>
-                <Button
-                    Grid.Row="2"
-                    Margin="0,3,5,0"
-                    Name="InsertVariableButton"
-                    IsEnabled="False"
-                    Height="24"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
+            <!-- ============================================================ -->
+            <!-- DATA COLUMNS (Column 0) -->
+            <!-- ============================================================ -->
+
+            <TextBlock Text="Data Columns" Grid.Row="0" Grid.Column="0" Margin="0,0,5,3"/>
+
+            <ListBox Grid.Row="1" Grid.Column="0" Margin="0,0,5,0"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                     x:Name="VariablesListBox"
+                     ToolTip="List of available data columns. Double click to insert into expression."
+                     MouseDoubleClick="VariablesListBox_MouseDoubleClick"
+                     SelectionChanged="VariablesListBox_SelectionChanged"/>
+
+            <Button Grid.Row="2" Grid.Column="0" Margin="0,3,5,0"
+                    Name="InsertVariableButton" IsEnabled="False"
+                    Height="24" HorizontalAlignment="Stretch"
                     ToolTip="Insert a data column into the expression."
                     Click="InsertVariableButton_Click">Insert</Button>
-            </Grid>
 
-            <!-- GridSplitter -->
-            <GridSplitter Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="2"
-                          Background="{DynamicResource EnvironmentWindowBackground}"/>
+            <!-- ============================================================ -->
+            <!-- FUNCTIONS (Column 1 — toggled by f(x) button in toolbar) -->
+            <!-- ============================================================ -->
 
-            <!-- Expression (CalculatorControl) -->
-            <Grid Grid.Column="1" Margin="3,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="Expression" Grid.Row="0" Margin="0,0,0,3"/>
-                <parser:CalculatorControl Grid.Row="1" Name="ExpressionCalculator"
-                                          ExpressionChanged="ExpressionCalculator_ExpressionChanged"/>
-            </Grid>
+            <TextBlock x:Name="FunctionsLabel" Text="Functions" Grid.Row="0" Grid.Column="1"
+                       Margin="0,0,5,3" Visibility="Collapsed"/>
+
+            <parser:AvailableFunctions x:Name="FunctionsPanel" Grid.Row="1" Grid.Column="1"
+                                       CompactMode="True" Margin="0,0,5,0"
+                                       Visibility="Collapsed"/>
+
+            <Button x:Name="InsertFunctionButton" Grid.Row="2" Grid.Column="1"
+                    Margin="0,3,5,0" Height="24" HorizontalAlignment="Stretch"
+                    IsEnabled="False" Click="InsertFunctionButton_Click"
+                    Visibility="Collapsed">Insert</Button>
+
+            <!-- ============================================================ -->
+            <!-- EXPRESSION (Column 2) — CalculatorControl spans content + toolbar rows -->
+            <!-- ============================================================ -->
+
+            <TextBlock Text="Expression" Grid.Row="0" Grid.Column="2" Margin="0,0,0,3"/>
+
+            <parser:CalculatorControl Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"
+                                      Name="ExpressionCalculator"
+                                      ExpressionChanged="ExpressionCalculator_ExpressionChanged"/>
         </Grid>
 
-        <!-- Row 2: Result Preview -->
-        <TextBlock Text="" Grid.Row="2" HorizontalAlignment="Left" Margin="0,0,0,5" Name="resultTextBlock" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        <!-- Row 2: Expression Errors Expander (full width, red text) -->
+        <Expander x:Name="ErrorsExpander" Grid.Row="2"
+                  Style="{DynamicResource PropertyExpanderStyle}"
+                  Visibility="Collapsed" IsExpanded="False"
+                  Margin="0,0,0,3">
+            <Expander.Header>
+                <TextBlock x:Name="ErrorsExpanderHeader" Text="Expression Errors"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource ExpressionError.Text}"/>
+            </Expander.Header>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120" Margin="0,3,0,0">
+                <ItemsControl x:Name="ErrorsList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,1,0,1">
+                                <TextBlock Text="&#x2022;" Margin="4,0,6,0" FontWeight="Bold"
+                                           Foreground="{DynamicResource ExpressionError.Text}"/>
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource ExpressionError.Text}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Expander>
 
-        <!-- Row 3: Footer — Checkbox left, Execute right -->
-        <Grid Grid.Row="3">
+        <!-- Row 3: Result Preview -->
+        <TextBlock Text="" Grid.Row="3" HorizontalAlignment="Left" Margin="0,0,0,5" Name="resultTextBlock" VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+        <!-- Row 4: Footer — Checkbox left, Execute right -->
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>

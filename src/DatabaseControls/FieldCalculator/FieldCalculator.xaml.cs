@@ -36,6 +36,7 @@ using System.Windows.Input;
 using DatabaseManager;
 using ExpressionParser;
 using ExpressionParser.Parser;
+using ExpressionParserControls;
 
 namespace DatabaseControls
 {
@@ -106,6 +107,14 @@ namespace DatabaseControls
 
             _dbView = dataView;
             _selectedRows = selectedRows;
+
+            // Wire up the CalculatorControl events for functions panel and help navigation
+            ExpressionCalculator.FunctionsToggleChanged += OnFunctionsToggleChanged;
+            ExpressionCalculator.HelpDocumentRequested += OnHelpDocumentRequested;
+
+            // Wire the functions panel to insert into the expression control
+            FunctionsPanel.ExpressionText = ExpressionCalculator.ExpressionEditor;
+            FunctionsPanel.SelectedFunctionChanged += OnFunctionsPanelSelectedFunctionChanged;
 
             // Set variables
             VariablesListBox.Items.Clear();
@@ -434,12 +443,14 @@ namespace DatabaseControls
 
         /// <summary>
         /// Handles the expression changed event from the calculator control.
-        /// Validates the expression and updates the result preview.
-        /// Uses CalculatorControl.HasErrors for error state instead of manual checking.
+        /// Validates the expression, updates the error display, and updates the result preview.
         /// </summary>
         private void ExpressionCalculator_ExpressionChanged()
         {
             resultTextBlock.Text = "";
+
+            // Update the errors expander
+            UpdateErrorDisplay();
 
             // Check for parse errors
             IParserNode parseNode = ExpressionCalculator.GetParseTree();
@@ -448,7 +459,7 @@ namespace DatabaseControls
                 return;
             }
 
-            // Use the CalculatorControl's HasErrors property (errors are displayed inline)
+            // Use the CalculatorControl's HasErrors property
             ExecuteButton.IsEnabled = !ExpressionCalculator.HasErrors;
 
             if (ExpressionCalculator.HasErrors)
@@ -558,5 +569,102 @@ namespace DatabaseControls
         {
             InsertVariableButton.IsEnabled = VariablesListBox.SelectedItem != null;
         }
+
+        #region Functions Panel
+
+        /// <summary>
+        /// Handles the f(x) toggle from the CalculatorControl toolbar.
+        /// Shows or hides the functions column in the 3-column layout.
+        /// </summary>
+        /// <param name="show">True to show, false to hide the functions column.</param>
+        private void OnFunctionsToggleChanged(bool show)
+        {
+            if (show)
+            {
+                FunctionsColumn.Width = new GridLength(140);
+                FunctionsColumn.MinWidth = 100;
+                FunctionsLabel.Visibility = Visibility.Visible;
+                FunctionsPanel.Visibility = Visibility.Visible;
+                InsertFunctionButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                FunctionsColumn.Width = new GridLength(0);
+                FunctionsColumn.MinWidth = 0;
+                FunctionsLabel.Visibility = Visibility.Collapsed;
+                FunctionsPanel.Visibility = Visibility.Collapsed;
+                InsertFunctionButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// Handles help document navigation from the expression editor.
+        /// Opens the functions panel and selects the matching function.
+        /// </summary>
+        /// <param name="helpDocumentPath">The help document path to navigate to.</param>
+        private void OnHelpDocumentRequested(string helpDocumentPath)
+        {
+            // Ensure the functions panel is visible
+            ExpressionCalculator.SetFunctionsToggle(true);
+
+            // Select the function in the tree
+            FunctionsPanel.SelectFunctionByHelpPath(helpDocumentPath);
+        }
+
+        /// <summary>
+        /// Handles function selection changes from the functions panel.
+        /// Updates the help expander in the CalculatorControl and enables the Insert button.
+        /// </summary>
+        /// <param name="func">The selected function descriptor, or null if deselected.</param>
+        private void OnFunctionsPanelSelectedFunctionChanged(FunctionDescriptor? func)
+        {
+            if (func != null)
+            {
+                ExpressionCalculator.ShowFunctionHelp(func);
+                InsertFunctionButton.IsEnabled = true;
+            }
+            else
+            {
+                InsertFunctionButton.IsEnabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Handles the Insert button click for the functions column.
+        /// Inserts the selected function's text into the expression.
+        /// </summary>
+        private void InsertFunctionButton_Click(object sender, RoutedEventArgs e)
+        {
+            FunctionsPanel.InsertSelectedFunction();
+        }
+
+        #endregion
+
+        #region Error Display
+
+        /// <summary>
+        /// Updates the errors expander with parse errors from the expression.
+        /// Auto-opens when errors exist, collapses when expression is error-free.
+        /// </summary>
+        private void UpdateErrorDisplay()
+        {
+            var errors = ExpressionCalculator.GetErrors();
+
+            if (errors.Count > 0)
+            {
+                ErrorsList.ItemsSource = errors;
+                ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
+                ErrorsExpander.Visibility = Visibility.Visible;
+                ErrorsExpander.IsExpanded = true;
+            }
+            else
+            {
+                ErrorsExpander.Visibility = Visibility.Collapsed;
+                ErrorsExpander.IsExpanded = false;
+                ErrorsList.ItemsSource = null;
+            }
+        }
+
+        #endregion
     }
 }
