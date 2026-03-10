@@ -68,8 +68,8 @@
                 ToolTip="Insert a data column into the expression."
                 Click="InsertVariableButton_Click">Insert</Button>
 
-            <GridSplitter Grid.Column="0" Grid.RowSpan="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="2"></GridSplitter>
-            <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="2"></GridSplitter>
+            <GridSplitter Grid.Column="0" Grid.RowSpan="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="2" Background="{DynamicResource EnvironmentWindowBackground}"/>
+            <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="2" Background="{DynamicResource EnvironmentWindowBackground}"/>
 
             <TextBlock Text="Expression" Grid.Row="0" Grid.Column="1" Margin="3,0,0,0"/>
             <parser:CalculatorControl Margin="3,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Name="ExpressionCalculator" ExpressionChanged="ExpressionCalculator_ExpressionChanged"/>
