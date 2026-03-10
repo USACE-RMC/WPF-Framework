@@ -93,7 +93,7 @@ namespace DatabaseControls
         /// <param name="readOnlyColumns">Set of column indices that should not be editable.</param>
         /// <param name="header">Optional header/field name. If provided, the field selection UI is hidden and this field is used.</param>
         /// <param name="isSelectByAttribute">If true, the calculator operates in "Select By Attribute" mode for filtering records.</param>
-        public FieldCalculator(DataTableView dataView, List<int>? selectedRows, HashSet<int> readOnlyColumns, string? header = null, bool isSelectByAttribute = false)
+        public FieldCalculator(DataTableView dataView, List<int>? selectedRows, HashSet<int>? readOnlyColumns, string? header = null, bool isSelectByAttribute = false)
         {
             // This call is required by the designer.
             InitializeComponent();
@@ -154,7 +154,7 @@ namespace DatabaseControls
                     _existingField = UpdateExistingRadioButton.IsChecked == true;
                     for (int i = 0; i < _dbView.ColumnNames.Length; i++)
                     {
-                        if (readOnlyColumns.Contains(i))
+                        if (readOnlyColumns != null && readOnlyColumns.Contains(i))
                         {
                             continue;
                         }
@@ -429,8 +429,8 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void UpdateExistingRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            // Update the field flag regardless of IsLoaded state to ensure proper initialization
-            _existingField = UpdateExistingRadioButton.IsChecked == true;
+            if (IsLoaded)
+                _existingField = UpdateExistingRadioButton.IsChecked == true;
         }
 
         /// <summary>

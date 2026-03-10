@@ -325,7 +325,7 @@ namespace DatabaseManager.Tests
             Assert.Equal(int.MaxValue, Convert.ToInt32(tableView.GetCell(0, 0)));
             Assert.Equal("Modified String", Convert.ToString(tableView.GetCell(1, 0)));
             Assert.Equal(double.MaxValue, Convert.ToDouble(tableView.GetCell(2, 0)));
-            Assert.Equal(true, Convert.ToBoolean(tableView.GetCell(3, 0)));
+            Assert.True(Convert.ToBoolean(tableView.GetCell(3, 0)));
         }
 
         /// <summary>

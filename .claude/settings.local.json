@@ -51,7 +51,8 @@
       "Bash(dotnet sln WPF-Framework.sln add tests/DAG.Tests/DAG.Tests.csproj --solution-folder Tests)",
       "Bash(done)",
       "Bash(sed 's/\\\\:.*//')",
-      "Bash(xargs -I {} basename {})"
+      "Bash(xargs -I {} basename {})",
+      "Bash(wc -l C:GITwpf-frameworksrcDataBase_Reader_VB/*.vb)"
     ]
   }
 }

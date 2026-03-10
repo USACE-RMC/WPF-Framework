@@ -1285,8 +1285,6 @@ namespace DatabaseControls
             RowColorGrid.RowDefinitions.Clear();
 
             for (int i = 0; i < _visibleRowCount; i++) AddRow();
-
-            UpdateVisibleRows();
         }
 
         /// <summary>
@@ -2331,6 +2329,32 @@ namespace DatabaseControls
                 SetSelectedCells();
                 SelectedRowIndicesChanged?.Invoke(_selectedDataRowIndices);
             }
+            else if (_mouseSelectionMode == SelectionMode.CellSelect)
+            {
+                if (_mouseDownVirtualRowIndex == mouseUpVirtualRowIndex && _mouseDownColumnIndex == 0)
+                {
+                    int dataRowIndex = _rowId![mouseUpVirtualRowIndex];
+                    if (!_selectedCellIndices.ContainsKey(dataRowIndex))
+                        _selectedCellIndices.Add(dataRowIndex, new SortedSet<int>());
+                    _selectedCellIndices[dataRowIndex].Add(0);
+                    SelectCell(0, mouseUpVirtualRowIndex - verticalScrollBarValue);
+                }
+                else
+                {
+                    int rowStep = mouseUpVirtualRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
+                    int columnStep = 0 >= _mouseDownColumnIndex ? 1 : -1;
+
+                    for (int i = _mouseDownVirtualRowIndex; rowStep > 0 ? i <= mouseUpVirtualRowIndex : i >= mouseUpVirtualRowIndex; i += rowStep)
+                    {
+                        int dataRowIndex = _rowId![i];
+                        if (!_selectedCellIndices.ContainsKey(dataRowIndex))
+                            _selectedCellIndices.Add(dataRowIndex, new SortedSet<int>());
+                        for (int j = _mouseDownColumnIndex; columnStep > 0 ? j <= 0 : j >= 0; j += columnStep)
+                            _selectedCellIndices[dataRowIndex].Add(j);
+                    }
+                    SetSelectedCells();
+                }
+            }
 
             UpdateSelectionButtonStates();
             _mouseSelectionMode = SelectionMode.None;
@@ -2386,6 +2410,18 @@ namespace DatabaseControls
                     for (int i = startRow; rowStep > 0 ? i <= endRow : i >= endRow; i += rowStep)
                         for (int j = 0; j < DataView.ColumnNames.Count(); j++)
                             SelectCell(j, i);
+                }
+                else if (_mouseSelectionMode == SelectionMode.CellSelect)
+                {
+                    int mouseMoveColumnIndex = GetTableColumnIndex(gridPosition);
+                    int rowStep = mouseMoveDataRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
+                    int columnStep = mouseMoveColumnIndex >= _mouseDownColumnIndex ? 1 : -1;
+
+                    for (int i = _mouseDownColumnIndex; columnStep > 0 ? i <= mouseMoveColumnIndex : i >= mouseMoveColumnIndex; i += columnStep)
+                        for (int j = _mouseDownVirtualRowIndex - verticalScrollBarValue;
+                             rowStep > 0 ? j <= mouseMoveDataRowIndex - verticalScrollBarValue : j >= mouseMoveDataRowIndex - verticalScrollBarValue;
+                             j += rowStep)
+                            SelectCell(i, j);
                 }
                 SetActiveCell();
             }
@@ -2819,7 +2855,7 @@ namespace DatabaseControls
 
         private void SelectByAttribute_Click(object sender, RoutedEventArgs e)
         {
-            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, new HashSet<int>(), null, true);
+            var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, null, null, true);
             attributeSelector.ContentRendered += SelectorRendered;
 
             if (attributeSelector.ShowDialog() == true)
@@ -2974,18 +3010,19 @@ namespace DatabaseControls
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (_mouseSelectionMode == SelectionMode.None || _mouseSelectionMode == SelectionMode.EditSelect) return;
-
-                AllCellsSelected = false;
-                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) ||
-                    Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                if (_mouseSelectionMode != SelectionMode.None && _mouseSelectionMode != SelectionMode.EditSelect)
                 {
-                    DeSelectAllCells();
-                    SetSelectedCells();
-                }
-                else
-                {
-                    DeSelectAllCells();
+                    AllCellsSelected = false;
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl) ||
+                        Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                    {
+                        DeSelectAllCells();
+                        SetSelectedCells();
+                    }
+                    else
+                    {
+                        DeSelectAllCells();
+                    }
                 }
 
                 int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
@@ -3469,7 +3506,7 @@ namespace DatabaseControls
         /// </summary>
         private void CopyAllToClipboard(bool includeHeaders)
         {
-            if (_selectedColumnIndices.Count * DataView.NumberOfRows > 50000)
+            if (DataView.ColumnNames.Count() * DataView.NumberOfRows > 50000)
             {
                 var msgString = $"Operation will copy {DataView.NumberOfRows * DataView.ColumnNames.Count()} cell values to the clipboard.  Are you sure you want to copy that much data to the clipboard?";
                 if (GenericControls.MessageBox.Show(msgString, "Large Amount of Data To Clipboard", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
@@ -3717,6 +3754,20 @@ namespace DatabaseControls
                         {
                             if (_selectedColumnIndices.BinarySearch(column) < 0) return false;
                         }
+                    }
+                }
+            }
+            else if (_selectedCellIndices.Count > 0)
+            {
+                // Check that cell-only selections form a uniform rectangle
+                int columnCount = _selectedCellIndices.First().Value.Count;
+                int[] columnIndices = _selectedCellIndices.First().Value.ToArray();
+                foreach (var rowSelectedCells in _selectedCellIndices)
+                {
+                    if (columnCount != rowSelectedCells.Value.Count) return false;
+                    for (int i = 0; i < columnIndices.Length; i++)
+                    {
+                        if (!rowSelectedCells.Value.Contains(columnIndices[i])) return false;
                     }
                 }
             }

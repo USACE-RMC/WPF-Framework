@@ -3146,6 +3146,7 @@ namespace OxyPlotControls
         /// <param name="stretch">The font stretch to use.</param>
         /// <param name="size">The font size to use.</param>
         /// <returns>The size of the rendered text.</returns>
+        [Obsolete]
         private Size MeasureString(string candidate, FontFamily family, FontStyle style, FontWeight weight, FontStretch stretch, double size)
         {
             if (candidate == null)

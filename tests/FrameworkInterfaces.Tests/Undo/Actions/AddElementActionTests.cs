@@ -279,7 +279,7 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
 
             // Undo removes element
             action.Undo();
-            Assert.Equal(1, collection.Count);
+            Assert.Single(collection);
             Assert.DoesNotContain(element, collection);
 
             // Execute again re-adds
