@@ -1499,7 +1499,7 @@ namespace DatabaseControls
                 if (_columnSortOrder == SortOrder.None)
                 {
                     int selectedIndex = Math.Min(firstRowIndex + tableRowIndex, _selectedDataRowIndices.Count - 1);
-                    return _selectedDataRowIndices[selectedIndex];
+                    return _rowId![_selectedDataRowIndices[selectedIndex]];
                 }
                 else
                 {
@@ -2660,9 +2660,6 @@ namespace DatabaseControls
                 if (_mouseDownVirtualRowIndex == mouseUpDataRowIndex && _mouseDownColumnIndex == mouseUpColumnIndex)
                 {
                     // Single cell selection
-                    _selectedCellIndices.Clear();
-                    _selectedDataRowIndices.Clear();
-                    _selectedColumnIndices.Clear();
                     if (!_selectedCellIndices.ContainsKey(_rowId![mouseUpDataRowIndex]))
                         _selectedCellIndices.Add(_rowId[mouseUpDataRowIndex], new SortedSet<int>());
                     _selectedCellIndices[_rowId[mouseUpDataRowIndex]].Add(mouseUpColumnIndex);
@@ -2672,10 +2669,6 @@ namespace DatabaseControls
                     // Multi-cell selection
                     int rowStep = mouseUpDataRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
                     int columnStep = mouseUpColumnIndex >= _mouseDownColumnIndex ? 1 : -1;
-
-                    _selectedCellIndices.Clear();
-                    _selectedDataRowIndices.Clear();
-                    _selectedColumnIndices.Clear();
 
                     for (int i = _mouseDownVirtualRowIndex; ; i += rowStep)
                     {
@@ -4197,7 +4190,6 @@ namespace DatabaseControls
                 ((Image)ShowSelected.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
                 DeSelectAll.IsEnabled = false;
                 ((Image)DeSelectAll.Content).Source = new BitmapImage(new Uri("pack://application:,,,/DatabaseControls;component/Resources/ClearSelectionIconDisabled_22x22.png"));
-                ShowAll_Checked(null, null);
             }
         }
 
