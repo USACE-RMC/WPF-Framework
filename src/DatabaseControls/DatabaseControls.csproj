@@ -30,6 +30,9 @@
 
   <ItemGroup>
     <Compile Remove="FieldCalculator\ExpressionTextBox.cs" />
+    <Compile Remove="FieldCalculator\ErrorWindow.xaml.cs" />
+    <Compile Remove="FieldCalculator\ErrorItem.cs" />
+    <Page Remove="FieldCalculator\ErrorWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
