@@ -41,7 +41,7 @@ namespace DatabaseControls
     /// Automatically determines whether to show numeric or alphabetic statistics based on the column data type.
     /// Supports filtering statistics to selected rows only.
     /// </summary>
-    public partial class ColumnStatsWindow : Window
+    public partial class ColumnStatsWindow : GenericControls.MetroWindow
     {
         #region Private Fields
 

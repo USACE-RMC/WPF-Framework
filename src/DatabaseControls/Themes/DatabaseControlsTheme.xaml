@@ -219,6 +219,9 @@
     <!-- COLUMN STATS WINDOW STYLES                                                       -->
     <!-- =============================================================================== -->
 
+    <!-- Note: Background/Foreground are also set directly on the XAML element alongside
+         Style="{DynamicResource MetroWindowStyle}" for Metro chrome. The explicit Style
+         attribute takes precedence over this implicit style, so these serve as fallback. -->
     <Style x:Key="ColumnStatsWindowStyle" TargetType="{x:Type local:ColumnStatsWindow}">
         <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentWindowText}"/>
