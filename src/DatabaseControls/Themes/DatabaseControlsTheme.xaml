@@ -53,7 +53,7 @@
     <!-- Column Header Border Style with gradient background -->
     <Style x:Key="ColumnHeaderBorderStyle" TargetType="{x:Type Border}">
         <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Header.Border}"/>
-        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        <Setter Property="BorderThickness" Value="0,1,1,1"/>
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0 0" EndPoint="0 1">

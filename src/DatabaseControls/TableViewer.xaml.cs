@@ -677,6 +677,14 @@ namespace DatabaseControls
                     tv._visualRefreshPending = false;
                     if (tv.DataView == null || tv.GridPanel.Children.Count == 0) return;
                     tv.LoadRows();
+                    // Update column grid line colors (not recreated by LoadRows)
+                    int colLineCount = tv.DataView.ColumnNames.Count() + 1;
+                    for (int i = 0; i < colLineCount && i < tv.GridLinesCanvas.Children.Count; i++)
+                    {
+                        if (tv.GridLinesCanvas.Children[i] is Line colLine)
+                            colLine.Stroke = tv.ColumnLineColor;
+                    }
+                    tv.DeSelectAllCells();
                     tv.SetSelectedCells();
                     tv.UpdateRowHeaders();
                 }, System.Windows.Threading.DispatcherPriority.Render);
@@ -739,7 +747,7 @@ namespace DatabaseControls
                     thisControl.RowHeadersColumnDefinition.Width = new GridLength(
                         (int)(new FormattedText(newView.NumberOfRows.ToString(), CultureInfo.GetCultureInfo("en-us"),
                             FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
-                            12, Brushes.Black, pixelsPerDip).Width) + 3);
+                            12, Brushes.Black, pixelsPerDip).Width) + 10);
                 }
 
                 thisControl.SelectionToolbar.IsEnabled = true;
@@ -1139,7 +1147,7 @@ namespace DatabaseControls
                 RowHeadersColumnDefinition.Width = new GridLength(
                     (int)(new FormattedText(DataView.NumberOfRows.ToString(), CultureInfo.GetCultureInfo("en-us"),
                         FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
-                        12, Brushes.Black, pixelsPerDip).Width) + 3);
+                        12, Brushes.Black, pixelsPerDip).Width) + 10);
             }
 
             UpdateRowHeaders();

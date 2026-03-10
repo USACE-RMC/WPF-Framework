@@ -260,8 +260,9 @@
             </Grid.ColumnDefinitions>
 
             <Border x:Name="SelectAllBorder"
-                    Style="{Binding ElementName=TableViewerControl, Path=RowHeaderBorderStyle}"
-                    BorderThickness="1"
+                    Style="{Binding ElementName=TableViewerControl, Path=ColumnHeaderBorderStyle}"
+                    BorderThickness="0,1,1,1"
+                    Margin="0"
                     MouseLeftButtonDown="SelectAllLeftMouseDown"
                     MouseLeftButtonUp="SelectAllLeftMouseUp"
                     Visibility="{Binding ShowRowHeaders, Converter={StaticResource BooleanToVisibility}, TargetNullValue=Visible}"/>
