@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:DatabaseControls"
     xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
     Title="Select By Attribute" Height="606" Width="511" ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/DatabaseControls;component/Resources/SelectByAttribute.png"
     Style="{DynamicResource MetroWindowStyle}"
     Background="{DynamicResource EnvironmentWindowBackground}"
