@@ -73,12 +73,6 @@ namespace DatabaseControls
         private readonly bool _isSelectByAttribute;
 
         /// <summary>
-        /// Tracks whether the errors expander is currently contributing to the window height.
-        /// Used to avoid double-growing or double-shrinking.
-        /// </summary>
-        private bool _errorsExpanderOpen;
-
-        /// <summary>
         /// List of row indices that match the selection criteria when using "Select By Attribute" mode.
         /// </summary>
         private List<int> _rowsToSelect = new List<int>();
@@ -453,14 +447,12 @@ namespace DatabaseControls
 
         /// <summary>
         /// Handles the expression changed event from the calculator control.
-        /// Validates the expression, updates the error display, and updates the result preview.
+        /// Validates the expression and updates the result preview.
+        /// Error display is handled internally by the CalculatorControl.
         /// </summary>
         private void ExpressionCalculator_ExpressionChanged()
         {
             resultTextBlock.Text = "";
-
-            // Update the errors expander
-            UpdateErrorDisplay();
 
             // Check for parse errors
             IParserNode parseNode = ExpressionCalculator.GetParseTree();
@@ -646,55 +638,6 @@ namespace DatabaseControls
         private void InsertFunctionButton_Click(object sender, RoutedEventArgs e)
         {
             FunctionsPanel.InsertSelectedFunction();
-        }
-
-        #endregion
-
-        #region Error Display
-
-        /// <summary>
-        /// Updates the errors expander with parse errors from the expression.
-        /// Auto-opens when errors exist, collapses when expression is error-free.
-        /// Grows/shrinks the window height to accommodate the expander.
-        /// </summary>
-        private void UpdateErrorDisplay()
-        {
-            var errors = ExpressionCalculator.GetErrors();
-
-            if (errors.Count > 0)
-            {
-                ErrorsList.ItemsSource = errors;
-                ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
-                ErrorsExpander.Visibility = Visibility.Visible;
-                ErrorsExpander.IsExpanded = true;
-
-                if (!_errorsExpanderOpen)
-                {
-                    _errorsExpanderOpen = true;
-                    // Force layout so the expander renders and we can measure its actual height
-                    ErrorsExpander.UpdateLayout();
-                    this.Height = this.ActualHeight + ErrorsExpander.ActualHeight;
-                }
-            }
-            else
-            {
-                if (_errorsExpanderOpen)
-                {
-                    _errorsExpanderOpen = false;
-                    // Measure before collapsing so we know exactly how much to shrink
-                    double expanderHeight = ErrorsExpander.ActualHeight;
-                    ErrorsExpander.Visibility = Visibility.Collapsed;
-                    ErrorsExpander.IsExpanded = false;
-                    ErrorsList.ItemsSource = null;
-                    this.Height = this.ActualHeight - expanderHeight;
-                }
-                else
-                {
-                    ErrorsExpander.Visibility = Visibility.Collapsed;
-                    ErrorsExpander.IsExpanded = false;
-                    ErrorsList.ItemsSource = null;
-                }
-            }
         }
 
         #endregion

@@ -215,7 +215,6 @@ namespace ExpressionParserControls
             HelpDescription.Text = func.Description;
             HelpExample.Text = func.Example;
             FunctionHelpHeader.Text = $"Function: {func.Name}";
-            HelpInsertButton.IsEnabled = true;
 
             FunctionHelpExpander.Visibility = Visibility.Visible;
             FunctionHelpExpander.IsExpanded = true;
@@ -309,7 +308,7 @@ namespace ExpressionParserControls
         /// </summary>
         private void LexTextBox_ExpressionChanged(List<Token> tokenList)
         {
-            UpdateErrorState();
+            UpdateErrorDisplay();
             ExpressionChanged?.Invoke();
         }
 
@@ -322,31 +321,29 @@ namespace ExpressionParserControls
         }
 
         /// <summary>
-        /// Parses the current expression and updates HasErrors/ErrorCount properties.
-        /// The actual error display is handled by the host (e.g., FieldCalculator's errors expander).
+        /// Parses the current expression, updates HasErrors/ErrorCount properties,
+        /// and populates the errors expander with any parse errors.
+        /// Auto-opens when errors exist, collapses when expression is error-free.
         /// </summary>
-        private void UpdateErrorState()
+        private void UpdateErrorDisplay()
         {
-            IParserNode parseNode = null;
-            try
-            {
-                parseNode = GetParseTree();
-            }
-            catch
-            {
-                // Parse failed entirely
-            }
-
-            if (parseNode == null)
-            {
-                HasErrors = false;
-                ErrorCount = 0;
-                return;
-            }
-
-            var errors = parseNode.GetErrors;
+            var errors = GetErrors();
             HasErrors = errors.Count > 0;
             ErrorCount = errors.Count;
+
+            if (errors.Count > 0)
+            {
+                ErrorsList.ItemsSource = errors;
+                ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
+                ErrorsExpander.Visibility = Visibility.Visible;
+                ErrorsExpander.IsExpanded = true;
+            }
+            else
+            {
+                ErrorsExpander.Visibility = Visibility.Collapsed;
+                ErrorsExpander.IsExpanded = false;
+                ErrorsList.ItemsSource = null;
+            }
         }
 
         #endregion
@@ -372,17 +369,6 @@ namespace ExpressionParserControls
         #endregion
 
         #region Function Help Expander
-
-        /// <summary>
-        /// Inserts the current help function's text into the expression.
-        /// </summary>
-        private void HelpInsertButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_currentHelpFunction != null)
-            {
-                this.LexTextBox.InsertText(_currentHelpFunction.InsertText);
-            }
-        }
 
         /// <summary>
         /// Handles navigation to a help document from within the LexTextBox.
