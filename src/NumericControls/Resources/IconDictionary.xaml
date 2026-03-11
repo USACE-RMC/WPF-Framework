@@ -58,12 +58,12 @@
             <TextBlock Text="f" FontFamily="Cambria" FontSize="14" FontStyle="Italic" FontWeight="SemiBold"
                        Foreground="{DynamicResource EnvironmentWindowText}"
                        HorizontalAlignment="Left" VerticalAlignment="Stretch"
-                       Margin="1,-1,0,0"/>
+                       Margin="2,-1,0,0"/>
             <!-- Subscript x -->
             <TextBlock Text="x" FontFamily="Cambria" FontSize="10" FontStyle="Italic" FontWeight="SemiBold"
                        Foreground="{DynamicResource EnvironmentWindowText}"
                        HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                       Margin="6,0,0,1"/>
+                       Margin="7,0,0,1"/>
         </Grid>
     </Viewbox>
 

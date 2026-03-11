@@ -105,6 +105,10 @@ namespace DatabaseControls
             // This call is required by the designer.
             InitializeComponent();
 
+            // Prevent content flicker on open — render invisible until layout completes
+            this.Opacity = 0;
+            this.ContentRendered += (s, e) => this.Opacity = 1;
+
             _isSelectByAttribute = isSelectByAttribute;
             if (_isSelectByAttribute)
             {
@@ -587,7 +591,7 @@ namespace DatabaseControls
         {
             if (show)
             {
-                FunctionsColumn.Width = new GridLength(160);
+                FunctionsColumn.Width = new GridLength(170);
                 FunctionsColumn.MinWidth = 100;
                 FunctionsLabel.Visibility = Visibility.Visible;
                 FunctionsPanel.Visibility = Visibility.Visible;
@@ -649,11 +653,6 @@ namespace DatabaseControls
         #region Error Display
 
         /// <summary>
-        /// The height added to the window when the errors expander opens.
-        /// </summary>
-        private const double ErrorsExpanderHeight = 130;
-
-        /// <summary>
         /// Updates the errors expander with parse errors from the expression.
         /// Auto-opens when errors exist, collapses when expression is error-free.
         /// Grows/shrinks the window height to accommodate the expander.
@@ -672,19 +671,28 @@ namespace DatabaseControls
                 if (!_errorsExpanderOpen)
                 {
                     _errorsExpanderOpen = true;
-                    this.Height = this.ActualHeight + ErrorsExpanderHeight;
+                    // Force layout so the expander renders and we can measure its actual height
+                    ErrorsExpander.UpdateLayout();
+                    this.Height = this.ActualHeight + ErrorsExpander.ActualHeight;
                 }
             }
             else
             {
-                ErrorsExpander.Visibility = Visibility.Collapsed;
-                ErrorsExpander.IsExpanded = false;
-                ErrorsList.ItemsSource = null;
-
                 if (_errorsExpanderOpen)
                 {
                     _errorsExpanderOpen = false;
-                    this.Height = this.ActualHeight - ErrorsExpanderHeight;
+                    // Measure before collapsing so we know exactly how much to shrink
+                    double expanderHeight = ErrorsExpander.ActualHeight;
+                    ErrorsExpander.Visibility = Visibility.Collapsed;
+                    ErrorsExpander.IsExpanded = false;
+                    ErrorsList.ItemsSource = null;
+                    this.Height = this.ActualHeight - expanderHeight;
+                }
+                else
+                {
+                    ErrorsExpander.Visibility = Visibility.Collapsed;
+                    ErrorsExpander.IsExpanded = false;
+                    ErrorsList.ItemsSource = null;
                 }
             }
         }

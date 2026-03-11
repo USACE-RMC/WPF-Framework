@@ -22,24 +22,24 @@
         <!-- Row 0: Field Selection -->
         <Grid Grid.Row="0" Name="FieldSelectionGrid" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="170"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Margin="0, 0, 0,0" Grid.Column="0" Grid.Row="0" VerticalContentAlignment="Center" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
-            <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0" Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}" TextChanged="NewFieldName_TextChanged"/>
-            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Row="1" Grid.Column="0" VerticalContentAlignment="Center" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
-            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Height="22" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
+            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Margin="10, 0, 0,0" Grid.Column="0" Grid.Row="0" VerticalContentAlignment="Center" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
+            <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}" TextChanged="NewFieldName_TextChanged"/>
+            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Margin="10,5,0,5" Grid.Row="1" Grid.Column="0" VerticalContentAlignment="Center" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
+            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Height="22" Margin="0,5,0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
         </Grid>
 
         <!-- Row 1: Main Content — 3-column layout (Data Columns | Functions | Expression) -->
         <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
                 <!-- Data Columns (fixed width) -->
-                <ColumnDefinition x:Name="DataColumnsColumn" Width="152" MinWidth="100"/>
+                <ColumnDefinition x:Name="DataColumnsColumn" Width="170" MinWidth="100"/>
                 <!-- Functions column (toggled, matches Data Columns width) -->
                 <ColumnDefinition x:Name="FunctionsColumn" Width="0"/>
                 <!-- Expression column (fills remaining space) -->
@@ -49,7 +49,7 @@
                 <!-- Labels row -->
                 <RowDefinition Height="Auto"/>
                 <!-- Content area (fills) -->
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" MinHeight="150"/>
                 <!-- Insert buttons / toolbar row (aligned horizontally) -->
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -106,11 +106,16 @@
                   Visibility="Collapsed" IsExpanded="False"
                   Margin="0,0,0,3">
             <Expander.Header>
-                <TextBlock x:Name="ErrorsExpanderHeader" Text="Expression Errors"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource ExpressionError.Text}"/>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{DynamicResource ErrorImage}" Width="14" Height="14" Margin="0,0,5,0"
+                           VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ErrorsExpanderHeader" Text="Expression Errors"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource ExpressionError.Text}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
             </Expander.Header>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120" Margin="0,3,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="150" Height="Auto" Margin="0,3,0,0">
                 <ItemsControl x:Name="ErrorsList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -127,7 +132,8 @@
         </Expander>
 
         <!-- Row 3: Result Preview -->
-        <TextBlock Text="" Grid.Row="3" HorizontalAlignment="Left" Margin="0,0,0,5" Name="resultTextBlock" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        <TextBlock x:Name="resultTextBlock" Grid.Row="3" Margin="0,3,0,3" TextWrapping="Wrap"
+                   Foreground="{DynamicResource EnvironmentWindowText}"/>
 
         <!-- Row 4: Footer — Checkbox left, Execute right -->
         <Grid Grid.Row="4">

@@ -18,7 +18,7 @@
 
         <!-- Row 0: Expression Editor -->
         <local:ExpressionControl Grid.Row="0" x:Name="LexTextBox" FontWeight="Normal" Text=""
-                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="15"
+                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="14"
                                  ExpressionChanged="LexTextBox_ExpressionChanged"
                                  HelpDocumentCalled="LexTextBox_HelpDocumentCalled"/>
 
@@ -28,12 +28,17 @@
                   Visibility="Collapsed" IsExpanded="False"
                   Margin="0,3,0,0">
             <Expander.Header>
-                <TextBlock x:Name="FunctionHelpHeader" Text="Function Help" FontWeight="SemiBold"
-                           Foreground="{DynamicResource EnvironmentWindowText}"/>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{DynamicResource HelpImage}" Width="14" Height="14" Margin="0,0,5,0"
+                           VerticalAlignment="Center"/>
+                    <TextBlock x:Name="FunctionHelpHeader" Text="Function Help" FontWeight="SemiBold"
+                               Foreground="{DynamicResource EnvironmentWindowText}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
             </Expander.Header>
-            <Border BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1"
+            <Border BorderBrush="{DynamicResource TextBox.Static.Border}" BorderThickness="1"
                     Background="{DynamicResource TextBox.Static.Background}" Margin="0,3,0,0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="160" Padding="8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Height="auto" Padding="5">
                     <StackPanel x:Name="HelpDetailPanel">
                         <!-- Function Name -->
                         <TextBlock x:Name="HelpFunctionName" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"
@@ -67,9 +72,8 @@
                                        Foreground="{DynamicResource AvailableFunctions.ExampleText}" TextWrapping="Wrap"/>
                         </Border>
 
-                        <!-- Insert button -->
                         <Button x:Name="HelpInsertButton" Content="Insert Function" Height="24" Width="120"
-                                HorizontalAlignment="Right" Margin="0,4,0,0"
+                                HorizontalAlignment="Left" Margin="0,4,0,0"
                                 Click="HelpInsertButton_Click" IsEnabled="False"/>
                     </StackPanel>
                 </ScrollViewer>
@@ -82,14 +86,14 @@
             <ToggleButton x:Name="FunctionsToggleButton" Height="24" Width="28" Padding="0"
                           SnapsToDevicePixels="True" ToolTip="More functions"
                           Checked="FunctionsToggleButton_Checked" Unchecked="FunctionsToggleButton_Unchecked">
-                <Viewbox Width="16" Height="16">
+                <Viewbox Width="16" Height="16" RenderOptions.EdgeMode="Aliased">
                     <Grid Width="16" Height="16">
                         <TextBlock Text="f" FontFamily="Cambria" FontSize="14" FontStyle="Italic" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource EnvironmentWindowText}" Margin="0,-1,0,0"
-                                   HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                        <TextBlock Text="x" FontFamily="Cambria" FontSize="9" FontStyle="Italic" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource EnvironmentWindowText}" Margin="2,-1,0,0"
+                                   HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+                        <TextBlock Text="x" FontFamily="Cambria" FontSize="10" FontStyle="Italic" FontWeight="SemiBold"
                                    Foreground="{DynamicResource EnvironmentWindowText}"
-                                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,0"/>
+                                   HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="7,0,0,1"/>
                     </Grid>
                 </Viewbox>
             </ToggleButton>
