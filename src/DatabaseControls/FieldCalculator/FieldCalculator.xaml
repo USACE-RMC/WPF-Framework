@@ -39,7 +39,7 @@
         <Grid Grid.Row="1" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
                 <!-- Data Columns (fixed width) -->
-                <ColumnDefinition x:Name="DataColumnsColumn" Width="160" MinWidth="100"/>
+                <ColumnDefinition x:Name="DataColumnsColumn" Width="152" MinWidth="100"/>
                 <!-- Functions column (toggled, matches Data Columns width) -->
                 <ColumnDefinition x:Name="FunctionsColumn" Width="0"/>
                 <!-- Expression column (fills remaining space) -->
