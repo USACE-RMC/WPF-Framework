@@ -323,7 +323,9 @@ namespace ExpressionParserControls
         /// <summary>
         /// Parses the current expression, updates HasErrors/ErrorCount properties,
         /// and populates the errors expander with any parse errors.
-        /// Auto-opens when errors exist, collapses when expression is error-free.
+        /// Shows the expander when errors exist but does not force it open —
+        /// if the user has manually expanded it, it stays open.
+        /// Collapses the expander when the expression is error-free.
         /// </summary>
         private void UpdateErrorDisplay()
         {
@@ -336,7 +338,6 @@ namespace ExpressionParserControls
                 ErrorsList.ItemsSource = errors;
                 ErrorsExpanderHeader.Text = $"Expression Errors ({errors.Count})";
                 ErrorsExpander.Visibility = Visibility.Visible;
-                ErrorsExpander.IsExpanded = true;
             }
             else
             {
