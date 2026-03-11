@@ -110,12 +110,12 @@
                         <ItemsControl x:Name="ErrorsList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="0,1,0,1">
-                                        <TextBlock Text="&#x2022;" Margin="4,0,6,0" FontWeight="Bold"
+                                    <DockPanel Margin="0,1,0,1">
+                                        <TextBlock Text="&#x2022;" DockPanel.Dock="Left" Margin="4,0,6,0" FontWeight="Bold"
                                                    Foreground="{DynamicResource ExpressionError.Text}"/>
                                         <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
                                                    Foreground="{DynamicResource ExpressionError.Text}"/>
-                                    </StackPanel>
+                                    </DockPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

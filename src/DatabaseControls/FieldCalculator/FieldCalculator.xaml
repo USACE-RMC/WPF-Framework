@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:parser="clr-namespace:ExpressionParserControls;assembly=ExpressionParserControls"
     xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
-    Title="Field Calculator" Height="500" Width="700" MinHeight="350" MinWidth="550" ResizeMode="CanResize"
+    Title="Field Calculator" Height="550" Width="700" MinHeight="350" MinWidth="550" ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/DatabaseControls;component/Resources/calculator_16x.png"
     Style="{DynamicResource MetroWindowStyle}"
