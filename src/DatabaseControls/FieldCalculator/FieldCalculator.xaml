@@ -100,9 +100,21 @@
                                       ExpressionChanged="ExpressionCalculator_ExpressionChanged"/>
         </Grid>
 
-        <!-- Row 2: Result Preview -->
-        <TextBlock x:Name="resultTextBlock" Grid.Row="2" Margin="0,3,0,3" TextWrapping="Wrap"
-                   Foreground="{DynamicResource EnvironmentWindowText}"/>
+        <!-- Row 2: Result Preview (HEAD-style, shows first N rows) -->
+        <Grid Grid.Row="2" Margin="0,3,0,3">
+            <TextBlock x:Name="resultMessageText" TextWrapping="Wrap" VerticalAlignment="Center"
+                       Foreground="{DynamicResource EnvironmentWindowText}" Visibility="Collapsed"/>
+            <DataGrid x:Name="PreviewGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                      HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
+                      CanUserReorderColumns="False" CanUserSortColumns="False"
+                      CanUserResizeRows="False" GridLinesVisibility="None"
+                      MaxHeight="120" VerticalScrollBarVisibility="Auto"
+                      BorderThickness="1" BorderBrush="{DynamicResource TextBox.Static.Border}"
+                      Background="{DynamicResource TextBox.Static.Background}"
+                      Foreground="{DynamicResource EnvironmentWindowText}"
+                      RowBackground="{DynamicResource TextBox.Static.Background}"
+                      Visibility="Collapsed"/>
+        </Grid>
 
         <!-- Row 3: Footer — Checkbox left, Execute right -->
         <Grid Grid.Row="3">

@@ -446,13 +446,18 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Maximum number of rows to preview in the HEAD-style result grid.
+        /// </summary>
+        private const int PreviewRowCount = 5;
+
+        /// <summary>
         /// Handles the expression changed event from the calculator control.
-        /// Validates the expression and updates the result preview.
+        /// Validates the expression and updates the HEAD-style result preview.
         /// Error display is handled internally by the CalculatorControl.
         /// </summary>
         private void ExpressionCalculator_ExpressionChanged()
         {
-            resultTextBlock.Text = "";
+            HidePreview();
 
             // Check for parse errors
             IParserNode parseNode = ExpressionCalculator.GetParseTree();
@@ -466,60 +471,143 @@ namespace DatabaseControls
 
             if (ExpressionCalculator.HasErrors)
             {
-                // Errors are displayed in the errors expander — no need for result text
+                return;
+            }
+
+            if (_isSelectByAttribute && parseNode.OutputType != ResultType.Boolean)
+            {
+                ShowMessage("Expression must return a true/false result for selection. Current result type: " + parseNode.OutputType.ToString() + ".");
+                ExecuteButton.IsEnabled = false;
+                return;
+            }
+
+            if (_dbView.NumberOfRows == 0)
+            {
+                return;
+            }
+
+            UpdatePreviewGrid(parseNode);
+        }
+
+        /// <summary>
+        /// Evaluates the expression against the first N rows and displays
+        /// a HEAD-style preview grid showing Row, Result (and Selected for select-by-attribute).
+        /// </summary>
+        private void UpdatePreviewGrid(IParserNode parseNode)
+        {
+            int rowCount = Math.Min(PreviewRowCount, _dbView.NumberOfRows);
+            bool hasVariables = parseNode.ContainsVariable();
+            List<VariableNode>? variables = hasVariables ? parseNode.GetVariableNodes() : null;
+
+            // Build column list
+            PreviewGrid.Columns.Clear();
+            PreviewGrid.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Row",
+                Binding = new System.Windows.Data.Binding("Row"),
+                Width = new DataGridLength(45),
+                IsReadOnly = true
+            });
+
+            if (_isSelectByAttribute)
+            {
+                PreviewGrid.Columns.Add(new DataGridTextColumn
+                {
+                    Header = "Selected",
+                    Binding = new System.Windows.Data.Binding("Result"),
+                    Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+                    IsReadOnly = true
+                });
             }
             else
             {
-                if (_isSelectByAttribute && parseNode.OutputType != ResultType.Boolean)
+                PreviewGrid.Columns.Add(new DataGridTextColumn
                 {
-                    resultTextBlock.Text = "When selecting by attributes the expression result must be in true/false logical format. The current expression returns a result of type '" + parseNode.OutputType.ToString() + "'.";
-                    ExecuteButton.IsEnabled = false;
+                    Header = "Result",
+                    Binding = new System.Windows.Data.Binding("Result"),
+                    Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+                    IsReadOnly = true
+                });
+            }
+
+            // Evaluate each row
+            var previewItems = new List<PreviewRow>();
+            for (int i = 0; i < rowCount; i++)
+            {
+                if (hasVariables && variables != null)
+                {
+                    object[] row = _dbView.GetRow(i);
+                    foreach (var v in variables)
+                    {
+                        int index = Array.IndexOf(_dbView.ColumnNames, v.VariableName);
+                        if (index != -1)
+                        {
+                            v.SetValue(row[index]);
+                        }
+                    }
                 }
-                else
+
+                try
                 {
-                    if (_dbView.NumberOfRows == 0)
+                    var result = parseNode.Evaluate();
+                    if (result.Type == ResultType.Error)
                     {
-                        return;
+                        previewItems.Add(new PreviewRow(i, "Error"));
                     }
-
-                    if (parseNode.ContainsVariable())
+                    else if (_isSelectByAttribute)
                     {
-                        var variables = parseNode.GetVariableNodes();
-                        object[] firstRow = _dbView.GetRow(0);
-                        foreach (var var in variables)
-                        {
-                            int index = Array.IndexOf(_dbView.ColumnNames, var.VariableName);
-                            if (index != -1)
-                            {
-                                var.SetValue(firstRow[index]);
-                            }
-                        }
-                    }
-
-                    if (_isSelectByAttribute)
-                    {
-                        if (Convert.ToBoolean(parseNode.Evaluate().Result))
-                        {
-                            resultTextBlock.Text = "First record (row 0) WILL get selected.";
-                        }
-                        else
-                        {
-                            resultTextBlock.Text = "First record (row 0) will NOT get selected.";
-                        }
+                        bool selected = Convert.ToBoolean(result.Result);
+                        previewItems.Add(new PreviewRow(i, selected ? "Yes" : "No"));
                     }
                     else
                     {
-                        var result = parseNode.Evaluate();
-                        if (result.Type == ResultType.Error)
-                        {
-                            resultTextBlock.Text = "Error attempting to evaluate the first data record.";
-                        }
-                        else
-                        {
-                            resultTextBlock.Text = $"First record (row 0) = '{result.Result}'";
-                        }
+                        previewItems.Add(new PreviewRow(i, Convert.ToString(result.Result) ?? ""));
                     }
                 }
+                catch
+                {
+                    previewItems.Add(new PreviewRow(i, "Error"));
+                }
+            }
+
+            PreviewGrid.ItemsSource = previewItems;
+            PreviewGrid.Visibility = Visibility.Visible;
+            resultMessageText.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Shows a text message in the preview area (hides the grid).
+        /// </summary>
+        private void ShowMessage(string message)
+        {
+            resultMessageText.Text = message;
+            resultMessageText.Visibility = Visibility.Visible;
+            PreviewGrid.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Hides both the preview grid and the message text.
+        /// </summary>
+        private void HidePreview()
+        {
+            resultMessageText.Text = "";
+            resultMessageText.Visibility = Visibility.Collapsed;
+            PreviewGrid.Visibility = Visibility.Collapsed;
+            PreviewGrid.ItemsSource = null;
+        }
+
+        /// <summary>
+        /// Simple row model for the preview DataGrid.
+        /// </summary>
+        private class PreviewRow
+        {
+            public int Row { get; }
+            public string Result { get; }
+
+            public PreviewRow(int row, string result)
+            {
+                Row = row;
+                Result = result;
             }
         }
 
