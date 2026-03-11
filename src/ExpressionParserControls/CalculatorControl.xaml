@@ -97,46 +97,30 @@
             <!-- Separator -->
             <Rectangle Width="1" Margin="4,4,4,4" Fill="{DynamicResource SeparatorBorder}"/>
 
-            <!-- Operator Buttons (TextBlock-based for crisp rendering at all DPIs) -->
+            <!-- Operator Buttons (native 12×12 vector paths — no Viewbox scaling) -->
             <Button Name="AddButton" Height="24" Width="24" Padding="0" SnapsToDevicePixels="True" ToolTip="Add (+)" Click="AddButton_Click">
-                <TextBlock Text="+" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 0,6 H 12 M 6,0 V 12" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="SubtractButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Subtract (-)" Click="SubtractButton_Click">
-                <TextBlock Text="&#x2212;" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 1,6 H 11" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="MultiplyButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Multiply (*)" Click="MultiplyButton_Click">
-                <TextBlock Text="&#x00D7;" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 1,1 L 11,11 M 1,11 L 11,1" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="DivideButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Divide (/)" Click="DivideButton_Click">
-                <TextBlock Text="&#x00F7;" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 1,6 H 11 M 5,10 H 7 M 5,2 H 7" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="ExponentButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Exponentiate (^)" Click="ExponentButton_Click">
-                <TextBlock Text="^" FontFamily="Cambria" FontSize="14" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 2,7 L 6,1 L 10,7" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" StrokeLineJoin="Round" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="LessThanButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Less than (&lt;)" Click="LessThanButton_Click">
-                <TextBlock Text="&lt;" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 10,1 L 2,6 L 10,11" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" StrokeLineJoin="Round" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="GreaterThanButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Greater than (&gt;)" Click="GreaterThanButton_Click">
-                <TextBlock Text="&gt;" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 2,1 L 10,6 L 2,11" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" StrokeLineJoin="Round" SnapsToDevicePixels="True"/>
             </Button>
             <Button Name="EqualsButton" Height="24" Width="24" Margin="3,0,0,0" Padding="0" SnapsToDevicePixels="True" ToolTip="Equals (=)" Click="EqualsButton_Click">
-                <TextBlock Text="=" FontFamily="Cambria" FontSize="16" FontWeight="Regular"
-                           Foreground="{DynamicResource CalculatorControl.OperatorGlyph}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                <Path Data="M 1,4 H 11 M 1,8 H 11" Width="12" Height="12" Stroke="{DynamicResource CalculatorControl.OperatorGlyph}" StrokeThickness="1.5" SnapsToDevicePixels="True"/>
             </Button>
 
             <!-- Match Case Checkbox -->

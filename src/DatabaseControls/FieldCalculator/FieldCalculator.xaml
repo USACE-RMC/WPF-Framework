@@ -29,10 +29,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Margin="5, 0, 0,0" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
+            <RadioButton Content="Create New Column" HorizontalAlignment="Left" Margin="0, 0, 0,0" Grid.Column="0" Grid.Row="0" VerticalContentAlignment="Center" Name="CreateNewFieldRadioButton" Checked="CreateNewFieldRadioButton_Checked"/>
             <TextBox Name="NewFieldName" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0" Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=CreateNewFieldRadioButton, Path=IsChecked}" TextChanged="NewFieldName_TextChanged"/>
-            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
-            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
+            <RadioButton Content="Update Existing Column" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Row="1" Grid.Column="0" VerticalContentAlignment="Center" Name="UpdateExistingRadioButton" IsChecked="True" Checked="UpdateExistingRadioButton_Checked"/>
+            <ComboBox Name="ExistingFieldsCombobox" Grid.Row="1" Grid.Column="1" Height="22" Margin="5,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="{Binding ElementName=UpdateExistingRadioButton, Path=IsChecked}" SelectionChanged="ExistingFieldsCombobox_SelectionChanged"/>
         </Grid>
 
         <!-- Row 1: Main Content — 3-column layout (Data Columns | Functions | Expression) -->
