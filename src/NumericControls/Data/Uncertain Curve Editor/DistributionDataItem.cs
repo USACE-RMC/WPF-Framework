@@ -359,6 +359,7 @@ namespace NumericControls
             _updatingData = true;
             DistributionRowItem rItem = (DistributionRowItem)sender;
             int dataIndex = DistributionRows.IndexOf(rItem);
+            if (dataIndex < 0) { _updatingData = false; return; }
             _data[dataIndex] = new UncertainOrdinate(rItem.X, rItem.Distribution.Clone());
             _updatingData = false;
             DataChanged?.Invoke(dataIndex);

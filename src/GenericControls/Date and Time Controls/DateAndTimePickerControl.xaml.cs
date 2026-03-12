@@ -166,7 +166,10 @@ namespace GenericControls
         /// <param name="e">Event arguments.</param>
         private void CalendarSelector_DisplayDateChanged(object sender, CalendarDateChangedEventArgs e)
         {
-            DateAndTime = new DateTime(e.AddedDate.Value.Year, e.AddedDate.Value.Month, DateAndTime.Day, DateAndTime.Hour, DateAndTime.Minute, DateAndTime.Second);
+            int year = e.AddedDate.Value.Year;
+            int month = e.AddedDate.Value.Month;
+            int day = Math.Min(DateAndTime.Day, DateTime.DaysInMonth(year, month));
+            DateAndTime = new DateTime(year, month, day, DateAndTime.Hour, DateAndTime.Minute, DateAndTime.Second);
         }
 
         /// <summary>

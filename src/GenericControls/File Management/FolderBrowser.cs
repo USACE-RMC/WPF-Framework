@@ -138,7 +138,14 @@ namespace GenericControls
             var w32owner = new Wpf32Window(owner);
             if (Environment.OSVersion.Version.Major >= 6)
             {
-                return ShowVistaDialog(w32owner);
+                try
+                {
+                    return ShowVistaDialog(w32owner);
+                }
+                catch (Exception ex) when (ex is InvalidCastException || ex is System.Runtime.InteropServices.COMException)
+                {
+                    return ShowLegacyDialog(w32owner);
+                }
             }
             else
             {
