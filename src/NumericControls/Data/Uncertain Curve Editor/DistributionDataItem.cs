@@ -292,7 +292,7 @@ namespace NumericControls
                 case NotifyCollectionChangedAction.Remove:
                     {
                         int startIndex = e.OldStartingIndex;
-                        if (startIndex == -1)
+                        if (startIndex == -1 || e.OldItems == null)
                         {
                             Refresh();
                         }

@@ -60,7 +60,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the selected distribution.
         /// </summary>
-        public static DependencyProperty DistributionProperty = DependencyProperty.Register(nameof(Distribution), typeof(EmpiricalDistribution), typeof(UnivariateXPControl), new PropertyMetadata(new EmpiricalDistribution(), SetDistribution));
+        public static DependencyProperty DistributionProperty = DependencyProperty.Register(nameof(Distribution), typeof(EmpiricalDistribution), typeof(UnivariateXPControl), new PropertyMetadata(null, SetDistribution));
 
         /// <summary>
         /// Callback invoked when the Distribution property changes.

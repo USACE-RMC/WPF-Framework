@@ -282,7 +282,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for the control background color.
         /// </summary>
-        public static DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(Brush), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.White)));
+        public static DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(Brush), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(Brushes.White));
 
         /// <summary>
         /// Get and set the distribution selector background color.

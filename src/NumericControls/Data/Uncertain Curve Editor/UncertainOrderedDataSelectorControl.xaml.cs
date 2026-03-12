@@ -346,7 +346,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="SelectedUncertainOrderedData"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedUncertainOrderedDataProperty = DependencyProperty.Register(nameof(SelectedUncertainOrderedData), typeof(UncertainOrderedPairedData), typeof(UncertainOrderedDataSelectorControl), new PropertyMetadata(new UncertainOrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending, UnivariateDistributionType.Deterministic), SetData));
+        public static DependencyProperty SelectedUncertainOrderedDataProperty = DependencyProperty.Register(nameof(SelectedUncertainOrderedData), typeof(UncertainOrderedPairedData), typeof(UncertainOrderedDataSelectorControl), new PropertyMetadata(null, SetData));
 
         /// <summary>
         /// Callback invoked when the SelectedUncertainOrderedData property changes.

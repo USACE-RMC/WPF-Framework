@@ -37,6 +37,7 @@ using OxyPlot.Wpf;
 using OxyPlotControls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -464,18 +465,18 @@ namespace NumericControls.Distributions.Univariate
                 var stats = Numerics.Data.Statistics.Statistics.ProductMoments(SampleData);
                 var mode = histogram.Mode;
 
-                SummaryStatisticsList[0].DataStat = summaryPercentiles[0].ToString("N4");
-                SummaryStatisticsList[1].DataStat = summaryPercentiles[6].ToString("N4");
-                SummaryStatisticsList[2].DataStat = stats[0].ToString("N4");
-                SummaryStatisticsList[3].DataStat = mode.ToString("N4");
-                SummaryStatisticsList[4].DataStat = stats[1].ToString("N4");
-                SummaryStatisticsList[5].DataStat = stats[2].ToString("N4");
-                SummaryStatisticsList[6].DataStat = stats[3].ToString("N4");
-                SummaryStatisticsList[7].DataStat = summaryPercentiles[1].ToString("N4");
-                SummaryStatisticsList[8].DataStat = summaryPercentiles[2].ToString("N4");
-                SummaryStatisticsList[9].DataStat = summaryPercentiles[3].ToString("N4");
-                SummaryStatisticsList[10].DataStat = summaryPercentiles[4].ToString("N4");
-                SummaryStatisticsList[11].DataStat = summaryPercentiles[5].ToString("N4");
+                SummaryStatisticsList[0].DataStat = summaryPercentiles[0].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[1].DataStat = summaryPercentiles[6].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[2].DataStat = stats[0].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[3].DataStat = mode.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[4].DataStat = stats[1].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[5].DataStat = stats[2].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[6].DataStat = stats[3].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[7].DataStat = summaryPercentiles[1].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[8].DataStat = summaryPercentiles[2].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[9].DataStat = summaryPercentiles[3].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[10].DataStat = summaryPercentiles[4].ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[11].DataStat = summaryPercentiles[5].ToString("N4", CultureInfo.InvariantCulture);
 
                 SummaryTable.Items.Refresh();
 
@@ -744,34 +745,34 @@ namespace NumericControls.Distributions.Univariate
             // Distribution
             if ((SelectedDistribution is null) || (SelectedDistribution.ParametersValid == false))
             {
-                SummaryStatisticsList[0].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[1].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[2].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[3].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[4].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[5].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[6].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[7].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[8].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[9].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[10].DistStat = double.NaN.ToString("N4");
-                SummaryStatisticsList[11].DistStat = double.NaN.ToString("N4");
+                SummaryStatisticsList[0].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[1].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[2].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[3].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[4].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[5].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[6].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[7].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[8].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[9].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[10].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[11].DistStat = double.NaN.ToString("N4", CultureInfo.InvariantCulture);
                 SummaryTable.Items.Refresh();
             }
             else
             {
-                SummaryStatisticsList[0].DistStat = SelectedDistribution.Minimum.ToString("N4");
-                SummaryStatisticsList[1].DistStat = SelectedDistribution.Maximum.ToString("N4");
-                SummaryStatisticsList[2].DistStat = SelectedDistribution.Mean.ToString("N4");
-                SummaryStatisticsList[3].DistStat = SelectedDistribution.Mode.ToString("N4");
-                SummaryStatisticsList[4].DistStat = SelectedDistribution.StandardDeviation.ToString("N4");
-                SummaryStatisticsList[5].DistStat = SelectedDistribution.Skewness.ToString("N4");
-                SummaryStatisticsList[6].DistStat = SelectedDistribution.Kurtosis.ToString("N4");
-                SummaryStatisticsList[7].DistStat = SelectedDistribution.InverseCDF(0.05d).ToString("N4");
-                SummaryStatisticsList[8].DistStat = SelectedDistribution.InverseCDF(0.25d).ToString("N4");
-                SummaryStatisticsList[9].DistStat = SelectedDistribution.InverseCDF(0.5d).ToString("N4");
-                SummaryStatisticsList[10].DistStat = SelectedDistribution.InverseCDF(0.75d).ToString("N4");
-                SummaryStatisticsList[11].DistStat = SelectedDistribution.InverseCDF(0.95d).ToString("N4");
+                SummaryStatisticsList[0].DistStat = SelectedDistribution.Minimum.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[1].DistStat = SelectedDistribution.Maximum.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[2].DistStat = SelectedDistribution.Mean.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[3].DistStat = SelectedDistribution.Mode.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[4].DistStat = SelectedDistribution.StandardDeviation.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[5].DistStat = SelectedDistribution.Skewness.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[6].DistStat = SelectedDistribution.Kurtosis.ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[7].DistStat = SelectedDistribution.InverseCDF(0.05d).ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[8].DistStat = SelectedDistribution.InverseCDF(0.25d).ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[9].DistStat = SelectedDistribution.InverseCDF(0.5d).ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[10].DistStat = SelectedDistribution.InverseCDF(0.75d).ToString("N4", CultureInfo.InvariantCulture);
+                SummaryStatisticsList[11].DistStat = SelectedDistribution.InverseCDF(0.95d).ToString("N4", CultureInfo.InvariantCulture);
 
                 // Add Goodness of fit stats
                 if (SampleData != null && DistributionCanEstimate() == true)
@@ -783,9 +784,9 @@ namespace NumericControls.Distributions.Univariate
                     var chi = GoodnessOfFit.ChiSquared(data, SelectedDistribution);
                     var ks = GoodnessOfFit.KolmogorovSmirnov(data, SelectedDistribution);
 
-                    SummaryStatisticsList[12].DistStat = rmse.ToString("N4");
-                    SummaryStatisticsList[13].DistStat = chi.ToString("N4");
-                    SummaryStatisticsList[14].DistStat = ks.ToString("N4");
+                    SummaryStatisticsList[12].DistStat = rmse.ToString("N4", CultureInfo.InvariantCulture);
+                    SummaryStatisticsList[13].DistStat = chi.ToString("N4", CultureInfo.InvariantCulture);
+                    SummaryStatisticsList[14].DistStat = ks.ToString("N4", CultureInfo.InvariantCulture);
                 }
 
 

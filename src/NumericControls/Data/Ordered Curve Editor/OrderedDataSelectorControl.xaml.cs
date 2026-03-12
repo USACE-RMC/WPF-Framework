@@ -340,7 +340,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the SelectedOrderedData property.
         /// </summary>
-        public static DependencyProperty SelectedOrderedDataProperty = DependencyProperty.Register(nameof(SelectedOrderedData), typeof(OrderedPairedData), typeof(OrderedDataSelectorControl), new PropertyMetadata(new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending), SetData));
+        public static DependencyProperty SelectedOrderedDataProperty = DependencyProperty.Register(nameof(SelectedOrderedData), typeof(OrderedPairedData), typeof(OrderedDataSelectorControl), new PropertyMetadata(null, SetData));
 
         /// <summary>
         /// Callback invoked when the SelectedOrderedData property changes.

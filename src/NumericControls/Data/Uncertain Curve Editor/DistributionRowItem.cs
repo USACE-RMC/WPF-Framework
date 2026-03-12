@@ -394,7 +394,8 @@ namespace NumericControls
             if (_distribution.ParametersValid == false)
             {
                 var argError = _distribution.ValidateParameters(newParams, false);
-                for (int i = 0; i < _propertyNames.Count(); i++)
+                int pKeyCount = Math.Min(_propertyNames.Count(), RuleMap.Keys.Count(k => k.StartsWith("P")));
+                for (int i = 0; i < pKeyCount; i++)
                     RuleMap["P" + (i + 1)].ErrorMessage = argError.Message;
                 return true;
             }
