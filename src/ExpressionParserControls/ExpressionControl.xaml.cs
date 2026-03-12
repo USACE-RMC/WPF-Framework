@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,7 +66,7 @@ namespace ExpressionParserControls
         /// <summary>
         /// Dependency property backing the <see cref="Text"/> property.
         /// </summary>
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ExpressionControl), new FrameworkPropertyMetadata("", OnTextPropertyChanged));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ExpressionControl), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnTextPropertyChanged));
 
     private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -238,7 +239,7 @@ namespace ExpressionParserControls
                 }
                 else if (t.TokenGroup == TokenClass.Function)
                 {
-                    var h = new Hyperlink(r) { NavigateUri = new Uri(Environment.CurrentDirectory + "/" + t.HelpDocPath), IsEnabled = true };
+                    var h = new Hyperlink(r) { NavigateUri = new Uri(Path.Combine(Environment.CurrentDirectory, t.HelpDocPath)), IsEnabled = true };
                     p.Inlines.Add(h);
                 }
                 // If the operator is defined here as hyperlink then the text can get too messy. The operators are self explanatory enough to not require help documentation.
@@ -258,7 +259,7 @@ namespace ExpressionParserControls
                     }
                 }
                 // last token if the new caret position was never defined
-                else if (newCaret == null)
+                else if (newCaret == null && r != null)
                     newCaret = r.ContentStart.GetPositionAtOffset(caretTextPosition - GetTokenList.Last().StartPosition);
             }
             //

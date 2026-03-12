@@ -47,7 +47,7 @@ namespace ExpressionParserControls
         /// <summary>
         /// Dictionary containing variable names and their associated result types for expression parsing.
         /// </summary>
-        private Dictionary<string, ResultType> _variables;
+        private Dictionary<string, ResultType> _variables = new Dictionary<string, ResultType>();
 
         /// <summary>
         /// Tracks the currently displayed function in the help expander.
@@ -187,7 +187,7 @@ namespace ExpressionParserControls
             {
                 parseNode = GetParseTree();
             }
-            catch (Exception)
+            catch (Exception ex) when (ex is not OutOfMemoryException and not StackOverflowException)
             {
                 // Parse failed entirely — return empty errors rather than crashing
                 return Array.Empty<ParseError>();
