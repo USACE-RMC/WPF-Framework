@@ -71,7 +71,7 @@ namespace NumericControls.Distributions.Multivariate
             set 
             {
                 _bivariateEmpiricalCDF = value;
-                RaisePropertyChange(nameof(BivariateEmpiricalCDF));
+                RaisePropertyChanged(nameof(BivariateEmpiricalCDF));
             }
         }
 
@@ -129,7 +129,7 @@ namespace NumericControls.Distributions.Multivariate
         /// </list>
         /// </para>
         /// </remarks>
-        public void RaisePropertyChange(string propertyName)
+        public void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

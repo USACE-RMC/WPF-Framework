@@ -446,21 +446,21 @@ namespace NumericControls
         {
             get
             {
-                return ((UnivariateDistributionType[])Enum.GetValues(typeof(UnivariateDistributionType))).Where(o => (o != UnivariateDistributionType.Bernoulli) &
-                                                                                                                     (o != UnivariateDistributionType.Beta) &
-                                                                                                                     (o != UnivariateDistributionType.Binomial) &
-                                                                                                                     (o != UnivariateDistributionType.Cauchy) &
-                                                                                                                     (o != UnivariateDistributionType.ChiSquared) &
-                                                                                                                     (o != UnivariateDistributionType.CompetingRisks) &
-                                                                                                                     (o != UnivariateDistributionType.Empirical) &
-                                                                                                                     (o != UnivariateDistributionType.Geometric) &
-                                                                                                                     (o != UnivariateDistributionType.InverseChiSquared) &
-                                                                                                                     (o != UnivariateDistributionType.InverseGamma) &
-                                                                                                                     (o != UnivariateDistributionType.KappaFour) &
-                                                                                                                     (o != UnivariateDistributionType.KernelDensity) &
-                                                                                                                     (o != UnivariateDistributionType.Mixture) &
-                                                                                                                     (o != UnivariateDistributionType.NoncentralT) &
-                                                                                                                     (o != UnivariateDistributionType.UniformDiscrete) &
+                return ((UnivariateDistributionType[])Enum.GetValues(typeof(UnivariateDistributionType))).Where(o => (o != UnivariateDistributionType.Bernoulli) &&
+                                                                                                                     (o != UnivariateDistributionType.Beta) &&
+                                                                                                                     (o != UnivariateDistributionType.Binomial) &&
+                                                                                                                     (o != UnivariateDistributionType.Cauchy) &&
+                                                                                                                     (o != UnivariateDistributionType.ChiSquared) &&
+                                                                                                                     (o != UnivariateDistributionType.CompetingRisks) &&
+                                                                                                                     (o != UnivariateDistributionType.Empirical) &&
+                                                                                                                     (o != UnivariateDistributionType.Geometric) &&
+                                                                                                                     (o != UnivariateDistributionType.InverseChiSquared) &&
+                                                                                                                     (o != UnivariateDistributionType.InverseGamma) &&
+                                                                                                                     (o != UnivariateDistributionType.KappaFour) &&
+                                                                                                                     (o != UnivariateDistributionType.KernelDensity) &&
+                                                                                                                     (o != UnivariateDistributionType.Mixture) &&
+                                                                                                                     (o != UnivariateDistributionType.NoncentralT) &&
+                                                                                                                     (o != UnivariateDistributionType.UniformDiscrete) &&
                                                                                                                      (o != UnivariateDistributionType.Poisson)).ToList();
             }
         }

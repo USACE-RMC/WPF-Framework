@@ -468,7 +468,7 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Currently does not support bivariate, univariate, or kernel density.
+        /// Excludes Empirical, KernelDensity, and UserDefined distribution types.
         /// </summary>
         /// <returns></returns>
         public static List<UnivariateDistributionBase> DefaultDistributions

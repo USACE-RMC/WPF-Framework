@@ -93,7 +93,7 @@ namespace ExpressionParserControls
     }
 
         /// <summary>
-        /// Gets or sets the text context of the expression editor.
+        /// Gets or sets the text content of the expression editor.
         /// </summary>
         public string Text
         {

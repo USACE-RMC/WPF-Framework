@@ -66,7 +66,7 @@ namespace DatabaseControls
             set
             {
                 _message = value;
-                NotifyPropertyChanged("Message");
+                NotifyPropertyChanged(nameof(Message));
             }
         }
 

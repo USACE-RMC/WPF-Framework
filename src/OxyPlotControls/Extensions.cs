@@ -50,7 +50,7 @@ namespace OxyPlotControls
         /// <exception cref="ArgumentNullException">Thrown when type is null.</exception>
         public static Type? GetFirstAbstractBaseType(this Type type)
         {
-            if (type == null) throw new ArgumentNullException("type");
+            if (type == null) throw new ArgumentNullException(nameof(type));
 
             Type? baseType = type.BaseType;
             if (baseType == null || baseType.IsAbstract) return baseType;

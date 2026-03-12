@@ -247,14 +247,14 @@ namespace GenericControls
         {
             this.NameTBox.ToolTip = (object)null;
             // 
-            if (this.NameTBox.Text.Length > CharacterLimit & CharacterLimit > -1)
+            if (this.NameTBox.Text.Length > CharacterLimit && CharacterLimit > -1)
             {
                 this.NameTBox.ToolTip = "The name entered is longer (" + this.NameTBox.Text.Length + " characters) than the maximum name length (" + CharacterLimit + " characters).";
                 IsValid = false;
                 return;
             }
-            // 
-            if (string.IsNullOrEmpty(this.NameTBox.Text) & CanBeBlank == false)
+            //
+            if (string.IsNullOrEmpty(this.NameTBox.Text) && CanBeBlank == false)
             {
                 this.NameTBox.ToolTip = "The name entered cannot be blank. The name entered must not be blank and must be less than " + CharacterLimit + " characters.";
                 IsValid = false;
@@ -290,12 +290,12 @@ namespace GenericControls
             if (IsValid == true)
                 return errorList;
             // 
-            if (this.NameTBox.Text.Length > CharacterLimit & CharacterLimit > -1)
+            if (this.NameTBox.Text.Length > CharacterLimit && CharacterLimit > -1)
             {
                 errorList.Add("The name entered is longer (" + this.NameTBox.Text.Length + " characters) than the maximum name length (" + CharacterLimit + " characters).");
             }
-            // 
-            if (string.IsNullOrEmpty(this.NameTBox.Text) & CanBeBlank == false)
+            //
+            if (string.IsNullOrEmpty(this.NameTBox.Text) && CanBeBlank == false)
             {
                 errorList.Add("The name entered cannot be blank. The name entered must not be blank and must be less than " + CharacterLimit + " characters.");
             }
