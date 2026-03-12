@@ -144,7 +144,7 @@ namespace DatabaseControls
 
             if (_isNumeric)
             {
-                NumericColumnViewer.Data = Array.ConvertAll(fieldData, o => Convert.IsDBNull(o) ? 0.0 : Convert.ToDouble(o));
+                NumericColumnViewer.Data = Array.ConvertAll(fieldData, o => Convert.IsDBNull(o) ? double.NaN : Convert.ToDouble(o));
             }
             else
             {
@@ -202,7 +202,7 @@ namespace DatabaseControls
 
             if (_isNumeric)
             {
-                NumericColumnViewer.Data = Array.ConvertAll(fieldData, o => Convert.IsDBNull(o) ? 0.0 : Convert.ToDouble(o));
+                NumericColumnViewer.Data = Array.ConvertAll(fieldData, o => Convert.IsDBNull(o) ? double.NaN : Convert.ToDouble(o));
             }
             else
             {
@@ -224,7 +224,7 @@ namespace DatabaseControls
 
             if (_isNumeric)
             {
-                NumericColumnViewer.Data = Array.ConvertAll(fieldData, o => Convert.IsDBNull(o) ? 0.0 : Convert.ToDouble(o));
+                NumericColumnViewer.Data = Array.ConvertAll(fieldData, o => Convert.IsDBNull(o) ? double.NaN : Convert.ToDouble(o));
             }
             else
             {

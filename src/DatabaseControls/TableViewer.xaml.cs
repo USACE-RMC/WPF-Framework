@@ -785,7 +785,10 @@ namespace DatabaseControls
         public void SetColumnsAsReadOnly(string[] columnNames)
         {
             foreach (var name in columnNames)
-                _readOnlyColumns.Add(Array.IndexOf(DataView.ColumnNames, name));
+            {
+                int idx = Array.IndexOf(DataView.ColumnNames, name);
+                if (idx >= 0) _readOnlyColumns.Add(idx);
+            }
         }
 
         #endregion
@@ -1403,7 +1406,7 @@ namespace DatabaseControls
             // Create row color
             RowColorGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(RowHeight) });
             Brush fillColor = RowColor;
-            if (_rowId![RowColorGrid.RowDefinitions.Count - 1] % 2 != 0) fillColor = AlternateRowColor;
+            if ((RowColorGrid.RowDefinitions.Count - 1) % 2 != 0) fillColor = AlternateRowColor;
             var rect = new Rectangle
             {
                 Stroke = new SolidColorBrush(Colors.Transparent),
@@ -1551,7 +1554,9 @@ namespace DatabaseControls
                     return _rowId![_sortedSelectedRowOffsets[sortedIndex]];
                 }
             }
-            return _rowId![firstRowIndex + tableRowIndex];
+            int index = firstRowIndex + tableRowIndex;
+            if (index < 0 || index >= _rowId!.Length) return Math.Max(0, _rowId.Length - 1);
+            return _rowId[index];
         }
 
         /// <summary>
@@ -1958,8 +1963,12 @@ namespace DatabaseControls
 
             if (newValue >= VerticalScrollbar.Maximum && VerticalScrollbar.Maximum != 0) // The last row has been reached
             {
-                // Remove the last row and refresh all cells
-                NumberOfRowsChanged();
+                // Only rebuild if the visible row count doesn't already include the extra row
+                int expectedRows = (int)Math.Floor(VerticalScrollbar.Maximum) + 1;
+                if (_visibleRowCount < expectedRows || _visibleRowCount > expectedRows)
+                {
+                    NumberOfRowsChanged();
+                }
                 if (_visibleRowCount > 0) FillRow(_visibleRowCount - 1, DataView.GetRow(GetDataRowIndex(_visibleRowCount - 1)));
             }
             else if (oldValue >= VerticalScrollbar.Maximum && VerticalScrollbar.Maximum != 0) // The last row has been vacated
@@ -2304,7 +2313,7 @@ namespace DatabaseControls
                     {
                         int selectedRowOffset;
                         if (_columnSortOrder == SortOrder.None)
-                            selectedRowOffset = _rowOffset![_selectedDataRowIndices.IndexOf(rowIndex)];
+                            selectedRowOffset = _rowOffset![rowIndex];
                         else
                             selectedRowOffset = Array.IndexOf(_sortedSelectedRowOffsets!, _rowOffset![rowIndex]);
                         SetCellText(selectedRowOffset - firstRowDataIndex, columnIndex, newText);
@@ -2817,7 +2826,7 @@ namespace DatabaseControls
                     VerticalScrollbar.Value = _selectedDataRowIndices[0];
                 }
             }
-            _visibleRowCount = (int)Math.Floor(RowsAr.ActualHeight / RowHeight);
+            _visibleRowCount = GetMaxRows(false);
             if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
             LoadRows();
             SetSelectedCells();
@@ -3601,7 +3610,7 @@ namespace DatabaseControls
                     if (includeHeaders) boardText.Append(DataView.ColumnNames[_selectedColumnIndices[i]] + '\t');
                     columnData.Add(DataView.GetColumn(DataView.ColumnNames[_selectedColumnIndices[i]]));
                 }
-                if (includeHeaders) boardText[boardText.Length - 1] = '\n';
+                if (includeHeaders && boardText.Length > 0) boardText[boardText.Length - 1] = '\n';
 
                 for (int i = 0; i < DataView.NumberOfRows; i++)
                 {
@@ -3711,7 +3720,7 @@ namespace DatabaseControls
                 var keysInVisualOrder = new SortedDictionary<int, int>();
                 foreach (int dataRowIndex in _selectedCellIndices.Keys)
                 {
-                    keysInVisualOrder.Add(_rowOffset![dataRowIndex], dataRowIndex);
+                    keysInVisualOrder.TryAdd(_rowOffset![dataRowIndex], dataRowIndex);
                 }
 
                 if (includeHeaders)
@@ -3745,7 +3754,7 @@ namespace DatabaseControls
                 throw new Exception("Error copying data to clipboard.");
             }
 
-            Clipboard.SetDataObject(boardText.ToString());
+            Clipboard.SetText(boardText.ToString());
         }
 
         /// <summary>

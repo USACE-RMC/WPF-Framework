@@ -39,7 +39,7 @@ namespace DatabaseControls
     /// Provides options for case-sensitive and whole-word matching, as well as
     /// navigation to find the next or previous occurrence.
     /// </summary>
-    public partial class FindAndReplace : Window
+    public partial class FindAndReplace : GenericControls.MetroWindow
     {
         #region Private Fields
 

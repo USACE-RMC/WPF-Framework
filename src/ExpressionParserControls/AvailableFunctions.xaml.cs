@@ -150,7 +150,7 @@ namespace ExpressionParserControls
                 {
                     Header = new TextBlock { Text = category, FontWeight = FontWeights.Bold },
                     IsExpanded = true,
-                    Style = (Style)FindResource("TreeViewItemStyle")
+                    Style = TryFindResource("TreeViewItemStyle") as Style
                 };
 
                 foreach (var func in grouped[category])
@@ -159,7 +159,7 @@ namespace ExpressionParserControls
                     {
                         Header = new TextBlock { Text = func.Name },
                         Tag = func,
-                        Style = (Style)FindResource("TreeViewItemStyle")
+                        Style = TryFindResource("TreeViewItemStyle") as Style
                     };
 
                     funcItem.MouseDoubleClick += FunctionItem_MouseDoubleClick;
@@ -318,11 +318,7 @@ namespace ExpressionParserControls
                 }
             }
 
-            // If nothing matched, select the first function
-            if (_functionItems.Count > 0)
-            {
-                _functionItems[0].IsSelected = true;
-            }
+            // No matching function found — don't select anything (e.g., for operators)
         }
     }
 }

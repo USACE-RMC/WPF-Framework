@@ -54,6 +54,12 @@ namespace DatabaseControls
                 : "DatabaseControls.Resources.Help.FieldCalculator.";
             Title = helpType == "SelectByAttribute" ? "Select By Attribute Help" : "Field Calculator Help";
             ContentRendered += CalculatorHelpWindow_ContentRendered;
+            Closing += CalculatorHelpWindow_Closing;
+        }
+
+        private void CalculatorHelpWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            HelpBrowser?.Dispose();
         }
 
         private void CalculatorHelpWindow_ContentRendered(object? sender, EventArgs e)

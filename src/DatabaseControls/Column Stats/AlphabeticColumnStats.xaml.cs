@@ -137,16 +137,6 @@ namespace DatabaseControls
         #region Event Handlers
 
         /// <summary>
-        /// Handles the Loaded event for the control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">Event arguments.</param>
-        private void AlphabeticColumnStats_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Reserved for future initialization logic
-        }
-
-        /// <summary>
         /// Handles the properties panel toggle from the plot toolbar.
         /// </summary>
         /// <param name="targetPlot">The target plot control.</param>
@@ -270,7 +260,7 @@ namespace DatabaseControls
             OxyPlot.Series.PieSeries internalPieSeries = (OxyPlot.Series.PieSeries)PieSeries.InternalSeries;
             internalPieSeries.Slices.Clear();
 
-            if (sortedList.Count < 4)
+            if (sortedList.Count <= 4)
             {
                 foreach (KeyValuePair<string, int> uniqueValue in sortedList)
                 {

@@ -279,7 +279,7 @@ namespace DatabaseControls
             int splitIndex = initialSplit;
             int previousCount = sortedData.Length;
 
-            while ((sortedData.Length - splitIndex) / (double)previousCount <= threshold || (sortedData.Length - splitIndex <= 1))
+            while ((sortedData.Length - splitIndex) / (double)previousCount <= threshold && (sortedData.Length - splitIndex > 1))
             {
                 avg = 0.0;
 
@@ -474,7 +474,7 @@ namespace DatabaseControls
 
             if (distinctValues.Length <= nClasses)
             {
-                if (breakCounts == null || breakCounts.Length != distinctValues.Length)
+                if (breakCounts == null || breakCounts.Length != classes.Length)
                 {
                     breakCounts = new int[distinctValues.Length];
                 }
@@ -551,7 +551,7 @@ namespace DatabaseControls
             JenksOptimize(classes, sortedData, squaredValues, 0, classes.Length - 1, SDAM);
 
             // Break range counts
-            if (breakCounts == null || breakCounts.Length != distinctValues.Length)
+            if (breakCounts == null || breakCounts.Length != classes.Length)
             {
                 breakCounts = new int[classes.Length];
             }

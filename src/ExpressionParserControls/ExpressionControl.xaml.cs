@@ -65,7 +65,31 @@ namespace ExpressionParserControls
         /// <summary>
         /// Dependency property backing the <see cref="Text"/> property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ExpressionControl), new FrameworkPropertyMetadata("")); // , AddressOf RichTextChanged))
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ExpressionControl), new FrameworkPropertyMetadata("", OnTextPropertyChanged));
+
+    private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (ExpressionControl)d;
+        if (control._formattingExpression || !control.IsLoaded)
+            return;
+
+        string newText = (string)e.NewValue ?? "";
+        string currentText = new System.Windows.Documents.TextRange(
+            control.ExpressionTextBox.Document.ContentStart,
+            control.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
+
+        if (currentText != newText)
+        {
+            control._formattingExpression = true;
+            control.ExpressionTextBox.Document.Blocks.Clear();
+            var p = new System.Windows.Documents.Paragraph();
+            p.Inlines.Add(new System.Windows.Documents.Run(newText));
+            control.ExpressionTextBox.Document.Blocks.Add(p);
+            control._formattingExpression = false;
+            // Trigger a TextChanged to reformat with syntax highlighting
+            control.ExpressionTextBox_TextChanged(control.ExpressionTextBox, new TextChangedEventArgs(System.Windows.Controls.RichTextBox.TextChangedEvent, UndoAction.None));
+        }
+    }
 
         /// <summary>
         /// Gets or sets the text context of the expression editor.
@@ -153,9 +177,6 @@ namespace ExpressionParserControls
         /// <param name="focusRichTextBox">Whether to refocus the editor after insertion.</param>
         public void InsertText(string textToInsert, bool focusRichTextBox = true)
         {
-            string allRichText = new TextRange(this.ExpressionTextBox.Document.ContentStart, this.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
-            string fromCaretText = new TextRange(this.ExpressionTextBox.CaretPosition, this.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
-            // 
             this.ExpressionTextBox.Selection.Text = textToInsert;
             if (focusRichTextBox)
             {
@@ -182,8 +203,8 @@ namespace ExpressionParserControls
             // Handle the situation where data was potentially pasted.
             if (e.Changes.Count > 0 && e.Changes.Any(o => o.AddedLength > 1))
             {
-                allRichText = allRichText.Replace(Environment.NewLine, " ");
-                fromCaretText = fromCaretText.Replace(Environment.NewLine, " ");
+                allRichText = allRichText.Replace(Environment.NewLine, " ").Replace("\n", " ");
+                fromCaretText = fromCaretText.Replace(Environment.NewLine, " ").Replace("\n", " ");
             }
             int caretTextPosition = allRichText.Length - fromCaretText.Length;
             // Get the token list.

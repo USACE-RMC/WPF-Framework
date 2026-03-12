@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:DatabaseControls"
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              mc:Ignorable="d"
-             UseLayoutRounding="False"
+             UseLayoutRounding="True"
              d:DesignHeight="400" d:DesignWidth="600"
              x:Name="TableViewerControl"
              Loaded="TableViewer_Loaded"

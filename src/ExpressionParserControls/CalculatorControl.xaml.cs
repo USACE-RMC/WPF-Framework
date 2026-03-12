@@ -30,7 +30,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -188,9 +187,10 @@ namespace ExpressionParserControls
             {
                 parseNode = GetParseTree();
             }
-            catch
+            catch (Exception)
             {
-                // Parse failed entirely
+                // Parse failed entirely — return empty errors rather than crashing
+                return Array.Empty<ParseError>();
             }
 
             if (parseNode == null)
@@ -385,30 +385,4 @@ namespace ExpressionParserControls
         #endregion
     }
 
-    /// <summary>
-    /// Converts a boolean value to a Visibility enumeration. True becomes Visible, false becomes Collapsed.
-    /// </summary>
-    public class BoolToVisibilityConverter : IValueConverter
-    {
-        /// <summary>
-        /// Converts a boolean value to Visibility.
-        /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value == null)
-                return Visibility.Collapsed;
-            if (value is bool b && b)
-                return Visibility.Visible;
-            else
-                return Visibility.Collapsed;
-        }
-
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

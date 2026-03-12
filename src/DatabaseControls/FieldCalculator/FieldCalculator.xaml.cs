@@ -243,6 +243,8 @@ namespace DatabaseControls
                 for (int i = 0; i < varNodes.Count; i++)
                 {
                     nodeToColumnIndices[i] = Array.IndexOf(_dbView.ColumnNames, varNodes[i].VariableName);
+                    if (nodeToColumnIndices[i] < 0)
+                        throw new InvalidOperationException($"Column '{varNodes[i].VariableName}' not found in the data table.");
                     nodeColumnData[i] = _dbView.GetColumn(varNodes[i].VariableName);
                 }
 
@@ -282,7 +284,8 @@ namespace DatabaseControls
         private void EvaluateColumn(IParserNode t)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-
+            try
+            {
             // Calculate the data
             bool useSelectedRows = UseSelectedRange.IsChecked == true;
             if (!UseSelectedRange.IsEnabled)
@@ -398,6 +401,15 @@ namespace DatabaseControls
 
             Mouse.OverrideCursor = null;
             DialogResult = true;
+            }
+            catch (Exception ex)
+            {
+                GenericControls.MessageBox.Show("Error: " + ex.Message, "Field Calculator Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
@@ -421,7 +433,7 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void CreateNewFieldRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            // Placeholder for future functionality
+            _existingField = false;
         }
 
         /// <summary>
