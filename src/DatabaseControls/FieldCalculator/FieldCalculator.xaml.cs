@@ -456,7 +456,7 @@ namespace DatabaseControls
         private void UpdateExistingRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             _existingField = UpdateExistingRadioButton.IsChecked == true;
-            if (_existingField && ExistingFieldsCombobox.SelectedItem is string selectedField)
+            if (_existingField && IsLoaded && ExistingFieldsCombobox.SelectedItem is string selectedField)
                 _fieldName = selectedField;
         }
 
