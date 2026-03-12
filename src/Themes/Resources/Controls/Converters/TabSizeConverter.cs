@@ -62,10 +62,11 @@ namespace Themes
         /// <returns>The calculated width for each tab, or 0 if the width would be too small.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            TabControl tabControl = (TabControl)values[0];
+            if (values == null || values.Length < 1 || values[0] is not TabControl tabControl) return 0.0;
+            if (tabControl.Items.Count == 0) return 0.0;
             double width = tabControl.ActualWidth / tabControl.Items.Count;
             if (width < 12d)
-                return 0;
+                return 0.0;
             return width - (tabControl.Items.Count + 1);
         }
 

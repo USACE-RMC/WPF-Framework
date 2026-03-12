@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security;
 using System.Threading;
 
 namespace SoftwareUpdate.Updater
@@ -90,7 +91,7 @@ namespace SoftwareUpdate.Updater
                 ExtractUpdate();
 
                 // Step 4: Clean up
-                CleanUp(backupDir!, success: true);
+                CleanUp(backupDir, success: true);
 
                 // Step 5: Restart application
                 RestartApplication();
@@ -137,7 +138,9 @@ namespace SoftwareUpdate.Updater
                     }
                     else
                     {
-                        _log("Process did not exit within timeout. Attempting to continue...");
+                        throw new TimeoutException(
+                            $"Process {processId} did not exit within {ProcessExitTimeoutMs / 1000} seconds. " +
+                            "Update aborted to prevent file corruption from overwriting locked files.");
                     }
                 }
             }
@@ -159,7 +162,7 @@ namespace SoftwareUpdate.Updater
         {
             _log("Creating backup...");
 
-            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
             var backupDir = Path.Combine(_args.TargetDirectory!, $".backup_{timestamp}");
 
             // Handle same-second backup name collisions by adding a suffix counter
@@ -248,11 +251,12 @@ namespace SoftwareUpdate.Updater
                     // Validate path doesn't escape target directory (prevent path traversal)
                     var fullDestPath = Path.GetFullPath(destPath);
                     var fullTargetDir = Path.GetFullPath(_args.TargetDirectory!);
-                    if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar) &&
-                        fullDestPath != fullTargetDir)
+                    if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(fullDestPath, fullTargetDir, StringComparison.OrdinalIgnoreCase))
                     {
-                        _log($"Skipping potentially dangerous path: {entryPath}");
-                        continue;
+                        throw new SecurityException(
+                            $"Path traversal attack detected in update package. " +
+                            $"Entry '{entryPath}' resolves outside target directory. Update aborted.");
                     }
 
                     // Skip backup directories - check if any path segment starts with .backup_
@@ -302,9 +306,6 @@ namespace SoftwareUpdate.Updater
                     Thread.Sleep(1000 * attempt);
                 }
             }
-
-            // Final attempt - let exception propagate
-            entry.ExtractToFile(destPath, overwrite: true);
         }
 
         /// <summary>
@@ -313,10 +314,18 @@ namespace SoftwareUpdate.Updater
         /// <param name="backupDir">The backup directory path.</param>
         private void RestoreFromBackup(string backupDir)
         {
+            var fullTargetDir = Path.GetFullPath(_args.TargetDirectory!);
+
             foreach (var file in Directory.GetFiles(backupDir))
             {
                 var fileName = Path.GetFileName(file);
                 var destPath = Path.Combine(_args.TargetDirectory!, fileName);
+
+                // Validate path stays within target directory
+                var fullDestPath = Path.GetFullPath(destPath);
+                if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 File.Copy(file, destPath, overwrite: true);
             }
 
@@ -324,6 +333,12 @@ namespace SoftwareUpdate.Updater
             {
                 var dirName = Path.GetFileName(dir);
                 var destPath = Path.Combine(_args.TargetDirectory!, dirName);
+
+                // Validate path stays within target directory
+                var fullDestPath = Path.GetFullPath(destPath);
+                if (!fullDestPath.StartsWith(fullTargetDir + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 CopyDirectory(dir, destPath);
             }
         }
@@ -333,7 +348,7 @@ namespace SoftwareUpdate.Updater
         /// </summary>
         /// <param name="backupDir">The backup directory path.</param>
         /// <param name="success">Whether the update was successful.</param>
-        private void CleanUp(string backupDir, bool success)
+        private void CleanUp(string? backupDir, bool success)
         {
             _log("Cleaning up...");
 

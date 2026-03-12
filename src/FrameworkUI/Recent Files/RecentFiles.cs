@@ -300,7 +300,7 @@ namespace FrameworkUI
             {
                 Directory.CreateDirectory(directoryName);
             }
-            // 
+            // Build the XML document in memory.
             var xml = new XmlDocument();
             xml.AppendChild(xml.CreateXmlDeclaration("1.0", null, null));
             var root = xml.CreateElement("RecentFiles");
@@ -313,7 +313,10 @@ namespace FrameworkUI
                 root.AppendChild(item);
             }
             xml.AppendChild(root);
-            xml.Save(FilePath);
+            // Write to a temp file first, then atomically replace the target to avoid corruption.
+            var tempPath = FilePath + ".tmp";
+            xml.Save(tempPath);
+            File.Move(tempPath, FilePath, overwrite: true);
         }
 
         /// <summary>

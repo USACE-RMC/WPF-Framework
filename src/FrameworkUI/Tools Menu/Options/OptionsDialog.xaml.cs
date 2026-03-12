@@ -181,7 +181,7 @@ namespace FrameworkUI
                 }
             }
             // Update AutoRecover if needed
-            if (UserSettings.CreateAutoRecoverBackup != currentAutoRecover | UserSettings.AutoRecoverInterval != currentAutoRecoverTime)
+            if (UserSettings.CreateAutoRecoverBackup != currentAutoRecover || UserSettings.AutoRecoverInterval != currentAutoRecoverTime)
             {
                 if (UserSettings.CreateAutoRecoverBackup == true)
                 {

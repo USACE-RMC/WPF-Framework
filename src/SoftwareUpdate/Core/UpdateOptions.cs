@@ -48,9 +48,9 @@ namespace SoftwareUpdate
     /// </remarks>
     public class UpdateOptions
     {
-        // GitHub username/repo format: alphanumeric, hyphens allowed (not at start/end), max 39 chars for usernames
+        // GitHub username/repo format: alphanumeric, hyphens, periods, and underscores allowed (not at start/end), max 39 chars for usernames
         private static readonly Regex GitHubNamePattern = new Regex(
-            @"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$",
+            @"^[a-zA-Z0-9]([a-zA-Z0-9._-]{0,37}[a-zA-Z0-9])?$",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -198,8 +198,8 @@ namespace SoftwareUpdate
 
             if (!GitHubNamePattern.IsMatch(GitHubOwner))
                 throw new ArgumentException(
-                    "GitHubOwner must contain only alphanumeric characters and hyphens, " +
-                    "cannot start or end with a hyphen, and must be 1-39 characters.",
+                    "GitHubOwner must contain only alphanumeric characters, hyphens, periods, and underscores, " +
+                    "cannot start or end with a special character, and must be 1-39 characters.",
                     nameof(GitHubOwner));
 
             if (string.IsNullOrWhiteSpace(GitHubRepo))
@@ -207,12 +207,16 @@ namespace SoftwareUpdate
 
             if (!GitHubNamePattern.IsMatch(GitHubRepo))
                 throw new ArgumentException(
-                    "GitHubRepo must contain only alphanumeric characters and hyphens, " +
-                    "cannot start or end with a hyphen, and must be 1-39 characters.",
+                    "GitHubRepo must contain only alphanumeric characters, hyphens, periods, and underscores, " +
+                    "cannot start or end with a special character, and must be 1-39 characters.",
                     nameof(GitHubRepo));
 
             if (CurrentVersion == null)
                 throw new ArgumentException("CurrentVersion is required.", nameof(CurrentVersion));
+
+            if (RequestTimeoutSeconds < 1 || RequestTimeoutSeconds > 300)
+                throw new ArgumentOutOfRangeException(nameof(RequestTimeoutSeconds),
+                    "RequestTimeoutSeconds must be between 1 and 300.");
         }
     }
 }

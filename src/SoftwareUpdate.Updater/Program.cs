@@ -93,7 +93,6 @@ namespace SoftwareUpdate.Updater
 
                 Log("Validating arguments...");
                 Log("Arguments validated.");
-                Log("Arguments validated.");
 
                 // Execute update
                 var installer = new InstallationManager(arguments, Log);

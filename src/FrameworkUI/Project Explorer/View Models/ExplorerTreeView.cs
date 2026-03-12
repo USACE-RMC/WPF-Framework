@@ -516,7 +516,11 @@ namespace FrameworkUI.ProjectExplorer
             _insertionAdorner = null;
             e.Effects = DragDropEffects.None;
 
-            if (e.OriginalSource == null) { _dragNode = null; e.Handled = true; return; }
+            // Capture _dragNode in a local before any nulling so subsequent tests use the local.
+            var dragNode = _dragNode;
+            _dragNode = null;
+
+            if (e.OriginalSource == null) { e.Handled = true; return; }
             var dropTarget = FindAncestor<Node>((DependencyObject)e.OriginalSource);
 
             // Get drag element collection
@@ -524,7 +528,7 @@ namespace FrameworkUI.ProjectExplorer
             string eName = "";
             string elementType = "";
             string eParentProjectName = "";
-            if (_dragNode == null)
+            if (dragNode == null)
             {
                 // Get drag data text and see if this is an element node or element node group
                 if (e.Data == null) { e.Handled = true; return; }
@@ -552,65 +556,64 @@ namespace FrameworkUI.ProjectExplorer
                 }
                 //dragParentCollection.ElementCollection.InsertFromExternalProject(dragParentCollection.ElementCollection.Count, eName, elementType, eParentProjectName); // Insert into the bottom of the list
                 //_dragNode = Node.FindElementNode(dragParentCollection.ElementCollection[dragParentCollection.ElementCollection.Count - 1], dragParentCollection);
-                if (_dragNode == null) { e.Handled = true; return; }
+                if (dragNode == null) { e.Handled = true; return; }
             }
             else
             {
-                dragParentCollection = _dragNode.GetNodeCollection();
+                dragParentCollection = dragNode.GetNodeCollection();
             }
 
-            // Null checks for _dragNode and dragParentCollection
-            if (_dragNode == null || dragParentCollection == null) { e.Handled = true; return; }
+            // Null checks for dragNode and dragParentCollection
+            if (dragNode == null || dragParentCollection == null) { e.Handled = true; return; }
 
             if (dropTarget == null)
             {
                 var k = e.GetPosition(this);
                 if (k.Y >= Math.Floor(this.DesiredSize.Height))
                 {
-                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
+                    dragNode.Move(dragNode.ParentNode!, dragParentCollection, dragNode.ParentNode!.Items.IndexOf(dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
                 }
             }
             else if (dropTarget as NodeCollection != null)
             {
                 if (dragParentCollection.Equals(dropTarget))
                 {
-                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), 0); // Insert into the top of the list
+                    dragNode.Move(dragNode.ParentNode!, dragParentCollection, dragNode.ParentNode!.Items.IndexOf(dragNode), 0); // Insert into the top of the list
                 }
                 else
                 {
-                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
+                    dragNode.Move(dragNode.ParentNode!, dragParentCollection, dragNode.ParentNode!.Items.IndexOf(dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
                 }
             }
             else if (dropTarget as ProjectNode != null)
             {
-                _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), 0); // Insert into the top of the list
+                dragNode.Move(dragNode.ParentNode!, dragParentCollection, dragNode.ParentNode!.Items.IndexOf(dragNode), 0); // Insert into the top of the list
             }
             else
             {
                 NodeCollection? dropParentCollection = dropTarget.GetNodeCollection();
                 if (dragParentCollection.Equals(dropParentCollection))
                 {
-                    int dragIndex = _dragNode.ParentNode!.Items.IndexOf(_dragNode);
+                    int dragIndex = dragNode.ParentNode!.Items.IndexOf(dragNode);
                     bool firstHalf = IsInTopHalf(dropTarget, e.GetPosition(dropTarget));
                     if (dropTarget as NodeGroup != null && firstHalf == false)
                     {
-                        _dragNode.Move(_dragNode.ParentNode!, dropTarget, dragIndex, 0);
+                        dragNode.Move(dragNode.ParentNode!, dropTarget, dragIndex, 0);
                     }
                     else
                     {
                         int dropIndex = dropTarget.ParentNode!.Items.IndexOf(dropTarget);
                         if (firstHalf == false) { dropIndex += 1; }
-                        if (dropTarget.ParentNode!.Equals(_dragNode.ParentNode) && dragIndex < dropIndex) { dropIndex -= 1; }
-                        _dragNode.Move(_dragNode.ParentNode!, dropTarget.ParentNode!, dragIndex, dropIndex);
+                        if (dropTarget.ParentNode!.Equals(dragNode.ParentNode) && dragIndex < dropIndex) { dropIndex -= 1; }
+                        dragNode.Move(dragNode.ParentNode!, dropTarget.ParentNode!, dragIndex, dropIndex);
                     }
                 }
                 else
                 {
-                    _dragNode.Move(_dragNode.ParentNode!, dragParentCollection, _dragNode.ParentNode!.Items.IndexOf(_dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
+                    dragNode.Move(dragNode.ParentNode!, dragParentCollection, dragNode.ParentNode!.Items.IndexOf(dragNode), dragParentCollection.Items.Count); // Insert into the bottom of the list
                 }
             }
 
-            _dragNode = null;
             e.Handled = true;
         }
 

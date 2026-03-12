@@ -38,8 +38,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Security;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,6 +69,12 @@ namespace SoftwareUpdate.GitHub
         /// Base delay in milliseconds between retry attempts.
         /// </summary>
         private const int RetryDelayMs = 500;
+
+        /// <summary>
+        /// Maximum allowed download size in bytes (500 MB) to prevent denial-of-service
+        /// from a compromised server sending an infinite response body.
+        /// </summary>
+        private const long MaxDownloadSizeBytes = 500L * 1024 * 1024;
 
         private readonly HttpClient _httpClient;
         private readonly object _lock = new object();
@@ -250,8 +256,19 @@ namespace SoftwareUpdate.GitHub
 
             try
             {
-                // Create temp directory for download
-                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Options.GitHubRepo ?? "");
+                // Security: Enforce HTTPS on download URL to prevent MITM attacks
+                if (!string.IsNullOrEmpty(update.DownloadUrl))
+                {
+                    var downloadUri = new Uri(update.DownloadUrl);
+                    if (!downloadUri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new SecurityException(
+                            $"Download URL must use HTTPS. Received: {downloadUri.Scheme}");
+                    }
+                }
+
+                // Create temp directory with GUID to prevent predictable path attacks
+                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(tempDir);
 
                 // Validate asset name to prevent path traversal attacks
@@ -265,9 +282,8 @@ namespace SoftwareUpdate.GitHub
 
                 var tempFilePath = Path.Combine(tempDir, safeAssetName);
 
-                // Delete existing file if present
-                if (File.Exists(tempFilePath))
-                    File.Delete(tempFilePath);
+                // FileMode.Create overwrites any existing file atomically — no need
+                // for a separate File.Exists/File.Delete check (avoids TOCTOU race).
 
                 using (var response = await _httpClient.GetAsync(update.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
                 {
@@ -290,6 +306,13 @@ namespace SoftwareUpdate.GitHub
                         {
                             await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
                             totalRead += bytesRead;
+
+                            // Security: Enforce maximum download size to prevent DoS
+                            if (totalRead > MaxDownloadSizeBytes)
+                            {
+                                throw new InvalidOperationException(
+                                    $"Download exceeded maximum allowed size of {MaxDownloadSizeBytes / 1024 / 1024} MB.");
+                            }
 
                             // Report progress
                             if (progress != null)
@@ -314,23 +337,31 @@ namespace SoftwareUpdate.GitHub
                             downloadProgress.BytesDownloaded = totalRead;
                             progress.Report(downloadProgress);
                         }
+
+                        // Validate SHA256 checksum if provided
+                        if (!string.IsNullOrEmpty(update.Sha256Checksum))
+                        {
+                            fileStream.Position = 0;
+                            using (var sha256 = SHA256.Create())
+                            {
+                                var hashBytes = sha256.ComputeHash(fileStream);
+                                var actualChecksum = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                                if (!string.Equals(actualChecksum, update.Sha256Checksum, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    throw new InvalidOperationException(
+                                        $"Checksum validation failed. Expected: {update.Sha256Checksum}, Actual: {actualChecksum}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("[GitHubUpdateService] WARNING: No SHA256 checksum provided. Download integrity was not verified.");
+                        }
+
+                        State = UpdateState.ReadyToInstall;
+                        return UpdateDownloadResult.Successful(tempFilePath, update, totalRead);
                     }
                 }
-
-                // Validate SHA256 checksum if provided
-                if (!string.IsNullOrEmpty(update.Sha256Checksum))
-                {
-                    var actualChecksum = ComputeSha256Checksum(tempFilePath);
-                    if (!string.Equals(actualChecksum, update.Sha256Checksum, StringComparison.OrdinalIgnoreCase))
-                    {
-                        File.Delete(tempFilePath);
-                        throw new InvalidOperationException(
-                            $"Checksum validation failed. Expected: {update.Sha256Checksum}, Actual: {actualChecksum}");
-                    }
-                }
-
-                State = UpdateState.ReadyToInstall;
-                return UpdateDownloadResult.Successful(tempFilePath, update, update.DownloadSize);
             }
             catch (OperationCanceledException)
             {
@@ -365,28 +396,44 @@ namespace SoftwareUpdate.GitHub
                     updaterPath);
             }
 
+            // Security: Validate the updater path resides inside the install directory
+            var fullUpdaterPath = Path.GetFullPath(updaterPath);
+            var fullInstallDir = Path.GetFullPath(Options.ResolvedInstallDirectory);
+            if (!fullUpdaterPath.StartsWith(fullInstallDir + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(Path.GetDirectoryName(fullUpdaterPath), fullInstallDir, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new SecurityException(
+                    $"Updater executable must reside within the install directory. " +
+                    $"Updater: '{fullUpdaterPath}', Install dir: '{fullInstallDir}'");
+            }
+
             var currentPid = Process.GetCurrentProcess().Id;
             var targetDir = Options.ResolvedInstallDirectory;
             var mainExe = Options.ResolvedMainExecutableName;
 
-            var arguments = new StringBuilder();
-            arguments.Append($"--pid {currentPid} ");
-            arguments.Append($"--zip \"{downloadedFilePath}\" ");
-            arguments.Append($"--target \"{targetDir}\" ");
-            arguments.Append($"--exe \"{mainExe}\" ");
-
-            if (Options.CreateBackup)
-                arguments.Append("--backup ");
-
+            // Use ArgumentList for safe argument passing (no manual quoting/escaping)
             var startInfo = new ProcessStartInfo
             {
                 FileName = updaterPath,
-                Arguments = arguments.ToString(),
                 UseShellExecute = false,
-                CreateNoWindow = false
+                CreateNoWindow = true
             };
+            startInfo.ArgumentList.Add("--pid");
+            startInfo.ArgumentList.Add(currentPid.ToString());
+            startInfo.ArgumentList.Add("--zip");
+            startInfo.ArgumentList.Add(downloadedFilePath);
+            startInfo.ArgumentList.Add("--target");
+            startInfo.ArgumentList.Add(targetDir);
+            startInfo.ArgumentList.Add("--exe");
+            startInfo.ArgumentList.Add(mainExe);
+            if (Options.CreateBackup)
+                startInfo.ArgumentList.Add("--backup");
 
-            Process.Start(startInfo);
+            var process = Process.Start(startInfo);
+            if (process == null)
+            {
+                throw new InvalidOperationException("Failed to start the updater process.");
+            }
 
             // Dispose resources before exiting the current application
             Dispose();

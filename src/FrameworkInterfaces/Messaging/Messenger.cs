@@ -410,50 +410,20 @@ namespace FrameworkInterfaces.Messaging
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
+            IMessageItem[]? toNotify = null;
+
             lock (_lockObject)
             {
-                // If it's an event then need to ensure the item code is unique
-                if (item.Type == MessageType.Event)
+                if (AddItemInternal(item))
                 {
-                    if (item.Source == null) return;
-                    if (!_messagesBySource.ContainsKey(item.Source))
-                    {
-                        _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
-                    }
-
-                    // Ensure that the event code is unique by appending counter if needed
-                    var srcMsgs = _messagesBySource[item.Source];
-                    string originalCode = item.Code;
-                    string code = originalCode;
-                    int counter = 1;
-
-                    while (srcMsgs.ContainsKey(code))
-                    {
-                        code = $"{originalCode}{counter}";
-                        counter++;
-                    }
-                    item.Code = code;
-
-                    srcMsgs.Add(item.Code, item);
-                    MessagesAdded?.Invoke(new IMessageItem[] { item });
+                    toNotify = new IMessageItem[] { item };
                 }
-                else
-                {
-                    if (item.Source == null) return;
-                    // For non-event messages, ignore duplicates
-                    if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
-                    {
-                        return;
-                    }
+            }
 
-                    if (!_messagesBySource.ContainsKey(item.Source))
-                    {
-                        _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
-                    }
-
-                    _messagesBySource[item.Source].Add(item.Code, item);
-                    MessagesAdded?.Invoke(new IMessageItem[] { item });
-                }
+            // Raise event outside the lock to prevent deadlock from re-entrant subscribers
+            if (toNotify != null)
+            {
+                MessagesAdded?.Invoke(toNotify);
             }
         }
 
@@ -462,7 +432,8 @@ namespace FrameworkInterfaces.Messaging
         /// </summary>
         /// <param name="items">The collection of message items to add.</param>
         /// <remarks>
-        /// Duplicate messages (same source and code) are ignored.
+        /// For event messages, the code is automatically made unique by appending a counter if necessary.
+        /// For other message types, duplicate messages (same source and code) are ignored.
         /// All successfully added messages trigger a single <see cref="MessagesAdded"/> event.
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
@@ -470,31 +441,30 @@ namespace FrameworkInterfaces.Messaging
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
 
+            IMessageItem[]? toNotify = null;
+
             lock (_lockObject)
             {
                 var newMessages = new List<IMessageItem>();
                 foreach (IMessageItem item in items)
                 {
-                    if (item == null || item.Source == null) continue;
-
-                    if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
+                    if (item == null) continue;
+                    if (AddItemInternal(item))
                     {
-                        continue;
+                        newMessages.Add(item);
                     }
-
-                    if (!_messagesBySource.ContainsKey(item.Source))
-                    {
-                        _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
-                    }
-
-                    _messagesBySource[item.Source].Add(item.Code, item);
-                    newMessages.Add(item);
                 }
 
                 if (newMessages.Count > 0)
                 {
-                    MessagesAdded?.Invoke(newMessages.ToArray());
+                    toNotify = newMessages.ToArray();
                 }
+            }
+
+            // Raise event outside the lock to prevent deadlock from re-entrant subscribers
+            if (toNotify != null)
+            {
+                MessagesAdded?.Invoke(toNotify);
             }
         }
 
@@ -509,18 +479,27 @@ namespace FrameworkInterfaces.Messaging
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (message.Source == null) return false;
 
+            bool removed;
+            IMessageItem[]? toNotify = null;
+
             lock (_lockObject)
             {
                 if (!_messagesBySource.ContainsKey(message.Source)) { return false; }
                 if (!_messagesBySource[message.Source].ContainsKey(message.Code)) { return false; }
 
-                bool removed = _messagesBySource[message.Source].Remove(message.Code);
+                removed = _messagesBySource[message.Source].Remove(message.Code);
                 if (removed)
                 {
-                    MessagesRemoved?.Invoke(new IMessageItem[] { message });
+                    toNotify = new IMessageItem[] { message };
                 }
-                return removed;
             }
+
+            // Raise event outside the lock to prevent deadlock from re-entrant subscribers
+            if (toNotify != null)
+            {
+                MessagesRemoved?.Invoke(toNotify);
+            }
+            return removed;
         }
 
         /// <summary>
@@ -528,11 +507,26 @@ namespace FrameworkInterfaces.Messaging
         /// </summary>
         public void Clear()
         {
+            IMessageItem[]? toNotify = null;
+
             lock (_lockObject)
             {
-                List<IMessageItem> allMessages = AllMessageItems();
+                var allMessages = new List<IMessageItem>();
+                foreach (var source in _messagesBySource)
+                {
+                    allMessages.AddRange(source.Value.Values);
+                }
                 _messagesBySource.Clear();
-                MessagesRemoved?.Invoke(allMessages.ToArray());
+                if (allMessages.Count > 0)
+                {
+                    toNotify = allMessages.ToArray();
+                }
+            }
+
+            // Raise event outside the lock to prevent deadlock from re-entrant subscribers
+            if (toNotify != null)
+            {
+                MessagesRemoved?.Invoke(toNotify);
             }
         }
 
@@ -545,13 +539,71 @@ namespace FrameworkInterfaces.Messaging
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
+            IMessageItem[]? toNotify = null;
+
             lock (_lockObject)
             {
                 if (!_messagesBySource.ContainsKey(source)) { return; }
 
-                IMessageItem[] allMessages = _messagesBySource[source].Values.ToArray();
+                toNotify = _messagesBySource[source].Values.ToArray();
                 _messagesBySource[source].Clear();
-                MessagesRemoved?.Invoke(allMessages);
+            }
+
+            // Raise event outside the lock to prevent deadlock from re-entrant subscribers
+            if (toNotify != null && toNotify.Length > 0)
+            {
+                MessagesRemoved?.Invoke(toNotify);
+            }
+        }
+
+        /// <summary>
+        /// Adds a single item to the internal storage. Must be called while holding <c>_lockObject</c>.
+        /// Handles event code uniquification for <see cref="MessageType.Event"/> items.
+        /// </summary>
+        /// <param name="item">The message item to add.</param>
+        /// <returns><c>true</c> if the item was added; <c>false</c> if it was a duplicate or had no source.</returns>
+        private bool AddItemInternal(IMessageItem item)
+        {
+            if (item.Source == null) return false;
+
+            if (item.Type == MessageType.Event)
+            {
+                if (!_messagesBySource.ContainsKey(item.Source))
+                {
+                    _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                }
+
+                // Ensure that the event code is unique by appending counter if needed
+                var srcMsgs = _messagesBySource[item.Source];
+                string originalCode = item.Code;
+                string code = originalCode;
+                int counter = 1;
+
+                while (srcMsgs.ContainsKey(code))
+                {
+                    code = $"{originalCode}{counter}";
+                    counter++;
+                }
+                item.Code = code;
+
+                srcMsgs.Add(item.Code, item);
+                return true;
+            }
+            else
+            {
+                // For non-event messages, ignore duplicates
+                if (_messagesBySource.ContainsKey(item.Source) && _messagesBySource[item.Source].ContainsKey(item.Code))
+                {
+                    return false;
+                }
+
+                if (!_messagesBySource.ContainsKey(item.Source))
+                {
+                    _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
+                }
+
+                _messagesBySource[item.Source].Add(item.Code, item);
+                return true;
             }
         }
 

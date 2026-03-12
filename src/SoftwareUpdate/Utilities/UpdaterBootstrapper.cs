@@ -31,7 +31,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace SoftwareUpdate.Utilities
 {
@@ -119,24 +118,29 @@ namespace SoftwareUpdate.Utilities
 
             var currentPid = Process.GetCurrentProcess().Id;
 
-            var arguments = new StringBuilder();
-            arguments.Append($"--pid {currentPid} ");
-            arguments.Append($"--zip \"{zipPath}\" ");
-            arguments.Append($"--target \"{targetDirectory}\" ");
-            arguments.Append($"--exe \"{mainExecutable}\" ");
-
-            if (createBackup)
-                arguments.Append("--backup ");
-
+            // Use ArgumentList for safe argument passing (no manual quoting/escaping)
             var startInfo = new ProcessStartInfo
             {
                 FileName = updaterPath,
-                Arguments = arguments.ToString(),
                 UseShellExecute = false,
-                CreateNoWindow = false
+                CreateNoWindow = true
             };
+            startInfo.ArgumentList.Add("--pid");
+            startInfo.ArgumentList.Add(currentPid.ToString());
+            startInfo.ArgumentList.Add("--zip");
+            startInfo.ArgumentList.Add(zipPath);
+            startInfo.ArgumentList.Add("--target");
+            startInfo.ArgumentList.Add(targetDirectory);
+            startInfo.ArgumentList.Add("--exe");
+            startInfo.ArgumentList.Add(mainExecutable);
+            if (createBackup)
+                startInfo.ArgumentList.Add("--backup");
 
-            Process.Start(startInfo);
+            var process = Process.Start(startInfo);
+            if (process == null)
+            {
+                throw new InvalidOperationException("Failed to start the updater process.");
+            }
 
             if (exitApplication)
             {

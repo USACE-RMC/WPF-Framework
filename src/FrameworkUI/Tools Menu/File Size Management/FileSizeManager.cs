@@ -269,6 +269,7 @@ namespace FrameworkUI
         {
             _backgroundWorker?.CancelAsync();
             if (_timer != null) { _timer.Stop(); _timer.Tick -= Timer_Tick; _timer = null; }
+            ShellPublicVariables.CompactionInProgress = false;
         }
 
         /// <summary>

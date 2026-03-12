@@ -30,6 +30,7 @@
 
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading;
 using FrameworkInterfaces.Undo;
 using FrameworkInterfaces.Undo.Actions;
 
@@ -226,7 +227,7 @@ namespace FrameworkInterfaces
             {
                 if (_undoManager == null)
                 {
-                    _undoManager = new UndoManager();
+                    Interlocked.CompareExchange(ref _undoManager, new UndoManager(), null);
                 }
                 return _undoManager;
             }

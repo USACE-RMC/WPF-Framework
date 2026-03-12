@@ -62,6 +62,8 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="parentTreeView">The parent tree view.</param>
         public NodeGroup(Node? parentNode, ExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
         {
+            if (parentNode == null) throw new ArgumentNullException(nameof(parentNode));
+
             // Set Properties
             IsExpanded = true;
             AllowDrop = true;

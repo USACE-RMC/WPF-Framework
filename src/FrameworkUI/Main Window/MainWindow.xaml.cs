@@ -784,7 +784,6 @@ namespace FrameworkUI
         private void SaveLayout()
         {
 
-            //throw new Exception();
 
             // Create the layout directory if it doesn't already exist.
             if (Directory.Exists(ShellPublicVariables.AvalonDockLayoutFolderPath) == false)
@@ -1523,6 +1522,7 @@ namespace FrameworkUI
             OpenWindows.CloseAllWindows();
             if (OpenWindows.CancelClosing == true)
             {
+                _closingProject = false;
                 Mouse.OverrideCursor = null;
                 return;
             }
@@ -1586,9 +1586,6 @@ namespace FrameworkUI
                     RecentFiles.Collection[0].FilePath = ProjectNode.Project.FullFileName;
                 }
             }
-            // Sleep to give appearance things are saving
-            Thread.Sleep(300);
-
             // Log Event
             FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(new BasicMessageItem(MessageType.Event, $"The project '{ProjectNode.Project.Name}' was saved.", ProjectNode.Project, "Project", ProjectNode.Project.Name, nameof(SaveProject)));
 

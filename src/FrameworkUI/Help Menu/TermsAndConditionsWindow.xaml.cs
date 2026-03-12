@@ -119,6 +119,17 @@ namespace FrameworkUI
             double verticalOffset = TCURichTextBox.VerticalOffset;
             double viewportHeight = TCURichTextBox.ViewportHeight;
             double extentHeight = TCURichTextBox.ExtentHeight;
+
+            // Enable checkbox when content fits entirely in the viewport (no scrolling needed)
+            if (extentHeight <= viewportHeight)
+            {
+                if (_showButtons)
+                {
+                    IAgreeCheckbox.IsEnabled = true;
+                }
+                return;
+            }
+
             if (verticalOffset != 0)
             {
                 if (verticalOffset + viewportHeight >= extentHeight - 2.0)

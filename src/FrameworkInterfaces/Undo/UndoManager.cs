@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using FrameworkInterfaces.Undo.Actions;
 
 namespace FrameworkInterfaces.Undo
@@ -61,7 +62,7 @@ namespace FrameworkInterfaces.Undo
         private int _savePointIndex = 0;
         private int _currentIndex = 0;
         private int _maxUndoLevels = 100;
-        private volatile bool _isExecutingAction = false;
+        private int _isExecutingAction = 0; // 0 = false, 1 = true; use Interlocked for thread-safe TOCTOU guard
         private CompositeAction? _currentTransaction = null;
         private readonly object _lockObject = new object();
 
@@ -130,7 +131,7 @@ namespace FrameworkInterfaces.Undo
         /// <inheritdoc/>
         public bool IsExecutingAction
         {
-            get { return _isExecutingAction; }
+            get { return Interlocked.CompareExchange(ref _isExecutingAction, 0, 0) != 0; }
         }
 
         /// <inheritdoc/>
@@ -147,16 +148,17 @@ namespace FrameworkInterfaces.Undo
         public void ExecuteAction(IUndoableAction action)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
-            if (_isExecutingAction) return;
+
+            // Atomically check-and-set to prevent TOCTOU race
+            if (Interlocked.CompareExchange(ref _isExecutingAction, 1, 0) != 0) return;
 
             try
             {
-                _isExecutingAction = true;
                 action.Execute();
             }
             finally
             {
-                _isExecutingAction = false;
+                Interlocked.Exchange(ref _isExecutingAction, 0);
             }
 
             RecordActionInternal(action);
@@ -166,7 +168,7 @@ namespace FrameworkInterfaces.Undo
         public void RecordAction(IUndoableAction action)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
-            if (_isExecutingAction) return;
+            if (IsExecutingAction) return;
 
             RecordActionInternal(action);
         }
@@ -182,14 +184,14 @@ namespace FrameworkInterfaces.Undo
                 action = _undoStack.Pop();
             }
 
+            Interlocked.Exchange(ref _isExecutingAction, 1);
             try
             {
-                _isExecutingAction = true;
                 action.Undo();
             }
             finally
             {
-                _isExecutingAction = false;
+                Interlocked.Exchange(ref _isExecutingAction, 0);
             }
 
             lock (_lockObject)
@@ -231,14 +233,14 @@ namespace FrameworkInterfaces.Undo
                 action = _redoStack.Pop();
             }
 
+            Interlocked.Exchange(ref _isExecutingAction, 1);
             try
             {
-                _isExecutingAction = true;
                 action.Execute();
             }
             finally
             {
-                _isExecutingAction = false;
+                Interlocked.Exchange(ref _isExecutingAction, 0);
             }
 
             lock (_lockObject)
@@ -399,9 +401,9 @@ namespace FrameworkInterfaces.Undo
             }
 
             // Undo all actions in reverse order
+            Interlocked.Exchange(ref _isExecutingAction, 1);
             try
             {
-                _isExecutingAction = true;
                 foreach (var action in composite.Actions.AsEnumerable().Reverse())
                 {
                     action.Undo();
@@ -409,7 +411,7 @@ namespace FrameworkInterfaces.Undo
             }
             finally
             {
-                _isExecutingAction = false;
+                Interlocked.Exchange(ref _isExecutingAction, 0);
             }
         }
 
@@ -457,13 +459,23 @@ namespace FrameworkInterfaces.Undo
             {
                 while (_undoStack.Count > _maxUndoLevels)
                 {
-                    // Convert to list, remove oldest, rebuild stack
+                    // Convert to list, remove oldest (last item = bottom of stack), rebuild stack
                     var list = _undoStack.ToList();
                     list.RemoveAt(list.Count - 1);
                     _undoStack.Clear();
                     for (int i = list.Count - 1; i >= 0; i--)
                     {
                         _undoStack.Push(list[i]);
+                    }
+
+                    // Keep _currentIndex in sync with actual stack depth
+                    _currentIndex--;
+
+                    // Adjust save point — if the discarded action was before the save point,
+                    // the save point is no longer reachable
+                    if (_savePointIndex > _currentIndex)
+                    {
+                        _savePointIndex = -1; // Mark as unreachable
                     }
                 }
             }

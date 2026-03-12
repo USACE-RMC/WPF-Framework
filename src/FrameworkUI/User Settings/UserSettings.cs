@@ -339,7 +339,7 @@ namespace FrameworkUI
                         {
                             innerXml = xmlReader.ReadInnerXml();
                             if (int.TryParse(innerXml, out int interval))
-                                AutoRecoverInterval = interval;
+                                AutoRecoverInterval = Math.Max(1, interval);
                         }
                         else if (elementName == nameof(KeepLastBackupVersion))
                         {
@@ -416,9 +416,9 @@ namespace FrameworkUI
                     }
                 }
             }
-            catch (XmlException)
+            catch (Exception ex) when (ex is XmlException || ex is IOException || ex is UnauthorizedAccessException)
             {
-                // If the XML file is corrupted, restore defaults
+                // If the XML file is corrupted or inaccessible, restore defaults
                 RestoreDefaults();
             }
         }
@@ -438,13 +438,10 @@ namespace FrameworkUI
             {
                 Directory.CreateDirectory(directoryPath);
             }
-            // Check if the settings file exists. If it does, then delete it. 
-            if (File.Exists(xmlFilePath) == true)
-            {
-                File.Delete(xmlFilePath);
-            }
+            // Write to a temp file first, then atomically replace the target to avoid corruption.
+            var tempPath = xmlFilePath + ".tmp";
             // Now, save settings.
-            using (var xmlWriter = XmlWriter.Create(xmlFilePath, new XmlWriterSettings() { Indent = true }))
+            using (var xmlWriter = XmlWriter.Create(tempPath, new XmlWriterSettings() { Indent = true }))
             {
                 // Write the XML declaration.
                 xmlWriter.WriteStartDocument();
@@ -554,6 +551,8 @@ namespace FrameworkUI
                 xmlWriter.Flush();
                 xmlWriter.Close();
             }
+            // Atomically replace the target file with the temp file.
+            File.Move(tempPath, xmlFilePath, overwrite: true);
         }
 
     }

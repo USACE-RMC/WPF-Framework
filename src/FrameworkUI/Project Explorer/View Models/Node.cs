@@ -548,17 +548,22 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="order">Optional. Ascending or descending order. Default = Ascending.</param>
         public void Sort(ListSortDirection order = ListSortDirection.Ascending)
         {
-            var nodes = ChildNodes.ToList();
+            List<Node> sorted;
             if (order == ListSortDirection.Ascending)
             {
-                nodes.Sort((x, y) => x._nodeHeader.HeaderText.CompareTo(y._nodeHeader.HeaderText));
+                sorted = ChildNodes.OrderBy(n => n._nodeHeader.HeaderText).ToList();
             }
             else
             {
-                nodes.Sort((x, y) => -1 * x._nodeHeader.HeaderText.CompareTo(y._nodeHeader.HeaderText));
+                sorted = ChildNodes.OrderByDescending(n => n._nodeHeader.HeaderText).ToList();
             }
-            ChildNodes = new ObservableCollection<Node>(nodes);
-            ResetItemsSource();
+            // Sort in-place using Move to preserve existing bindings and listeners on ChildNodes.
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                int currentIndex = ChildNodes.IndexOf(sorted[i]);
+                if (currentIndex != i)
+                    ChildNodes.Move(currentIndex, i);
+            }
             Items.Refresh();
             NodeSorted?.Invoke(this);
         }

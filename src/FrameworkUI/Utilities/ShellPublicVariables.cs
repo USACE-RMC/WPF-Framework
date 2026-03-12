@@ -192,28 +192,28 @@ namespace FrameworkUI
         /// <summary>
         /// Determines if a simulation is in progress.
         /// </summary>
-        public static bool SimulationInProgress = false;
+        public static volatile bool SimulationInProgress = false;
 
         /// <summary>
         /// Determines if a simulation has been canceled.
         /// </summary>
-        public static bool SimulationIsCanceled = false;
+        public static volatile bool SimulationIsCanceled = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether a Bayesian estimation file is being copied.
         /// These files are large and can take a long time to copy.
         /// </summary>
-        public static bool CopyingSimulationFile = false;
+        public static volatile bool CopyingSimulationFile = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether a project file is being compressed.
         /// </summary>
-        public static bool CompactionInProgress;
+        public static volatile bool CompactionInProgress;
 
         /// <summary>
         /// Gets or sets a value indicating whether the dragged file can be dropped and opened.
         /// </summary>
-        public static bool IsDroppableFile = false;
+        public static volatile bool IsDroppableFile = false;
 
     }
 }

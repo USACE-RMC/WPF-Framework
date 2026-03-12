@@ -422,9 +422,10 @@ namespace FrameworkInterfaces.Undo
                 var value = propertyInfo.GetValue(_sourceObject);
                 _shadowValues[propertyName] = value;
             }
-            catch
+            catch (Exception ex)
             {
                 // Property getter may throw; just skip this property
+                System.Diagnostics.Debug.WriteLine($"[UndoableStateBridge] Failed to read property: {ex.Message}");
             }
         }
 
@@ -442,9 +443,10 @@ namespace FrameworkInterfaces.Undo
                         var value = kvp.Value.GetValue(_sourceObject);
                         _shadowValues[kvp.Key] = value;
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         // Property getter may throw; just skip this property
+                        System.Diagnostics.Debug.WriteLine($"[UndoableStateBridge] Failed to read property: {ex.Message}");
                     }
                 }
             }
@@ -604,18 +606,6 @@ namespace FrameworkInterfaces.Undo
                 _bridge = bridge;
                 // Unsubscribe from events during suspension
                 _bridge._source.PropertyChanged -= _bridge.OnPropertyChanged;
-            }
-
-            /// <summary>
-            /// Finalizer to re-subscribe if Dispose was not called, preventing
-            /// permanent loss of undo recording.
-            /// </summary>
-            ~RecordingSuspension()
-            {
-                if (!_disposed)
-                {
-                    _bridge._source.PropertyChanged += _bridge.OnPropertyChanged;
-                }
             }
 
             /// <summary>

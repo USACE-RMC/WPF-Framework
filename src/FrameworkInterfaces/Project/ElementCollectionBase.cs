@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using FrameworkInterfaces.Undo;
 using FrameworkInterfaces.Undo.Actions;
 
@@ -158,7 +159,7 @@ namespace FrameworkInterfaces
             {
                 if (_undoManager == null)
                 {
-                    _undoManager = new UndoManager();
+                    Interlocked.CompareExchange(ref _undoManager, new UndoManager(), null);
                 }
                 return _undoManager;
             }
@@ -222,10 +223,14 @@ namespace FrameworkInterfaces
         /// Raise property changed event.
         /// </summary>
         /// <param name="propertyName">Name of property that changed.</param>
-        public void RaisePropertyChange(string propertyName)
+        /// <param name="setDirty">
+        /// <c>true</c> to mark the collection as dirty after the property change;
+        /// <c>false</c> to leave the dirty state unchanged. Default is <c>true</c>.
+        /// </param>
+        public void RaisePropertyChange(string propertyName, bool setDirty = true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            SetIsDirty(true);
+            if (setDirty) SetIsDirty(true);
         }
 
         /// <summary>
@@ -243,32 +248,38 @@ namespace FrameworkInterfaces
             if (cancel == true) return;
 
             _savingAll = true;
-            if (IsDirty == true)
+            try
             {
-                // Save all elements in order as the order may have changed.
-                for (int i = 0; i < ElementList.Count; i++)
-                    ElementList[i].Save();
-            }
-            else
-            {
-                // Element collection is unchanged, so
-                // only save elements that are dirty
-                for (int i = 0; i < ElementList.Count; i++)
+                if (IsDirty == true)
                 {
-                    if (ElementList[i].IsDirty == true)
+                    // Save all elements in order as the order may have changed.
+                    for (int i = 0; i < ElementList.Count; i++)
                         ElementList[i].Save();
                 }
-            }
+                else
+                {
+                    // Element collection is unchanged, so
+                    // only save elements that are dirty
+                    for (int i = 0; i < ElementList.Count; i++)
+                    {
+                        if (ElementList[i].IsDirty == true)
+                            ElementList[i].Save();
+                    }
+                }
 
-            // Save child element collections
-            foreach (var child in _elementCollections)
+                // Save child element collections
+                foreach (var child in _elementCollections)
+                {
+                    child.Save();
+                }
+
+                SetIsDirty(false);
+                ObjectSaved?.Invoke(this);
+            }
+            finally
             {
-                child.Save();
+                _savingAll = false;
             }
-
-            SetIsDirty(false);
-            ObjectSaved?.Invoke(this);
-            _savingAll = false;
         }
 
         /// <summary>

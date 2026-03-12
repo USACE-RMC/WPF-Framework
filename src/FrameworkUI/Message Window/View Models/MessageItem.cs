@@ -98,7 +98,7 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// Dependency property for the beep boolean.
         /// </summary>
-        public static DependencyProperty BeepProperty = DependencyProperty.Register(nameof(Beep), typeof(bool), typeof(MessageItem), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty BeepProperty = DependencyProperty.Register(nameof(Beep), typeof(bool), typeof(MessageItem), new UIPropertyMetadata(false));
 
         /// <summary>
         /// Determines whether the computer should beep when adding the item.
@@ -112,7 +112,7 @@ namespace FrameworkUI.MessageWindow
         /// <summary>
         /// Dependency property for the message item foreground color.
         /// </summary>
-        public static DependencyProperty ForegroundColorProperty = DependencyProperty.Register(nameof(ForegroundColor), typeof(SolidColorBrush), typeof(MessageItem), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
+        public static readonly DependencyProperty ForegroundColorProperty = DependencyProperty.Register(nameof(ForegroundColor), typeof(SolidColorBrush), typeof(MessageItem), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
 
         /// <summary>
         /// Gets or sets the message item foreground (text) color.

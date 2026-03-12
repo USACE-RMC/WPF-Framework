@@ -35,6 +35,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 
 namespace FrameworkInterfaces
 {
@@ -191,6 +192,7 @@ namespace FrameworkInterfaces
             protected set
             {
                 _lastModified = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastModified)));
             }
         }
 
@@ -251,7 +253,7 @@ namespace FrameworkInterfaces
         public ReadOnlyCollection<IElementCollection>? ElementCollections
         {
             get => _readOnlyElementCollections;
-            set => _readOnlyElementCollections = value;
+            protected set => _readOnlyElementCollections = value;
         }
 
         /// <summary>
@@ -270,7 +272,7 @@ namespace FrameworkInterfaces
             {
                 if (_undoManager == null)
                 {
-                    _undoManager = new UndoManager();
+                    Interlocked.CompareExchange(ref _undoManager, new UndoManager(), null);
                 }
                 return _undoManager;
             }

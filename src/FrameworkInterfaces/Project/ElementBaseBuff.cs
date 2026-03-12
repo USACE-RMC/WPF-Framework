@@ -107,11 +107,11 @@ namespace FrameworkInterfaces
         /// <param name="parentCollection">The parent collection of the element.</param>
         public ElementBaseBuff(string name, IElementCollection parentCollection)
         {
-            _name = name;
+            _name = name ?? string.Empty;
             _parentCollection = parentCollection;
 
-            _nameOnDisk = name;
-            _displayName = name;
+            _nameOnDisk = name ?? string.Empty;
+            _displayName = name ?? string.Empty;
             _creationDate = DateTime.Now;
             _lastModified = DateTime.Now;
             _isValid = true;
