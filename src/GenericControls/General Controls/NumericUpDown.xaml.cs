@@ -79,6 +79,7 @@ namespace GenericControls
 
         private double _max;
         private double _min;
+        private bool _settingBounds;
         private int _decimalPlaces;
         private double _increment = 1d;
         private bool _thousandsSeperator;
@@ -143,12 +144,15 @@ namespace GenericControls
             }
             set
             {
+                if (_settingBounds) { _max = value; return; }
+                _settingBounds = true;
                 if (value < Minimum)
                 {
                     Minimum = value;
                 }
                 _max = value;
                 this.NumericTextBox.MaxValue = value;
+                _settingBounds = false;
             }
         }
 
@@ -163,12 +167,15 @@ namespace GenericControls
             }
             set
             {
+                if (_settingBounds) { _min = value; return; }
+                _settingBounds = true;
                 if (value > Maximum)
                 {
                     Maximum = value;
                 }
                 _min = value;
                 this.NumericTextBox.MinValue = value;
+                _settingBounds = false;
             }
         }
 

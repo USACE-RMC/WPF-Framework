@@ -85,7 +85,12 @@ namespace GenericControls
         /// Gets/sets the color component (A,R,G, or B) to extract or update.
         /// </summary>
         public ColorComponent Component { get; set; } = ColorComponent.R;
-        private SolidColorBrush _color;
+
+        // Track the last color seen during Convert for use in ConvertBack.
+        // Access is confined to the UI thread via WPF binding engine.
+        [ThreadStatic]
+        private static SolidColorBrush _lastColor;
+
         /// <summary>
         /// Converts a <see cref="SolidColorBrush"/> to the byte of the selected <see cref="ColorComponent"/>
         /// </summary>
@@ -98,36 +103,25 @@ namespace GenericControls
         {
             if (value is null)
             {
-                _color = null;
+                _lastColor = null;
                 return null;
             }
-            _color = value as SolidColorBrush;
-            if (_color is null)
+            var color = value as SolidColorBrush;
+            if (color is null)
                 return null;
-            // 
+            _lastColor = color;
             switch (Component)
             {
                 case ColorComponent.A:
-                    {
-                        return _color.Color.A;
-                    }
+                    return color.Color.A;
                 case ColorComponent.R:
-                    {
-                        return _color.Color.R;
-                    }
+                    return color.Color.R;
                 case ColorComponent.G:
-                    {
-                        return _color.Color.G;
-                    }
+                    return color.Color.G;
                 case ColorComponent.B:
-                    {
-                        return _color.Color.B;
-                    }
-
+                    return color.Color.B;
                 default:
-                    {
-                        return (byte)0;
-                    }
+                    return (byte)0;
             }
         }
         /// <summary>
@@ -142,39 +136,29 @@ namespace GenericControls
         {
             if (value is null)
                 return null;
-            if (_color is null)
+            var color = _lastColor;
+            if (color is null)
                 return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
             double doubleValue = 0d;
             byte byteValue = 0;
             _ = NumberFormatHelper.TryParseDouble(value.ToString(), out doubleValue);
-            if (doubleValue <= 255d && doubleValue >= 0d)
+            if (doubleValue >= 0d && doubleValue <= 255d)
             {
-                byteValue = (byte)Math.Round(doubleValue);
+                byteValue = (byte)Math.Min(255, Math.Max(0, Math.Round(doubleValue)));
             }
 
             switch (Component)
             {
                 case ColorComponent.A:
-                    {
-                        return new SolidColorBrush(Color.FromArgb(byteValue, _color.Color.R, _color.Color.G, _color.Color.B));
-                    }
+                    return new SolidColorBrush(Color.FromArgb(byteValue, color.Color.R, color.Color.G, color.Color.B));
                 case ColorComponent.R:
-                    {
-                        return new SolidColorBrush(Color.FromArgb(_color.Color.A, byteValue, _color.Color.G, _color.Color.B));
-                    }
+                    return new SolidColorBrush(Color.FromArgb(color.Color.A, byteValue, color.Color.G, color.Color.B));
                 case ColorComponent.G:
-                    {
-                        return new SolidColorBrush(Color.FromArgb(_color.Color.A, _color.Color.R, byteValue, _color.Color.B));
-                    }
+                    return new SolidColorBrush(Color.FromArgb(color.Color.A, color.Color.R, byteValue, color.Color.B));
                 case ColorComponent.B:
-                    {
-                        return new SolidColorBrush(Color.FromArgb(_color.Color.A, _color.Color.R, _color.Color.G, byteValue));
-                    }
-
+                    return new SolidColorBrush(Color.FromArgb(color.Color.A, color.Color.R, color.Color.G, byteValue));
                 default:
-                    {
-                        return new SolidColorBrush(Color.FromArgb(byteValue, byteValue, byteValue, byteValue));
-                    }
+                    return new SolidColorBrush(Color.FromArgb(byteValue, byteValue, byteValue, byteValue));
             }
         }
 

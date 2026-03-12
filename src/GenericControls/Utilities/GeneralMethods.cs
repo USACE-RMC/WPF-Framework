@@ -278,8 +278,8 @@ namespace GenericControls
             {
                 string dest = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(DirectoryFiles[i]));
                 File.Copy(DirectoryFiles[i], dest);
-                Dispatcher.CurrentDispatcher.Invoke(updatePbDelegate, DispatcherPriority.Background, new object[] { System.Windows.Controls.Primitives.RangeBase.ValueProperty, 100 * i / (double)DirectoryFiles.Count() });
-                Dispatcher.CurrentDispatcher.Invoke(UpdatePbTDelegate, DispatcherPriority.Background, new object[] { TextBlock.TextProperty, (int)Math.Round(100d * (i / (double)DirectoryFiles.Count())) + "% Copying From " + DirName });
+                Application.Current.Dispatcher.Invoke(updatePbDelegate, DispatcherPriority.Background, new object[] { System.Windows.Controls.Primitives.RangeBase.ValueProperty, 100 * i / (double)DirectoryFiles.Count() });
+                Application.Current.Dispatcher.Invoke(UpdatePbTDelegate, DispatcherPriority.Background, new object[] { TextBlock.TextProperty, (int)Math.Round(100d * (i / (double)DirectoryFiles.Count())) + "% Copying From " + DirName });
             }
             // 
             foreach (string folder in Directory.GetDirectories(sourcePath))
@@ -288,8 +288,8 @@ namespace GenericControls
                 CopyDirectory(folder, dest, theProgressBar, progressText);
             }
 
-            Dispatcher.CurrentDispatcher.Invoke(updatePbDelegate, DispatcherPriority.Background, new object[] { System.Windows.Controls.Primitives.RangeBase.ValueProperty, 0d });
-            Dispatcher.CurrentDispatcher.Invoke(UpdatePbTDelegate, DispatcherPriority.Background, new object[] { TextBlock.TextProperty, "" });
+            Application.Current.Dispatcher.Invoke(updatePbDelegate, DispatcherPriority.Background, new object[] { System.Windows.Controls.Primitives.RangeBase.ValueProperty, 0d });
+            Application.Current.Dispatcher.Invoke(UpdatePbTDelegate, DispatcherPriority.Background, new object[] { TextBlock.TextProperty, "" });
         }
         private delegate void UpdateProgressBarDelegate(DependencyProperty dp, object value);
 

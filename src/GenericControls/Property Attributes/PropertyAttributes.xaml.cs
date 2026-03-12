@@ -88,8 +88,10 @@ namespace GenericControls
             // Get the attributes for the class object.
             var attributes = TypeDescriptor.GetAttributes(classObject.GetType());
             // Update the name and description text boxes.
-            this.NameTextBlock.Text = ((DisplayNameAttribute)attributes[typeof(DisplayNameAttribute)]).DisplayName.ToString();
-            this.Description.Text = ((DescriptionAttribute)attributes[typeof(DescriptionAttribute)]).Description.ToString();
+            var dnAttr = attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
+            var descAttr = attributes[typeof(DescriptionAttribute)] as DescriptionAttribute;
+            if (dnAttr != null) this.NameTextBlock.Text = dnAttr.DisplayName;
+            if (descAttr != null) this.Description.Text = descAttr.Description;
         }
 
         /// <summary>
@@ -104,8 +106,10 @@ namespace GenericControls
             // Get the attributes for property.
             var attributes = propertyDescriptors[propertyName].Attributes;
             // Update the name and description text boxes.
-            this.NameTextBlock.Text = ((DisplayNameAttribute)attributes[typeof(DisplayNameAttribute)]).DisplayName.ToString();
-            this.Description.Text = ((DescriptionAttribute)attributes[typeof(DescriptionAttribute)]).Description.ToString();
+            var dnAttr = attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
+            var descAttr = attributes[typeof(DescriptionAttribute)] as DescriptionAttribute;
+            if (dnAttr != null) this.NameTextBlock.Text = dnAttr.DisplayName;
+            if (descAttr != null) this.Description.Text = descAttr.Description;
         }
 
         #endregion
