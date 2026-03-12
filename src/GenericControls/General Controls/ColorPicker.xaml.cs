@@ -326,7 +326,7 @@ namespace GenericControls
         private void UpdateSliderPosition(Color newColor)
         {
             this.PART_ColorSlider.ValueChanged -= this.PART_ColorSlider_ValueChanged;
-            var hsv = ConvertRgbToHsv(newColor.R, newColor.B, newColor.G);
+            var hsv = ConvertRgbToHsv(newColor.R, newColor.G, newColor.B);
             this.PART_ColorSlider.Value = hsv.H;
             var SliderColor = ColorPicker.ConvertHsvToRgb(360d - this.PART_ColorSlider.Value, 1d, 1d);
             this.GradBrush1.Color = SliderColor;

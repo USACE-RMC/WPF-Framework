@@ -186,7 +186,7 @@ namespace GenericControls
             if (e.Cancel)
                 return;
             string prettyheader = d.PropertyDisplayName(e.PropertyName);
-            if (!(prettyheader == null) || !prettyheader.Equals(""))
+            if (!(prettyheader == null) && !prettyheader.Equals(""))
                 e.Column.Header = prettyheader;
             // 
             if (_propertyTypes.ContainsKey(e.PropertyName))

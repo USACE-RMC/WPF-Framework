@@ -184,8 +184,8 @@ namespace GenericControls
         [Obsolete("Use BoundsAreExclusive instead. This property will be removed in a future version.")]
         public bool IncludeBounds
         {
-            get { return BoundsAreExclusive; }
-            set { BoundsAreExclusive = value; }
+            get { return !BoundsAreExclusive; }
+            set { BoundsAreExclusive = !value; }
         }
 
         /// <summary>

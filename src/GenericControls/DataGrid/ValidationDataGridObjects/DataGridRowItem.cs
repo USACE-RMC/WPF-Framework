@@ -323,7 +323,7 @@ namespace GenericControls
             if (_recurse == true)
             {
                 _recurse = false;
-                if (previousIndex > 0)
+                if (previousIndex >= 0)
                 {
                     ((DataGridRowItem)_parentList[previousIndex])._recurse = false;
                     ((DataGridRowItem)_parentList[previousIndex]).RuleMap[propertyName].ExecuteRules();
