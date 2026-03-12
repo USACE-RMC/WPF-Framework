@@ -361,7 +361,6 @@ namespace OxyPlotControls
                     {
                         AnnotationPropertiesControl.Annotation = textualAnnotation;
                     }
-                    break;
                 }
             }
 

@@ -248,7 +248,7 @@ namespace OxyPlotControls
                 Plot.Series.Add(oldSeries[i]);
             }
 
-            SeriesPropertyControlComboBox.SelectedIndex = index + 1;
+            SeriesPropertyControlComboBox.SelectedIndex = index - 1;
             Plot.InvalidatePlot(true);
         }
 

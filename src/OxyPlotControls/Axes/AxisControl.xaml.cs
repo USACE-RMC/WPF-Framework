@@ -549,9 +549,10 @@ namespace OxyPlotControls
             }
 
             thePlot.ReplaceAxis(Axis, newAxis);
+            var oldAxis = Axis;
             Axis = newAxis;
 
-            AxisTypeChanged?.Invoke(Axis, newAxis);
+            AxisTypeChanged?.Invoke(oldAxis, newAxis);
 
             thePlot.InvalidatePlot();
         }

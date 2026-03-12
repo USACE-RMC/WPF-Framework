@@ -196,9 +196,12 @@ namespace OxyPlotControls
             if (e.OldValue is Wpf.Plot)
             {
                 var oldPlot = (Wpf.Plot)e.OldValue;
-                oldPlot.ActualModel.MouseDown -= oxyToolBar.PlotModelMouseDown;
-                oldPlot.ActualModel.MouseMove -= oxyToolBar.PlotModelMouseMove;
-                oldPlot.ActualModel.MouseUp -= oxyToolBar.PlotModelMouseUp;
+                if (oldPlot?.ActualModel != null)
+                {
+                    oldPlot.ActualModel.MouseDown -= oxyToolBar.PlotModelMouseDown;
+                    oldPlot.ActualModel.MouseMove -= oxyToolBar.PlotModelMouseMove;
+                    oldPlot.ActualModel.MouseUp -= oxyToolBar.PlotModelMouseUp;
+                }
                 oldPlot.Annotations.CollectionChanged -= oxyToolBar.PlotModelAnnotationCollectionChanged;
                 oldPlot.LayoutUpdated -= oxyToolBar.ToolBarLayoutUpdated;
 
@@ -214,9 +217,12 @@ namespace OxyPlotControls
                 var newPlot = (Wpf.Plot)e.NewValue;
 
                 // Set up the mouse events
-                newPlot.ActualModel.MouseDown += oxyToolBar.PlotModelMouseDown;
-                newPlot.ActualModel.MouseMove += oxyToolBar.PlotModelMouseMove;
-                newPlot.ActualModel.MouseUp += oxyToolBar.PlotModelMouseUp;
+                if (newPlot?.ActualModel != null)
+                {
+                    newPlot.ActualModel.MouseDown += oxyToolBar.PlotModelMouseDown;
+                    newPlot.ActualModel.MouseMove += oxyToolBar.PlotModelMouseMove;
+                    newPlot.ActualModel.MouseUp += oxyToolBar.PlotModelMouseUp;
+                }
                 newPlot.Annotations.CollectionChanged += oxyToolBar.PlotModelAnnotationCollectionChanged;
 
                 newPlot.ApplyTemplate(); // Needed to set the canvas

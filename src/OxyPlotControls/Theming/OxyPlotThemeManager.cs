@@ -148,7 +148,7 @@ namespace OxyPlotControls
         /// </summary>
         public static void ApplyTheme(Wpf.Plot plot, OxyPlotTheme theme)
         {
-            if (plot == null) return;
+            if (plot?.ActualModel == null) return;
 
             // Suppress PropertyChanged on all child elements during theme application.
             // Plot.SuppressPropertyChanged is already set by the caller (OxyPlotToolbar_Loaded),

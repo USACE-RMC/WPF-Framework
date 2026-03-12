@@ -748,7 +748,18 @@ namespace DatabaseControls
                 newView.ColumnsAdded += thisControl.TableViewColumnsAdded;
                 newView.ColumnsDeleted += thisControl.TableViewColumnsDeleted;
 
-                if (!newView.ParentDatabase.DataBaseOpen) newView.ParentDatabase.Open();
+                if (!newView.ParentDatabase.DataBaseOpen)
+                {
+                    try
+                    {
+                        newView.ParentDatabase.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to open database: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
 
                 thisControl._columnSortOrder = SortOrder.None;
                 thisControl._columnsSortedOrder = new SortOrder[newView.ColumnNames.Count()];
@@ -980,7 +991,18 @@ namespace DatabaseControls
         private void Refresh()
         {
             if (DataView == null) return;
-            if (!DataView.ParentDatabase.DataBaseOpen) DataView.ParentDatabase.Open();
+            if (!DataView.ParentDatabase.DataBaseOpen)
+            {
+                try
+                {
+                    DataView.ParentDatabase.Open();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open database: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
 
             _selectedCellIndices = new SortedDictionary<int, SortedSet<int>>();
             _selectedColumnIndices = new List<int>();
