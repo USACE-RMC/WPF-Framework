@@ -681,7 +681,10 @@ namespace GenericControls
                                 {
                                     Debug.WriteLine(ex);
                                     if (IsNumericType(y.PropertyType))
-                                        y.SetValue(Items[rowIndex + i], Convert.ChangeType(IsDoubleType(y.PropertyType) ? double.NaN : 0d, y.PropertyType), null);
+                                    {
+                                        object fallback = IsDoubleType(y.PropertyType) ? double.NaN : Convert.ChangeType(0, y.PropertyType);
+                                        y.SetValue(Items[rowIndex + i], fallback, null);
+                                    }
                                 }
                             }
                         }
@@ -782,7 +785,10 @@ namespace GenericControls
                                 {
                                     Debug.WriteLine(ex);
                                     if (IsNumericType(y.PropertyType))
-                                        y.SetValue(Items[rowIndex + i], Convert.ChangeType(IsDoubleType(y.PropertyType) ? double.NaN : 0d, y.PropertyType), null);
+                                    {
+                                        object fallback = IsDoubleType(y.PropertyType) ? double.NaN : Convert.ChangeType(0, y.PropertyType);
+                                        y.SetValue(Items[rowIndex + i], fallback, null);
+                                    }
                                 }
                             }
                         }
@@ -875,7 +881,7 @@ namespace GenericControls
             // 
             catch (Exception ex)
             {
-                MessageBox.Show("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, "Insert Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("An unexpected error occurred while modifying rows." + Environment.NewLine + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
         }
@@ -910,7 +916,8 @@ namespace GenericControls
                     if (Items.Count == 0)
                         return;
                     var table = ((DataRowView)Items[0]).DataView.Table;
-                    table.Rows.Add(table.NewRow());
+                    for (int i = 0; i < rowCount; i++)
+                        table.Rows.Add(table.NewRow());
                 }
                 else
                 {
@@ -935,7 +942,7 @@ namespace GenericControls
             // Items.Refresh()
             catch (Exception ex)
             {
-                MessageBox.Show("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, "Insert Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("An unexpected error occurred while modifying rows." + Environment.NewLine + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
         }
@@ -1021,7 +1028,7 @@ namespace GenericControls
             // Items.Refresh()
             catch (Exception ex)
             {
-                MessageBox.Show("Hey developer this shouldn't happen you did something wrong:" + Environment.NewLine + ex.Message, "Insert Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("An unexpected error occurred while modifying rows." + Environment.NewLine + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
         }
