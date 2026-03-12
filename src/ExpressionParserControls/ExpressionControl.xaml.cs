@@ -115,7 +115,7 @@ namespace ExpressionParserControls
         /// <summary>
         /// Raised when the expression changes and tokens are re-evaluated.
         /// </summary>
-        public event ExpressionChangedEventHandler ExpressionChanged;
+        public event ExpressionChangedEventHandler? ExpressionChanged;
 
         /// <summary>
         /// Delegate for handling expression changes.
@@ -126,7 +126,7 @@ namespace ExpressionParserControls
         /// <summary>
         /// Raised when a help document is triggered by clicking a hyperlink in the expression editor.
         /// </summary>
-        public event HelpDocumentCalledEventHandler HelpDocumentCalled;
+        public event HelpDocumentCalledEventHandler? HelpDocumentCalled;
 
         /// <summary>
         /// Delegate for the HelpDocumentCalled event.
@@ -219,9 +219,9 @@ namespace ExpressionParserControls
             this.ExpressionTextBox.Document.Blocks.Add(p);
             // 
             int parenthesisColorPosition = 0;
-            TextPointer newCaret = null;
+            TextPointer? newCaret = null;
             Token t;
-            Run r = null;
+            Run? r = null;
             for (int i = 0; i < GetTokenList.Count; i++)
             {
                 t = GetTokenList[i];

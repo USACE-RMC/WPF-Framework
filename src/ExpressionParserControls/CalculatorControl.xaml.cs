@@ -57,7 +57,7 @@ namespace ExpressionParserControls
         /// <summary>
         /// Raised when the expression in the LexTextBox has changed.
         /// </summary>
-        public event ExpressionChangedEventHandler ExpressionChanged;
+        public event ExpressionChangedEventHandler? ExpressionChanged;
 
         /// <summary>
         /// Delegate for expression change notifications.
@@ -182,7 +182,7 @@ namespace ExpressionParserControls
         /// <returns>List of parse errors.</returns>
         public IList<ParseError> GetErrors()
         {
-            IParserNode parseNode = null;
+            IParserNode? parseNode = null;
             try
             {
                 parseNode = GetParseTree();
