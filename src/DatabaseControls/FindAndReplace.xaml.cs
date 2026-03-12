@@ -108,6 +108,7 @@ namespace DatabaseControls
         {
             if (_tableViewer == null || string.IsNullOrEmpty(FindText.Text))
                 return;
+            if (_tableViewer.DataView.NumberOfRows == 0) return;
 
             _foundInstance = false;
             _currentRow += 1;
@@ -164,6 +165,7 @@ namespace DatabaseControls
         {
             if (_tableViewer == null || string.IsNullOrEmpty(FindText.Text))
                 return;
+            if (_tableViewer.DataView.NumberOfRows == 0) return;
 
             _foundInstance = false;
             _currentRow -= 1;

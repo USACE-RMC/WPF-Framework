@@ -401,7 +401,8 @@ namespace DatabaseControls
             double maxVal = thisControl._sortedData[thisControl._sortedData.Length - 1];
             double avg = thisControl._sortedData.Average();
             thisControl.DefaultR = (avg <= 0 || maxVal <= 0) ? 1.08 : Math.Pow(maxVal / avg, 1.0 / (3 - 1));
-            double defaultInterval = (thisControl._sortedData[thisControl._sortedData.Length - 1] - thisControl._sortedData[0]) / 5; // 5 equally sized bins
+            double range = thisControl._sortedData[thisControl._sortedData.Length - 1] - thisControl._sortedData[0];
+            double defaultInterval = range == 0 ? 1.0 : range / 5; // 5 equally sized bins
             if (thisControl.DefaultIntervalSize == thisControl.IntervalSize)
             {
                 thisControl.IntervalSize = defaultInterval;
@@ -703,7 +704,7 @@ namespace DatabaseControls
                 if (_sortedData[0] == _sortedData[_sortedData.Length - 1])
                 {
                     breaks = new double[1];
-                    breaks[0] = _sortedData.Length;
+                    breaks[0] = _sortedData[0];
                 }
                 else
                 {

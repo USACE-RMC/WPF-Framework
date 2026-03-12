@@ -468,7 +468,7 @@ namespace DatabaseControls
             double[] distinctValues = sortedData.Distinct().ToArray();
             if (distinctValues.Length <= 2)
             {
-                breakCounts = new int[] { sortedData.Length - 1 };
+                breakCounts = new int[] { sortedData.Length };
                 return new double[] { sortedData[sortedData.Length - 1] };
             }
 

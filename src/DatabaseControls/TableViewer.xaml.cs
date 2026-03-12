@@ -1844,18 +1844,13 @@ namespace DatabaseControls
                     FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
                     12, Brushes.Black, pixelsPerDip).Width) + 12;
 
-                int stringLength = 0;
                 for (int i = 0; i < data.Length; i++)
                 {
                     string stringData = data[i]?.ToString() ?? "";
-                    if (stringLength <= stringData.Length)
-                    {
-                        stringLength = stringData.Length;
-                        int formattedWidth = (int)(new FormattedText(stringData, CultureInfo.GetCultureInfo("en-us"),
-                            FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
-                            12, Brushes.Black, pixelsPerDip).Width) + 6;
-                        if (formattedWidth > max) max = formattedWidth;
-                    }
+                    int formattedWidth = (int)(new FormattedText(stringData, CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight, new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+                        12, Brushes.Black, pixelsPerDip).Width) + 6;
+                    if (formattedWidth > max) max = formattedWidth;
                 }
                 if (max < 6) max = 6;
                 _columnWidths![columnIndex] = new GridLength(max);
@@ -1937,6 +1932,7 @@ namespace DatabaseControls
 
         private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
         {
+            _isLoaded = false;
             if (DataView != null)
             {
                 DataView.RowsAdded -= TableViewRowsAdded;
@@ -2386,6 +2382,7 @@ namespace DatabaseControls
             int verticalScrollBarValue = (int)Math.Floor(VerticalScrollbar.Value);
             Point gridPosition = e.GetPosition(GridPanel);
             int mouseUpVirtualRowIndex = GetTableRowIndex(gridPosition) + verticalScrollBarValue;
+            int mouseUpColumnIndex = GetTableColumnIndex(gridPosition);
 
             if (_mouseSelectionMode == SelectionMode.RowSelect)
             {
@@ -2399,25 +2396,25 @@ namespace DatabaseControls
             }
             else if (_mouseSelectionMode == SelectionMode.CellSelect)
             {
-                if (_mouseDownVirtualRowIndex == mouseUpVirtualRowIndex && _mouseDownColumnIndex == 0)
+                if (_mouseDownVirtualRowIndex == mouseUpVirtualRowIndex && _mouseDownColumnIndex == mouseUpColumnIndex)
                 {
                     int dataRowIndex = _rowId![mouseUpVirtualRowIndex];
                     if (!_selectedCellIndices.ContainsKey(dataRowIndex))
                         _selectedCellIndices.Add(dataRowIndex, new SortedSet<int>());
-                    _selectedCellIndices[dataRowIndex].Add(0);
-                    SelectCell(0, mouseUpVirtualRowIndex - verticalScrollBarValue);
+                    _selectedCellIndices[dataRowIndex].Add(mouseUpColumnIndex);
+                    SelectCell(mouseUpColumnIndex, mouseUpVirtualRowIndex - verticalScrollBarValue);
                 }
                 else
                 {
                     int rowStep = mouseUpVirtualRowIndex >= _mouseDownVirtualRowIndex ? 1 : -1;
-                    int columnStep = 0 >= _mouseDownColumnIndex ? 1 : -1;
+                    int columnStep = mouseUpColumnIndex >= _mouseDownColumnIndex ? 1 : -1;
 
                     for (int i = _mouseDownVirtualRowIndex; rowStep > 0 ? i <= mouseUpVirtualRowIndex : i >= mouseUpVirtualRowIndex; i += rowStep)
                     {
                         int dataRowIndex = _rowId![i];
                         if (!_selectedCellIndices.ContainsKey(dataRowIndex))
                             _selectedCellIndices.Add(dataRowIndex, new SortedSet<int>());
-                        for (int j = _mouseDownColumnIndex; columnStep > 0 ? j <= 0 : j >= 0; j += columnStep)
+                        for (int j = _mouseDownColumnIndex; columnStep > 0 ? j <= mouseUpColumnIndex : j >= mouseUpColumnIndex; j += columnStep)
                             _selectedCellIndices[dataRowIndex].Add(j);
                     }
                     SetSelectedCells();
@@ -2814,7 +2811,7 @@ namespace DatabaseControls
         {
 
             _selectedRowsOnly = false;
-            VerticalScrollbar.Maximum = DataView.NumberOfRows - (int)Math.Floor(RowsAr.ActualHeight / RowHeight);
+            VerticalScrollbar.Maximum = DataView.NumberOfRows - GetMaxRows(false);
             if (_selectedDataRowIndices.Count > 0)
             {
                 if (_selectedDataRowIndices[0] > VerticalScrollbar.Maximum)
@@ -2882,7 +2879,7 @@ namespace DatabaseControls
             if (_selectedRowsOnly == true)
             {
                 _selectedRowsOnly = false;
-                _visibleRowCount = (int)Math.Floor(RowsAr.ActualHeight / RowHeight);
+                _visibleRowCount = GetMaxRows(false);
                 if (_visibleRowCount > DataView.NumberOfRows) _visibleRowCount = DataView.NumberOfRows;
                 VerticalScrollbar.Maximum = DataView.NumberOfRows - _visibleRowCount;
                 LoadRows();
@@ -3568,10 +3565,10 @@ namespace DatabaseControls
                 for (int i = 0; i < DataView.NumberOfRows; i++)
                 {
                     readerRow = DataView.GetRow(_rowId![i]);
-                    boardText.Append(readerRow[0].ToString());
+                    boardText.Append(readerRow[0]?.ToString() ?? "");
                     for (int j = 1; j < DataView.ColumnNames.Count(); j++)
                     {
-                        boardText.Append('\t' + readerRow[j].ToString());
+                        boardText.Append('\t' + (readerRow[j]?.ToString() ?? ""));
                     }
                     if (i < DataView.NumberOfRows - 1) boardText.Append('\n');
                 }
@@ -3666,10 +3663,10 @@ namespace DatabaseControls
                     foreach (var r in GetSelectedRowVirtualRowIndices())
                     {
                         readerRow = DataView.GetRow(r.Value);
-                        boardText.Append(readerRow[0].ToString());
+                        boardText.Append(readerRow[0]?.ToString() ?? "");
                         for (int j = 1; j < DataView.ColumnNames.Count(); j++)
                         {
-                            boardText.Append('\t' + readerRow[j].ToString());
+                            boardText.Append('\t' + (readerRow[j]?.ToString() ?? ""));
                         }
                         boardText.Append('\n');
                     }
@@ -3680,10 +3677,10 @@ namespace DatabaseControls
                     for (int i = 0; i < _selectedDataRowIndices.Count; i++)
                     {
                         readerRow = DataView.GetRow(_selectedDataRowIndices[i]);
-                        boardText.Append(readerRow[0].ToString());
+                        boardText.Append(readerRow[0]?.ToString() ?? "");
                         for (int j = 1; j < DataView.ColumnNames.Count(); j++)
                         {
-                            boardText.Append('\t' + readerRow[j].ToString());
+                            boardText.Append('\t' + (readerRow[j]?.ToString() ?? ""));
                         }
                         boardText.Append('\n');
                     }
@@ -3741,7 +3738,7 @@ namespace DatabaseControls
 
                     foreach (int column in rowCellEdits)
                     {
-                        boardText.Append(row[column].ToString() + '\t');
+                        boardText.Append((row[column]?.ToString() ?? "") + '\t');
                     }
                     boardText[boardText.Length - 1] = '\n';
                 }
@@ -3819,7 +3816,8 @@ namespace DatabaseControls
             {
                 sortedRowsIndices.Add(_rowOffset![_selectedDataRowIndices[i]], _selectedDataRowIndices[i]);
             }
-            if (_columnSortOrder == SortOrder.Descending) sortedRowsIndices.Reverse();
+            if (_columnSortOrder == SortOrder.Descending)
+                return new SortedDictionary<int, int>(sortedRowsIndices, Comparer<int>.Create((a, b) => b.CompareTo(a)));
             return sortedRowsIndices;
         }
 
@@ -4077,8 +4075,8 @@ namespace DatabaseControls
             {
                 sortedRowsIndices.Add(_rowOffset![selectedCell.Key], selectedCell.Key);
             }
-            //
-            if (_columnSortOrder == SortOrder.Descending) sortedRowsIndices.Reverse();
+            if (_columnSortOrder == SortOrder.Descending)
+                return new SortedDictionary<int, int>(sortedRowsIndices, Comparer<int>.Create((a, b) => b.CompareTo(a)));
             return sortedRowsIndices;
         }
 

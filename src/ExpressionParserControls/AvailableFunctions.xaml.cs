@@ -45,7 +45,7 @@ namespace ExpressionParserControls
         /// <summary>
         /// The expression control to insert function text into.
         /// </summary>
-        public static DependencyProperty ExpressionTextProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ExpressionTextProperty = DependencyProperty.Register(
             nameof(ExpressionText), typeof(ExpressionControl), typeof(AvailableFunctions));
 
         /// <summary>

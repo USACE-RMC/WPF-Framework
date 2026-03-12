@@ -255,6 +255,7 @@ namespace DatabaseControls
                     {
                         for (int j = 0; j < nodeToColumnIndices.Length; j++)
                         {
+                            if (_selectedRows[i] >= nodeColumnData[j].Length) continue;
                             varNodes[j].SetValue(nodeColumnData[j][_selectedRows[i]]);
                         }
                         columnData[i] = t.Evaluate().Result;
@@ -455,6 +456,8 @@ namespace DatabaseControls
         private void UpdateExistingRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             _existingField = UpdateExistingRadioButton.IsChecked == true;
+            if (_existingField && ExistingFieldsCombobox.SelectedItem is string selectedField)
+                _fieldName = selectedField;
         }
 
         /// <summary>
