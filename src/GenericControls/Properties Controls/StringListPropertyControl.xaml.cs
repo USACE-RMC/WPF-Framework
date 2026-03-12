@@ -64,7 +64,7 @@ namespace GenericControls
         /// <summary>
         /// Backing dependency property for <see cref="StringList"/>.
         /// </summary>
-        public static DependencyProperty StringListProperty = DependencyProperty.Register(nameof(StringList), typeof(IList<string>), typeof(StringListPropertyControl), new PropertyMetadata(new List<string>(), StringListPropertyChanged_Callback));
+        public static readonly DependencyProperty StringListProperty = DependencyProperty.Register(nameof(StringList), typeof(IList<string>), typeof(StringListPropertyControl), new PropertyMetadata(new List<string>(), StringListPropertyChanged_Callback));
         /// <summary>
         /// Gets/sets the list of strings displayed in the control.
         /// </summary>
@@ -84,7 +84,7 @@ namespace GenericControls
         /// <summary>
         /// Backing dependency property for <see cref="Title"/>.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(StringListPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(StringListPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets or sets the title displayed alongside the string list.
@@ -128,7 +128,7 @@ namespace GenericControls
         /// <summary>
         /// Backing dependency property for <see cref="AddRemoveEnabled"/>.
         /// </summary>
-        public static DependencyProperty AddRemoveEnabledProperty = DependencyProperty.Register(nameof(AddRemoveEnabled), typeof(bool), typeof(StringListPropertyControl), new UIPropertyMetadata(true, AddRemoveEnabledChanged_Callback));
+        public static readonly DependencyProperty AddRemoveEnabledProperty = DependencyProperty.Register(nameof(AddRemoveEnabled), typeof(bool), typeof(StringListPropertyControl), new UIPropertyMetadata(true, AddRemoveEnabledChanged_Callback));
 
         /// <summary>
         /// Gets or sets whether add/remove buttons are enabled on the control.

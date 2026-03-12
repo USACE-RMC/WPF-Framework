@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata(""));
         /// <summary>
         /// Gets or sets the text value displayed in the control.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependence property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(TextPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the title text to display on property.
         /// </summary>
@@ -101,7 +101,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="TextWrapping"/> dependence property.
         /// </summary>
-        public static DependencyProperty TextWrappingProperty = DependencyProperty.Register(nameof(TextWrapping), typeof(TextWrapping), typeof(TextPropertyControl), new UIPropertyMetadata(TextWrapping.WrapWithOverflow));
+        public static readonly DependencyProperty TextWrappingProperty = DependencyProperty.Register(nameof(TextWrapping), typeof(TextWrapping), typeof(TextPropertyControl), new UIPropertyMetadata(TextWrapping.WrapWithOverflow));
         /// <summary>
         /// Gets or sets the text wrapping behavior (e.g., NoWrap, Wrap, or WrapWithOverflow).
         /// </summary>
@@ -120,7 +120,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinTitleWidth"/> dependence property.
         /// </summary>
-        public static DependencyProperty MinTitleWidthProperty = DependencyProperty.Register(nameof(MinTitleWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(100d));
+        public static readonly DependencyProperty MinTitleWidthProperty = DependencyProperty.Register(nameof(MinTitleWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(100d));
         /// <summary>
         /// Gets or sets the minimum width for the title label.
         /// </summary>
@@ -139,7 +139,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(TextPropertyControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(TextPropertyControl), new UIPropertyMetadata(false));
         /// <summary>
         /// Gets or sets whether the text is read-only.
         /// </summary>
@@ -158,7 +158,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum width for the title label.
         /// </summary>
@@ -177,7 +177,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependence property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets or sets the minimum width for the title label.
         /// </summary>
@@ -196,7 +196,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(TextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// Gets or sets the layout width of the property section using GridLength.
         /// </summary>
@@ -215,7 +215,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(TextPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(TextPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets whether to display a leader line next to the control.
         /// </summary>

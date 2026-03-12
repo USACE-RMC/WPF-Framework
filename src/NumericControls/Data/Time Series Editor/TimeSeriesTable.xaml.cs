@@ -156,7 +156,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="Series"/> dependency property.
         /// </summary>
-        public static DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(new TimeSeries(), SetData));
+        public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(new TimeSeries(), SetData));
 
         /// <summary>
         /// Handles changes to the Series property and configures the grid for the time interval type.
@@ -220,7 +220,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="MaximumX"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(DateTime), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(DateTime.MaxValue));
+        public static readonly DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(DateTime), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(DateTime.MaxValue));
 
         /// <summary>
         /// Gets or sets the maximum allowed date/time value for validation.
@@ -234,7 +234,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="MinimumX"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(DateTime), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(DateTime.MinValue));
+        public static readonly DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(DateTime), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(DateTime.MinValue));
 
         /// <summary>
         /// Gets or sets the minimum allowed date/time value for validation.
@@ -248,7 +248,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="MaximumY"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(double.MaxValue));
+        public static readonly DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
         /// Gets or sets the maximum allowed Y value for validation.
@@ -262,7 +262,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="MinimumY"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(double.MinValue));
+        public static readonly DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
         /// Gets or sets the minimum allowed Y value for validation.
@@ -276,7 +276,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(TimeSeriesTable), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the control is read-only.
@@ -290,7 +290,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="XColumnHeader"/> dependency property.
         /// </summary>
-        public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(TimeSeriesTable), new FrameworkPropertyMetadata("X Data"));
+        public static readonly DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(TimeSeriesTable), new FrameworkPropertyMetadata("X Data"));
 
         /// <summary>
         /// Gets or sets the column header text for the date/time (X) column.
@@ -304,7 +304,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="YColumnHeader"/> dependency property.
         /// </summary>
-        public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(TimeSeriesTable), new FrameworkPropertyMetadata("Y Data"));
+        public static readonly DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(TimeSeriesTable), new FrameworkPropertyMetadata("Y Data"));
 
         /// <summary>
         /// Gets or sets the column header text for the value (Y) column.

@@ -62,7 +62,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Decimals"/> dependency property.
         /// </summary>
-        public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(PointPropertyControl), new UIPropertyMetadata(5, InitializeControl));
+        public static readonly DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(PointPropertyControl), new UIPropertyMetadata(5, InitializeControl));
         /// <summary>
         /// gets/sets the number of decimal places to display for the point values.
         /// </summary>
@@ -81,7 +81,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="DataPoint"/> dependency property.
         /// </summary>
-        public static DependencyProperty DataPointProperty = DependencyProperty.Register(nameof(DataPoint), typeof(Point), typeof(PointPropertyControl), new UIPropertyMetadata(new Point(0d, 0d), InitializeControl));
+        public static readonly DependencyProperty DataPointProperty = DependencyProperty.Register(nameof(DataPoint), typeof(Point), typeof(PointPropertyControl), new UIPropertyMetadata(new Point(0d, 0d), InitializeControl));
         /// <summary>
         /// Gets/sets the 2D point value.
         /// </summary>
@@ -132,7 +132,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(PointPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(PointPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets/sets the title to display next to the control.
         /// </summary>
@@ -151,7 +151,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(PointPropertyControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(PointPropertyControl), new UIPropertyMetadata(false));
         /// <summary>
         /// gets/sets a value indicating whether the control is read-only.
         /// </summary>
@@ -170,7 +170,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(PointPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(PointPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// gets/sets the maximum width of the property label.
         /// </summary>
@@ -189,7 +189,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(PointPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(PointPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// gets/sets the minimum width of the property label.
         /// </summary>
@@ -208,7 +208,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(PointPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(PointPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// gets/sets the grid width for the label column in the control layout.
         /// </summary>
@@ -227,7 +227,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(PointPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(PointPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// gets/sets a value indicating on whether to show the leader line in the layout.
         /// </summary>

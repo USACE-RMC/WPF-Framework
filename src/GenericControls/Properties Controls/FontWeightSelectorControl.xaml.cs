@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FontWeightSelectorControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FontWeightSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the title displayed for this control.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="SelectedFontWeight"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedFontWeightProperty = DependencyProperty.Register(nameof(SelectedFontWeight), typeof(FontWeight), typeof(FontWeightSelectorControl), new UIPropertyMetadata(FontWeights.Normal));
+        public static readonly DependencyProperty SelectedFontWeightProperty = DependencyProperty.Register(nameof(SelectedFontWeight), typeof(FontWeight), typeof(FontWeightSelectorControl), new UIPropertyMetadata(FontWeights.Normal));
 
         /// <summary>
         /// Gets or sets the selected <see cref="FontWeight"/>.
@@ -102,7 +102,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum width allowed for the property display.
         /// </summary>
@@ -121,7 +121,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets or sets the minimum width allowed for the property display.
         /// </summary>
@@ -140,7 +140,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(FontWeightSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// Gets or sets the desired layout width for the property column.
         /// </summary>
@@ -159,7 +159,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FontWeightSelectorControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FontWeightSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets whether to show a visual leader line next to the property.
         /// </summary>

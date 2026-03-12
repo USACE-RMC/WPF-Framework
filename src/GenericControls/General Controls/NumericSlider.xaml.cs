@@ -81,7 +81,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for setting the numeric text box value.
         /// </summary>
-        public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericSlider), new PropertyMetadata(0.0d, SetText));
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericSlider), new PropertyMetadata(0.0d, SetText));
 
         /// <summary>
         /// Gets and sets the current value of the numeric slider control.
@@ -130,7 +130,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for setting the Maximum value.
         /// </summary>
-        public static DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumericSlider), new PropertyMetadata(100d));
+        public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumericSlider), new PropertyMetadata(100d));
 
         /// <summary>
         /// Gets and sets the maximum value for the numeric slider control.
@@ -151,7 +151,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for setting the Minimum value.
         /// </summary>
-        public static DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumericSlider), new PropertyMetadata(0d));
+        public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumericSlider), new PropertyMetadata(0d));
 
         /// <summary>
         /// Get and set the minimum value for the numeric slider control.
@@ -172,7 +172,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for setting the Increment value.
         /// </summary>
-        public static DependencyProperty IncrementProperty = DependencyProperty.Register(nameof(Increment), typeof(double), typeof(NumericSlider), new PropertyMetadata(1d));
+        public static readonly DependencyProperty IncrementProperty = DependencyProperty.Register(nameof(Increment), typeof(double), typeof(NumericSlider), new PropertyMetadata(1d));
 
         /// <summary>
         /// Gets and sets the amount to increment and decrement on each button click.

@@ -64,7 +64,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the selected color. 
         /// </summary>
-        public static DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(SolidColorBrush), typeof(ColorPicker), new UIPropertyMetadata(Brushes.Black, ColorCallback));
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(SolidColorBrush), typeof(ColorPicker), new UIPropertyMetadata(Brushes.Black, ColorCallback));
 
         /// <summary>
         /// Callback executed when the <see cref="Color"/> property changes.

@@ -64,7 +64,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Decimals"/> dependency property.
         /// </summary>
-        public static DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(Point3DPropertyControl), new UIPropertyMetadata(5, InitializeControl));
+        public static readonly DependencyProperty DecimalsProperty = DependencyProperty.Register(nameof(Decimals), typeof(int), typeof(Point3DPropertyControl), new UIPropertyMetadata(5, InitializeControl));
         /// <summary>
         /// Gets or sets the number of decimal places to display for the X, Y, and Z values.
         /// </summary>
@@ -118,7 +118,7 @@ namespace GenericControls
         /// <summary>
         /// The dependency property for the 3D point value.
         /// </summary>
-        public static DependencyProperty DataPointProperty = DependencyProperty.Register(nameof(DataPoint), typeof(Point3D), typeof(Point3DPropertyControl), new UIPropertyMetadata(new Point3D(double.MinValue, double.MinValue, double.MinValue), InitializeControl));
+        public static readonly DependencyProperty DataPointProperty = DependencyProperty.Register(nameof(DataPoint), typeof(Point3D), typeof(Point3DPropertyControl), new UIPropertyMetadata(new Point3D(double.MinValue, double.MinValue, double.MinValue), InitializeControl));
 
         /// <summary>
         /// Gets/sets the 3D point value (X, Y, Z).
@@ -138,7 +138,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(Point3DPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(Point3DPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets/sets title of the control.
         /// </summary>
@@ -157,7 +157,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(Point3DPropertyControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(Point3DPropertyControl), new UIPropertyMetadata(false));
         /// <summary>
         /// gets/sets the input fields are read-only.
         /// </summary>
@@ -176,7 +176,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(Point3DPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(Point3DPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets/sets value of the maximum width for the layout column.
         /// </summary>
@@ -195,7 +195,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(Point3DPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(Point3DPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// gets/sets value of the minimum width for the layout column.
         /// </summary>
@@ -214,7 +214,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(Point3DPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(Point3DPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// gets/sets the GridLength value for property layout.
         /// </summary>
@@ -269,7 +269,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(Point3DPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(Point3DPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// gets/sets whether a leader line is shown.
         /// </summary>
@@ -288,7 +288,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowTitle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowTitleProperty = DependencyProperty.Register(nameof(ShowTitle), typeof(bool), typeof(Point3DPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowTitleProperty = DependencyProperty.Register(nameof(ShowTitle), typeof(bool), typeof(Point3DPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// gets/sets whether the title is visible.
         /// </summary>

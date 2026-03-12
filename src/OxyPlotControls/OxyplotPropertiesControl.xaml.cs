@@ -64,7 +64,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty PlotProperty = DependencyProperty.Register(
             nameof(Plot), typeof(Plot), typeof(OxyPlotPropertiesControl),
             new PropertyMetadata(null, InitializePlot));
 
@@ -95,7 +95,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ShowCloseButton"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowCloseButtonProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ShowCloseButtonProperty = DependencyProperty.Register(
             nameof(ShowCloseButton), typeof(bool), typeof(OxyPlotPropertiesControl),
             new PropertyMetadata(true));
 
@@ -127,7 +127,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="BackButtonStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty BackButtonStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty BackButtonStyleProperty = DependencyProperty.Register(
             nameof(BackButtonStyle), typeof(Style), typeof(OxyPlotPropertiesControl),
             new UIPropertyMetadata(null));
 
@@ -143,7 +143,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="TabItemStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty TabItemStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty TabItemStyleProperty = DependencyProperty.Register(
             nameof(TabItemStyle), typeof(Style), typeof(OxyPlotPropertiesControl),
             new UIPropertyMetadata(null));
 
@@ -159,7 +159,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ExpanderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
             nameof(ExpanderStyle), typeof(Style), typeof(OxyPlotPropertiesControl),
             new UIPropertyMetadata(null));
 
@@ -175,7 +175,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="PropertyControlComboBoxStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyControlComboBoxStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty PropertyControlComboBoxStyleProperty = DependencyProperty.Register(
             nameof(PropertyControlComboBoxStyle), typeof(Style), typeof(OxyPlotPropertiesControl),
             new UIPropertyMetadata(null));
 

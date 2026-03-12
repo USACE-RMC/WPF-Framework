@@ -65,7 +65,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the text property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(""));
 
         /// <summary>
         /// Gets or sets the directory path text.
@@ -85,7 +85,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the control is read-only.
@@ -105,7 +105,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the title property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets or sets the title text displayed for the control.
@@ -125,7 +125,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the property width.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets or sets the width of the property column in the layout.
@@ -145,7 +145,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the maximum property width.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
         /// Gets or sets the maximum width of the property area.
@@ -165,7 +165,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the minimum property width.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
         /// Gets or sets the minimum width of the property area.
@@ -185,7 +185,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the show leader line property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(DirectorySelectorControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// Gets or sets a value indicating whether the leader line should be visible.

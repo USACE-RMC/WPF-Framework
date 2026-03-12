@@ -82,12 +82,12 @@ namespace DAGControls
         /// <summary>
         /// Identifies the <see cref="Node"/> dependency property.
         /// </summary>
-        public static DependencyProperty NodeProperty = NodePropertyKey.DependencyProperty;
+        public static readonly DependencyProperty NodeProperty = NodePropertyKey.DependencyProperty;
 
         /// <summary>
         /// Identifies the <see cref="NodeContent"/> dependency property.
         /// </summary>
-        public static DependencyProperty NodeContentProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty NodeContentProperty = DependencyProperty.Register(
             nameof(NodeContent),
             typeof(object),
             typeof(NodeControl),
@@ -96,7 +96,7 @@ namespace DAGControls
         /// <summary>
         /// Identifies the <see cref="HeaderColor"/> dependency property.
         /// </summary>
-        public static DependencyProperty HeaderColorProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty HeaderColorProperty = DependencyProperty.Register(
             nameof(HeaderColor),
             typeof(SolidColorBrush),
             typeof(NodeControl),
@@ -105,7 +105,7 @@ namespace DAGControls
         /// <summary>
         /// Identifies the <see cref="NodeIcon"/> dependency property.
         /// </summary>
-        public static DependencyProperty NodeIconProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty NodeIconProperty = DependencyProperty.Register(
             nameof(NodeIcon),
             typeof(ImageSource),
             typeof(NodeControl),

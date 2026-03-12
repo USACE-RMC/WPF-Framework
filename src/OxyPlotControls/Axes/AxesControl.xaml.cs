@@ -44,7 +44,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty PlotProperty = DependencyProperty.Register(
             nameof(Plot), typeof(Wpf.Plot), typeof(AxesControl),
             new PropertyMetadata(null, InitializePlot));
 
@@ -60,7 +60,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="SelectedAxis"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedAxisProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty SelectedAxisProperty = DependencyProperty.Register(
             nameof(SelectedAxis), typeof(Wpf.Axis), typeof(AxesControl),
             new PropertyMetadata(null));
 
@@ -76,7 +76,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="TitleMinWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleMinWidthProp = DependencyProperty.Register(
+        public static readonly DependencyProperty TitleMinWidthProp = DependencyProperty.Register(
             nameof(TitleMinWidth), typeof(int), typeof(AxesControl),
             new UIPropertyMetadata(110));
 
@@ -92,7 +92,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="LeaderLinesVisibility"/> dependency property.
         /// </summary>
-        public static DependencyProperty LeaderLinesVisibilityProp = DependencyProperty.Register(
+        public static readonly DependencyProperty LeaderLinesVisibilityProp = DependencyProperty.Register(
             nameof(LeaderLinesVisibility), typeof(Visibility), typeof(AxesControl),
             new UIPropertyMetadata(Visibility.Visible));
 
@@ -108,7 +108,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="TabItemStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty TabItemStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty TabItemStyleProperty = DependencyProperty.Register(
             nameof(TabItemStyle), typeof(Style), typeof(AxesControl));
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ExpanderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
             nameof(ExpanderStyle), typeof(Style), typeof(AxesControl));
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ComboBoxStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ComboBoxStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ComboBoxStyleProperty = DependencyProperty.Register(
             nameof(ComboBoxStyle), typeof(Style), typeof(AxesControl),
             new PropertyMetadata(null));
 

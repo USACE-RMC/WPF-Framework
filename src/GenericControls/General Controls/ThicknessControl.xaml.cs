@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the selected <see cref="Thickness"/>
         /// </summary>
-        public static DependencyProperty ThicknessProperty = DependencyProperty.Register(nameof(SelectedThickness), typeof(Thickness), typeof(ThicknessControl), new UIPropertyMetadata(new Thickness(1d)));
+        public static readonly DependencyProperty ThicknessProperty = DependencyProperty.Register(nameof(SelectedThickness), typeof(Thickness), typeof(ThicknessControl), new UIPropertyMetadata(new Thickness(1d)));
         /// <summary>
         /// gets/sets the selected <see cref="Thickness"/> value.
         /// </summary>

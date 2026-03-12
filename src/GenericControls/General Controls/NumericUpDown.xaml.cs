@@ -88,7 +88,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for setting the numeric text box value.
         /// </summary>
-        public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericUpDown), new PropertyMetadata(0.0d, SetText));
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericUpDown), new PropertyMetadata(0.0d, SetText));
 
         /// <summary>
         /// Gets and sets the current value of the numeric up-down control.

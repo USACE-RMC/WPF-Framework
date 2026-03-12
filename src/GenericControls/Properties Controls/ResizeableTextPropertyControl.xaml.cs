@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(""));
 
         /// <summary>
         /// Gets or sets the text value used in the control.
@@ -83,7 +83,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets or sets the title to display next to the control.
@@ -103,7 +103,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the control is read-only.
@@ -123,7 +123,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
         /// Gets or sets the maximum width of the property label.
@@ -143,7 +143,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
         /// Gets or sets the minimum width of the property label.
@@ -163,7 +163,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets or sets the grid width for the label column in the control layout.
@@ -183,7 +183,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="TextBoxHeight"/> dependency property.
         /// </summary>
-        public static DependencyProperty TextBoxHeightProperty = DependencyProperty.Register(nameof(TextBoxHeight), typeof(double), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(22d));
+        public static readonly DependencyProperty TextBoxHeightProperty = DependencyProperty.Register(nameof(TextBoxHeight), typeof(double), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(22d));
 
         /// <summary>
         /// Gets or sets the height of the text box.
@@ -203,7 +203,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(ResizeableTextPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets/sets a value indicating whether to show the leader line in the layout.
         /// </summary>

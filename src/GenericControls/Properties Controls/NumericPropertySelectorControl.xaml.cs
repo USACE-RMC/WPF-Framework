@@ -67,7 +67,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="SelectedNumber"/>
         /// </summary>
-        public static DependencyProperty SelectedNumberProperty = DependencyProperty.Register(nameof(SelectedNumber), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(0d));
+        public static readonly DependencyProperty SelectedNumberProperty = DependencyProperty.Register(nameof(SelectedNumber), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(0d));
         /// <summary>
         /// gets/sets the currently selected number.
         /// </summary>
@@ -86,7 +86,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="NumericOptions"/> dependency property.
         /// </summary>
-        public static DependencyProperty NumericOptionsProperty = DependencyProperty.Register(nameof(NumericOptions), typeof(IList<double>), typeof(NumericPropertySelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
+        public static readonly DependencyProperty NumericOptionsProperty = DependencyProperty.Register(nameof(NumericOptions), typeof(IList<double>), typeof(NumericPropertySelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
         /// <summary>
         /// gets/sets the list of numeric options available for selection. 
         /// </summary>
@@ -105,7 +105,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsEditable"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsEditableProperty = DependencyProperty.Register(nameof(IsEditable), typeof(bool), typeof(NumericPropertySelectorControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(nameof(IsEditable), typeof(bool), typeof(NumericPropertySelectorControl), new PropertyMetadata(true));
         /// <summary>
         /// gets/sets a value indicating whether the combo box is editable.
         /// </summary>
@@ -124,7 +124,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="CanHaveNegative"/> dependency property.
         /// </summary>
-        public static DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericPropertySelectorControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericPropertySelectorControl), new PropertyMetadata(true));
         /// <summary>
         /// gets/sets a value indicating whether negative numbers are allowed.
         /// </summary>
@@ -143,7 +143,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericPropertySelectorControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericPropertySelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets/sets the title label for the control.
         /// </summary>
@@ -162,7 +162,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// gets/sets the maximum allowed width for the property field.
         /// </summary>
@@ -181,7 +181,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// gets/sets the minimum allowed width for the property field.
         /// </summary>
@@ -200,7 +200,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary> 
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// gets/sets the width of the value field.
         /// </summary>
@@ -219,7 +219,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericPropertySelectorControl), new UIPropertyMetadata(true));
         /// <summary>
         /// gets/sets a value indicating whether a leader line should be displayed.
         /// </summary>

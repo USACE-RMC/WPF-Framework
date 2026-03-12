@@ -159,7 +159,7 @@ namespace DAGControls
         /// <summary>
         /// Identifies the <see cref="Graph"/> dependency property.
         /// </summary>
-        public static DependencyProperty GraphProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty GraphProperty = DependencyProperty.Register(
             nameof(Graph),
             typeof(Graph),
             typeof(FlowGraphCanvas),

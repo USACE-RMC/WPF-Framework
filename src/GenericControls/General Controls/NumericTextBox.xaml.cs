@@ -93,7 +93,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for read-only mode.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(NumericTextBox), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(NumericTextBox), new UIPropertyMetadata(false));
         /// <summary>
         /// gets/sets whether the textbox is read-only.
         /// </summary>
@@ -188,7 +188,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the Text content.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NumericTextBox), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NumericTextBox), new UIPropertyMetadata(""));
         /// <summary>
         /// gets/sets the raw text content of the control.
         /// </summary>

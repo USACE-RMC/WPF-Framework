@@ -125,7 +125,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the data grid.
         /// </summary>
-        public static DependencyProperty DataGridProperty = DependencyProperty.Register(nameof(DataGrid), typeof(CopyPasteDataGrid), typeof(DataGridToolbar), new FrameworkPropertyMetadata(null, DataGridChangedCallback));
+        public static readonly DependencyProperty DataGridProperty = DependencyProperty.Register(nameof(DataGrid), typeof(CopyPasteDataGrid), typeof(DataGridToolbar), new FrameworkPropertyMetadata(null, DataGridChangedCallback));
 
         /// <summary>
         /// Callback method invoked when the DataGrid property changes.
@@ -265,7 +265,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the toolbar orientation.
         /// </summary>
-        public static DependencyProperty ToolOrientationProperty = DependencyProperty.Register(nameof(ToolOrientation), typeof(Orientation), typeof(DataGridToolbar), new FrameworkPropertyMetadata(Orientation.Horizontal));
+        public static readonly DependencyProperty ToolOrientationProperty = DependencyProperty.Register(nameof(ToolOrientation), typeof(Orientation), typeof(DataGridToolbar), new FrameworkPropertyMetadata(Orientation.Horizontal));
 
         /// <summary>
         /// Gets or sets the orientation of the toolbar buttons.
@@ -288,7 +288,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the control background color.
         /// </summary>
-        public static DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(SolidColorBrush), typeof(DataGridToolbar), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent)));
+        public static readonly DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(SolidColorBrush), typeof(DataGridToolbar), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Transparent)));
 
         /// <summary>
         /// Gets or sets the control background color.
@@ -312,7 +312,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the stack panel button style.
         /// </summary>
-        public static DependencyProperty StackPanelButtonStyleProperty = DependencyProperty.Register(nameof(StackPanelButtonStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelButtonStyle(), StackPanelButtonStylePropertyCallback));
+        public static readonly DependencyProperty StackPanelButtonStyleProperty = DependencyProperty.Register(nameof(StackPanelButtonStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelButtonStyle(), StackPanelButtonStylePropertyCallback));
 
         /// <summary>
         /// Callback method invoked when the StackPanelButtonStyle property changes.
@@ -384,7 +384,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the stack panel separator style.
         /// </summary>
-        public static DependencyProperty StackPanelSeparatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeparatorStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelSeparatorStyle(), StackPanelSeperatorStylePropertyCallback));
+        public static readonly DependencyProperty StackPanelSeparatorStyleProperty = DependencyProperty.Register(nameof(StackPanelSeparatorStyle), typeof(Style), typeof(DataGridToolbar), new FrameworkPropertyMetadata(DefaultStackPanelSeparatorStyle(), StackPanelSeperatorStylePropertyCallback));
 
         /// <summary>
         /// Callback method invoked when the StackPanelSeperatorStyle property changes.

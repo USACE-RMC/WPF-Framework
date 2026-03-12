@@ -69,7 +69,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for <see cref="SelectedCalendarWeekRule"/>
         /// </summary>
-        public static DependencyProperty SelectedCalendarWeekRuleProperty = DependencyProperty.Register(nameof(SelectedCalendarWeekRule), typeof(CalendarWeekRule), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(CalendarWeekRule.FirstDay));
+        public static readonly DependencyProperty SelectedCalendarWeekRuleProperty = DependencyProperty.Register(nameof(SelectedCalendarWeekRule), typeof(CalendarWeekRule), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(CalendarWeekRule.FirstDay));
 
         /// <summary>
         /// Gets/sets the selected <see cref="CalendarWeekRule"/>
@@ -89,7 +89,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for <see cref="Title"/>
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets/sets the title displayed for the property control.
         /// </summary>
@@ -108,7 +108,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for <see cref="MaxPropertyWidth"/>
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum width of the property area.
         /// </summary>
@@ -127,7 +127,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for <see cref="MinPropertyWidth"/>
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets/sets the minimum width of the property area.
         /// </summary>
@@ -146,7 +146,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for <see cref="PropertyWidth"/>
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// Gets/sets the width of the property column in the layout.
         /// </summary>
@@ -165,7 +165,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for <see cref="ShowLeaderLine"/>
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(CalendarWeekRulePropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets/sets a value indicating whether the leader line should be shown.
         /// </summary>

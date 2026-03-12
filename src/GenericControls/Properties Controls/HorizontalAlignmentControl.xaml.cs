@@ -75,7 +75,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Alignment"/> dependency property.
         /// </summary>
-        public static DependencyProperty AlignmentProperty = DependencyProperty.Register(nameof(Alignment), typeof(HorizontalAlignment), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(HorizontalAlignment.Stretch));
+        public static readonly DependencyProperty AlignmentProperty = DependencyProperty.Register(nameof(Alignment), typeof(HorizontalAlignment), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(HorizontalAlignment.Stretch));
 
         /// <summary>
         /// Gets or sets the currently selected <see cref="HorizontalAlignment"/>.
@@ -95,7 +95,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(HorizontalAlignmentControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(HorizontalAlignmentControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the display title of the control.
         /// </summary>
@@ -114,7 +114,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum width of the property label section.
         /// </summary>
@@ -133,7 +133,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary> 
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets or sets the minimum width of the property label section.
         /// </summary>
@@ -152,7 +152,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// Gets or sets the width of the property label section.
         /// </summary>
@@ -171,7 +171,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets a value indicating whether a leader line should be displayed next to the property label.
         /// </summary>
@@ -190,7 +190,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowStretch"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowStretchProperty = DependencyProperty.Register(nameof(ShowStretch), typeof(bool), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(true, OnShowStretchChanged));
+        public static readonly DependencyProperty ShowStretchProperty = DependencyProperty.Register(nameof(ShowStretch), typeof(bool), typeof(HorizontalAlignmentControl), new UIPropertyMetadata(true, OnShowStretchChanged));
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="HorizontalAlignment.Stretch"/> option

@@ -65,7 +65,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the text content of the control.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ResizableTextBoxControl), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ResizableTextBoxControl), new UIPropertyMetadata(""));
         /// <summary>
         /// Gets/sets the text content of the control.
         /// </summary>
@@ -84,7 +84,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for determining whether the text box is read-only.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(ResizableTextBoxControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(ResizableTextBoxControl), new UIPropertyMetadata(false));
         /// <summary>
         /// gets/sets a value indicating whether the text box is read-only.
         /// </summary>

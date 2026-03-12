@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the selected <see cref="Color"/>
         /// </summary>
-        public static DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(SolidColorBrush), typeof(ColorPickerPopup), new UIPropertyMetadata(Brushes.Black)); 
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(SolidColorBrush), typeof(ColorPickerPopup), new UIPropertyMetadata(Brushes.Black)); 
         /// <summary>
         /// Gets/sets the selected color shown in the color picker popup.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for controlling the visibility of the arrow button in the popup.
         /// </summary>
-        public static DependencyProperty ArrowButtonVisibilityProperty = DependencyProperty.Register(nameof(ArrowButtonVisibility), typeof(Visibility), typeof(ColorPickerPopup), new UIPropertyMetadata(Visibility.Visible));
+        public static readonly DependencyProperty ArrowButtonVisibilityProperty = DependencyProperty.Register(nameof(ArrowButtonVisibility), typeof(Visibility), typeof(ColorPickerPopup), new UIPropertyMetadata(Visibility.Visible));
         /// <summary>
         /// Gets/sets the visibility of the arrow button in the popup interface.
         /// </summary>

@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="SelectedColor"/> property.
         /// </summary>
-        public static DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ColorPropertyControl), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
+        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ColorPropertyControl), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
         /// <summary>
         /// Gets or sets the selected color represented as a <see cref="SolidColorBrush"/>.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="Title"/> property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ColorPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ColorPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the title displayed for the color property.
         /// </summary>
@@ -101,7 +101,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="ShowLeaderLine"/> property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(ColorPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(ColorPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets a value indicating whether to show a visual leader line in the UI.
         /// </summary>
@@ -120,7 +120,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="PropertyHeight"/> property.
         /// </summary>
-        public static DependencyProperty PropertyHeightProperty = DependencyProperty.Register(nameof(PropertyHeight), typeof(double), typeof(ColorPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyHeight));
+        public static readonly DependencyProperty PropertyHeightProperty = DependencyProperty.Register(nameof(PropertyHeight), typeof(double), typeof(ColorPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyHeight));
         /// <summary>
         /// Gets or sets the height of the property row in the layout.
         /// </summary>
@@ -139,7 +139,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="MaxPropertyWidth"/> property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ColorPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ColorPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum allowed width of the property.
         /// </summary>
@@ -158,7 +158,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="MinPropertyWidth"/> property.
         /// </summary> 
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ColorPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ColorPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets or sets the minimum allowed width of the property.
         /// </summary>
@@ -177,7 +177,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="PropertyWidth"/> property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ColorPropertyControl), new UIPropertyMetadata(new GridLength(36d)));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ColorPropertyControl), new UIPropertyMetadata(new GridLength(36d)));
         /// <summary>
         /// Gets or sets the current width of the property layout column.
         /// </summary>

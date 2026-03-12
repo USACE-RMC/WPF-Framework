@@ -55,7 +55,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the selected DateTime.
         /// </summary>
-        public static DependencyProperty DateAndTimeProperty = DependencyProperty.Register(nameof(DateAndTime), typeof(DateTime), typeof(DateAndTimePickerControl), new UIPropertyMetadata(new DateTime(1980, 7, 30, 12, 0, 0), TimePropertyCallback));
+        public static readonly DependencyProperty DateAndTimeProperty = DependencyProperty.Register(nameof(DateAndTime), typeof(DateTime), typeof(DateAndTimePickerControl), new UIPropertyMetadata(new DateTime(1980, 7, 30, 12, 0, 0), TimePropertyCallback));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DateAndTimePickerControl"/> class.
@@ -90,7 +90,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Is24Hour"/> dependency property.
         /// </summary>
-        public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimePickerControl), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimePickerControl), new FrameworkPropertyMetadata(false));
         /// <summary>
         /// Gets or sets a value indicating whether the clock uses 24-hour format.
         /// </summary>
@@ -124,7 +124,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property indicating whether seconds selection is enabled.
         /// </summary>
-        public static DependencyProperty HasSecondsProperty = DependencyProperty.Register(nameof(HasSeconds), typeof(bool), typeof(DateAndTimePickerControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty HasSecondsProperty = DependencyProperty.Register(nameof(HasSeconds), typeof(bool), typeof(DateAndTimePickerControl), new UIPropertyMetadata(false));
         /// <summary>
         /// Gets or sets a value indicating whether seconds are enabled in the time selection.
         /// </summary>
@@ -143,7 +143,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property indicating whether the control should start in hour selection mode.
         /// </summary>
-        public static DependencyProperty SetToHoursOnLoadProperty = DependencyProperty.Register(nameof(SetToHoursOnLoad), typeof(bool), typeof(DateAndTimePickerControl), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty SetToHoursOnLoadProperty = DependencyProperty.Register(nameof(SetToHoursOnLoad), typeof(bool), typeof(DateAndTimePickerControl), new UIPropertyMetadata(false));
         /// <summary>
         /// Gets or sets whether the clock should initially display hour selection on load.
         /// </summary>

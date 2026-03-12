@@ -66,7 +66,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="SelectedDateTime"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedDateTimeProperty = DependencyProperty.Register(nameof(SelectedDateTime), typeof(DateTime), typeof(DateAndTimeTextBoxControl), new UIPropertyMetadata(new DateTime(2017, 8, 7, 20, 35, 23), DateChangedCallback));
+        public static readonly DependencyProperty SelectedDateTimeProperty = DependencyProperty.Register(nameof(SelectedDateTime), typeof(DateTime), typeof(DateAndTimeTextBoxControl), new UIPropertyMetadata(new DateTime(2017, 8, 7, 20, 35, 23), DateChangedCallback));
 
         /// <summary>
         /// Called when the <see cref="SelectedDateTime"/> property changes.
@@ -114,7 +114,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Is24Hour"/> dependency property.
         /// </summary>
-        public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimeTextBoxControl), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(DateAndTimeTextBoxControl), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets whether the time should be displayed in 24-hour format.

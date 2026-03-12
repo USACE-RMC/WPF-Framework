@@ -49,7 +49,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty PlotProperty = DependencyProperty.Register(
             nameof(Plot), typeof(Wpf.Plot), typeof(GeneralPlotControl),
             new PropertyMetadata(null, OnPlotPropertyChanged));
 
@@ -65,7 +65,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ExpanderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
             nameof(ExpanderStyle), typeof(Style), typeof(GeneralPlotControl));
 
         /// <summary>

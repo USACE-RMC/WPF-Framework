@@ -102,7 +102,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ErrorCellBorderBrush"/> dependency property.
         /// </summary>
-        public static DependencyProperty ErrorCellBorderBrushProperty = DependencyProperty.Register(nameof(ErrorCellBorderBrush), typeof(Brush), typeof(ValidationDataGrid), new FrameworkPropertyMetadata(Brushes.Red));
+        public static readonly DependencyProperty ErrorCellBorderBrushProperty = DependencyProperty.Register(nameof(ErrorCellBorderBrush), typeof(Brush), typeof(ValidationDataGrid), new FrameworkPropertyMetadata(Brushes.Red));
 
         /// <summary>
         /// Brush used to highlight the border of cells with validation errors.
@@ -122,7 +122,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ErrorCellBackgroundBrush"/> dependency property.
         /// </summary>
-        public static DependencyProperty ErrorCellBackgroundBrushProperty = DependencyProperty.Register(nameof(ErrorCellBackgroundBrush), typeof(Brush), typeof(ValidationDataGrid), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 247, 182, 175))));
+        public static readonly DependencyProperty ErrorCellBackgroundBrushProperty = DependencyProperty.Register(nameof(ErrorCellBackgroundBrush), typeof(Brush), typeof(ValidationDataGrid), new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 247, 182, 175))));
 
         /// <summary>
         /// Brush used to highlight the background of cells with validation errors.

@@ -67,7 +67,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="GridLength"/> dependency property.
         /// </summary>
-        public static DependencyProperty GridLengthProperty = DependencyProperty.Register(nameof(GridLength), typeof(GridLength), typeof(GridLengthControl), new FrameworkPropertyMetadata(GridLength.Auto, GridLengthPropertyCallback));
+        public static readonly DependencyProperty GridLengthProperty = DependencyProperty.Register(nameof(GridLength), typeof(GridLength), typeof(GridLengthControl), new FrameworkPropertyMetadata(GridLength.Auto, GridLengthPropertyCallback));
         /// <summary>
         /// Callback when <see cref="GridLength"/> is changed. Updates individual components.
         /// </summary>
@@ -110,7 +110,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="GridLengthValue"/> dependency property.
         /// </summary>
-        public static DependencyProperty GridLengthValueProperty = DependencyProperty.Register(nameof(GridLengthValue), typeof(double), typeof(GridLengthControl), new FrameworkPropertyMetadata(100d, GridLengthValuePropertyCallback));
+        public static readonly DependencyProperty GridLengthValueProperty = DependencyProperty.Register(nameof(GridLengthValue), typeof(double), typeof(GridLengthControl), new FrameworkPropertyMetadata(100d, GridLengthValuePropertyCallback));
         /// <summary>
         /// Callback when <see cref="GridLengthValue"/> is changed. Triggers update to <see cref="GridLength"/>
         /// </summary>
@@ -144,7 +144,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="GridLengthUnit"/> dependency property.
         /// </summary>
-        public static DependencyProperty GridLengthUnitProperty = DependencyProperty.Register(nameof(GridLengthUnit), typeof(GridUnitType), typeof(GridLengthControl), new FrameworkPropertyMetadata(GridUnitType.Auto, GridLengthUnitPropertyCallback));
+        public static readonly DependencyProperty GridLengthUnitProperty = DependencyProperty.Register(nameof(GridLengthUnit), typeof(GridUnitType), typeof(GridLengthControl), new FrameworkPropertyMetadata(GridUnitType.Auto, GridLengthUnitPropertyCallback));
         /// <summary>
         /// Callback when <see cref="GridLengthUnit"/> is changed. Triggers update to <see cref="GridLength"/>
         /// </summary>

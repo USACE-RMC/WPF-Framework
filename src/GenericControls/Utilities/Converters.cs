@@ -673,7 +673,7 @@ namespace GenericControls
         /// <summary>
         /// gets/sets whether to use 24-hour time format.
         /// </summary>
-        public static DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(TimeTextConverter), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty Is24HourProperty = DependencyProperty.Register(nameof(Is24Hour), typeof(bool), typeof(TimeTextConverter), new UIPropertyMetadata(false));
 
         /// <summary>
         /// Gets/sets whether to use 24-hour time format.

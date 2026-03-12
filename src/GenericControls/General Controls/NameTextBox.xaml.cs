@@ -57,7 +57,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameTextBox), new FrameworkPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameTextBox), new FrameworkPropertyMetadata(""));
 
         /// <summary>
         /// Gets or sets the user-entered text.
@@ -77,7 +77,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="CharacterLimit"/> dependency property.
         /// </summary>
-        public static DependencyProperty CharacterLimitProperty = DependencyProperty.Register(nameof(CharacterLimit), typeof(int), typeof(NameTextBox), new FrameworkPropertyMetadata(64, ValidationProperty_Callback));
+        public static readonly DependencyProperty CharacterLimitProperty = DependencyProperty.Register(nameof(CharacterLimit), typeof(int), typeof(NameTextBox), new FrameworkPropertyMetadata(64, ValidationProperty_Callback));
 
         /// <summary>
         /// Gets or sets the maximum number of characters allowed in the text. Default is 64.
@@ -97,7 +97,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="CanBeBlank"/> dependency property.
         /// </summary>
-        public static DependencyProperty CanBeBlankProperty = DependencyProperty.Register(nameof(CanBeBlank), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(false, ValidationProperty_Callback));
+        public static readonly DependencyProperty CanBeBlankProperty = DependencyProperty.Register(nameof(CanBeBlank), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(false, ValidationProperty_Callback));
 
         /// <summary>
         /// Gets or sets a value indicating if the name string can be blank/empty. Default is false.
@@ -117,7 +117,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="InvalidCharacters"/> dependency property.
         /// </summary>
-        public static DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextBox), new FrameworkPropertyMetadata(GetDefaultInvalidCharacters(), ValidationProperty_Callback));
+        public static readonly DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextBox), new FrameworkPropertyMetadata(GetDefaultInvalidCharacters(), ValidationProperty_Callback));
 
         /// <summary>
         /// Gets or sets the array of characters that are invalid. Default is invalid filename characters plus apostrophe and brackets.
@@ -137,7 +137,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="InvalidStrings"/> dependency property.
         /// </summary>
-        public static DependencyProperty InvalidStringsProperty = DependencyProperty.Register(nameof(InvalidStrings), typeof(string[]), typeof(NameTextBox), new FrameworkPropertyMetadata(new string[] { }, ValidationProperty_Callback));
+        public static readonly DependencyProperty InvalidStringsProperty = DependencyProperty.Register(nameof(InvalidStrings), typeof(string[]), typeof(NameTextBox), new FrameworkPropertyMetadata(new string[] { }, ValidationProperty_Callback));
         /// <summary>
         /// Gets or sets the array of strings that are invalid. Default is no invalid strings.
         /// </summary>
@@ -156,7 +156,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsValid"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsValidProperty = DependencyProperty.Register(nameof(IsValid), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty IsValidProperty = DependencyProperty.Register(nameof(IsValid), typeof(bool), typeof(NameTextBox), new FrameworkPropertyMetadata(true));
         /// <summary>
         /// Gets or sets a value indicating whether the current text is valid.
         /// </summary>

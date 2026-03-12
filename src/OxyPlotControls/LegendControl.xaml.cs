@@ -54,7 +54,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ExpanderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
             nameof(ExpanderStyle), typeof(Style), typeof(LegendControl));
 
         #endregion

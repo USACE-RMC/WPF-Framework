@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="InnerContent"/> property.
         /// </summary>
-        public static DependencyProperty InnerContentProperty = DependencyProperty.Register(nameof(InnerContent), typeof(object), typeof(ContentPropertyControl), new UIPropertyMetadata(null));
+        public static readonly DependencyProperty InnerContentProperty = DependencyProperty.Register(nameof(InnerContent), typeof(object), typeof(ContentPropertyControl), new UIPropertyMetadata(null));
         /// <summary>
         /// Gets or sets the inner content displayed within the control.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="Title"/> property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ContentPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(ContentPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the title displayed for the property control.
         /// </summary>
@@ -101,7 +101,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="MaxPropertyWidth"/> property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum width of the property control.
         /// </summary>
@@ -120,7 +120,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="MinPropertyWidth"/> property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets or sets the minimum width of the property control.
         /// </summary>
@@ -139,7 +139,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="PropertyWidth"/>
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// Gets or sets the current width of the property layout column.
         /// </summary>
@@ -158,7 +158,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="ShowLeaderLine"/> property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(ContentPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(ContentPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets/sets a value indicating whether to display a visual leader line.
         /// </summary>
@@ -177,7 +177,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the <see cref="PropertyHeight"/> property.
         /// </summary>
-        public static DependencyProperty PropertyHeightProperty = DependencyProperty.Register(nameof(PropertyHeight), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyHeight));
+        public static readonly DependencyProperty PropertyHeightProperty = DependencyProperty.Register(nameof(PropertyHeight), typeof(double), typeof(ContentPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyHeight));
         /// <summary>
         /// Gets/sets the height of the property row.
         /// </summary>

@@ -65,7 +65,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the file filters property.
         /// </summary>
-        public static DependencyProperty FileFiltersProperty = DependencyProperty.Register(nameof(FileFilters), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata("All files (*.*) |*.*"));
+        public static readonly DependencyProperty FileFiltersProperty = DependencyProperty.Register(nameof(FileFilters), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata("All files (*.*) |*.*"));
 
         /// <summary>
         /// Gets or sets the file filter string for the file dialog.
@@ -85,7 +85,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the text property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata(""));
 
         /// <summary>
         /// Gets or sets the file path text.
@@ -105,7 +105,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the control is read-only.
@@ -125,7 +125,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the title property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FileSelectorControl), new FrameworkPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets or sets the title text displayed for the control.
@@ -145,7 +145,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the property width.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets or sets the width of the property column in the layout.
@@ -165,7 +165,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the maximum property width.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
         /// Gets or sets the maximum width of the property area.
@@ -185,7 +185,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the minimum property width.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(FileSelectorControl), new FrameworkPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
         /// Gets or sets the minimum width of the property area.
@@ -205,7 +205,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the show leader line property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// Gets or sets a value indicating whether the leader line should be visible.
@@ -225,7 +225,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the show title property.
         /// </summary>
-        public static DependencyProperty ShowTitleProperty = DependencyProperty.Register(nameof(ShowTitle), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty ShowTitleProperty = DependencyProperty.Register(nameof(ShowTitle), typeof(bool), typeof(FileSelectorControl), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
 
         /// <summary>
         /// Gets or sets a value indicating whether the title should be visible.

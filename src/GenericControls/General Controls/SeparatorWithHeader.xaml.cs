@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the header text.
         /// </summary>
-        public static DependencyProperty HeaderProperty = DependencyProperty.Register(nameof(Header), typeof(string), typeof(SeparatorWithHeader), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register(nameof(Header), typeof(string), typeof(SeparatorWithHeader), new UIPropertyMetadata(""));
         /// <summary>
         /// gets/sets the header text displayed between between the left and right separators.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the width of the left separator 
         /// </summary>
-        public static DependencyProperty LeftSeparatorWidthProperty = DependencyProperty.Register(nameof(LeftSeparatorWidth), typeof(GridLength), typeof(SeparatorWithHeader), new UIPropertyMetadata(new GridLength(0.5d, GridUnitType.Star)));
+        public static readonly DependencyProperty LeftSeparatorWidthProperty = DependencyProperty.Register(nameof(LeftSeparatorWidth), typeof(GridLength), typeof(SeparatorWithHeader), new UIPropertyMetadata(new GridLength(0.5d, GridUnitType.Star)));
         /// <summary>
         /// gets/sets the width of the left separator line.
         /// </summary>
@@ -101,7 +101,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the width of the right separator
         /// </summary>
-        public static DependencyProperty RightSeparatorWidthProperty = DependencyProperty.Register(nameof(RightSeparatorWidth), typeof(GridLength), typeof(SeparatorWithHeader), new UIPropertyMetadata(new GridLength(0.5d, GridUnitType.Star)));
+        public static readonly DependencyProperty RightSeparatorWidthProperty = DependencyProperty.Register(nameof(RightSeparatorWidth), typeof(GridLength), typeof(SeparatorWithHeader), new UIPropertyMetadata(new GridLength(0.5d, GridUnitType.Star)));
         /// <summary>
         /// gets/sets the width of the right separator line.
         /// </summary>

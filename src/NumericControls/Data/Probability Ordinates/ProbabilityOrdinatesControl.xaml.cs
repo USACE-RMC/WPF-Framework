@@ -82,7 +82,7 @@ namespace NumericControls
         /// Identifies the <see cref="ProbabilityOrdinates"/> dependency property.
         /// This property represents the probability ordinates to be displayed and edited.
         /// </summary>
-        public static DependencyProperty ProbabilityOrdinatesProperty = DependencyProperty.Register(nameof(ProbabilityOrdinates), typeof(ProbabilityOrdinates), typeof(ProbabilityOrdinatesControl), new PropertyMetadata(null, ElementCallback));
+        public static readonly DependencyProperty ProbabilityOrdinatesProperty = DependencyProperty.Register(nameof(ProbabilityOrdinates), typeof(ProbabilityOrdinates), typeof(ProbabilityOrdinatesControl), new PropertyMetadata(null, ElementCallback));
 
         /// <summary>
         /// Gets or sets the probability ordinates for this control.

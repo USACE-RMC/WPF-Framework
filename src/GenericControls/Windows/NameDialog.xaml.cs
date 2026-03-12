@@ -53,7 +53,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameDialog), new FrameworkPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameDialog), new FrameworkPropertyMetadata(""));
         /// <summary>
         /// Gets/sets the input text from the name textbox.
         /// </summary>
@@ -72,7 +72,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="InnerContent"/> dependency property. 
         /// </summary>
-        public static DependencyProperty InnerContentProperty = DependencyProperty.Register(nameof(InnerContent), typeof(object), typeof(NameDialog), new FrameworkPropertyMetadata(null));
+        public static readonly DependencyProperty InnerContentProperty = DependencyProperty.Register(nameof(InnerContent), typeof(object), typeof(NameDialog), new FrameworkPropertyMetadata(null));
         /// <summary>
         /// Gets/sets optional additional content to be shown in the dialog.
         /// </summary>

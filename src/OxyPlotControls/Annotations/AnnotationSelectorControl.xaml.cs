@@ -62,7 +62,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="Plot"/> dependency property.
         /// </summary>
-        public static DependencyProperty PlotProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty PlotProperty = DependencyProperty.Register(
             nameof(Plot), typeof(Plot), typeof(AnnotationSelectorControl),
             new PropertyMetadata(null, InitializePlot));
 
@@ -78,7 +78,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="SelectedAnnotation"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedAnnotationProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty SelectedAnnotationProperty = DependencyProperty.Register(
             nameof(SelectedAnnotation), typeof(Annotation), typeof(AnnotationSelectorControl),
             new PropertyMetadata(null));
 
@@ -94,7 +94,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ExpanderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(
             nameof(ExpanderStyle), typeof(Style), typeof(AnnotationSelectorControl));
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace OxyPlotControls
         /// <summary>
         /// Identifies the <see cref="ComboBoxStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ComboBoxStyleProperty = DependencyProperty.Register(
+        public static readonly DependencyProperty ComboBoxStyleProperty = DependencyProperty.Register(
             nameof(ComboBoxStyle), typeof(Style), typeof(AnnotationSelectorControl),
             new PropertyMetadata(null));
 

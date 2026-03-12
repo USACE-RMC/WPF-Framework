@@ -65,7 +65,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the OrderedData property.
         /// </summary>
-        public static DependencyProperty OrderedDataProperty = DependencyProperty.Register(nameof(OrderedData), typeof(OrderedPairedData), typeof(OrderedDataTableEditor), new PropertyMetadata(new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending), SetData));
+        public static readonly DependencyProperty OrderedDataProperty = DependencyProperty.Register(nameof(OrderedData), typeof(OrderedPairedData), typeof(OrderedDataTableEditor), new PropertyMetadata(new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending), SetData));
 
         /// <summary>
         /// Handles changes to the OrderedData property and updates the data grid.
@@ -122,7 +122,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the MaximumX property.
         /// </summary>
-        public static DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
+        public static readonly DependencyProperty MaximumXProperty = DependencyProperty.Register(nameof(MaximumX), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
         /// Gets or sets the maximum allowed X value.
@@ -136,7 +136,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the MinimumX property.
         /// </summary>
-        public static DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MinValue));
+        public static readonly DependencyProperty MinimumXProperty = DependencyProperty.Register(nameof(MinimumX), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
         /// Gets or sets the minimum allowed X value.
@@ -150,7 +150,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the MaximumY property.
         /// </summary>
-        public static DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
+        public static readonly DependencyProperty MaximumYProperty = DependencyProperty.Register(nameof(MaximumY), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
         /// Gets or sets the maximum allowed Y value.
@@ -164,7 +164,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the MinimumY property.
         /// </summary>
-        public static DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MinValue));
+        public static readonly DependencyProperty MinimumYProperty = DependencyProperty.Register(nameof(MinimumY), typeof(double), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
         /// Gets or sets the minimum allowed Y value.
@@ -178,7 +178,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the IsReadOnly property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the data grid is read-only.
@@ -192,7 +192,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the XColumnHeader property.
         /// </summary>
-        public static DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata("X Data"));
+        public static readonly DependencyProperty XColumnHeaderProperty = DependencyProperty.Register(nameof(XColumnHeader), typeof(string), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata("X Data"));
 
         /// <summary>
         /// Gets or sets the column header text for the X data column.
@@ -206,7 +206,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the YColumnHeader property.
         /// </summary>
-        public static DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata("Y Data"));
+        public static readonly DependencyProperty YColumnHeaderProperty = DependencyProperty.Register(nameof(YColumnHeader), typeof(string), typeof(OrderedDataTableEditor), new FrameworkPropertyMetadata("Y Data"));
 
         /// <summary>
         /// Gets or sets the column header text for the Y data column.

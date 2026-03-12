@@ -67,7 +67,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the number.
         /// </summary>
-        public static DependencyProperty NumberProperty = DependencyProperty.Register(nameof(Number), typeof(double), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(0d, NumberChangedCallback));
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(nameof(Number), typeof(double), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(0d, NumberChangedCallback));
 
         /// <summary>
         /// Gets and sets the number.
@@ -122,7 +122,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the can have negative property.
         /// </summary>
-        public static DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericSliderPropertyControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericSliderPropertyControl), new PropertyMetadata(true));
 
         /// <summary>
         /// Determines if the number can be negative.
@@ -142,7 +142,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the is text box enabled property.
         /// </summary>
-        public static DependencyProperty IsTextBoxEnabledProperty = DependencyProperty.Register(nameof(IsTextBoxEnabled), typeof(bool), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty IsTextBoxEnabledProperty = DependencyProperty.Register(nameof(IsTextBoxEnabled), typeof(bool), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(true));
 
         /// <summary>
         /// Gets and sets whether the text box is enabled.
@@ -183,7 +183,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the is whole number property.
         /// </summary>
-        public static DependencyProperty IsWholeNumberProperty = DependencyProperty.Register(nameof(IsWholeNumber), typeof(bool), typeof(NumericSliderPropertyControl), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsWholeNumberProperty = DependencyProperty.Register(nameof(IsWholeNumber), typeof(bool), typeof(NumericSliderPropertyControl), new PropertyMetadata(false));
 
         /// <summary>
         /// Gets and sets whether the number must be a whole number.
@@ -203,7 +203,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the max value property.
         /// </summary>
-        public static DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericSliderPropertyControl), new FrameworkPropertyMetadata(double.MaxValue));
+        public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericSliderPropertyControl), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
         /// Gets and sets the maximum value allowed.
@@ -223,7 +223,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the min value property.
         /// </summary>
-        public static DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericSliderPropertyControl), new FrameworkPropertyMetadata(double.MinValue));
+        public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericSliderPropertyControl), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
         /// Gets and sets the minimum value allowed.
@@ -243,7 +243,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the increment value.
         /// </summary>
-        public static DependencyProperty IncrementProperty = DependencyProperty.Register(nameof(Increment), typeof(double), typeof(NumericSliderPropertyControl), new FrameworkPropertyMetadata(1d));
+        public static readonly DependencyProperty IncrementProperty = DependencyProperty.Register(nameof(Increment), typeof(double), typeof(NumericSliderPropertyControl), new FrameworkPropertyMetadata(1d));
 
         /// <summary>
         /// Gets and sets the increment value for the slider.
@@ -263,7 +263,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the title property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericSliderPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericSliderPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets and sets the title of the property.
@@ -285,7 +285,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the max property width.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
         /// Gets and sets the maximum property width.
@@ -305,7 +305,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the min property width.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
         /// Gets and sets the minimum property width.
@@ -325,7 +325,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the property width.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets and sets the property width.
@@ -345,7 +345,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="TextPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty TextPropertyWidthProperty = DependencyProperty.Register(nameof(TextPropertyWidth), typeof(GridLength), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty TextPropertyWidthProperty = DependencyProperty.Register(nameof(TextPropertyWidth), typeof(GridLength), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets and sets the width of the text portion of the property control.
@@ -365,7 +365,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the show leader line property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericSliderPropertyControl), new UIPropertyMetadata(true));
 
         /// <summary>
         /// Gets and sets whether to show the leader line.

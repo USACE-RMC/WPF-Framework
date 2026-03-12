@@ -111,7 +111,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the control distribution options.
         /// </summary>
-        public static DependencyProperty BivariateCDFProperty = DependencyProperty.Register(nameof(BivariateCDF), typeof(BivariateEmpirical), typeof(BivariateEmpiricalControl), new PropertyMetadata(null, BivariateCDFPropertyCallback));
+        public static readonly DependencyProperty BivariateCDFProperty = DependencyProperty.Register(nameof(BivariateCDF), typeof(BivariateEmpirical), typeof(BivariateEmpiricalControl), new PropertyMetadata(null, BivariateCDFPropertyCallback));
 
         /// <summary>
         /// Property changed callback for the BivariateCDF dependency property.
@@ -244,7 +244,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="X2HeaderBorderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty X2HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X2HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderBorderStyle(), X2HeaderBorderStylePropertyCallback));
+        public static readonly DependencyProperty X2HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X2HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderBorderStyle(), X2HeaderBorderStylePropertyCallback));
 
         /// <summary>
         /// Property changed callback for the X2HeaderBorderStyle dependency property.
@@ -269,7 +269,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="X2HeaderTextBlockStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty X2HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X2HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderTextBlockStyle(), X2HeaderTextBlockStylePropertyCallback));
+        public static readonly DependencyProperty X2HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X2HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX2HeaderTextBlockStyle(), X2HeaderTextBlockStylePropertyCallback));
 
         /// <summary>
         /// Property changed callback for the X2HeaderTextBlockStyle dependency property.
@@ -294,7 +294,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="X1HeaderBorderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty X1HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X1HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderBorderStyle(), X1HeaderBorderStylePropertyCallback));
+        public static readonly DependencyProperty X1HeaderBorderStyleProperty = DependencyProperty.Register(nameof(X1HeaderBorderStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderBorderStyle(), X1HeaderBorderStylePropertyCallback));
 
         /// <summary>
         /// Property changed callback for the X1HeaderBorderStyle dependency property.
@@ -319,7 +319,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="X1HeaderTextBlockStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty X1HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X1HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderTextBlockStyle(), X1HeaderTextBlockStylePropertyCallback));
+        public static readonly DependencyProperty X1HeaderTextBlockStyleProperty = DependencyProperty.Register(nameof(X1HeaderTextBlockStyle), typeof(Style), typeof(BivariateEmpiricalControl), new UIPropertyMetadata(DefaultX1HeaderTextBlockStyle(), X1HeaderTextBlockStylePropertyCallback));
 
         /// <summary>
         /// Property changed callback for the X1HeaderTextBlockStyle dependency property.
@@ -344,7 +344,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="X2Header"/> dependency property.
         /// </summary>
-        public static DependencyProperty X2HeaderProperty = DependencyProperty.Register(nameof(X2Header), typeof(string), typeof(BivariateEmpiricalControl), new FrameworkPropertyMetadata("X2 Data"));
+        public static readonly DependencyProperty X2HeaderProperty = DependencyProperty.Register(nameof(X2Header), typeof(string), typeof(BivariateEmpiricalControl), new FrameworkPropertyMetadata("X2 Data"));
 
         /// <summary>
         /// Gets or sets the header text for the X2 data column.
@@ -358,7 +358,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="X1Header"/> dependency property.
         /// </summary>
-        public static DependencyProperty X1HeaderProperty = DependencyProperty.Register(nameof(X1Header), typeof(string), typeof(BivariateEmpiricalControl), new FrameworkPropertyMetadata("X1 Data"));
+        public static readonly DependencyProperty X1HeaderProperty = DependencyProperty.Register(nameof(X1Header), typeof(string), typeof(BivariateEmpiricalControl), new FrameworkPropertyMetadata("X1 Data"));
 
         /// <summary>
         /// Gets or sets the header text for the X1 data row.

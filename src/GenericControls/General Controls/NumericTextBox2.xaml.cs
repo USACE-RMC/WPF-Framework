@@ -65,7 +65,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the number.
         /// </summary>
-        public static DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericTextBox2), new UIPropertyMetadata(0d, ValueChangedCallback));
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double), typeof(NumericTextBox2), new UIPropertyMetadata(0d, ValueChangedCallback));
 
         /// <summary>
         /// Property Changed Callback for the Number property.
@@ -131,7 +131,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for read-only mode.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(NumericTextBox2), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(NumericTextBox2), new UIPropertyMetadata(false));
         /// <summary>
         /// gets/sets whether the textbox is read-only.
         /// </summary>
@@ -150,7 +150,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the can have negative property.
         /// </summary>
-        public static DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(true));
+        public static readonly DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(true));
 
         /// <summary>
         /// Determines if the number can be negative.
@@ -191,7 +191,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the is whole number property.
         /// </summary>
-        public static DependencyProperty IsWholeNumberProperty = DependencyProperty.Register(nameof(IsWholeNumber), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsWholeNumberProperty = DependencyProperty.Register(nameof(IsWholeNumber), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(false));
 
         /// <summary>
         /// Gets and sets whether the number must be a whole number.
@@ -211,7 +211,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the max value property.
         /// </summary>
-        public static DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericTextBox2), new FrameworkPropertyMetadata(double.MaxValue));
+        public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericTextBox2), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
         /// Gets and sets the maximum value allowed.
@@ -231,7 +231,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the min value property.
         /// </summary>
-        public static DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericTextBox2), new FrameworkPropertyMetadata(double.MinValue));
+        public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericTextBox2), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
         /// Gets and sets the minimum value allowed.
@@ -251,7 +251,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the BoundsAreExclusive property.
         /// </summary>
-        public static DependencyProperty BoundsAreExclusiveProperty = DependencyProperty.Register(nameof(BoundsAreExclusive), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(false));
+        public static readonly DependencyProperty BoundsAreExclusiveProperty = DependencyProperty.Register(nameof(BoundsAreExclusive), typeof(bool), typeof(NumericTextBox2), new PropertyMetadata(false));
 
         /// <summary>
         /// Gets/sets whether the bounds (MinValue and MaxValue) are exclusive.

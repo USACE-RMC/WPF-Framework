@@ -58,7 +58,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for the array of stratification options.
         /// </summary>
-        public static DependencyProperty StratificationOptionsCollectionProperty = DependencyProperty.Register(nameof(StratificationOptionsCollection), typeof(List<StratificationOptions>), typeof(BinDefinitionControl), new PropertyMetadata(null, SetStratificationOptionsCallback));
+        public static readonly DependencyProperty StratificationOptionsCollectionProperty = DependencyProperty.Register(nameof(StratificationOptionsCollection), typeof(List<StratificationOptions>), typeof(BinDefinitionControl), new PropertyMetadata(null, SetStratificationOptionsCallback));
 
         /// <summary>
         /// Get and set the array of stratification options.
@@ -108,7 +108,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="ColumnHeaderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.Register(nameof(ColumnHeaderStyle), typeof(Style), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(null));
+        public static readonly DependencyProperty ColumnHeaderStyleProperty = DependencyProperty.Register(nameof(ColumnHeaderStyle), typeof(Style), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the style for column headers in the data grid.
@@ -122,7 +122,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="CellStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty CellStyleProperty = DependencyProperty.Register(nameof(CellStyle), typeof(Style), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(null));
+        public static readonly DependencyProperty CellStyleProperty = DependencyProperty.Register(nameof(CellStyle), typeof(Style), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the style for cells in the data grid.
@@ -136,7 +136,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="MaxBins"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxBinsProperty = DependencyProperty.Register(nameof(MaxBins), typeof(int), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(1000));
+        public static readonly DependencyProperty MaxBinsProperty = DependencyProperty.Register(nameof(MaxBins), typeof(int), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(1000));
 
         /// <summary>
         /// Gets or sets the maximum number of bins allowed.
@@ -151,7 +151,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(false));
+        public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(BinDefinitionControl), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the control is read-only.
@@ -166,7 +166,7 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="StringFormat"/> dependency property.
         /// </summary>
-        public static DependencyProperty StringFormatProperty = DependencyProperty.Register(nameof(StringFormat), typeof(string), typeof(BinDefinitionControl), new FrameworkPropertyMetadata("{0:#,##0.####}"));
+        public static readonly DependencyProperty StringFormatProperty = DependencyProperty.Register(nameof(StringFormat), typeof(string), typeof(BinDefinitionControl), new FrameworkPropertyMetadata("{0:#,##0.####}"));
 
         /// <summary>
         /// Gets or sets the string format for displaying numeric values.
@@ -190,7 +190,7 @@ namespace NumericControls
         /// <summary>
         /// Dependency property for IsProbability.
         /// </summary>
-        public static DependencyProperty IsProbabilityProperty = DependencyProperty.Register(nameof(IsProbability), typeof(bool), typeof(BinDefinitionControl), new PropertyMetadata(false, IsProbabilityChanged));
+        public static readonly DependencyProperty IsProbabilityProperty = DependencyProperty.Register(nameof(IsProbability), typeof(bool), typeof(BinDefinitionControl), new PropertyMetadata(false, IsProbabilityChanged));
 
         /// <summary>
         /// Callback invoked when the IsProbability property changes.

@@ -64,7 +64,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="SelectedWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedWidthProperty = DependencyProperty.Register(nameof(SelectedWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(0d));
+        public static readonly DependencyProperty SelectedWidthProperty = DependencyProperty.Register(nameof(SelectedWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(0d));
         /// <summary>
         /// Gets or sets the selected line width.
         /// </summary>
@@ -83,7 +83,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="WidthOptions"/> dependency property.
         /// </summary>
-        public static DependencyProperty WidthOptionsProperty = DependencyProperty.Register(nameof(WidthOptions), typeof(IList<double>), typeof(LineWidthSelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
+        public static readonly DependencyProperty WidthOptionsProperty = DependencyProperty.Register(nameof(WidthOptions), typeof(IList<double>), typeof(LineWidthSelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
         /// <summary>
         /// Gets or sets the list of selectable line width options.
         /// </summary>
@@ -102,7 +102,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(LineWidthSelectorControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(LineWidthSelectorControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the label text shown next to the width selector.
         /// </summary>
@@ -121,7 +121,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MaxPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
         /// <summary>
         /// Gets or sets the maximum width of the label area.
         /// </summary>
@@ -140,7 +140,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="MinPropertyWidth"/> dependency property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
         /// <summary>
         /// Gets or sets the minimum width of the label area.
         /// </summary>
@@ -159,7 +159,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="PropertyWidth"/> dependency property. 
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(LineWidthSelectorControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
         /// <summary>
         /// Gets or sets the column width allocated to the property selector.
         /// </summary>
@@ -178,7 +178,7 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="ShowLeaderLine"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(LineWidthSelectorControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(LineWidthSelectorControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets a value indicating whether a line should visually connect the title to control.
         /// </summary>

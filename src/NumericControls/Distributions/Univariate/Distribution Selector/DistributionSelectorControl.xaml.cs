@@ -209,7 +209,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for the control distribution options.
         /// </summary>
-        public static DependencyProperty DistributionsProperty = DependencyProperty.Register(nameof(Distributions), typeof(IList<UnivariateDistributionBase>), typeof(DistributionSelectorControl), new PropertyMetadata(DefaultDistributions));
+        public static readonly DependencyProperty DistributionsProperty = DependencyProperty.Register(nameof(Distributions), typeof(IList<UnivariateDistributionBase>), typeof(DistributionSelectorControl), new PropertyMetadata(DefaultDistributions));
 
         /// <summary>
         /// Gets and sets the distribution options.
@@ -223,7 +223,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for the selected distribution.
         /// </summary>
-        public static DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorControl), new PropertyMetadata(null, SelectedDistributionProperty_Callback));
+        public static readonly DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorControl), new PropertyMetadata(null, SelectedDistributionProperty_Callback));
 
         /// <summary>
         /// Property changed callback for the SelectedDistribution dependency property.
@@ -282,7 +282,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for the control background color.
         /// </summary>
-        public static DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(Brush), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(Brushes.White));
+        public static readonly DependencyProperty BackgroundColorProperty = DependencyProperty.Register(nameof(BackgroundColor), typeof(Brush), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(Brushes.White));
 
         /// <summary>
         /// Get and set the distribution selector background color.
@@ -296,7 +296,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property to show the plot axis title.
         /// </summary>
-        public static DependencyProperty ShowAxisProperty = DependencyProperty.Register(nameof(ShowAxis), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty ShowAxisProperty = DependencyProperty.Register(nameof(ShowAxis), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
 
         /// <summary>
         /// Get and set the distribution selector plot axis title visibility.
@@ -310,7 +310,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property to show the plot axis title.
         /// </summary>
-        public static DependencyProperty ShowAxisTitleProperty = DependencyProperty.Register(nameof(ShowAxisTitle), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true, OnShowAxisPropertyChanged));
+        public static readonly DependencyProperty ShowAxisTitleProperty = DependencyProperty.Register(nameof(ShowAxisTitle), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true, OnShowAxisPropertyChanged));
 
         /// <summary>
         /// Get and set the distribution selector plot axis title visibility.
@@ -324,7 +324,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property to show the plot label title.
         /// </summary>
-        public static DependencyProperty ShowAxisLabelProperty = DependencyProperty.Register(nameof(ShowAxisLabel), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(false, OnShowAxisPropertyChanged));
+        public static readonly DependencyProperty ShowAxisLabelProperty = DependencyProperty.Register(nameof(ShowAxisLabel), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(false, OnShowAxisPropertyChanged));
 
         /// <summary>
         /// Get and set the distribution selector plot axis label visibility.
@@ -369,7 +369,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for showing the distribution pdf plot.
         /// </summary>
-        public static DependencyProperty ShowPlotProperty = DependencyProperty.Register(nameof(ShowPlot), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty ShowPlotProperty = DependencyProperty.Register(nameof(ShowPlot), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
 
         /// <summary>
         /// Gets and sets the plot visibility.
@@ -383,7 +383,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Identifies the <see cref="ExpandPlot"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpandPlotProperty = DependencyProperty.Register(nameof(ExpandPlot), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty ExpandPlotProperty = DependencyProperty.Register(nameof(ExpandPlot), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
 
         /// <summary>
         /// Gets or sets a value indicating whether the plot expander is expanded by default.
@@ -398,7 +398,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Identifies the <see cref="ExpanderStyle"/> dependency property.
         /// </summary>
-        public static DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(nameof(ExpanderStyle), typeof(Style), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(null));
+        public static readonly DependencyProperty ExpanderStyleProperty = DependencyProperty.Register(nameof(ExpanderStyle), typeof(Style), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the style applied to the expander controls.
@@ -412,7 +412,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Identifies the <see cref="ShowStatistics"/> dependency property.
         /// </summary>
-        public static DependencyProperty ShowStatisticsProperty = DependencyProperty.Register(nameof(ShowStatistics), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty ShowStatisticsProperty = DependencyProperty.Register(nameof(ShowStatistics), typeof(bool), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(true));
 
         /// <summary>
         /// Gets or sets a value indicating whether the summary statistics table is visible.
@@ -427,7 +427,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for showing the distribution title.
         /// </summary>
-        public static DependencyProperty DistributionTitleProperty = DependencyProperty.Register(nameof(DistributionTitle), typeof(string), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(""));
+        public static readonly DependencyProperty DistributionTitleProperty = DependencyProperty.Register(nameof(DistributionTitle), typeof(string), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(""));
 
         /// <summary>
         /// Gets and sets the distribution title.
@@ -441,7 +441,7 @@ namespace NumericControls.Distributions.Univariate
         /// <summary>
         /// Dependency property for showing the distribution title.
         /// </summary>
-        public static DependencyProperty SampleDataProperty = DependencyProperty.Register(nameof(SampleData), typeof(double[]), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(null, SampleDataProperty_Callback));
+        public static readonly DependencyProperty SampleDataProperty = DependencyProperty.Register(nameof(SampleData), typeof(double[]), typeof(DistributionSelectorControl), new FrameworkPropertyMetadata(null, SampleDataProperty_Callback));
 
         /// <summary>
         /// Property changed callback for the SampleData dependency property.

@@ -63,7 +63,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the selected state of the checkbox.
         /// </summary>
-        public static DependencyProperty IsSelectedProperty = DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets whether the checkbox is selected.
         /// </summary>
@@ -82,7 +82,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the display title associated with the control. 
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(BooleanPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(BooleanPropertyControl), new UIPropertyMetadata("Title"));
         /// <summary>
         /// Gets or sets the title text shown next to the checkbox.
         /// </summary>
@@ -101,7 +101,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property to control the visibility of the leader line.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(BooleanPropertyControl), new UIPropertyMetadata(true));
         /// <summary>
         /// Gets or sets whether the leader line should be visible.
         /// </summary>

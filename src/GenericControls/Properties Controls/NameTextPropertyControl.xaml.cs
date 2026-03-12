@@ -72,7 +72,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the character limit property.
         /// </summary>
-        public static DependencyProperty CharacterLimitProperty = DependencyProperty.Register(nameof(CharacterLimit), typeof(int), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(64));
+        public static readonly DependencyProperty CharacterLimitProperty = DependencyProperty.Register(nameof(CharacterLimit), typeof(int), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(64));
 
         /// <summary>
         /// Maximum number of characters that the name string can contain. Default is 64 characters.
@@ -92,7 +92,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the existing names property.
         /// </summary>
-        public static DependencyProperty ExistingNamesProperty = DependencyProperty.Register(nameof(ExistingNames), typeof(string[]), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(new string[] { }));
+        public static readonly DependencyProperty ExistingNamesProperty = DependencyProperty.Register(nameof(ExistingNames), typeof(string[]), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(new string[] { }));
 
         /// <summary>
         /// Array of strings that are invalid. Default is no invalid strings.
@@ -112,7 +112,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the invalid characters property.
         /// </summary>
-        public static DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(NameTextBox.GetDefaultInvalidCharacters()));
+        public static readonly DependencyProperty InvalidCharactersProperty = DependencyProperty.Register(nameof(InvalidCharacters), typeof(char[]), typeof(NameTextPropertyControl), new FrameworkPropertyMetadata(NameTextBox.GetDefaultInvalidCharacters()));
 
         /// <summary>
         /// Array of characters that are invalid. Default is invalid filename characters with the addition of apostrophe, left bracket, and right bracket.
@@ -132,7 +132,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the text property.
         /// </summary>
-        public static DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameTextPropertyControl), new UIPropertyMetadata(""));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(NameTextPropertyControl), new UIPropertyMetadata(""));
 
         /// <summary>
         /// Gets or sets the text.
@@ -152,7 +152,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the title property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NameTextPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NameTextPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets or sets the title.
@@ -173,7 +173,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the property width property.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets or sets the width of the property layout column.
@@ -193,7 +193,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the max width property.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
         /// Gets or sets the maximum width of the control.
@@ -213,7 +213,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the min width property.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NameTextPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
         /// Gets or sets the minimum width of the control.
@@ -233,7 +233,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the show leader line property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NameTextPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NameTextPropertyControl), new UIPropertyMetadata(true));
 
         /// <summary>
         /// Gets or sets whether the leader line should be visible.

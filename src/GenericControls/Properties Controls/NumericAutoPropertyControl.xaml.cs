@@ -67,7 +67,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the number.
         /// </summary>
-        public static DependencyProperty NumberProperty = DependencyProperty.Register(nameof(Number), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(0d, NumberChangedCallback));
+        public static readonly DependencyProperty NumberProperty = DependencyProperty.Register(nameof(Number), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(0d, NumberChangedCallback));
 
         /// <summary>
         /// Gets and sets the number.
@@ -174,7 +174,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the default number.
         /// </summary>
-        public static DependencyProperty DefaultNumberProperty = DependencyProperty.Register(nameof(DefaultNumber), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(0d, DefaultNumberChangedCallback));
+        public static readonly DependencyProperty DefaultNumberProperty = DependencyProperty.Register(nameof(DefaultNumber), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(0d, DefaultNumberChangedCallback));
 
         /// <summary>
         /// Property Changed Callback for the DefaultNumber property.
@@ -227,12 +227,12 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the can have negative property.
         /// </summary>
-        public static DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericAutoPropertyControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty CanHaveNegativeProperty = DependencyProperty.Register(nameof(CanHaveNegative), typeof(bool), typeof(NumericAutoPropertyControl), new PropertyMetadata(true));
 
         /// <summary>
         /// Dependency property for the max value property.
         /// </summary>
-        public static DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericAutoPropertyControl), new FrameworkPropertyMetadata(double.MaxValue));
+        public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericAutoPropertyControl), new FrameworkPropertyMetadata(double.MaxValue));
 
         /// <summary>
         /// Gets and sets the maximum value allowed.
@@ -252,7 +252,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the min value property.
         /// </summary>
-        public static DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericAutoPropertyControl), new FrameworkPropertyMetadata(double.MinValue));
+        public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericAutoPropertyControl), new FrameworkPropertyMetadata(double.MinValue));
 
         /// <summary>
         /// Gets and sets the minimum value allowed.
@@ -322,7 +322,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the allow text entry property.
         /// </summary>
-        public static DependencyProperty AllowTextEntryProperty = DependencyProperty.Register(nameof(AllowTextEntry), typeof(bool), typeof(NumericAutoPropertyControl), new PropertyMetadata(true));
+        public static readonly DependencyProperty AllowTextEntryProperty = DependencyProperty.Register(nameof(AllowTextEntry), typeof(bool), typeof(NumericAutoPropertyControl), new PropertyMetadata(true));
 
         /// <summary>
         /// Determines if text editing is allowed.
@@ -342,7 +342,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the title property.
         /// </summary>
-        public static DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericAutoPropertyControl), new UIPropertyMetadata("Title"));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(NumericAutoPropertyControl), new UIPropertyMetadata("Title"));
 
         /// <summary>
         /// Gets and sets the title of the property.
@@ -364,7 +364,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the max property width.
         /// </summary>
-        public static DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
+        public static readonly DependencyProperty MaxPropertyWidthProperty = DependencyProperty.Register(nameof(MaxPropertyWidth), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMaxPropertyWidth));
 
         /// <summary>
         /// Gets and sets the maximum property width.
@@ -384,7 +384,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the min property width.
         /// </summary>
-        public static DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
+        public static readonly DependencyProperty MinPropertyWidthProperty = DependencyProperty.Register(nameof(MinPropertyWidth), typeof(double), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultMinPropertyWidth));
 
         /// <summary>
         /// Gets and sets the minimum property width.
@@ -404,7 +404,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the property width.
         /// </summary>
-        public static DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
+        public static readonly DependencyProperty PropertyWidthProperty = DependencyProperty.Register(nameof(PropertyWidth), typeof(GridLength), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(PropertyDefaults.DefaultPropertyWidth));
 
         /// <summary>
         /// Gets and sets the property width.
@@ -424,7 +424,7 @@ namespace GenericControls
         /// <summary>
         /// Dependency property for the show leader line property.
         /// </summary>
-        public static DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(true));
+        public static readonly DependencyProperty ShowLeaderLineProperty = DependencyProperty.Register(nameof(ShowLeaderLine), typeof(bool), typeof(NumericAutoPropertyControl), new UIPropertyMetadata(true));
 
         /// <summary>
         /// Gets and sets whether to show the leader line.
