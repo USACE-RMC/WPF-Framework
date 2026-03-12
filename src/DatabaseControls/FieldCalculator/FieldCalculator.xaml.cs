@@ -573,6 +573,13 @@ namespace DatabaseControls
             PreviewGrid.ItemsSource = previewItems;
             PreviewGrid.Visibility = Visibility.Visible;
             resultMessageText.Visibility = Visibility.Collapsed;
+
+            // Set dynamic expander header
+            int totalRows = _dbView.NumberOfRows;
+            PreviewExpander.Header = totalRows <= PreviewRowCount
+                ? $"Preview \u2014 {totalRows} rows"
+                : $"Preview \u2014 first {PreviewRowCount} of {totalRows} rows";
+            PreviewExpander.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -583,6 +590,8 @@ namespace DatabaseControls
             resultMessageText.Text = message;
             resultMessageText.Visibility = Visibility.Visible;
             PreviewGrid.Visibility = Visibility.Collapsed;
+            PreviewExpander.Header = "Preview";
+            PreviewExpander.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -594,6 +603,7 @@ namespace DatabaseControls
             resultMessageText.Visibility = Visibility.Collapsed;
             PreviewGrid.Visibility = Visibility.Collapsed;
             PreviewGrid.ItemsSource = null;
+            PreviewExpander.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
