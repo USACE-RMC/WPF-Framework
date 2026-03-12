@@ -110,15 +110,75 @@
                 <DataGrid x:Name="PreviewGrid" AutoGenerateColumns="False" IsReadOnly="True"
                           HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
                           CanUserReorderColumns="False" CanUserSortColumns="False"
-                          CanUserResizeRows="False" GridLinesVisibility="None"
+                          CanUserResizeRows="False"
                           MaxHeight="120" VerticalScrollBarVisibility="Auto"
-                          BorderThickness="1" BorderBrush="{DynamicResource TextBox.Static.Border}"
-                          Background="{DynamicResource TextBox.Static.Background}"
-                          Foreground="{DynamicResource EnvironmentWindowText}"
-                          RowBackground="{DynamicResource TextBox.Static.Background}"
-                          AlternatingRowBackground="{DynamicResource TextBox.MouseOver.Background}"
+                          Background="{DynamicResource EnvironmentWindowBackground}"
+                          BorderBrush="{DynamicResource DataGrid.Static.Border}"
+                          BorderThickness="1"
+                          Foreground="{DynamicResource DataGrid.Static.Foreground}"
+                          RowBackground="{DynamicResource DataGrid.Row.Background}"
+                          AlternatingRowBackground="{DynamicResource DataGrid.Row.Alternating.Background}"
+                          HorizontalGridLinesBrush="{DynamicResource DataGrid.GridLines}"
+                          VerticalGridLinesBrush="{DynamicResource DataGrid.GridLines}"
+                          GridLinesVisibility="All"
                           AlternationCount="2"
-                          Visibility="Collapsed"/>
+                          RowHeight="22"
+                          ColumnHeaderStyle="{DynamicResource ColumnHeaderStyle}"
+                          RowHeaderStyle="{DynamicResource RowHeaderStyle}"
+                          Visibility="Collapsed">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Background}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Foreground}"/>
+                            <Style.Triggers>
+                                <Trigger Property="AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Alternating.Background}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.MouseOver.Background}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+                                </MultiTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+                                </MultiTrigger>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
+                </DataGrid>
             </Grid>
         </Expander>
 

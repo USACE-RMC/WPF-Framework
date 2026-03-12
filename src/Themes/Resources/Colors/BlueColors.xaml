@@ -101,26 +101,26 @@
     <Color x:Key="DataGrid.Header.GradientEnd">#EDEEF3</Color>
     <SolidColorBrush x:Key="DataGrid.Header.Border" Color="#BEC3CB"/>
     <SolidColorBrush x:Key="DataGrid.Header.Foreground" Color="#000000"/>
-    <SolidColorBrush x:Key="DataGrid.Header.MouseOver.Background" Color="#FDF4BF"/>
-    <SolidColorBrush x:Key="DataGrid.Header.Pressed.Background" Color="#E5C365"/>
+    <SolidColorBrush x:Key="DataGrid.Header.MouseOver.Background" Color="#C9DEF5"/>
+    <SolidColorBrush x:Key="DataGrid.Header.Pressed.Background" Color="#007ACC"/>
     <Color x:Key="DataGrid.RowHeader.Background">#E8EBF0</Color>
     <SolidColorBrush x:Key="DataGrid.Row.Background" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="DataGrid.Row.Alternating.Background" Color="#F3F9F7"/>
     <SolidColorBrush x:Key="DataGrid.Row.Foreground" Color="#000000"/>
-    <SolidColorBrush x:Key="DataGrid.Row.Selection.Background" Color="#FFF29D"/>
-    <SolidColorBrush x:Key="DataGrid.Row.Selection.Foreground" Color="#000000"/>
+    <SolidColorBrush x:Key="DataGrid.Row.Selection.Background" Color="#007ACC"/>
+    <SolidColorBrush x:Key="DataGrid.Row.Selection.Foreground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="DataGrid.Row.Selection.Inactive.Background" Color="#D6DBE9"/>
     <SolidColorBrush x:Key="DataGrid.Row.Selection.Inactive.Foreground" Color="#000000"/>
-    <SolidColorBrush x:Key="DataGrid.Row.MouseOver.Background" Color="#FDF4BF"/>
+    <SolidColorBrush x:Key="DataGrid.Row.MouseOver.Background" Color="#E8F4FD"/>
     <SolidColorBrush x:Key="DataGrid.GridLines" Color="#BEC3CB"/>
-    <SolidColorBrush x:Key="DataGrid.Cell.Focus.Border" Color="#E5C365"/>
+    <SolidColorBrush x:Key="DataGrid.Cell.Focus.Border" Color="#007ACC"/>
     <!-- Validation Error Colors -->
     <SolidColorBrush x:Key="DataGrid.Cell.Error.Border" Color="#FF0000"/>
     <SolidColorBrush x:Key="DataGrid.Cell.Error.Background" Color="#FFF7B6AF"/>
 
     <!-- Expression Error Expander Colors -->
-    <SolidColorBrush x:Key="ExpressionError.Text" Color="#D32F2F"/>
-    <SolidColorBrush x:Key="ExpressionError.Glyph" Color="#D32F2F"/>
+    <SolidColorBrush x:Key="ExpressionError.Text" Color="#E41400"/>
+    <SolidColorBrush x:Key="ExpressionError.Glyph" Color="#E41400"/>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
     <!-- EXPANDER                                                                     -->
