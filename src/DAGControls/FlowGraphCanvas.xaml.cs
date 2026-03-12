@@ -141,6 +141,8 @@ namespace DAGControls
         private readonly Dictionary<Tuple<OutConnector, InConnector>, Path> _connections = new Dictionary<Tuple<OutConnector, InConnector>, Path>();
         private readonly List<UIElement> _customVisuals = new List<UIElement>();
 
+        private int _graphGeneration;
+
         // Transform objects for zoom/pan
         private readonly ScaleTransform _scaleTransform = new ScaleTransform();
         private readonly ScaleTransform _backgroundScaleTransform = new ScaleTransform();
@@ -368,11 +370,20 @@ namespace DAGControls
                 _ = BindingOperations.SetBinding(thisControl._scaleTransform, ScaleTransform.ScaleYProperty, binder);
             }
 
+            thisControl._graphGeneration++;
             thisControl.RedrawGraph();
         }
 
         private void RedrawGraph()
         {
+            // Unsubscribe event handlers before clearing
+            foreach (var nc in _nodes.Values)
+            {
+                nc.Delete_Clicked -= Node_Delete_Clicked;
+                nc.AutoConnection_Clicked -= AutoConnection_Clicked;
+                nc.SizeChanged -= Node_SizeChanged;
+            }
+
             // Clear existing visual elements
             GraphCanvas.Children.Clear();
             _nodes.Clear();
@@ -384,12 +395,14 @@ namespace DAGControls
             int nodesLoaded = 0;
             int expectedNodeCount = Graph.Nodes.Count;
             int connectionsDrawn = 0;
+            int capturedGeneration = _graphGeneration;
 
             foreach (NodeBase node in Graph.Nodes)
             {
                 AddNode(node);
                 GetNodeControl(node).Loaded += (object sender, RoutedEventArgs e) =>
                 {
+                    if (_graphGeneration != capturedGeneration) { return; }
                     int loadedCount = Interlocked.Increment(ref nodesLoaded);
                     if (loadedCount == expectedNodeCount && Interlocked.Exchange(ref connectionsDrawn, 1) == 0)
                     {
@@ -463,12 +476,13 @@ namespace DAGControls
                 {
                     NodeBase node = (NodeBase)item;
                     if (node == null) { continue; }
+                    if (!_nodes.TryGetValue(node, out var nodeControl)) { continue; }
 
                     // Delete the node from the UI
-                    _nodes[node].Delete_Clicked -= Node_Delete_Clicked;
-                    _nodes[node].AutoConnection_Clicked -= AutoConnection_Clicked;
-                    _nodes[node].SizeChanged -= Node_SizeChanged;
-                    GraphCanvas.Children.Remove(_nodes[node]);
+                    nodeControl.Delete_Clicked -= Node_Delete_Clicked;
+                    nodeControl.AutoConnection_Clicked -= AutoConnection_Clicked;
+                    nodeControl.SizeChanged -= Node_SizeChanged;
+                    GraphCanvas.Children.Remove(nodeControl);
                     _ = _nodes.Remove(node);
                 }
             }
@@ -606,8 +620,8 @@ namespace DAGControls
             else if (_isMoving)
             {
                 // Move the target node
-                _targetNode.LeftPosition += pos.X - _previousLocation.X;
-                _targetNode.TopPosition += pos.Y - _previousLocation.Y;
+                _targetNode.LeftPosition += (pos.X - _previousLocation.X) / Graph.Scale;
+                _targetNode.TopPosition += (pos.Y - _previousLocation.Y) / Graph.Scale;
 
                 // Update all connection paths connected to the target moving node
                 Point startPoint, endPoint;
@@ -665,8 +679,11 @@ namespace DAGControls
                 }
 
                 // Move the background
-                _backgroundTranslate.X += xTrans / (ActualWidth * _backgroundScaleTransform.ScaleX);
-                _backgroundTranslate.Y += yTrans / (ActualHeight * _backgroundScaleTransform.ScaleY);
+                if (ActualWidth > 0 && ActualHeight > 0)
+                {
+                    _backgroundTranslate.X += xTrans / (ActualWidth * _backgroundScaleTransform.ScaleX);
+                    _backgroundTranslate.Y += yTrans / (ActualHeight * _backgroundScaleTransform.ScaleY);
+                }
             }
 
             _previousLocation = pos;
@@ -738,6 +755,7 @@ namespace DAGControls
 
         private void GraphCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            if (Graph == null) return;
             Point mousePosition = e.GetPosition(GraphCanvas);
 
             double ratio = Math.Pow(0.9, -e.Delta / 120);

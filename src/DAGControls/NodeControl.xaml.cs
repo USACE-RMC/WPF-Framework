@@ -250,7 +250,7 @@ namespace DAGControls
             for (int i = 0; i < Node.Inputs.Count; i++)
             {
                 UIElement uiElement = (UIElement)InputsListBox.ItemContainerGenerator.ContainerFromIndex(i);
-                if (uiElement == null) { break; }
+                if (uiElement == null) { continue; }
                 _ = ((ContentPresenter)uiElement).ApplyTemplate();
                 InConnectors.Add(Node.Inputs[i], (Ellipse)((ContentPresenter)uiElement).ContentTemplate.FindName("InConnector", (ContentPresenter)uiElement));
             }
@@ -271,7 +271,7 @@ namespace DAGControls
             for (int i = 0; i < Node.Outputs.Count; i++)
             {
                 UIElement uiElement = (UIElement)OutputsListBox.ItemContainerGenerator.ContainerFromIndex(i);
-                if (uiElement == null) { break; }
+                if (uiElement == null) { continue; }
                 _ = ((ContentPresenter)uiElement).ApplyTemplate();
                 OutConnectors.Add(Node.Outputs[i], (Ellipse)((ContentPresenter)uiElement).ContentTemplate.FindName("OutConnector", (ContentPresenter)uiElement));
             }
