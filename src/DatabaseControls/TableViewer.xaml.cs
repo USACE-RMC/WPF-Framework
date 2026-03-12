@@ -1895,16 +1895,17 @@ namespace DatabaseControls
                     if (sumStar == 0) sumStar = (int)_columnWidths[i].Value;
                     double starredWidth = remainingSpace * _columnWidths[i].Value / sumStar;
                     if (starredWidth < 10) starredWidth = 10;
-                    columnWidths[i] = starredWidth;
+                    columnWidths[i] = Math.Round(starredWidth);
                 }
             }
 
             runningWidth = 0;
             for (int i = 0; i < DataView.ColumnNames.Count(); i++)
             {
-                ColumnHeadersGrid.ColumnDefinitions[i].Width = new GridLength(columnWidths[i]);
-                GridPanel.ColumnDefinitions[i].Width = new GridLength(columnWidths[i]);
-                runningWidth += columnWidths[i];
+                double w = Math.Round(columnWidths[i]);
+                ColumnHeadersGrid.ColumnDefinitions[i].Width = new GridLength(w);
+                GridPanel.ColumnDefinitions[i].Width = new GridLength(w);
+                runningWidth += w;
                 ((Line)GridLinesCanvas.Children[i + 1]).X1 = runningWidth;
                 ((Line)GridLinesCanvas.Children[i + 1]).X2 = runningWidth;
             }
