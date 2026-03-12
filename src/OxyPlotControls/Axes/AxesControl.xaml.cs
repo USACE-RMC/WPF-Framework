@@ -188,7 +188,6 @@ namespace OxyPlotControls
             newPlot.Axes.CollectionChanged += thisControl.Axes_CollectionChanged;
 
             thisControl.AxesPropertyControlComboBox.ApplyTemplate();
-            var t = thisControl.AxesPropertyControlComboBox.FindResource("ComboBoxTemplate");
 
             if (newPlot.Axes.Count > 0) thisControl.AxesPropertyControlComboBox.SelectedIndex = 0;
         }

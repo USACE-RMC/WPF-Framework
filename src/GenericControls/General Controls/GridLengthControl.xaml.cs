@@ -184,14 +184,5 @@ namespace GenericControls
             GridLength = new GridLength(GridLengthValue, GridLengthUnit);
         }
 
-        /// <summary>
-        /// Reserved for future use (currently no-op).
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The routed event arguments.</param>
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

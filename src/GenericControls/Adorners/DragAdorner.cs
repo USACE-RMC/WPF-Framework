@@ -101,6 +101,7 @@ namespace GenericControls
         {
             dc.PushOpacityMask(new LinearGradientBrush(Colors.White, Colors.Transparent, 45d));
             dc.DrawRectangle(_vBrush, null, new Rect(_location.X, _location.Y, Math.Min(RenderSize.Width, MaxRenderWidth), Math.Min(RenderSize.Height, MaxRenderHeight)));
+            dc.Pop();
         }
     }
 }

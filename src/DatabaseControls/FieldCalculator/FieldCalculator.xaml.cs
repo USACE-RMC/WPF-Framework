@@ -356,6 +356,12 @@ namespace DatabaseControls
             else
             {
                 int columnIndex = Array.IndexOf(_dbView.ColumnNames, _fieldName);
+                if (columnIndex < 0)
+                {
+                    GenericControls.MessageBox.Show($"The field '{_fieldName}' was not found in the data table.", "Field Not Found", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    Mouse.OverrideCursor = null;
+                    return;
+                }
                 ResultType fcType = ParseNodeResult.TypeToParserResultType(_dbView.ColumnTypes[columnIndex]);
                 if (fcType == ResultType.UnDeclared)
                 {

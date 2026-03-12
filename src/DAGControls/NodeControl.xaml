@@ -154,7 +154,6 @@
                             </Style>
                         </Path.Style>
                     </Path>
-                    <!--<Path x:Name="HorizontalPath" Data="M 0 5 L 10 5" Stroke="{StaticResource OutFillBrush}" StrokeThickness="2" />-->
                 </Grid>
             </Grid>
         </DataTemplate>

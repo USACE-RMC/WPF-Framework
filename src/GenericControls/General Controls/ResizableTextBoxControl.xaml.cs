@@ -100,31 +100,6 @@ namespace GenericControls
             }
         }
 
-        // Private _isResizing As Boolean = False
-        // Private _startPosition As Point
-
-        // Private Sub ResizeGripper_MouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
-        // If Mouse.Capture(ResizeGripper) Then
-        // _isResizing = True
-        // _startPosition = e.GetPosition(Me)
-        // End If
-        // End Sub
-
-        // Private Sub ResizeGripper_MouseMove(sender As Object, e As MouseEventArgs)
-        // If _isResizing Then
-        // Dim currentPosition As Point = e.GetPosition(Me)
-        // Dim diffY As Double = currentPosition.Y - _startPosition.Y
-        // Height += diffY
-        // _startPosition = currentPosition
-        // End If
-        // End Sub
-
-        // Private Sub ResizeGripper_MouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs)
-        // If _isResizing = True Then
-        // _isResizing = False
-        // End If
-        // End Sub
-
         /// <summary>
         /// Handles the drag movement of the resize thumb and adjusts the control's height accordingly.
         /// </summary>

@@ -1227,7 +1227,7 @@ namespace GenericControls
     public class DoubleToStringConverter : IValueConverter
     {
         /// <summary>
-        /// Converts a string to a double.
+        /// Converts a double to its string representation.
         /// </summary>
         /// <param name="value">The value produced by the binding source.</param>
         /// <param name="targetType">The type of the binding target property.</param>
@@ -1278,7 +1278,7 @@ namespace GenericControls
     public class StringToDoubleConverter : IValueConverter
     {
         /// <summary>
-        /// Converts a double to its string representation.
+        /// Converts a string to a double.
         /// </summary>
         /// <param name="value">The value produced by the binding source.</param>
         /// <param name="targetType">The type of the binding target property.</param>
@@ -1641,9 +1641,7 @@ namespace GenericControls
                 return "+∞";
             if (double.IsNegativeInfinity(val))
                 return "-∞";
-            if (double.IsInfinity(val))
-                return "∞";
-            // 
+            //
             return val;
         }
 

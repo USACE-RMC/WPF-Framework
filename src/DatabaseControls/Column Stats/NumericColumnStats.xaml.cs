@@ -653,14 +653,18 @@ namespace DatabaseControls
                 {
                     int[] bgCounts = new int[bgBreaks.Length];
                     int binIdx = 0;
+                    int prevBgI = -1;
                     for (int i = 0; i < _sortedData.Length; i++)
                     {
                         if (_sortedData[i] <= bgBreaks[binIdx])
                         {
                             bgCounts[binIdx]++;
+                            prevBgI = -1;
                         }
                         else
                         {
+                            if (i == prevBgI) break; // safety: prevent infinite loop
+                            prevBgI = i;
                             i--;
                             binIdx++;
                             if (binIdx >= bgBreaks.Length) break;
@@ -772,14 +776,18 @@ namespace DatabaseControls
             {
                 rangeCounts = new int[breaks.Length];
                 int binIdx = 0;
+                int prevI = -1;
                 for (int i = 0; i < _sortedData.Length; i++)
                 {
                     if (_sortedData[i] <= breaks[binIdx])
                     {
                         rangeCounts[binIdx] += 1;
+                        prevI = -1;
                     }
                     else
                     {
+                        if (i == prevI) break; // safety: prevent infinite loop
+                        prevI = i;
                         i -= 1;
                         binIdx += 1;
                         if (binIdx >= breaks.Length) break;
