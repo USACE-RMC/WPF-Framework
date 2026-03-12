@@ -193,10 +193,9 @@ namespace OxyPlotControls
             var oxyToolBar = (OxyPlotToolbar)d;
 
             // Remove handlers from old plot
-            if (e.OldValue is Wpf.Plot)
+            if (e.OldValue is Wpf.Plot oldPlot)
             {
-                var oldPlot = (Wpf.Plot)e.OldValue;
-                if (oldPlot?.ActualModel != null)
+                if (oldPlot.ActualModel != null)
                 {
                     oldPlot.ActualModel.MouseDown -= oxyToolBar.PlotModelMouseDown;
                     oldPlot.ActualModel.MouseMove -= oxyToolBar.PlotModelMouseMove;
@@ -212,12 +211,10 @@ namespace OxyPlotControls
             }
 
             // Add handlers to new plot
-            if (e.NewValue is Wpf.Plot)
+            if (e.NewValue is Wpf.Plot newPlot)
             {
-                var newPlot = (Wpf.Plot)e.NewValue;
-
                 // Set up the mouse events
-                if (newPlot?.ActualModel != null)
+                if (newPlot.ActualModel != null)
                 {
                     newPlot.ActualModel.MouseDown += oxyToolBar.PlotModelMouseDown;
                     newPlot.ActualModel.MouseMove += oxyToolBar.PlotModelMouseMove;

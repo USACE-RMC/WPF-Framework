@@ -1577,7 +1577,7 @@ namespace DatabaseControls
                 }
             }
             int index = firstRowIndex + tableRowIndex;
-            if (index < 0 || index >= _rowId!.Length) return Math.Max(0, _rowId.Length - 1);
+            if (index < 0 || index >= _rowId!.Length) return Math.Max(0, _rowId!.Length - 1);
             return _rowId[index];
         }
 

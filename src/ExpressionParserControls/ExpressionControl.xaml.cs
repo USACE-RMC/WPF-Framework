@@ -142,6 +142,9 @@ namespace ExpressionParserControls
         /// </summary>
         private SolidColorBrush _overflowColor = Brushes.Gray;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionControl"/> class.
+        /// </summary>
         public ExpressionControl()
         {
             // This call is required by the designer.

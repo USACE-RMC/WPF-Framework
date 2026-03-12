@@ -832,9 +832,10 @@ namespace DatabaseControls
             }
 
             // Set up the breaks table
-            InMemoryReader breaksDataView = new InMemoryReader(breaksDataTable);
-            BreaksTable.DataView.EditAdded -= BreaksEditAdded;
-            BreaksTable.DataView = breaksDataView.GetTableManager(breaksDataTable.TableName);
+            var breaksDataView = new InMemoryReader(breaksDataTable);
+            if (BreaksTable.DataView != null)
+                BreaksTable.DataView.EditAdded -= BreaksEditAdded;
+            BreaksTable.DataView = breaksDataView.GetTableManager(breaksDataTable.TableName)!;
             BreaksTable.DataView.EditAdded += BreaksEditAdded;
             BreaksTable.SetColumnsAsReadOnly(new string[] { "Count" });
 

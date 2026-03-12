@@ -15,7 +15,7 @@ namespace ExampleLibrary
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using System.Net;
+    using System.Net.Http;
     using System.Threading;
 
     /// <summary>
@@ -35,6 +35,11 @@ namespace ExampleLibrary
         private readonly Queue<string> queue = new Queue<string>();
 
         /// <summary>
+        /// The shared HttpClient instance for downloading tiles.
+        /// </summary>
+        private readonly HttpClient httpClient = new HttpClient();
+
+        /// <summary>
         /// The current number of downloads
         /// </summary>
         private int numberOfDownloads;
@@ -50,6 +55,7 @@ namespace ExampleLibrary
             this.Opacity = 1.0;
             this.MaxNumberOfDownloads = 8;
             this.UserAgent = "OxyPlotExampleLibrary";
+            this.httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(this.UserAgent);
         }
 
         /// <summary>
@@ -262,44 +268,26 @@ namespace ExampleLibrary
         private OxyImage Download(string uri)
         {
             OxyImage img = null;
-            var mre = new ManualResetEvent(false);
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = "GET";
-            request.BeginGetResponse(
-               r =>
-               {
-                   try
-                   {
-                       if (request.HaveResponse)
-                       {
-                           var response = request.EndGetResponse(r);
-                           var stream = response.GetResponseStream();
+            try
+            {
+                var response = this.httpClient.GetAsync(uri).GetAwaiter().GetResult();
+                if (response.IsSuccessStatusCode)
+                {
+                    var buffer = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                    img = new OxyImage(buffer);
+                    this.images[uri] = img;
+                }
+            }
+            catch (Exception e)
+            {
+                var ie = e;
+                while (ie != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(ie.Message);
+                    ie = ie.InnerException;
+                }
+            }
 
-                           var ms = new MemoryStream();
-                           stream.CopyTo(ms);
-                           var buffer = ms.ToArray();
-
-                           img = new OxyImage(buffer);
-                           this.images[uri] = img;
-                       }
-                   }
-                   catch (Exception e)
-                   {
-                       var ie = e;
-                       while (ie != null)
-                       {
-                           System.Diagnostics.Debug.WriteLine(ie.Message);
-                           ie = ie.InnerException;
-                       }
-                   }
-                   finally
-                   {
-                       mre.Set();
-                   }
-               },
-               request);
-
-            mre.WaitOne();
             return img;
         }
 
@@ -314,42 +302,29 @@ namespace ExampleLibrary
             }
 
             string uri = this.queue.Dequeue();
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = "GET";
-
-#if NETFRAMEWORK
-            // unavailable in NET Standard 1.0
-            request.UserAgent = this.UserAgent;
-#else
-            // compiles but does not run under NET Framework
-            request.Headers["User-Agent"] = this.UserAgent;
-#endif
 
             Interlocked.Increment(ref this.numberOfDownloads);
-            request.BeginGetResponse(
-                r =>
+            this.httpClient.GetAsync(uri).ContinueWith(task =>
+            {
+                Interlocked.Decrement(ref this.numberOfDownloads);
+                try
                 {
-                    Interlocked.Decrement(ref this.numberOfDownloads);
-                    try
+                    if (task.IsCompletedSuccessfully && task.Result.IsSuccessStatusCode)
                     {
-                        if (request.HaveResponse)
-                        {
-                            var response = request.EndGetResponse(r);
-                            var stream = response.GetResponseStream();
-                            this.DownloadCompleted(uri, stream);
-                        }
+                        var stream = task.Result.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+                        this.DownloadCompleted(uri, stream);
                     }
-                    catch (Exception e)
+                }
+                catch (Exception e)
+                {
+                    var ie = e;
+                    while (ie != null)
                     {
-                        var ie = e;
-                        while (ie != null)
-                        {
-                            System.Diagnostics.Debug.WriteLine(ie.Message);
-                            ie = ie.InnerException;
-                        }
+                        System.Diagnostics.Debug.WriteLine(ie.Message);
+                        ie = ie.InnerException;
                     }
-                },
-                request);
+                }
+            });
         }
 
         /// <summary>

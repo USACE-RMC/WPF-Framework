@@ -260,7 +260,7 @@ namespace DatabaseControls
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void SelectByAttribute_ContentRendered(object sender, EventArgs e)
+        private void SelectByAttribute_ContentRendered(object? sender, EventArgs e)
         {
             //If ExpressionWindow.Text <> "" Then ExpressionWindow.Parse()
         }

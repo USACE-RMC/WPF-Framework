@@ -229,7 +229,7 @@ public class NumberFormatHelperTests
     [Theory]
     [InlineData(123.456, "F2", "123.46")]
     [InlineData(1000.0, "N0", "1,000")]
-    public void FormatDouble_WithFormat_FormatsCorrectly(double value, string format, string expected)
+    public void FormatDouble_WithFormat_FormatsCorrectly(double value, string format, string _)
     {
         // Act
         var result = NumberFormatHelper.FormatDouble(value, format);
@@ -249,7 +249,7 @@ public class NumberFormatHelperTests
     [InlineData(123.456, 2, false, "123.46")]
     [InlineData(123.456, 0, false, "123")]
     [InlineData(1234.5, 1, true, "1,234.5")]
-    public void FormatDouble_WithDecimalPlaces_FormatsCorrectly(double value, int decimalPlaces, bool useThousands, string expected)
+    public void FormatDouble_WithDecimalPlaces_FormatsCorrectly(double value, int decimalPlaces, bool useThousands, string _)
     {
         // Act
         var result = NumberFormatHelper.FormatDouble(value, decimalPlaces, useThousands);

@@ -77,6 +77,17 @@ namespace ExpressionParserControls
         /// </summary>
         public string InsertText { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FunctionDescriptor"/> class.
+        /// </summary>
+        /// <param name="name">The function name.</param>
+        /// <param name="category">The category this function belongs to.</param>
+        /// <param name="syntax">The function syntax.</param>
+        /// <param name="returns">Description of the return value.</param>
+        /// <param name="description">A description of the function.</param>
+        /// <param name="example">An example usage of the function.</param>
+        /// <param name="aliases">Alternative names for this function.</param>
+        /// <param name="insertText">The text to insert into the expression, or null to use the name followed by an opening parenthesis.</param>
         public FunctionDescriptor(string name, string category, string syntax, string returns, string description, string example, string[] aliases, string? insertText = null)
         {
             Name = name;

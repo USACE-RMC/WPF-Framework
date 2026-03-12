@@ -479,7 +479,7 @@ namespace SoftwareUpdate.Tests.GitHub
         /// Verifies that the State property can be safely accessed from multiple threads.
         /// </summary>
         [Fact]
-        public void State_IsThreadSafe()
+        public async Task State_IsThreadSafe()
         {
             var options = CreateValidOptions();
             _service = new GitHubUpdateService(options);
@@ -489,7 +489,7 @@ namespace SoftwareUpdate.Tests.GitHub
                 .Select(i => Task.Run(() => { var state = _service.State; }))
                 .ToArray();
 
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
         }
 
         #endregion
@@ -500,7 +500,7 @@ namespace SoftwareUpdate.Tests.GitHub
         /// Verifies that the AvailableUpdate property can be safely accessed from multiple threads.
         /// </summary>
         [Fact]
-        public void AvailableUpdate_IsThreadSafe()
+        public async Task AvailableUpdate_IsThreadSafe()
         {
             var options = CreateValidOptions();
             _service = new GitHubUpdateService(options);
@@ -510,7 +510,7 @@ namespace SoftwareUpdate.Tests.GitHub
                 .Select(i => Task.Run(() => { var update = _service.AvailableUpdate; }))
                 .ToArray();
 
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
         }
 
         #endregion

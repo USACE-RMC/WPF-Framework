@@ -127,6 +127,9 @@ namespace ExpressionParserControls
         /// </summary>
         private readonly List<TreeViewItem> _functionItems = new List<TreeViewItem>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AvailableFunctions"/> class.
+        /// </summary>
         public AvailableFunctions()
         {
             InitializeComponent();
