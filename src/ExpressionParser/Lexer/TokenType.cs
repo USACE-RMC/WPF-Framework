@@ -293,7 +293,12 @@ namespace ExpressionParser
         /// <summary>
         /// Represents a conversion to boolean (e.g., CBOOL, TOBOOLEAN).
         /// </summary>
-        ConvertToBoolean
+        ConvertToBoolean,
+
+        /// <summary>
+        /// Represents a lexer error such as an unterminated string literal.
+        /// </summary>
+        LexerError
 
     }
 }

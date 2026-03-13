@@ -54,7 +54,7 @@ namespace ExpressionParser
         /// <summary>
         /// Represents any floating-point type (Double or Single).
         /// </summary>
-        Decimal = Double + Single,
+        FloatingPoint = Double + Single,
 
         /// <summary>
         /// Represents a 16-bit integer (short).

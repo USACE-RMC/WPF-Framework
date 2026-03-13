@@ -151,9 +151,9 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_leftNode == null))
-                hasVariable = _leftNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _leftNode.ContainsVariable();
             if (!(_rightNode == null))
-                hasVariable = _rightNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _rightNode.ContainsVariable();
             // 
             return hasVariable;
         }

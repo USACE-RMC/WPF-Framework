@@ -50,7 +50,7 @@ namespace ExpressionParser
         /// <summary>
         /// The collection of parser nodes to test for the logical operation.
         /// </summary>
-        private IEnumerable<IParserNode> _nodesToTest;
+        private List<IParserNode> _nodesToTest;
 
         /// <summary>
         /// The list of parse errors encountered during construction or evaluation.
@@ -88,18 +88,18 @@ namespace ExpressionParser
         /// </summary>
         public AndOrNode(IEnumerable<IParserNode> nodesToTest, List<string> parameterErrors, Token token)
         {
-            _nodesToTest = nodesToTest;
+            _nodesToTest = nodesToTest?.ToList();
             //
             if (_nodesToTest == null)
             {
                 _errorMessages.Add(new ParseError(token, "Operator does not contain anything to test. The " + token.TokenString + " must have at least one logical test to work."));
-                _nodesToTest = new IParserNode[] { }; // set as empty array to reduce null exception potential.
+                _nodesToTest = new List<IParserNode>(); // set as empty list to reduce null exception potential.
             }
             else
             {
-                for (int i = 0; i < _nodesToTest.Count(); i++)
+                for (int i = 0; i < _nodesToTest.Count; i++)
                 {
-                    var node = _nodesToTest.ElementAtOrDefault(i);
+                    var node = _nodesToTest[i];
                     if (node == null)
                     {
                         _errorMessages.Add(new ParseError(token, "Contains an empty value (entry number " + (i + 1) + ") each entry must be a logical true/false statement."));
@@ -131,12 +131,12 @@ namespace ExpressionParser
         {
             if (ContainsVariable())
             {
-                foreach (var testNode in _nodesToTest)
+                _nodesToTest = _nodesToTest.Select(testNode =>
                 {
                     if (testNode == null)
-                        continue;
-                    testNode.Simplify();
-                }
+                        return testNode;
+                    return testNode.Simplify();
+                }).ToList();
                 return this;
             }
             // 
@@ -153,7 +153,7 @@ namespace ExpressionParser
             foreach (var testNode in _nodesToTest)
             {
                 if (!(testNode == null))
-                    hasVariable = testNode.ContainsVariable() ? true : hasVariable;
+                    hasVariable |= testNode.ContainsVariable();
             }
             // 
             return hasVariable;

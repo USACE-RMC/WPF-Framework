@@ -651,25 +651,8 @@ namespace DatabaseManager
                 }
                 // 
                 // update original
-                try
-                {
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                // 
-                try
-                {
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
+                File.Delete(_parentDatabase.DataBasePath);
+                File.Copy(tmpdbf, _parentDatabase.DataBasePath);
                 // 
                 // 
                 File.Delete(tmpdbf);
@@ -748,25 +731,8 @@ namespace DatabaseManager
                 }
                 // 
                 // update original
-                try
-                {
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                // 
-                try
-                {
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
+                File.Delete(_parentDatabase.DataBasePath);
+                File.Copy(tmpdbf, _parentDatabase.DataBasePath);
                 // 
                 // 
                 File.Delete(tmpdbf);
@@ -959,7 +925,7 @@ namespace DatabaseManager
                 {
                     _parentDatabase.Open(); 
                 }
-                _parentDbfReader.DbReader.BaseStream.Position = 32 + (columnIndex - 1) * 32 + 17;
+                _parentDbfReader.DbReader.BaseStream.Position = 32 + columnIndex * 32 + 17;
                 byte nDecimals;
                 nDecimals = _parentDbfReader.DbReader.ReadByte();
                 _parentDatabase.Close();
@@ -1047,7 +1013,7 @@ namespace DatabaseManager
                     _parentDatabase.Open(); 
                 }
 
-                _parentDbfReader.DbReader.BaseStream.Position = 32 + (columnIndex - 1) * 32 + 17;
+                _parentDbfReader.DbReader.BaseStream.Position = 32 + columnIndex * 32 + 17;
                 byte nDecimals;
                 nDecimals = _parentDbfReader.DbReader.ReadByte();
                 _parentDatabase.Close();
@@ -1633,25 +1599,8 @@ namespace DatabaseManager
                 }
                 // 
                 // update original
-                try
-                {
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                // 
-                try
-                {
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
+                File.Delete(_parentDatabase.DataBasePath);
+                File.Copy(tmpdbf, _parentDatabase.DataBasePath);
                 // 
                 LoadAttributeInfo();
                 File.Delete(tmpdbf);
@@ -1756,25 +1705,8 @@ namespace DatabaseManager
                 }
                 // 
                 // update original
-                try
-                {
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Delete(_parentDatabase.DataBasePath);
-                }
-                // 
-                try
-                {
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
-                catch
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    File.Copy(tmpdbf, _parentDatabase.DataBasePath);
-                }
+                File.Delete(_parentDatabase.DataBasePath);
+                File.Copy(tmpdbf, _parentDatabase.DataBasePath);
                 // 
                 LoadAttributeInfo();
                 File.Delete(tmpdbf);

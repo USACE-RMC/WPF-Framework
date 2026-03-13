@@ -61,7 +61,7 @@ namespace DatabaseManager
 ///     </list>
 /// </para>
 /// </remarks>
-    public class SQLiteManager : DatabaseManager
+    public class SQLiteManager : DatabaseManager, IDisposable
     {
 
         #region Construction
@@ -96,6 +96,7 @@ namespace DatabaseManager
         #region Members
 
         private SQLiteConnection _dbConnection;
+        private bool _disposed;
 
         /// <summary>
         /// Get the SQLite database connection.
@@ -107,6 +108,35 @@ namespace DatabaseManager
                 return _dbConnection;
             }
 
+        }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="SQLiteManager"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="SQLiteManager"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _dbConnection?.Dispose();
+                }
+                _disposed = true;
+            }
         }
 
         #endregion
@@ -130,8 +160,8 @@ namespace DatabaseManager
                 connectionBuilder.BusyTimeout = 5000;
                 connectionBuilder.PageSize = 65536;
                 connectionBuilder.CacheSize = 16777216;
-                connectionBuilder.SyncMode = SynchronizationModes.Off;
-                connectionBuilder.JournalMode = SQLiteJournalModeEnum.Memory;
+                connectionBuilder.SyncMode = SynchronizationModes.Full;
+                connectionBuilder.JournalMode = SQLiteJournalModeEnum.Wal;
                 connectionBuilder.FailIfMissing = false;
                 connectionBuilder.ReadOnly = false;
                 // Use InvariantCulture for DateTime parsing to handle various date formats
@@ -222,15 +252,15 @@ namespace DatabaseManager
         public static void CreateSqLiteFile(string databaseFile, string databasePassword)
         {
             SQLiteConnection.CreateFile(databaseFile);
-            // 
-            using (var sqlConn = new SQLiteConnection("DataSource=" + databaseFile + ";Version=3;"))
+            var builder = new SQLiteConnectionStringBuilder
+            {
+                DataSource = databaseFile,
+                Version = 3,
+                Password = databasePassword
+            };
+            using (var sqlConn = new SQLiteConnection(builder.ConnectionString))
             {
                 sqlConn.Open();
-                using (var command = new SQLiteCommand($"PRAGMA key={databasePassword}", sqlConn))
-                {
-                    command.ExecuteNonQuery();
-                }
-                // 
                 sqlConn.Close();
             }
         }
@@ -302,8 +332,9 @@ namespace DatabaseManager
             }
             // Create the table copy create statement from existing table.
             string existingCreateStatement = "";
-            using (var cmd = new SQLiteCommand("SELECT sql FROM sqlite_master WHERE type='table' AND name='" + existingTableName + "'", _dbConnection))
+            using (var cmd = new SQLiteCommand("SELECT sql FROM sqlite_master WHERE type='table' AND name=@tableName", _dbConnection))
             {
+                cmd.Parameters.AddWithValue("@tableName", existingTableName);
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -696,7 +727,7 @@ namespace DatabaseManager
 
                     using (var Command = new SQLiteCommand("PRAGMA table_info([" + tableName + "])", DbConnection))
                     {
-                        var Adap = new SQLiteDataAdapter(Command);
+                        using var Adap = new SQLiteDataAdapter(Command);
                         var tab = new DataTable();
                         Adap.Fill(tab);
                         _ColumnNames = new object[tab.Rows.Count];
@@ -734,7 +765,7 @@ namespace DatabaseManager
                                         }
                                 }
                             }
-                            else if (TypeString.Contains("CHAR") | TypeString.Contains("CLOB") | TypeString.Contains("TEXT"))
+                            else if (TypeString.Contains("CHAR") || TypeString.Contains("CLOB") || TypeString.Contains("TEXT"))
                             {
                                 _ColumnTypes[i] = typeof(string);
                             }
@@ -742,7 +773,7 @@ namespace DatabaseManager
                             {
                                 _ColumnTypes[i] = typeof(float);
                             }
-                            else if (TypeString.Contains("REAL") | TypeString.Contains("DOUB"))
+                            else if (TypeString.Contains("REAL") || TypeString.Contains("DOUB"))
                             {
                                 _ColumnTypes[i] = typeof(double);
                             }
@@ -812,7 +843,7 @@ namespace DatabaseManager
                     break;
                 }
 
-                catch 
+                catch (SQLiteException)
                 {
                     // If there was an exception, put thread to sleep and try again
                     Thread.Sleep(2000);
@@ -837,8 +868,8 @@ namespace DatabaseManager
             if (_tableNames.Contains(tableName) == false) { return; }
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
-            { 
-                Open(); 
+            {
+                Open();
             }
             using (var cmd = _dbConnection.CreateCommand())
             {
@@ -846,10 +877,9 @@ namespace DatabaseManager
                 cmd.ExecuteNonQuery();
             }
             _tableNames = GetTableNames();
-            Close();
-            if (wasOpen == true)
-            { 
-                Open(); 
+            if (wasOpen == false)
+            {
+                Close();
             }
         }
 
@@ -1134,7 +1164,7 @@ namespace DatabaseManager
                                     }
                             }
                         }
-                        else if (typeString.Contains("CHAR") | typeString.Contains("CLOB") | typeString.Contains("TEXT"))
+                        else if (typeString.Contains("CHAR") || typeString.Contains("CLOB") || typeString.Contains("TEXT"))
                         {
                             existingColumnTypes[i] = typeof(string);
                         }
@@ -1142,7 +1172,7 @@ namespace DatabaseManager
                         {
                             existingColumnTypes[i] = typeof(float);
                         }
-                        else if (typeString.Contains("REAL") | typeString.Contains("DOUB"))
+                        else if (typeString.Contains("REAL") || typeString.Contains("DOUB"))
                         {
                             existingColumnTypes[i] = typeof(double);
                         }
@@ -1704,6 +1734,29 @@ namespace DatabaseManager
             }
 
             /// <summary>
+            /// Maps a CLR <see cref="Type"/> to its corresponding SQLite type name string.
+            /// </summary>
+            /// <param name="t">The CLR type to map.</param>
+            /// <returns>The SQLite type name (e.g., <c>"TEXT"</c>, <c>"INT4"</c>, <c>"BLOB"</c>).</returns>
+            /// <exception cref="Exception">Thrown when the type has no known SQLite mapping.</exception>
+            private static string GetSQLiteTypeName(Type t)
+            {
+                if (t == typeof(string)) return "TEXT";
+                if (t == typeof(DateTime)) return "DATETIME";
+                if (t == typeof(byte) || t == typeof(sbyte)) return "INT1";
+                if (t == typeof(short) || t == typeof(ushort)) return "INT2";
+                if (t == typeof(int) || t == typeof(uint)) return "INT4";
+                if (t == typeof(long) || t == typeof(ulong)) return "INT8";
+                if (t == typeof(float)) return "FLOAT";
+                if (t == typeof(double)) return "DOUBLE";
+                if (t == typeof(decimal)) return "NUMBER";
+                if (t == typeof(char)) return "CHAR";
+                if (t == typeof(bool)) return "BOOLEAN";
+                if (t == typeof(object) || t == typeof(byte[])) return "BLOB";
+                throw new Exception(t.ToString() + " Not implemented.");
+            }
+
+            /// <summary>
             /// <inheritdoc/>
             /// </summary>
             protected override void DeleteColumnsFromDatabase(string[] columnsToDelete)
@@ -1713,7 +1766,7 @@ namespace DatabaseManager
                 {
                     _parentDatabase.Open();
                 }
-                // 
+                //
                 var newColumnNames = new List<string>();
                 var newColumnTypes = new List<Type>();
                 var sb = new System.Text.StringBuilder();
@@ -1723,79 +1776,7 @@ namespace DatabaseManager
                     newColumnNames.Add(_storedColumnNames[i]);
                     newColumnTypes.Add(_storedColumnTypes[i]);
                     sb.Append("[").Append(_storedColumnNames[i]).Append("] ");
-                    switch (_storedColumnTypes[i])
-                    {
-                        case var @case when @case == typeof(string):
-                            {
-                                sb.Append("TEXT,");
-                                break;
-                            }
-                        case var case1 when case1 == typeof(DateTime):
-                            {
-                                sb.Append("DATETIME,");
-                                break;
-                            }
-                        case var case2 when case2 == typeof(byte):
-                        case var case3 when case3 == typeof(sbyte):
-                            {
-                                sb.Append("INT1,");
-                                break;
-                            }
-                        case var case4 when case4 == typeof(short):
-                        case var case5 when case5 == typeof(ushort):
-                            {
-                                sb.Append("INT2,");
-                                break;
-                            }
-                        case var case6 when case6 == typeof(int):
-                        case var case7 when case7 == typeof(uint):
-                            {
-                                sb.Append("INT4,");
-                                break;
-                            }
-                        case var case8 when case8 == typeof(long):
-                        case var case9 when case9 == typeof(ulong):
-                            {
-                                sb.Append("INT8,");
-                                break;
-                            }
-                        case var case10 when case10 == typeof(float):
-                            {
-                                sb.Append("FLOAT,");
-                                break;
-                            }
-                        case var case11 when case11 == typeof(double):
-                            {
-                                sb.Append("DOUBLE,");
-                                break;
-                            }
-                        case var case12 when case12 == typeof(decimal):
-                            {
-                                sb.Append("NUMBER,");
-                                break;
-                            }
-                        case var case13 when case13 == typeof(char):
-                            {
-                                sb.Append("CHAR,");
-                                break;
-                            }
-                        case var case14 when case14 == typeof(bool):
-                            {
-                                sb.Append("BOOLEAN,");
-                                break;
-                            }
-                        case var case15 when case15 == typeof(object):
-                        case var case16 when case16 == typeof(byte[]):
-                            {
-                                sb.Append("BLOB,");
-                                break;
-                            }
-
-                        default:
-                            {
-                                throw new Exception(_storedColumnTypes[i].ToString() + " Not implemented, Column: " + _storedColumnNames[i]);
-                            }
-                    }
+                    sb.Append(GetSQLiteTypeName(_storedColumnTypes[i])).Append(",");
                 }
                 sb.Remove(sb.Length - 1, 1);
 
@@ -1841,10 +1822,10 @@ namespace DatabaseManager
             {
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
-                { 
-                    _parentDatabase.Open(); 
+                {
+                    _parentDatabase.Open();
                 }
-                // 
+                //
                 var newColumnNames = new List<string>();
                 var newColumnTypes = new List<Type>();
                 var sb = new System.Text.StringBuilder();
@@ -1854,79 +1835,7 @@ namespace DatabaseManager
                     newColumnNames.Add(_storedColumnNames[i]);
                     newColumnTypes.Add(_storedColumnTypes[i]);
                     sb.Append("[").Append(_storedColumnNames[i]).Append("] ");
-                    switch (_storedColumnTypes[i])
-                    {
-                        case var @case when @case == typeof(string):
-                            {
-                                sb.Append("TEXT,");
-                                break;
-                            }
-                        case var case1 when case1 == typeof(DateTime):
-                            {
-                                sb.Append("DATETIME,");
-                                break;
-                            }
-                        case var case2 when case2 == typeof(byte):
-                        case var case3 when case3 == typeof(sbyte):
-                            {
-                                sb.Append("INT1,");
-                                break;
-                            }
-                        case var case4 when case4 == typeof(short):
-                        case var case5 when case5 == typeof(ushort):
-                            {
-                                sb.Append("INT2,");
-                                break;
-                            }
-                        case var case6 when case6 == typeof(int):
-                        case var case7 when case7 == typeof(uint):
-                            {
-                                sb.Append("INT4,");
-                                break;
-                            }
-                        case var case8 when case8 == typeof(long):
-                        case var case9 when case9 == typeof(ulong):
-                            {
-                                sb.Append("INT8,");
-                                break;
-                            }
-                        case var case10 when case10 == typeof(float):
-                            {
-                                sb.Append("FLOAT,");
-                                break;
-                            }
-                        case var case11 when case11 == typeof(double):
-                            {
-                                sb.Append("DOUBLE,");
-                                break;
-                            }
-                        case var case12 when case12 == typeof(decimal):
-                            {
-                                sb.Append("NUMBER,");
-                                break;
-                            }
-                        case var case13 when case13 == typeof(char):
-                            {
-                                sb.Append("CHAR,");
-                                break;
-                            }
-                        case var case14 when case14 == typeof(bool):
-                            {
-                                sb.Append("BOOLEAN,");
-                                break;
-                            }
-                        case var case15 when case15 == typeof(object):
-                        case var case16 when case16 == typeof(byte[]):
-                            {
-                                sb.Append("BLOB,");
-                                break;
-                            }
-
-                        default:
-                            {
-                                throw new Exception(_storedColumnTypes[i].ToString() + " Not implemented, Column: " + _storedColumnNames[i]);
-                            }
-                    }
+                    sb.Append(GetSQLiteTypeName(_storedColumnTypes[i])).Append(",");
                 }
                 sb.Remove(sb.Length - 1, 1);
 
@@ -2036,8 +1945,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, bool cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2047,8 +1957,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, byte cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2058,8 +1969,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, short cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2069,8 +1981,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, int cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2080,8 +1993,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, long cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2091,8 +2005,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, float cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2102,8 +2017,9 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseCell(int columnIndex, int rowIndex, double cellValue)
             {
-                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]='" + cellValue.ToString() + "' WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
+                using (var cmd = new SQLiteCommand("UPDATE [" + _tableName + "] SET [" + _storedColumnNames[columnIndex] + "]=@cellValue WHERE rowid=" + _rowIdArray[rowIndex], _dbConnection))
                 {
+                    cmd.Parameters.AddWithValue("@cellValue", cellValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -2176,24 +2092,28 @@ namespace DatabaseManager
                 { 
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records"); 
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", false);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
                     trans.Commit();
                 }
                 if (wasOpen == false)
-                { 
-                    _parentDatabase.Close(); 
+                {
+                    _parentDatabase.Close();
                 }
             }
 
@@ -2207,7 +2127,7 @@ namespace DatabaseManager
                 {
                     _parentDatabase.Open();
                 }
-                // 
+                //
                 if (columnData.Count() == 0) { return; }
                 int columnIndex = Array.IndexOf(_storedColumnNames, columnName);
                 if (columnIndex == -1)
@@ -2224,16 +2144,20 @@ namespace DatabaseManager
                 {
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records");
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", (byte)0);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -2241,9 +2165,9 @@ namespace DatabaseManager
                 }
                 if (wasOpen == false)
                 {
-                    _parentDatabase.Close(); 
+                    _parentDatabase.Close();
                 }
-      
+
             }
 
             /// <summary>
@@ -2322,16 +2246,20 @@ namespace DatabaseManager
                 { 
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records");
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", 0.0);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -2339,7 +2267,7 @@ namespace DatabaseManager
                 }
                 if (wasOpen == false)
                 {
-                    _parentDatabase.Close(); 
+                    _parentDatabase.Close();
                 }
             }
 
@@ -2370,24 +2298,28 @@ namespace DatabaseManager
                 { 
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records");
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", 0);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
                     trans.Commit();
                 }
                 if (wasOpen == false)
-                { 
-                    _parentDatabase.Close(); 
+                {
+                    _parentDatabase.Close();
                 }
             }
 
@@ -2418,24 +2350,28 @@ namespace DatabaseManager
                 { 
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records");
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", (short)0);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
                     trans.Commit();
                 }
                 if (wasOpen == false)
-                { 
-                    _parentDatabase.Close(); 
+                {
+                    _parentDatabase.Close();
                 }
             }
 
@@ -2466,23 +2402,27 @@ namespace DatabaseManager
                 { 
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records");
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", 0L);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
                     trans.Commit();
                 }
                 if (wasOpen == false)
-                { 
+                {
                     _parentDatabase.Close();
                 }
             }
@@ -2514,24 +2454,28 @@ namespace DatabaseManager
                 {
                     throw new Exception("The table '" + _tableName + "' does not have: " + columnData.Count() + " records");
                 }
-                // 
-                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]='";
+                //
+                string commandText = "UPDATE [" + _tableName + "] SET [" + columnName + "]=@colValue WHERE rowid=@rowId";
                 using (var trans = _dbConnection.BeginTransaction())
                 {
                     using (var cmd = _dbConnection.CreateCommand())
                     {
                         cmd.Transaction = trans;
+                        cmd.CommandText = commandText;
+                        cmd.Parameters.AddWithValue("@colValue", 0f);
+                        cmd.Parameters.AddWithValue("@rowId", 0L);
                         for (int i = 0; i < columnData.Count(); i++)
                         {
-                            cmd.CommandText = commandText + columnData[i] + "' WHERE rowid=" + _rowIdArray[i];
+                            cmd.Parameters["@colValue"].Value = columnData[i];
+                            cmd.Parameters["@rowId"].Value = _rowIdArray[i];
                             cmd.ExecuteNonQuery();
                         }
                     }
                     trans.Commit();
                 }
                 if (wasOpen == false)
-                { 
-                    _parentDatabase.Close(); 
+                {
+                    _parentDatabase.Close();
                 }
             }
 

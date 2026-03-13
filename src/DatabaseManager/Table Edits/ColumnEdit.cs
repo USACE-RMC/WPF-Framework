@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -100,6 +101,7 @@ namespace DatabaseManager
         /// <returns>A list containing one <see cref="CellEdit"/>, or empty if column is negative.</returns>
         public override List<CellEdit> GetEditedCellsInRow(int indexOfRow)
         {
+            if (indexOfRow < 0 || indexOfRow >= _columnData.Count) return new List<CellEdit>();
             if (_columnIndex >= 0)
             {
                 return new List<CellEdit>(new[] { new CellEdit(indexOfRow, _columnIndex, _columnData[indexOfRow]) });
@@ -171,6 +173,7 @@ namespace DatabaseManager
         {
             if (rowData == null)
             {
+                if (_removedValues.Count == 0) throw new InvalidOperationException("No removed values available to restore.");
                 _columnData.Insert(indexOfRow, _removedValues.Last());
                 _removedValues.RemoveAt(_removedValues.Count - 1);
             }

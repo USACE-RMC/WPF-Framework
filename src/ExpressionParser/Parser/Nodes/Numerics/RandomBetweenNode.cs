@@ -180,11 +180,11 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_startValue == null))
-                hasVariable = _startValue.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _startValue.ContainsVariable();
             if (!(_endValue == null))
-                hasVariable = _endValue.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _endValue.ContainsVariable();
             if (!(_seed == null))
-                hasVariable = _seed.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _seed.ContainsVariable();
             // 
             return hasVariable;
         }
@@ -212,11 +212,25 @@ namespace ExpressionParser
             {
                 double min = Convert.ToDouble(_startValue.Evaluate().Result);
                 double max = Convert.ToDouble(_endValue.Evaluate().Result);
+                if (min > max)
+                {
+                    double temp = min;
+                    min = max;
+                    max = temp;
+                }
                 return new ParseNodeResult(min + (max - min) * randy.NextDouble(), OutputType);
             }
             else
             {
-                return new ParseNodeResult(randy.Next(Convert.ToInt32(_startValue.Evaluate().Result), Convert.ToInt32(_endValue.Evaluate().Result)), OutputType);
+                int min = Convert.ToInt32(_startValue.Evaluate().Result);
+                int max = Convert.ToInt32(_endValue.Evaluate().Result);
+                if (min > max)
+                {
+                    int temp = min;
+                    min = max;
+                    max = temp;
+                }
+                return new ParseNodeResult(randy.Next(min, max), OutputType);
             }
         }
 

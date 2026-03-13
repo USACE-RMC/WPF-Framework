@@ -27,6 +27,11 @@ namespace OxyPlot.Wpf.Serialization
     public static class AxisSerializer
     {
         /// <summary>
+        /// Shared <see cref="FontWeightConverter"/> instance used for serializing and deserializing font weights.
+        /// </summary>
+        private static readonly FontWeightConverter FontWeightConverterInstance = new FontWeightConverter();
+
+        /// <summary>
         /// Visual property names on <see cref="Axis"/> that are serialized for settings persistence.
         /// Includes properties common to all axis types. Consumers can use this list to monitor
         /// these properties for change tracking.
@@ -139,13 +144,12 @@ namespace OxyPlot.Wpf.Serialization
             axisProperties.Add(positionProperties);
 
             // Title Properties
-            var weightConverter = new FontWeightConverter();
             var titleProperties = new XElement("Title");
             titleProperties.SetAttributeValue(nameof(axis.Title), axis.Title);
             titleProperties.SetAttributeValue(nameof(axis.TitleColor), axis.TitleColor.ToString());
             titleProperties.SetAttributeValue(nameof(axis.TitleFont), axis.TitleFont);
             titleProperties.SetAttributeValue(nameof(axis.TitleFontSize), axis.TitleFontSize.ToString("G17", CultureInfo.InvariantCulture));
-            titleProperties.SetAttributeValue(nameof(axis.TitleFontWeight), weightConverter.ConvertToInvariantString(axis.TitleFontWeight));
+            titleProperties.SetAttributeValue(nameof(axis.TitleFontWeight), FontWeightConverterInstance.ConvertToInvariantString(axis.TitleFontWeight));
             titleProperties.SetAttributeValue(nameof(axis.AxisTitleDistance), axis.AxisTitleDistance.ToString("G17", CultureInfo.InvariantCulture));
             titleProperties.SetAttributeValue(nameof(axis.Unit), axis.Unit);
             axisProperties.Add(titleProperties);
@@ -155,7 +159,7 @@ namespace OxyPlot.Wpf.Serialization
             labelProperties.SetAttributeValue(nameof(axis.TextColor), axis.TextColor.ToString());
             labelProperties.SetAttributeValue(nameof(axis.Font), axis.Font);
             labelProperties.SetAttributeValue(nameof(axis.FontSize), axis.FontSize.ToString("G17", CultureInfo.InvariantCulture));
-            labelProperties.SetAttributeValue(nameof(axis.FontWeight), weightConverter.ConvertToInvariantString(axis.FontWeight));
+            labelProperties.SetAttributeValue(nameof(axis.FontWeight), FontWeightConverterInstance.ConvertToInvariantString(axis.FontWeight));
             labelProperties.SetAttributeValue(nameof(axis.Angle), axis.Angle.ToString("G17", CultureInfo.InvariantCulture));
             labelProperties.SetAttributeValue(nameof(axis.AxisTickToLabelDistance), axis.AxisTickToLabelDistance.ToString("G17", CultureInfo.InvariantCulture));
             labelProperties.SetAttributeValue(nameof(axis.StringFormat), axis.StringFormat);
@@ -258,6 +262,50 @@ namespace OxyPlot.Wpf.Serialization
                 var gumbelProbabilityAxisProperties = new XElement("GumbelProbabilityAxis");
                 axisProperties.Add(gumbelProbabilityAxisProperties);
             }
+            else if (axis is CategoryColorAxis categoryColorAxis)
+            {
+                var categoryColorAxisProperties = new XElement("CategoryColorAxis");
+                categoryColorAxisProperties.SetAttributeValue(nameof(categoryColorAxis.IsTickCentered), categoryColorAxis.IsTickCentered.ToString());
+                categoryColorAxisProperties.SetAttributeValue(nameof(categoryColorAxis.GapWidth), categoryColorAxis.GapWidth.ToString("G17", CultureInfo.InvariantCulture));
+                categoryColorAxisProperties.SetAttributeValue(nameof(categoryColorAxis.InvalidCategoryColor), categoryColorAxis.InvalidCategoryColor.ToString());
+                axisProperties.Add(categoryColorAxisProperties);
+            }
+            else if (axis is LogarithmicColorAxis logarithmicColorAxis)
+            {
+                var logColorAxisProperties = new XElement("LogarithmicColorAxis");
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.HighColor), logarithmicColorAxis.HighColor.ToString());
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.LowColor), logarithmicColorAxis.LowColor.ToString());
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.PaletteSize), logarithmicColorAxis.PaletteSize.ToString());
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.InvalidNumberColor), logarithmicColorAxis.InvalidNumberColor.ToString());
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.RenderAsImage), logarithmicColorAxis.RenderAsImage.ToString());
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.Base), logarithmicColorAxis.Base.ToString("G17", CultureInfo.InvariantCulture));
+                logColorAxisProperties.SetAttributeValue(nameof(logarithmicColorAxis.PowerPadding), logarithmicColorAxis.PowerPadding.ToString());
+                axisProperties.Add(logColorAxisProperties);
+            }
+            else if (axis is RangeColorAxis rangeColorAxis)
+            {
+                var rangeColorAxisProperties = new XElement("RangeColorAxis");
+                rangeColorAxisProperties.SetAttributeValue(nameof(rangeColorAxis.HighColor), rangeColorAxis.HighColor.ToString());
+                rangeColorAxisProperties.SetAttributeValue(nameof(rangeColorAxis.LowColor), rangeColorAxis.LowColor.ToString());
+                rangeColorAxisProperties.SetAttributeValue(nameof(rangeColorAxis.InvalidNumberColor), rangeColorAxis.InvalidNumberColor.ToString());
+                rangeColorAxisProperties.SetAttributeValue(nameof(rangeColorAxis.FormatAsFractions), rangeColorAxis.FormatAsFractions.ToString());
+                axisProperties.Add(rangeColorAxisProperties);
+            }
+            else if (axis is AngleAxisFullPlotArea angleAxisFullPlotArea)
+            {
+                var angleFullProperties = new XElement("AngleAxisFullPlotArea");
+                angleFullProperties.SetAttributeValue(nameof(angleAxisFullPlotArea.StartAngle), angleAxisFullPlotArea.StartAngle.ToString("G17", CultureInfo.InvariantCulture));
+                angleFullProperties.SetAttributeValue(nameof(angleAxisFullPlotArea.EndAngle), angleAxisFullPlotArea.EndAngle.ToString("G17", CultureInfo.InvariantCulture));
+                axisProperties.Add(angleFullProperties);
+            }
+            else if (axis is MagnitudeAxisFullPlotArea magnitudeAxisFullPlotArea)
+            {
+                var magFullProperties = new XElement("MagnitudeAxisFullPlotArea");
+                magFullProperties.SetAttributeValue(nameof(magnitudeAxisFullPlotArea.FormatAsFractions), magnitudeAxisFullPlotArea.FormatAsFractions.ToString());
+                magFullProperties.SetAttributeValue(nameof(magnitudeAxisFullPlotArea.MidshiftH), magnitudeAxisFullPlotArea.MidshiftH.ToString("G17", CultureInfo.InvariantCulture));
+                magFullProperties.SetAttributeValue(nameof(magnitudeAxisFullPlotArea.MidshiftV), magnitudeAxisFullPlotArea.MidshiftV.ToString("G17", CultureInfo.InvariantCulture));
+                axisProperties.Add(magFullProperties);
+            }
 
             return axisProperties;
         }
@@ -275,7 +323,6 @@ namespace OxyPlot.Wpf.Serialization
         {
             if (element.Name != AxisPropertiesTag) return null;
 
-            var fontWeightConverter = new FontWeightConverter();
             Axis axis;
             string axisType = "";
             var axisTypeAttr = element.Attribute("AxisType");
@@ -307,6 +354,16 @@ namespace OxyPlot.Wpf.Serialization
                     axis = new NormalProbabilityAxis();
                 else if (axisType == typeof(GumbelProbabilityAxis).ToString())
                     axis = new GumbelProbabilityAxis();
+                else if (axisType == typeof(CategoryColorAxis).ToString())
+                    axis = new CategoryColorAxis();
+                else if (axisType == typeof(LogarithmicColorAxis).ToString())
+                    axis = new LogarithmicColorAxis();
+                else if (axisType == typeof(RangeColorAxis).ToString())
+                    axis = new RangeColorAxis();
+                else if (axisType == typeof(AngleAxisFullPlotArea).ToString())
+                    axis = new AngleAxisFullPlotArea();
+                else if (axisType == typeof(MagnitudeAxisFullPlotArea).ToString())
+                    axis = new MagnitudeAxisFullPlotArea();
                 else
                     axis = new LinearAxis();
             }
@@ -379,7 +436,7 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetColorAttribute(titleElement, nameof(axis.TitleColor), out var titleColor)) axis.TitleColor = titleColor;
                 if (GetStringAttribute(titleElement, nameof(axis.TitleFont), out var titleFont)) axis.TitleFont = titleFont;
                 if (GetDoubleAttribute(titleElement, nameof(axis.TitleFontSize), out var titleFontSize)) axis.TitleFontSize = titleFontSize;
-                if (GetFontWeightAttribute(titleElement, nameof(axis.TitleFontWeight), fontWeightConverter, out var titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
+                if (GetFontWeightAttribute(titleElement, nameof(axis.TitleFontWeight), FontWeightConverterInstance, out var titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
                 if (GetDoubleAttribute(titleElement, nameof(axis.AxisTitleDistance), out var axisTitleDistance)) axis.AxisTitleDistance = axisTitleDistance;
                 if (GetStringAttribute(titleElement, nameof(axis.Unit), out var unit)) axis.Unit = unit;
 
@@ -387,7 +444,7 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetColorAttribute(titleElement, "Color", out titleColor)) axis.TitleColor = titleColor;
                 if (GetStringAttribute(titleElement, "Font", out titleFont)) axis.TitleFont = titleFont;
                 if (GetDoubleAttribute(titleElement, "Size", out titleFontSize)) axis.TitleFontSize = titleFontSize;
-                if (GetFontWeightAttribute(titleElement, "Weight", fontWeightConverter, out titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
+                if (GetFontWeightAttribute(titleElement, "Weight", FontWeightConverterInstance, out titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
                 if (GetDoubleAttribute(titleElement, "Distance", out axisTitleDistance)) axis.AxisTitleDistance = axisTitleDistance;
             }
 
@@ -398,7 +455,7 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetColorAttribute(labelElement, nameof(axis.TextColor), out var textColor)) axis.TextColor = textColor;
                 if (GetStringAttribute(labelElement, nameof(axis.Font), out var font)) axis.Font = font;
                 if (GetDoubleAttribute(labelElement, nameof(axis.FontSize), out var fontSize)) axis.FontSize = fontSize;
-                if (GetFontWeightAttribute(labelElement, nameof(axis.FontWeight), fontWeightConverter, out var fontWeight)) axis.FontWeight = fontWeight;
+                if (GetFontWeightAttribute(labelElement, nameof(axis.FontWeight), FontWeightConverterInstance, out var fontWeight)) axis.FontWeight = fontWeight;
                 if (GetDoubleAttribute(labelElement, nameof(axis.Angle), out var angle)) axis.Angle = angle;
                 if (GetDoubleAttribute(labelElement, nameof(axis.AxisTickToLabelDistance), out var axisTickToLabelDistance)) axis.AxisTickToLabelDistance = axisTickToLabelDistance;
                 if (GetStringAttribute(labelElement, nameof(axis.StringFormat), out var stringFormat)) axis.StringFormat = stringFormat;
@@ -407,7 +464,7 @@ namespace OxyPlot.Wpf.Serialization
                 // Backward compatibility
                 if (GetColorAttribute(labelElement, "Color", out textColor)) axis.TextColor = textColor;
                 if (GetDoubleAttribute(labelElement, "Size", out fontSize)) axis.FontSize = fontSize;
-                if (GetFontWeightAttribute(labelElement, "Weight", fontWeightConverter, out fontWeight)) axis.FontWeight = fontWeight;
+                if (GetFontWeightAttribute(labelElement, "Weight", FontWeightConverterInstance, out fontWeight)) axis.FontWeight = fontWeight;
                 if (GetDoubleAttribute(labelElement, "TickDistance", out axisTickToLabelDistance)) axis.AxisTickToLabelDistance = axisTickToLabelDistance;
                 if (GetBooleanAttribute(labelElement, "Superscript", out useSuperExponentialFormat)) axis.UseSuperExponentialFormat = useSuperExponentialFormat;
             }
@@ -563,6 +620,79 @@ namespace OxyPlot.Wpf.Serialization
             else if (currentAxisType == typeof(GumbelProbabilityAxis))
             {
                 // GumbelProbabilityAxis has no specific properties beyond base Axis
+            }
+            else if (currentAxisType == typeof(CategoryColorAxis))
+            {
+                var categoryColorAxisElement = element.Element("CategoryColorAxis");
+                if (categoryColorAxisElement != null)
+                {
+                    if (GetBooleanAttribute(categoryColorAxisElement, nameof(CategoryColorAxis.IsTickCentered), out var isTickCentered))
+                        ((CategoryColorAxis)axis).IsTickCentered = isTickCentered;
+                    if (GetDoubleAttribute(categoryColorAxisElement, nameof(CategoryColorAxis.GapWidth), out var gapWidth))
+                        ((CategoryColorAxis)axis).GapWidth = gapWidth;
+                    if (GetColorAttribute(categoryColorAxisElement, nameof(CategoryColorAxis.InvalidCategoryColor), out var invalidCategoryColor))
+                        ((CategoryColorAxis)axis).InvalidCategoryColor = invalidCategoryColor;
+                }
+            }
+            else if (currentAxisType == typeof(LogarithmicColorAxis))
+            {
+                var logColorAxisElement = element.Element("LogarithmicColorAxis");
+                if (logColorAxisElement != null)
+                {
+                    if (GetColorAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.HighColor), out var highColor))
+                        ((LogarithmicColorAxis)axis).HighColor = highColor;
+                    if (GetColorAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.LowColor), out var lowColor))
+                        ((LogarithmicColorAxis)axis).LowColor = lowColor;
+                    if (GetIntegerAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.PaletteSize), out var paletteSize))
+                        ((LogarithmicColorAxis)axis).PaletteSize = paletteSize;
+                    if (GetColorAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.InvalidNumberColor), out var invalidNumberColor))
+                        ((LogarithmicColorAxis)axis).InvalidNumberColor = invalidNumberColor;
+                    if (GetBooleanAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.RenderAsImage), out var renderAsImage))
+                        ((LogarithmicColorAxis)axis).RenderAsImage = renderAsImage;
+                    if (GetDoubleAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.Base), out var logBase))
+                        ((LogarithmicColorAxis)axis).Base = logBase;
+                    if (GetBooleanAttribute(logColorAxisElement, nameof(LogarithmicColorAxis.PowerPadding), out var powerPadding))
+                        ((LogarithmicColorAxis)axis).PowerPadding = powerPadding;
+                }
+            }
+            else if (currentAxisType == typeof(RangeColorAxis))
+            {
+                var rangeColorAxisElement = element.Element("RangeColorAxis");
+                if (rangeColorAxisElement != null)
+                {
+                    if (GetColorAttribute(rangeColorAxisElement, nameof(RangeColorAxis.HighColor), out var highColor))
+                        ((RangeColorAxis)axis).HighColor = highColor;
+                    if (GetColorAttribute(rangeColorAxisElement, nameof(RangeColorAxis.LowColor), out var lowColor))
+                        ((RangeColorAxis)axis).LowColor = lowColor;
+                    if (GetColorAttribute(rangeColorAxisElement, nameof(RangeColorAxis.InvalidNumberColor), out var invalidNumberColor))
+                        ((RangeColorAxis)axis).InvalidNumberColor = invalidNumberColor;
+                    if (GetBooleanAttribute(rangeColorAxisElement, nameof(RangeColorAxis.FormatAsFractions), out var formatAsFractions))
+                        ((RangeColorAxis)axis).FormatAsFractions = formatAsFractions;
+                }
+            }
+            else if (currentAxisType == typeof(AngleAxisFullPlotArea))
+            {
+                var angleFullElement = element.Element("AngleAxisFullPlotArea");
+                if (angleFullElement != null)
+                {
+                    if (GetDoubleAttribute(angleFullElement, nameof(AngleAxisFullPlotArea.StartAngle), out var startAngle))
+                        ((AngleAxisFullPlotArea)axis).StartAngle = startAngle;
+                    if (GetDoubleAttribute(angleFullElement, nameof(AngleAxisFullPlotArea.EndAngle), out var endAngle))
+                        ((AngleAxisFullPlotArea)axis).EndAngle = endAngle;
+                }
+            }
+            else if (currentAxisType == typeof(MagnitudeAxisFullPlotArea))
+            {
+                var magFullElement = element.Element("MagnitudeAxisFullPlotArea");
+                if (magFullElement != null)
+                {
+                    if (GetBooleanAttribute(magFullElement, nameof(MagnitudeAxisFullPlotArea.FormatAsFractions), out var formatAsFractions))
+                        ((MagnitudeAxisFullPlotArea)axis).FormatAsFractions = formatAsFractions;
+                    if (GetDoubleAttribute(magFullElement, nameof(MagnitudeAxisFullPlotArea.MidshiftH), out var midshiftH))
+                        ((MagnitudeAxisFullPlotArea)axis).MidshiftH = midshiftH;
+                    if (GetDoubleAttribute(magFullElement, nameof(MagnitudeAxisFullPlotArea.MidshiftV), out var midshiftV))
+                        ((MagnitudeAxisFullPlotArea)axis).MidshiftV = midshiftV;
+                }
             }
 
             return axis;

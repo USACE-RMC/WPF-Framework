@@ -135,7 +135,7 @@ namespace ExpressionParser
                     {
                         _operation = new Func<double, double, double>((a, b) =>
                                 {
-                                    if (b >= 0d && b < 15d)
+                                    if (b >= 0d && b < 15d) // Math.Round supports 0-14 decimal places
                                         return Math.Round(a, (int)Math.Round(b));
                                     // Allows for negative precision (e.g. ROUND(234.2,-1) = 230)
                                     return Math.Round(a * Math.Pow(10d, b), 0) / Math.Pow(10d, b);
@@ -191,7 +191,7 @@ namespace ExpressionParser
         /// <returns><c>true</c> if the number or digits parameter contains a variable; otherwise <c>false</c>.</returns>
         public bool ContainsVariable()
         {
-            return _number.ContainsVariable() || _digits.ContainsVariable();
+            return (_number?.ContainsVariable() ?? false) || (_digits?.ContainsVariable() ?? false);
         }
 
         /// <summary>

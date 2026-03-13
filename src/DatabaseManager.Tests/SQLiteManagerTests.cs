@@ -96,8 +96,8 @@ namespace DatabaseManager.Tests
 
             Assert.NotNull(builder);
             Assert.Equal(3, builder.Version);
-            Assert.Equal(SynchronizationModes.Off, builder.SyncMode);
-            Assert.Equal(SQLiteJournalModeEnum.Memory, builder.JournalMode);
+            Assert.Equal(SynchronizationModes.Full, builder.SyncMode);
+            Assert.Equal(SQLiteJournalModeEnum.Wal, builder.JournalMode);
             Assert.False(builder.ReadOnly);
         }
 

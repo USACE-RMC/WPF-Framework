@@ -154,9 +154,9 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_nodeToSearch == null))
-                hasVariable = _nodeToSearch.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _nodeToSearch.ContainsVariable();
             if (!(_searchNode == null))
-                hasVariable = _searchNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _searchNode.ContainsVariable();
             // 
             return hasVariable;
         }
@@ -169,7 +169,7 @@ namespace ExpressionParser
         {
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
-            int result = _nodeToSearch.Evaluate().Result.ToString().IndexOf(_searchNode.Evaluate().Result.ToString(), _stringComparison);
+            int result = (_nodeToSearch.Evaluate().Result?.ToString() ?? "").IndexOf(_searchNode.Evaluate().Result?.ToString() ?? "", _stringComparison);
             // 
             return new ParseNodeResult(result, ResultType.Integer);
         }

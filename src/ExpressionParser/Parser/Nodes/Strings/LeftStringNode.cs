@@ -153,9 +153,9 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_stringNode == null))
-                hasVariable = _stringNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _stringNode.ContainsVariable();
             if (!(_nCharacters == null))
-                hasVariable = _nCharacters.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _nCharacters.ContainsVariable();
             // 
             return hasVariable;
         }
@@ -168,7 +168,7 @@ namespace ExpressionParser
         {
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
-            string value = _stringNode.Evaluate().Result.ToString();
+            string value = _stringNode.Evaluate().Result?.ToString() ?? "";
             int length = Convert.ToInt32(_nCharacters.Evaluate().Result);
             // Handle edge cases like VB's Left function does
             if (length < 0)

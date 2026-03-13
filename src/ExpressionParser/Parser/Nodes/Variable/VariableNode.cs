@@ -137,7 +137,7 @@ namespace ExpressionParser
                             _variableType = ResultType.Integer;
                             break;
                         }
-                    case ResultType.Decimal:
+                    case ResultType.FloatingPoint:
                     case ResultType.Double:
                     case ResultType.Single:
                         {

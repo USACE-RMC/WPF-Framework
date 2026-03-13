@@ -203,11 +203,11 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_testNode == null))
-                hasVariable = _testNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _testNode.ContainsVariable();
             if (!(_ifTrue == null))
-                hasVariable = _ifTrue.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _ifTrue.ContainsVariable();
             if (!(_ifFalse == null))
-                hasVariable = _ifFalse.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _ifFalse.ContainsVariable();
             // 
             return hasVariable;
         }
@@ -220,16 +220,11 @@ namespace ExpressionParser
         {
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
-            // 
-            // If Parser.IsNumericType(Me) Then
-            // If OutputType = ResultType.Integer Then
-            // Return New IntegerNode(CInt(Evaluate.Result))
-            // Else
-            // Return New DecimalNode(CInt(Evaluate.Result))
-            // End If
-            // Else
-            // End If
-            if (Convert.ToBoolean(_testNode.Evaluate().Result))
+            //
+            var testResult = _testNode.Evaluate();
+            if (testResult.Result == null)
+                return new ParseNodeResult(null, ResultType.Error);
+            if (Convert.ToBoolean(testResult.Result))
             {
                 return new ParseNodeResult(_ifTrue.Evaluate().Result, OutputType);
             }

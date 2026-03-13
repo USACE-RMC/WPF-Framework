@@ -332,7 +332,7 @@ namespace DatabaseManager
             }
             catch (Exception ex)
             {
-                throw new Exception("Error occurred while writing sqlite table: " + Environment.NewLine + ex.Message);
+                throw new Exception("Error occurred while writing sqlite table: " + Environment.NewLine + ex.Message, ex);
             }
             finally
             {

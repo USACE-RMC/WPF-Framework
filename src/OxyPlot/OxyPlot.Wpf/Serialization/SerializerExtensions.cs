@@ -190,19 +190,10 @@ namespace OxyPlot.Wpf.Serialization
             if (dpelements.Name != "DataPoints" && dpelements.Name != "Points") return new List<DataPoint>();
 
             var dpList = new List<DataPoint>();
-            if (dpelements.Name == "DataPoints") // Backwards Compatibility
+            // Supports both "DataPoints" (legacy) and "Points" element names.
+            foreach (var dp in dpelements.Elements("DataPoint"))
             {
-                foreach (var dp in dpelements.Elements("DataPoint"))
-                {
-                    dpList.Add(dp.PointFromXElement());
-                }
-            }
-            else if (dpelements.Name == "Points")
-            {
-                foreach (var dp in dpelements.Elements("DataPoint"))
-                {
-                    dpList.Add(dp.PointFromXElement());
-                }
+                dpList.Add(dp.PointFromXElement());
             }
 
             return dpList;

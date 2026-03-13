@@ -96,13 +96,13 @@ namespace ExpressionParser.Tests
         }
 
         /// <summary>
-        /// Tests division by zero behavior, which should return infinity.
+        /// Tests division by zero behavior, which should return NaN.
         /// </summary>
         [TestMethod]
         public void DivisionByZeroTests()
         {
             var result = ExpressionParser.Parser.Parser.Parse("10/0").Evaluate().Result;
-            Assert.IsTrue(double.IsPositiveInfinity((double)result));
+            Assert.IsTrue(double.IsNaN((double)result));
         }
 
         /// <summary>

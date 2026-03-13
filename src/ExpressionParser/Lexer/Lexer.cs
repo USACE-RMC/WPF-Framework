@@ -87,22 +87,30 @@ namespace ExpressionParser
                     if (t.Type == TokenType.SingleQuote)
                     {
                         i += 1;
-                        tokenList.Add(new Token(startPosition + 1, BuildString(stringToTokenize, '\'', ref i), "", 0, TokenType.String, TokenClass.Value)); 
+                        tokenList.Add(new Token(startPosition + 1, BuildString(stringToTokenize, '\'', ref i), "", 0, TokenType.String, TokenClass.Value));
                         if (TestForNextChar('\'', stringToTokenize, i))
                         {
                             tokenList.Add(new Token(i + 1, "'", "", 1, TokenType.SingleQuote, TokenClass.Other));
                             i += 1;
-                        } 
+                        }
+                        else
+                        {
+                            tokenList.Add(new Token(startPosition, "Unterminated string literal starting with '", "", 0, TokenType.LexerError, TokenClass.Other));
+                        }
                     }
                     else if (t.Type == TokenType.DoubleQuote)
                     {
                         i += 1;
-                        tokenList.Add(new Token(startPosition + 1, BuildString(stringToTokenize, '"', ref i), "", 0, TokenType.String, TokenClass.Value)); 
+                        tokenList.Add(new Token(startPosition + 1, BuildString(stringToTokenize, '"', ref i), "", 0, TokenType.String, TokenClass.Value));
                         if (TestForNextChar('"', stringToTokenize, i))
                         {
                             tokenList.Add(new Token(i + 1, "\"", "", 1, TokenType.DoubleQuote, TokenClass.Other));
                             i += 1;
-                        } 
+                        }
+                        else
+                        {
+                            tokenList.Add(new Token(startPosition, "Unterminated string literal starting with \"", "", 0, TokenType.LexerError, TokenClass.Other));
+                        }
                     }
                     else if (t.Type == TokenType.LeftBracket)
                     {
@@ -355,7 +363,57 @@ namespace ExpressionParser
         /// - Item3: Token type
         /// - Item4: Token classification
         /// </remarks>
-        public static Dictionary<string, Tuple<string, byte, TokenType, TokenClass>> Keywords { get; private set; } = new Dictionary<string, Tuple<string, byte, TokenType, TokenClass>>(StringComparer.OrdinalIgnoreCase) { { "IF", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/IFHelp.html", 1, TokenType.If, TokenClass.Function) }, { "AND", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ANDHelp.html", 1, TokenType.And, TokenClass.Function) }, { "OR", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ORHelp.html", 1, TokenType.Or, TokenClass.Function) }, { "TRUE", new Tuple<string, byte, TokenType, TokenClass>("", 0, TokenType.Boolean, TokenClass.Value) }, { "FALSE", new Tuple<string, byte, TokenType, TokenClass>("", 0, TokenType.Boolean, TokenClass.Value) }, { "RIGHT", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RIGHTHelp.html", 1, TokenType.Right, TokenClass.Function) }, { "LEFT", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/LEFTHelp.html", 1, TokenType.Left, TokenClass.Function) }, { "LEN", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/LENHelp.html", 1, TokenType.Length, TokenClass.Function) }, { "LENGTH", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/LENHelp.html", 1, TokenType.Length, TokenClass.Function) }, { "RAND", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDHelp.html", 1, TokenType.Random, TokenClass.Function) }, { "RANDBETWEEN", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDBETWEENHelp.html", 1, TokenType.RandomBetween, TokenClass.Function) }, { "RANDINT", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDINTHelp.html", 1, TokenType.RandomInteger, TokenClass.Function) }, { "RANDINTBETWEEN", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDINTBETWEENHelp.html", 1, TokenType.RandomIntegerBetween, TokenClass.Function) }, { "ROUND", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDHelp.html", 1, TokenType.Round, TokenClass.Function) }, { "ROUNDDOWN", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDDOWNHelp.html", 1, TokenType.RoundDown, TokenClass.Function) }, { "FLOOR", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDDOWNHelp.html", 1, TokenType.RoundDown, TokenClass.Function) }, { "ROUNDUP", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDUPHelp.html", 1, TokenType.RoundUp, TokenClass.Function) }, { "CEILING", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDUPHelp.html", 1, TokenType.RoundUp, TokenClass.Function) }, { "INCREMENT", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/INCREMENTHelp.html", 1, TokenType.Increment, TokenClass.Function) }, { "INDEXOF", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/INSTRINGHelp.html", 1, TokenType.IndexOf, TokenClass.Function) }, { "INSTRING", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/INSTRINGHelp.html", 1, TokenType.IndexOf, TokenClass.Function) }, { "SUBSTRING", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/SUBSTRINGHelp.html", 1, TokenType.Substring, TokenClass.Function) }, { "CONTAINS", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONTAINSHelp.html", 1, TokenType.Contains, TokenClass.Function) }, { "CONCATENATE", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONCATENATEHelp.html", 1, TokenType.Concatenate, TokenClass.Function) }, { "DBL", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTODOUBLEHelp.html", 1, TokenType.ConvertToDouble, TokenClass.Function) }, { "TODOUBLE", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTODOUBLEHelp.html", 1, TokenType.ConvertToDouble, TokenClass.Function) }, { "CDBL", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTODOUBLEHelp.html", 1, TokenType.ConvertToDouble, TokenClass.Function) }, { "INT", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOINTHelp.html", 1, TokenType.ConvertToInteger, TokenClass.Function) }, { "CINT", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOINTHelp.html", 1, TokenType.ConvertToInteger, TokenClass.Function) }, { "TOINTEGER", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOINTHelp.html", 1, TokenType.ConvertToInteger, TokenClass.Function) }, { "STR", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOSTRINGHelp.html", 1, TokenType.ConvertToString, TokenClass.Function) }, { "CSTR", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOSTRINGHelp.html", 1, TokenType.ConvertToString, TokenClass.Function) }, { "TOSTRING", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOSTRINGHelp.html", 1, TokenType.ConvertToString, TokenClass.Function) }, { "BOOL", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) }, { "CBOOL", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) }, { "TOBOOLEAN", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) }, { "TOLOGICAL", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) } };
+        public static Dictionary<string, Tuple<string, byte, TokenType, TokenClass>> Keywords { get; private set; } = new Dictionary<string, Tuple<string, byte, TokenType, TokenClass>>(StringComparer.OrdinalIgnoreCase)
+        {
+            // Logical operators
+            { "IF",             new Tuple<string, byte, TokenType, TokenClass>("Parser Help/IFHelp.html",  1, TokenType.If,  TokenClass.Function) },
+            { "AND",            new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ANDHelp.html", 1, TokenType.And, TokenClass.Function) },
+            { "OR",             new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ORHelp.html",  1, TokenType.Or,  TokenClass.Function) },
+
+            // Boolean literals
+            { "TRUE",           new Tuple<string, byte, TokenType, TokenClass>("", 0, TokenType.Boolean, TokenClass.Value) },
+            { "FALSE",          new Tuple<string, byte, TokenType, TokenClass>("", 0, TokenType.Boolean, TokenClass.Value) },
+
+            // String functions
+            { "RIGHT",          new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RIGHTHelp.html",     1, TokenType.Right,   TokenClass.Function) },
+            { "LEFT",           new Tuple<string, byte, TokenType, TokenClass>("Parser Help/LEFTHelp.html",      1, TokenType.Left,    TokenClass.Function) },
+            { "LEN",            new Tuple<string, byte, TokenType, TokenClass>("Parser Help/LENHelp.html",       1, TokenType.Length,  TokenClass.Function) },
+            { "LENGTH",         new Tuple<string, byte, TokenType, TokenClass>("Parser Help/LENHelp.html",       1, TokenType.Length,  TokenClass.Function) },
+            { "INDEXOF",        new Tuple<string, byte, TokenType, TokenClass>("Parser Help/INSTRINGHelp.html",  1, TokenType.IndexOf, TokenClass.Function) },
+            { "INSTRING",       new Tuple<string, byte, TokenType, TokenClass>("Parser Help/INSTRINGHelp.html",  1, TokenType.IndexOf, TokenClass.Function) },
+            { "SUBSTRING",      new Tuple<string, byte, TokenType, TokenClass>("Parser Help/SUBSTRINGHelp.html", 1, TokenType.Substring,    TokenClass.Function) },
+            { "CONTAINS",       new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONTAINSHelp.html",  1, TokenType.Contains,     TokenClass.Function) },
+            { "CONCATENATE",    new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONCATENATEHelp.html", 1, TokenType.Concatenate, TokenClass.Function) },
+
+            // Numeric / random functions
+            { "RAND",           new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDHelp.html",           1, TokenType.Random,              TokenClass.Function) },
+            { "RANDBETWEEN",    new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDBETWEENHelp.html",    1, TokenType.RandomBetween,        TokenClass.Function) },
+            { "RANDINT",        new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDINTHelp.html",        1, TokenType.RandomInteger,        TokenClass.Function) },
+            { "RANDINTBETWEEN", new Tuple<string, byte, TokenType, TokenClass>("Parser Help/RANDINTBETWEENHelp.html", 1, TokenType.RandomIntegerBetween, TokenClass.Function) },
+            { "INCREMENT",      new Tuple<string, byte, TokenType, TokenClass>("Parser Help/INCREMENTHelp.html",      1, TokenType.Increment,            TokenClass.Function) },
+
+            // Rounding functions
+            { "ROUND",          new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDHelp.html",     1, TokenType.Round,     TokenClass.Function) },
+            { "ROUNDDOWN",      new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDDOWNHelp.html", 1, TokenType.RoundDown, TokenClass.Function) },
+            { "FLOOR",          new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDDOWNHelp.html", 1, TokenType.RoundDown, TokenClass.Function) },
+            { "ROUNDUP",        new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDUPHelp.html",   1, TokenType.RoundUp,   TokenClass.Function) },
+            { "CEILING",        new Tuple<string, byte, TokenType, TokenClass>("Parser Help/ROUNDUPHelp.html",   1, TokenType.RoundUp,   TokenClass.Function) },
+
+            // Type conversion functions
+            { "DBL",            new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTODOUBLEHelp.html",   1, TokenType.ConvertToDouble,  TokenClass.Function) },
+            { "TODOUBLE",       new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTODOUBLEHelp.html",   1, TokenType.ConvertToDouble,  TokenClass.Function) },
+            { "CDBL",           new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTODOUBLEHelp.html",   1, TokenType.ConvertToDouble,  TokenClass.Function) },
+            { "INT",            new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOINTHelp.html",      1, TokenType.ConvertToInteger, TokenClass.Function) },
+            { "CINT",           new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOINTHelp.html",      1, TokenType.ConvertToInteger, TokenClass.Function) },
+            { "TOINTEGER",      new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOINTHelp.html",      1, TokenType.ConvertToInteger, TokenClass.Function) },
+            { "STR",            new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOSTRINGHelp.html",   1, TokenType.ConvertToString,  TokenClass.Function) },
+            { "CSTR",           new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOSTRINGHelp.html",   1, TokenType.ConvertToString,  TokenClass.Function) },
+            { "TOSTRING",       new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOSTRINGHelp.html",   1, TokenType.ConvertToString,  TokenClass.Function) },
+            { "BOOL",           new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) },
+            { "CBOOL",          new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) },
+            { "TOBOOLEAN",      new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) },
+            { "TOLOGICAL",      new Tuple<string, byte, TokenType, TokenClass>("Parser Help/CONVERTTOBOOLEANHelp.html", 1, TokenType.ConvertToBoolean, TokenClass.Function) },
+        };
         
         /// <summary>
         /// Determines the appropriate token for a given keyword string by performing a case-insensitive lookup in the Keywords dictionary.

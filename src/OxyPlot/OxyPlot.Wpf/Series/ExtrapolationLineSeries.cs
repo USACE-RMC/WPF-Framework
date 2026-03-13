@@ -55,11 +55,11 @@ namespace OxyPlot.Wpf
                 new PropertyMetadata(null, AppearanceChanged));
 
         /// <summary>
-        /// Identifies the <see cref="IgnoreExtraplotationForScaling"/> dependency property.
+        /// Identifies the <see cref="IgnoreExtrapolationForScaling"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IgnoreExtraplotationForScalingProperty =
+        public static readonly DependencyProperty IgnoreExtrapolationForScalingProperty =
             DependencyProperty.Register(
-                nameof(IgnoreExtraplotationForScaling),
+                nameof(IgnoreExtrapolationForScaling),
                 typeof(bool),
                 typeof(ExtrapolationLineSeries),
                 new PropertyMetadata(false, AppearanceChanged));
@@ -125,10 +125,10 @@ namespace OxyPlot.Wpf
         /// Gets or sets a value indicating whether to ignore extrapolated regions for axis scaling.
         /// </summary>
         /// <value><c>true</c> to ignore extrapolated regions; otherwise, <c>false</c>. The default is <c>false</c>.</value>
-        public bool IgnoreExtraplotationForScaling
+        public bool IgnoreExtrapolationForScaling
         {
-            get => (bool)this.GetValue(IgnoreExtraplotationForScalingProperty);
-            set => this.SetValue(IgnoreExtraplotationForScalingProperty, value);
+            get => (bool)this.GetValue(IgnoreExtrapolationForScalingProperty);
+            set => this.SetValue(IgnoreExtrapolationForScalingProperty, value);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace OxyPlot.Wpf
                 s.ExtrapolationColor = this.ExtrapolationColor.ToOxyColor();
                 s.ExtrapolationLineStyle = this.ExtrapolationLineStyle;
                 s.ExtrapolationDashes = this.ExtrapolationDashes;
-                s.IgnoreExtraplotationForScaling = this.IgnoreExtraplotationForScaling;
+                s.IgnoreExtrapolationForScaling = this.IgnoreExtrapolationForScaling;
             }
         }
     }

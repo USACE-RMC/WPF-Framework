@@ -69,17 +69,13 @@ namespace DatabaseManager
             _dataBaseOpen = true;
         }
         
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public override void Close()
         {
             _dataBaseOpen = false;
         }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public override void Open()
         {
             _dataBaseOpen = true;
@@ -128,7 +124,7 @@ namespace DatabaseManager
                 _tableName = dataTableName;
                 _storedColumnNames = GetStoredColumnNames();
                 _storedColumnTypes = GetStoredColumnTypes();
-                _storedNumberOfRows = (int)GetStoredRowCount();
+                _storedNumberOfRows = checked((int)GetStoredRowCount());
                 InitializeView();
             }
 
@@ -185,9 +181,7 @@ namespace DatabaseManager
                 return result;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -197,9 +191,7 @@ namespace DatabaseManager
                 throw new NotImplementedException("table does not support storage of jagged byte arrays.");
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -224,9 +216,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -251,9 +241,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -278,9 +266,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -305,9 +291,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -332,9 +316,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -359,9 +341,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -386,9 +366,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -413,9 +391,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <exception cref="NotImplementedException"></exception>
             /// <exception cref="Exception"></exception>
@@ -438,9 +414,7 @@ namespace DatabaseManager
                 _storedColumnTypes = GetStoredColumnTypes();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -461,9 +435,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -484,9 +456,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -507,9 +477,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -530,9 +498,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -553,9 +519,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -576,9 +540,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -599,9 +561,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -622,9 +582,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnName"></param>
             /// <param name="columnData"></param>
             /// <exception cref="NotImplementedException"></exception>
@@ -648,25 +606,19 @@ namespace DatabaseManager
 
             #region Row Stuff
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             protected override void AddRowToDatabase(object[] row)
             {
                 _table.Rows.Add(row);
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             protected override void AddRowToDatabase()
             {
                 _table.Rows.Add(_table.NewRow());
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="newRowData"></param>
             protected override void AddRowsToDatabase(List<object[]> newRowData)
             {
@@ -674,9 +626,7 @@ namespace DatabaseManager
                     AddRowToDatabase(newRowData[i]);
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="rowIndex">The index of the row to delete.</param>
             protected override void DeleteRowFromDatabase(int rowIndex)
             {
@@ -684,9 +634,7 @@ namespace DatabaseManager
                 _table.AcceptChanges();
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="rowIndices">The indices of the rows to delete.</param>
             protected override void DeleteRowsFromDatabase(int[] rowIndices)
             {
@@ -738,9 +686,7 @@ namespace DatabaseManager
 
             #region Cell Stuff
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnsToEdit"></param>
             /// <param name="rowIndices"></param>
             /// <param name="cellValues"></param>
@@ -752,9 +698,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndices"></param>
             /// <param name="rowIndices"></param>
             /// <param name="cellValues"></param>
@@ -766,9 +710,7 @@ namespace DatabaseManager
                 }
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -777,9 +719,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -788,9 +728,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -799,9 +737,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -810,9 +746,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -821,9 +755,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -832,9 +764,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -843,9 +773,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -854,9 +782,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>
@@ -865,9 +791,7 @@ namespace DatabaseManager
                 _table.Rows[rowIndex][columnIndex] = cellValue;
             }
 
-            /// <summary>
             /// <inheritdoc/>
-            /// </summary>
             /// <param name="columnIndex"></param>
             /// <param name="rowIndex"></param>
             /// <param name="cellValue"></param>

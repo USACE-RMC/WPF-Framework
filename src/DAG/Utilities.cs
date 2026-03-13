@@ -74,7 +74,7 @@ namespace DAG
         /// <param name="memberName">The property name (automatically provided by the compiler).</param>
         public static void SetString(string value, ref string target, PropertyChangedEventHandler propertyChanged = null, object source = null, Action<string> action = null, [CallerMemberName] string memberName = "")
         {
-            if (value == target) { return; }
+            if (AreEqual(value, target)) { return; }
             target = value;
             action?.Invoke(memberName);
             propertyChanged?.Invoke(source, new PropertyChangedEventArgs(memberName));

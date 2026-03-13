@@ -96,7 +96,7 @@ namespace DatabaseManager
         /// <param name="columnData">Optional data for the new column.</param>
         public override void ColumnAdded<T>(int indexOfColumn, T[] columnData = null)
         {
-            _rowData.Insert(indexOfColumn, 0);
+            _rowData.Insert(indexOfColumn, null);
         }
 
         /// <summary>

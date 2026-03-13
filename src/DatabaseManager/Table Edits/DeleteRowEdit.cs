@@ -62,45 +62,45 @@ namespace DatabaseManager
 
         /// <summary>
         /// Handles the addition of a column.
-        /// This operation is not applicable for a row delete and is currently unimplemented.
+        /// This operation is not applicable for a row delete edit.
         /// </summary>
         /// <typeparam name="T">The type of data in the added column.</typeparam>
         /// <param name="indexOfColumn">The index of the added column.</param>
         /// <param name="columnData">Optional column data.</param>
         public override void ColumnAdded<T>(int indexOfColumn, T[] columnData = null)
         {
-            // Throw New NotImplementedException()
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>
-        /// Handles the deletion of a column. 
-        /// This operation is not applicable for a column delete and is currently unimplemented.
+        /// Handles the deletion of a column.
+        /// This operation is not applicable for a row delete edit.
         /// </summary>
         /// <param name="indexOfColumn">The index of the deleted column.</param>
         public override void ColumnDeleted(int indexOfColumn)
         {
-            // Throw New NotImplementedException()
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>
-        /// Handles the addition of a row. 
-        /// Adjusting the internal row index could be implemented here if row tracking is required.
+        /// Handles the addition of a row.
+        /// This operation is not applicable for a row delete edit.
         /// </summary>
         /// <param name="indexOfRow">The index where the row was added.</param>
         /// <param name="rowData">Optional data for the added row.</param>
         public override void RowAdded(int indexOfRow, object[] rowData = null)
         {
-            // If _rowIndex > indexOfRow Then _rowIndex += 1
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>
         /// Handles the deletion of a row.
-        /// Adjusting the internal row index could be implemented here if row tracking is required.
+        /// This operation is not applicable for a row delete edit.
         /// </summary>
         /// <param name="indexOfRow">The index of the deleted row.</param>
         public override void RowDeleted(int indexOfRow)
         {
-            // If _rowIndex > indexOfRow Then _rowIndex -= 1
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>

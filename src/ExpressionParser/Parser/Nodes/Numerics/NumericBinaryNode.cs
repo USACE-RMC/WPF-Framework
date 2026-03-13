@@ -135,7 +135,14 @@ namespace ExpressionParser
             //
             if (OutputType == ResultType.Double)
                 return new DecimalNode(Convert.ToDouble(Evaluate().Result));
-            return new IntegerNode(Convert.ToInt32(Evaluate().Result));
+            try
+            {
+                return new IntegerNode(Convert.ToInt32(Evaluate().Result));
+            }
+            catch (OverflowException)
+            {
+                return this;
+            }
         }
 
         /// <summary>
@@ -146,9 +153,9 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_leftNode == null))
-                hasVariable = _leftNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _leftNode.ContainsVariable();
             if (!(_rightNode == null))
-                hasVariable = _rightNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _rightNode.ContainsVariable();
             // 
             return hasVariable;
         }
@@ -161,7 +168,13 @@ namespace ExpressionParser
         {
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
-            double result = _operation(Convert.ToDouble(_leftNode.Evaluate().Result), Convert.ToDouble(_rightNode.Evaluate().Result));
+            var leftResult = _leftNode.Evaluate();
+            var rightResult = _rightNode.Evaluate();
+            if (leftResult.Result == null || leftResult.Type == ResultType.Error)
+                return new ParseNodeResult(null, ResultType.Error);
+            if (rightResult.Result == null || rightResult.Type == ResultType.Error)
+                return new ParseNodeResult(null, ResultType.Error);
+            double result = _operation(Convert.ToDouble(leftResult.Result), Convert.ToDouble(rightResult.Result));
             if (OutputType == ResultType.Integer)
             {
                 return new ParseNodeResult((int)Math.Round(result), OutputType);

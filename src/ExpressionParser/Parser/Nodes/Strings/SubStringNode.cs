@@ -171,11 +171,11 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_stringValue == null))
-                hasVariable = _stringValue.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _stringValue.ContainsVariable();
             if (!(_startIndex == null))
-                hasVariable = _startIndex.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _startIndex.ContainsVariable();
             if (!(_length == null))
-                hasVariable = _length.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _length.ContainsVariable();
             // 
             return hasVariable;
         }

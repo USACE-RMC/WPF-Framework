@@ -62,45 +62,45 @@ namespace DatabaseManager
 
         /// <summary>
         /// Handles the addition of a column.
-        /// Currently, this method does not adjust the internal index and serves as a stub.
+        /// This operation is not applicable for a column delete edit.
         /// </summary>
         /// <typeparam name="T">The data type of the added column (if any).</typeparam>
         /// <param name="indexOfColumn">The index at which the column was added.</param>
         /// <param name="columnData">The column data.</param>
         public override void ColumnAdded<T>(int indexOfColumn, T[] columnData = null)
         {
-            // If _columnIndex >= indexOfColumn Then _columnIndex += 1
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>
         /// Handles the deletion of a column.
-        /// This operation is not applicable for a column delete and is left unimplemented.
+        /// This operation is not applicable for a column delete edit.
         /// </summary>
         /// <param name="indexOfColumn">The index of the deleted column.</param>
         public override void ColumnDeleted(int indexOfColumn)
         {
-            // If _columnIndex > indexOfColumn Then _columnIndex -= 1
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>
         /// Handles the addition of a row.
-        /// This operation is not applicable for a column delete and is left unimplemented.
+        /// This operation is not applicable for a column delete edit.
         /// </summary>
         /// <param name="indexOfRow">The index where the row was added.</param>
         /// <param name="rowData">Optional data for the added row.</param>
         public override void RowAdded(int indexOfRow, object[] rowData = null)
         {
-            // Throw New NotImplementedException()
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>
         /// Handles the deletion of a row.
-        /// This operation is not applicable for a column delete and is left unimplemented.
+        /// This operation is not applicable for a column delete edit.
         /// </summary>
         /// <param name="indexOfRow">The index of the deleted row.</param>
         public override void RowDeleted(int indexOfRow)
         {
-            // Throw New NotImplementedException()
+            // No index adjustment needed for this edit type.
         }
 
         /// <summary>

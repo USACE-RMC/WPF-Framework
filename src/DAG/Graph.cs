@@ -87,12 +87,18 @@ namespace DAG
         /// <summary>
         /// The collection of nodes in the graph.
         /// </summary>
-        public readonly ObservableCollection<NodeBase> Nodes = new ObservableCollection<NodeBase>();
+        private readonly ObservableCollection<NodeBase> _nodes = new ObservableCollection<NodeBase>();
 
         /// <summary>
         /// Internal list of connections between nodes.
         /// </summary>
-        protected readonly List<Tuple<OutConnector, InConnector>> _connections = new List<Tuple<OutConnector, InConnector>>();
+        private readonly List<Tuple<OutConnector, InConnector>> _connections = new List<Tuple<OutConnector, InConnector>>();
+
+        /// <summary>
+        /// Tracks nodes that have been subscribed to for collection changed events,
+        /// enabling proper cleanup on <see cref="System.Collections.Specialized.NotifyCollectionChangedAction.Reset"/>.
+        /// </summary>
+        private readonly HashSet<NodeBase> _subscribedNodes = new HashSet<NodeBase>();
 
         /// <summary>
         /// The current scale/zoom level of the graph.
@@ -102,6 +108,11 @@ namespace DAG
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the collection of nodes in the graph.
+        /// </summary>
+        public ObservableCollection<NodeBase> Nodes => _nodes;
 
         /// <summary>
         /// Gets or sets the scale (zoom level) of the graph for visual display.
@@ -158,7 +169,7 @@ namespace DAG
         /// </summary>
         public Graph()
         {
-            Nodes.CollectionChanged += Nodes_CollectionChanged;
+            _nodes.CollectionChanged += Nodes_CollectionChanged;
             Connections = new ReadOnlyCollection<Tuple<OutConnector, InConnector>>(_connections);
         }
 
@@ -172,7 +183,7 @@ namespace DAG
         /// </remarks>
         public Graph(XElement el)
         {
-            Nodes.CollectionChanged += Nodes_CollectionChanged;
+            _nodes.CollectionChanged += Nodes_CollectionChanged;
             Connections = new ReadOnlyCollection<Tuple<OutConnector, InConnector>>(_connections);
             if (el == null || el.Name != this.GetType().Name) { return; }
 
@@ -195,7 +206,12 @@ namespace DAG
             foreach (XElement nodeElement in nodeElements)
             {
                 node = ReadNodeRequested(nodeElement);
-                nodes.Add(node.NodeGuid.ToString(), node);
+                if (node == null) { continue; }
+                string key = node.NodeGuid.ToString();
+                if (!nodes.ContainsKey(key))
+                {
+                    nodes.Add(key, node);
+                }
                 Nodes.Add(node);
             }
 
@@ -568,11 +584,13 @@ namespace DAG
         /// Gets the depth (longest path length) of the graph.
         /// </summary>
         /// <returns>
-        /// The length of the longest path in the graph, or 0 if the graph is empty.
+        /// The length of the longest path in the graph, 0 if the graph is empty,
+        /// or -1 if a cycle is detected.
         /// </returns>
         /// <remarks>
         /// The depth represents the maximum number of sequential dependencies in the graph.
         /// This is calculated by finding the longest path from any root node to any leaf node.
+        /// Returns -1 if the graph contains a cycle (which should not occur in a properly maintained DAG).
         /// </remarks>
         public int GetGraphDepth()
         {
@@ -636,12 +654,6 @@ namespace DAG
         /// </remarks>
         public bool AddConnection(Tuple<OutConnector, InConnector> connection)
         {
-            // Check for cycle before adding
-            if (WouldCreateCycle(connection.Item1, connection.Item2))
-            {
-                return false;
-            }
-
             AddConnections(new Tuple<OutConnector, InConnector>[] { connection });
             return _connections.Contains(connection);
         }
@@ -675,6 +687,18 @@ namespace DAG
 
         private void Nodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+            {
+                // Unsubscribe all tracked nodes
+                foreach (var node in _subscribedNodes)
+                {
+                    node.Inputs.CollectionChanged -= Inputs_CollectionChanged;
+                    node.Outputs.CollectionChanged -= Outputs_CollectionChanged;
+                }
+                _subscribedNodes.Clear();
+                return;
+            }
+
             if (e.OldItems != null)
             {
                 // Remove connections associated with the removed nodes
@@ -687,6 +711,7 @@ namespace DAG
                     // Release the node event handlers
                     node.Inputs.CollectionChanged -= Inputs_CollectionChanged;
                     node.Outputs.CollectionChanged -= Outputs_CollectionChanged;
+                    _subscribedNodes.Remove(node);
 
                     for (int i = _connections.Count - 1; i >= 0; i--)
                     {
@@ -697,7 +722,7 @@ namespace DAG
                     }
                 }
 
-                RemoveConnections(connectionsToRemove.ToArray());
+                ForceRemoveConnections(connectionsToRemove);
             }
 
             if (e.NewItems != null)
@@ -709,6 +734,7 @@ namespace DAG
                     // Add handlers to manage connections if inputs or outputs change
                     node.Inputs.CollectionChanged += Inputs_CollectionChanged;
                     node.Outputs.CollectionChanged += Outputs_CollectionChanged;
+                    _subscribedNodes.Add(node);
                 }
             }
         }
@@ -759,6 +785,22 @@ namespace DAG
 
         #region Private Methods
 
+        /// <summary>
+        /// Removes connections without firing <see cref="PreviewConnectionsRemoved"/>.
+        /// Used during node removal to avoid cancellation of internal cleanup.
+        /// </summary>
+        private void ForceRemoveConnections(IEnumerable<Tuple<OutConnector, InConnector>> connections)
+        {
+            var toRemove = connections.ToArray();
+            if (toRemove.Length == 0) { return; }
+
+            foreach (var con in toRemove)
+            {
+                _ = _connections.Remove(con);
+            }
+            ConnectionsRemoved?.Invoke(toRemove);
+        }
+
         private void RemoveConnections(Tuple<OutConnector, InConnector>[] connectionsToRemove)
         {
             if (connectionsToRemove == null || connectionsToRemove.Length == 0) { return; }
@@ -779,12 +821,14 @@ namespace DAG
         {
             if (connectionsToAdd == null || connectionsToAdd.Length == 0) { return; }
 
-            // Filter to remove connections that already exist or would create cycles
+            // Filter to remove connections that already exist, would create cycles,
+            // or target an InConnector that already has a connection
             var filteredConnections = new List<Tuple<OutConnector, InConnector>>(connectionsToAdd.Length);
             for (int i = 0; i < connectionsToAdd.Length; i++)
             {
                 if (_connections.Contains(connectionsToAdd[i]) == false &&
-                    !WouldCreateCycle(connectionsToAdd[i].Item1, connectionsToAdd[i].Item2))
+                    !WouldCreateCycle(connectionsToAdd[i].Item1, connectionsToAdd[i].Item2) &&
+                    !_connections.Any(c => c.Item2 == connectionsToAdd[i].Item2))
                 {
                     filteredConnections.Add(connectionsToAdd[i]);
                 }
@@ -800,6 +844,36 @@ namespace DAG
                 foreach (var con in connections) { _connections.Add(con); }
                 ConnectionsAdded?.Invoke(connections);
             }
+        }
+
+        #endregion
+
+        #region Validation
+
+        /// <summary>
+        /// Validates the structural integrity of the graph by checking that all connections
+        /// reference nodes that are currently in the <see cref="Nodes"/> collection.
+        /// </summary>
+        /// <returns>A list of human-readable error messages. An empty list indicates the graph is valid.</returns>
+        public List<string> ValidateIntegrity()
+        {
+            var errors = new List<string>();
+            var nodeSet = new HashSet<NodeBase>(Nodes);
+
+            for (int i = 0; i < _connections.Count; i++)
+            {
+                var connection = _connections[i];
+                if (connection.Item1.Parent == null || !nodeSet.Contains(connection.Item1.Parent))
+                {
+                    errors.Add($"Connection {i}: source node is not in Nodes collection.");
+                }
+                if (connection.Item2.Parent == null || !nodeSet.Contains(connection.Item2.Parent))
+                {
+                    errors.Add($"Connection {i}: destination node is not in Nodes collection.");
+                }
+            }
+
+            return errors;
         }
 
         #endregion
@@ -850,11 +924,15 @@ namespace DAG
             XElement connectionsElement = new XElement("Connections");
             foreach (Tuple<OutConnector, InConnector> item in _connections)
             {
+                int fromIdx = item.Item1.Parent.Outputs.IndexOf(item.Item1);
+                int toIdx = item.Item2.Parent.Inputs.IndexOf(item.Item2);
+                if (fromIdx == -1 || toIdx == -1) continue;
+
                 XElement connectionElement = new XElement("Connection");
                 connectionElement.SetAttributeValue("From_Node", item.Item1.Parent.NodeGuid);
-                connectionElement.SetAttributeValue("From_Connector", item.Item1.Parent.Outputs.IndexOf(item.Item1).ToString(CultureInfo.InvariantCulture));
+                connectionElement.SetAttributeValue("From_Connector", fromIdx.ToString(CultureInfo.InvariantCulture));
                 connectionElement.SetAttributeValue("To_Node", item.Item2.Parent.NodeGuid);
-                connectionElement.SetAttributeValue("To_Connector", item.Item2.Parent.Inputs.IndexOf(item.Item2).ToString(CultureInfo.InvariantCulture));
+                connectionElement.SetAttributeValue("To_Connector", toIdx.ToString(CultureInfo.InvariantCulture));
                 connectionsElement.Add(connectionElement);
             }
             graphElement.Add(connectionsElement);

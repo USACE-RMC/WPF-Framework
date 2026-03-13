@@ -115,7 +115,7 @@ namespace OxyPlot.Wpf.Serialization
 
             // Annotation Properties
             var generalProperties = new XElement("General");
-            generalProperties.SetAttributeValue(nameof(annotation.Name), annotation.Name.ToString());
+            generalProperties.SetAttributeValue(nameof(annotation.Name), annotation.Name ?? "");
             generalProperties.SetAttributeValue(nameof(annotation.IsEnabled), annotation.IsEnabled.ToString());
             generalProperties.SetAttributeValue(nameof(annotation.Layer), annotation.Layer.ToString());
             generalProperties.SetAttributeValue(nameof(annotation.XAxisKey), annotation.XAxisKey);

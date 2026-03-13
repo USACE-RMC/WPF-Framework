@@ -106,9 +106,9 @@ namespace DatabaseManager
                         catch (Microsoft.VisualBasic.FileIO.MalformedLineException)
                         {
                             // If the fields are enclosed in quotes then likely failed due to quotes within the quoted text
-                            if (fieldsEnclosedInQuotes)
-                            { 
-                                lineArray = csvParser.ErrorLine.Substring(1, csvParser.ErrorLine.Length - 2).Split(new[] { '"' + "," + '"' }, StringSplitOptions.None); 
+                            if (fieldsEnclosedInQuotes && !string.IsNullOrEmpty(csvParser.ErrorLine) && csvParser.ErrorLine.Length >= 2)
+                            {
+                                lineArray = csvParser.ErrorLine.Substring(1, csvParser.ErrorLine.Length - 2).Split(new[] { '"' + "," + '"' }, StringSplitOptions.None);
                             }
                         }
                         continue;
@@ -121,9 +121,9 @@ namespace DatabaseManager
                     catch (Microsoft.VisualBasic.FileIO.MalformedLineException)
                     {
                         // If the fields are enclosed in quotes then likely failed due to quotes within the quoted text
-                        if (fieldsEnclosedInQuotes)
-                        { 
-                            lineArray = csvParser.ErrorLine.Substring(1, csvParser.ErrorLine.Length - 2).Split(new[] { '"' + "," + '"' }, StringSplitOptions.None); 
+                        if (fieldsEnclosedInQuotes && !string.IsNullOrEmpty(csvParser.ErrorLine) && csvParser.ErrorLine.Length >= 2)
+                        {
+                            lineArray = csvParser.ErrorLine.Substring(1, csvParser.ErrorLine.Length - 2).Split(new[] { '"' + "," + '"' }, StringSplitOptions.None);
                         }
                     }
                 }

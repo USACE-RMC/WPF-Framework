@@ -65,7 +65,7 @@ namespace ExampleLibrary.Series
                 ExtrapolationColor = OxyColors.DarkGray,
                 ExtrapolationLineStyle = LineStyle.Dash,
                 StrokeThickness = 3,
-                IgnoreExtraplotationForScaling = true,
+                IgnoreExtrapolationForScaling = true,
             };
 
             lineSeries.Intervals.Add(new DataRange(double.NegativeInfinity, scatterSeries.Points.Select(p => p.X).Min()));
@@ -260,7 +260,7 @@ namespace ExampleLibrary.Series
                 LineStyle = LineStyle.Solid,
                 ExtrapolationLineStyle = LineStyle.Solid,
                 StrokeThickness = 3,
-                IgnoreExtraplotationForScaling = true,
+                IgnoreExtrapolationForScaling = true,
             };
 
             lineSeries.Intervals.Add(new DataRange(-1000, 10_000));

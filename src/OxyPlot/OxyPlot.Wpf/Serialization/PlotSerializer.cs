@@ -17,9 +17,7 @@ namespace OxyPlot.Wpf.Serialization
     using System.Collections.Generic;
     using System.Globalization;
     using System.Windows;
-    using System.Windows.Markup;
     using System.Windows.Media;
-    using System.Xml;
     using System.Xml.Linq;
     using OxyPlot.Legends;
 
@@ -35,42 +33,47 @@ namespace OxyPlot.Wpf.Serialization
         /// <summary>
         /// The XML tag name used for the root element containing OxyPlot properties.
         /// </summary>
-        public static readonly string OxyplotPropertiesTag = "OxyplotProperties";
+        public const string OxyplotPropertiesTag = "OxyplotProperties";
 
         /// <summary>
         /// The XML tag name used for general plot properties.
         /// </summary>
-        public static readonly string GeneralPropertiesTag = "General";
+        public const string GeneralPropertiesTag = "General";
 
         /// <summary>
         /// The XML tag name used for legend properties.
         /// </summary>
-        public static readonly string LegendPropertiesTag = "Legend";
+        public const string LegendPropertiesTag = "Legend";
 
         /// <summary>
         /// The XML tag name used for the axes collection.
         /// </summary>
-        public static readonly string AxesPropertiesTag = "Axes";
+        public const string AxesPropertiesTag = "Axes";
 
         /// <summary>
         /// The XML tag name used for a single axis.
         /// </summary>
-        public static readonly string AxisPropertiesTag = "Axis";
+        public const string AxisPropertiesTag = "Axis";
 
         /// <summary>
         /// The XML tag name used for the annotations collection.
         /// </summary>
-        public static readonly string AnnotationsPropertiesTag = "Annotations";
+        public const string AnnotationsPropertiesTag = "Annotations";
 
         /// <summary>
         /// The XML tag name used for a single annotation.
         /// </summary>
-        public static readonly string AnnotationPropertiesTag = "Annotation";
+        public const string AnnotationPropertiesTag = "Annotation";
 
         /// <summary>
         /// The XML tag name used for the series collection.
         /// </summary>
-        public static readonly string SeriesPropertiesTag = "Series";
+        public const string SeriesPropertiesTag = "Series";
+
+        /// <summary>
+        /// The XML tag name used for a single series item.
+        /// </summary>
+        public const string SeriesItemTag = "SeriesItem";
 
         #endregion
 
@@ -589,8 +592,15 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            c = (Color)ColorConverter.ConvertFromString(value);
-            return true;
+            try
+            {
+                c = (Color)ColorConverter.ConvertFromString(value);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -608,8 +618,15 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            b = (Brush?)converter.ConvertFromInvariantString(value);
-            return true;
+            try
+            {
+                b = (Brush?)converter.ConvertFromInvariantString(value);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -694,8 +711,15 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            ff = (FontFamily?)converter.ConvertFromInvariantString(value);
-            return true;
+            try
+            {
+                ff = (FontFamily?)converter.ConvertFromInvariantString(value);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -713,8 +737,15 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            fw = (FontWeight)converter.ConvertFromInvariantString(value)!;
-            return true;
+            try
+            {
+                fw = (FontWeight)converter.ConvertFromInvariantString(value)!;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -732,8 +763,15 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            t = (Thickness)converter.ConvertFromInvariantString(value)!;
-            return true;
+            try
+            {
+                t = (Thickness)converter.ConvertFromInvariantString(value)!;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -769,7 +807,7 @@ namespace OxyPlot.Wpf.Serialization
             if (string.IsNullOrEmpty(value)) return false;
 
             dp = value.FromPrettyDataText();
-            return true;
+            return !dp.Equals(OxyPlot.DataPoint.Undefined);
         }
 
         /// <summary>
@@ -805,7 +843,7 @@ namespace OxyPlot.Wpf.Serialization
             if (string.IsNullOrEmpty(value)) return false;
 
             vp = value.FromPrettyScreenText();
-            return true;
+            return !vp.Equals(OxyPlot.ScreenPoint.Undefined);
         }
 
         /// <summary>
@@ -841,9 +879,15 @@ namespace OxyPlot.Wpf.Serialization
         /// </remarks>
         internal static object DeserializeFromXElement(XElement element)
         {
-            var doc = new XmlDocument();
-            doc.LoadXml(element.ToString());
-            return XamlReader.Load(new XmlNodeReader(doc));
+            try
+            {
+                var converter = new BrushConverter();
+                return converter.ConvertFromInvariantString(element.Value);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         #endregion

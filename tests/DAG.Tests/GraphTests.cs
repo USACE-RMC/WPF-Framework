@@ -911,5 +911,178 @@ namespace DAG.Tests
         }
 
         #endregion
+
+        #region Regression Tests
+
+        [TestMethod]
+        public void AddConnection_InConnectorAlreadyConnected_SecondConnectionRejected()
+        {
+            // DAG-20: Each InConnector should accept at most one connection.
+            // Arrange
+            var graph = CreateTestGraph();
+            var nodeA = CreateNode("A");
+            var nodeB = CreateNode("B");
+            var nodeC = CreateNode("C");
+            graph.Nodes.Add(nodeA);
+            graph.Nodes.Add(nodeB);
+            graph.Nodes.Add(nodeC);
+
+            // Act
+            bool firstResult = graph.AddConnection(nodeA.Outputs[0], nodeC.Inputs[0]);
+            bool secondResult = graph.AddConnection(nodeB.Outputs[0], nodeC.Inputs[0]);
+
+            // Assert
+            Assert.IsTrue(firstResult);
+            Assert.IsFalse(secondResult);
+            Assert.AreEqual(1, graph.Connections.Count);
+        }
+
+        [TestMethod]
+        public void NodesClear_RemovesAllNodesAndUnsubscribes()
+        {
+            // DAG-3: Nodes.Clear() should unsubscribe event handlers and not crash.
+            // Arrange
+            var graph = CreateTestGraph();
+            var nodeA = CreateNode("A");
+            var nodeB = CreateNode("B");
+            var nodeC = CreateNode("C");
+            graph.Nodes.Add(nodeA);
+            graph.Nodes.Add(nodeB);
+            graph.Nodes.Add(nodeC);
+            graph.AddConnection(nodeA.Outputs[0], nodeB.Inputs[0]);
+            graph.AddConnection(nodeB.Outputs[0], nodeC.Inputs[0]);
+
+            // Act
+            graph.Nodes.Clear();
+
+            // Assert
+            Assert.AreEqual(0, graph.Nodes.Count);
+            // After clear, adding a new node and manipulating it should not crash
+            var nodeD = CreateNode("D");
+            graph.Nodes.Add(nodeD);
+            Assert.AreEqual(1, graph.Nodes.Count);
+        }
+
+        [TestMethod]
+        public void RemoveSourceNode_ConnectionsAlsoRemoved()
+        {
+            // DAG-4: Removing a node must force-remove all its connections.
+            // Arrange
+            var graph = CreateTestGraph();
+            var nodeA = CreateNode("A");
+            var nodeB = CreateNode("B");
+            graph.Nodes.Add(nodeA);
+            graph.Nodes.Add(nodeB);
+            graph.AddConnection(nodeA.Outputs[0], nodeB.Inputs[0]);
+            Assert.AreEqual(1, graph.Connections.Count);
+
+            // Act - remove the source node
+            graph.Nodes.Remove(nodeA);
+
+            // Assert
+            Assert.AreEqual(1, graph.Nodes.Count);
+            Assert.AreEqual(0, graph.Connections.Count);
+        }
+
+        [TestMethod]
+        public void SerializationRoundTrip_PreservesTopology()
+        {
+            // DAG-9/DAG-28: Round-trip serialization must preserve all nodes and connections.
+            // Arrange: A -> B -> C
+            var graph = CreateTestGraph();
+            var nodeA = CreateNode("A");
+            var nodeB = CreateNode("B");
+            var nodeC = CreateNode("C");
+            graph.Nodes.Add(nodeA);
+            graph.Nodes.Add(nodeB);
+            graph.Nodes.Add(nodeC);
+            graph.AddConnection(nodeA.Outputs[0], nodeB.Inputs[0]);
+            graph.AddConnection(nodeB.Outputs[0], nodeC.Inputs[0]);
+
+            // Act
+            var xml = graph.ToXElement();
+            var restored = new SimpleTestGraph(xml);
+
+            // Assert
+            Assert.AreEqual(3, restored.Nodes.Count);
+            Assert.AreEqual(2, restored.Connections.Count);
+
+            // Verify topology: the source of the first connection feeds the destination of the second
+            var sortedRestored = restored.TopologicalSort();
+            Assert.IsNotNull(sortedRestored);
+            Assert.AreEqual(3, sortedRestored.Count);
+            // Root should be "A", leaf should be "C"
+            Assert.AreEqual("A", sortedRestored[0].Name);
+            Assert.AreEqual("B", sortedRestored[1].Name);
+            Assert.AreEqual("C", sortedRestored[2].Name);
+        }
+
+        [TestMethod]
+        public void Deserialization_MalformedGuid_AssignsNewGuid()
+        {
+            // DAG-8: A node with a malformed GUID should not crash; it gets a new GUID.
+            // Arrange
+            var nodeElement = new System.Xml.Linq.XElement("Node");
+            nodeElement.SetAttributeValue("Name", "BadGuidNode");
+            nodeElement.SetAttributeValue("NodeGuid", "not-a-guid");
+            nodeElement.SetAttributeValue("LeftPosition", "100");
+            nodeElement.SetAttributeValue("TopPosition", "200");
+
+            // Act
+            var node = new SimpleTestNode(nodeElement);
+
+            // Assert
+            Assert.IsNotNull(node);
+            Assert.AreNotEqual(Guid.Empty, node.NodeGuid);
+            Assert.AreEqual("BadGuidNode", node.Name);
+        }
+
+        [TestMethod]
+        public void GetGraphDepth_MixedConnectedAndIsolatedNodes_ReturnsChainDepth()
+        {
+            // DAG-27: Isolated nodes should not affect the depth of the longest chain.
+            // Arrange: A -> B -> C (depth 2) and isolated node D
+            var graph = CreateTestGraph();
+            var nodeA = CreateNode("A");
+            var nodeB = CreateNode("B");
+            var nodeC = CreateNode("C");
+            var nodeD = CreateNode("D");
+            graph.Nodes.Add(nodeA);
+            graph.Nodes.Add(nodeB);
+            graph.Nodes.Add(nodeC);
+            graph.Nodes.Add(nodeD);
+            graph.AddConnection(nodeA.Outputs[0], nodeB.Inputs[0]);
+            graph.AddConnection(nodeB.Outputs[0], nodeC.Inputs[0]);
+
+            // Act
+            int depth = graph.GetGraphDepth();
+
+            // Assert
+            Assert.AreEqual(2, depth);
+        }
+
+        [TestMethod]
+        public void ValidateIntegrity_CleanGraph_ReturnsNoErrors()
+        {
+            // DAG-5: A properly constructed graph should pass integrity validation.
+            // Arrange
+            var graph = CreateTestGraph();
+            var nodeA = CreateNode("A");
+            var nodeB = CreateNode("B");
+            var nodeC = CreateNode("C");
+            graph.Nodes.Add(nodeA);
+            graph.Nodes.Add(nodeB);
+            graph.Nodes.Add(nodeC);
+            graph.AddConnection(nodeA.Outputs[0], nodeB.Inputs[0]);
+            graph.AddConnection(nodeB.Outputs[0], nodeC.Inputs[0]);
+
+            // Act
+            var errors = graph.ValidateIntegrity();
+
+            // Assert
+            Assert.AreEqual(0, errors.Count);
+        }
+
+        #endregion
     }
 }

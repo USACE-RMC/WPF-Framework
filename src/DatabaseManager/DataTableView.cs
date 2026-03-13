@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 #if NET9_0_OR_GREATER
 using System.Text.Json;
 #else
@@ -45,7 +44,7 @@ namespace DatabaseManager
     /// <summary>
     /// Abstract base class for managing database files, providing shared functionality such as event hooks and static helpers.
     /// </summary>
-    public abstract class DataTableView
+    public abstract class DataTableView : IDisposable
     {
 
         #region Variables
@@ -234,12 +233,12 @@ namespace DatabaseManager
             _columnNames = GetStoredColumnNames();
             _columnTypes = GetStoredColumnTypes();
             _viewToStoredRowIndex = new int[_nRows];
-            for (int i = 0; i < _viewToStoredRowIndex.Count(); i++)
+            for (int i = 0; i < _viewToStoredRowIndex.Length; i++)
             { 
                 _viewToStoredRowIndex[i] = i; 
             }
-            _viewToStoredColumnIndex = new int[(_columnNames.Count())];
-            for (int i = 0; i < _viewToStoredColumnIndex.Count(); i++)
+            _viewToStoredColumnIndex = new int[(_columnNames.Length)];
+            for (int i = 0; i < _viewToStoredColumnIndex.Length; i++)
             { 
                 _viewToStoredColumnIndex[i] = i; 
             }
@@ -404,8 +403,8 @@ namespace DatabaseManager
                         {
                             {
                                 var withBlock = (DeleteColumnsEdit)_edits[i];
-                                var columnsToDelete = new string[(withBlock.ColumnsDeleted.Count())];
-                                for (int j = 0; j < withBlock.ColumnsDeleted.Count(); j++)
+                                var columnsToDelete = new string[(withBlock.ColumnsDeleted.Length)];
+                                for (int j = 0; j < withBlock.ColumnsDeleted.Length; j++)
                                     columnsToDelete[j] = _storedColumnNames[withBlock.ColumnsDeleted[j].ColumnIndex];
                                 DeleteColumnsFromDatabase(columnsToDelete);
                             }
@@ -434,10 +433,10 @@ namespace DatabaseManager
                         {
                             {
                                 var withBlock1 = (MultiCellEdit)_edits[i];
-                                var columnIndices = new int[(withBlock1.CellEdits.Count())];
-                                var rowIndices = new int[(withBlock1.CellEdits.Count())];
-                                var cellvalues = new object[(withBlock1.CellEdits.Count())];
-                                for (int j = 0; j < columnIndices.Count(); j++)
+                                var columnIndices = new int[(withBlock1.CellEdits.Length)];
+                                var rowIndices = new int[(withBlock1.CellEdits.Length)];
+                                var cellvalues = new object[(withBlock1.CellEdits.Length)];
+                                for (int j = 0; j < columnIndices.Length; j++)
                                 {
                                     columnIndices[j] = withBlock1.CellEdits[j].ColumnIndex;
                                     rowIndices[j] = withBlock1.CellEdits[j].RowIndex;
@@ -453,10 +452,10 @@ namespace DatabaseManager
                             // for now I am just applying the edits as a multi-cell edit. This works alright since the database calls put it in a transaction. 
                             {
                                 var withBlock2 = ((RowEdit)_edits[i]).GetRowData();
-                                var columnIndices = new int[(withBlock2.CellEdits.Count())];
-                                var rowIndices = new int[(withBlock2.CellEdits.Count())];
-                                var cellvalues = new object[(withBlock2.CellEdits.Count())];
-                                for (int j = 0; j < columnIndices.Count(); j++)
+                                var columnIndices = new int[(withBlock2.CellEdits.Length)];
+                                var rowIndices = new int[(withBlock2.CellEdits.Length)];
+                                var cellvalues = new object[(withBlock2.CellEdits.Length)];
+                                for (int j = 0; j < columnIndices.Length; j++)
                                 {
                                     columnIndices[j] = withBlock2.CellEdits[j].ColumnIndex;
                                     rowIndices[j] = withBlock2.CellEdits[j].RowIndex;
@@ -656,6 +655,7 @@ namespace DatabaseManager
         public void EditCell(int rowIndex, string columnName, object cellEdit)
         {
             int columnIndex = Array.IndexOf(_columnNames, columnName);
+            if (columnIndex < 0) throw new ArgumentException($"Column '{columnName}' not found.", nameof(columnName));
             EditCell(rowIndex, columnIndex, cellEdit);
         }
 
@@ -668,10 +668,10 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown if a cell edit contains an invalid type.</exception>
         public void EditCells(int[] rowIndices, int[] columnIndices, object[] cellEdits)
         {
-            if (rowIndices.Count() != columnIndices.Count()) { return; }
-            if (columnIndices.Count() != cellEdits.Count()) { return; }
-            var cellEditSet = new CellEdit[(rowIndices.Count())];
-            for (int i = 0; i < rowIndices.Count(); i++)
+            if (rowIndices.Length != columnIndices.Length) { return; }
+            if (columnIndices.Length != cellEdits.Length) { return; }
+            var cellEditSet = new CellEdit[(rowIndices.Length)];
+            for (int i = 0; i < rowIndices.Length; i++)
             {
                 if (ConvertToColumnType(_columnTypes[columnIndices[i]], ref cellEdits[i]) == false)
                 { 
@@ -691,11 +691,11 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown if the values don't match column count or types.</exception>
         public void EditRow(int rowIndex, object[] rowData)
         {
-            if (rowData.Count() != _columnNames.Count())
+            if (rowData.Length != _columnNames.Length)
             { 
                 throw new Exception("Number of columns in row edit do not match the number of columns in the current view."); 
             }
-            for (int i = 0; i < rowData.Count(); i++)
+            for (int i = 0; i < rowData.Length; i++)
             {
                 if (ConvertToColumnType(_columnTypes[i], ref rowData[i]) == false)
                 { 
@@ -714,12 +714,12 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown if the value count or types are invalid.</exception>
         public void EditColumn(int columnIndex, object[] columnData)
         {
-            if (columnData.Count() == 0) { return; }
-            if (columnData.Count() != _nRows)
+            if (columnData.Length == 0) { return; }
+            if (columnData.Length != _nRows)
             { 
                 throw new Exception("Number of records in the column to edit do not match the number of records in the current view."); 
             }
-            for (int i = 0; i < columnData.Count(); i++)
+            for (int i = 0; i < columnData.Length; i++)
             {
                 // this is a hack to make it work with byte arrays. not the best solution by any means.
                 var b = columnData[i];
@@ -742,13 +742,13 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown if the value count or types are invalid.</exception>
         public void EditColumn<T>(int columnIndex, T[] columnData)
         {
-            if (columnData.Count() == 0) { return; }
-            if (columnData.Count() != _nRows)
+            if (columnData.Length == 0) { return; }
+            if (columnData.Length != _nRows)
             {
                 throw new Exception("Number of records in the column to edit do not match the number of records in the current view."); 
             }
-            var editedColumn = new object[(columnData.Count())];
-            for (int i = 0; i < columnData.Count(); i++)
+            var editedColumn = new object[(columnData.Length)];
+            for (int i = 0; i < columnData.Length; i++)
             {
                 // this is a hack to make it work with byte arrays. not the best solution by any means.
                 object b = columnData[i];
@@ -823,11 +823,11 @@ namespace DatabaseManager
         {
             if (rowIndices == null)
                 return;
-            if (rowIndices.Count() == 0)
+            if (rowIndices.Length == 0)
             {
                 return;
             }
-            else if (rowIndices.Count() == 1)
+            else if (rowIndices.Length == 1)
             {
                 DeleteRow(rowIndices[0]);
             }
@@ -838,12 +838,12 @@ namespace DatabaseManager
                 {
                     throw new Exception("Attempting to delete a row that is not in the current view."); 
                 }
-                if (rowIndices[rowIndices.Count() - 1] >= _nRows)
+                if (rowIndices[rowIndices.Length - 1] >= _nRows)
                 {
                     throw new Exception("Attempting to delete a row that is not in the current view."); 
                 }
-                var rowsToDelete = new DeleteRowEdit[(rowIndices.Count())];
-                for (int i = 0; i < rowIndices.Count(); i++)
+                var rowsToDelete = new DeleteRowEdit[(rowIndices.Length)];
+                for (int i = 0; i < rowIndices.Length; i++)
                 {
                     rowsToDelete[i] = new DeleteRowEdit(rowIndices[i]); 
                 }
@@ -858,8 +858,8 @@ namespace DatabaseManager
         /// </summary>
         public void AddRow()
         {
-            var dummyRow = new object[(_columnNames.Count())];
-            for (int i = 0; i < _columnNames.Count(); i++)
+            var dummyRow = new object[(_columnNames.Length)];
+            for (int i = 0; i < _columnNames.Length; i++)
             { 
                 dummyRow[i] = DBNull.Value;
             }
@@ -874,12 +874,12 @@ namespace DatabaseManager
         public void AddRow(object[] rowData)
         {
             if (rowData == null) { return; }
-            if (rowData.Count() == 0) { return; }
-            if (rowData.Count() != _columnNames.Count())
+            if (rowData.Length == 0) { return; }
+            if (rowData.Length != _columnNames.Length)
             {
                 throw new Exception("Number of columns in a row to be added do not match the number of columns in the current view."); 
             }
-            for (int i = 0; i < rowData.Count(); i++)
+            for (int i = 0; i < rowData.Length; i++)
             {
                 if (ConvertToColumnType(_columnTypes[i], ref rowData[i]) == false)
                 {
@@ -902,11 +902,11 @@ namespace DatabaseManager
             if (rowData.Count == 0) { return; }
             for (int i = 0; i < rowData.Count; i++)
             {
-                if (rowData[i].Count() != _columnNames.Count())
+                if (rowData[i].Length != _columnNames.Length)
                 {
                     throw new Exception("Number of columns in a row to be added do not match the number of columns in the current view."); 
                 }
-                for (int j = 0; j < rowData[i].Count(); j++)
+                for (int j = 0; j < rowData[i].Length; j++)
                 {
                     var tmp = rowData[i];
                     var argvalue = tmp[j];
@@ -938,7 +938,7 @@ namespace DatabaseManager
         {
             if (newRowData == null) { return; }
             if (newRowData.Rows.Count == 0) { return; }
-            if (newRowData.Columns.Count != _columnNames.Count())
+            if (newRowData.Columns.Count != _columnNames.Length)
             {
                 throw new Exception("Number of columns in a row to be added do not match the number of columns in the current view."); 
             }
@@ -975,7 +975,7 @@ namespace DatabaseManager
         public void DeleteColumn(int columnIndex)
         {
             if (columnIndex < 0) { return; }
-            if (columnIndex >= _columnNames.Count())
+            if (columnIndex >= _columnNames.Length)
             {
                 throw new Exception("Attempting to delete a column that is not in the current view."); 
             }
@@ -988,10 +988,11 @@ namespace DatabaseManager
         /// This method is not fully tested. Use at own risk.
         /// </summary>
         /// <param name="columnIndex">Index of the column to hide.</param>
+        [Obsolete("This method has not been fully validated. Use with caution.")]
         public void HideColumn(int columnIndex)
         {
             if (columnIndex < 0) { return; }
-            if (columnIndex >= _columnNames.Count())
+            if (columnIndex >= _columnNames.Length)
             {
                 throw new Exception("Attempting to hide a column that is not in the current view."); 
             }
@@ -1004,6 +1005,7 @@ namespace DatabaseManager
         /// This method is not fully tested. Use at own risk.
         /// </summary>
         /// <param name="columnName">name of the column to hide.</param>
+        [Obsolete("This method has not been fully validated. Use with caution.")]
         public void HideColumn(string columnName)
         {
             if (_columnNames.Contains(columnName) == false)
@@ -1023,19 +1025,19 @@ namespace DatabaseManager
         public void DeleteColumns(int[] columnIndices)
         {
             if (columnIndices == null) { return; }
-            if (columnIndices.Count() == 0) { return; }
+            if (columnIndices.Length == 0) { return; }
             Array.Sort(columnIndices);
             if (columnIndices[0] < 0)
             {
                 throw new Exception("Attempting to delete a column that is not in the current view."); 
             }
-            if (columnIndices[columnIndices.Count() - 1] >= _columnNames.Count())
+            if (columnIndices[columnIndices.Length - 1] >= _columnNames.Length)
             {
                 throw new Exception("Attempting to delete a column that is not in the current view."); 
             }
             // 
-            var columnsToDelete = new DeleteColumnEdit[(columnIndices.Count())];
-            for (int i = 0; i < columnIndices.Count(); i++)
+            var columnsToDelete = new DeleteColumnEdit[(columnIndices.Length)];
+            for (int i = 0; i < columnIndices.Length; i++)
             {
                 columnsToDelete[i] = new DeleteColumnEdit(columnIndices[i]); 
             }
@@ -1064,13 +1066,13 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown if value count mismatches row count.</exception>
         public void AddColumn<T>(string columnName, T[] columnData)
         {
-            if (columnData.Count() != _nRows)
+            if (columnData.Length != _nRows)
             {
                 throw new Exception("Number of records in the column to edit do not match the number of records in the current view."); 
             }
-            AddEdit(new AddColumnEdit<T>(columnData, _columnNames.Count(), columnName));
+            AddEdit(new AddColumnEdit<T>(columnData, _columnNames.Length, columnName));
             // update column information and existing edits
-            ColumnAddMade(_columnNames.Count(), true, columnData);
+            ColumnAddMade(_columnNames.Length, true, columnData);
         }
 
         /// <summary>
@@ -1082,13 +1084,13 @@ namespace DatabaseManager
         /// <exception cref="Exception">Thrown if values mismatch expected types.</exception>
         public void AddColumn(string columnName, object[] columnData, Type columnDataType)
         {
-            if (columnData.Count() != _nRows)
+            if (columnData.Length != _nRows)
             { 
                 throw new Exception("Number of records in the column to edit do not match the number of records in the current view."); 
             }
-            if (columnData.Count() > 0)
+            if (columnData.Length > 0)
             {
-                for (int i = 0; i < columnData.Count(); i++)
+                for (int i = 0; i < columnData.Length; i++)
                 {
                     // this is a hack to make it work with byte arrays. not the best solution by any means.
                     var b = columnData[i];
@@ -1166,23 +1168,23 @@ namespace DatabaseManager
             if (_columnNames == null) { return; }
             if (ColumnTypes == null) { return; }
             if (columnData.Count == 0) { return; }
-            if (_columnNames.Count() != columnData.Count)
-            { 
-                throw new Exception("Number of column names and column datasets do not match for the columns to add."); 
+            if (namesOfColumns.Length != columnData.Count)
+            {
+                throw new Exception("Number of column names and column datasets do not match for the columns to add.");
             }
-            if (_columnNames.Count() != columnDataTypes.Count())
+            if (namesOfColumns.Length != columnDataTypes.Length)
             { 
                 throw new Exception("Number of column names and column types do not match for the columns to add.");
             }
             for (int i = 0; i < columnData.Count; i++)
             {
-                if (columnData[i].Count() != _nRows)
+                if (columnData[i].Length != _nRows)
                 { 
                     throw new Exception("Number of records in the column to edit do not match the number of records in the current view."); 
                 }
-                if (columnData[i].Count() > 0)
+                if (columnData[i].Length > 0)
                 {
-                    for (int j = 0; j < columnData[i].Count(); j++)
+                    for (int j = 0; j < columnData[i].Length; j++)
                     {
                         if (columnData[i][j].GetType() != columnDataTypes[i])
                         { 
@@ -1192,11 +1194,11 @@ namespace DatabaseManager
                 }
             }
             // 
-            var columnsToAdd = new IColumnEdit[(namesOfColumns.Count())];
-            var addedIndices = new int[(namesOfColumns.Count())];
-            for (int i = 0; i < namesOfColumns.Count(); i++)
+            var columnsToAdd = new IColumnEdit[(namesOfColumns.Length)];
+            var addedIndices = new int[(namesOfColumns.Length)];
+            for (int i = 0; i < namesOfColumns.Length; i++)
             {
-                addedIndices[i] = _columnNames.Count() + i;
+                addedIndices[i] = _columnNames.Length + i;
                 switch (columnDataTypes[i])
                 {
                     case var @case when @case == typeof(double):
@@ -1253,7 +1255,7 @@ namespace DatabaseManager
             AddEdit(new AddColumnsEdit(columnsToAdd));
             UpdateColumnInfo();
             // 
-            for (int i = 0; i < addedIndices.Count(); i++)
+            for (int i = 0; i < addedIndices.Length; i++)
             {
                 for (int j = 0; j < _editIndex; j++)
                 {
@@ -1294,7 +1296,7 @@ namespace DatabaseManager
                     {
                         int[] rowIndices = ((DeleteRowsEdit)editToUndo).GetDeletedRowIndices();
                         var rowData = new List<object[]>();
-                        for (int i = 0; i < rowIndices.Count(); i++)
+                        for (int i = 0; i < rowIndices.Length; i++)
                             rowData.Add(null);
                         RowAddsMade(rowIndices.ToArray(), rowData);
                         break;
@@ -1355,6 +1357,7 @@ namespace DatabaseManager
         /// </summary>
         public void RedoEdit()
         {
+            if (!CanRedo()) return;
             if (_editIndex < _edits.Count - 1)
             { 
                 _editIndex += 1;
@@ -1472,7 +1475,7 @@ namespace DatabaseManager
         /// <param name="rowIndices">Indices of rows deleted.</param>
         private void RowDeletesMade(int[] rowIndices)
         {
-            _nRows -= rowIndices.Count();
+            _nRows -= rowIndices.Length;
             // 
             UpdateRowInfo();
             // 
@@ -1484,7 +1487,7 @@ namespace DatabaseManager
                 {
                     continue;
                 }
-                for (int j = rowIndices.Count() - 1; j >= 0; j -= 1)
+                for (int j = rowIndices.Length - 1; j >= 0; j -= 1)
                 {
                     _edits[i].RowDeleted(rowIndices[j]);
                 }
@@ -1530,7 +1533,7 @@ namespace DatabaseManager
         /// <param name="rowData">Row data for each index.</param>
         private void RowAddsMade(int[] rowIndices, List<object[]> rowData)
         {
-            _nRows += rowIndices.Count();
+            _nRows += rowIndices.Length;
             // 
             UpdateRowInfo();
             // 
@@ -1542,7 +1545,7 @@ namespace DatabaseManager
                 {
                     continue;
                 }
-                for (int j = 0; j < rowIndices.Count(); j++)
+                for (int j = 0; j < rowIndices.Length; j++)
                 {
                     _edits[i].RowAdded(rowIndices[j], rowData[j]); 
                 }
@@ -1575,7 +1578,7 @@ namespace DatabaseManager
         {
             UpdateColumnInfo();
             // 
-            for (int i = 0; i < columnIndices.Count(); i++)
+            for (int i = 0; i < columnIndices.Length; i++)
             {
                 for (int j = 0; j <= _editIndex; j++)
                 { 
@@ -1624,7 +1627,7 @@ namespace DatabaseManager
         {
             UpdateColumnInfo();
             // 
-            for (int i = 0; i < columnIndices.Count(); i++)
+            for (int i = 0; i < columnIndices.Length; i++)
             {
                 for (int j = 0; j <= _editIndex; j++)
                 { 
@@ -1658,7 +1661,7 @@ namespace DatabaseManager
                         }
                     case var case1 when case1 == typeof(AddRowsEdit):
                         {
-                            for (int j = 0; j < ((AddRowsEdit)edit).AddRowEdits.Count(); j++)
+                            for (int j = 0; j < ((AddRowsEdit)edit).AddRowEdits.Length; j++)
                                 newStored.Add(-1);
                             break;
                         }
@@ -1671,13 +1674,13 @@ namespace DatabaseManager
                         {
                             {
                                 var withBlock = (DeleteRowsEdit)edit;
-                                var rowsdeleted = new int[(withBlock.DeleteRowEdits.Count())];
-                                for (int j = 0; j < withBlock.DeleteRowEdits.Count(); j++)
+                                var rowsdeleted = new int[(withBlock.DeleteRowEdits.Length)];
+                                for (int j = 0; j < withBlock.DeleteRowEdits.Length; j++)
                                 { 
                                     rowsdeleted[j] = withBlock.DeleteRowEdits[j].RowIndex; 
                                 }
                                 Array.Sort(rowsdeleted);
-                                for (int j = rowsdeleted.Count() - 1; j >= 0; j -= 1)
+                                for (int j = rowsdeleted.Length - 1; j >= 0; j -= 1)
                                 { 
                                     newStored.RemoveAt(rowsdeleted[j]); 
                                 }
@@ -1752,7 +1755,7 @@ namespace DatabaseManager
                         {
                             {
                                 var withBlock = (DeleteColumnsEdit)edit;
-                                for (int j = withBlock.ColumnsDeleted.Count() - 1; j >= 0; j -= 1)
+                                for (int j = withBlock.ColumnsDeleted.Length - 1; j >= 0; j -= 1)
                                 {
                                     newColumnNames.RemoveAt(withBlock.ColumnsDeleted[j].ColumnIndex);
                                     newColumnTypes.RemoveAt(withBlock.ColumnsDeleted[j].ColumnIndex);
@@ -1796,7 +1799,7 @@ namespace DatabaseManager
             }
             //
             // Check if column and row exist in stored data (newly added columns/rows have index -1)
-            if (_viewToStoredColumnIndex[columnIndex] >= 0 && _viewToStoredColumnIndex[columnIndex] < _storedColumnNames.Count() &&
+            if (_viewToStoredColumnIndex[columnIndex] >= 0 && _viewToStoredColumnIndex[columnIndex] < _storedColumnNames.Length &&
                 _viewToStoredRowIndex[rowIndex] >= 0 && _viewToStoredRowIndex[rowIndex] < _storedNumberOfRows)
             {
                 return GetStoredCell(_viewToStoredColumnIndex[columnIndex], _viewToStoredRowIndex[rowIndex]);
@@ -1814,10 +1817,12 @@ namespace DatabaseManager
         public object GetCell(string columnName, int rowIndex)
         {
             if (_editIndex < 0)
-            { 
+            {
                 return GetStoredCell(columnName, rowIndex);
             }
-            return GetCell(Array.IndexOf(_columnNames, columnName), rowIndex);
+            int columnIndex = Array.IndexOf(_columnNames, columnName);
+            if (columnIndex < 0) throw new ArgumentException($"Column '{columnName}' not found.", nameof(columnName));
+            return GetCell(columnIndex, rowIndex);
         }
 
         /// <summary>
@@ -1832,8 +1837,8 @@ namespace DatabaseManager
             { 
                 return GetStoredCells(columnIndices, rowIndices); 
             }
-            var result = new object[(columnIndices.Count())];
-            for (int i = 0; i < columnIndices.Count(); i++)
+            var result = new object[(columnIndices.Length)];
+            for (int i = 0; i < columnIndices.Length; i++)
             { 
                 result[i] = GetCell(columnIndices[i], rowIndices[i]);
             }
@@ -1852,13 +1857,13 @@ namespace DatabaseManager
                 return GetStoredRow(rowIndex); 
             }
             // Get the stored data
-            var result = new object[(_columnNames.Count())];
+            var result = new object[(_columnNames.Length)];
             if (_viewToStoredRowIndex[rowIndex] < _storedNumberOfRows && _viewToStoredRowIndex[rowIndex] >= 0)
             {
                 object[] storedrow = GetStoredRow(_viewToStoredRowIndex[rowIndex]);
-                for (int i = 0; i < _viewToStoredColumnIndex.Count(); i++)
+                for (int i = 0; i < _viewToStoredColumnIndex.Length; i++)
                 {
-                    if (_viewToStoredColumnIndex[i] < _storedColumnNames.Count() && _viewToStoredColumnIndex[i] >= 0)
+                    if (_viewToStoredColumnIndex[i] < _storedColumnNames.Length && _viewToStoredColumnIndex[i] >= 0)
                     {
                         result[i] = storedrow[_viewToStoredColumnIndex[i]];
                     }
@@ -1890,8 +1895,8 @@ namespace DatabaseManager
             }
             // 
             object[] allColumnsResult = GetRow(rowIndex);
-            var result = new object[(columnIndices.Count())];
-            for (int i = 0; i < columnIndices.Count(); i++)
+            var result = new object[(columnIndices.Length)];
+            for (int i = 0; i < columnIndices.Length; i++)
             { 
                 result[i] = allColumnsResult[columnIndices[i]]; 
             }
@@ -1911,8 +1916,8 @@ namespace DatabaseManager
                 return GetStoredRow(rowIndex, columns); 
             }
             // 
-            var columnIndices = new int[(columns.Count())];
-            for (int i = 0; i < columns.Count(); i++)
+            var columnIndices = new int[(columns.Length)];
+            for (int i = 0; i < columns.Length; i++)
             { 
                 columnIndices[i] = Array.IndexOf(_columnNames, columns[i]); 
             }
@@ -1953,10 +1958,10 @@ namespace DatabaseManager
                 return GetStoredColumn(columnIndex);
             }
             var result = new object[_nRows];
-            if (_viewToStoredColumnIndex[columnIndex] >= 0 && _viewToStoredColumnIndex[columnIndex] < _storedColumnNames.Count())
+            if (_viewToStoredColumnIndex[columnIndex] >= 0 && _viewToStoredColumnIndex[columnIndex] < _storedColumnNames.Length)
             {
                 object[] storedcolumn = GetStoredColumn(_viewToStoredColumnIndex[columnIndex]);
-                for (int i = 0; i < _viewToStoredRowIndex.Count(); i++)
+                for (int i = 0; i < _viewToStoredRowIndex.Length; i++)
                 {
                     if (_viewToStoredRowIndex[i] >= 0 && _viewToStoredRowIndex[i] < _storedNumberOfRows)
                     {
@@ -1985,10 +1990,12 @@ namespace DatabaseManager
         public object[] GetColumn(string columnName)
         {
             if (_editIndex < 0)
-            { 
+            {
                 return GetStoredColumn(columnName);
             }
-            return GetColumn(Array.IndexOf(_columnNames, columnName));
+            int columnIndex = Array.IndexOf(_columnNames, columnName);
+            if (columnIndex < 0) throw new ArgumentException($"Column '{columnName}' not found.", nameof(columnName));
+            return GetColumn(columnIndex);
         }
 
         #endregion
@@ -2399,7 +2406,7 @@ namespace DatabaseManager
                 loopStep = -1; 
             }
             object[] columnArray = GetColumn(columnName);
-            if (columnArray.Count() == 0)
+            if (columnArray.Length == 0)
             { 
                 return -1; 
             }
@@ -2437,7 +2444,7 @@ namespace DatabaseManager
         /// <returns>The row index where the value was found, or -1 if not found.</returns>
         public int SearchColumn(int startIndex, int endIndex, int columnIndex, string searchValue, bool matchCase, bool wholeWord)
         {
-            if (columnIndex < 0 || columnIndex >= _columnNames.Count())
+            if (columnIndex < 0 || columnIndex >= _columnNames.Length)
             { 
                 return -1; 
             }
@@ -2451,7 +2458,7 @@ namespace DatabaseManager
         public List<string> GetNumericColumns()
         {
             var numericColumns = new List<string>();
-            for (int i = 0; i < _columnNames.Count(); i++)
+            for (int i = 0; i < _columnNames.Length; i++)
             {
                 if (DatabaseManager.IsNumericType(_columnTypes[i]))
                 {
@@ -2501,8 +2508,8 @@ namespace DatabaseManager
             // 
             if (columnIndicesToExport == null)
             {
-                columnIndicesToExport = new int[(_columnNames.Count())];
-                for (int i = 0; i < _columnNames.Count(); i++)
+                columnIndicesToExport = new int[(_columnNames.Length)];
+                for (int i = 0; i < _columnNames.Length; i++)
                 { 
                     columnIndicesToExport[i] = i; 
                 }
@@ -2517,17 +2524,17 @@ namespace DatabaseManager
             }
             var csvWriter = new StreamWriter(filePath);
             csvWriter.Write(_columnNames[columnIndicesToExport[0]]);
-            for (int i = 1; i < columnIndicesToExport.Count(); i++)
+            for (int i = 1; i < columnIndicesToExport.Length; i++)
             { 
                 csvWriter.Write("," + _columnNames[columnIndicesToExport[i]]);
             }
             csvWriter.WriteLine();
             object[] row;
-            for (int i = 0; i < rowIndicesToExport.Count(); i++)
+            for (int i = 0; i < rowIndicesToExport.Length; i++)
             {
                 row = GetRow(rowIndicesToExport[i], columnIndicesToExport);
                 csvWriter.Write(row[0].ToString());
-                for (int j = 1; j < row.Count(); j++)
+                for (int j = 1; j < row.Length; j++)
                 { 
                     csvWriter.Write("," + row[j].ToString());
                 }
@@ -2586,7 +2593,7 @@ namespace DatabaseManager
                     headerRange.Style.Border.BottomBorder = ClosedXML.Excel.XLBorderStyleValues.Medium;
                     headerRange.Style.Border.BottomBorderColor = ClosedXML.Excel.XLColor.FromArgb(125, 140, 150);
                     headerRange.SetAutoFilter(true);
-                    ws.Columns(1, _columnNames.Count()).AdjustToContents();
+                    ws.Columns(1, _columnNames.Length).AdjustToContents();
                     // 
                     wb.SaveAs(filePath);
                 }
@@ -2605,7 +2612,7 @@ namespace DatabaseManager
                     headerRange.Style.Border.BottomBorder = ClosedXML.Excel.XLBorderStyleValues.Medium;
                     headerRange.Style.Border.BottomBorderColor = ClosedXML.Excel.XLColor.FromArgb(125, 140, 150);
                     headerRange.SetAutoFilter(true);
-                    ws.Columns(1, _columnNames.Count()).AdjustToContents();
+                    ws.Columns(1, _columnNames.Length).AdjustToContents();
                     // 
                     wb.SaveAs(filePath);
                 }
@@ -2622,8 +2629,8 @@ namespace DatabaseManager
         {
             if (columnIndicesToExport == null)
             {
-                columnIndicesToExport = new int[(_columnNames.Count())];
-                for (int i = 0; i < _columnNames.Count(); i++)
+                columnIndicesToExport = new int[(_columnNames.Length)];
+                for (int i = 0; i < _columnNames.Length; i++)
                 { 
                     columnIndicesToExport[i] = i; 
                 }
@@ -2638,7 +2645,7 @@ namespace DatabaseManager
             }
             // 
             var dt = new DataTable();
-            for (int i = 0; i < columnIndicesToExport.Count(); i++)
+            for (int i = 0; i < columnIndicesToExport.Length; i++)
             {
                 if (dt.Columns.Contains(_columnNames[columnIndicesToExport[i]]))
                 {
@@ -2662,7 +2669,7 @@ namespace DatabaseManager
             {
                 _parentDatabase.Open(); 
             }
-            for (int i = 0; i < rowIndicesToExport.Count(); i++)
+            for (int i = 0; i < rowIndicesToExport.Length; i++)
             { 
                 dt.Rows.Add(GetRow(rowIndicesToExport[i], columnIndicesToExport));
             }
@@ -2689,8 +2696,8 @@ namespace DatabaseManager
             }
             if (columnIndicesToExport == null)
             {
-                columnIndicesToExport = new int[(_columnNames.Count())];
-                for (int i = 0; i < _columnNames.Count(); i++)
+                columnIndicesToExport = new int[(_columnNames.Length)];
+                for (int i = 0; i < _columnNames.Length; i++)
                 { 
                     columnIndicesToExport[i] = i; 
                 }
@@ -2705,7 +2712,7 @@ namespace DatabaseManager
             }
             // only include DBF fields that are supported
             var filteredColumnsToExport = new List<int>();
-            for (int i = 0; i < columnIndicesToExport.Count(); i++)
+            for (int i = 0; i < columnIndicesToExport.Length; i++)
             {
                 switch (_columnTypes[i])
                 {
@@ -2754,7 +2761,7 @@ namespace DatabaseManager
                 DbfReader.CreateDbf(filePath, dt);
                 var outputDbf = new DbfReader(filePath);
                 var outputDbft = outputDbf.GetTableManager(Path.GetFileNameWithoutExtension(filePath));
-                for (int i = 1; i < rowIndicesToExport.Count(); i++)
+                for (int i = 1; i < rowIndicesToExport.Length; i++)
                 {
                     outputDbft.AddRow(GetRow(rowIndicesToExport[i], filteredColumnsToExport.ToArray())); 
                 }
@@ -3042,5 +3049,28 @@ namespace DatabaseManager
                     }
             }
         }
+
+        #region IDisposable
+
+        /// <summary>
+        /// Releases unmanaged and optionally managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources if needed.
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }

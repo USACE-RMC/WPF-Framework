@@ -152,9 +152,9 @@ namespace ExpressionParser
         {
             bool hasVariable = false;
             if (!(_stringNode == null))
-                hasVariable = _stringNode.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _stringNode.ContainsVariable();
             if (!(_nCharacters == null))
-                hasVariable = _nCharacters.ContainsVariable() ? true : hasVariable;
+                hasVariable |= _nCharacters.ContainsVariable();
             // 
             return hasVariable;
         }

@@ -86,7 +86,7 @@ namespace OxyPlot.Series
         /// be taken into account when calculating the minima and maxima of the dataset.
         /// These regions will hence also be ignored when auto-scaling the axes.
         /// </summary>
-        public bool IgnoreExtraplotationForScaling { get; set; }
+        public bool IgnoreExtrapolationForScaling { get; set; }
 
         /// <summary>
         /// Gets the list of X intervals within which the line is rendered using the second color and style.
@@ -162,7 +162,7 @@ namespace OxyPlot.Series
         /// </summary>
         protected internal override void UpdateMaxMin()
         {
-            if (this.IgnoreExtraplotationForScaling && this.orderedIntervals.Any())
+            if (this.IgnoreExtrapolationForScaling && this.orderedIntervals.Any())
             {
                 this.MinX = this.Points
                     .Where(p => !this.InAnyInterval(p.X))

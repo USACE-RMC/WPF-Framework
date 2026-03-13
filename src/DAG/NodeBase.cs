@@ -71,6 +71,8 @@ namespace DAG
     {
         #region Fields
 
+        private const string NodeElementName = "Node";
+
         private Guid _nodeGuid = Guid.NewGuid();
         private double _leftPosition = 10;
         private double _topPosition = 10;
@@ -166,18 +168,28 @@ namespace DAG
         /// Initializes a new instance of the <see cref="NodeBase"/> class from an XML element.
         /// </summary>
         /// <param name="nodeElement">The XML element containing the serialized node data.</param>
-        /// <exception cref="NullReferenceException">Thrown when <paramref name="nodeElement"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="nodeElement"/> is null.</exception>
         /// <exception cref="FormatException">Thrown when the XML element is not named "Node".</exception>
         /// <remarks>
+        /// <para>
         /// The XML element must contain attributes for NodeGuid, LeftPosition, and TopPosition.
         /// Derived classes should call this constructor and then parse their own custom attributes.
+        /// </para>
+        /// <para>
+        /// Serialization contract: connections are stored by connector index. Derived classes must
+        /// recreate their input and output connectors in the same order and count as the original node
+        /// so that the graph can correctly restore connections during deserialization.
+        /// </para>
         /// </remarks>
         public NodeBase(XElement nodeElement)
         {
-            if (nodeElement == null) { throw new NullReferenceException("XElement Node can't be null."); }
-            if (nodeElement.Name != "Node") { throw new FormatException("XElement must be named Node. It is currently " + nodeElement.Name); }
+            if (nodeElement == null) { throw new ArgumentNullException(nameof(nodeElement), "XElement Node can't be null."); }
+            if (nodeElement.Name != NodeElementName) { throw new FormatException("XElement must be named Node. It is currently " + nodeElement.Name); }
 
-            _ = Guid.TryParse(nodeElement.Attribute(nameof(NodeGuid))?.Value, out _nodeGuid);
+            if (!Guid.TryParse(nodeElement.Attribute(nameof(NodeGuid))?.Value, out _nodeGuid) || _nodeGuid == Guid.Empty)
+            {
+                _nodeGuid = Guid.NewGuid();
+            }
             _ = double.TryParse(nodeElement.Attribute(nameof(LeftPosition))?.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out _leftPosition);
             _ = double.TryParse(nodeElement.Attribute(nameof(TopPosition))?.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out _topPosition);
         }
@@ -250,7 +262,7 @@ namespace DAG
         /// </remarks>
         public XElement ToXElement()
         {
-            XElement nodeElement = new XElement("Node");
+            XElement nodeElement = new XElement(NodeElementName);
             nodeElement.SetAttributeValue(nameof(Name), Name);
             nodeElement.SetAttributeValue(nameof(NodeGuid), _nodeGuid);
             nodeElement.SetAttributeValue(nameof(LeftPosition), _leftPosition.ToString("G17", CultureInfo.InvariantCulture));

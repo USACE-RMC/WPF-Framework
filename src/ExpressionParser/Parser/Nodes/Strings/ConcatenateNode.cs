@@ -141,7 +141,7 @@ namespace ExpressionParser
             foreach (var testNode in _nodesToConcatenate)
             {
                 if (!(testNode == null))
-                    hasVariable = testNode.ContainsVariable() ? true : hasVariable;
+                    hasVariable |= testNode.ContainsVariable();
             }
             // 
             return hasVariable;

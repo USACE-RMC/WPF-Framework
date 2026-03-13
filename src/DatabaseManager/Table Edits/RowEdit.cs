@@ -28,6 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -76,6 +77,7 @@ namespace DatabaseManager
         {
             if (columnData == null)
             {
+                if (_removedValues.Count == 0) throw new InvalidOperationException("No removed values available to restore.");
                 _rowData.Insert(indexOfColumn, _removedValues.Last());
                 _removedValues.RemoveAt(_removedValues.Count - 1);
             }

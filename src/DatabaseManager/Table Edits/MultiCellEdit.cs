@@ -28,8 +28,8 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DatabaseManager
 {
@@ -63,6 +63,7 @@ namespace DatabaseManager
         /// <param name="cellEdits">An array of <see cref="CellEdit"/> objects representing the edited cells.</param>
         public MultiCellEdit(CellEdit[] cellEdits)
         {
+            if (cellEdits == null || cellEdits.Length == 0) throw new ArgumentException("cellEdits cannot be null or empty.", nameof(cellEdits));
             _cellEdits = cellEdits;
             _minColumnIndex = cellEdits[0].ColumnIndex;
             _maxColumnIndex = _minColumnIndex;
@@ -94,7 +95,7 @@ namespace DatabaseManager
                 return result;
             if (indexOfColumn > _maxColumnIndex)
                 return result;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
             {
                 if (_cellEdits[i].ColumnIndex == indexOfColumn && _cellEdits[i].RowIndex >= 0)
                     result.Add(_cellEdits[i]);
@@ -114,7 +115,7 @@ namespace DatabaseManager
                 return result;
             if (indexOfRow > _maxRowIndex)
                 return result;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
             {
                 if (_cellEdits[i].RowIndex == indexOfRow && _cellEdits[i].ColumnIndex >= 0)
                     result.Add(_cellEdits[i]);
@@ -132,7 +133,7 @@ namespace DatabaseManager
         {
             if (indexOfColumn > _maxColumnIndex)
                 return;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
                 _cellEdits[i].ColumnAdded(indexOfColumn, columnData);
             if (indexOfColumn <= _minColumnIndex)
                 _minColumnIndex += 1;
@@ -148,7 +149,7 @@ namespace DatabaseManager
         {
             if (indexOfColumn > _maxColumnIndex)
                 return;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
                 _cellEdits[i].ColumnDeleted(indexOfColumn);
             if (indexOfColumn < _minColumnIndex)
                 _minColumnIndex -= 1;
@@ -165,7 +166,7 @@ namespace DatabaseManager
         {
             if (indexOfRow > _maxRowIndex)
                 return;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
                 _cellEdits[i].RowAdded(indexOfRow);
             if (indexOfRow <= _minRowIndex)
                 _minRowIndex += 1;
@@ -181,7 +182,7 @@ namespace DatabaseManager
         {
             if (indexOfRow > _maxRowIndex)
                 return;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
                 _cellEdits[i].RowDeleted(indexOfRow);
             if (indexOfRow < _minRowIndex)
                 _minRowIndex -= 1;
@@ -206,7 +207,7 @@ namespace DatabaseManager
                 return false;
             if (indexOfColumn > _maxColumnIndex)
                 return false;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
             {
                 if (_cellEdits[i].ContainsCell(indexOfColumn, indexOfRow, ref returnValue))
                     return true;
@@ -225,7 +226,7 @@ namespace DatabaseManager
                 return false;
             if (indexOfColumn > _maxColumnIndex)
                 return false;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
             {
                 if (_cellEdits[i].ColumnIndex == indexOfColumn)
                     return true;
@@ -244,7 +245,7 @@ namespace DatabaseManager
                 return false;
             if (indexOfRow > _maxRowIndex)
                 return false;
-            for (int i = 0; i < _cellEdits.Count(); i++)
+            for (int i = 0; i < _cellEdits.Length; i++)
             {
                 if (_cellEdits[i].RowIndex == indexOfRow)
                     return true;

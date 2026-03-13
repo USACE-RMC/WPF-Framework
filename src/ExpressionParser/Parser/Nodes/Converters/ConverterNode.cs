@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace ExpressionParser
 {
@@ -132,10 +133,7 @@ namespace ExpressionParser
                         break;
                     }
             }
-            // 
-            foreach (string errorString in parameterErrors)
-                _errorMessages.Add(new ParseError(token, errorString + " for the IF function"));
-            // 
+            //
             if (_errorMessages.Count > 0)
                 OutputType = ResultType.Error;
         }
@@ -216,7 +214,7 @@ namespace ExpressionParser
                 case ResultType.Double:
                     {
                         double doubleValue;
-                        if (double.TryParse(Convert.ToString(_nodeToConvert.Evaluate().Result), out doubleValue))
+                        if (double.TryParse(Convert.ToString(_nodeToConvert.Evaluate().Result), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out doubleValue))
                         {
                             return new ParseNodeResult(doubleValue, ResultType.Double);
                         }
@@ -228,14 +226,14 @@ namespace ExpressionParser
                 case ResultType.Integer:
                     {
                         int intValue;
-                        if (int.TryParse(Convert.ToString(_nodeToConvert.Evaluate().Result), out intValue))
+                        if (int.TryParse(Convert.ToString(_nodeToConvert.Evaluate().Result), NumberStyles.Integer, CultureInfo.InvariantCulture, out intValue))
                         {
                             return new ParseNodeResult(intValue, ResultType.Integer);
                         }
                         else
                         {
                             double doubleValue;
-                            if (double.TryParse(Convert.ToString(_nodeToConvert.Evaluate().Result), out doubleValue))
+                            if (double.TryParse(Convert.ToString(_nodeToConvert.Evaluate().Result), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out doubleValue))
                             {
                                 return new ParseNodeResult(Convert.ToInt32(doubleValue), ResultType.Integer);
                             }

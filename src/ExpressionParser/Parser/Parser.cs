@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace ExpressionParser.Parser
 {
@@ -116,12 +117,18 @@ namespace ExpressionParser.Parser
                             {
                                 case TokenType.IntegerNumber:
                                     {
-                                        newNode = new IntegerNode(int.Parse(token.TokenString));
+                                        if (int.TryParse(token.TokenString, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intValue))
+                                            newNode = new IntegerNode(intValue);
+                                        else
+                                            newNode = new IntegerNode(0);
                                         break;
                                     }
                                 case TokenType.DecimalNumber:
                                     {
-                                        newNode = new DecimalNode(double.Parse(token.TokenString));
+                                        if (double.TryParse(token.TokenString, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double doubleValue))
+                                            newNode = new DecimalNode(doubleValue);
+                                        else
+                                            newNode = new DecimalNode(0.0);
                                         break;
                                     }
                                 case TokenType.String:
@@ -169,7 +176,7 @@ namespace ExpressionParser.Parser
                                     }
                                 case TokenType.Division:
                                     {
-                                        leftNode = new NumericBinaryNode(leftNode, Parse(tokenStack, null, token.OperationOrder, availableVariables, stringComparison), (a, b) => a / b, token);
+                                        leftNode = new NumericBinaryNode(leftNode, Parse(tokenStack, null, token.OperationOrder, availableVariables, stringComparison), (a, b) => b == 0.0 ? double.NaN : a / b, token);
                                         break;
                                     }
                                 case TokenType.Exponent:
@@ -181,12 +188,12 @@ namespace ExpressionParser.Parser
                                     {
                                         if (leftNode == null && token.StartPosition == 0)
                                             continue; // This essentially fixes the copy and paste from excel error.
-                                        leftNode = new BooleanBinaryNode(leftNode, Parse(tokenStack, null, token.OperationOrder, availableVariables, stringComparison), (a, b) => a.Evaluate().Result.ToString().Equals(b.Evaluate().Result.ToString(), stringComparison), false, token);
+                                        leftNode = new BooleanBinaryNode(leftNode, Parse(tokenStack, null, token.OperationOrder, availableVariables, stringComparison), (a, b) => (a.Evaluate().Result?.ToString() ?? "").Equals(b.Evaluate().Result?.ToString() ?? "", stringComparison), false, token);
                                         break;
                                     }
                                 case TokenType.NotEqual:
                                     {
-                                        leftNode = new BooleanBinaryNode(leftNode, Parse(tokenStack, null, token.OperationOrder, availableVariables, stringComparison), (a, b) => (a.Evaluate().Result.ToString() ?? "") != (b.Evaluate().Result.ToString() ?? ""), false, token);
+                                        leftNode = new BooleanBinaryNode(leftNode, Parse(tokenStack, null, token.OperationOrder, availableVariables, stringComparison), (a, b) => (a.Evaluate().Result?.ToString() ?? "") != (b.Evaluate().Result?.ToString() ?? ""), false, token);
                                         break;
                                     }
                                 case TokenType.LessThan:
@@ -274,10 +281,16 @@ namespace ExpressionParser.Parser
                                     }
                                 case TokenType.NormalInverse:
                                     {
+                                        var normalParams = GetFunctionParameters(tokenStack, ref functionParameterErrors, availableVariables, stringComparison);
+                                        newNode = new StringNode(token.TokenString);
+                                        newNode.GetErrors.Add(new ParseError(token, "The NormalInverse function is not yet implemented."));
                                         break;
                                     }
                                 case TokenType.TriangularInverse:
                                     {
+                                        var triangularParams = GetFunctionParameters(tokenStack, ref functionParameterErrors, availableVariables, stringComparison);
+                                        newNode = new StringNode(token.TokenString);
+                                        newNode.GetErrors.Add(new ParseError(token, "The TriangularInverse function is not yet implemented."));
                                         break;
                                     }
                                 case TokenType.IndexOf:
