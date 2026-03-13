@@ -32,7 +32,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
-using Microsoft.VisualBasic;
 using FrameworkInterfaces;
 
 namespace FrameworkUI
@@ -166,17 +165,11 @@ namespace FrameworkUI
         private static void BackgroundWorker_Dowork(object? sender, DoWorkEventArgs e)
         {
             if (sender is not BackgroundWorker worker || _project == null) return;
-            // Sleep for 1 second to give appearance that the compaction is doing some work
-            Thread.Sleep(1000);
             // Update progress bar to compacting
             worker.ReportProgress(0);
             _project.Compact();
-            Thread.Sleep(1000);
-            //
-            // update progress bar to optimizing
+            // Update progress bar to optimizing
             worker.ReportProgress(100);
-            // Sleep for 3 seconds to give appearance that the optimizing is doing some work
-            Thread.Sleep(3000);
             _project.Optimize();
         }
 
@@ -372,7 +365,7 @@ namespace FrameworkUI
                     unit = "bytes";
                 }
 
-                return Strings.FormatNumber(value, 2) + " " + unit;
+                return value.ToString("N2") + " " + unit;
             }
             catch (Exception ex)
             {

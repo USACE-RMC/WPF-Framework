@@ -104,10 +104,26 @@ namespace FrameworkInterfaces.Messaging
         private bool _warningBeep;
         private bool _messageBeep;
         private bool _eventBeep;
-        private SolidColorBrush _errorColor = new SolidColorBrush(Color.FromRgb(228, 20, 0));
-        private SolidColorBrush _warningColor = new SolidColorBrush(Color.FromRgb(229, 160, 0));
-        private SolidColorBrush _messageColor = new SolidColorBrush(Color.FromRgb(26, 161, 226));
-        private SolidColorBrush _eventColor = new SolidColorBrush(Color.FromRgb(0, 206, 209));
+        private static readonly SolidColorBrush _defaultErrorColor = CreateFrozenBrush(Color.FromRgb(228, 20, 0));
+        private static readonly SolidColorBrush _defaultWarningColor = CreateFrozenBrush(Color.FromRgb(229, 160, 0));
+        private static readonly SolidColorBrush _defaultMessageColor = CreateFrozenBrush(Color.FromRgb(26, 161, 226));
+        private static readonly SolidColorBrush _defaultEventColor = CreateFrozenBrush(Color.FromRgb(0, 206, 209));
+
+        private SolidColorBrush _errorColor = _defaultErrorColor;
+        private SolidColorBrush _warningColor = _defaultWarningColor;
+        private SolidColorBrush _messageColor = _defaultMessageColor;
+        private SolidColorBrush _eventColor = _defaultEventColor;
+
+        #endregion
+
+        #region Static Helpers
+
+        private static SolidColorBrush CreateFrozenBrush(Color color)
+        {
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
+        }
 
         #endregion
 

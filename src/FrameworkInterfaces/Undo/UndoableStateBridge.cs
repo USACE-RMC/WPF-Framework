@@ -118,11 +118,6 @@ namespace FrameworkInterfaces.Undo
         private readonly INotifyPropertyChanged _source;
 
         /// <summary>
-        /// The source object stored as dynamic to allow proper property access via reflection.
-        /// </summary>
-        private readonly object _sourceObject;
-
-        /// <summary>
         /// A function that returns the current undo manager, or null if undo is disabled.
         /// Using a delegate allows dynamic checking of IsUndoEnabled.
         /// </summary>
@@ -222,7 +217,6 @@ namespace FrameworkInterfaces.Undo
             Action? onActionRecorded = null)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
-            _sourceObject = source;
             _getUndoManager = getUndoManager ?? throw new ArgumentNullException(nameof(getUndoManager));
             _sourceDescription = sourceDescription ?? "settings";
             _target = target;
@@ -384,7 +378,7 @@ namespace FrameworkInterfaces.Undo
             object? newValue;
             try
             {
-                newValue = propertyInfo.GetValue(_sourceObject);
+                newValue = propertyInfo.GetValue(_source);
             }
             catch (System.Reflection.TargetInvocationException)
             {
@@ -403,7 +397,7 @@ namespace FrameworkInterfaces.Undo
 
             // Use PropertyChangeAction which supports time-window merging (500ms)
             // for coalescing rapid changes like typing in a TextBox.
-            return new PropertyChangeAction(_sourceObject, propertyName, oldValue, newValue);
+            return new PropertyChangeAction(_source, propertyName, oldValue, newValue);
         }
 
         /// <summary>
@@ -419,7 +413,7 @@ namespace FrameworkInterfaces.Undo
 
             try
             {
-                var value = propertyInfo.GetValue(_sourceObject);
+                var value = propertyInfo.GetValue(_source);
                 _shadowValues[propertyName] = value;
             }
             catch (Exception ex)
@@ -440,7 +434,7 @@ namespace FrameworkInterfaces.Undo
                 {
                     try
                     {
-                        var value = kvp.Value.GetValue(_sourceObject);
+                        var value = kvp.Value.GetValue(_source);
                         _shadowValues[kvp.Key] = value;
                     }
                     catch (Exception ex)

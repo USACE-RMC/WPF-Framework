@@ -189,34 +189,6 @@ namespace FrameworkUI.ProjectExplorer
         }
 
         /// <summary>
-        /// Get the element node group that contains this node.
-        /// </summary>
-        /// <returns>The parent ElementNodeGroup, or null if not found.</returns>
-        private ElementNodeGroup? GetElementNodeGroup()
-        {
-            ElementNodeGroup? elementNodeGroup = null;
-            Node? parentNode = ParentNode;
-            while (parentNode != null)
-            {
-                if (parentNode is ElementNodeGroup group)
-                {
-                    elementNodeGroup = group;
-                    break;
-                }
-                else if (parentNode is ElementNodeCollection)
-                {
-                    break;
-                }
-                else if (parentNode is ProjectNode)
-                {
-                    break;
-                }
-                parentNode = parentNode.ParentNode;
-            }
-            return elementNodeGroup;
-        }
-
-        /// <summary>
         /// On select, edit mode = false. Raise the edit or activate event.
         /// </summary>
         protected override void Me_Selected(object sender, RoutedEventArgs e)
@@ -228,7 +200,7 @@ namespace FrameworkUI.ProjectExplorer
         /// Gets the drag text representation of this element node for drag-drop operations.
         /// </summary>
         /// <returns>A formatted string containing element information for drag-drop operations.</returns>
-        public new string GetDragText()
+        public override string GetDragText()
         {
             return nameof(ElementNode) + ">" + Element.Name + ">" + Element.GetType().ToString() + ">" + Element.ParentCollection.Name + ">" + Element.ParentCollection.ParentProject.FullFileName + ">" + Element.CanCopyFromExternal;
         }
@@ -365,10 +337,6 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="e">The event data.</param>
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
-            var nodeCollection = GetElementNodeCollection();
-            //if (nodeCollection != null && nodeCollection != ParentNode)
-            //    nodeCollection.ElementNodeAddedParentNode = ParentNode;
-
             Copy?.Invoke(Element);
             e.Handled = true;
         }

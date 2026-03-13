@@ -49,6 +49,12 @@ namespace FrameworkUI
     public class OpenWindowItem
     {
         /// <summary>
+        /// Backing field for <see cref="ImageSource"/>. Cached at construction to avoid
+        /// recreating the BitmapSource on every property access.
+        /// </summary>
+        private readonly ImageSource? _imageSource;
+
+        /// <summary>
         /// Construct a new Window Item.
         /// </summary>
         /// <param name="document">The AvalonDock layout document that is displayed in the window.</param>
@@ -57,6 +63,7 @@ namespace FrameworkUI
         {
             Document = document;
             Element = element;
+            _imageSource = element != null ? GeneralMethods.Bitmap2BitmapSource(element.ElementImage) : null;
         }
 
         /// <summary>
@@ -85,10 +92,7 @@ namespace FrameworkUI
         /// <summary>
         /// Gets the element image source.
         /// </summary>
-        public ImageSource? ImageSource
-        {
-            get { return Element != null ? GeneralMethods.Bitmap2BitmapSource(Element.ElementImage) : null; }
-        }
+        public ImageSource? ImageSource => _imageSource;
 
 
     }

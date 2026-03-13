@@ -28,11 +28,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrameworkInterfaces
 {
@@ -78,7 +74,7 @@ namespace FrameworkInterfaces
         /// </summary>
         /// <typeparam name="T">Type of element collection.</typeparam>
         /// <param name="project">Project to search.</param>
-        /// <returns>T or Nothing</returns>
+        /// <returns>T or null</returns>
         public static T? ElementCollection<T>(this IProject project)
         {
             if (project.ElementCollections == null) return default;

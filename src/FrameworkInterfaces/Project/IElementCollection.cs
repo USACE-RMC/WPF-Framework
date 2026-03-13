@@ -81,13 +81,11 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised when adding an element.
         /// </summary>
-        /// <param name="element">The new element to add.</param>
         event ElementAddedEventHandler ElementAdded;
-   
+
         /// <summary>
         /// Event is raised when removing an element.
         /// </summary>
-        /// <param name="element">The element to remove.</param>
         event ElementRemovedEventHandler ElementRemoved;
 
         /// <summary>

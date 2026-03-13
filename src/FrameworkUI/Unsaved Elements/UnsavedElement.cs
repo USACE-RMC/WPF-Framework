@@ -48,12 +48,19 @@ namespace FrameworkUI
     {
 
         /// <summary>
+        /// Backing field for <see cref="ImageSource"/>. Cached at construction to avoid
+        /// recreating the BitmapSource on every property access.
+        /// </summary>
+        private readonly ImageSource _imageSource;
+
+        /// <summary>
         /// Construct a new Unsaved Element.
         /// </summary>
         /// <param name="element">The unsaved element.</param>
         public UnsavedElement(IElement element)
         {
             Element = element;
+            _imageSource = GeneralMethods.Bitmap2BitmapSource(Element.ElementImage);
         }
 
         /// <summary>
@@ -64,10 +71,7 @@ namespace FrameworkUI
         /// <summary>
         /// Gets the element image source.
         /// </summary>
-        public ImageSource ImageSource
-        {
-            get { return GeneralMethods.Bitmap2BitmapSource(Element.ElementImage); }
-        }
+        public ImageSource ImageSource => _imageSource;
 
     }
 }

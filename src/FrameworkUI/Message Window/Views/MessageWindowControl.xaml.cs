@@ -501,7 +501,6 @@ namespace FrameworkUI.MessageWindow
             _showMessages = true;
             _showEvents = true;
             RefreshFilteredItems();
-            //Messenger.GetInstance().ClearAllFilters();
             // Update styles
             ErrorsButton.Style = StackPanelPressedButtonStyle;
             WarningsButton.Style = StackPanelPressedButtonStyle;
@@ -523,7 +522,7 @@ namespace FrameworkUI.MessageWindow
             var SaveFileDialog = new SaveFileDialog()
             {
                 Title = "Export Message Window to Text File",
-                Filter = "Text Files (*.txt)|*.text"
+                Filter = "Text Files (*.txt)|*.txt"
             };
             if (SaveFileDialog.ShowDialog() == true)
             {

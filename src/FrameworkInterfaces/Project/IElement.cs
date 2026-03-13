@@ -89,14 +89,11 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised before the element has been deleted.
         /// </summary>
-        /// <param name="element">The element to be deleted.</param>
-        /// <param name="cancel">Determines if the deletion should be canceled.</param>
         event PreviewDeletedEventHandler PreviewDeleted;
-   
+
         /// <summary>
         /// Event is raised when the element has been deleted.
         /// </summary>
-        /// <param name="element">The element that was deleted.</param>
         event DeletedEventHandler Deleted;
 
         /// <summary>

@@ -31,6 +31,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Threading;
 using FrameworkInterfaces;
 
@@ -121,6 +122,14 @@ namespace FrameworkUI
         /// </remarks>
         public static void Start()
         {
+            // DispatcherTimer must be created on the UI thread. Marshal if necessary.
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                dispatcher.Invoke(Start);
+                return;
+            }
+
             lock (_lockObject)
             {
                 // Clean up existing timer if any

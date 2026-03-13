@@ -83,7 +83,7 @@
             </Grid.RowDefinitions>
             <Button Name="ActivateButton" Height="24" Width="110" IsEnabled="False" Click="ActivateButton_Click" Content="Activate" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="0" Margin="0,6,6,6" Cursor="Hand"/>
             <Button Name="SaveButton"  Height="24" Width="110" IsEnabled="False"  Click="SaveButton_Click" Content="Save" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="1" Margin="0,0,6,6" Cursor="Hand"/>
-            <Button Name="CloseWindwowsButton"  Height="24" Width="110" IsEnabled="False" Click="CloseWindwowsButton_Click" Content="Close Window(s)" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="2" Margin="0,0,6,6" Cursor="Hand"/>
+            <Button Name="CloseWindowsButton"  Height="24" Width="110" IsEnabled="False" Click="CloseWindowsButton_Click" Content="Close Window(s)" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="2" Margin="0,0,6,6" Cursor="Hand"/>
         </Grid>
     </Grid>
 </cntrls:MetroWindow>

@@ -57,42 +57,35 @@ namespace FrameworkUI
         /// </summary>
         static ApplicationAttributes()
         {
-            try
+            Assembly = Assembly.GetEntryAssembly();
+            if (Assembly != null)
             {
-                Assembly = Assembly.GetEntryAssembly();
-                if (Assembly != null)
+                var attributes = Assembly.GetCustomAttributes(false);
+                foreach (object attribute in attributes)
                 {
-                    var attributes = Assembly.GetCustomAttributes(false);
-                    foreach (object attribute in attributes)
+                    var type = attribute.GetType();
+                    if (type == typeof(AssemblyTitleAttribute))
                     {
-                        var type = attribute.GetType();
-                        if (type == typeof(AssemblyTitleAttribute))
-                        {
-                            _Title = (AssemblyTitleAttribute)attribute;
-                        }
-                        if (type == typeof(AssemblyCompanyAttribute))
-                        {
-                            _Company = (AssemblyCompanyAttribute)attribute;
-                        }
-                        if (type == typeof(AssemblyCopyrightAttribute))
-                        {
-                            _Copyright = (AssemblyCopyrightAttribute)attribute;
-                        }
-                        if (type == typeof(AssemblyProductAttribute))
-                        {
-                            _Product = (AssemblyProductAttribute)attribute;
-                        }
-                        if (type == typeof(AssemblyDescriptionAttribute))
-                        {
-                            _Description = (AssemblyDescriptionAttribute)attribute;
-                        }
+                        _Title = (AssemblyTitleAttribute)attribute;
                     }
-                    _Version = Assembly.GetName().Version;
+                    if (type == typeof(AssemblyCompanyAttribute))
+                    {
+                        _Company = (AssemblyCompanyAttribute)attribute;
+                    }
+                    if (type == typeof(AssemblyCopyrightAttribute))
+                    {
+                        _Copyright = (AssemblyCopyrightAttribute)attribute;
+                    }
+                    if (type == typeof(AssemblyProductAttribute))
+                    {
+                        _Product = (AssemblyProductAttribute)attribute;
+                    }
+                    if (type == typeof(AssemblyDescriptionAttribute))
+                    {
+                        _Description = (AssemblyDescriptionAttribute)attribute;
+                    }
                 }
-            }
-            catch (Exception)
-            {
-                throw;
+                _Version = Assembly.GetName().Version;
             }
         }
 

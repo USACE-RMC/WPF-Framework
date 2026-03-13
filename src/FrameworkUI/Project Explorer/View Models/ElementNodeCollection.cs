@@ -128,6 +128,11 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="element">IElement to remove.</param>
         private void ElementRemoved(IElement element)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => ElementRemoved(element));
+                return;
+            }
             var node = ElementNode.FindElementNode(element, this);
             if (node == null) return;
             node.ParentNode?.ChildNodes.Remove(node);
@@ -140,6 +145,11 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="element">IElement to add.</param>
         private void ElementAdded(IElement element)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => ElementAdded(element));
+                return;
+            }
             if (ElementNode.FindElementNode(element, this)==null)
             {
                 Add(new ElementNode(element, this, ParentTreeView as ProjectExplorerTreeView));

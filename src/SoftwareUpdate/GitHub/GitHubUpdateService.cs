@@ -36,8 +36,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
+using System.Text.Json;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -80,7 +79,7 @@ namespace SoftwareUpdate.GitHub
         private readonly object _lock = new object();
         private UpdateState _state = UpdateState.Idle;
         private UpdateInfo? _availableUpdate;
-        private HashSet<string> _skippedVersions = new HashSet<string>();
+        private HashSet<string> _skippedVersions = null!; // Assigned by LoadSkippedVersions() in constructor
         private bool _disposed;
 
         /// <summary>
@@ -156,7 +155,7 @@ namespace SoftwareUpdate.GitHub
                 response.EnsureSuccessStatusCode();
 
                 var jsonStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                var releases = DeserializeReleases(jsonStream);
+                var releases = await DeserializeReleasesAsync(jsonStream, cancellationToken).ConfigureAwait(false);
 
                 // Filter releases
                 var validReleases = releases
@@ -196,9 +195,16 @@ namespace SoftwareUpdate.GitHub
                             ReleasePageUrl = release.HtmlUrl
                         };
 
-                        AvailableUpdate = updateInfo;
-                        var isSkipped = IsVersionSkipped(releaseVersion);
-                        State = UpdateState.UpdateAvailable;
+                        // Atomically update AvailableUpdate, IsSkipped, and State in a single lock
+                        // to prevent another thread from observing an inconsistent state (e.g.,
+                        // AvailableUpdate set but State still Checking).
+                        bool isSkipped;
+                        lock (_lock)
+                        {
+                            _availableUpdate = updateInfo;
+                            isSkipped = _skippedVersions.Contains(releaseVersion.ToString());
+                            _state = UpdateState.UpdateAvailable;
+                        }
 
                         var result = UpdateCheckResult.UpdateAvailable(Options.CurrentVersion!, updateInfo, isSkipped);
                         RaiseEvent(UpdateCheckCompleted, result);
@@ -219,7 +225,7 @@ namespace SoftwareUpdate.GitHub
                 RaiseEvent(UpdateCheckCompleted, result);
                 return result;
             }
-            catch (SerializationException ex)
+            catch (JsonException ex)
             {
                 State = UpdateState.Error;
                 var wrappedException = new InvalidOperationException("Failed to parse GitHub API response.", ex);
@@ -502,10 +508,10 @@ namespace SoftwareUpdate.GitHub
         /// </summary>
         /// <param name="jsonStream">The JSON stream to deserialize.</param>
         /// <returns>List of GitHub releases.</returns>
-        private List<GitHubRelease> DeserializeReleases(Stream jsonStream)
+        private static async Task<List<GitHubRelease>> DeserializeReleasesAsync(Stream jsonStream, CancellationToken cancellationToken)
         {
-            var serializer = new DataContractJsonSerializer(typeof(List<GitHubRelease>));
-            return (List<GitHubRelease>?)serializer.ReadObject(jsonStream) ?? new List<GitHubRelease>();
+            return await JsonSerializer.DeserializeAsync<List<GitHubRelease>>(jsonStream, cancellationToken: cancellationToken).ConfigureAwait(false)
+                ?? new List<GitHubRelease>();
         }
 
         /// <summary>
@@ -553,6 +559,10 @@ namespace SoftwareUpdate.GitHub
         /// <summary>
         /// Saves skipped versions to disk.
         /// </summary>
+        /// <remarks>
+        /// Data is copied inside the lock and written outside to minimize lock contention.
+        /// A temp-file-then-rename strategy is used so the file is never left half-written.
+        /// </remarks>
         private void SaveSkippedVersions()
         {
             try
@@ -562,10 +572,19 @@ namespace SoftwareUpdate.GitHub
                 if (!string.IsNullOrEmpty(dir))
                     Directory.CreateDirectory(dir);
 
+                // Copy the set while holding the lock, then do I/O outside the lock.
+                string[] versionsCopy;
                 lock (_lock)
                 {
-                    File.WriteAllLines(filePath, _skippedVersions);
+                    versionsCopy = new string[_skippedVersions.Count];
+                    _skippedVersions.CopyTo(versionsCopy);
                 }
+
+                // Write to a temp file then atomically rename to prevent a partial write
+                // from corrupting the persisted file.
+                var tempPath = filePath + ".tmp";
+                File.WriteAllLines(tempPath, versionsCopy);
+                File.Move(tempPath, filePath, overwrite: true);
             }
             catch (Exception ex)
             {
@@ -620,7 +639,23 @@ namespace SoftwareUpdate.GitHub
         }
 
         /// <summary>
+        /// Determines whether an HTTP status code is transient and worth retrying.
+        /// Only 5xx server errors and 429 (Too Many Requests) are retried; other 4xx
+        /// client errors are permanent and should not be retried.
+        /// </summary>
+        /// <param name="statusCode">The HTTP status code to check.</param>
+        /// <returns><c>true</c> if the request should be retried; otherwise, <c>false</c>.</returns>
+        private static bool IsTransientStatusCode(HttpStatusCode statusCode)
+        {
+            return statusCode == HttpStatusCode.TooManyRequests ||
+                   ((int)statusCode >= 500 && (int)statusCode < 600);
+        }
+
+        /// <summary>
         /// Performs an HTTP GET request with retry logic for transient failures.
+        /// Only retries on 5xx server errors, 429 (Too Many Requests), or network-level
+        /// failures (<see cref="HttpRequestException"/> with no HTTP status code).
+        /// 4xx client errors (except 429) are returned immediately without retrying.
         /// </summary>
         /// <param name="url">The URL to fetch.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -633,23 +668,36 @@ namespace SoftwareUpdate.GitHub
             {
                 try
                 {
-                    return await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                    var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+
+                    // Return immediately for success or non-transient errors (e.g., 4xx other than 429)
+                    if (response.IsSuccessStatusCode || !IsTransientStatusCode(response.StatusCode))
+                        return response;
+
+                    // Transient HTTP error (5xx or 429) — treat like a network failure and retry
+                    Debug.WriteLine($"[GitHubUpdateService] Transient HTTP {(int)response.StatusCode} (attempt {attempt}/{MaxRetryAttempts}), retrying.");
+
+                    if (attempt == MaxRetryAttempts)
+                        return response; // Return the error response after all attempts are exhausted
+
+                    response.Dispose();
                 }
                 catch (HttpRequestException ex)
                 {
+                    // Network-level failure (no HTTP response received) — always retry
                     lastException = ex;
-                    Debug.WriteLine($"[GitHubUpdateService] HTTP request failed (attempt {attempt}/{MaxRetryAttempts}): {ex.Message}");
+                    Debug.WriteLine($"[GitHubUpdateService] Network failure (attempt {attempt}/{MaxRetryAttempts}): {ex.Message}");
 
-                    if (attempt < MaxRetryAttempts)
-                    {
-                        // Exponential backoff: 500ms, 1000ms, etc.
-                        var delay = RetryDelayMs * attempt;
-                        await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
-                    }
+                    if (attempt == MaxRetryAttempts)
+                        throw;
                 }
+
+                // Exponential backoff: 500ms, 1000ms, etc.
+                var delay = RetryDelayMs * attempt;
+                await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
             }
 
-            // All retries exhausted, throw the last exception
+            // Should not reach here, but satisfy the compiler
             throw lastException!;
         }
     }

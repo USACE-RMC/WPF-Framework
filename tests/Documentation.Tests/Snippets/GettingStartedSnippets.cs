@@ -48,13 +48,13 @@ namespace Documentation.Tests.Snippets.GettingStarted
 
         public override string Name
         {
-            get => _name;
+            get => NameField;
             set
             {
-                if (_name != value)
+                if (NameField != value)
                 {
-                    var oldValue = _name;
-                    _name = value;
+                    var oldValue = NameField;
+                    NameField = value;
                     RecordPropertyChange(nameof(Name), oldValue, value);
                 }
             }
@@ -142,13 +142,13 @@ namespace Documentation.Tests.Snippets.GettingStarted
         // Abstract properties from ElementBase
         public override string Name
         {
-            get => _name;
+            get => NameField;
             set
             {
-                if (_name != value)
+                if (NameField != value)
                 {
-                    var oldValue = _name;
-                    _name = value;
+                    var oldValue = NameField;
+                    NameField = value;
                     RecordPropertyChange(nameof(Name), oldValue, value);
                 }
             }

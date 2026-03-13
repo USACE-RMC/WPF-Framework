@@ -28,50 +28,49 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace SoftwareUpdate.GitHub
 {
     /// <summary>
     /// Represents a downloadable asset attached to a GitHub release.
     /// </summary>
-    [DataContract]
     internal class GitHubReleaseAsset
     {
         /// <summary>
         /// Gets or sets the unique identifier of the asset.
         /// </summary>
-        [DataMember(Name = "id")]
+        [JsonPropertyName("id")]
         public long Id { get; set; }
 
         /// <summary>
         /// Gets or sets the file name of the asset.
         /// </summary>
-        [DataMember(Name = "name")]
+        [JsonPropertyName("name")]
         public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the MIME type of the asset (e.g., "application/zip").
         /// </summary>
-        [DataMember(Name = "content_type")]
+        [JsonPropertyName("content_type")]
         public string? ContentType { get; set; }
 
         /// <summary>
         /// Gets or sets the file size in bytes.
         /// </summary>
-        [DataMember(Name = "size")]
+        [JsonPropertyName("size")]
         public long Size { get; set; }
 
         /// <summary>
         /// Gets or sets the number of times this asset has been downloaded.
         /// </summary>
-        [DataMember(Name = "download_count")]
+        [JsonPropertyName("download_count")]
         public int DownloadCount { get; set; }
 
         /// <summary>
         /// Gets or sets the direct download URL for this asset.
         /// </summary>
-        [DataMember(Name = "browser_download_url")]
+        [JsonPropertyName("browser_download_url")]
         public string? BrowserDownloadUrl { get; set; }
     }
 }

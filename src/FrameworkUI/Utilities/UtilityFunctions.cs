@@ -190,7 +190,7 @@ namespace FrameworkUI
             }
             else if (elements.GetLength(0) == 2)
             {
-                return root + Convert.ToString(@"...\") + elements[1];
+                return root + @"...\" + elements[1];
             }
             else
             {

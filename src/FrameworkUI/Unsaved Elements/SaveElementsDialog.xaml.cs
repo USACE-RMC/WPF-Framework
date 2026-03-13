@@ -68,8 +68,11 @@ namespace FrameworkUI
             set
             {
                 SetValue(ElementItemsProperty, value);
-                MyDataGrid.ItemsSource = null;
-                MyDataGrid.ItemsSource = ElementItems;
+                if (MyDataGrid != null)
+                {
+                    MyDataGrid.ItemsSource = null;
+                    MyDataGrid.ItemsSource = ElementItems;
+                }
             }
         }
 

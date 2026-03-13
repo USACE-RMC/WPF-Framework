@@ -317,10 +317,10 @@ namespace SoftwareUpdate.Updater.Tests
         #region ExtractUpdate Path Traversal Tests
 
         /// <summary>
-        /// Verifies that ExtractUpdate protects against path traversal attacks by skipping malicious entries.
+        /// Verifies that ExtractUpdate protects against path traversal attacks by throwing a SecurityException.
         /// </summary>
         [Fact]
-        public void ExtractUpdate_PathTraversalAttempt_SkipsEntry()
+        public void ExtractUpdate_PathTraversalAttempt_ThrowsSecurityException()
         {
             var targetDir = CreateSubDir("target");
             var parentFile = Path.Combine(_testDir, "escaped.txt");
@@ -338,13 +338,13 @@ namespace SoftwareUpdate.Updater.Tests
             };
 
             var manager = new InstallationManager(args, Log);
-            try { manager.Execute(); } catch { }
+            var ex = Assert.ThrowsAny<Exception>(() => manager.Execute());
 
             // The escaped file should NOT exist outside target directory
             Assert.False(File.Exists(parentFile));
 
-            // Verify the log contains the security message
-            Assert.Contains(_logs, l => l.Contains("potentially dangerous path"));
+            // Verify the exception message indicates path traversal was detected
+            Assert.Contains("Path traversal", ex.Message);
         }
 
         /// <summary>

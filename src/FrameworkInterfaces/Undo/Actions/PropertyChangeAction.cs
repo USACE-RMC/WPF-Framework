@@ -63,10 +63,17 @@ namespace FrameworkInterfaces.Undo.Actions
         private readonly PropertyInfo _propertyInfo;
         private readonly object _syncLock = new object();
 
+        private static int _mergeWindowMilliseconds = 500;
+
         /// <summary>
-        /// Time window in milliseconds for merging rapid changes.
+        /// Gets or sets the time window in milliseconds for merging rapid changes to the same property.
+        /// Must be greater than or equal to zero. Default is 500 ms.
         /// </summary>
-        public static int MergeWindowMilliseconds = 500;
+        public static int MergeWindowMilliseconds
+        {
+            get => _mergeWindowMilliseconds;
+            set => _mergeWindowMilliseconds = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "MergeWindowMilliseconds must be >= 0.");
+        }
 
         #endregion
 

@@ -180,7 +180,7 @@ namespace FrameworkInterfaces
         }
 
         /// <summary>
-        /// Private sub used to set is dirty.
+        /// Private method used to set is dirty.
         /// </summary>
         /// <param name="value">Determines if IsDirty = True or False.</param>
         protected void SetIsDirty(bool value)
@@ -288,8 +288,19 @@ namespace FrameworkInterfaces
         /// <param name="element">The element to move.</param>
         /// <param name="startIndex">The start position of the element to move.</param>
         /// <param name="endIndex">The end position of the element to move.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="startIndex"/> or <paramref name="endIndex"/> is outside the valid range.
+        /// </exception>
         public virtual void MoveElement(IElement element, int startIndex, int endIndex)
         {
+            if (startIndex < 0 || startIndex >= ElementList.Count)
+                throw new ArgumentOutOfRangeException(nameof(startIndex),
+                    $"startIndex ({startIndex}) must be within [0, {ElementList.Count - 1}].");
+
+            if (endIndex < 0 || endIndex >= ElementList.Count)
+                throw new ArgumentOutOfRangeException(nameof(endIndex),
+                    $"endIndex ({endIndex}) must be within [0, {ElementList.Count - 1}].");
+
             ElementList.RemoveAt(startIndex);
             ElementList.Insert(endIndex, element);
             SetIsDirty(true);

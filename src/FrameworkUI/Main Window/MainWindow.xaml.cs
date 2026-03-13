@@ -709,7 +709,7 @@ namespace FrameworkUI
             // Always load content the main controls: Project Explorer, Message Window, Properties Window
             if (e.Model.ContentId == ShellPublicVariables.ProjectExplorerContentID || e.Model.ContentId == ShellPublicVariables.MessageWindowContentID || e.Model.ContentId == ShellPublicVariables.PropertiesWindowContentID)
             {
-                e.Content = e.Content;
+                // No action needed; content is already set for these built-in panes.
             }
             else if (_loadFullLayout == true)
             {
@@ -2183,7 +2183,6 @@ namespace FrameworkUI
             // Re-acquire references and restore each pane.
             BuildProjectExplorer();
             ShowAnchorable(_projectExplorerDock, AnchorableShowStrategy.Left);
-            //_mapExplorerDock.Show();
             BuildMessageWindow();
             ShowAnchorable(_messageWindowDock, AnchorableShowStrategy.Bottom);
             BuildPropertiesWindow();
@@ -2235,7 +2234,6 @@ namespace FrameworkUI
 
                 LoadLayout(true);
                 BuildProjectExplorer();
-                //BuildMapExplorer();
                 BuildMessageWindow();
                 BuildPropertiesWindow();
             }
@@ -2252,11 +2250,6 @@ namespace FrameworkUI
         /// <param name="e">The event data.</param>
         private void ProjectMenuOpened(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < ProjectNode.ChildNodes.Count; i++)
-            {
-                if (!(ProjectNode.ChildNodes[i] is ElementNodeCollection elementnodeCollection)) continue;
-                //elementnodeCollection.ElementNodeAddedParentNode = null;
-            }
         }
 
         /// <summary>

@@ -166,12 +166,12 @@ namespace FrameworkInterfaces
         public bool IsDirty { get => _isDirty; protected set => Methods.SetBoolean(value, ref _isDirty, PropertyChanged, this, SetDisplayNameDirty); }
 
         /// <summary>
-        /// Private sub used to set display name as dirty with a * or not.
+        /// Private method used to set display name as dirty with a * or not.
         /// </summary>
-        /// <param name="prop">property name.</param>
+        /// <param name="prop">The property name.</param>
         private void SetDisplayNameDirty(string prop)
         {
-            if (_isDirty == true)
+            if (_isDirty)
             {
                 if (DisplayName != Name + "*")
                 {

@@ -30,6 +30,7 @@
 
 using GenericControls;
 using FrameworkInterfaces;
+using System;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -239,9 +240,10 @@ namespace FrameworkUI.ProjectExplorer
                         loadStandard = true;
 
                 }
-                catch
+                catch (Exception ex)
                 {
                     //nodes failed to load from XML, so load the standard way.
+                    System.Diagnostics.Debug.WriteLine($"ProjectNode: Failed to load project explorer layout from XML: {ex}");
                     loadStandard = true;
                 }
 

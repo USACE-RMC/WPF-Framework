@@ -258,11 +258,12 @@ namespace FrameworkUI.ProjectExplorer
         public static DependencyProperty IsCheckBoxNodeProperty = DependencyProperty.Register(nameof(IsCheckBoxNode), typeof(bool), typeof(Node), new UIPropertyMetadata(false, IsCheckBoxNode_PropertyChangedCallback));
 
         /// <summary>
-        /// IsCheckBoxNode Callback.
+        /// Handles property changes for the <see cref="IsCheckBoxNodeProperty"/> dependency property.
+        /// Propagates the new value to all child nodes.
         /// </summary>
         /// <param name="d">The dependency object.</param>
         /// <param name="e">The event data.</param>
-        public static void IsCheckBoxNode_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void IsCheckBoxNode_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null) return;
             Node thisControl = (Node)d;
@@ -518,7 +519,7 @@ namespace FrameworkUI.ProjectExplorer
         /// Gets the drag text representation for drag-drop operations.
         /// </summary>
         /// <returns>The drag text string.</returns>
-        public string GetDragText()
+        public virtual string GetDragText()
         {
             return "";
         }
@@ -529,7 +530,7 @@ namespace FrameworkUI.ProjectExplorer
         /// <param name="node">The node that sorted.</param>
         protected void RaiseNodeSorted(Node node)
         {
-            NodeSorted?.Invoke(this);
+            NodeSorted?.Invoke(node);
         }
 
         /// <summary>

@@ -31,6 +31,7 @@
 // Copyright (c) USACE. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Windows;
 
 namespace FrameworkUI
@@ -229,9 +230,9 @@ namespace FrameworkUI
                 if (source != null)
                 {
                     var originalString = source.OriginalString;
-                    if (originalString.Contains(blueString) ||
-                        originalString.Contains(darkString) ||
-                        originalString.Contains(lightString))
+                    if (originalString.EndsWith(blueString, StringComparison.OrdinalIgnoreCase) ||
+                        originalString.EndsWith(darkString, StringComparison.OrdinalIgnoreCase) ||
+                        originalString.EndsWith(lightString, StringComparison.OrdinalIgnoreCase))
                     {
                         Application.Current.Resources.MergedDictionaries.RemoveAt(i);
                     }

@@ -185,13 +185,13 @@ namespace FrameworkUI.Demo
         [Category("Meta Data"), DisplayName("Name"), Description("The name of this parametric hazard function."), Browsable(true)]
         public override string Name
         {
-            get => _name;
+            get => NameField;
             set
             {
-                if (_name != value)
+                if (NameField != value)
                 {
-                    var oldValue = _name;
-                    _name = value;
+                    var oldValue = NameField;
+                    NameField = value;
 
                     // Reset messages with new name
                     foreach (var item in _messages)

@@ -74,7 +74,7 @@ namespace FrameworkInterfaces
         /// <summary>
         /// The name of the element.
         /// </summary>
-        protected string _name;
+        private string _name;
 
         /// <summary>
         /// The name of the element as stored on disk.
@@ -126,6 +126,23 @@ namespace FrameworkInterfaces
             _name = name ?? string.Empty;
             ParentCollection = parentCollection;
             DisplayName = _name;
+        }
+
+        #endregion
+
+        #region Protected Name Access
+
+        /// <summary>
+        /// Gets or sets the backing name field for use by derived class implementations of <see cref="Name"/>.
+        /// </summary>
+        /// <remarks>
+        /// Derived classes that override <see cref="Name"/> should use this property to read and write
+        /// the backing value, since <c>_name</c> is private to <see cref="ElementBase"/>.
+        /// </remarks>
+        protected string NameField
+        {
+            get => _name;
+            set => _name = value ?? string.Empty;
         }
 
         #endregion

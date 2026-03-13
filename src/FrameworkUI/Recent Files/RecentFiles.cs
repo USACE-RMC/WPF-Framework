@@ -201,6 +201,7 @@ namespace FrameworkUI
             };
 
             var jumpList = JumpList.GetJumpList(Application.Current);
+            if (jumpList == null) return;
             jumpList.JumpItems.Insert(0, task);
             if (jumpList.JumpItems.Count > NumberOfFilesToDisplay)
             {
@@ -428,6 +429,7 @@ namespace FrameworkUI
             int iMenuItem = FileMenu.Items.IndexOf(this);
             int iSender = FileMenu.Items.IndexOf((MenuItem)sender);
             int iItem = iSender - iMenuItem - 1;
+            if (iItem < 0 || iItem >= Collection.Count) return;
             OpenItem(Collection[iItem].FilePath);
         }
 

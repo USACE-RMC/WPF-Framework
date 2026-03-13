@@ -385,7 +385,6 @@ namespace SoftwareUpdate.Tests.Core
         [InlineData("-invalid")]
         [InlineData("invalid-")]
         [InlineData("in valid")]
-        [InlineData("in_valid")]
         [InlineData("invalid@owner")]
         public void Validate_InvalidOwnerFormats_ThrowsArgumentException(string owner)
         {

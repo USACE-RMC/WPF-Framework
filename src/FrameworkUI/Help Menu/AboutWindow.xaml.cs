@@ -61,7 +61,7 @@ namespace FrameworkUI
                 new Typeface(FontFamily, FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
                 32,
                 Brushes.Black,
-                96.0);
+                VisualTreeHelper.GetDpi(this).PixelsPerDip);
             double nameWidth = formattedText.Width + 10; // small buffer for padding
             if (nameWidth > 250 && FindName("NameColumn") is System.Windows.Controls.ColumnDefinition nameColumn)
                 nameColumn.Width = new GridLength(nameWidth);

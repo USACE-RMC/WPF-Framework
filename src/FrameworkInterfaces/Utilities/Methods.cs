@@ -57,6 +57,7 @@ namespace FrameworkInterfaces
         /// <param name="memberName">The name of the calling property (auto-populated).</param>
         public static void SetString(string value, ref string target, PropertyChangedEventHandler? propertyChanged = null, object? source = null, Action<string>? action = null, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
+            value = value ?? string.Empty;
             if (value == target) return;
             target = value;
             action?.Invoke(memberName);
@@ -142,7 +143,7 @@ namespace FrameworkInterfaces
         /// <param name="memberName">The name of the calling property (auto-populated).</param>
         public static void SetDateTime(DateTime value, ref DateTime target, PropertyChangedEventHandler? propertyChanged = null, object? source = null, Action<string>? action = null, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
-            if (DateTime.Equals(value, target) == true) return;
+            if (DateTime.Equals(value, target)) return;
             target = value;
             action?.Invoke(memberName);
             propertyChanged?.Invoke(source, new PropertyChangedEventArgs(memberName));

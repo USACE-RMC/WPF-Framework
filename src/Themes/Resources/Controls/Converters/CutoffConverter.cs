@@ -82,6 +82,10 @@ namespace Themes
 
             if (value is GridLength gridLength)
             {
+                // Only compare absolute pixel values; Star and Auto lengths have no meaningful
+                // pixel magnitude and should never be considered below the cutoff.
+                if (!gridLength.IsAbsolute)
+                    return false;
                 return gridLength.Value < Cutoff;
             }
 

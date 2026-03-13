@@ -58,6 +58,12 @@ namespace SoftwareUpdate
         /// <summary>
         /// Gets or sets the URL to download the update package.
         /// </summary>
+        /// <remarks>
+        /// Ideally this would be typed as <see cref="Uri"/> to enforce well-formed URLs at the
+        /// type level, but it is kept as <see cref="string"/> to avoid cascading changes across
+        /// all call sites that pass it directly to <see cref="System.Net.Http.HttpClient"/> and
+        /// <see cref="System.Uri"/> constructors.
+        /// </remarks>
         public string? DownloadUrl { get; set; }
 
         /// <summary>

@@ -68,10 +68,17 @@ namespace Themes
         /// <returns>The zero-based depth of the item.</returns>
         public int GetItemDepth(TreeViewItem item)
         {
-            var parent = GetParent(item);
-            if (parent != null)
-                return GetItemDepth(parent) + 1;
-            return 0;
+            int depth = 0;
+            TreeViewItem current = item;
+            while (true)
+            {
+                var parent = GetParent(current);
+                if (parent == null)
+                    break;
+                depth++;
+                current = parent;
+            }
+            return depth;
         }
 
         /// <summary>

@@ -130,13 +130,15 @@ namespace Themes
 
         /// <summary>
         /// The currently loaded control templates resource dictionary.
+        /// Null until <see cref="Initialize"/> is called.
         /// </summary>
-        private ResourceDictionary _controlTemplatesDictionary;
+        private ResourceDictionary? _controlTemplatesDictionary;
 
         /// <summary>
         /// The currently loaded color resource dictionary.
+        /// Null until <see cref="Initialize"/> is called.
         /// </summary>
-        private ResourceDictionary _currentColorDictionary;
+        private ResourceDictionary? _currentColorDictionary;
 
         #endregion
 
@@ -236,7 +238,7 @@ namespace Themes
 
             if (!app.Dispatcher.CheckAccess())
             {
-                app.Dispatcher.Invoke(() => SetTheme(theme));
+                app.Dispatcher.BeginInvoke(() => SetTheme(theme));
                 return;
             }
 

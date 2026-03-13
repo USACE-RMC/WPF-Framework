@@ -61,42 +61,39 @@ namespace Themes.Tests.Converters
         #region Convert Edge Cases
 
         /// <summary>
-        /// Verifies that Convert throws a NullReferenceException when provided with null values.
+        /// Verifies that Convert returns 0.0 when provided with null values.
         /// </summary>
         [Fact]
-        public void Convert_NullValues_ThrowsNullReferenceException()
+        public void Convert_NullValues_ReturnsZero()
         {
             var converter = new TabSizeConverter();
 
-            // The converter casts values[0] to TabControl, so null values will throw
-            Assert.Throws<NullReferenceException>(() =>
-                converter.Convert(null!, typeof(double), null, CultureInfo.InvariantCulture));
+            var result = converter.Convert(null!, typeof(double), null, CultureInfo.InvariantCulture);
+            Assert.Equal(0.0, result);
         }
 
         /// <summary>
-        /// Verifies that Convert throws an IndexOutOfRangeException when provided with an empty values array.
+        /// Verifies that Convert returns 0.0 when provided with an empty values array.
         /// </summary>
         [Fact]
-        public void Convert_EmptyValues_ThrowsIndexOutOfRangeException()
+        public void Convert_EmptyValues_ReturnsZero()
         {
             var converter = new TabSizeConverter();
 
-            // The converter accesses values[0], so empty array throws IndexOutOfRange
-            Assert.Throws<IndexOutOfRangeException>(() =>
-                converter.Convert(Array.Empty<object>(), typeof(double), null, CultureInfo.InvariantCulture));
+            var result = converter.Convert(Array.Empty<object>(), typeof(double), null, CultureInfo.InvariantCulture);
+            Assert.Equal(0.0, result);
         }
 
         /// <summary>
-        /// Verifies that Convert throws an InvalidCastException when the first value is not a TabControl.
+        /// Verifies that Convert returns 0.0 when the first value is not a TabControl.
         /// </summary>
         [Fact]
-        public void Convert_NonTabControlValue_ThrowsInvalidCastException()
+        public void Convert_NonTabControlValue_ReturnsZero()
         {
             var converter = new TabSizeConverter();
 
-            // The converter casts values[0] to TabControl
-            Assert.Throws<InvalidCastException>(() =>
-                converter.Convert(new object[] { 100.0, 5 }, typeof(double), null, CultureInfo.InvariantCulture));
+            var result = converter.Convert(new object[] { 100.0, 5 }, typeof(double), null, CultureInfo.InvariantCulture);
+            Assert.Equal(0.0, result);
         }
 
         #endregion

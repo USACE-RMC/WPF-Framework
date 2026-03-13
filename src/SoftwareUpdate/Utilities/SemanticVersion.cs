@@ -144,9 +144,18 @@ namespace SoftwareUpdate
             if (!match.Success)
                 return false;
 
-            var major = int.Parse(match.Groups["major"].Value);
-            var minor = int.Parse(match.Groups["minor"].Value);
-            var patch = match.Groups["patch"].Success ? int.Parse(match.Groups["patch"].Value) : 0;
+            // Use int.TryParse instead of int.Parse to handle overflow/malformed input gracefully
+            // (the regex ensures only digits are present, but version numbers could exceed int.MaxValue)
+            if (!int.TryParse(match.Groups["major"].Value, out var major))
+                return false;
+
+            if (!int.TryParse(match.Groups["minor"].Value, out var minor))
+                return false;
+
+            var patch = 0;
+            if (match.Groups["patch"].Success && !int.TryParse(match.Groups["patch"].Value, out patch))
+                return false;
+
             var preRelease = match.Groups["prerelease"].Success ? match.Groups["prerelease"].Value : null;
             var build = match.Groups["build"].Success ? match.Groups["build"].Value : null;
 

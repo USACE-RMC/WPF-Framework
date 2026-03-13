@@ -29,10 +29,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrameworkInterfaces.Utilities
 {
@@ -58,6 +54,10 @@ namespace FrameworkInterfaces.Utilities
         {
             if (DateTime.TryParse(dateString, out DateTime result))
             {
+                // Only convert to local time if the kind is Utc or Unspecified.
+                // If it is already Local, calling ToLocalTime() again would double-shift the value.
+                if (result.Kind == DateTimeKind.Local)
+                    return result;
                 return result.ToLocalTime();
             }
             return null;

@@ -585,10 +585,6 @@ namespace FrameworkInterfaces.Undo
 
             if (oldIndex == newIndex) return null;
 
-            // Capture the item being moved
-            var movedItems = e.NewItems?.Cast<T>().ToList() ?? new List<T>();
-            if (movedItems.Count == 0) return null;
-
             string description = $"Move item in {_collectionDescription}";
 
             return new DelegateAction(

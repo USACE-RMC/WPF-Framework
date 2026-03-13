@@ -457,26 +457,30 @@ namespace FrameworkInterfaces.Undo
         {
             lock (_lockObject)
             {
-                while (_undoStack.Count > _maxUndoLevels)
+                if (_undoStack.Count <= _maxUndoLevels) return;
+
+                // Do a single pass: convert once, trim excess oldest entries, rebuild stack once.
+                // Stack enumeration order is top-to-bottom (most-recent first), so list[0] is newest.
+                var list = _undoStack.ToList();
+                int excess = list.Count - _maxUndoLevels;
+
+                // Remove the oldest entries (tail of the list = bottom of the stack)
+                list.RemoveRange(list.Count - excess, excess);
+
+                _undoStack.Clear();
+                for (int i = list.Count - 1; i >= 0; i--)
                 {
-                    // Convert to list, remove oldest (last item = bottom of stack), rebuild stack
-                    var list = _undoStack.ToList();
-                    list.RemoveAt(list.Count - 1);
-                    _undoStack.Clear();
-                    for (int i = list.Count - 1; i >= 0; i--)
-                    {
-                        _undoStack.Push(list[i]);
-                    }
+                    _undoStack.Push(list[i]);
+                }
 
-                    // Keep _currentIndex in sync with actual stack depth
-                    _currentIndex--;
+                // Keep _currentIndex in sync with actual stack depth
+                _currentIndex -= excess;
 
-                    // Adjust save point — if the discarded action was before the save point,
-                    // the save point is no longer reachable
-                    if (_savePointIndex > _currentIndex)
-                    {
-                        _savePointIndex = -1; // Mark as unreachable
-                    }
+                // Adjust save point — if the discarded actions were before the save point,
+                // the save point is no longer reachable
+                if (_savePointIndex > _currentIndex)
+                {
+                    _savePointIndex = -1; // Mark as unreachable
                 }
             }
         }
@@ -519,11 +523,16 @@ namespace FrameworkInterfaces.Undo
         }
 
         /// <summary>
-        /// No-op disposable for nested transactions.
+        /// No-op disposable for nested transactions. Nested transactions are silently discarded.
         /// </summary>
         private class NestedTransactionScope : IDisposable
         {
-            public void Dispose() { }
+            public void Dispose()
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    "[UndoManager] WARNING: A nested transaction was silently discarded. " +
+                    "Nested BeginTransaction calls are not supported; only the outermost transaction is committed.");
+            }
         }
 
         #endregion

@@ -76,13 +76,13 @@ namespace FrameworkUI.Demo
         /// </summary>
         public override string Name
         {
-            get => _name;
+            get => NameField;
             set
             {
-                if (_name != value)
+                if (NameField != value)
                 {
-                    var oldValue = _name;
-                    _name = value;
+                    var oldValue = NameField;
+                    NameField = value;
                     RecordPropertyChange(nameof(Name), oldValue, value);
                 }
             }

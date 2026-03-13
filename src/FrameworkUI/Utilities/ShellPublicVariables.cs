@@ -158,8 +158,24 @@ namespace FrameworkUI
         public static string SoftwareVersion = ApplicationAttributes.Version;
         /// <summary>
         /// Gets or sets the software version release date.
+        /// Defaults to the assembly's last write time; can be overridden by the application.
         /// </summary>
-        public static string SoftwareVersionDate = "March 2020";
+        public static string SoftwareVersionDate = GetAssemblyDate();
+
+        private static string GetAssemblyDate()
+        {
+            try
+            {
+                var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                if (!string.IsNullOrEmpty(location))
+                {
+                    var lastWrite = System.IO.File.GetLastWriteTime(location);
+                    return lastWrite.ToString("MMMM yyyy");
+                }
+            }
+            catch { }
+            return string.Empty;
+        }
         /// <summary>
         /// Gets or sets the software name from application attributes.
         /// </summary>

@@ -68,8 +68,11 @@ namespace FrameworkUI
             set
             {
                 SetValue(WindowsProperty, value);
-                MyDataGrid.ItemsSource = null;
-                MyDataGrid.ItemsSource = Windows.Collection;
+                if (MyDataGrid != null)
+                {
+                    MyDataGrid.ItemsSource = null;
+                    MyDataGrid.ItemsSource = Windows?.Collection;
+                }
             }
         }
 
@@ -99,7 +102,7 @@ namespace FrameworkUI
         /// <summary>
         /// Close selected windows.
         /// </summary>
-        private void CloseWindwowsButton_Click(object sender, RoutedEventArgs e)
+        private void CloseWindowsButton_Click(object sender, RoutedEventArgs e)
         {
             for (int i = MyDataGrid.SelectedItems.Count - 1; i >= 0; i -= 1)
             {
@@ -120,13 +123,13 @@ namespace FrameworkUI
             {
                 ActivateButton.IsEnabled = false;
                 SaveButton.IsEnabled = false;
-                CloseWindwowsButton.IsEnabled = false;
+                CloseWindowsButton.IsEnabled = false;
             }
             else if (MyDataGrid.SelectedItems.Count == 1)
             {
                 ActivateButton.IsEnabled = true;
                 SaveButton.IsEnabled = false;
-                CloseWindwowsButton.IsEnabled = true;
+                CloseWindowsButton.IsEnabled = true;
                 if (MyDataGrid.SelectedItem is OpenWindowItem selectedItem && selectedItem.Element?.IsDirty == true)
                 {
                     SaveButton.IsEnabled = true;
@@ -136,7 +139,7 @@ namespace FrameworkUI
             {
                 ActivateButton.IsEnabled = false;
                 SaveButton.IsEnabled = false;
-                CloseWindwowsButton.IsEnabled = true;
+                CloseWindowsButton.IsEnabled = true;
                 for (int i = 0; i < MyDataGrid.SelectedItems.Count; i++)
                 {
                     if (MyDataGrid.SelectedItems[i] is OpenWindowItem item && item.Element?.IsDirty == true)
