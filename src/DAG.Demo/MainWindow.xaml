@@ -55,7 +55,6 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Image Width="16" Height="16" Source="/DAG.Demo;component/Resources/Add.png"/>
-                            <!--<TextBlock Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center" Text="Add Node"/>-->
                         </Grid>
                 </Button.Content>
             </Button>
@@ -71,7 +70,6 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <!--<Image Width="16" Height="16" Source="/DAG.Demo;component/Resources/Add.png"/>-->
                         <TextBlock Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center" Text="Save"/>
                     </Grid>
                 </Button.Content>
@@ -84,7 +82,6 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <!--<Image Width="16" Height="16" Source="/DAG.Demo;component/Resources/Add.png"/>-->
                         <TextBlock Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center" Text="Load"/>
                     </Grid>
                 </Button.Content>
@@ -97,7 +94,6 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <!--<Image Width="16" Height="16" Source="/DAG.Demo;component/Resources/Add.png"/>-->
                         <TextBlock Grid.Column="1" Margin="2,0,0,0" VerticalAlignment="Center" Text="Test"/>
                     </Grid>
                 </Button.Content>

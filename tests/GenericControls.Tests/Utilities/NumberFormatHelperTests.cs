@@ -229,13 +229,13 @@ public class NumberFormatHelperTests
     [Theory]
     [InlineData(123.456, "F2", "123.46")]
     [InlineData(1000.0, "N0", "1,000")]
-    public void FormatDouble_WithFormat_FormatsCorrectly(double value, string format, string _)
+    public void FormatDouble_WithFormat_FormatsCorrectly(double value, string format, string expected)
     {
         // Act
         var result = NumberFormatHelper.FormatDouble(value, format);
 
-        // Assert - Normalize for culture-specific formatting
-        Assert.NotNull(result);
+        // Assert
+        Assert.Equal(expected, result);
     }
 
     /// <summary>
@@ -249,13 +249,13 @@ public class NumberFormatHelperTests
     [InlineData(123.456, 2, false, "123.46")]
     [InlineData(123.456, 0, false, "123")]
     [InlineData(1234.5, 1, true, "1,234.5")]
-    public void FormatDouble_WithDecimalPlaces_FormatsCorrectly(double value, int decimalPlaces, bool useThousands, string _)
+    public void FormatDouble_WithDecimalPlaces_FormatsCorrectly(double value, int decimalPlaces, bool useThousands, string expected)
     {
         // Act
         var result = NumberFormatHelper.FormatDouble(value, decimalPlaces, useThousands);
 
-        // Assert - The result should be a string (culture-specific)
-        Assert.NotNull(result);
+        // Assert
+        Assert.Equal(expected, result);
     }
 
     #endregion
@@ -1109,9 +1109,11 @@ public class NumberFormatHelperTests
     [Fact]
     public void NegativeSignIsPrefix_ReturnsBasedOnCulture()
     {
-        // Assert - Just verify it returns a boolean without throwing
+        // Assert - Should match the expected pattern from the current culture
         var result = NumberFormatHelper.NegativeSignIsPrefix;
-        Assert.True(result || !result); // Always true, just checking it doesn't throw
+        int pattern = CultureInfo.CurrentCulture.NumberFormat.NumberNegativePattern;
+        bool expected = pattern == 1 || pattern == 2;
+        Assert.Equal(expected, result);
     }
 
     #endregion

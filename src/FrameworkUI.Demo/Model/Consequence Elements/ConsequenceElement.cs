@@ -29,11 +29,7 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FrameworkInterfaces;
 
 namespace FrameworkUI.Demo
@@ -56,7 +52,6 @@ namespace FrameworkUI.Demo
     /// </remarks>
     internal class ConsequenceElement : ElementBase
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ConsequenceElement"/> class.
         /// </summary>
@@ -65,6 +60,9 @@ namespace FrameworkUI.Demo
         public ConsequenceElement(string name, IElementCollection parentCollection) : base(name, parentCollection)
         {
             Name = name;
+            _description = "Consequence Element";
+            _creationDate = DateTime.Now;
+            _lastModified = _creationDate;
             SetIsDirty(false);
         }
 
@@ -76,17 +74,17 @@ namespace FrameworkUI.Demo
         /// <summary>
         /// Gets or sets the description of the consequence element.
         /// </summary>
-        public override string Description { get => "Consequence Element"; set => throw new NotImplementedException(); }
+        public override string Description { get => _description; set => _description = value; }
 
         /// <summary>
         /// Gets the creation date of the consequence element.
         /// </summary>
-        public override DateTime CreationDate => DateTime.Now;
+        public override DateTime CreationDate => _creationDate;
 
         /// <summary>
         /// Gets the last modified date of the consequence element.
         /// </summary>
-        public override DateTime LastModified => DateTime.Now;
+        public override DateTime LastModified => _lastModified;
 
         /// <summary>
         /// Gets the name used when saving the element to disk.

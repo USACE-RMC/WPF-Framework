@@ -43,22 +43,10 @@ namespace ExpressionParserControls.Demo
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// Hooks the <see cref="Window.ContentRendered"/> event to perform post-load actions.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
-            this.ContentRendered += MainWindow_ContentRendered;
-        }
-
-        /// <summary>
-        /// Handles the <see cref="Window.ContentRendered"/> event when the window is fully loaded and displayed.
-        /// Intended for triggering parse-evaluation routines or performance benchmarking.
-        /// </summary>
-        /// <param name="sender">The event source, typically the window.</param>
-        /// <param name="e">Event arguments.</param>
-        private void MainWindow_ContentRendered(object sender, EventArgs e)
-        {
         }
 
         /// <summary>

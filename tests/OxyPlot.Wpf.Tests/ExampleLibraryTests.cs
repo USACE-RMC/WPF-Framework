@@ -78,11 +78,6 @@ namespace OxyPlot.Wpf.Tests
                 validFileName = validFileName.Replace(invalChar.ToString(), string.Empty);
             }
 
-            foreach (var invalChar in invalidFileNameChars)
-            {
-                validFileName = validFileName.Replace(invalChar.ToString(), string.Empty);
-            }
-
             if (validFileName.Length > 160)
             {
                 // safe value threshold is 260

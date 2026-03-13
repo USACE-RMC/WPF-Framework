@@ -61,7 +61,9 @@
       "Bash(for dir:*)",
       "Bash(do find:*)",
       "Bash(sed -i 's/Assert.Equal\\(SynchronizationModes.Off, builder.SyncMode\\)/Assert.Equal\\(SynchronizationModes.Full, builder.SyncMode\\)/' src/DatabaseManager.Tests/SQLiteManagerTests.cs)",
-      "Bash(sed -i 's/Assert.Equal\\(SQLiteJournalModeEnum.Memory, builder.JournalMode\\)/Assert.Equal\\(SQLiteJournalModeEnum.Wal, builder.JournalMode\\)/' src/DatabaseManager.Tests/SQLiteManagerTests.cs)"
+      "Bash(sed -i 's/Assert.Equal\\(SQLiteJournalModeEnum.Memory, builder.JournalMode\\)/Assert.Equal\\(SQLiteJournalModeEnum.Wal, builder.JournalMode\\)/' src/DatabaseManager.Tests/SQLiteManagerTests.cs)",
+      "Bash(sort find:*)",
+      "Bash(xargs cat:*)"
     ]
   }
 }

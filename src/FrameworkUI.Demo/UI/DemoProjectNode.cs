@@ -32,7 +32,6 @@ using FrameworkInterfaces;
 using FrameworkUI;
 using FrameworkUI.ProjectExplorer;
 using GenericControls;
-using Microsoft.VisualBasic;
 using OxyPlot.Wpf;
 using OxyPlotControls;
 using System.Collections.Generic;
@@ -73,30 +72,6 @@ namespace FrameworkUI.Demo.UI
 
             _plotPropertiesControl = new OxyPlotPropertiesControl() { Margin = new Thickness(0, 0, 5, 5) };
             _plotPropertiesControl.ClosePropertiesCalled += (x) => { ClosePlotProperties_Click(x.Plot); };
-
-            //for (int i = 0; i < ChildNodes.Count; i++)
-            //{
-            //    ElementNodeCollection elementnodeCollection = ChildNodes[i] as ElementNodeCollection;
-            //    if (elementnodeCollection == null) continue;
-
-            //    // Custom menu item to add hazard
-            //    var myCustomMenuItem = new MenuItem() { Header = "Add Hazard (Custom Item)...", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Hazard_Icon) } };
-            //    myCustomMenuItem.Click += (s, e) => { CreateNewHazardElement(elementnodeCollection); };
-            //    elementnodeCollection.CustomContextItems.Add(myCustomMenuItem);
-
-            //    // Allow groups to add hazard like the parent node collection
-            //    elementnodeCollection.GroupAdded += (g) =>
-            //    {
-            //        var gCustomMenuItem = new MenuItem() { Header = "Add Hazard (Custom Item)...", Icon = new Image() { Source = GeneralMethods.Bitmap2BitmapSource(Properties.Resources.Hazard_Icon) } };
-            //        gCustomMenuItem.Click += (s, e) =>
-            //        {
-            //            var newHazard = CreateNewHazardElement(elementnodeCollection);
-            //            Node n = elementnodeCollection.ChildNodes.FirstOrDefault(o => o.GetType() == typeof(ElementNode) && ((ElementNode)o).Element == newHazard);
-            //            n.Move(elementnodeCollection, g, elementnodeCollection.ChildNodes.IndexOf(n), g.ChildNodes.Count);
-            //        };
-            //        g.CustomContextItems.Add(gCustomMenuItem);
-            //    };
-            //}
         }
 
         /// <summary>
@@ -227,7 +202,7 @@ namespace FrameworkUI.Demo.UI
                 Owner = Window.GetWindow(this),
                 Text = initialName
             };
-            if (nameDialog.ShowDialog() == true == true)
+            if (nameDialog.ShowDialog() == true)
             {
                 return nameDialog.Text;
             }
@@ -245,7 +220,7 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The routed event arguments.</param>
         private void CustomMenuItem_Clicked(object sender, RoutedEventArgs e)
         {
-            Interaction.MsgBox("Yay");
+            System.Windows.MessageBox.Show("Yay", "Custom Menu", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
 
         #endregion
@@ -263,7 +238,7 @@ namespace FrameworkUI.Demo.UI
         /// is not recognized or does not have a corresponding document control.
         /// </returns>
         /// <remarks>
-        /// This method supports all element types in the RMC-BestFit application including:
+        /// This method supports all element types in the FrameworkUI.Demo application including:
         /// <list type="bullet">
         /// <item>Time Series elements</item>
         /// <item>Input Data elements</item>
@@ -303,7 +278,7 @@ namespace FrameworkUI.Demo.UI
         /// </returns>
         /// <remarks>
         /// This method supports extraction of elements from all document controls and properties controls
-        /// used in the application. It performs type checking on the control to determine which element
+        /// used in the FrameworkUI.Demo application. It performs type checking on the control to determine which element
         /// property to access.
         /// </remarks>
         public override IElement GetControlElement(UIElement control)

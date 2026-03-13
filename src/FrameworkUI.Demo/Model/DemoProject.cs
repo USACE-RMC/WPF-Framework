@@ -29,14 +29,12 @@
 */
 
 using DatabaseManager;
-using DocumentFormat.OpenXml.Vml.Office;
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -341,7 +339,7 @@ namespace FrameworkUI.Demo
 
             if (winExpName != Name && Name != "Blank Project")
             {
-                FullFileName = Path.Combine(FileDirectory, Name + ".tra");
+                FullFileName = Path.Combine(FileDirectory, Name + ".fun");
                 File.Move(winExpFullFileName, FullFileName);
             }
 

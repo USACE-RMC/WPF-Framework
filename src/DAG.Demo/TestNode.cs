@@ -64,6 +64,9 @@ namespace DAG.Demo
         public TestNode(XElement nodeElement) : base(nodeElement)
         {
             Init();
+            // Clear the random connectors created by Init() before XML deserialization adds its own
+            _inputs.Clear();
+            _outputs.Clear();
             int.TryParse(nodeElement.Attribute(nameof(MySpecialNumber))?.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out _mySpecialNumber);
         }
 

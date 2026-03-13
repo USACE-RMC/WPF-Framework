@@ -28,7 +28,8 @@ namespace Documentation.Tests.Snippets
             object val = table.GetCell(0, 0);
 
             // SQLite with password
-            var db2 = new SQLiteManager("encrypted.sqlite", "password123");
+            // Replace with actual credentials - never hardcode passwords
+            var db2 = new SQLiteManager("encrypted.sqlite", "<your-password-here>");
         }
 
         // ---------------------------------------------------------------

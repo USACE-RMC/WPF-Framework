@@ -113,7 +113,7 @@ namespace OxyPlot.Wpf.Tests
         /// In this case, the Loaded event is not fired.
         /// </summary>
         [Test]
-        public void PlotInifityPolyline()
+        public void PlotInfinityPolyline()
         {
             var model = new PlotModel();
             var series = new OxyPlot.Series.LineSeries();

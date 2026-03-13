@@ -12,7 +12,7 @@ namespace OxyPlot.Tests
     public class MySetupClass
     {
         /// <summary>
-        /// Workaround for breaking changes while moving to latest NUnit, <see cref="https://github.com/nunit/docs/wiki/Breaking-Changes"/>
+        /// Workaround for breaking changes while moving to latest NUnit, <see href="https://github.com/nunit/docs/wiki/Breaking-Changes"/>
         /// </summary>
         [OneTimeSetUp]
         public void RunBeforeAnyTests()

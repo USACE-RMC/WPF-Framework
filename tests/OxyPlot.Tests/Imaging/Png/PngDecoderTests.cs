@@ -23,9 +23,9 @@ namespace OxyPlot.Tests
         {
             var d = new PngDecoder();
             var pixels = d.Decode(File.ReadAllBytes(path));
+            Assert.IsNotNull(pixels);
             Assert.AreEqual(w, pixels.GetLength(0));
             Assert.AreEqual(h, pixels.GetLength(1));
-            Assert.IsNotNull(pixels);
             var e = new PngEncoder(new PngEncoderOptions());
             var encodedPixels = e.Encode(pixels);
             File.WriteAllBytes(Path.ChangeExtension(path, "out.png"), encodedPixels);

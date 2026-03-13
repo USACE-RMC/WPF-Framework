@@ -110,13 +110,10 @@ namespace ExpressionParser.Tests
         public void EP014_IfWithNullCondition_DoesNotCrash()
         {
             var node = ExpressionParser.Parser.Parser.Parse("IF(,1,2)");
-            // The expression may parse to null or contain errors - either is acceptable
-            if (node != null)
-            {
-                var result = node.Evaluate();
-                // Should either produce an error or handle gracefully - must not throw
-                Assert.IsNotNull(result, "IF with null condition should return a result, not throw");
-            }
+            Assert.IsNotNull(node, "IF(,1,2) should parse to a non-null node");
+            var result = node.Evaluate();
+            // Should either produce an error or handle gracefully - must not throw
+            Assert.IsNotNull(result, "IF with null condition should return a result, not throw");
         }
 
         /// <summary>
@@ -127,12 +124,10 @@ namespace ExpressionParser.Tests
         public void EP017_ContainsWithErrorInputs_ReturnsError()
         {
             var node = ExpressionParser.Parser.Parser.Parse("CONTAINS(, 'test')");
-            if (node != null)
-            {
-                var result = node.Evaluate();
-                Assert.AreEqual(ResultType.Error, result.Type,
-                    "CONTAINS with null first operand should produce an Error result");
-            }
+            Assert.IsNotNull(node, "CONTAINS(, 'test') should parse to a non-null node");
+            var result = node.Evaluate();
+            Assert.AreEqual(ResultType.Error, result.Type,
+                "CONTAINS with null first operand should produce an Error result");
         }
 
         /// <summary>
@@ -143,12 +138,9 @@ namespace ExpressionParser.Tests
         public void AndOrWithNullOperands_ReturnsError()
         {
             var node = ExpressionParser.Parser.Parser.Parse("AND(TRUE,)");
-            // The expression may parse to null or contain errors - either is acceptable
-            if (node != null)
-            {
-                var result = node.Evaluate();
-                Assert.IsNotNull(result, "AND with null operand should return a result, not throw");
-            }
+            Assert.IsNotNull(node, "AND(TRUE,) should parse to a non-null node");
+            var result = node.Evaluate();
+            Assert.IsNotNull(result, "AND with null operand should return a result, not throw");
         }
 
         /// <summary>
@@ -159,13 +151,11 @@ namespace ExpressionParser.Tests
         public void EP010_RoundNullParameter_ReturnsError()
         {
             var node = ExpressionParser.Parser.Parser.Parse("ROUND(,2)");
-            if (node != null)
-            {
-                Assert.IsTrue(node.ContainsErrors, "ROUND with null first parameter should contain errors");
-                var result = node.Evaluate();
-                Assert.AreEqual(ResultType.Error, result.Type,
-                    "ROUND with null first parameter should produce an Error result");
-            }
+            Assert.IsNotNull(node, "ROUND(,2) should parse to a non-null node");
+            Assert.IsTrue(node.ContainsErrors, "ROUND with null first parameter should contain errors");
+            var result = node.Evaluate();
+            Assert.AreEqual(ResultType.Error, result.Type,
+                "ROUND with null first parameter should produce an Error result");
         }
 
         /// <summary>

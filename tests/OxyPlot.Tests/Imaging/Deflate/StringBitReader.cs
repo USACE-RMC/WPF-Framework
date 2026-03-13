@@ -10,6 +10,7 @@
 namespace OxyPlot.Tests
 {
     using System;
+    using System.IO;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -33,7 +34,7 @@ namespace OxyPlot.Tests
         /// <param name="text">The source string.</param>
         public StringBitReader(string text)
         {
-            if (!Regex.IsMatch(text, "[01]*"))
+            if (!Regex.IsMatch(text, "[01]+"))
             {
                 throw new ArgumentException("str");
             }
@@ -62,7 +63,7 @@ namespace OxyPlot.Tests
         /// Reads a bit from the stream.
         /// </summary>
         /// <returns>Returns 0 or 1 if a bit is available, or throws an EOFException if the end of stream is reached.</returns>
-        /// <exception cref="System.Exception">End of stream reached</exception>
+        /// <exception cref="System.IO.EndOfStreamException">End of stream reached</exception>
         public override int ReadNoEof()
         {
             int result = this.Read();
@@ -71,7 +72,7 @@ namespace OxyPlot.Tests
                 return result;
             }
 
-            throw new Exception("End of stream reached");
+            throw new EndOfStreamException("End of stream reached");
         }
 
         /// <summary>

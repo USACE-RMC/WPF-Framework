@@ -72,6 +72,10 @@ namespace FrameworkUI.Demo.UI
             get => _element;
             set
             {
+                if (_element != null)
+                {
+                    _element.PropertyChanged -= Element_PropertyChanged;
+                }
                 _element = value;
                 if (_element != null)
                 {

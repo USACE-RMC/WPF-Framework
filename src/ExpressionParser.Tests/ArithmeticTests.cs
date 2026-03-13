@@ -45,9 +45,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void MultiplicationBasicTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2*3").Evaluate().Result, 6);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5*10").Evaluate().Result, 50);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("7*8").Evaluate().Result, 56);
+            Assert.AreEqual(6, ExpressionParser.Parser.Parser.Parse("2*3").Evaluate().Result);
+            Assert.AreEqual(50, ExpressionParser.Parser.Parser.Parse("5*10").Evaluate().Result);
+            Assert.AreEqual(56, ExpressionParser.Parser.Parser.Parse("7*8").Evaluate().Result);
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void MultiplicationWithDecimalsTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2.5*4").Evaluate().Result, 10.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("3.5*2.5").Evaluate().Result, 8.75);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("0.5*10").Evaluate().Result, 5.0);
+            Assert.AreEqual(10.0, ExpressionParser.Parser.Parser.Parse("2.5*4").Evaluate().Result);
+            Assert.AreEqual(8.75, ExpressionParser.Parser.Parser.Parse("3.5*2.5").Evaluate().Result);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("0.5*10").Evaluate().Result);
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void DivisionBasicTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10/2").Evaluate().Result, 5.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("20/4").Evaluate().Result, 5.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("15/3").Evaluate().Result, 5.0);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("10/2").Evaluate().Result);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("20/4").Evaluate().Result);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("15/3").Evaluate().Result);
         }
 
         /// <summary>
@@ -90,9 +90,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void DivisionWithDecimalResultsTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10/4").Evaluate().Result, 2.5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("7/2").Evaluate().Result, 3.5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("1/8").Evaluate().Result, 0.125);
+            Assert.AreEqual(2.5, ExpressionParser.Parser.Parser.Parse("10/4").Evaluate().Result);
+            Assert.AreEqual(3.5, ExpressionParser.Parser.Parser.Parse("7/2").Evaluate().Result);
+            Assert.AreEqual(0.125, ExpressionParser.Parser.Parser.Parse("1/8").Evaluate().Result);
         }
 
         /// <summary>
@@ -111,10 +111,10 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ExponentiationBasicTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2^3").Evaluate().Result, 8.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5^2").Evaluate().Result, 25.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("3^4").Evaluate().Result, 81.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10^0").Evaluate().Result, 1.0);
+            Assert.AreEqual(8.0, ExpressionParser.Parser.Parser.Parse("2^3").Evaluate().Result);
+            Assert.AreEqual(25.0, ExpressionParser.Parser.Parser.Parse("5^2").Evaluate().Result);
+            Assert.AreEqual(81.0, ExpressionParser.Parser.Parser.Parse("3^4").Evaluate().Result);
+            Assert.AreEqual(1.0, ExpressionParser.Parser.Parser.Parse("10^0").Evaluate().Result);
         }
 
         /// <summary>
@@ -134,9 +134,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void OperatorPrecedenceMultiplicationAdditionTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2+3*4").Evaluate().Result, 14);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10-2*3").Evaluate().Result, 4);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5*2+3*4").Evaluate().Result, 22);
+            Assert.AreEqual(14, ExpressionParser.Parser.Parser.Parse("2+3*4").Evaluate().Result);
+            Assert.AreEqual(4, ExpressionParser.Parser.Parser.Parse("10-2*3").Evaluate().Result);
+            Assert.AreEqual(22, ExpressionParser.Parser.Parser.Parse("5*2+3*4").Evaluate().Result);
         }
 
         /// <summary>
@@ -145,9 +145,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void OperatorPrecedenceExponentiationTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2^3*4").Evaluate().Result, 32.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2*3^2").Evaluate().Result, 18.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2+3^2").Evaluate().Result, 11.0);
+            Assert.AreEqual(32.0, ExpressionParser.Parser.Parser.Parse("2^3*4").Evaluate().Result);
+            Assert.AreEqual(18.0, ExpressionParser.Parser.Parser.Parse("2*3^2").Evaluate().Result);
+            Assert.AreEqual(11.0, ExpressionParser.Parser.Parser.Parse("2+3^2").Evaluate().Result);
         }
 
         /// <summary>
@@ -156,10 +156,10 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ComplexNestedExpressionsTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("((2+3)*4)^2").Evaluate().Result, 400.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("(10-(3+2))*2").Evaluate().Result, 10);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("((5*2)+(3*4))/(2+2)").Evaluate().Result, 5.5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2*(3+(4*(5-2)))").Evaluate().Result, 30);
+            Assert.AreEqual(400.0, ExpressionParser.Parser.Parser.Parse("((2+3)*4)^2").Evaluate().Result);
+            Assert.AreEqual(10, ExpressionParser.Parser.Parser.Parse("(10-(3+2))*2").Evaluate().Result);
+            Assert.AreEqual(5.5, ExpressionParser.Parser.Parser.Parse("((5*2)+(3*4))/(2+2)").Evaluate().Result);
+            Assert.AreEqual(30, ExpressionParser.Parser.Parser.Parse("2*(3+(4*(5-2)))").Evaluate().Result);
         }
 
         /// <summary>
@@ -168,9 +168,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void UnaryMinusTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("-5").Evaluate().Result, -5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("-10+5").Evaluate().Result, -5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("-(5+3)").Evaluate().Result, -8);
+            Assert.AreEqual(-5, ExpressionParser.Parser.Parser.Parse("-5").Evaluate().Result);
+            Assert.AreEqual(-5, ExpressionParser.Parser.Parser.Parse("-10+5").Evaluate().Result);
+            Assert.AreEqual(-8, ExpressionParser.Parser.Parser.Parse("-(5+3)").Evaluate().Result);
         }
 
         /// <summary>
@@ -190,9 +190,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void IntegerTypeHandlingTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5+10").Evaluate().Type, ResultType.Integer);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("20-5").Evaluate().Type, ResultType.Integer);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("4*5").Evaluate().Type, ResultType.Integer);
+            Assert.AreEqual(ResultType.Integer, ExpressionParser.Parser.Parser.Parse("5+10").Evaluate().Type);
+            Assert.AreEqual(ResultType.Integer, ExpressionParser.Parser.Parser.Parse("20-5").Evaluate().Type);
+            Assert.AreEqual(ResultType.Integer, ExpressionParser.Parser.Parser.Parse("4*5").Evaluate().Type);
         }
 
         /// <summary>
@@ -201,10 +201,10 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void DoubleTypeHandlingTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10/2").Evaluate().Type, ResultType.Double);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2^3").Evaluate().Type, ResultType.Double);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5.5+10").Evaluate().Type, ResultType.Double);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5+10.5").Evaluate().Type, ResultType.Double);
+            Assert.AreEqual(ResultType.Double, ExpressionParser.Parser.Parser.Parse("10/2").Evaluate().Type);
+            Assert.AreEqual(ResultType.Double, ExpressionParser.Parser.Parser.Parse("2^3").Evaluate().Type);
+            Assert.AreEqual(ResultType.Double, ExpressionParser.Parser.Parser.Parse("5.5+10").Evaluate().Type);
+            Assert.AreEqual(ResultType.Double, ExpressionParser.Parser.Parser.Parse("5+10.5").Evaluate().Type);
         }
 
         /// <summary>
@@ -213,11 +213,11 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ZeroOperandTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("0+5").Evaluate().Result, 5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10-0").Evaluate().Result, 10);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("0*100").Evaluate().Result, 0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("0/5").Evaluate().Result, 0.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("0^5").Evaluate().Result, 0.0);
+            Assert.AreEqual(5, ExpressionParser.Parser.Parser.Parse("0+5").Evaluate().Result);
+            Assert.AreEqual(10, ExpressionParser.Parser.Parser.Parse("10-0").Evaluate().Result);
+            Assert.AreEqual(0, ExpressionParser.Parser.Parser.Parse("0*100").Evaluate().Result);
+            Assert.AreEqual(0.0, ExpressionParser.Parser.Parser.Parse("0/5").Evaluate().Result);
+            Assert.AreEqual(0.0, ExpressionParser.Parser.Parser.Parse("0^5").Evaluate().Result);
         }
 
         /// <summary>
@@ -253,9 +253,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ChainedMultiplicationTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2*3*4").Evaluate().Result, 24);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5*2*3*2").Evaluate().Result, 60);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10*10*10").Evaluate().Result, 1000);
+            Assert.AreEqual(24, ExpressionParser.Parser.Parser.Parse("2*3*4").Evaluate().Result);
+            Assert.AreEqual(60, ExpressionParser.Parser.Parser.Parse("5*2*3*2").Evaluate().Result);
+            Assert.AreEqual(1000, ExpressionParser.Parser.Parser.Parse("10*10*10").Evaluate().Result);
         }
 
         /// <summary>
@@ -264,9 +264,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ChainedDivisionTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("100/10/2").Evaluate().Result, 5.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("64/8/2").Evaluate().Result, 4.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("1000/10/10").Evaluate().Result, 10.0);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("100/10/2").Evaluate().Result);
+            Assert.AreEqual(4.0, ExpressionParser.Parser.Parser.Parse("64/8/2").Evaluate().Result);
+            Assert.AreEqual(10.0, ExpressionParser.Parser.Parser.Parse("1000/10/10").Evaluate().Result);
         }
 
         /// <summary>
@@ -275,9 +275,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void MixedOperationsTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("10+5*2-8/4").Evaluate().Result, 18.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("100-50/5+10*2").Evaluate().Result, 110.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2^3+4*5-10/2").Evaluate().Result, 23.0);
+            Assert.AreEqual(18.0, ExpressionParser.Parser.Parser.Parse("10+5*2-8/4").Evaluate().Result);
+            Assert.AreEqual(110.0, ExpressionParser.Parser.Parser.Parse("100-50/5+10*2").Evaluate().Result);
+            Assert.AreEqual(23.0, ExpressionParser.Parser.Parser.Parse("2^3+4*5-10/2").Evaluate().Result);
         }
 
         /// <summary>
@@ -286,9 +286,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void MultipleParenthesesGroupsTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("(2+3)*(4+5)").Evaluate().Result, 45);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("(10-5)+(20-10)").Evaluate().Result, 15);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("(8/2)*(12/3)").Evaluate().Result, 16.0);
+            Assert.AreEqual(45, ExpressionParser.Parser.Parser.Parse("(2+3)*(4+5)").Evaluate().Result);
+            Assert.AreEqual(15, ExpressionParser.Parser.Parser.Parse("(10-5)+(20-10)").Evaluate().Result);
+            Assert.AreEqual(16.0, ExpressionParser.Parser.Parser.Parse("(8/2)*(12/3)").Evaluate().Result);
         }
 
         /// <summary>
@@ -297,9 +297,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ComplexExponentiationTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("(2+1)^(6-3)").Evaluate().Result, 27.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("2^(3+1)").Evaluate().Result, 16.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("(2^3)^2").Evaluate().Result, 64.0);
+            Assert.AreEqual(27.0, ExpressionParser.Parser.Parser.Parse("(2+1)^(6-3)").Evaluate().Result);
+            Assert.AreEqual(16.0, ExpressionParser.Parser.Parser.Parse("2^(3+1)").Evaluate().Result);
+            Assert.AreEqual(64.0, ExpressionParser.Parser.Parser.Parse("(2^3)^2").Evaluate().Result);
         }
 
         /// <summary>
@@ -308,9 +308,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void MultiplicationByOneTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5*1").Evaluate().Result, 5);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("1*100").Evaluate().Result, 100);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("3.5*1").Evaluate().Result, 3.5);
+            Assert.AreEqual(5, ExpressionParser.Parser.Parser.Parse("5*1").Evaluate().Result);
+            Assert.AreEqual(100, ExpressionParser.Parser.Parser.Parse("1*100").Evaluate().Result);
+            Assert.AreEqual(3.5, ExpressionParser.Parser.Parser.Parse("3.5*1").Evaluate().Result);
         }
 
         /// <summary>
@@ -319,9 +319,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void DivisionByOneTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5/1").Evaluate().Result, 5.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("100/1").Evaluate().Result, 100.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("7.5/1").Evaluate().Result, 7.5);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("5/1").Evaluate().Result);
+            Assert.AreEqual(100.0, ExpressionParser.Parser.Parser.Parse("100/1").Evaluate().Result);
+            Assert.AreEqual(7.5, ExpressionParser.Parser.Parser.Parse("7.5/1").Evaluate().Result);
         }
 
         /// <summary>
@@ -330,9 +330,9 @@ namespace ExpressionParser.Tests
         [TestMethod]
         public void ExponentiationWithOneTests()
         {
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("5^1").Evaluate().Result, 5.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("1^5").Evaluate().Result, 1.0);
-            Assert.AreEqual(ExpressionParser.Parser.Parser.Parse("1^1").Evaluate().Result, 1.0);
+            Assert.AreEqual(5.0, ExpressionParser.Parser.Parser.Parse("5^1").Evaluate().Result);
+            Assert.AreEqual(1.0, ExpressionParser.Parser.Parser.Parse("1^5").Evaluate().Result);
+            Assert.AreEqual(1.0, ExpressionParser.Parser.Parser.Parse("1^1").Evaluate().Result);
         }
     }
 }

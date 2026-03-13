@@ -603,7 +603,7 @@ namespace GenericControls.Demo
         {
             string file = GeneralMethods.FileOpenDialog("All Files (*.*)|*.*|Text Files (*.txt)|*.txt");
 
-            if (file != null && !string.IsNullOrEmpty(file))
+            if (!string.IsNullOrEmpty(file))
             {
                 DialogResultText = $"File Dialog Result: \"{file}\"";
                 FilePathProperty = file;

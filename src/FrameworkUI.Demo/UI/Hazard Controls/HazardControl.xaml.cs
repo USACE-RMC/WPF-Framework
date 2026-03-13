@@ -131,7 +131,6 @@ namespace FrameworkUI.Demo.UI
                 var oldElement = e.OldValue as HazardElement;
                 if (oldElement != null)
                 {
-                    oldElement.ParentCollection.PreviewObjectSaved -= thisControl.PreviewSaved;
                     oldElement.PropertyChanged -= thisControl.HazardFunctionPropertyChanged;
                 }
             }
@@ -141,7 +140,6 @@ namespace FrameworkUI.Demo.UI
             var newElement = e.NewValue as HazardElement;
             if (newElement == null) return;
 
-            newElement.ParentCollection.PreviewObjectSaved += thisControl.PreviewSaved;
             newElement.PropertyChanged += thisControl.HazardFunctionPropertyChanged;
 
             thisControl.LoadPlotSettings();
@@ -232,19 +230,6 @@ namespace FrameworkUI.Demo.UI
                     Plot.InvalidatePlot(true);
                 }
             }));
-        }
-
-        /// <summary>
-        /// Handles the preview save event to persist chart settings before saving.
-        /// </summary>
-        /// <param name="sender">The object being saved.</param>
-        /// <param name="cancel">A reference parameter that can be set to <c>true</c> to cancel the save operation.</param>
-        private void PreviewSaved(ISave sender, ref bool cancel)
-        {
-            if (_isLoaded)
-            {
-
-            }
         }
 
         /// <summary>

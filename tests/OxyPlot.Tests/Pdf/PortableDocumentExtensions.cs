@@ -9,7 +9,6 @@
 
 namespace OxyPlot.Tests
 {
-    using System.Diagnostics;
     using System.IO;
 
     /// <summary>
@@ -22,8 +21,7 @@ namespace OxyPlot.Tests
         /// </summary>
         /// <param name="doc">The document.</param>
         /// <param name="path">The path.</param>
-        /// <param name="explore">Open Windows explorer on the specified path if set to <c>true</c>.</param>
-        public static void Save(this PortableDocument doc, string path, bool explore = false)
+        public static void Save(this PortableDocument doc, string path)
         {
             var directory = Path.GetDirectoryName(path);
             if (directory != null && !Directory.Exists(directory))
@@ -34,11 +32,6 @@ namespace OxyPlot.Tests
             using (var stream = File.Create(path))
             {
                 doc.Save(stream);
-            }
-
-            if (explore)
-            {
-                Process.Start("explorer.exe", "/select," + path);
             }
         }
 

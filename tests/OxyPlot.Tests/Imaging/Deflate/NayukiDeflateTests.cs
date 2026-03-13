@@ -12,6 +12,7 @@ namespace OxyPlot.Tests
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
 
     using NUnit.Framework;
 
@@ -38,7 +39,7 @@ namespace OxyPlot.Tests
         public void testEofInBlockType()
         {
             // Partial block type
-            Assert.Throws<Exception>(() => test("1 0", string.Empty));
+            Assert.Throws<EndOfStreamException>(() => test("1 0", string.Empty));
         }
 
         [Test]
@@ -74,7 +75,7 @@ namespace OxyPlot.Tests
         public void testUncompressedEofInLength()
         {
             // Uncompressed block (partial length)
-            Assert.Throws<Exception>(() => test("1 00 00000 0000000000", string.Empty));
+            Assert.Throws<EndOfStreamException>(() => test("1 00 00000 0000000000", string.Empty));
         }
 
         [Test]

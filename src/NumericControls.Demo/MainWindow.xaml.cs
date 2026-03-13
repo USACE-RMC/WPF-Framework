@@ -70,26 +70,31 @@ namespace NumericControls.Demo
     /// </remarks>
     public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
+        private readonly List<UnivariateDistributionBase> _distOptions = new List<UnivariateDistributionBase>(new[] {
+            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Deterministic),
+            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Normal),
+            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.LnNormal),
+            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.TruncatedNormal),
+            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Triangular),
+            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Pert)
+        });
+
         /// <summary>
         /// Gets a list of available univariate distribution options for the distribution selector control.
         /// </summary>
         /// <value>
         /// A list containing instances of Deterministic, Normal, LnNormal, TruncatedNormal, Triangular, and Pert distributions.
         /// </value>
-        public List<UnivariateDistributionBase> DistOptions
-        {
-            get
-            {
-                return new List<UnivariateDistributionBase>(new[] {
-                    UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Deterministic),
-                    UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Normal),
-                    UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.LnNormal),
-                    UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.TruncatedNormal),
-                    UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Triangular),
-                    UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Pert)
-                });
-            }
-        }
+        public List<UnivariateDistributionBase> DistOptions => _distOptions;
+
+        private readonly List<UnivariateDistributionType> _tableDistOptions = new List<UnivariateDistributionType>(new[] {
+            UnivariateDistributionType.Deterministic,
+            UnivariateDistributionType.Normal,
+            UnivariateDistributionType.Pert,
+            UnivariateDistributionType.Triangular,
+            UnivariateDistributionType.LnNormal,
+            UnivariateDistributionType.TruncatedNormal
+        });
 
         /// <summary>
         /// Gets a list of univariate distribution types for use in table-based distribution selection.
@@ -97,20 +102,7 @@ namespace NumericControls.Demo
         /// <value>
         /// A list of distribution type enumerations including Deterministic, Normal, Pert, Triangular, LnNormal, and TruncatedNormal.
         /// </value>
-        public List<UnivariateDistributionType> TableDistOptions
-        {
-            get
-            {
-                return new List<UnivariateDistributionType>(new[] {
-                    UnivariateDistributionType.Deterministic,
-                    UnivariateDistributionType.Normal,
-                    UnivariateDistributionType.Pert,
-                    UnivariateDistributionType.Triangular,
-                    UnivariateDistributionType.LnNormal,
-                    UnivariateDistributionType.TruncatedNormal
-                });
-            }
-        }
+        public List<UnivariateDistributionType> TableDistOptions => _tableDistOptions;
 
         private UnivariateDistributionBase _selectedDistribution;
 
@@ -345,17 +337,6 @@ namespace NumericControls.Demo
         }
 
         /// <summary>
-        /// Handles the ContentRendered event of the MainWindow.
-        /// Called after the window content has been rendered.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event data.</param>
-        private void MainWindow_ContentRendered(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
         /// Handles the Click event of the TestButton control.
         /// Demonstrates dynamic modification of uncertain curve data.
         /// </summary>
@@ -375,8 +356,16 @@ namespace NumericControls.Demo
         /// <param name="e">The event data.</param>
         private async void USGSItem_Selected(object sender, RoutedEventArgs e)
         {
-            var result = await TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.TimeSeriesType.DailyDischarge);
-            TimeSeriesTableControl.Series = result.TimeSeries;
+            try
+            {
+                var result = await TimeSeriesDownload.FromUSGS("01134500", TimeSeriesDownload.TimeSeriesType.DailyDischarge);
+                TimeSeriesTableControl.Series = result.TimeSeries;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"USGS download failed: {ex.Message}");
+                System.Windows.MessageBox.Show($"Failed to download USGS data: {ex.Message}", "Download Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         /// <summary>
@@ -401,7 +390,7 @@ namespace NumericControls.Demo
         /// <param name="e">The event data.</param>
         private void DailyItem_Selected(object sender, RoutedEventArgs e)
         {
-            TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneDay, new DateTime(1980, 7, 30), new DateTime(1980, 8, 30), 10); ;
+            TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneDay, new DateTime(1980, 7, 30), new DateTime(1980, 8, 30), 10);
         }
 
         /// <summary>
@@ -412,7 +401,7 @@ namespace NumericControls.Demo
         /// <param name="e">The event data.</param>
         private void HourlyItem_Selected(object sender, RoutedEventArgs e)
         {
-            TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneHour, new DateTime(1980, 7, 30), new DateTime(1980, 8, 1), 15); ;
+            TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneHour, new DateTime(1980, 7, 30), new DateTime(1980, 8, 1), 15);
         }
 
         /// <summary>
@@ -423,7 +412,7 @@ namespace NumericControls.Demo
         /// <param name="e">The event data.</param>
         private void MinutesItem_Selected(object sender, RoutedEventArgs e)
         {
-            TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneMinute, new DateTime(1980, 7, 30), new DateTime(1980, 7, 30, 23, 59, 0), 10); ;
+            TimeSeriesTableControl.Series = new TimeSeries(TimeInterval.OneMinute, new DateTime(1980, 7, 30), new DateTime(1980, 7, 30, 23, 59, 0), 10);
         }
 
         /// <summary>

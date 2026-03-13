@@ -7,7 +7,6 @@
         xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
         xmlns:numCntrls="clr-namespace:NumericControls;assembly=NumericControls"
         xmlns:uni="clr-namespace:NumericControls.Distributions.Univariate;assembly=NumericControls"
-        ContentRendered="MainWindow_ContentRendered"
         mc:Ignorable="d"
         Title="NumericControls Demo - USACE Risk Management Center"
         Height="750" Width="1100" MinWidth="900" MinHeight="600"
@@ -358,7 +357,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0"
-                           Text="NumericControls Library Demo - .NET 9.0 | WPF"
+                           Text="NumericControls Library Demo - .NET 10.0 | WPF"
                            FontSize="11" Opacity="0.7"
                            Foreground="{DynamicResource EnvironmentWindowText}"/>
 

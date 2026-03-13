@@ -169,7 +169,6 @@ namespace FrameworkUI.Demo
                 _badOrdinatesMsg,
                 _unorderedOrdinatesMsg,
                 _badSimulationMsg,
-                _estimatedMsg,
                 _pmomMsg,
                 _lmomMsg
             });
@@ -862,8 +861,9 @@ namespace FrameworkUI.Demo
                     var bootstrap = new BootstrapAnalysis(ParentDistribution, EstimationMethod, EffectiveRecordLength, Realizations, seed);
                     Results = bootstrap.Estimate(probs, 1 - ConfidenceIntervalWidth);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine($"Bootstrap estimation failed: {ex.Message}");
                     _messenger.Add(_badSimulationMsg);
                     IsEstimated = false;
                     return;
@@ -916,7 +916,7 @@ namespace FrameworkUI.Demo
             {
                 var distribution = ParentDistribution.Clone();
                 // Get parameter set
-                int i = (int)Math.Floor(percentile * Realizations);
+                int i = Math.Min((int)Math.Floor(percentile * Realizations), Realizations - 1);
                 if (Results?.ParameterSets?[i].Values != null)
                 {
                     distribution.SetParameters(Results.ParameterSets[i].Values);
@@ -995,6 +995,10 @@ namespace FrameworkUI.Demo
                 _minmax[0] = double.MaxValue;
                 _minmax[1] = double.MinValue;
 
+                double localMin = double.MaxValue;
+                double localMax = double.MinValue;
+                object lockObj = new object();
+
                 Parallel.For(0, Realizations, idx =>
                 {
                     var dist = ParentDistribution.Clone();
@@ -1003,10 +1007,16 @@ namespace FrameworkUI.Demo
                         dist.SetParameters(Results.ParameterSets[idx].Values);
                         double minX = dist.InverseCDF(1 - maxP);
                         double maxX = dist.InverseCDF(1 - minP);
-                        if (minX < _minmax[0]) _minmax[0] = minX;
-                        if (maxX > _minmax[1]) _minmax[1] = maxX;
+                        lock (lockObj)
+                        {
+                            if (minX < localMin) localMin = minX;
+                            if (maxX > localMax) localMax = maxX;
+                        }
                     }
                 });
+
+                _minmax[0] = localMin;
+                _minmax[1] = localMax;
             }
             else
             {

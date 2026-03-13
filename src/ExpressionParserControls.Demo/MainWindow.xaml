@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExpressionParserControls.Demo"
         xmlns:parseControls="clr-namespace:ExpressionParserControls;assembly=ExpressionParserControls"
-        xmlns:dock="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid Margin="10">

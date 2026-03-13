@@ -44,6 +44,7 @@ namespace OxyPlot.Tests
             if (!File.Exists(baseline))
             {
                 File.Copy(path, baseline);
+                Assert.Fail($"Baseline file '{path}' does not exist. A new baseline has been created — rerun the test.");
                 return;
             }
 

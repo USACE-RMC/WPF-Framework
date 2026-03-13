@@ -73,16 +73,19 @@ namespace OxyPlot.Wpf.Tests
             {
                 if (output != null)
                 {
+                    int diffCount = 0;
                     for (int i = 0; i < h; i++)
                     {
                         for (int j = 0; j < w; j++)
                         {
                             if (!expectedImage[j, i].Equals(actualImage[j, i]))
                             {
+                                diffCount++;
                             }
                         }
                     }
 
+                    Assert.AreEqual(0, diffCount, $"PNG images differ at {diffCount} pixel(s).");
                     EnsureFolder(output);
                     var encoder = new PngEncoder(new PngEncoderOptions());
                     File.WriteAllBytes(output, encoder.Encode(differenceImage));

@@ -122,27 +122,20 @@ namespace DAG.Demo
             ConnectionText.TextDecorations = null;
             ConnectionText.Text = $"Create node and connection from {fromConnector.Parent.Name} - '{fromConnector.Name}'";
             if (FindResource("animate") is Storyboard sb1) sb1.Begin(ConnectionText);
-            //AddNodeButton_Click(null, null);
         }
 
         private void SaveGraphButton_Click(object sender, RoutedEventArgs e)
         {
-            //Debug.Print(GraphCanvas.GraphToXElement().ToString());
+            // TODO: Implement when FlowGraphCanvas.GraphToXElement() is available
         }
 
         private void LoadGraphButton_Click(object sender, RoutedEventArgs e)
         {
-            string samplePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "SampleGraph.xml");
-            if (System.IO.File.Exists(samplePath) == false) { return; }
-            var r = XElement.Parse(System.IO.File.ReadAllText(samplePath));
-            //GraphCanvas.LoadFromXElement(r);
+            // TODO: Implement when FlowGraphCanvas.LoadFromXElement() is available
         }
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            //_testNodes[1].Inputs.RemoveAt(1);
-            // _testNodes[1].Inputs.Add(new DAG.InConnector("Test", "", _testNodes[1]));
-
             Rectangle rect = new Rectangle() { Width = 350, Height = 200, Stroke = Brushes.Black, StrokeThickness = 2 };
             Canvas.SetLeft(rect, 90);
             Canvas.SetTop(rect, 200);

@@ -32,6 +32,7 @@ using Xunit;
 using SoftwareUpdate.Updater;
 using System.IO.Compression;
 using System.Reflection;
+using System.Security;
 
 namespace SoftwareUpdate.Updater.Tests
 {
@@ -225,7 +226,8 @@ namespace SoftwareUpdate.Updater.Tests
         {
             var method = typeof(InstallationManager)
                 .GetMethod("ParseBackupTimestamp", BindingFlags.NonPublic | BindingFlags.Static);
-            return (DateTime?)method?.Invoke(null, new object[] { backupPath });
+            Assert.NotNull(method);
+            return (DateTime?)method!.Invoke(null, new object[] { backupPath });
         }
 
         #endregion
@@ -338,7 +340,7 @@ namespace SoftwareUpdate.Updater.Tests
             };
 
             var manager = new InstallationManager(args, Log);
-            var ex = Assert.ThrowsAny<Exception>(() => manager.Execute());
+            var ex = Assert.Throws<SecurityException>(() => manager.Execute());
 
             // The escaped file should NOT exist outside target directory
             Assert.False(File.Exists(parentFile));

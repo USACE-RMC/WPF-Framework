@@ -80,8 +80,25 @@ namespace FrameworkUI.Demo.UI
             LoadSampleData();
             UpdateThemeRadioButton();
 
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        /// <summary>
+        /// Handles the Loaded event. Subscribes to theme changes.
+        /// </summary>
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             // Subscribe to theme changes to keep UI in sync
             ThemeService.Instance.ThemeChanged += OnThemeChanged;
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event. Unsubscribes from theme changes to prevent memory leaks.
+        /// </summary>
+        private void OnUnloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ThemeService.Instance.ThemeChanged -= OnThemeChanged;
         }
 
         /// <summary>

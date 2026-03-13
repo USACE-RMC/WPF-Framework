@@ -143,6 +143,9 @@ namespace OxyPlotControls.Demo
             // Subscribe to theme changes to refresh plot when theme changes
             // OxyPlot controls need explicit invalidation because they use a custom rendering pipeline
             ThemeService.Instance.ThemeChanged += OnThemeChanged;
+
+            // Unsubscribe when the window closes to prevent memory leaks
+            Closing += (s, e) => ThemeService.Instance.ThemeChanged -= OnThemeChanged;
         }
 
         private void OnPlotPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -198,14 +201,9 @@ namespace OxyPlotControls.Demo
             return result;
         }
 
-        private void MainWindow_ContentRendered(object sender, EventArgs e)
-        {
-            // Content rendered event handler
-        }
-
         private void PlotPropertiesUpdated(Plot targetPlot)
         {
-            Console.WriteLine("Plot Properties");
+            System.Diagnostics.Debug.WriteLine("Plot Properties");
         }
 
         private void OxyPlotToolBar_PropertiesCalled(OxyPlot.Wpf.Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject)
@@ -1091,7 +1089,7 @@ namespace OxyPlotControls.Demo
             TestPlot.Series.Clear();
             TestPlot.Axes.Clear();
 
-            TestPlot.Title = "Scatter Series";
+            TestPlot.Title = "Scatter Error Series";
 
             var yAxis = new OxyPlot.Wpf.LinearAxis
             {

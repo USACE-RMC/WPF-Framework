@@ -147,7 +147,7 @@ namespace OxyPlot.Tests
             model.Axes.Add(new LinearAxis());
             model.Series.Add(new LineSeries { XAxisKey = "invalidKey" });
             ((IPlotModel)model).Update(true);
-            Assert.IsNotNull(model.GetLastPlotException() as InvalidOperationException);
+            Assert.IsInstanceOf<InvalidOperationException>(model.GetLastPlotException());
         }
 
         /// <summary>

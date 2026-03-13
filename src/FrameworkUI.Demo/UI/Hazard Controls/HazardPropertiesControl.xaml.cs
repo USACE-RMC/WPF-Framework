@@ -141,14 +141,7 @@ namespace FrameworkUI.Demo.UI
             private set => SetValue(ExistingNamesProperty, value);
         }
 
-        /// <summary>
-        /// Gets the available parent distribution options.
-        /// </summary>
-        /// <value>
-        /// An array of <see cref="UnivariateDistributionBase"/> instances representing
-        /// the supported probability distributions for parametric hazard functions.
-        /// </value>
-        public UnivariateDistributionBase[] DistributionOptions => new[] {
+        private static readonly UnivariateDistributionBase[] _distributionOptions = new[] {
             UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Exponential),
             UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GammaDistribution),
             UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GeneralizedExtremeValue),
@@ -165,18 +158,36 @@ namespace FrameworkUI.Demo.UI
         };
 
         /// <summary>
+        /// Gets the available parent distribution options.
+        /// </summary>
+        /// <value>
+        /// An array of <see cref="UnivariateDistributionBase"/> instances representing
+        /// the supported probability distributions for parametric hazard functions.
+        /// </value>
+        public UnivariateDistributionBase[] DistributionOptions => _distributionOptions;
+
+        private static readonly ObservableCollection<ConfidenceIntervalItem> _confidenceIntervalWidthList = new ObservableCollection<ConfidenceIntervalItem>(new[]
+        {
+            new ConfidenceIntervalItem("90%", 0.9),
+            new ConfidenceIntervalItem("95%", 0.95),
+            new ConfidenceIntervalItem("98%", 0.98),
+            new ConfidenceIntervalItem("99%", 0.99)
+        });
+
+        /// <summary>
         /// Gets the list of available confidence interval width options.
         /// </summary>
         /// <value>
         /// An observable collection of <see cref="ConfidenceIntervalItem"/> objects
         /// representing common confidence interval widths (90%, 95%, 98%, 99%).
         /// </value>
-        public ObservableCollection<ConfidenceIntervalItem> ConfidenceIntervalWidthList => new ObservableCollection<ConfidenceIntervalItem>(new[]
+        public ObservableCollection<ConfidenceIntervalItem> ConfidenceIntervalWidthList => _confidenceIntervalWidthList;
+
+        private static readonly ObservableCollection<EstimationMethod> _estimationMethodList = new ObservableCollection<EstimationMethod>(new[]
         {
-            new ConfidenceIntervalItem("90%", 0.9),
-            new ConfidenceIntervalItem("95%", 0.95),
-            new ConfidenceIntervalItem("98%", 0.98),
-            new ConfidenceIntervalItem("99%", 0.99)
+            new EstimationMethod("Product Moments", ParameterEstimationMethod.MethodOfMoments),
+            new EstimationMethod("Linear Moments", ParameterEstimationMethod.MethodOfLinearMoments),
+            new EstimationMethod("Maximum Likelihood", ParameterEstimationMethod.MaximumLikelihood)
         });
 
         /// <summary>
@@ -186,12 +197,7 @@ namespace FrameworkUI.Demo.UI
         /// An observable collection of <see cref="EstimationMethod"/> objects
         /// representing the supported estimation techniques (Product Moments, Linear Moments, Maximum Likelihood).
         /// </value>
-        public ObservableCollection<EstimationMethod> EstimationMethodList => new ObservableCollection<EstimationMethod>(new[]
-        {
-            new EstimationMethod("Product Moments", ParameterEstimationMethod.MethodOfMoments),
-            new EstimationMethod("Linear Moments", ParameterEstimationMethod.MethodOfLinearMoments),
-            new EstimationMethod("Maximum Likelihood", ParameterEstimationMethod.MaximumLikelihood)
-        });
+        public ObservableCollection<EstimationMethod> EstimationMethodList => _estimationMethodList;
 
         /// <summary>
         /// Gets the list of Monte Carlo realization count options.

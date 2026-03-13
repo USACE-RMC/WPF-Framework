@@ -29,7 +29,6 @@
 */
 
 using GenericControls;
-using FrameworkUI.ProjectExplorer;
 using SoftwareUpdate;
 using SoftwareUpdate.GitHub;
 using SoftwareUpdate.Utilities;
@@ -37,11 +36,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using Xceed.Wpf.AvalonDock.Layout;
 using FrameworkUI.Demo.UI;
 
 #nullable enable
@@ -123,7 +119,7 @@ namespace FrameworkUI.Demo
                 File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n{message}\n\n");
                 GenericControls.MessageBox.Show($"Exception logged to: {logPath}\n\n{ex?.Message}", source, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            catch { }
+            catch (Exception logEx) { System.Diagnostics.Debug.WriteLine($"Failed to write exception log: {logEx.Message}"); }
         }
 
         /// <summary>
@@ -151,38 +147,6 @@ namespace FrameworkUI.Demo
             // Create and Show the Main Window
             FrameworkUI.MainWindow mainWindow = new FrameworkUI.MainWindow(); //{ ProjectNode = projectNode }; 
             mainWindow.ProjectNode = projectNode;
-
-            //var treeGrid = new Grid();
-            ////var treeStyle = (Style)FindResource("TreeViewStyle");
-            //var itemStyle = (Style)FindResource("ElementNodeStyle");
-            //ExplorerTreeView explorer = new ExplorerTreeView();
-            //var layerCollection = new NodeCollection(null, explorer); //{ ShowCreateNewContextItem = false };
-            //layerCollection.NodeHeader.HeaderText = "Layers";
-            //var g = new NodeGroup(layerCollection, explorer) { IsCheckBoxNode = true };//, Style = itemStyle };
-            //g.NodeHeader.HeaderText = "Grouped Items";
-            //g.Add(CreateNode("Test 1", g, explorer, itemStyle));
-            //g.Add(CreateNode("Test 2", g, explorer, itemStyle));
-            //layerCollection.Add(g);
-            //layerCollection.Add(CreateNode("Test 3", g, explorer,itemStyle));
-            //layerCollection.Add(CreateNode("Test 4", g, explorer, itemStyle));
-            //layerCollection.Add(CreateNode("Test 5", g, explorer, itemStyle));
-            //layerCollection.Add(CreateNode("Test 6", g, explorer, itemStyle));
-            //layerCollection.Add(CreateNode("Test 7", g, explorer, itemStyle));
-            //layerCollection.Add(CreateNode("Test 8", g, explorer, itemStyle));
-            //explorer.Items.Add(layerCollection);
-            //var document = new LayoutDocument() { CanClose = false, IconSource = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) };
-            //treeGrid.Children.Add(explorer);
-            //document.Content = treeGrid;
-            //document.ContentId = "MapLayers"; //element.ParentCollection.Name
-            //document.Title = "Map Layers";
-            //mainWindow.OpenDocument(document, null);
-
-            //// Open the Theme Demo document to demonstrate the new Themes library
-            //var themeDemo = new LayoutDocument() { CanClose = false };
-            //themeDemo.Content = new UI.ThemeDemoControl();
-            //themeDemo.ContentId = "ThemeDemo";
-            //themeDemo.Title = "Theme Demo";
-            //mainWindow.OpenDocument(themeDemo, null);
 
             // =================================================================
             // SOFTWARE UPDATE SERVICE EXAMPLE
@@ -252,20 +216,6 @@ namespace FrameworkUI.Demo
             }
 
             mainWindow.Show();
-        }
-
-        /// <summary>
-        /// Creates a simple node for the explorer tree view.
-        /// </summary>
-        /// <param name="name">The name of the node.</param>
-        /// <param name="parent">The parent node.</param>
-        /// <param name="explorer">The explorer tree view.</param>
-        /// <param name="itemStyle">The style to apply to the node.</param>
-        /// <returns>A new <see cref="Node"/> instance.</returns>
-        private Node CreateNode(string name, Node parent, ExplorerTreeView explorer, Style itemStyle)
-        {
-            var n = new SimpleNode(name,parent, explorer) { IsCheckBoxNode = true, Style=itemStyle };
-            return n;
         }
 
         /// <summary>
