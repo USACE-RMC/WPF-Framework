@@ -32,6 +32,8 @@ using System;
 using System.Threading;
 using System.Windows;
 
+#nullable enable
+
 namespace Themes
 {
     /// <summary>
@@ -173,7 +175,7 @@ namespace Themes
         #region Events
 
         /// <inheritdoc/>
-        public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
+        public event EventHandler<ThemeChangedEventArgs>? ThemeChanged;
 
         /// <summary>
         /// Raises the <see cref="ThemeChanged"/> event.

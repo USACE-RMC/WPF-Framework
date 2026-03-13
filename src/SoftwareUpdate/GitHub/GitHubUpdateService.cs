@@ -507,6 +507,7 @@ namespace SoftwareUpdate.GitHub
         /// Deserializes the GitHub releases JSON response.
         /// </summary>
         /// <param name="jsonStream">The JSON stream to deserialize.</param>
+        /// <param name="cancellationToken">Token to cancel the operation.</param>
         /// <returns>List of GitHub releases.</returns>
         private static async Task<List<GitHubRelease>> DeserializeReleasesAsync(Stream jsonStream, CancellationToken cancellationToken)
         {
