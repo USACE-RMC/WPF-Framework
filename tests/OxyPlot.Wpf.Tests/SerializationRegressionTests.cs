@@ -40,11 +40,7 @@ namespace OxyPlot.Wpf.Tests
             var axis = new LinearAxis { Title = "X Axis", Position = OxyPlot.Axes.AxisPosition.Bottom };
             plot.Axes.Add(axis);
 
-            var series = new LineSeries();
-            series.Title = "Test Series";
-            series.Points.Add(new OxyPlot.DataPoint(1, 2));
-            series.Points.Add(new OxyPlot.DataPoint(3, 4));
-            series.Points.Add(new OxyPlot.DataPoint(5, 6));
+            var series = new LineSeries { Title = "Test Series" };
             plot.Series.Add(series);
 
             // Force the plot to synchronize its internal model
