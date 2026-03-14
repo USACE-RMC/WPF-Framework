@@ -177,8 +177,18 @@ namespace OxyPlotControls
 
             if (isLeftOrRight)
             {
-                // Force Vertical and disable the control
-                Plot.LegendOrientation = LegendOrientation.Vertical;
+                // Force Vertical and disable the control.
+                // Suppress PropertyChanged so this programmatic write doesn't
+                // create a spurious undo entry.
+                Plot.SuppressPropertyChanged = true;
+                try
+                {
+                    Plot.LegendOrientation = LegendOrientation.Vertical;
+                }
+                finally
+                {
+                    Plot.SuppressPropertyChanged = false;
+                }
                 LegendOrientationControl.IsEnabled = false;
             }
             else

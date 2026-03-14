@@ -565,6 +565,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddArrowAnnotation;
             SetCursor();
         }
@@ -576,6 +577,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddTextAnnotation;
             SetCursor();
         }
@@ -587,6 +589,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddVerticalLineAnnotation;
             SetCursor();
         }
@@ -598,6 +601,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddHorizontalLineAnnotation;
             SetCursor();
         }
@@ -609,6 +613,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddRectangleAnnotation;
             SetCursor();
         }
@@ -620,6 +625,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddEllipseAnnotation;
             SetCursor();
         }
@@ -631,6 +637,7 @@ namespace OxyPlotControls
         {
             StopAddAnnotation();
             Plot.ActualController.UnbindAll();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddPointAnnotation;
             SetCursor();
         }
@@ -641,6 +648,7 @@ namespace OxyPlotControls
         private void AddPolygonAnnotationItem_Click(object sender, RoutedEventArgs e)
         {
             StopAddAnnotation();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddPolygonAnnotation;
             _leaderLine.Visibility = Visibility.Visible;
             _leaderLine.Points.Clear();
@@ -653,6 +661,7 @@ namespace OxyPlotControls
         private void AddPolylineAnnotationItem_Click(object sender, RoutedEventArgs e)
         {
             StopAddAnnotation();
+            BindEscapeToCancelAnnotation();
             _addAnnotationToolMode = AddToolMode.AddPolylineAnnotation;
             _leaderLine.Visibility = Visibility.Visible;
             _leaderLine.Points.Clear();
@@ -719,6 +728,64 @@ namespace OxyPlotControls
                 }
                 SetCursor();
             }
+        }
+
+        /// <summary>
+        /// Cancels the in-progress annotation placement, removing the partially-created annotation
+        /// from the plot. Called when the user presses Escape during annotation placement.
+        /// </summary>
+        private void CancelAddAnnotation()
+        {
+            if (_addAnnotationToolMode == AddToolMode.None) return;
+
+            // Remove the in-progress annotation from the plot before stopping
+            if (_targetAddAnnotation != null && Plot.Annotations.Contains(_targetAddAnnotation))
+            {
+                _targetAddAnnotation.SuppressPropertyChanged = false;
+                Plot.Annotations.Remove(_targetAddAnnotation);
+            }
+
+            // For polygon/polyline that may not be added yet, just clear the leader line
+            if (_addAnnotationToolMode == AddToolMode.AddPolygonAnnotation || _addAnnotationToolMode == AddToolMode.AddPolylineAnnotation)
+            {
+                _leaderLine.Visibility = Visibility.Collapsed;
+                _leaderLine.Points.Clear();
+            }
+
+            _doubleClicked = false;
+            _addAnnotationToolMode = AddToolMode.None;
+            _targetAddAnnotation = null!;
+
+            // Restore the previous tool mode
+            if (PanButton.IsChecked == true)
+            {
+                PanButton_Click(null!, null!);
+            }
+            else if (PointerButton.IsChecked == true)
+            {
+                PointerButton_Click(null!, null!);
+            }
+            else if (ZoomButton.IsChecked == true)
+            {
+                ZoomButton_Click(null!, null!);
+            }
+
+            Plot.InvalidatePlot(false);
+            SetCursor();
+        }
+
+        /// <summary>
+        /// Binds the Escape key to cancel the current annotation placement via the OxyPlot controller.
+        /// Called after UnbindAll() when entering an annotation add mode.
+        /// </summary>
+        private void BindEscapeToCancelAnnotation()
+        {
+            Plot.ActualController.BindKeyDown(OxyKey.Escape,
+                new DelegatePlotCommand<OxyKeyEventArgs>((view, controller, args) =>
+                {
+                    CancelAddAnnotation();
+                    args.Handled = true;
+                }));
         }
 
         /// <summary>
@@ -2069,11 +2136,15 @@ namespace OxyPlotControls
                     var arrow = (Wpf.ArrowAnnotation)_targetAddAnnotation;
                     if (Math.Abs(arrow.StartPoint.X - arrow.EndPoint.X) < 0.000000001 && Math.Abs(arrow.StartPoint.Y - arrow.EndPoint.Y) < 0.000000001)
                     {
+                        // Offset the start point (tail) by 5% of plot width in screen space,
+                        // then convert back to data space. This works correctly for all axis
+                        // types including logarithmic.
                         OxyRect plotArea = Plot.ActualModel.PlotArea;
-                        var plotCenter = ConvertScreenPointToDataPoint(plotArea.Center);
-                        double xShift = plotArea.Center.X + Math.Abs(plotArea.Right - plotArea.Left) * 0.05;
-                        var centerXShifted = ConvertScreenPointToDataPoint(new ScreenPoint(xShift, plotArea.Center.Y));
-                        arrow.StartPoint = new DataPoint(arrow.StartPoint.X + centerXShifted.X, arrow.StartPoint.Y);
+                        double shiftPixels = Math.Abs(plotArea.Right - plotArea.Left) * 0.05;
+                        var arrowScreen = arrow.InternalAnnotation.Transform(arrow.EndPoint);
+                        var shiftedData = arrow.InternalAnnotation.InverseTransform(
+                            new ScreenPoint(arrowScreen.X + shiftPixels, arrowScreen.Y));
+                        arrow.StartPoint = shiftedData;
                     }
                 }
                 StopAddAnnotation();
@@ -2848,13 +2919,16 @@ namespace OxyPlotControls
             }
             BindingOperations.SetBinding(dependencyObj, dependencyProp, binding);
 
-            // If the plot size changes, remove the textbox overlay
-            // Note: Do NOT clear the binding here - the binding must remain in place for the text to be saved
-            Plot.SizeChanged += (s, args) =>
+            // If the plot size changes, remove the textbox overlay.
+            // Store the handler so it can be unsubscribed in the cleanup to prevent leaking
+            // references to the old canvasOverlay and TextBox.
+            SizeChangedEventHandler sizeChangedHandler = null!;
+            sizeChangedHandler = (s, args) =>
             {
                 plotParent.Children.Remove(canvasOverlay);
                 // This will also fire the lost focus event below
             };
+            Plot.SizeChanged += sizeChangedHandler;
 
             // On key enter, remove the textbox overlay
             // Note: Do NOT clear the binding here - the binding must remain in place for the text to be saved
@@ -2871,6 +2945,7 @@ namespace OxyPlotControls
             // Note: Do NOT clear the binding here - the binding must remain in place for the text to be saved
             _textBox.LostFocus += (s, args) =>
             {
+                Plot.SizeChanged -= sizeChangedHandler;
                 plotParent.Children.Remove(canvasOverlay);
 
                 // Change the color of the text back from transparent for annotations
@@ -3071,11 +3146,15 @@ namespace OxyPlotControls
             }
             BindingOperations.SetBinding(dependencyObj, dependencyProp, binding);
 
-            // If the plot size changes, remove the textbox overlay
-            Plot.SizeChanged += (s, args) =>
+            // If the plot size changes, remove the textbox overlay.
+            // Store the handler so it can be unsubscribed in the cleanup to prevent leaking
+            // references to the old canvasOverlay and TextBox.
+            SizeChangedEventHandler sizeChangedHandler2 = null!;
+            sizeChangedHandler2 = (s, args) =>
             {
                 plotParent.Children.Remove(canvasOverlay);
             };
+            Plot.SizeChanged += sizeChangedHandler2;
 
             // On key enter, remove the textbox overlay
             _textBox.PreviewKeyDown += (s, args) =>
@@ -3089,6 +3168,7 @@ namespace OxyPlotControls
             // On lost focus, remove the textbox overlay and restore text color
             _textBox.LostFocus += (s, args) =>
             {
+                Plot.SizeChanged -= sizeChangedHandler2;
                 plotParent.Children.Remove(canvasOverlay);
 
                 if (depObjType == typeof(Wpf.Plot))
@@ -4331,6 +4411,14 @@ namespace OxyPlotControls
                     {
                         Plot.Annotations.CollectionChanged -= PlotModelAnnotationCollectionChanged;
                         Plot.LayoutUpdated -= ToolBarLayoutUpdated;
+
+                        // Unsubscribe from PlotModel mouse events
+                        if (Plot.ActualModel != null)
+                        {
+                            Plot.ActualModel.MouseDown -= PlotModelMouseDown;
+                            Plot.ActualModel.MouseMove -= PlotModelMouseMove;
+                            Plot.ActualModel.MouseUp -= PlotModelMouseUp;
+                        }
                     }
 
                     // Dispose managed resources (cursors)
