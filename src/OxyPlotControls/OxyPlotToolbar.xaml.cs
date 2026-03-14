@@ -2674,17 +2674,25 @@ namespace OxyPlotControls
 
             if (depObjType == typeof(Wpf.Plot))
             {
-                // It must be a title or subtitle, which are handled the same way
+                // Title or subtitle — hide the appropriate text and read its current color
                 dockPanel.RenderTransform = new RotateTransform(angle, 0, 0);
                 dockPanel.Width = Plot.ActualModel.PlotArea.Width;
                 dockPanel.Height = height;
                 Canvas.SetLeft(dockPanel, Plot.ActualModel.PlotArea.Left);
                 Canvas.SetTop(dockPanel, top);
 
-                string title = Plot.Title;
-                currentTextColor = Plot.TitleColor;
-                Plot.TitleColor = Colors.Transparent;
-                _textBox.Text = title;
+                if (dependencyProp == Wpf.Plot.SubtitleProperty)
+                {
+                    currentTextColor = Plot.SubtitleColor;
+                    Plot.SubtitleColor = Colors.Transparent;
+                    _textBox.Text = Plot.Subtitle;
+                }
+                else
+                {
+                    currentTextColor = Plot.TitleColor;
+                    Plot.TitleColor = Colors.Transparent;
+                    _textBox.Text = Plot.Title;
+                }
             }
             else if (depObjType == typeof(Wpf.LogarithmicAxis) || depObjType == typeof(Wpf.LinearAxis) ||
                      depObjType == typeof(Wpf.DateTimeAxis) || depObjType == typeof(Wpf.CategoryAxis) ||
@@ -3001,7 +3009,10 @@ namespace OxyPlotControls
                 }
                 else if (depObjType == typeof(Wpf.Plot))
                 {
-                    Plot.TitleColor = currentTextColor;
+                    if (dependencyProp == Wpf.Plot.SubtitleProperty)
+                        Plot.SubtitleColor = currentTextColor;
+                    else
+                        Plot.TitleColor = currentTextColor;
                 }
 
             };
@@ -3223,16 +3234,6 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Converts a data point to a screen point using the plot's default axes.
-        /// </summary>
-        /// <param name="pt">The data point to convert.</param>
-        /// <returns>The corresponding screen point.</returns>
-        private ScreenPoint ConvertDataPointToScreenPoint(DataPoint pt)
-        {
-            return Plot.ActualModel.DefaultXAxis.Transform(pt.X, pt.Y, Plot.ActualModel.DefaultYAxis);
-        }
-
-        /// <summary>
         /// Converts a data point to a WPF Point using the plot's default axes.
         /// </summary>
         /// <param name="pt">The data point to convert.</param>
@@ -3251,34 +3252,6 @@ namespace OxyPlotControls
         private DataPoint ConvertLeaderLinePoint(int pointIndex)
         {
             return Plot.ActualModel.DefaultXAxis.InverseTransform(_leaderLine.Points[pointIndex].X, _leaderLine.Points[pointIndex].Y, Plot.ActualModel.DefaultYAxis);
-        }
-
-        /// <summary>
-        /// Measures the size of a text string with the specified font properties.
-        /// </summary>
-        /// <param name="candidate">The text string to measure.</param>
-        /// <param name="family">The font family to use.</param>
-        /// <param name="style">The font style to use.</param>
-        /// <param name="weight">The font weight to use.</param>
-        /// <param name="stretch">The font stretch to use.</param>
-        /// <param name="size">The font size to use.</param>
-        /// <returns>The size of the rendered text.</returns>
-        [Obsolete]
-        private Size MeasureString(string candidate, FontFamily family, FontStyle style, FontWeight weight, FontStretch stretch, double size)
-        {
-            if (candidate == null)
-            {
-                return new Size(0, 0);
-            }
-            var formattedText = new FormattedText(
-                candidate,
-                System.Globalization.CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(family, style, weight, stretch),
-                size,
-                Brushes.Black,
-                new NumberSubstitution());
-            return new Size(formattedText.Width, formattedText.Height);
         }
 
         /// <summary>

@@ -115,6 +115,7 @@ namespace OxyPlot.Wpf
         public void OpenDrawing(DrawingVisual visual)
         {
             this.dc = visual.RenderOpen();
+            this.clipPushed = false;
             this.renderedText.Clear();
         }
 
@@ -308,6 +309,11 @@ namespace OxyPlot.Wpf
             {
                 foreach (var polygon in polygons)
                 {
+                    if (polygon.Count == 0)
+                    {
+                        continue;
+                    }
+
                     bool snap = this.ShouldSnapPoints(edgeRenderingMode, polygon);
                     var p0 = this.ToPoint(polygon[0], actualThickness, snap);
                     sgc.BeginFigure(p0, brush != null, true);
@@ -758,8 +764,12 @@ namespace OxyPlot.Wpf
                     }
                 }
 
+                // Use multiplicative hash combining instead of XOR to avoid collisions.
+                // Each component is mixed with a prime multiplier before combining.
                 long upper = (long)colorHash << 32;
-                long lower = (long)(thickness.GetHashCode() ^ ((int)lineJoin << 28) ^ dashHash);
+                int lower = thickness.GetHashCode();
+                lower = lower * 397 + (int)lineJoin;
+                lower = lower * 397 + dashHash;
                 return upper | (lower & 0xFFFFFFFFL);
             }
         }
