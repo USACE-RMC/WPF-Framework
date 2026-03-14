@@ -49,6 +49,8 @@ namespace OxyPlot.Wpf.Serialization
             "MarkerStroke", "MarkerStrokeThickness", "MarkerType",
             "MinimumSegmentLength", "StrokeThickness", "LabelFormatString", "LabelMargin",
             "BrokenLineColor", "BrokenLineStyle", "BrokenLineThickness",
+            // ExtrapolationLineSeries
+            "ExtrapolationColor", "ExtrapolationLineStyle", "IgnoreExtrapolationForScaling",
             // AreaSeries
             "Color2", "Fill", "DataFieldX2", "DataFieldY2", "Reverse2",
             // BarSeriesBase
@@ -64,7 +66,7 @@ namespace OxyPlot.Wpf.Serialization
             "Stroke", "IsVertical", "OutlierType",
             "WhiskerWidth", "ShowMedianAsDot", "MedianPointSize", "OutlierSize", "BoxWidth", "ShowBox",
             // ScatterPointSeries
-            "DataFieldTag", "DataFieldValue", "ColorAxisKey", "BinSize",
+            "DataFieldTag", "DataFieldValue", "DataFieldSize", "ColorAxisKey", "BinSize",
             // ScatterErrorSeries
             "ErrorBarStopWidth", "MinimumErrorSize", "ErrorBarStrokeThickness", "ErrorBarColor",
             "DataFieldLowerErrorX", "DataFieldUpperErrorX", "DataFieldLowerErrorY", "DataFieldUpperErrorY",
