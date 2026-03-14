@@ -342,6 +342,7 @@ namespace OxyPlotControls
         /// </summary>
         private void AddHandlers()
         {
+            Plot.Annotations.CollectionChanged -= Annotation_CollectionChanged;
             Plot.Annotations.CollectionChanged += Annotation_CollectionChanged;
         }
 

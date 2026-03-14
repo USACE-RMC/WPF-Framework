@@ -234,7 +234,7 @@ namespace OxyPlotControls
                 thisControl.AxisTypeSelector.Visibility = Visibility.Collapsed;
 
                 thisControl.GapWidthSelector.Visibility = Visibility.Visible;
-                var gapWidthBinding = new Binding(nameof(Wpf.CategoryAxis.GapWidth)) { Source = newAxis };
+                var gapWidthBinding = new Binding(nameof(Wpf.CategoryAxis.GapWidth)) { Source = newAxis, Mode = BindingMode.TwoWay };
                 BindingOperations.SetBinding(thisControl.GapWidthSelector, GenericControls.NumericPropertySelectorControl.SelectedNumberProperty, gapWidthBinding);
 
                 thisControl.AxisLabelsControl.Visibility = Visibility.Visible;

@@ -33,7 +33,8 @@ namespace OxyPlot.Wpf
         /// <param name="height">The height.</param>
         public void SaveBitmap(string fileName, int width, int height)
         {
-            this.SaveBitmap(fileName, width, height, this.ActualModel.Background);
+            var background = this.ActualModel?.Background ?? OxyColors.Undefined;
+            this.SaveBitmap(fileName, width, height, background);
         }
 
         /// <summary>

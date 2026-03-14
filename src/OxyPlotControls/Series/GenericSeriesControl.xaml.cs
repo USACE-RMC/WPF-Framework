@@ -304,7 +304,7 @@ namespace OxyPlotControls
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e) => _suppressPlotChanged = false;
-        private void OnUnloaded(object sender, RoutedEventArgs e) { Loaded -= OnLoaded; }
+        private void OnUnloaded(object sender, RoutedEventArgs e) { _suppressPlotChanged = true; }
 
         /// <summary>
         /// Raises the <see cref="PlotChanged"/> event.

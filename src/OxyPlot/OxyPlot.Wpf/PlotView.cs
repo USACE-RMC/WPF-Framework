@@ -26,7 +26,7 @@ namespace OxyPlot.Wpf
         /// </summary>
         public static readonly DependencyProperty TextMeasurementMethodProperty =
             DependencyProperty.Register(
-                nameof(TextMeasurementMethod), typeof(TextMeasurementMethod), typeof(PlotViewBase), new PropertyMetadata(TextMeasurementMethod.TextBlock));
+                nameof(TextMeasurementMethod), typeof(TextMeasurementMethod), typeof(PlotView), new PropertyMetadata(TextMeasurementMethod.TextBlock));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlotView" /> class.

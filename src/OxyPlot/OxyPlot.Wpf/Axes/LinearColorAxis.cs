@@ -173,6 +173,12 @@ namespace OxyPlot.Wpf
             var palette = new List<OxyColor>();
             stops.Sort((x1, x2) => x1.Offset.CompareTo(x2.Offset));
 
+            if (paletteSize == 1)
+            {
+                palette.Add(GetColorAtPosition(stops, 0.5));
+                return new OxyPalette(palette);
+            }
+
             var step = 1.0 / (paletteSize - 1);
 
             for (int i = 0; i < paletteSize; i++)

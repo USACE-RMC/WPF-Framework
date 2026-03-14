@@ -245,7 +245,7 @@ namespace OxyPlotControls
 
             var displayProps = new XElement("Display");
             displayProps.SetAttributeValue("Background", barSeries.Background);
-            displayProps.SetAttributeValue("Color", barSeries.Foreground);
+            displayProps.SetAttributeValue("Color", barSeries.Color);
             displayProps.SetAttributeValue("Fill", barSeries.FillColor);
             displayProps.SetAttributeValue("LineThickness", barSeries.StrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
             properties.Add(displayProps);

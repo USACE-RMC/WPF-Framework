@@ -45,7 +45,7 @@ namespace OxyPlot.Wpf.Serialization
             "CanTrackerInterpolatePoints", "DataFieldX", "DataFieldY",
             // LineSeries
             "LineJoin", "LineLegendPosition", "LineStyle",
-            "MarkerFill", "MarkerOutline", "MarkerResolution", "MarkerSize",
+            "MarkerFill", "MarkerResolution", "MarkerSize",
             "MarkerStroke", "MarkerStrokeThickness", "MarkerType",
             "MinimumSegmentLength", "StrokeThickness", "LabelFormatString", "LabelMargin",
             "BrokenLineColor", "BrokenLineStyle", "BrokenLineThickness",
@@ -252,7 +252,6 @@ namespace OxyPlot.Wpf.Serialization
                 lineSeriesElement.SetAttributeValue(nameof(lineSeries.LineLegendPosition), lineSeries.LineLegendPosition);
                 lineSeriesElement.SetAttributeValue(nameof(lineSeries.LineStyle), lineSeries.LineStyle);
                 lineSeriesElement.SetAttributeValue(nameof(lineSeries.MarkerFill), lineSeries.MarkerFill);
-                lineSeriesElement.SetAttributeValue(nameof(lineSeries.MarkerOutline), lineSeries.MarkerOutline);
                 lineSeriesElement.SetAttributeValue(nameof(lineSeries.MarkerResolution), lineSeries.MarkerResolution.ToString(CultureInfo.InvariantCulture));
                 lineSeriesElement.SetAttributeValue(nameof(lineSeries.MarkerSize), lineSeries.MarkerSize.ToString("G17", CultureInfo.InvariantCulture));
                 lineSeriesElement.SetAttributeValue(nameof(lineSeries.MarkerStroke), lineSeries.MarkerStroke);
@@ -311,7 +310,6 @@ namespace OxyPlot.Wpf.Serialization
                 scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.ColorAxisKey), scatterPointSeries.ColorAxisKey);
                 scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.BinSize), scatterPointSeries.BinSize.ToString("G17", CultureInfo.InvariantCulture));
                 scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.MarkerFill), scatterPointSeries.MarkerFill);
-                scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.MarkerOutline), scatterPointSeries.MarkerOutline);
                 scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.MarkerSize), scatterPointSeries.MarkerSize.ToString("G17", CultureInfo.InvariantCulture));
                 scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.MarkerStroke), scatterPointSeries.MarkerStroke);
                 scatterPointElement.SetAttributeValue(nameof(scatterPointSeries.MarkerStrokeThickness), scatterPointSeries.MarkerStrokeThickness.ToString("G17", CultureInfo.InvariantCulture));
@@ -329,7 +327,6 @@ namespace OxyPlot.Wpf.Serialization
                 element.SetAttributeValue(nameof(errorBarsSeries.ColorAxisKey), errorBarsSeries.ColorAxisKey);
                 element.SetAttributeValue(nameof(errorBarsSeries.BinSize), errorBarsSeries.BinSize.ToString("G17", CultureInfo.InvariantCulture));
                 element.SetAttributeValue(nameof(errorBarsSeries.MarkerFill), errorBarsSeries.MarkerFill);
-                element.SetAttributeValue(nameof(errorBarsSeries.MarkerOutline), errorBarsSeries.MarkerOutline);
                 element.SetAttributeValue(nameof(errorBarsSeries.MarkerSize), errorBarsSeries.MarkerSize.ToString("G17", CultureInfo.InvariantCulture));
                 element.SetAttributeValue(nameof(errorBarsSeries.MarkerStroke), errorBarsSeries.MarkerStroke);
                 element.SetAttributeValue(nameof(errorBarsSeries.MarkerStrokeThickness), errorBarsSeries.MarkerStrokeThickness.ToString("G17", CultureInfo.InvariantCulture));

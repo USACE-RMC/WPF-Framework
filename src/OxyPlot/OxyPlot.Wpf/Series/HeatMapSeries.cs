@@ -80,7 +80,7 @@ namespace OxyPlot.Wpf
                 nameof(ColorAxisKey),
                 typeof(string),
                 typeof(HeatMapSeries),
-                new PropertyMetadata(default(string)));
+                new PropertyMetadata(default(string), AppearanceChanged));
 
         /// <summary>
         /// Identifies the <see cref="LowColor"/> dependency property.
@@ -90,7 +90,7 @@ namespace OxyPlot.Wpf
                 nameof(LowColor),
                 typeof(Color),
                 typeof(HeatMapSeries),
-                new PropertyMetadata(default(Color)));
+                new PropertyMetadata(default(Color), AppearanceChanged));
 
         /// <summary>
         /// Identifies the <see cref="HighColor"/> dependency property.
@@ -100,7 +100,7 @@ namespace OxyPlot.Wpf
                 nameof(HighColor),
                 typeof(Color),
                 typeof(HeatMapSeries),
-                new PropertyMetadata(default(Color)));
+                new PropertyMetadata(default(Color), AppearanceChanged));
 
         /// <summary>
         /// Identifies the <see cref="CoordinateDefinition"/> dependency property.

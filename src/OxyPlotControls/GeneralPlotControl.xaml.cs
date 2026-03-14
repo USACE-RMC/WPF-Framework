@@ -150,7 +150,9 @@ namespace OxyPlotControls
         /// <returns>The Color from the SolidColorBrush.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((SolidColorBrush)value).Color;
+            if (value is SolidColorBrush brush)
+                return brush.Color;
+            return Color.FromArgb(255, 0, 0, 0);
         }
     }
 
