@@ -109,7 +109,7 @@ namespace OxyPlotControls
             _leaderLine.Stroke = new SolidColorBrush(Colors.SkyBlue);
             _leaderLine.StrokeDashArray = new DoubleCollection(LineStyle.DashDashDot.GetDashArray());
 
-            _c.Children.Add(_leaderLine);
+            _leaderLineCanvas.Children.Add(_leaderLine);
 
             Loaded += OxyPlotToolbar_Loaded;
             Unloaded += OxyPlotToolbar_Unloaded;
@@ -137,12 +137,12 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Handles the Unloaded event. Unsubscribes from theme changes and disposes resources.
+        /// Handles the Unloaded event. Unsubscribes from theme changes.
+        /// Does not call Dispose because the control may be re-loaded (e.g., tab switching).
         /// </summary>
         private void OxyPlotToolbar_Unloaded(object sender, RoutedEventArgs e)
         {
             ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
-            Dispose();
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace OxyPlotControls
 
                 if (oldPlot.grid != null)
                 {
-                    oldPlot.grid.Children.Remove(oxyToolBar._c);
+                    oldPlot.grid.Children.Remove(oxyToolBar._leaderLineCanvas);
                 }
             }
 
@@ -240,7 +240,7 @@ namespace OxyPlotControls
                 newPlot.LayoutUpdated += oxyToolBar.ToolBarLayoutUpdated;
 
                 // Set up leader line for adding polyline and polygon annotations
-                newPlot.grid.Children.Add(oxyToolBar._c);
+                newPlot.grid.Children.Add(oxyToolBar._leaderLineCanvas);
 
                 // Apply current theme to the newly connected plot (only if toolbar is already loaded;
                 // during initial construction, the Loaded handler will apply the theme instead)
@@ -358,11 +358,21 @@ namespace OxyPlotControls
         private Cursor _panHandClosedCursor;
         private Cursor _zoomCursor;
 
+        /// <summary>
+        /// The distance in screen pixels used for annotation hit-testing, edge detection, and point proximity checks.
+        /// </summary>
+        private const double HitTestTolerance = 10;
+
+        /// <summary>
+        /// The minimum size in screen pixels for newly created rectangle and ellipse annotations.
+        /// </summary>
+        private const double MinAnnotationSize = 10;
+
         // Edit Annotation variables
         private bool _doubleClicked = false;
         private bool _showPoints = false;
         private Polyline _leaderLine = new Polyline();
-        private Canvas _c = new Canvas();
+        private Canvas _leaderLineCanvas = new Canvas();
         private ScreenPoint _lastScreenPoint = ScreenPoint.Undefined;
         private bool _moveStartPoint = false;
         private bool _moveEndPoint = false;
@@ -735,6 +745,7 @@ namespace OxyPlotControls
                         _moveStartPoint = ae.HitTestResult.Index != 2;
                         _moveEndPoint = ae.HitTestResult.Index != 1;
                         _originalColor = newArrow.Color;
+                        newArrow.SuppressPropertyChanged = true;
                         newArrow.Color = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -767,6 +778,8 @@ namespace OxyPlotControls
                     {
                         if (!newArrow.IsEnabled) return;
                         newArrow.Color = _originalColor;
+                        newArrow.SuppressPropertyChanged = false;
+                        newArrow.RaisePropertyChanged(nameof(newArrow.StartPoint), nameof(newArrow.EndPoint), nameof(newArrow.Color));
                     };
                 }
                 else if (item is Wpf.TextAnnotation)
@@ -783,6 +796,7 @@ namespace OxyPlotControls
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
                         _originalColor = newText.Background;
+                        newText.SuppressPropertyChanged = true;
                         newText.Background = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -811,6 +825,8 @@ namespace OxyPlotControls
                     {
                         if (!newText.IsEnabled) return;
                         newText.Background = _originalColor;
+                        newText.SuppressPropertyChanged = false;
+                        newText.RaisePropertyChanged(nameof(newText.TextPosition), nameof(newText.Background));
                     };
                 }
                 else if (item is Wpf.RectangleAnnotation)
@@ -830,10 +846,10 @@ namespace OxyPlotControls
                         var topRight = new ScreenPoint(Math.Abs(upperRight.X - ae.Position.X), Math.Abs(upperRight.Y - ae.Position.Y));
                         var bottomLeft = new ScreenPoint(Math.Abs(lowerLeft.X - ae.Position.X), Math.Abs(lowerLeft.Y - ae.Position.Y));
 
-                        _scaleMaxX = topRight.X < 10;
-                        _scaleMaxY = topRight.Y < 10;
-                        _scaleMinX = bottomLeft.X < 10;
-                        _scaleMinY = bottomLeft.Y < 10;
+                        _scaleMaxX = topRight.X < HitTestTolerance;
+                        _scaleMaxY = topRight.Y < HitTestTolerance;
+                        _scaleMinX = bottomLeft.X < HitTestTolerance;
+                        _scaleMinY = bottomLeft.Y < HitTestTolerance;
 
                         if (ae.HitTestResult.Index == 0)
                         {
@@ -841,6 +857,7 @@ namespace OxyPlotControls
                         }
 
                         _originalColor = newRect.Fill;
+                        newRect.SuppressPropertyChanged = true;
                         newRect.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -883,6 +900,8 @@ namespace OxyPlotControls
                     {
                         if (!newRect.IsEnabled) return;
                         newRect.Fill = _originalColor;
+                        newRect.SuppressPropertyChanged = false;
+                        newRect.RaisePropertyChanged(nameof(newRect.MinimumX), nameof(newRect.MaximumX), nameof(newRect.MinimumY), nameof(newRect.MaximumY), nameof(newRect.Fill));
                     };
                 }
                 else if (item is Wpf.EllipseAnnotation)
@@ -902,10 +921,10 @@ namespace OxyPlotControls
                         var topRight = new ScreenPoint(Math.Abs(upperRight.X - ae.Position.X), Math.Abs(upperRight.Y - ae.Position.Y));
                         var bottomLeft = new ScreenPoint(Math.Abs(lowerLeft.X - ae.Position.X), Math.Abs(lowerLeft.Y - ae.Position.Y));
 
-                        _scaleMaxX = topRight.X < 10;
-                        _scaleMaxY = topRight.Y < 10;
-                        _scaleMinX = bottomLeft.X < 10;
-                        _scaleMinY = bottomLeft.Y < 10;
+                        _scaleMaxX = topRight.X < HitTestTolerance;
+                        _scaleMaxY = topRight.Y < HitTestTolerance;
+                        _scaleMinX = bottomLeft.X < HitTestTolerance;
+                        _scaleMinY = bottomLeft.Y < HitTestTolerance;
 
                         if (ae.HitTestResult.Index == 0)
                         {
@@ -913,6 +932,7 @@ namespace OxyPlotControls
                         }
 
                         _originalColor = newEllipse.Fill;
+                        newEllipse.SuppressPropertyChanged = true;
                         newEllipse.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -955,6 +975,8 @@ namespace OxyPlotControls
                     {
                         if (!newEllipse.IsEnabled) return;
                         newEllipse.Fill = _originalColor;
+                        newEllipse.SuppressPropertyChanged = false;
+                        newEllipse.RaisePropertyChanged(nameof(newEllipse.X), nameof(newEllipse.Y), nameof(newEllipse.Width), nameof(newEllipse.Height), nameof(newEllipse.Fill));
                     };
                 }
                 else if (item is Wpf.PointAnnotation)
@@ -971,6 +993,7 @@ namespace OxyPlotControls
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
                         _originalColor = newPoint.Fill;
+                        newPoint.SuppressPropertyChanged = true;
                         newPoint.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -1003,6 +1026,8 @@ namespace OxyPlotControls
                     {
                         if (!newPoint.IsEnabled) return;
                         newPoint.Fill = _originalColor;
+                        newPoint.SuppressPropertyChanged = false;
+                        newPoint.RaisePropertyChanged(nameof(newPoint.X), nameof(newPoint.Y), nameof(newPoint.Fill));
                     };
                 }
                 else if (item is Wpf.PolygonAnnotation)
@@ -1018,7 +1043,7 @@ namespace OxyPlotControls
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         var screenToData = newPolygon.InternalAnnotation.InverseTransform(ae.Position);
-                        var screen2ToData = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(ae.Position.X - 10, ae.Position.Y - 10));
+                        var screen2ToData = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(ae.Position.X - HitTestTolerance, ae.Position.Y - HitTestTolerance));
                         var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
                         var dPoint = newPolygon.InternalAnnotation.InverseTransform(ae.Position);
 
@@ -1040,7 +1065,7 @@ namespace OxyPlotControls
                                 var p1 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[i]);
                                 var p2 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[i + 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(ae.Position, p1, p2);
-                                if ((linePoint - ae.Position).Length < 10)
+                                if ((linePoint - ae.Position).Length < HitTestTolerance)
                                 {
                                     newPolygon.Points.Insert(i + 1, newPolygon.InternalAnnotation.InverseTransform(linePoint));
                                     onLine = true;
@@ -1054,7 +1079,7 @@ namespace OxyPlotControls
                                 var p1 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[0]);
                                 var p2 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[newPolygon.Points.Count - 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(ae.Position, p1, p2);
-                                if ((linePoint - ae.Position).Length < 10)
+                                if ((linePoint - ae.Position).Length < HitTestTolerance)
                                 {
                                     newPolygon.Points.Add(newPolygon.InternalAnnotation.InverseTransform(linePoint));
                                     _movePointIndex = newPolygon.Points.Count - 1;
@@ -1067,6 +1092,7 @@ namespace OxyPlotControls
                         }
 
                         _originalColor = newPolygon.Fill;
+                        newPolygon.SuppressPropertyChanged = true;
                         newPolygon.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -1105,6 +1131,8 @@ namespace OxyPlotControls
                     {
                         if (!newPolygon.IsEnabled) return;
                         newPolygon.Fill = _originalColor;
+                        newPolygon.SuppressPropertyChanged = false;
+                        newPolygon.RaisePropertyChanged(nameof(newPolygon.Points), nameof(newPolygon.Fill));
                     };
                 }
                 else if (item is Wpf.PolylineAnnotation)
@@ -1120,7 +1148,7 @@ namespace OxyPlotControls
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         var screenToData = newPolyline.InternalAnnotation.InverseTransform(ae.Position);
-                        var screen2ToData = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(ae.Position.X - 10, ae.Position.Y - 10));
+                        var screen2ToData = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(ae.Position.X - HitTestTolerance, ae.Position.Y - HitTestTolerance));
                         var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
                         var dPoint = newPolyline.InternalAnnotation.InverseTransform(ae.Position);
 
@@ -1142,7 +1170,7 @@ namespace OxyPlotControls
                                 var p1 = newPolyline.InternalAnnotation.Transform(newPolyline.Points[i]);
                                 var p2 = newPolyline.InternalAnnotation.Transform(newPolyline.Points[i + 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(ae.Position, p1, p2);
-                                if ((linePoint - ae.Position).Length < 10)
+                                if ((linePoint - ae.Position).Length < HitTestTolerance)
                                 {
                                     newPolyline.Points.Insert(i + 1, newPolyline.InternalAnnotation.InverseTransform(linePoint));
                                     onLine = true;
@@ -1155,6 +1183,7 @@ namespace OxyPlotControls
                         if (!onLine) _moveStartPoint = true;
 
                         _originalColor = newPolyline.Color;
+                        newPolyline.SuppressPropertyChanged = true;
                         newPolyline.Color = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -1193,6 +1222,8 @@ namespace OxyPlotControls
                     {
                         if (!newPolyline.IsEnabled) return;
                         newPolyline.Color = _originalColor;
+                        newPolyline.SuppressPropertyChanged = false;
+                        newPolyline.RaisePropertyChanged(nameof(newPolyline.Points), nameof(newPolyline.Color));
                     };
                 }
                 else if (item is Wpf.LineAnnotation)
@@ -1210,6 +1241,7 @@ namespace OxyPlotControls
                         _moveStartPoint = ae.HitTestResult.Index == 0;
 
                         _originalColor = newLine.Color;
+                        newLine.SuppressPropertyChanged = true;
                         newLine.Color = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
@@ -1261,6 +1293,8 @@ namespace OxyPlotControls
                     {
                         if (!newLine.IsEnabled) return;
                         newLine.Color = _originalColor;
+                        newLine.SuppressPropertyChanged = false;
+                        newLine.RaisePropertyChanged(nameof(newLine.X), nameof(newLine.Y), nameof(newLine.Intercept), nameof(newLine.Color));
                         CloseLineAnnotationTooltip(newLine);
                     };
                 }
@@ -1725,7 +1759,7 @@ namespace OxyPlotControls
             foreach (var a in Plot.Annotations)
             {
                 if (!a.IsEnabled) continue;
-                var ht = a.InternalAnnotation.HitTest(new HitTestArguments(e.Position, 10));
+                var ht = a.InternalAnnotation.HitTest(new HitTestArguments(e.Position, HitTestTolerance));
                 if (ht == null) continue;
 
                 var aType = a.GetType();
@@ -1771,13 +1805,13 @@ namespace OxyPlotControls
                     var bottomLeft = new ScreenPoint(Math.Abs(ll.X - e.Position.X), Math.Abs(ll.Y - e.Position.Y));
 
                     // Corners
-                    if (topRight.X < 10 && topRight.Y < 10) { updatedCursor = Cursors.SizeNESW; continue; }
-                    if (bottomLeft.X < 10 && bottomLeft.Y < 10) { updatedCursor = Cursors.SizeNESW; continue; }
-                    if (bottomLeft.X < 10 && topRight.Y < 10) { updatedCursor = Cursors.SizeNWSE; continue; }
-                    if (topRight.X < 10 && bottomLeft.Y < 10) { updatedCursor = Cursors.SizeNWSE; continue; }
+                    if (topRight.X < HitTestTolerance && topRight.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNESW; continue; }
+                    if (bottomLeft.X < HitTestTolerance && bottomLeft.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNESW; continue; }
+                    if (bottomLeft.X < HitTestTolerance && topRight.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNWSE; continue; }
+                    if (topRight.X < HitTestTolerance && bottomLeft.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNWSE; continue; }
                     // Edges
-                    if (topRight.X < 10 || bottomLeft.X < 10) { updatedCursor = Cursors.SizeWE; continue; }
-                    if (topRight.Y < 10 || bottomLeft.Y < 10) { updatedCursor = Cursors.SizeNS; continue; }
+                    if (topRight.X < HitTestTolerance || bottomLeft.X < HitTestTolerance) { updatedCursor = Cursors.SizeWE; continue; }
+                    if (topRight.Y < HitTestTolerance || bottomLeft.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNS; continue; }
                     // All
                     if (ht.Index == 0) updatedCursor = Cursors.SizeAll;
                 }
@@ -1801,13 +1835,13 @@ namespace OxyPlotControls
                     var bottomLeft = new ScreenPoint(Math.Abs(ll.X - e.Position.X), Math.Abs(ll.Y - e.Position.Y));
 
                     // Corners
-                    if (topRight.X < 10 && topRight.Y < 10) { updatedCursor = Cursors.SizeNESW; continue; }
-                    if (bottomLeft.X < 10 && bottomLeft.Y < 10) { updatedCursor = Cursors.SizeNESW; continue; }
-                    if (bottomLeft.X < 10 && topRight.Y < 10) { updatedCursor = Cursors.SizeNWSE; continue; }
-                    if (topRight.X < 10 && bottomLeft.Y < 10) { updatedCursor = Cursors.SizeNWSE; continue; }
+                    if (topRight.X < HitTestTolerance && topRight.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNESW; continue; }
+                    if (bottomLeft.X < HitTestTolerance && bottomLeft.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNESW; continue; }
+                    if (bottomLeft.X < HitTestTolerance && topRight.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNWSE; continue; }
+                    if (topRight.X < HitTestTolerance && bottomLeft.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNWSE; continue; }
                     // Edges
-                    if (topRight.X < 10 || bottomLeft.X < 10) { updatedCursor = Cursors.SizeWE; continue; }
-                    if (topRight.Y < 10 || bottomLeft.Y < 10) { updatedCursor = Cursors.SizeNS; continue; }
+                    if (topRight.X < HitTestTolerance || bottomLeft.X < HitTestTolerance) { updatedCursor = Cursors.SizeWE; continue; }
+                    if (topRight.Y < HitTestTolerance || bottomLeft.Y < HitTestTolerance) { updatedCursor = Cursors.SizeNS; continue; }
                     // All
                     if (ht.Index == 0) updatedCursor = Cursors.SizeAll;
                 }
@@ -1821,7 +1855,7 @@ namespace OxyPlotControls
                     {
                         var polyAnnotation = (Wpf.PolygonAnnotation)a;
                         var screenToData = polyAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                        var screen2ToData = polyAnnotation.InternalAnnotation.InverseTransform(new ScreenPoint(e.Position.X - 10, e.Position.Y - 10));
+                        var screen2ToData = polyAnnotation.InternalAnnotation.InverseTransform(new ScreenPoint(e.Position.X - HitTestTolerance, e.Position.Y - HitTestTolerance));
                         var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
 
                         foreach (var p in polyAnnotation.Points)
@@ -1844,7 +1878,7 @@ namespace OxyPlotControls
                                 var p1 = polyAnnotation.InternalAnnotation.Transform(polyAnnotation.Points[i]);
                                 var p2 = polyAnnotation.InternalAnnotation.Transform(polyAnnotation.Points[i + 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(e.Position, p1, p2);
-                                if ((linePoint - e.Position).Length < 10)
+                                if ((linePoint - e.Position).Length < HitTestTolerance)
                                 {
                                     onLine = true;
                                     updatedCursor = _addPointCursor;
@@ -1857,7 +1891,7 @@ namespace OxyPlotControls
                                 var p1 = polyAnnotation.InternalAnnotation.Transform(polyAnnotation.Points[0]);
                                 var p2 = polyAnnotation.InternalAnnotation.Transform(polyAnnotation.Points[polyAnnotation.Points.Count - 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(e.Position, p1, p2);
-                                if ((linePoint - e.Position).Length < 10)
+                                if ((linePoint - e.Position).Length < HitTestTolerance)
                                 {
                                     updatedCursor = _addPointCursor;
                                 }
@@ -1875,7 +1909,7 @@ namespace OxyPlotControls
                     {
                         var polylineAnnotation = (Wpf.PolylineAnnotation)a;
                         var screenToData = polylineAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                        var screen2ToData = polylineAnnotation.InternalAnnotation.InverseTransform(new ScreenPoint(e.Position.X - 10, e.Position.Y - 10));
+                        var screen2ToData = polylineAnnotation.InternalAnnotation.InverseTransform(new ScreenPoint(e.Position.X - HitTestTolerance, e.Position.Y - HitTestTolerance));
                         var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
 
                         foreach (var p in polylineAnnotation.Points)
@@ -1979,19 +2013,19 @@ namespace OxyPlotControls
                 double pixelWidth = Math.Abs(upperRight.X - lowerLeft.X);
                 double pixelHeight = Math.Abs(upperRight.Y - lowerLeft.Y);
                 // Correct the height and width if necessary
-                if (pixelWidth < 10 || pixelHeight < 10)
+                if (pixelWidth < MinAnnotationSize || pixelHeight < MinAnnotationSize)
                 {
                     var plotLL = rectangle.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Left, Plot.ActualModel.PlotArea.Bottom));
                     var plotUR = rectangle.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Right, Plot.ActualModel.PlotArea.Top));
                     double centerXShift = Math.Abs((plotUR.X - plotLL.X) * 0.1);
                     double centerYShift = Math.Abs((plotUR.Y - plotLL.Y) * 0.1);
                     var mouseDataPoint = rectangle.InternalAnnotation.InverseTransform(e.Position);
-                    if (pixelWidth < 10)
+                    if (pixelWidth < MinAnnotationSize)
                     {
                         rectangle.MinimumX = mouseDataPoint.X - centerXShift;
                         rectangle.MaximumX = mouseDataPoint.X + centerXShift;
                     }
-                    if (pixelHeight < 10)
+                    if (pixelHeight < MinAnnotationSize)
                     {
                         rectangle.MinimumY = mouseDataPoint.Y - centerYShift;
                         rectangle.MaximumY = mouseDataPoint.Y + centerYShift;
@@ -2008,19 +2042,19 @@ namespace OxyPlotControls
                 double pixelWidth = Math.Abs(upperRight.X - lowerLeft.X);
                 double pixelHeight = Math.Abs(upperRight.Y - lowerLeft.Y);
                 // Correct the height and width if necessary
-                if (pixelWidth < 10 || pixelHeight < 10)
+                if (pixelWidth < MinAnnotationSize || pixelHeight < MinAnnotationSize)
                 {
                     var plotLL = ellipse.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Left, Plot.ActualModel.PlotArea.Bottom));
                     var plotUR = ellipse.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Right, Plot.ActualModel.PlotArea.Top));
                     double centerXShift = Math.Abs((plotUR.X - plotLL.X) * 0.1);
                     double centerYShift = Math.Abs((plotUR.Y - plotLL.Y) * 0.1);
                     var mouseDataPoint = ellipse.InternalAnnotation.InverseTransform(e.Position);
-                    if (pixelWidth < 10)
+                    if (pixelWidth < MinAnnotationSize)
                     {
                         ellipse.MinimumX = mouseDataPoint.X - centerXShift;
                         ellipse.MaximumX = mouseDataPoint.X + centerXShift;
                     }
-                    if (pixelHeight < 10)
+                    if (pixelHeight < MinAnnotationSize)
                     {
                         ellipse.MinimumY = mouseDataPoint.Y - centerYShift;
                         ellipse.MaximumY = mouseDataPoint.Y + centerYShift;
@@ -2062,7 +2096,7 @@ namespace OxyPlotControls
             _contextMenu = new ContextMenu();
 
             // SERIES hit test
-            var seriesHTRS = Plot.ActualModel.HitTest(new HitTestArguments(e.Position, 10)).ToList();
+            var seriesHTRS = Plot.ActualModel.HitTest(new HitTestArguments(e.Position, HitTestTolerance)).ToList();
             foreach (var htr in seriesHTRS)
             {
                 var wpfSeries = Plot.Series.FirstOrDefault(d => d.InternalSeries.Equals(htr.Element));
@@ -2351,7 +2385,7 @@ namespace OxyPlotControls
             }
 
             // ANNOTATIONS hit test
-            var annoHTRS = Plot.ActualModel.HitTest(new HitTestArguments(e.Position, 10)).ToList();
+            var annoHTRS = Plot.ActualModel.HitTest(new HitTestArguments(e.Position, HitTestTolerance)).ToList();
             foreach (var htr in annoHTRS)
             {
                 var theAnno = htr.Element as OxyPlot.Annotations.Annotation;

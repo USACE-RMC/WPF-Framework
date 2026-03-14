@@ -227,10 +227,11 @@ public class OxyDefaultFontSizeConverterTests
     }
 
     /// <summary>
-    /// Tests that ConvertBack returns NaN when given the default value (12.0).
+    /// Tests that ConvertBack returns 12.0 when given the default font size value.
+    /// A deliberately-set 12pt font size must not be cleared to NaN.
     /// </summary>
     [Fact]
-    public void ConvertBack_DefaultValue12_ReturnsNaN()
+    public void ConvertBack_DefaultValue12_ReturnsValue()
     {
         // Arrange
         var value = 12.0;
@@ -239,7 +240,7 @@ public class OxyDefaultFontSizeConverterTests
         var result = _converter.ConvertBack(value, typeof(double), null!, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.True(double.IsNaN((double)result));
+        Assert.Equal(12.0, (double)result);
     }
 
     /// <summary>

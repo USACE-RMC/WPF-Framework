@@ -184,14 +184,12 @@ namespace OxyPlotControls
         /// <param name="targetType">The target type (not used).</param>
         /// <param name="parameter">Additional parameter (not used).</param>
         /// <param name="culture">The culture to use for conversion.</param>
-        /// <returns>The font size, or NaN if the value is null, invalid, or 12.0.</returns>
+        /// <returns>The font size, or NaN if the value is null or invalid.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return double.NaN;
             if (value.GetType() != typeof(double)) return double.NaN;
-            double doubleVal = (double)value;
-            if (doubleVal == 12.0) return double.NaN;
-            return doubleVal;
+            return (double)value;
         }
     }
 
@@ -207,11 +205,11 @@ namespace OxyPlotControls
         /// <param name="targetType">The target type (not used).</param>
         /// <param name="parameter">Additional parameter (not used).</param>
         /// <param name="culture">The culture to use for conversion.</param>
-        /// <returns>The value cast to SolidColorBrush, or null if the value is null.</returns>
+        /// <returns>The value as a SolidColorBrush, or null if the value is null or not a SolidColorBrush.</returns>
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
-            return (SolidColorBrush)value;
+            return value as SolidColorBrush;
         }
 
         /// <summary>
@@ -221,11 +219,11 @@ namespace OxyPlotControls
         /// <param name="targetType">The target type (not used).</param>
         /// <param name="parameter">Additional parameter (not used).</param>
         /// <param name="culture">The culture to use for conversion.</param>
-        /// <returns>The value cast to Brush, or null if the value is null.</returns>
+        /// <returns>The value as a Brush, or null if the value is null or not a Brush.</returns>
         public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
-            return (Brush)value;
+            return value as Brush;
         }
     }
 }

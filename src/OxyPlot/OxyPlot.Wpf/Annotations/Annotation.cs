@@ -55,6 +55,24 @@ namespace OxyPlot.Wpf
         }
 
         /// <summary>
+        /// Raises <see cref="PropertyChanged"/> for the specified property names, bypassing
+        /// the <see cref="SuppressPropertyChanged"/> flag.
+        /// </summary>
+        /// <param name="propertyNames">The property names to raise change notifications for.</param>
+        /// <remarks>
+        /// Use this after a drag operation where <see cref="SuppressPropertyChanged"/> was true
+        /// during the drag to batch all changes into a single set of notifications at mouse-up.
+        /// This allows the undo system to capture the entire drag as one undoable operation.
+        /// </remarks>
+        public void RaisePropertyChanged(params string[] propertyNames)
+        {
+            foreach (var name in propertyNames)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Layer"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty LayerProperty = DependencyProperty.Register(

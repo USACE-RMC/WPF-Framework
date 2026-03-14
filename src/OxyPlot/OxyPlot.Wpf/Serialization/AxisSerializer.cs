@@ -39,7 +39,7 @@ namespace OxyPlot.Wpf.Serialization
         public static readonly IReadOnlyList<string> AxisVisualProperties = new[]
         {
             // General
-            "Name", "IsAxisVisible", "StartPosition", "EndPosition", "IsPanEnabled", "IsZoomEnabled",
+            "Name", "IsEnabled", "IsAxisVisible", "Layer", "StartPosition", "EndPosition", "IsPanEnabled", "IsZoomEnabled",
             "Maximum", "Minimum", "AbsoluteMaximum", "AbsoluteMinimum", "FilterMaxValue", "FilterMinValue",
             // Style
             "AxislineColor", "AxislineStyle", "AxislineThickness",
@@ -54,6 +54,8 @@ namespace OxyPlot.Wpf.Serialization
             "MajorGridlineColor", "MajorGridlineStyle", "MajorGridlineThickness", "MajorStep", "MajorTickSize",
             // Minor gridlines
             "MinorGridlineColor", "MinorGridlineStyle", "MinorGridlineThickness", "MinorStep", "MinorTickSize",
+            // Extra gridlines
+            "ExtraGridlineColor", "ExtraGridlineStyle", "ExtraGridlineThickness",
             // Ticks
             "TickStyle", "TicklineColor",
         };
@@ -111,6 +113,7 @@ namespace OxyPlot.Wpf.Serialization
             generalProperties.SetAttributeValue(nameof(Axis.Name), axis.Name ?? "");
             generalProperties.SetAttributeValue(nameof(axis.IsEnabled), axis.IsEnabled.ToString());
             generalProperties.SetAttributeValue(nameof(axis.IsAxisVisible), axis.IsAxisVisible.ToString());
+            generalProperties.SetAttributeValue(nameof(axis.Layer), axis.Layer.ToString());
             generalProperties.SetAttributeValue(nameof(axis.StartPosition), axis.StartPosition.ToString("G17", CultureInfo.InvariantCulture));
             generalProperties.SetAttributeValue(nameof(axis.EndPosition), axis.EndPosition.ToString("G17", CultureInfo.InvariantCulture));
             generalProperties.SetAttributeValue(nameof(axis.IsPanEnabled), axis.IsPanEnabled.ToString());
@@ -183,6 +186,13 @@ namespace OxyPlot.Wpf.Serialization
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorStep), axis.MinorStep.ToString("G17", CultureInfo.InvariantCulture));
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorTickSize), axis.MinorTickSize.ToString("G17", CultureInfo.InvariantCulture));
             axisProperties.Add(minorGridlineProperties);
+
+            // Extra Gridline Properties
+            var extraGridlineProperties = new XElement("ExtraGridlines");
+            extraGridlineProperties.SetAttributeValue(nameof(axis.ExtraGridlineColor), axis.ExtraGridlineColor.ToString());
+            extraGridlineProperties.SetAttributeValue(nameof(axis.ExtraGridlineStyle), axis.ExtraGridlineStyle.ToString());
+            extraGridlineProperties.SetAttributeValue(nameof(axis.ExtraGridlineThickness), axis.ExtraGridlineThickness.ToString("G17", CultureInfo.InvariantCulture));
+            axisProperties.Add(extraGridlineProperties);
 
             // Tick Style Properties
             var tickStyleProperties = new XElement("Tick");
@@ -375,6 +385,7 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetStringAttribute(generalElement, nameof(axis.Name), out var name)) axis.Name = name;
                 if (GetBooleanAttribute(generalElement, nameof(axis.IsEnabled), out var isEnabled)) axis.IsEnabled = isEnabled;
                 if (GetBooleanAttribute(generalElement, nameof(axis.IsAxisVisible), out var isAxisVisible)) axis.IsAxisVisible = isAxisVisible;
+                if (GetEnumAttribute(generalElement, nameof(axis.Layer), out OxyPlot.Axes.AxisLayer layer)) axis.Layer = layer;
                 if (GetDoubleAttribute(generalElement, nameof(axis.StartPosition), out var startPosition)) axis.StartPosition = startPosition;
                 if (GetDoubleAttribute(generalElement, nameof(axis.EndPosition), out var endPosition)) axis.EndPosition = endPosition;
                 if (GetBooleanAttribute(generalElement, nameof(axis.IsPanEnabled), out var isPanEnabled)) axis.IsPanEnabled = isPanEnabled;
@@ -503,6 +514,15 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetDoubleAttribute(minorGridlineElement, "Thickness", out minorGridlineThickness)) axis.MinorGridlineThickness = minorGridlineThickness;
                 if (GetDoubleAttribute(minorGridlineElement, "Step", out minorStep)) axis.MinorStep = minorStep;
                 if (GetDoubleAttribute(minorGridlineElement, "TickSize", out minorTickSize)) axis.MinorTickSize = minorTickSize;
+            }
+
+            // Extra Gridline Properties
+            var extraGridlineElement = element.Element("ExtraGridlines");
+            if (extraGridlineElement != null)
+            {
+                if (GetColorAttribute(extraGridlineElement, nameof(axis.ExtraGridlineColor), out var extraGridlineColor)) axis.ExtraGridlineColor = extraGridlineColor;
+                if (GetEnumAttribute(extraGridlineElement, nameof(axis.ExtraGridlineStyle), out OxyPlot.LineStyle extraGridlineStyle)) axis.ExtraGridlineStyle = extraGridlineStyle;
+                if (GetDoubleAttribute(extraGridlineElement, nameof(axis.ExtraGridlineThickness), out var extraGridlineThickness)) axis.ExtraGridlineThickness = extraGridlineThickness;
             }
 
             // Tick Style Properties

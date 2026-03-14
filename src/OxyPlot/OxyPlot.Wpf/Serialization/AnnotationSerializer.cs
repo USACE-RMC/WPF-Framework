@@ -182,10 +182,15 @@ namespace OxyPlot.Wpf.Serialization
                 {
                     var ellipseAnnotation = (EllipseAnnotation)shapeAnnotation;
                     var ellipseProperties = new XElement("Ellipse");
+                    // Serialize both Min/Max (backward compat) and X/Y/Width/Height (authoritative DPs)
                     ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MinimumX), ellipseAnnotation.MinimumX.ToString("G17", CultureInfo.InvariantCulture));
                     ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MaximumY), ellipseAnnotation.MaximumY.ToString("G17", CultureInfo.InvariantCulture));
                     ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MaximumX), ellipseAnnotation.MaximumX.ToString("G17", CultureInfo.InvariantCulture));
                     ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.MinimumY), ellipseAnnotation.MinimumY.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.X), ellipseAnnotation.X.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.Y), ellipseAnnotation.Y.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.Width), ellipseAnnotation.Width.ToString("G17", CultureInfo.InvariantCulture));
+                    ellipseProperties.SetAttributeValue(nameof(ellipseAnnotation.Height), ellipseAnnotation.Height.ToString("G17", CultureInfo.InvariantCulture));
                     shapeProperties.Add(ellipseProperties);
                 }
                 else if (annotationType == typeof(RectangleAnnotation))
@@ -411,10 +416,16 @@ namespace OxyPlot.Wpf.Serialization
                         if (ellipseElement != null)
                         {
                             var ellipseAnnotation = (EllipseAnnotation)shapeAnnotation;
+                            // Read Min/Max first (backward compat for old files)
                             if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MinimumX), out var minimumX)) ellipseAnnotation.MinimumX = minimumX;
                             if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MaximumY), out var maximumY)) ellipseAnnotation.MaximumY = maximumY;
                             if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MaximumX), out var maximumX)) ellipseAnnotation.MaximumX = maximumX;
                             if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.MinimumY), out var minimumY)) ellipseAnnotation.MinimumY = minimumY;
+                            // Read X/Y/Width/Height after — authoritative DPs take precedence when present
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.X), out var x)) ellipseAnnotation.X = x;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.Y), out var y)) ellipseAnnotation.Y = y;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.Width), out var width)) ellipseAnnotation.Width = width;
+                            if (GetDoubleAttribute(ellipseElement, nameof(ellipseAnnotation.Height), out var height)) ellipseAnnotation.Height = height;
                         }
                     }
                     else if (currentAnnotationType == typeof(RectangleAnnotation))

@@ -561,7 +561,9 @@ namespace OxyPlotControls
 
             // values[2] is Series.Color — only used to trigger re-evaluation when line color changes
 
-            // Convert - use ActualMarkerFill as the resolved automatic color for stroke too
+            // Convert — OxyPlot core resolves automatic marker stroke to the same default as
+            // marker fill (there is no separate ActualMarkerStroke property), so using
+            // ActualMarkerFill here is correct by convention.
             if (oxyCol.IsAutomatic())
             {
                 var actualColor = _series.ActualMarkerFill;
