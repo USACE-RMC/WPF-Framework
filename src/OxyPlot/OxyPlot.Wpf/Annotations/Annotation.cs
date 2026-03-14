@@ -160,12 +160,18 @@ namespace OxyPlot.Wpf
         /// <summary>
         /// Handles changes to appearance-related properties.
         /// </summary>
+        /// <remarks>
+        /// Always triggers a visual update via <see cref="IPlotView.InvalidatePlot"/> so that
+        /// the annotation renders correctly even when <see cref="SuppressPropertyChanged"/> is
+        /// true (e.g., during interactive annotation creation). The <see cref="PropertyChanged"/>
+        /// event is only raised when suppression is off, keeping the undo system clean.
+        /// </remarks>
         protected static void AppearanceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var annotation = (Annotation)d;
-            if (annotation.SuppressPropertyChanged) return;
             var pc = annotation.Parent as IPlotView;
             pc?.InvalidatePlot(false);
+            if (annotation.SuppressPropertyChanged) return;
             annotation.OnPropertyChanged(e.Property.Name);
         }
 
@@ -175,9 +181,8 @@ namespace OxyPlot.Wpf
         protected static void DataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var annotation = (Annotation)d;
-            if (annotation.SuppressPropertyChanged) return;
             var pc = annotation.Parent as IPlotView;
-            pc?.InvalidatePlot();
+            pc?.InvalidatePlot(false);
         }
     }
 }

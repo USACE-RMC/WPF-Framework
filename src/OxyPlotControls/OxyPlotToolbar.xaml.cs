@@ -1508,7 +1508,6 @@ namespace OxyPlotControls
                         newArrow.StartPoint = newArrow.InternalAnnotation.InverseTransform(e.Position);
                         newArrow.EndPoint = newArrow.StartPoint;
                         _targetAddAnnotation = newArrow;
-                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddTextAnnotation:
@@ -1520,7 +1519,6 @@ namespace OxyPlotControls
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newText);
                         newText.TextPosition = newText.InternalAnnotation.InverseTransform(e.Position);
                         _targetAddAnnotation = newText;
-                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
@@ -1556,7 +1554,6 @@ namespace OxyPlotControls
 
                             OpenLineAnnotationTooltip(newVLine);
                             UpdateLineAnnotationTooltip(newVLine);
-                            Plot.ActualModel.InvalidatePlot(false);
                         }
                         break;
 
@@ -1593,7 +1590,6 @@ namespace OxyPlotControls
 
                             OpenLineAnnotationTooltip(newHLine);
                             UpdateLineAnnotationTooltip(newHLine);
-                            Plot.ActualModel.InvalidatePlot(false);
                         }
                         break;
 
@@ -1612,7 +1608,6 @@ namespace OxyPlotControls
                             newRectangle.MaximumY = dataPointClicked.Y;
                             _targetAddAnnotation = newRectangle;
                         }
-                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddEllipseAnnotation:
@@ -1630,7 +1625,6 @@ namespace OxyPlotControls
                             newEllipse.MaximumY = dataPointClicked.Y;
                             _targetAddAnnotation = newEllipse;
                         }
-                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddPointAnnotation:
@@ -1652,7 +1646,6 @@ namespace OxyPlotControls
                             newPoint.Y = dataPointClicked.Y;
                             _targetAddAnnotation = newPoint;
                         }
-                        Plot.ActualModel.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddPolygonAnnotation:
@@ -1701,7 +1694,6 @@ namespace OxyPlotControls
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
                             _targetAddAnnotation = newPolyline;
-                            Plot.ActualModel.InvalidatePlot(false);
                         }
                         else
                         {
@@ -1749,24 +1741,20 @@ namespace OxyPlotControls
                 {
                     case AddToolMode.AddArrowAnnotation:
                         ((Wpf.ArrowAnnotation)_targetAddAnnotation).EndPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddTextAnnotation:
                         ((Wpf.TextAnnotation)_targetAddAnnotation).TextPosition = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
                         ((Wpf.LineAnnotation)_targetAddAnnotation).X = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).X;
                         UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
-                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddHorizontalLineAnnotation:
                         ((Wpf.LineAnnotation)_targetAddAnnotation).Y = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).Y;
                         UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
-                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddRectangleAnnotation:
@@ -1775,7 +1763,6 @@ namespace OxyPlotControls
                             var rect = (Wpf.RectangleAnnotation)_targetAddAnnotation;
                             rect.MaximumX = mouseDataPoint.X;
                             rect.MaximumY = mouseDataPoint.Y;
-                            Plot.InvalidatePlot(false);
                         }
                         break;
 
@@ -1785,7 +1772,6 @@ namespace OxyPlotControls
                             var ellipse = (Wpf.EllipseAnnotation)_targetAddAnnotation;
                             ellipse.MaximumX = mouseDataPoint.X;
                             ellipse.MaximumY = mouseDataPoint.Y;
-                            Plot.InvalidatePlot(false);
                         }
                         break;
 
@@ -1795,7 +1781,6 @@ namespace OxyPlotControls
                             var point = (Wpf.PointAnnotation)_targetAddAnnotation;
                             point.X = mouseDataPoint.X;
                             point.Y = mouseDataPoint.Y;
-                            Plot.InvalidatePlot(false);
                         }
                         break;
 
@@ -3108,9 +3093,10 @@ namespace OxyPlotControls
                 Canvas.SetTop(dockPanel, top);
 
                 string title = (string)dependencyObj.GetValue(dependencyProp);
-                Plot.TitleColor = Colors.Transparent;
                 if (dependencyProp == Wpf.Plot.SubtitleProperty)
                     Plot.SubtitleColor = Colors.Transparent;
+                else
+                    Plot.TitleColor = Colors.Transparent;
                 _textBox.Text = title;
             }
             else if (dependencyObj is Wpf.Axis axis)
@@ -3184,9 +3170,10 @@ namespace OxyPlotControls
 
                 if (depObjType == typeof(Wpf.Plot))
                 {
-                    Plot.TitleColor = currentTextColor;
                     if (dependencyProp == Wpf.Plot.SubtitleProperty)
                         Plot.SubtitleColor = currentTextColor;
+                    else
+                        Plot.TitleColor = currentTextColor;
                 }
                 else if (dependencyObj is Wpf.Axis axRestore)
                 {
