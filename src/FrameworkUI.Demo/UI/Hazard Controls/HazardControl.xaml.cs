@@ -367,7 +367,10 @@ namespace FrameworkUI.Demo.UI
             MeanLinePoints.Clear();
             ModeLinePoints.Clear();
 
-            if (Element.Results == null) return;
+            // Element can be null during the swap-out phase of ElementPropertyChanged if
+            // the DP callback fires between the old value being nulled and the new value
+            // being assigned. Bail instead of NRE'ing on Element.Results below.
+            if (Element == null || Element.Results == null) return;
 
             if (Element.IsEstimated)
             {

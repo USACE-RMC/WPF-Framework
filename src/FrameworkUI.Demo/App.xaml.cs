@@ -138,9 +138,16 @@ namespace FrameworkUI.Demo
             FrameworkUI.ShellPublicVariables.SoftwareExtension = ".fun";
             FrameworkUI.UserSettings.CreateAutoRecoverBackup = false;
 
-            // Create the project model
+            // Create the project model. Use TryFindResource so a missing TreeViewItemStyle
+            // (e.g., if theme resource loading didn't complete) degrades gracefully to the
+            // default WPF style instead of throwing ResourceReferenceKeyNotFoundException
+            // and crashing before the main window shows.
             DemoProject project = DemoProject.GetInstance();
-            var projectNode = new DemoProjectNode(project) { Style = (Style)FindResource("TreeViewItemStyle") };
+            var projectNode = new DemoProjectNode(project);
+            if (TryFindResource("TreeViewItemStyle") is Style treeItemStyle)
+            {
+                projectNode.Style = treeItemStyle;
+            }
 
             project.CreateNewDummyProject();
 

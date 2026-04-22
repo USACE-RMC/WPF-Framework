@@ -340,8 +340,20 @@ namespace FrameworkUI.Demo
 
             if (winExpName != Name && Name != "Blank Project")
             {
-                FullFileName = Path.Combine(FileDirectory, Name + ".fun");
-                File.Move(winExpFullFileName, FullFileName);
+                var newFullFileName = Path.Combine(FileDirectory ?? string.Empty, Name + ".fun");
+                try
+                {
+                    File.Move(winExpFullFileName, newFullFileName);
+                    FullFileName = newFullFileName;
+                }
+                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is FileNotFoundException)
+                {
+                    FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(
+                        new BasicMessageItem(FrameworkInterfaces.MessageType.Warning,
+                            $"Failed to rename project file: {ex.Message}",
+                            this, "DemoProject", Name, "Save"));
+                    return;
+                }
             }
 
             // Update last edited
