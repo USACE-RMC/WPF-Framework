@@ -2450,7 +2450,11 @@ namespace OxyPlotControls
                     var wpfAnno = Plot.Annotations.FirstOrDefault(d => d.InternalAnnotation == theAnno);
                     if (wpfAnno != null)
                     {
-                        var annoText = ((Wpf.TextualAnnotation)wpfAnno).Text;
+                        // LineAnnotation (vertical / horizontal lines) inherits PathAnnotation,
+                        // not TextualAnnotation. A hard cast crashed on right-click of a
+                        // line annotation; `as` + null-coalesce produces a blank label for
+                        // non-textual annotations.
+                        var annoText = (wpfAnno as Wpf.TextualAnnotation)?.Text ?? string.Empty;
 
                         if (leftClickBool)
                         {
@@ -3214,10 +3218,16 @@ namespace OxyPlotControls
         /// Converts a screen point to a data point using the plot's default axes.
         /// </summary>
         /// <param name="pt">The screen point to convert.</param>
-        /// <returns>The corresponding data point.</returns>
+        /// <returns>The corresponding data point, or <see cref="DataPoint.Undefined"/> if the plot has no default axes.</returns>
         private DataPoint ConvertScreenPointToDataPoint(ScreenPoint pt)
         {
-            return Plot.ActualModel.DefaultXAxis.InverseTransform(pt.X, pt.Y, Plot.ActualModel.DefaultYAxis);
+            var xAxis = Plot?.ActualModel?.DefaultXAxis;
+            var yAxis = Plot?.ActualModel?.DefaultYAxis;
+            if (xAxis == null || yAxis == null)
+            {
+                return DataPoint.Undefined;
+            }
+            return xAxis.InverseTransform(pt.X, pt.Y, yAxis);
         }
 
         /// <summary>

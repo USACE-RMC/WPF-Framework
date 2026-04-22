@@ -138,6 +138,11 @@ namespace OxyPlotControls
         /// </summary>
         private void SavePlotImageDialog_Closing(object? sender, CancelEventArgs e)
         {
+            // Stop the resize-debounce timer so a pending Tick doesn't fire after the
+            // visual tree has been torn down and UpdatePreview() accesses disposed elements.
+            _resizeDebounceTimer.Stop();
+            _resizeDebounceTimer.Tick -= ResizeDebounceTimer_Tick;
+
             if (!string.IsNullOrEmpty(FolderPathControl.Text))
                 _lastUsedFolderPath = FolderPathControl.Text;
 

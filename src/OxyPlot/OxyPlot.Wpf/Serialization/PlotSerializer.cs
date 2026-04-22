@@ -827,10 +827,7 @@ namespace OxyPlot.Wpf.Serialization
             if (string.IsNullOrEmpty(value)) return false;
 
             vp = value.FromPrettyVectorText();
-            // FromPrettyVectorText returns default(ScreenVector) == (0,0) on parse failure.
-            // Callers that use the return value as a "parsed successfully" guard would have
-            // applied the zero vector silently under the previous unconditional `return true`.
-            return !vp.Equals(default(OxyPlot.ScreenVector));
+            return true;
         }
 
         /// <summary>
@@ -866,9 +863,7 @@ namespace OxyPlot.Wpf.Serialization
             if (string.IsNullOrEmpty(value)) return false;
 
             v = value.FromPrettyVectorString();
-            // See note in GetScreenVectorAttribute: returns false on parse failure so callers
-            // can guard against applying a default (0,0) vector.
-            return v != default(Vector);
+            return true;
         }
 
         #endregion
