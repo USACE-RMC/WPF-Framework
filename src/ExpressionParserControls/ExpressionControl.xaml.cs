@@ -81,12 +81,21 @@ namespace ExpressionParserControls
 
         if (currentText != newText)
         {
+            // try/finally so an exception during document rebuild (Blocks.Clear/Add or
+            // the TextChanged reformat) doesn't leave _formattingExpression stuck at true,
+            // which would permanently lock the editor.
             control._formattingExpression = true;
-            control.ExpressionTextBox.Document.Blocks.Clear();
-            var p = new System.Windows.Documents.Paragraph();
-            p.Inlines.Add(new System.Windows.Documents.Run(newText));
-            control.ExpressionTextBox.Document.Blocks.Add(p);
-            control._formattingExpression = false;
+            try
+            {
+                control.ExpressionTextBox.Document.Blocks.Clear();
+                var p = new System.Windows.Documents.Paragraph();
+                p.Inlines.Add(new System.Windows.Documents.Run(newText));
+                control.ExpressionTextBox.Document.Blocks.Add(p);
+            }
+            finally
+            {
+                control._formattingExpression = false;
+            }
             // Trigger a TextChanged to reformat with syntax highlighting
             control.ExpressionTextBox_TextChanged(control.ExpressionTextBox, new TextChangedEventArgs(System.Windows.Controls.RichTextBox.TextChangedEvent, UndoAction.None));
         }
@@ -201,76 +210,83 @@ namespace ExpressionParserControls
             if (_formattingExpression == true)
                 return;
             _formattingExpression = true;
-            // Get caret position within the unformatted text string.
-            string allRichText = new TextRange(this.ExpressionTextBox.Document.ContentStart, this.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
-            string fromCaretText = new TextRange(this.ExpressionTextBox.CaretPosition, this.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
-            // Handle the situation where data was potentially pasted.
-            if (e.Changes.Count > 0 && e.Changes.Any(o => o.AddedLength > 1))
+            try
             {
-                allRichText = allRichText.Replace(Environment.NewLine, " ").Replace("\n", " ");
-                fromCaretText = fromCaretText.Replace(Environment.NewLine, " ").Replace("\n", " ");
-            }
-            int caretTextPosition = allRichText.Length - fromCaretText.Length;
-            // Get the token list.
-            GetTokenList = Lexer.TokenizeStringToList(allRichText);
-            // Clear the expression box of previous entries.
-            this.ExpressionTextBox.Document.Blocks.Clear();
-            var p = new Paragraph();
-            this.ExpressionTextBox.Document.Blocks.Add(p);
-            // 
-            int parenthesisColorPosition = 0;
-            TextPointer? newCaret = null;
-            Token t;
-            Run? r = null;
-            for (int i = 0; i < GetTokenList.Count; i++)
-            {
-                t = GetTokenList[i];
-                r = new Run(t.TokenString) { FontSize = FontSize, FontWeight = FontWeight, FontStyle = FontStyle, FontFamily = FontFamily, FontStretch = FontStretch };
-                if (t.Type == TokenType.LeftParenthesis)
+                // Get caret position within the unformatted text string.
+                string allRichText = new TextRange(this.ExpressionTextBox.Document.ContentStart, this.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
+                string fromCaretText = new TextRange(this.ExpressionTextBox.CaretPosition, this.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
+                // Handle the situation where data was potentially pasted.
+                if (e.Changes.Count > 0 && e.Changes.Any(o => o.AddedLength > 1))
                 {
-                    r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? _overflowColor : _parenthesisColors[parenthesisColorPosition];
-                    p.Inlines.Add(r);
-                    parenthesisColorPosition += 1;
+                    allRichText = allRichText.Replace(Environment.NewLine, " ").Replace("\n", " ");
+                    fromCaretText = fromCaretText.Replace(Environment.NewLine, " ").Replace("\n", " ");
                 }
-                else if (t.Type == TokenType.RightParenthesis)
+                int caretTextPosition = allRichText.Length - fromCaretText.Length;
+                // Get the token list.
+                GetTokenList = Lexer.TokenizeStringToList(allRichText);
+                // Clear the expression box of previous entries.
+                this.ExpressionTextBox.Document.Blocks.Clear();
+                var p = new Paragraph();
+                this.ExpressionTextBox.Document.Blocks.Add(p);
+                //
+                int parenthesisColorPosition = 0;
+                TextPointer? newCaret = null;
+                Token t;
+                Run? r = null;
+                for (int i = 0; i < GetTokenList.Count; i++)
                 {
-                    parenthesisColorPosition -= 1;
-                    if (parenthesisColorPosition < 0)
-                        parenthesisColorPosition = 0;
-                    r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? _overflowColor : _parenthesisColors[parenthesisColorPosition];
-                    p.Inlines.Add(r);
-                }
-                else if (t.TokenGroup == TokenClass.Function)
-                {
-                    var h = new Hyperlink(r) { NavigateUri = new Uri(Path.Combine(Environment.CurrentDirectory, t.HelpDocPath)), IsEnabled = true };
-                    p.Inlines.Add(h);
-                }
-                // If the operator is defined here as hyperlink then the text can get too messy. The operators are self explanatory enough to not require help documentation.
-                // ElseIf t.TokenGroup = TokenClass.Operator Then
-                // Dim h As New Hyperlink(r) With {.NavigateUri = New Uri(Environment.CurrentDirectory & "/" & t.HelpDocPath), .IsEnabled = True}
-                // p.Inlines.Add(h)
-                else
-                {
-                    p.Inlines.Add(r);
+                    t = GetTokenList[i];
+                    r = new Run(t.TokenString) { FontSize = FontSize, FontWeight = FontWeight, FontStyle = FontStyle, FontFamily = FontFamily, FontStretch = FontStretch };
+                    if (t.Type == TokenType.LeftParenthesis)
+                    {
+                        r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? _overflowColor : _parenthesisColors[parenthesisColorPosition];
+                        p.Inlines.Add(r);
+                        parenthesisColorPosition += 1;
+                    }
+                    else if (t.Type == TokenType.RightParenthesis)
+                    {
+                        parenthesisColorPosition -= 1;
+                        if (parenthesisColorPosition < 0)
+                            parenthesisColorPosition = 0;
+                        r.Foreground = parenthesisColorPosition > _parenthesisColors.Length - 1 ? _overflowColor : _parenthesisColors[parenthesisColorPosition];
+                        p.Inlines.Add(r);
+                    }
+                    else if (t.TokenGroup == TokenClass.Function && !string.IsNullOrEmpty(t.HelpDocPath))
+                    {
+                        // Base path on the app directory, not CurrentDirectory - the working
+                        // directory may not be the install directory at runtime.
+                        var h = new Hyperlink(r) { NavigateUri = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, t.HelpDocPath)), IsEnabled = true };
+                        p.Inlines.Add(h);
+                    }
+                    else
+                    {
+                        p.Inlines.Add(r);
+                    }
+                    //
+                    if (i < GetTokenList.Count - 1)
+                    {
+                        if (t.StartPosition <= caretTextPosition && GetTokenList[i + 1].StartPosition > caretTextPosition)
+                        {
+                            newCaret = r.ContentStart.GetPositionAtOffset(caretTextPosition - t.StartPosition);
+                        }
+                    }
+                    // last token if the new caret position was never defined
+                    else if (newCaret == null && r != null)
+                        newCaret = r.ContentStart.GetPositionAtOffset(caretTextPosition - GetTokenList.Last().StartPosition);
                 }
                 //
-                if (i < GetTokenList.Count - 1)
-                {
-                    if (t.StartPosition <= caretTextPosition && GetTokenList[i + 1].StartPosition > caretTextPosition)
-                    {
-                        newCaret = r.ContentStart.GetPositionAtOffset(caretTextPosition - t.StartPosition);
-                    }
-                }
-                // last token if the new caret position was never defined
-                else if (newCaret == null && r != null)
-                    newCaret = r.ContentStart.GetPositionAtOffset(caretTextPosition - GetTokenList.Last().StartPosition);
+                // GetPositionAtOffset returns null if the offset exceeds the element's content
+                // range; the CaretPosition setter throws on null. Only assign when the lookup
+                // actually found a valid position.
+                if (newCaret != null)
+                    this.ExpressionTextBox.CaretPosition = newCaret;
+                Text = allRichText;
+            }
+            finally
+            {
+                _formattingExpression = false;
             }
             //
-            if (newCaret != null)
-                this.ExpressionTextBox.CaretPosition = newCaret;
-            Text = allRichText;
-            _formattingExpression = false;
-            // 
             ExpressionChanged?.Invoke(GetTokenList);
         }
 
