@@ -774,8 +774,12 @@ namespace NumericControls.Distributions.Univariate
                 SummaryStatisticsList[10].DistStat = SelectedDistribution.InverseCDF(0.75d).ToString("N4", CultureInfo.InvariantCulture);
                 SummaryStatisticsList[11].DistStat = SelectedDistribution.InverseCDF(0.95d).ToString("N4", CultureInfo.InvariantCulture);
 
-                // Add Goodness of fit stats
-                if (SampleData != null && DistributionCanEstimate() == true)
+                // Add Goodness of fit stats. Only populate indices 12-14 when the list was
+                // built with all 15 rows. Selector initializes 12 rows; the three GoF rows
+                // are added only by DistributionSelectorControl's histogram update path.
+                // Without the bounds check this threw ArgumentOutOfRangeException whenever
+                // the fitting branch was reached under Selector.
+                if (SampleData != null && DistributionCanEstimate() == true && SummaryStatisticsList.Count >= 15)
                 {
                     var data = SampleData.ToArray();
                     Array.Sort(data);

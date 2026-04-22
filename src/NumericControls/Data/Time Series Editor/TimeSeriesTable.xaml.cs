@@ -706,6 +706,15 @@ namespace NumericControls
             foreach (var item in _rowItems)
                 ((TimeSeriesRowItem)item).SuppressNotify = true;
             PreviewPasteData?.Invoke(clipboardData, ref cancelPaste);
+
+            // If a PreviewPasteData subscriber cancels the paste, DataPasted never fires and the
+            // row items would be left permanently suppressed, making the grid unresponsive to
+            // subsequent value changes. Unsuppress on cancel.
+            if (cancelPaste)
+            {
+                foreach (var item in _rowItems)
+                    ((TimeSeriesRowItem)item).SuppressNotify = false;
+            }
         }
 
         /// <summary>
@@ -744,22 +753,32 @@ namespace NumericControls
     /// <summary>
     /// Converts between <see cref="DateTime"/> values and their string representations using the current culture's date/time format.
     /// </summary>
+    /// <remarks>
+    /// The date/time pattern and culture are read on each call rather than captured as readonly
+    /// fields. A user who changes the application culture (e.g., via localization settings) after
+    /// the converter is constructed would otherwise see cells formatted and parsed against the
+    /// old culture.
+    /// </remarks>
     public class DateToStringConverter : IValueConverter
     {
-        private readonly string _pattern = $"{Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern} {Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern}";
-        private readonly CultureInfo _fp = Thread.CurrentThread.CurrentCulture;
+        private static string BuildPattern(CultureInfo culture)
+        {
+            return $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
+        }
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((DateTime)value).ToString(_pattern, _fp);
+            var current = CultureInfo.CurrentCulture;
+            return ((DateTime)value).ToString(BuildPattern(current), current);
         }
 
         /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            var current = CultureInfo.CurrentCulture;
             DateTime newDate;
-            if (DateTime.TryParseExact((string)value, _pattern, _fp, DateTimeStyles.None, out newDate) == false) { DateTime.TryParse((string)value, out newDate); }
+            if (DateTime.TryParseExact((string)value, BuildPattern(current), current, DateTimeStyles.None, out newDate) == false) { DateTime.TryParse((string)value, out newDate); }
 
             return newDate;
         }
