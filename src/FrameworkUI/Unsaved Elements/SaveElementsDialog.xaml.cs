@@ -81,8 +81,11 @@ namespace FrameworkUI
         /// </summary>
         public enum DialogResultType
         {
+            /// <summary>The user chose to save the elements before the pending action proceeds.</summary>
             YesSave,
+            /// <summary>The user chose to skip saving and let the pending action proceed.</summary>
             NoSave,
+            /// <summary>The user cancelled the pending action; no save occurred.</summary>
             Cancel
         }
 

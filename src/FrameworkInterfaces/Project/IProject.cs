@@ -136,9 +136,9 @@ namespace FrameworkInterfaces
         void ZipProject(string zipFileName);
 
         /// <summary>
-        /// Determines if the specified property is valid. If no property name is input, all properties are validated.
+        /// Determines whether the project's current state is valid.
         /// </summary>
-        /// <param name="propertyName">Optional. The name of the property to validate.</param>
+        /// <returns><c>true</c> if all project state passes validation; otherwise, <c>false</c>.</returns>
         bool IsValid();
 
         /// <summary>

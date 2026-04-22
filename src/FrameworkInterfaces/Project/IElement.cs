@@ -78,8 +78,9 @@ namespace FrameworkInterfaces
 
         /// <summary>
         /// Gets an optional resource key for a theme-aware element icon.
-        /// When non-null, the project explorer uses <see cref="FrameworkElement.SetResourceReference"/>
-        /// to bind the icon, so it updates automatically when the theme changes.
+        /// When non-null, the project explorer uses
+        /// <c>FrameworkElement.SetResourceReference</c> to bind the icon, so it updates
+        /// automatically when the theme changes.
         /// When null, the static <see cref="ElementImage"/> is used instead.
         /// </summary>
         string? ElementImageResourceKey => null;

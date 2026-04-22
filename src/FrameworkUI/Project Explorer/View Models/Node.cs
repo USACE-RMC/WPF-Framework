@@ -115,7 +115,14 @@ namespace FrameworkUI.ProjectExplorer
         private readonly MenuItem _moveUpMenuItem = new MenuItem() { Header = "Move Up" };
         private readonly MenuItem _moveDownMenuItem = new MenuItem() { Header = "Move Down" };
 
+        /// <summary>
+        /// Host-supplied additional context-menu items shown on this node.
+        /// </summary>
         protected readonly ObservableCollection<MenuItem> _customContextItems = new ObservableCollection<MenuItem>();
+
+        /// <summary>
+        /// Host-supplied additional context-menu items shown on collection-type nodes.
+        /// </summary>
         protected readonly ObservableCollection<MenuItem> _collectionContextItems = new ObservableCollection<MenuItem>();
 
         /// <summary>
@@ -953,8 +960,10 @@ namespace FrameworkUI.ProjectExplorer
         }
 
         /// <summary>
-        /// Move node within a node collection.
+        /// Move node within a node collection, optionally across parents.
         /// </summary>
+        /// <param name="startParent">The parent node the node is currently under.</param>
+        /// <param name="endParent">The parent node the node should move to (may equal <paramref name="startParent"/>).</param>
         /// <param name="startIndex">The start position of the node to move.</param>
         /// <param name="endIndex">The end position of the node to move.</param>
         public virtual void Move(Node startParent, Node endParent, int startIndex, int endIndex)

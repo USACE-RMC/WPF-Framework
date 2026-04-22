@@ -183,6 +183,7 @@ namespace FrameworkUI.ProjectExplorer
         /// Add a node to the collection.
         /// </summary>
         /// <param name="node">The node to add.</param>
+        /// <param name="refreshItems">If <c>true</c>, refreshes the underlying <see cref="ItemCollection"/> so bound views re-bind to the updated children.</param>
         public void Add(Node node, bool refreshItems = true)
         {
             node.ParentNode = this;

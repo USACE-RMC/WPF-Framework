@@ -26,6 +26,19 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+    <!--
+      Treat XML-doc warnings as errors so missing or malformed documentation on public
+      API fails the build instead of shipping a partial reference. Scope limited to
+      IsWpfFrameworkLibrary=true so vendored forks (AvalonDock, upstream OxyPlot) are
+      unaffected.
+        CS1591 - missing XML comment for publicly visible type or member
+        CS1572 - XML comment has a param tag for a non-existent parameter
+        CS1573 - parameter has no matching param tag (but other parameters do)
+        CS1574 - XML comment has cref attribute that could not be resolved
+        CS0419 - ambiguous reference in cref attribute
+    -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS1591;CS1572;CS1573;CS1574;CS0419</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsWpfFrameworkLibrary)' == 'true'">

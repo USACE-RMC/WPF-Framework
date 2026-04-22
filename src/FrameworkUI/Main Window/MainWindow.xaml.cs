@@ -571,9 +571,10 @@ namespace FrameworkUI
         }
 
         /// <summary>
-        /// When a message is added, add a new message action that will navigate the user to the proper control.
+        /// When one or more messages are added, attach a message action that navigates the
+        /// user to the source element when the message is clicked.
         /// </summary>
-        /// <param name="message">The new message.</param>
+        /// <param name="messages">The new messages.</param>
         private void ProjectMessageAdded(IMessageItem[] messages)
         {
             foreach (IMessageItem message in messages)

@@ -77,10 +77,26 @@ namespace FrameworkInterfaces
         /// </summary>
         public IProject ParentProject { get; private set; }
 
+        /// <summary>
+        /// Child element collections owned by this collection.
+        /// </summary>
         protected List<IElementCollection> _elementCollections = new List<IElementCollection>();
+
         private ReadOnlyCollection<IElementCollection> _readOnlyElementCollections;
+
+        /// <summary>
+        /// Set while a SaveAll operation is in progress to suppress per-element save events.
+        /// </summary>
         protected bool _savingAll = false;
+
+        /// <summary>
+        /// Set while elements are being loaded from disk to suppress dirty tracking.
+        /// </summary>
         protected bool _opening = false;
+
+        /// <summary>
+        /// The collection's persisted name on disk; used to detect rename-on-save.
+        /// </summary>
         protected string _nameOnDisk = string.Empty;
 
         /// <summary>
@@ -213,7 +229,6 @@ namespace FrameworkInterfaces
         /// <summary>
         /// Event is raised when the object has been saved.
         /// </summary>
-        /// <param name="sender">The object that was saved.</param>
         public event ObjectSavedEventHandler? ObjectSaved;
 
         /// <summary>
@@ -436,6 +451,10 @@ namespace FrameworkInterfaces
         /// </summary>
         public abstract void Delete();
 
+        /// <summary>
+        /// Returns an enumerator that iterates the elements in this collection.
+        /// </summary>
+        /// <returns>An enumerator over the <see cref="IElement"/> items.</returns>
         public IEnumerator<IElement> GetEnumerator()
         {
             return ElementList.GetEnumerator();

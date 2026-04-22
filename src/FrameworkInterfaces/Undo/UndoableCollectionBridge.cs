@@ -650,7 +650,7 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         /// <remarks>
         /// This method unsubscribes from the <see cref="INotifyCollectionChanged.CollectionChanged"/>
-        /// event to prevent memory leaks. Always call <see cref="Dispose"/> when you are finished
+        /// event to prevent memory leaks. Always call <see cref="Dispose()"/> when you are finished
         /// using the bridge, or use a using statement.
         /// </remarks>
         public void Dispose()

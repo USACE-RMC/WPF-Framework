@@ -45,7 +45,6 @@ namespace FrameworkUI.ProjectExplorer
         /// <summary>
         /// Construct a new element node group.
         /// </summary>
-        /// <param name="element">The project IElement.</param>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentTreeView">The parent tree view.</param>
         public ElementNodeGroup(Node? parentNode, ProjectExplorerTreeView? parentTreeView) : base(parentNode, parentTreeView)
