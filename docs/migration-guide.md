@@ -46,7 +46,7 @@ Install the .NET 10 SDK. No WPF API changes are required -- the migration is a t
 
 ## OxyPlot Vendoring
 
-OxyPlot was previously consumed as a set of external DLLs built from a separate fork repository (`C:\GIT\oxyplot`). It is now vendored directly into the solution at `src/OxyPlot/` with three projects:
+OxyPlot was previously consumed as a set of external DLLs built from a separate fork repository. It is now vendored directly into the solution at `src/OxyPlot/` with three projects:
 
 | Project | Target | Location |
 |---------|--------|----------|
@@ -76,13 +76,13 @@ Replace any HintPath DLL references with project references:
 
 If your code referenced `OxyPlotSettingsSerializer` from `OxyPlotControls`, that class is now a thin pass-through wrapper. The actual serialization logic lives in `OxyPlot.Wpf.Serialization`. No namespace changes are required for consuming code -- `OxyPlotSettingsSerializer` still works as before.
 
-The external OxyPlot fork repository (`C:\GIT\oxyplot`) is no longer needed and can be archived.
+The external OxyPlot fork repository is no longer needed and can be archived.
 
 ---
 
 ## DAG Integration
 
-The DAG (directed acyclic graph) projects were previously maintained in a separate repository (`C:\GIT\DAG`). They have been migrated into WPF-Framework with renamed namespaces:
+The DAG (directed acyclic graph) projects were previously maintained in a separate repository. They have been migrated into WPF-Framework with renamed namespaces:
 
 | Old Repository | Old Namespace | New Project | New Namespace | Location |
 |----------------|---------------|-------------|---------------|----------|

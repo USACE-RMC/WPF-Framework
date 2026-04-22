@@ -199,7 +199,7 @@ Key additions beyond upstream:
 
 | Dependency | Source | Purpose |
 |-----------|--------|---------|
-| **Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) at `C:\GIT\numerics\` | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. Must be built separately. |
+| **Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) (cloned alongside this repo) | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. Must be built separately. |
 
 All other dependencies are either vendored into the solution (AvalonDock, OxyPlot) or available as NuGet packages (System.Data.SQLite, DocumentFormat.OpenXml, etc.).
 

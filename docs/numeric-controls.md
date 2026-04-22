@@ -29,7 +29,7 @@ NumericControls depends on several framework libraries and one external dependen
 | **OxyPlotControls** | Project reference | Plot integration for distribution and curve visualization |
 | **Themes** | Project reference | Theme-aware styling and runtime theme switching |
 | **OxyPlot / OxyPlot.Wpf** | Project reference | Chart rendering for PDF plots and curve previews |
-| **[Numerics](https://github.com/USACE-RMC/Numerics)** | External DLL | Statistical distribution types, ordered data structures, time series, and sampling utilities. Must be built separately from `C:\GIT\numerics\`. |
+| **[Numerics](https://github.com/USACE-RMC/Numerics)** | External DLL | Statistical distribution types, ordered data structures, time series, and sampling utilities. Must be built separately from a sibling clone of the Numerics repository. |
 
 ---
 
@@ -260,7 +260,7 @@ The **NumericControls.Demo** project (`src/NumericControls.Demo/`) provides a wo
 dotnet run --project src/NumericControls.Demo/NumericControls.Demo.csproj
 ```
 
-> **Note:** The NumericControls.Demo requires the external Numerics DLL to be built and available at its HintPath location. Build the Numerics solution at `C:\GIT\numerics\` first.
+> **Note:** The NumericControls.Demo requires the external Numerics DLL to be built and available at its HintPath location. Clone the [Numerics](https://github.com/USACE-RMC/Numerics) repository alongside WPF-Framework and build it first.
 
 ---
 
