@@ -137,17 +137,38 @@ namespace SoftwareUpdate.GitHub
                 var apiUrl = $"https://api.github.com/repos/{Options.GitHubOwner}/{Options.GitHubRepo}/releases";
                 var response = await GetWithRetryAsync(apiUrl, cancellationToken).ConfigureAwait(false);
 
-                // Check for rate limiting before calling EnsureSuccessStatusCode
+                // 403 can mean rate-limited OR forbidden (bad token, private repo). Distinguish
+                // by the X-RateLimit-Remaining header: 0 means we're rate limited; absent or > 0
+                // means authorization failure.
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    var message = "GitHub API rate limit exceeded. ";
-                    if (string.IsNullOrEmpty(Options.GitHubToken))
+                    var isRateLimited = false;
+                    if (response.Headers.TryGetValues("X-RateLimit-Remaining", out var rateHeader))
                     {
-                        message += "Consider providing a GitHubToken to increase the rate limit.";
+                        foreach (var value in rateHeader)
+                        {
+                            if (int.TryParse(value, out var remaining) && remaining <= 0)
+                            {
+                                isRateLimited = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    string message;
+                    if (isRateLimited)
+                    {
+                        message = "GitHub API rate limit exceeded. ";
+                        message += string.IsNullOrEmpty(Options.GitHubToken)
+                            ? "Consider providing a GitHubToken to increase the rate limit."
+                            : "Please wait before making additional requests.";
                     }
                     else
                     {
-                        message += "Please wait before making additional requests.";
+                        message =
+                            "GitHub API returned 403 Forbidden. " +
+                            "The provided token may be invalid, lack required scopes, or the repository may be private. " +
+                            $"Repository: {Options.GitHubOwner}/{Options.GitHubRepo}";
                     }
                     throw new HttpRequestException(message);
                 }
@@ -260,6 +281,9 @@ namespace SoftwareUpdate.GitHub
 
             State = UpdateState.Downloading;
 
+            string? tempDir = null;
+            bool downloadSucceeded = false;
+
             try
             {
                 // Security: Enforce HTTPS on download URL to prevent MITM attacks
@@ -274,7 +298,7 @@ namespace SoftwareUpdate.GitHub
                 }
 
                 // Create temp directory with GUID to prevent predictable path attacks
-                var tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Guid.NewGuid().ToString("N"));
+                tempDir = Path.Combine(Path.GetTempPath(), "SoftwareUpdate", Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(tempDir);
 
                 // Validate asset name to prevent path traversal attacks
@@ -298,8 +322,10 @@ namespace SoftwareUpdate.GitHub
                     var totalBytes = response.Content.Headers.ContentLength ?? update.DownloadSize;
                     var downloadProgress = new UpdateDownloadProgress { TotalBytes = totalBytes };
 
+                    // FileAccess.ReadWrite (not Write) so the stream can be seeked back to
+                    // position 0 and re-read for SHA256 validation below.
                     using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
-                    using (var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                    using (var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 8192, true))
                     {
                         var buffer = new byte[8192];
                         long totalRead = 0;
@@ -365,6 +391,7 @@ namespace SoftwareUpdate.GitHub
                         }
 
                         State = UpdateState.ReadyToInstall;
+                        downloadSucceeded = true;
                         return UpdateDownloadResult.Successful(tempFilePath, update, totalRead);
                     }
                 }
@@ -379,6 +406,21 @@ namespace SoftwareUpdate.GitHub
                 State = UpdateState.Error;
                 RaiseEvent(UpdateError, ex);
                 return UpdateDownloadResult.Failed(ex);
+            }
+            finally
+            {
+                // Clean up the temp directory if the download didn't complete successfully
+                // (cancellation, checksum mismatch, MaxDownloadSize overrun, network failure, etc.).
+                // Best-effort: swallow cleanup failures so the original error is what the caller
+                // sees, not a secondary cleanup IOException.
+                if (!downloadSucceeded && !string.IsNullOrEmpty(tempDir) && Directory.Exists(tempDir))
+                {
+                    try { Directory.Delete(tempDir, recursive: true); }
+                    catch (Exception cleanupEx)
+                    {
+                        Debug.WriteLine($"[GitHubUpdateService] Failed to clean up temp dir '{tempDir}': {cleanupEx.Message}");
+                    }
+                }
             }
         }
 

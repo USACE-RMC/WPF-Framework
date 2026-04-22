@@ -248,7 +248,10 @@ namespace SoftwareUpdate
                 }
                 else
                 {
-                    var cmp = string.Compare(partA, partB, StringComparison.OrdinalIgnoreCase);
+                    // SemVer 2.0 section 11.4.4: pre-release identifiers are compared in ASCII
+                    // sort order, i.e. case-sensitive. Using OrdinalIgnoreCase would treat
+                    // "Beta" and "beta" as equal, which is non-conformant.
+                    var cmp = string.Compare(partA, partB, StringComparison.Ordinal);
                     if (cmp != 0) return cmp;
                 }
             }
