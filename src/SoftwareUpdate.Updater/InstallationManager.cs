@@ -417,7 +417,10 @@ namespace SoftwareUpdate.Updater
                 UseShellExecute = true
             };
 
-            using (Process.Start(startInfo)) { }
+            // Process.Start can return null when UseShellExecute redirects to an already-running
+            // instance. Guard the null before calling Dispose through the using.
+            var started = Process.Start(startInfo);
+            started?.Dispose();
             _log("Application restarted.");
         }
 
