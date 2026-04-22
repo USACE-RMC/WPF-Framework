@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -301,7 +302,7 @@ namespace DatabaseManager
                                     }
                                     else
                                     {
-                                        value = Convert.ToDouble(row[i]).ToString(formatString).PadRight(_lengths[i], ' ');
+                                        value = Convert.ToDouble(row[i]).ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[i], ' ');
                                     }
                                     asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                                     dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
@@ -522,7 +523,7 @@ namespace DatabaseManager
                                         }
                                         else
                                         {
-                                            value = Convert.ToDouble(row[i]).ToString(formatString).PadRight(_lengths[i], ' ');
+                                            value = Convert.ToDouble(row[i]).ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[i], ' ');
                                         }
                                         asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                                         dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
@@ -969,7 +970,7 @@ namespace DatabaseManager
                     {
                         startPosition = (int)(_recordStartPositions[i] - 1L); 
                         dbfReaderFs.Position = startPosition + lengthBegin;
-                        value = columnData[i].ToString(formatString).PadRight(_lengths[columnIndex], ' ');
+                        value = columnData[i].ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[columnIndex], ' ');
                         asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                         dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
                     }
@@ -1057,7 +1058,7 @@ namespace DatabaseManager
                     {
                         startPosition = (int)(_recordStartPositions[i] - 1L); 
                         dbfReaderFs.Position = startPosition + lengthBegin;
-                        value = columnData[i].ToString(formatString).PadRight(_lengths[columnIndex], ' ');
+                        value = columnData[i].ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[columnIndex], ' ');
                         asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                         dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
                     }
@@ -2643,13 +2644,13 @@ namespace DatabaseManager
                     case var @case when @case == typeof(int):
                         {
                             int i;
-                            if (int.TryParse(cellValue, out i) == false) { return DBNull.Value; }
+                            if (int.TryParse(cellValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out i) == false) { return DBNull.Value; }
                             return i;
                         }
                     case var case1 when case1 == typeof(double):
                         {
                             double i;
-                            if (double.TryParse(cellValue, out i) == false) { return DBNull.Value; }
+                            if (double.TryParse(cellValue, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out i) == false) { return DBNull.Value; }
                             return i;
                         }
                     case var case2 when case2 == typeof(string):
@@ -2908,7 +2909,7 @@ namespace DatabaseManager
                                     do
                                     {
                                         dbfReaderFs.Position = _recordStartPositions[rowIndices[idx[i]]] + _positions[columnIndices[idx[i]]];
-                                        value = Convert.ToDouble(cellValues[idx[i]]).ToString(formatString).PadRight(_lengths[columnIndices[idx[i]]], ' ');
+                                        value = Convert.ToDouble(cellValues[idx[i]]).ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[columnIndices[idx[i]]], ' ');
                                         asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                                         dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
                                         i += 1;
@@ -3031,7 +3032,7 @@ namespace DatabaseManager
 
                     // edit the appropriate part of the dbf file
                     dbfReaderFs.Position = _recordStartPositions[rowIndex] + _positions[columnIndex];
-                    value = cellValue.ToString(formatString).PadRight(_lengths[columnIndex], ' ');
+                    value = cellValue.ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[columnIndex], ' ');
                     asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                     dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
                 }
@@ -3097,7 +3098,7 @@ namespace DatabaseManager
 
                     // edit the appropriate part of the dbf file
                     dbfReaderFs.Position = _recordStartPositions[rowIndex] + _positions[columnIndex];
-                    value = cellValue.ToString(formatString).PadRight(_lengths[columnIndex], ' ');
+                    value = cellValue.ToString(formatString, CultureInfo.InvariantCulture).PadRight(_lengths[columnIndex], ' ');
                     asciiBytes = System.Text.Encoding.ASCII.GetBytes(value);
                     dbfReaderFs.Write(asciiBytes, 0, asciiBytes.Count());
                 }

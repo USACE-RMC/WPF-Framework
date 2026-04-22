@@ -899,6 +899,7 @@ namespace DatabaseManager
             {
                 using (var cmd = _dbConnection.CreateCommand())
                 {
+                    cmd.Transaction = tr;
                     cmd.CommandText = "DELETE FROM " + "[" + tableName + "]";
                     cmd.ExecuteNonQuery();
                 }

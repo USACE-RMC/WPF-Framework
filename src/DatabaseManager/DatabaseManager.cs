@@ -302,15 +302,20 @@ namespace DatabaseManager
                     int lineCounter = 0;
                     while (!csvParser.EndOfData)
                     {
-                        if (lineArray.Length != columnHeaders.Count) { continue; }
-                        tempDataTable.Rows.Add(lineArray);
-
-                        lineCounter += 1;
-                        if (lineCounter > 500000)
+                        // Advance to the next row at the top of the loop. Previously `continue`
+                        // on a malformed-row skip returned to the while without calling
+                        // ReadFields(), spinning on the same lineArray forever.
+                        if (lineArray.Length == columnHeaders.Count)
                         {
-                            sqLiteTable.AddRows(tempDataTable);
-                            tempDataTable.Rows.Clear();
-                            lineCounter = 0;
+                            tempDataTable.Rows.Add(lineArray);
+
+                            lineCounter += 1;
+                            if (lineCounter > 500000)
+                            {
+                                sqLiteTable.AddRows(tempDataTable);
+                                tempDataTable.Rows.Clear();
+                                lineCounter = 0;
+                            }
                         }
 
                         try

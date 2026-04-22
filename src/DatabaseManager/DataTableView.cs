@@ -2522,26 +2522,26 @@ namespace DatabaseManager
                     rowIndicesToExport[i] = i;
                 }
             }
-            var csvWriter = new StreamWriter(filePath);
-            csvWriter.Write(_columnNames[columnIndicesToExport[0]]);
-            for (int i = 1; i < columnIndicesToExport.Length; i++)
-            { 
-                csvWriter.Write("," + _columnNames[columnIndicesToExport[i]]);
-            }
-            csvWriter.WriteLine();
-            object[] row;
-            for (int i = 0; i < rowIndicesToExport.Length; i++)
+            using (var csvWriter = new StreamWriter(filePath))
             {
-                row = GetRow(rowIndicesToExport[i], columnIndicesToExport);
-                csvWriter.Write(row[0].ToString());
-                for (int j = 1; j < row.Length; j++)
-                { 
-                    csvWriter.Write("," + row[j].ToString());
+                csvWriter.Write(_columnNames[columnIndicesToExport[0]]);
+                for (int i = 1; i < columnIndicesToExport.Length; i++)
+                {
+                    csvWriter.Write("," + _columnNames[columnIndicesToExport[i]]);
                 }
                 csvWriter.WriteLine();
+                object[] row;
+                for (int i = 0; i < rowIndicesToExport.Length; i++)
+                {
+                    row = GetRow(rowIndicesToExport[i], columnIndicesToExport);
+                    csvWriter.Write(row[0]?.ToString() ?? string.Empty);
+                    for (int j = 1; j < row.Length; j++)
+                    {
+                        csvWriter.Write("," + (row[j]?.ToString() ?? string.Empty));
+                    }
+                    csvWriter.WriteLine();
+                }
             }
-            csvWriter.Close();
-            csvWriter.Dispose();
             // 
         }
 
