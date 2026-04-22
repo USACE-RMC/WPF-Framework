@@ -3,44 +3,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>ExpressionParser</RootNamespace>
     <AssemblyName>ExpressionParser</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <DebugType>embedded</DebugType>
-	
-    <Description>ExpressionParser is a free and open-source library for .NET developed by USACE-RMC, providing a lexer and parser for evaluating mathematical and logical expressions with Excel-like syntax.</Description>
-    <PackageProjectUrl>https://github.com/USACE-RMC/ExpressionParser</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/USACE-RMC/ExpressionParser</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Title>ExpressionParser</Title>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Company>USACE-RMC</Company>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>expression parser; lexer; formula evaluation; math expressions; logical expressions; AST; calculator</PackageTags>
-    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
     <PackageId>RMC.ExpressionParser</PackageId>
-    <Version>1.0.0</Version>
+    <Title>ExpressionParser</Title>
+    <Description>Mathematical expression parsing library with Excel-like syntax. Tokenizes and parses expressions into an AST for evaluation. Supports variables, type conversions, operator precedence, string / boolean / comparison operations, and built-in functions (IF, AND/OR, RAND, ROUND, SUBSTRING, etc.).</Description>
+    <PackageTags>expression-parser; lexer; formula-evaluation; ast; calculator; excel-syntax; usace-rmc</PackageTags>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-
-  <ItemGroup>
-    <!--https://github.com/dotnet/reproducible-builds-->
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <!--https://github.com/dotnet/sourcelink/tree/main-->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
 
 
 </Project>

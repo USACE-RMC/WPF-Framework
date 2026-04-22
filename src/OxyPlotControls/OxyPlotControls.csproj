@@ -6,11 +6,16 @@
     <Nullable>enable</Nullable>
     <LangVersion>12.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>OxyPlotControls</RootNamespace>
     <AssemblyName>OxyPlotControls</AssemblyName>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
+
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
+    <PackageId>RMC.OxyPlotControls</PackageId>
+    <Title>OxyPlotControls</Title>
+    <Description>WPF controls for configuring and interacting with OxyPlot charts. Provides property editors for plot settings, axes, series, annotations, and legends; a toolbar with pan/zoom/annotation/export; and an image export dialog.</Description>
+    <PackageTags>wpf; oxyplot; charting; plotting; toolbar; property-editor; usace-rmc</PackageTags>
   </PropertyGroup>
 
   <!-- Resource files -->

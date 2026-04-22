@@ -9,38 +9,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <DebugType>embedded</DebugType>
 
-    <Description>GenericControls is a flexible and reusable WPF control library built for rapid desktop application development. It provides a rich set of customizable, designer-friendly controls that simplify user interaction and data binding for common UI tasks.</Description>
-    <PackageProjectUrl>https://github.com/USACE-RMC/GenericControls</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/USACE-RMC/GenericControls</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Title>GenericControls</Title>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Company>USACE-RMC</Company>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>WPF; controls; MVVM; user interface; NumericTextBox; ColorPicker; data binding; desktop</PackageTags>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
     <PackageId>RMC.GenericControls</PackageId>
+    <Title>GenericControls</Title>
+    <Description>Reusable WPF control library for WPF Framework. Themed windows, data grids with copy/paste, numeric inputs, color picker, date/time controls, property editors, adorners, converters, and file management dialogs.</Description>
+    <PackageTags>wpf; controls; datagrid; numeric-textbox; color-picker; metro-window; property-editor; usace-rmc</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="GenericControls.Tests" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!--https://github.com/dotnet/reproducible-builds-->
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <!--https://github.com/dotnet/sourcelink/tree/main-->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
 
 

@@ -8,6 +8,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
+    <PackageId>RMC.DAG</PackageId>
+    <Title>DAG</Title>
+    <Description>Platform-agnostic directed acyclic graph (DAG) model library. Provides node, connector, and graph abstractions with cycle detection, topological sorting, path queries, and XML serialization.</Description>
+    <PackageTags>dag; directed-acyclic-graph; flow-graph; graph; topological-sort; usace-rmc</PackageTags>
   </PropertyGroup>
 
 </Project>

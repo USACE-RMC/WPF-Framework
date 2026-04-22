@@ -231,6 +231,11 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         public event ElementRemovedEventHandler? ElementRemoved;
 
         /// <summary>
+        /// Occurs when a child element transitions from clean to dirty.
+        /// </summary>
+        public event EventHandler? ElementIsDirtyChanged;
+
+        /// <summary>
         /// Occurs before the collection is saved.
         /// </summary>
 #pragma warning disable CS0067 // Event is never used (mock implementation satisfies interface)

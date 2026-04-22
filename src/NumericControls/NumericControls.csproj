@@ -9,30 +9,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <DebugType>embedded</DebugType>
 
-    <Description>NumericControls is a WPF control library for numeric data entry, probability distributions, and statistical analysis. It provides specialized controls for ordered curves, time series, and bivariate data.</Description>
-    <PackageProjectUrl>https://github.com/USACE-RMC/WPF-Framework</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/USACE-RMC/WPF-Framework</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Title>NumericControls</Title>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Company>USACE-RMC</Company>
-    <PackageTags>WPF; controls; numeric; statistics; distributions; data binding; desktop</PackageTags>
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
     <PackageId>RMC.NumericControls</PackageId>
+    <Title>NumericControls</Title>
+    <Description>WPF controls for numeric data entry, statistical distributions, ordered curves, time series, uncertain data, probability ordinates, and stratified sampling. Built for engineering and risk analysis applications.</Description>
+    <PackageTags>wpf; numeric; distributions; curve-editor; time-series; statistics; uncertainty; usace-rmc</PackageTags>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GenericControls\GenericControls.csproj" />

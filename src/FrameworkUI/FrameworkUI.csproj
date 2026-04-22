@@ -8,6 +8,13 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
+    <PackageId>RMC.FrameworkUI</PackageId>
+    <Title>FrameworkUI</Title>
+    <Description>Complete WPF application shell for WPF Framework. Provides the main window, AvalonDock docking layout, project explorer, message window, recent files, user settings, and theme bridging.</Description>
+    <PackageTags>wpf; main-window; docking; avalondock; theme; ribbon; project-explorer; usace-rmc</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

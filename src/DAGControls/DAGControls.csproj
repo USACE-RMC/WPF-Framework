@@ -10,6 +10,12 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
+    <PackageId>RMC.DAGControls</PackageId>
+    <Title>DAGControls</Title>
+    <Description>WPF control library for interactive visualization and editing of DAG graphs. Canvas with drag-and-drop node positioning, connection creation via Bezier curves, zoom/pan navigation, and context menus.</Description>
+    <PackageTags>wpf; dag; directed-acyclic-graph; flow-graph; graph-editor; canvas; usace-rmc</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

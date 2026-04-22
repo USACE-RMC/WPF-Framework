@@ -5,27 +5,13 @@
 		<OutputType>Library</OutputType>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<DebugType>embedded</DebugType>
-
-		<Description>.NET class library that provides an extensible, multi-format data table
-			interface for working with local data sources such as `.CSV`, `.DBF`, and `.SQLite`. It
-			supports reading, editing, and exporting tables with a common interface, offering
-			undo/redo capabilities, type-safe conversions, and flexible UI integration in WPF or
-			WinForms environments.</Description>
-		<PackageProjectUrl>https://github.com/USACE-RMC/DatabaseManagement</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/USACE-RMC/DatabaseManagement</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<Title>DatabaseManager</Title>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Company>USACE-RMC</Company>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>database, sqlite, dbf, csv</PackageTags>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
 		<PackageId>RMC.DatabaseManager</PackageId>
+		<Title>DatabaseManager</Title>
+		<Description>Multi-format database abstraction library for .NET. Provides a unified interface for reading, editing, and exporting tabular data backed by SQLite, CSV, DBF, or in-memory DataTables, with undo/redo edit tracking and Excel/CSV export.</Description>
+		<PackageTags>database; sqlite; dbf; csv; datatable; undo-redo; excel-export; usace-rmc</PackageTags>
 	</PropertyGroup>
 
 	<!-- Shared packages -->
@@ -36,19 +22,6 @@
 		<PackageReference Include="FastMember" Version="1.5.0" />
 		<PackageReference Include="System.Data.SQLite" Version="2.0.2" />
 		<PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<!--https://github.com/dotnet/reproducible-builds-->
-		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-		</PackageReference>
-		<!--https://github.com/dotnet/sourcelink/tree/main-->
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
 	</ItemGroup>
 
 </Project>

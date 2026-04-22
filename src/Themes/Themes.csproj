@@ -9,6 +9,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
+    <PackageId>RMC.Themes</PackageId>
+    <Title>Themes</Title>
+    <Description>VS2013-style Light, Blue, and Dark theme service for WPF Framework. Swappable color dictionaries and shared control templates with runtime theme switching.</Description>
+    <PackageTags>wpf; theme; theming; vs2013; light-dark; color-scheme; usace-rmc</PackageTags>
   </PropertyGroup>
 
 </Project>

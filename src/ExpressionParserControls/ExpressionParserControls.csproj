@@ -6,44 +6,14 @@
     <Nullable>enable</Nullable>
     <RootNamespace>ExpressionParserControls</RootNamespace>
     <AssemblyName>ExpressionParserControls</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <DebugType>embedded</DebugType>
-
-    <Description>WPF controls for the ExpressionParser library, providing expression editing components for Windows applications.</Description>
-    <PackageProjectUrl>https://github.com/USACE-RMC/ExpressionParser</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/USACE-RMC/ExpressionParser</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Title>ExpressionParserControls</Title>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Company>USACE-RMC</Company>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>expression parser; WPF controls; formula editor; expression editor</PackageTags>
-    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
     <PackageId>RMC.ExpressionParserControls</PackageId>
-    <Version>1.0.0</Version>
+    <Title>ExpressionParserControls</Title>
+    <Description>WPF controls for the ExpressionParser library: a syntax-highlighted expression editor, calculator-style button panel, and browsable function reference.</Description>
+    <PackageTags>wpf; expression-parser; formula-editor; expression-editor; calculator; usace-rmc</PackageTags>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-windows|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-windows|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-
-  <ItemGroup>
-    <!--https://github.com/dotnet/reproducible-builds-->
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <!--https://github.com/dotnet/sourcelink/tree/main-->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ExpressionParser\ExpressionParser.csproj" />

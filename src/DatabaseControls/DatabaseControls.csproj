@@ -9,6 +9,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
+    <PackageId>RMC.DatabaseControls</PackageId>
+    <Title>DatabaseControls</Title>
+    <Description>WPF controls for viewing, editing, searching, and analyzing database tables backed by DatabaseManager. Includes a virtualized table viewer, find-and-replace, column statistics, and an expression-based field calculator.</Description>
+    <PackageTags>wpf; database; table-viewer; field-calculator; column-stats; find-replace; usace-rmc</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
