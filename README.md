@@ -1,5 +1,6 @@
 # WPF Framework
 
+[![CI](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml/badge.svg)](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml)
 [![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 WPF Framework is a free and open-source .NET 10.0 application framework for building desktop project management applications, developed by the U.S. Army Corps of Engineers Risk Management Center ([USACE-RMC](https://www.rmc.usace.army.mil/)). It provides a complete application shell with docking layout, project explorer, theme switching, undo/redo, and specialized controls for charting, databases, expression parsing, and directed acyclic graphs.
@@ -10,6 +11,10 @@ WPF Framework is a free and open-source .NET 10.0 application framework for buil
 |----------|---------|
 | .NET | 10.0 |
 | OS | Windows 10+ |
+
+WPF Framework is currently distributed as source only. NuGet package publishing is planned for a future release; until then, clone the repository and reference the individual library projects directly, or build them as local NuGet packages.
+
+The framework depends on the [Numerics](https://github.com/USACE-RMC/Numerics) library (built separately and referenced via `HintPath`). See [Prerequisites](#prerequisites) for the expected layout.
 
 ## Solution Structure
 
@@ -119,6 +124,12 @@ Multi-format database abstraction supporting SQLite, CSV, DBF, and in-memory tab
 ### Software Updates
 
 Automatic update checking and installation from GitHub Releases with SemVer 2.0, SHA256 checksum validation, and backup/recovery.
+
+## Support
+
+USACE-RMC is committed to maintaining and supporting WPF Framework with regular updates, bug fixes, and enhancements. The framework is under active development and serves as the shared foundation for our suite of desktop engineering applications.
+
+The repository includes extensive unit tests across 13 test projects that also serve as usage examples for the classes and methods in the libraries.
 
 ## Applications
 
