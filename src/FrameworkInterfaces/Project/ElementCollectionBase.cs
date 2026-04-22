@@ -223,12 +223,17 @@ namespace FrameworkInterfaces
         
 
         /// <summary>
-        /// Raise property changed event.
+        /// Raises the <see cref="PropertyChanged"/> event and optionally promotes the
+        /// collection to the dirty state.
         /// </summary>
         /// <param name="propertyName">Name of property that changed.</param>
         /// <param name="setDirty">
-        /// <c>true</c> to mark the collection as dirty after the property change;
-        /// <c>false</c> to leave the dirty state unchanged. Default is <c>true</c>.
+        /// If <c>true</c>, marks the collection dirty (sets <see cref="IsDirty"/> to <c>true</c>).
+        /// If <c>false</c>, <see cref="IsDirty"/> is NOT modified and is left unchanged —
+        /// the call only raises <see cref="PropertyChanged"/> for UI bindings.
+        /// Clearing dirty is the explicit responsibility of <see cref="SetIsDirty"/>
+        /// called from <c>Save()</c> / <c>Open()</c> tails.
+        /// Default is <c>true</c>.
         /// </param>
         public void RaisePropertyChange(string propertyName, bool setDirty = true)
         {

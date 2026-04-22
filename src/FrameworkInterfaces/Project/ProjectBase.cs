@@ -266,7 +266,7 @@ namespace FrameworkInterfaces
                 if (_avalonDockLayout != value)
                 {
                     _avalonDockLayout = value;
-                    // Layout changes do not mark the project dirty (isDirty:false) —
+                    // Layout changes do not mark the project dirty (setDirty:false) —
                     // they only persist window state, not model data. LayoutDirty
                     // tracks them separately so that a layout-only save can skip
                     // LastModified stamping.
@@ -395,21 +395,32 @@ namespace FrameworkInterfaces
         #region Protected Methods
 
         /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event and optionally sets the dirty state.
+        /// Raises the <see cref="PropertyChanged"/> event and optionally promotes the
+        /// project to the dirty state.
         /// </summary>
         /// <param name="propertyName">The name of the property that changed.</param>
-        /// <param name="isDirty">
-        /// <c>true</c> to mark the element as dirty after the property change;
-        /// <c>false</c> to leave the dirty state unchanged. Default is <c>true</c>.
+        /// <param name="setDirty">
+        /// If <c>true</c>, marks the project dirty (sets <see cref="IsDirty"/> to <c>true</c>).
+        /// If <c>false</c>, <see cref="IsDirty"/> is NOT modified and is left unchanged —
+        /// the call only raises <see cref="PropertyChanged"/> for UI bindings.
+        /// Clearing dirty is the explicit responsibility of <see cref="SetIsDirty"/>
+        /// called from <c>Save()</c> / <c>Open()</c> / <c>CreateNew()</c> tails.
+        /// Default is <c>true</c>.
         /// </param>
         /// <remarks>
         /// This method is provided for backwards compatibility. For undo support,
         /// use <see cref="RecordPropertyChange"/> instead.
         /// </remarks>
-        protected void RaisePropertyChange(string propertyName, bool isDirty = true)
+        protected void RaisePropertyChange(string propertyName, bool setDirty = true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            SetIsDirty(isDirty);
+
+            // Only promote to dirty. Never clear — callers pass false when they want
+            // to notify bindings without disturbing existing dirty state (e.g., layout
+            // setters, or during Open() post-deserialize refreshes where SetIsDirty
+            // has already been called directly to set the correct final state).
+            if (setDirty)
+                SetIsDirty(true);
         }
 
         /// <summary>
@@ -431,9 +442,13 @@ namespace FrameworkInterfaces
         /// <param name="propertyName">The name of the property that changed.</param>
         /// <param name="oldValue">The previous value of the property.</param>
         /// <param name="newValue">The new value of the property.</param>
-        /// <param name="isDirty">
-        /// <c>true</c> to mark the element as dirty after the property change;
-        /// <c>false</c> to leave the dirty state unchanged. Default is <c>true</c>.
+        /// <param name="setDirty">
+        /// If <c>true</c>, marks the project dirty (subject to the user-edit gate:
+        /// <see cref="IsUndoEnabled"/> is <c>true</c> and the undo manager is not
+        /// replaying an action). If <c>false</c>, <see cref="IsDirty"/> is NOT modified
+        /// and is left unchanged. PropertyChanged still fires either way; undo recording
+        /// is unaffected by this flag (it gates on <see cref="IsUndoEnabled"/> only).
+        /// Default is <c>true</c>.
         /// </param>
         /// <remarks>
         /// <para>
@@ -461,7 +476,7 @@ namespace FrameworkInterfaces
         /// </code>
         /// </para>
         /// </remarks>
-        protected void RecordPropertyChange(string propertyName, object oldValue, object newValue, bool isDirty = true)
+        protected void RecordPropertyChange(string propertyName, object oldValue, object newValue, bool setDirty = true)
         {
             // Record the action for undo if enabled and not currently executing an undo/redo
             if (IsUndoEnabled && !UndoManager.IsExecutingAction && !Equals(oldValue, newValue))
@@ -473,12 +488,14 @@ namespace FrameworkInterfaces
             // Always raise the property changed event so UI bindings refresh.
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-            // Only flip dirty state when we are in a user-edit context. Open(), CreateNew(),
+            // Only promote to dirty, and only in a user-edit context. Open(), CreateNew(),
             // bulk operations, and undo/redo replay all disable undo recording precisely
-            // because they are not user-initiated edits. In those paths the caller is
-            // responsible for the final SetIsDirty(...) call.
-            if (IsUndoEnabled && !UndoManager.IsExecutingAction)
-                SetIsDirty(isDirty);
+            // because they are not user-initiated edits; in those paths the caller is
+            // responsible for the final SetIsDirty(...) call. setDirty=false is also
+            // a no-op on the flag — use it when the setter changes a notify-only property
+            // whose edit must not mark the project dirty.
+            if (setDirty && IsUndoEnabled && !UndoManager.IsExecutingAction)
+                SetIsDirty(true);
         }
 
         /// <summary>
