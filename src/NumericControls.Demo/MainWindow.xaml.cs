@@ -320,8 +320,12 @@ namespace NumericControls.Demo
 
 
 
-            // Time Series
-            USGSItem.IsSelected = true;
+            // Time Series - defer the async-download-triggering selection until the window's
+            // visual tree is fully loaded. Previously the assignment here fired
+            // USGSItem_Selected (async void) synchronously during the constructor, which
+            // started a network download against a TimeSeriesTableControl that hadn't yet
+            // completed attachment to the visual tree.
+            Loaded += (s, e) => { USGSItem.IsSelected = true; };
 
 
             //if( File.Exists(mapSettingsXMLFile) Then File.Delete(mapSettingsXMLFile)

@@ -55,7 +55,18 @@ namespace ExpressionParserControls.Demo
         /// </summary>
         private void CalculatorControl_ExpressionChanged()
         {
-            var result = this.testCalc.GetParseTree();
+            IParserNode result;
+            try
+            {
+                result = this.testCalc.GetParseTree();
+            }
+            catch (Exception ex)
+            {
+                // GetParseTree can throw on pathological input (stack overflow on deeply
+                // nested expressions, unexpected token patterns). Surface the message.
+                this.ResultTextBlock.Text = "Parse failed: " + ex.Message;
+                return;
+            }
             this.ResultTextBlock.Text = "";
             // check for parse errors
             if (result == null)
@@ -77,9 +88,18 @@ namespace ExpressionParserControls.Demo
                 }
                 else
                 {
-                    this.ResultTextBlock.Text = "Example: result equal to '" + result.Evaluate().Result?.ToString() + "'";
+                    try
+                    {
+                        this.ResultTextBlock.Text = "Example: result equal to '" + result.Evaluate().Result?.ToString() + "'";
+                    }
+                    catch (Exception ex)
+                    {
+                        // Evaluate can raise InvalidCastException / FormatException for
+                        // operations that mix incompatible types at runtime.
+                        this.ResultTextBlock.Text = "Evaluation failed: " + ex.Message;
+                    }
                 }
-            } // ExpressionWindow.GetResult & "'"
+            }
         }
     }
 }

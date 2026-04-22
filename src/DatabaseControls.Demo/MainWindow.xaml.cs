@@ -218,27 +218,39 @@ namespace DatabaseControls.Demo
                 string outputPath = saveFileDialog.FileName;
                 string extension = Path.GetExtension(outputPath).ToLower();
 
-                switch (extension)
+                try
                 {
-                    case ".csv":
-                        TestViewer.DataView.ExportToCsv(outputPath);
-                        break;
+                    switch (extension)
+                    {
+                        case ".csv":
+                            TestViewer.DataView.ExportToCsv(outputPath);
+                            break;
 
-                    case ".dbf":
-                        TestViewer.DataView.ExportToDbf(outputPath);
-                        break;
+                        case ".dbf":
+                            TestViewer.DataView.ExportToDbf(outputPath);
+                            break;
 
-                    case ".xls":
-                    case ".xlsx":
-                        TestViewer.DataView.ExportToXlsx(outputPath);
-                        break;
+                        case ".xls":
+                        case ".xlsx":
+                            TestViewer.DataView.ExportToXlsx(outputPath);
+                            break;
 
-                    case ".sqlite":
-                        TestViewer.DataView.ExportToSqlite(outputPath, TestViewer.DataView.TableName);
-                        break;
+                        case ".sqlite":
+                            TestViewer.DataView.ExportToSqlite(outputPath, TestViewer.DataView.TableName);
+                            break;
+                    }
+                    RowCountText.Text = $"Exported to: {outputPath}";
                 }
-
-                RowCountText.Text = $"Exported to: {outputPath}";
+                catch (Exception ex)
+                {
+                    // File I/O on export can fail for permission / disk-full / file-locked
+                    // reasons. Surface the error instead of crashing the demo.
+                    GenericControls.MessageBox.Show(
+                        $"Export failed: {ex.Message}",
+                        "Export Error",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Error);
+                }
             }
         }
 
@@ -303,6 +315,9 @@ namespace DatabaseControls.Demo
             if (tableNames.Length > 0)
             {
                 StatusText.Text = $"Loaded: {Path.GetFileName(filePath)} ({tableNames.Length} tables)";
+                // Auto-select the first table so TestViewer.DataView is populated and the
+                // viewer isn't left blank with no feedback (matches LoadCsvFile / LoadDbfFile).
+                TableComboBox.SelectedIndex = 0;
             }
         }
 

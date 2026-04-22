@@ -86,6 +86,10 @@ namespace DAG.Demo
             var newNode = new TestNode() { LeftPosition = p.X, TopPosition = p.Y };
             GraphCanvas.Graph.Nodes.Add(newNode);
             DAGControls.NodeControl cntrl = GraphCanvas.GetNodeControl(newNode);
+            // GetNodeControl returns null if the visual hasn't been added to _nodes yet.
+            // Skip the decoration if that happens; the canvas will fill in the NodeControl
+            // on its own timing.
+            if (cntrl == null) return;
             if (FindResource("HazardIcon") is DrawingImage icon)
                 cntrl.NodeIcon = icon;
 

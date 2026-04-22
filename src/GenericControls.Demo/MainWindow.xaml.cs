@@ -451,8 +451,16 @@ namespace GenericControls.Demo
             };
             ColorItemsControl.ItemsSource = _colorItems;
 
-            // Initialize DataGrid sample data
-            var sampleData = new ObservableCollection<SampleDataItem>
+            // Initialize DataGrid sample data. Each grid gets its own ObservableCollection
+            // so that Add/Insert/Delete actions in the main grid don't silently mutate the
+            // popup grid (and vice versa) through CopyPasteDataGrid's IList operations.
+            CPDataGrid.ItemsSource = CreateSampleDataItems();
+            CPDataGrid2.ItemsSource = CreateSampleDataItems();
+        }
+
+        private static ObservableCollection<SampleDataItem> CreateSampleDataItems()
+        {
+            return new ObservableCollection<SampleDataItem>
             {
                 new SampleDataItem { Name = "Item 1", Value = 100, Category = "Alpha" },
                 new SampleDataItem { Name = "Item 2", Value = 250, Category = "Beta" },
@@ -460,8 +468,6 @@ namespace GenericControls.Demo
                 new SampleDataItem { Name = "Item 4", Value = 320, Category = "Gamma" },
                 new SampleDataItem { Name = "Item 5", Value = 95, Category = "Beta" }
             };
-            CPDataGrid.ItemsSource = sampleData;
-            CPDataGrid2.ItemsSource = sampleData;
         }
 
         #endregion
