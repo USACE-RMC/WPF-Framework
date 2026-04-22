@@ -1514,6 +1514,13 @@ namespace DatabaseControls
                 if (firstRowVirtualIndex < 0) firstRowVirtualIndex = 0;
             }
 
+            // Clamp against the current _rowId length. Rows may have been deleted since the
+            // scroll-bar value was last clamped (e.g., during a TableViewRowsDeleted event
+            // before LoadRows runs), leaving firstRowVirtualIndex referencing a now-invalid
+            // slot.
+            if (firstRowVirtualIndex >= _rowId.Length) firstRowVirtualIndex = _rowId.Length - 1;
+            if (firstRowVirtualIndex < 0) return;
+
             bool alternate = _rowOffset![_rowId[firstRowVirtualIndex]] % 2 != 0;
             for (int i = 0; i < _visibleRowCount; i++)
             {
@@ -3896,6 +3903,10 @@ namespace DatabaseControls
         private string[][] GetClipboardData()
         {
             string clipText = Clipboard.GetText();
+            // Trim the trailing \r\n (or \n) that Windows clipboards append to copied cell
+            // ranges. Without this trim, Split('\n') produces an empty trailing element that
+            // the paste path later writes as a spurious blank row at the end of the selection.
+            clipText = clipText.TrimEnd('\r', '\n');
             string[] clipTextLineSplit = clipText.Split('\n');
             string[][] result = new string[clipTextLineSplit.Length][];
             var clipboardRows = clipTextLineSplit.Select(r => r.Split('\t'));

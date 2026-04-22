@@ -74,9 +74,12 @@ namespace DatabaseControls
         {
             InitializeComponent();
 
-            // Allow null for backwards compatibility with VB version - exit gracefully if null
+            // Allow null for backwards compatibility with VB version - queue a Close so the
+            // caller doesn't see an empty stats window. Previously the constructor returned
+            // silently and the caller's Show() displayed a blank window with no feedback.
             if (theViewer == null)
             {
+                Dispatcher.BeginInvoke((Action)Close);
                 return;
             }
 

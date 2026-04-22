@@ -417,6 +417,22 @@ namespace DatabaseControls
             if (data.Length == 0) return Array.Empty<double>();
             if (data.Length == 1) return new double[] { data[0] };
 
+            // Strip NaN values: NaN <= anything is false, which confuses the class-assignment
+            // loop below (it can increment binIdx past distinctValues.Length into an
+            // IndexOutOfRangeException). NaN in a column of real-valued measurements is
+            // conventionally treated as "missing" for classification purposes.
+            if (!dataIsSorted)
+            {
+                data = data.Where(v => !double.IsNaN(v)).ToArray();
+            }
+            else if (data.Any(double.IsNaN))
+            {
+                data = data.Where(v => !double.IsNaN(v)).ToArray();
+                dataIsSorted = false;
+            }
+            if (data.Length == 0) return Array.Empty<double>();
+            if (data.Length == 1) return new double[] { data[0] };
+
             double[] sortedData = data;
             if (!dataIsSorted)
             {
