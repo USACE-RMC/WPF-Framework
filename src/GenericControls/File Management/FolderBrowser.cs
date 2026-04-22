@@ -161,59 +161,71 @@ namespace GenericControls
         private bool ShowVistaDialog(IWin32Window owner)
         {
             NativeMethods.IFileDialog frm = (NativeMethods.IFileDialog)new NativeMethods.FileOpenDialogRCW();
-            var options = default(uint);
-            frm.GetOptions(ref options);
-            options = options | NativeMethods.FOS_PICKFOLDERS | NativeMethods.FOS_FORCEFILESYSTEM | NativeMethods.FOS_NOVALIDATE | NativeMethods.FOS_NOTESTFILECREATE | NativeMethods.FOS_DONTADDTORECENT;
-            frm.SetOptions(options);
-            if (Title is not null)
-            {
-                frm.SetTitle(Title);
-            }
-            if (InitialDirectory is not null)
-            {
-                var directoryShellItem = default(NativeMethods.IShellItem);
-                var riid = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");
-                // IShellItem
-                if (NativeMethods.SHCreateItemFromParsingName(InitialDirectory, IntPtr.Zero, ref riid, ref directoryShellItem) == NativeMethods.S_OK)
-                {
-                    frm.SetFolder(directoryShellItem);
-                }
-            }
-            if (DefaultDirectory is not null)
-            {
-                var directoryShellItem = default(NativeMethods.IShellItem);
-                var riid = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");
-                // IShellItem
-                if (NativeMethods.SHCreateItemFromParsingName(DefaultDirectory, IntPtr.Zero, ref riid, ref directoryShellItem) == NativeMethods.S_OK)
-                {
-                    frm.SetDefaultFolder(directoryShellItem);
-                }
-            }
+            NativeMethods.IShellItem initialFolderShellItem = default;
+            NativeMethods.IShellItem defaultFolderShellItem = default;
+            NativeMethods.IShellItem resultShellItem = default;
 
-            if (frm.Show(owner.Handle) == NativeMethods.S_OK)
+            try
             {
-                var shellItem = default(NativeMethods.IShellItem);
-                if (frm.GetResult(ref shellItem) == NativeMethods.S_OK)
+                var options = default(uint);
+                frm.GetOptions(ref options);
+                options = options | NativeMethods.FOS_PICKFOLDERS | NativeMethods.FOS_FORCEFILESYSTEM | NativeMethods.FOS_NOVALIDATE | NativeMethods.FOS_NOTESTFILECREATE | NativeMethods.FOS_DONTADDTORECENT;
+                frm.SetOptions(options);
+                if (Title is not null)
                 {
-                    IntPtr pszString = IntPtr.Zero;
-                    if (shellItem.GetDisplayName(NativeMethods.SIGDN_FILESYSPATH, ref pszString) == NativeMethods.S_OK)
+                    frm.SetTitle(Title);
+                }
+                if (InitialDirectory is not null)
+                {
+                    var riid = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");
+                    if (NativeMethods.SHCreateItemFromParsingName(InitialDirectory, IntPtr.Zero, ref riid, ref initialFolderShellItem) == NativeMethods.S_OK)
                     {
-                        if (pszString != IntPtr.Zero)
+                        frm.SetFolder(initialFolderShellItem);
+                    }
+                }
+                if (DefaultDirectory is not null)
+                {
+                    var riid = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");
+                    if (NativeMethods.SHCreateItemFromParsingName(DefaultDirectory, IntPtr.Zero, ref riid, ref defaultFolderShellItem) == NativeMethods.S_OK)
+                    {
+                        frm.SetDefaultFolder(defaultFolderShellItem);
+                    }
+                }
+
+                if (frm.Show(owner.Handle) == NativeMethods.S_OK)
+                {
+                    if (frm.GetResult(ref resultShellItem) == NativeMethods.S_OK)
+                    {
+                        IntPtr pszString = IntPtr.Zero;
+                        if (resultShellItem.GetDisplayName(NativeMethods.SIGDN_FILESYSPATH, ref pszString) == NativeMethods.S_OK)
                         {
-                            try
+                            if (pszString != IntPtr.Zero)
                             {
-                                SelectedFolder = Marshal.PtrToStringAuto(pszString);
-                                return true;
-                            }
-                            finally
-                            {
-                                Marshal.FreeCoTaskMem(pszString);
+                                try
+                                {
+                                    SelectedFolder = Marshal.PtrToStringAuto(pszString);
+                                    return true;
+                                }
+                                finally
+                                {
+                                    Marshal.FreeCoTaskMem(pszString);
+                                }
                             }
                         }
                     }
                 }
+                return false;
             }
-            return false;
+            finally
+            {
+                // Release COM-callable wrappers explicitly. Without this the dialog's COM
+                // objects stay alive until the next GC, accumulating handles under repeated
+                // folder-pick usage (e.g. from a property editor).
+                if (resultShellItem != null) Marshal.ReleaseComObject(resultShellItem);
+                if (defaultFolderShellItem != null) Marshal.ReleaseComObject(defaultFolderShellItem);
+                if (initialFolderShellItem != null) Marshal.ReleaseComObject(initialFolderShellItem);
+                if (frm != null) Marshal.ReleaseComObject(frm);
+            }
         }
 
         /// <summary>

@@ -499,9 +499,14 @@ namespace GenericControls
             PerformingBulkValidation = false;
             SuppressValidation = false;
             // Validate the first row.
-            // This fires the unique rule if it is used
-            rowitem = (DataGridRowItem)itemsList[0];
-            rowitem.ForceValidation();
+            // This fires the unique rule if it is used.
+            // Guard with the same is-check used in the loop: non-DataGridRowItem sources
+            // (e.g., a DataView in a ValidationDataGrid not tied to DataGridRowItem rows)
+            // would otherwise throw InvalidCastException here.
+            if (itemsList[0] is DataGridRowItem firstRow)
+            {
+                firstRow.ForceValidation();
+            }
         }
 
         /// <summary>

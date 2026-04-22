@@ -921,7 +921,10 @@ namespace GenericControls
                         for (int j = columnIndex, loopTo3 = columnMax; j <= loopTo3; j++)
                         {
                             cellCheck = GetCell(i, j);
-                            if (cellCheck.IsSelected == false)
+                            // GetCell returns null for rows that haven't been realized in the
+                            // virtualizing panel yet. Treat unrealized cells as "not selected"
+                            // so the continuity check still fails cleanly instead of NRE'ing.
+                            if (cellCheck == null || cellCheck.IsSelected == false)
                             {
                                 Mouse.OverrideCursor = null;
                                 MessageBox.Show("Invalid selection, selected cells must be continuous.", "Invalid Selection", MessageBoxButton.OK, MessageBoxImage.Information);
