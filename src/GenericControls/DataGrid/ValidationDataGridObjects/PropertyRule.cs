@@ -1,0 +1,207 @@
+﻿/*
+* NOTICE:
+* The U.S. Army Corps of Engineers, Risk Management Center (USACE-RMC) makes no guarantees about
+* the results, or appropriateness of outputs, obtained from this software.
+*
+* LIST OF CONDITIONS:
+* Redistribution and use in source and binary forms, with or without modification, are permitted
+* provided that the following conditions are met:
+* ● Redistributions of source code must retain the above notice, this list of conditions, and the
+* following disclaimer.
+* ● Redistributions in binary form must reproduce the above notice, this list of conditions, and
+* the following disclaimer in the documentation and/or other materials provided with the distribution.
+* ● The names of the U.S. Government, the U.S. Army Corps of Engineers, the Institute for Water
+* Resources, or the Risk Management Center may not be used to endorse or promote products derived
+* from this software without specific prior written permission. Nor may the names of its contributors
+* be used to endorse or promote products derived from this software without specific prior
+* written permission.
+*
+* DISCLAIMER:
+* THIS SOFTWARE IS PROVIDED BY THE U.S. ARMY CORPS OF ENGINEERS RISK MANAGEMENT CENTER
+* (USACE-RMC) "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED. IN NO EVENT SHALL USACE-RMC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+* THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System.ComponentModel;
+
+namespace GenericControls
+{
+    /// <summary>
+    /// Represents a validation rule for a property, with support for multiple error conditions and messages.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     <b> Authors: </b>
+    /// <list type="bullet">
+    /// <item><description>
+    ///     Woodrow Fields, USACE Risk Management Center, woodrow.l.fields@usace.army.mil
+    /// </description></item>
+    /// <item><description>
+    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// </description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    public class PropertyRule : INotifyPropertyChanged
+    {
+
+        #region Construction
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyRule"/> class.
+        /// </summary>
+        /// <param name="rule">A function that returns true when an error condition is met.</param>
+        /// <param name="message">The error message to display if the function returns true.</param>
+        public PropertyRule(Func<bool> rule, string message)
+        {
+            _rules.Add(new Rule(rule, message));
+        }
+
+        #endregion
+
+        #region Members
+
+        /// <summary>
+        /// Occurs when a property value changes. Required for UI binding to update error states.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly List<Rule> _rules = new List<Rule>();
+        private bool _hasError = false;
+        private string _errorMessage = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the property has a validation error.
+        /// </summary>
+        public bool HasError
+        {
+            get
+            {
+                return _hasError;
+            }
+            set
+            {
+                if (_hasError != value)
+                {
+                    _hasError = value;
+                    NotifyPropertyChanged(nameof(HasError));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the error message describing the validation failure.
+        /// </summary>
+        public string ErrorMessage
+        {
+            get
+            {
+                return _errorMessage;
+            }
+            set
+            {
+                if ((_errorMessage ?? "") != (value ?? ""))
+                {
+                    _errorMessage = value;
+                    NotifyPropertyChanged(nameof(ErrorMessage));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of validation rules for this property.
+        /// </summary>
+        public List<Rule> Rules
+        {
+            get
+            {
+                return _rules;
+            }
+        }
+
+        /// <summary>
+        /// Class for the property rule. Each rule has a function and an error message.
+        /// </summary>
+        public class Rule
+        {
+            /// <summary>
+            /// The expression that evaluates to true when an error condition is met.
+            /// </summary>
+            public readonly Func<bool> Expression;
+
+            /// <summary>
+            /// The error message to display when the expression returns true.
+            /// </summary>
+            public readonly string Message;
+
+            /// <summary>
+            /// Indicates whether this rule currently has an error.
+            /// </summary>
+            public bool HasError;
+
+            internal Rule(Func<bool> expression, string message)
+            {
+                Expression = expression;
+                Message = message;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Adds a validation rule to the property.
+        /// </summary>
+        /// <param name="rule">A function that returns true when an error condition is met.</param>
+        /// <param name="message">The error message to display if the function returns true.</param>
+        internal void AddRule(Func<bool> rule, string message)
+        {
+            _rules.Add(new Rule(rule, message));
+        }
+
+
+
+        /// <summary>
+        /// Executes all validation rules for this property and updates the error state.
+        /// </summary>
+        internal void ExecuteRules()
+        {
+            ErrorMessage = "";
+            HasError = false;
+            try
+            {
+                for (int i = 0, loopTo = _rules.Count - 1; i <= loopTo; i++)
+                {
+                    if (_rules[i].Expression() == true)
+                    {
+                        HasError = true;
+                        ErrorMessage += i == 0 ? _rules[i].Message : Environment.NewLine + _rules[i].Message;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _errorMessage = e.Message;
+                HasError = true;
+            }
+        }
+
+        #endregion
+
+    }
+}

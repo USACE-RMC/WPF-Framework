@@ -1,0 +1,32 @@
+<!-- OxyPlotControls - Modern C# WPF Controls for OxyPlot -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RootNamespace>OxyPlotControls</RootNamespace>
+    <AssemblyName>OxyPlotControls</AssemblyName>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+
+  <!-- Resource files -->
+  <ItemGroup>
+    <Resource Include="Resources\*.cur" />
+    <Resource Include="Resources\*.png" />
+    <Resource Include="Resources\*.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GenericControls\GenericControls.csproj" />
+    <ProjectReference Include="..\Themes\Themes.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
+    <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf.Shared\OxyPlot.Wpf.Shared.csproj" />
+  </ItemGroup>
+</Project>
