@@ -211,8 +211,12 @@ namespace DAGControls
             RefreshInConnectors();
             RefreshOutConnectors();
 
-            node.Inputs.CollectionChanged += (sender, e) => RefreshInConnectors();
-            node.Outputs.CollectionChanged += (sender, e) => RefreshOutConnectors();
+            // Subscribe via named handlers so we can unsubscribe on Unloaded. Previous
+            // anonymous-lambda subscriptions were never unhooked, keeping the NodeControl
+            // alive for the lifetime of the node's observable collections.
+            node.Inputs.CollectionChanged += OnInputsCollectionChanged;
+            node.Outputs.CollectionChanged += OnOutputsCollectionChanged;
+            Unloaded += OnNodeControlUnloaded;
 
             // Bind position to node
             Binding b = new Binding(nameof(NodeBase.LeftPosition))
@@ -229,6 +233,22 @@ namespace DAGControls
                 Source = node
             };
             _ = SetBinding(Canvas.TopProperty, b);
+        }
+
+        private void OnInputsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            => RefreshInConnectors();
+
+        private void OnOutputsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            => RefreshOutConnectors();
+
+        private void OnNodeControlUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (Node != null)
+            {
+                Node.Inputs.CollectionChanged -= OnInputsCollectionChanged;
+                Node.Outputs.CollectionChanged -= OnOutputsCollectionChanged;
+            }
+            Unloaded -= OnNodeControlUnloaded;
         }
 
         #endregion

@@ -267,6 +267,23 @@ namespace DAGControls
             {
                 _connectingCursor = new Cursor(ms);
             }
+
+            // If mouse capture is lost unexpectedly (e.g., another process grabs focus
+            // mid-drag), reset interaction state so the cursor and in-progress drag visuals
+            // don't stick.
+            GraphCanvas.LostMouseCapture += GraphCanvas_LostMouseCapture;
+        }
+
+        private void GraphCanvas_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            _isPanning = false;
+            _isMoving = false;
+            if (_isConnecting)
+            {
+                _isConnecting = false;
+                if (_targetPath != null) { GraphCanvas.Children.Remove(_targetPath); }
+            }
+            Mouse.OverrideCursor = null;
         }
 
         #endregion
@@ -562,6 +579,9 @@ namespace DAGControls
                             _targetPath = CreatePath(item.Value);
                             _targetNode = node.Key;
                             _targetConnector = item.Key;
+                            // Capture so MouseUp / LostMouseCapture fires reliably even if
+                            // the cursor leaves the canvas bounds during the drag.
+                            _ = GraphCanvas.CaptureMouse();
                             return;
                         }
                     }
@@ -581,6 +601,7 @@ namespace DAGControls
                                     _targetPath = CreatePath(_nodes[connection.Item1.Parent].OutConnectors[connection.Item1]);
                                     _targetConnector = connection.Item1;
                                     _targetNode = _targetConnector.Parent;
+                                    _ = GraphCanvas.CaptureMouse();
                                     return;
                                 }
                             }
@@ -696,14 +717,17 @@ namespace DAGControls
             if (_isMoving)
             {
                 _isMoving = false;
-                _nodes[_targetNode].NodeBorder.BorderBrush = Brushes.Transparent;
+                // TryGetValue: _targetNode may have been removed from the graph between
+                // MouseDown and MouseUp (e.g. via a context-menu delete on another control).
+                if (_targetNode != null && _nodes.TryGetValue(_targetNode, out var movedNc))
+                {
+                    movedNc.NodeBorder.BorderBrush = Brushes.Transparent;
+                }
                 NodeMoved?.Invoke(_targetNode);
             }
             else if (_isConnecting)
             {
                 bool raiseAddEvent = false;
-                NodeControl targetNodeControl = _nodes[_targetNode];
-
                 // Identify which node to connect to
                 foreach (KeyValuePair<NodeBase, NodeControl> node in _nodes)
                 {
@@ -808,20 +832,20 @@ namespace DAGControls
 
             // Shift each connector to the updated node connector positions
             // Handle currently connecting path
-            if (_isConnecting && _targetPath != null)
+            if (_isConnecting && _targetPath != null && _targetNode != null && _nodes.TryGetValue(_targetNode, out var targetNodeControl))
             {
-                NodeControl targetNodeControl = _nodes[_targetNode];
-                Ellipse targetOutConnector = targetNodeControl.OutConnectors[_targetConnector];
+                if (targetNodeControl.OutConnectors.TryGetValue(_targetConnector, out var targetOutConnector))
+                {
+                    // Start Position
+                    Point connectorPosition = targetOutConnector.TranslatePoint(new Point(), targetNodeControl);
+                    double startY = GetTop(targetNodeControl) + ((connectorPosition.Y + (targetOutConnector.ActualHeight * .5)) * scale);
+                    Point startPoint = new Point(_targetNode.LeftPosition + ((targetNodeControl.ActualWidth - 1) * scale), startY);
 
-                // Start Position
-                Point connectorPosition = targetOutConnector.TranslatePoint(new Point(), targetNodeControl);
-                double startY = GetTop(targetNodeControl) + ((connectorPosition.Y + (targetOutConnector.ActualHeight * .5)) * scale);
-                Point startPoint = new Point(_targetNode.LeftPosition + ((targetNodeControl.ActualWidth - 1) * scale), startY);
+                    // End Position
+                    Point endPoint = mousePosition;
 
-                // End Position
-                Point endPoint = mousePosition;
-
-                DrawConnection(_targetPath, startPoint, endPoint);
+                    DrawConnection(_targetPath, startPoint, endPoint);
+                }
             }
 
             // Handle existing connections
@@ -875,7 +899,15 @@ namespace DAGControls
 
         private Path CreatePath(Ellipse connectionSource)
         {
-            // Identify the center point of node connector
+            // Identify the center point of node connector. TransformToAncestor throws
+            // InvalidOperationException if connectionSource is not a descendant of GraphCanvas
+            // - this happens briefly during initial layout or after a node is removed from
+            // the canvas but before the connect-drag is cleaned up.
+            if (connectionSource == null || !GraphCanvas.IsAncestorOf(connectionSource))
+            {
+                return new Path { Data = new PathGeometry() };
+            }
+
             Point connectorPosition = connectionSource.TransformToAncestor(GraphCanvas).Transform(new Point());
             Point connectorStart = new Point(
                 connectorPosition.X + (connectionSource.ActualWidth * .5 * Graph.Scale),
