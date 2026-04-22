@@ -152,16 +152,19 @@ namespace FrameworkInterfaces.Undo
             // Atomically check-and-set to prevent TOCTOU race
             if (Interlocked.CompareExchange(ref _isExecutingAction, 1, 0) != 0) return;
 
+            // Keep _isExecutingAction set through both Execute and RecordActionInternal so any
+            // re-entrant RecordAction triggered by property-change events inside RecordActionInternal
+            // sees the guard and is suppressed. Resetting only in the finally block ensures the flag
+            // is cleared on any exception path as well.
             try
             {
                 action.Execute();
+                RecordActionInternal(action);
             }
             finally
             {
                 Interlocked.Exchange(ref _isExecutingAction, 0);
             }
-
-            RecordActionInternal(action);
         }
 
         /// <inheritdoc/>

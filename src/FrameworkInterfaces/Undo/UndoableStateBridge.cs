@@ -605,18 +605,25 @@ namespace FrameworkInterfaces.Undo
             /// <summary>
             /// Resumes undo recording and updates shadow values.
             /// </summary>
+            /// <remarks>
+            /// If the owning bridge has already been disposed, this skips the shadow-value refresh
+            /// and re-subscription — touching the cleared caches would be wasted work, and
+            /// re-subscribing would resurrect a handler on a disposed bridge.
+            /// </remarks>
             public void Dispose()
             {
                 if (!_disposed)
                 {
+                    _disposed = true;
+                    GC.SuppressFinalize(this);
+
+                    if (_bridge.IsDisposed) return;
+
                     // Update shadow values to current state
                     _bridge.UpdateShadowValues();
 
                     // Re-subscribe to events
                     _bridge._source.PropertyChanged += _bridge.OnPropertyChanged;
-
-                    _disposed = true;
-                    GC.SuppressFinalize(this);
                 }
             }
         }
