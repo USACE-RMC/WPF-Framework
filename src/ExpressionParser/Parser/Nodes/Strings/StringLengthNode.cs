@@ -143,7 +143,7 @@ namespace ExpressionParser
         {
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
-            int result = _stringNode.Evaluate().Result.ToString().Length;
+            int result = (_stringNode.Evaluate().Result?.ToString() ?? "").Length;
             // 
             return new ParseNodeResult(result, ResultType.Integer);
         }

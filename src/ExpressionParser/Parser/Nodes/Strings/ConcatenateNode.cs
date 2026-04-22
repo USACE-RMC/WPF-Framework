@@ -119,16 +119,16 @@ namespace ExpressionParser
         {
             if (ContainsVariable())
             {
-                foreach (var testNode in _nodesToConcatenate)
-                {
-                    if (testNode == null)
-                        continue;
-                    testNode.Simplify();
-                }
+                // Reassign the simplified children. The previous implementation discarded
+                // Simplify()'s return value, so CONCATENATE never folded constant sub-expressions
+                // when it had variable children.
+                _nodesToConcatenate = _nodesToConcatenate
+                    .Select(n => n == null ? n : n.Simplify())
+                    .ToList();
                 return this;
             }
-            // 
-            return new StringNode(Evaluate().Result.ToString());
+            //
+            return new StringNode(Evaluate().Result?.ToString() ?? "");
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace ExpressionParser
             // 
             var result = new StringBuilder();
             foreach (var testNode in _nodesToConcatenate)
-                result.Append(testNode.Evaluate().Result.ToString());
+                result.Append(testNode.Evaluate().Result?.ToString() ?? "");
             // 
             return new ParseNodeResult(result.ToString(), ResultType.String);
         }

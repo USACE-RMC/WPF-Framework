@@ -167,7 +167,7 @@ namespace ExpressionParser
         {
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
-            string value = _stringNode.Evaluate().Result.ToString();
+            string value = _stringNode.Evaluate().Result?.ToString() ?? "";
             int length = Convert.ToInt32(_nCharacters.Evaluate().Result);
             // Handle edge cases like VB's Right function does
             if (length < 0)

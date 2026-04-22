@@ -121,6 +121,10 @@ namespace ExpressionParser
                             tokenList.Add(new Token(i + 1, "]", "", 1, TokenType.RightBracket, TokenClass.Other));
                             i += 1;
                         }
+                        else
+                        {
+                            tokenList.Add(new Token(startPosition, "Unterminated bracketed identifier starting with [", "", 0, TokenType.LexerError, TokenClass.Other));
+                        }
                     }
                 }
             }

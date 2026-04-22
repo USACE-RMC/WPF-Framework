@@ -191,7 +191,7 @@ namespace ExpressionParser
             //
             int startIndex = Convert.ToInt32(_startIndex.Evaluate().Result);
             int length = Convert.ToInt32(_length.Evaluate().Result);
-            string value = _stringValue.Evaluate().Result.ToString();
+            string value = _stringValue.Evaluate().Result?.ToString() ?? "";
             // Handle negative indices by treating them as 0
             if (startIndex < 0)
                 startIndex = 0;
