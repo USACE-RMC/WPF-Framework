@@ -541,8 +541,19 @@ namespace FrameworkUI
                 xmlWriter.Flush();
                 xmlWriter.Close();
             }
-            // Atomically replace the target file with the temp file.
-            File.Move(tempPath, xmlFilePath, overwrite: true);
+            // Atomically replace the target file with the temp file. Guarded because a
+            // permissions failure on the final replace would otherwise surface as an
+            // unhandled exception on the UI thread at application close - the settings
+            // write is best-effort and shouldn't block shutdown.
+            try
+            {
+                File.Move(tempPath, xmlFilePath, overwrite: true);
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+            {
+                System.Diagnostics.Debug.WriteLine($"[UserSettings] Failed to save settings: {ex.Message}");
+                try { File.Delete(tempPath); } catch { /* best-effort cleanup */ }
+            }
         }
 
     }

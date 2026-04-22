@@ -220,6 +220,7 @@ namespace FrameworkUI
         public void RemoveFromJumpList(int index)
         {
             var jumpList = JumpList.GetJumpList(Application.Current);
+            if (jumpList == null) return;
             if (index > jumpList.JumpItems.Count - 1) return;
             jumpList.JumpItems.RemoveAt(index);
             jumpList.ShowRecentCategory = false;
@@ -233,6 +234,7 @@ namespace FrameworkUI
         public void LoadJumpList()
         {
             var jumpList = JumpList.GetJumpList(Application.Current);
+            if (jumpList == null) return;
             jumpList.JumpItems.Clear();
             jumpList.ShowRecentCategory = false;
             for (int i = 0; i < Collection.Count; i++)

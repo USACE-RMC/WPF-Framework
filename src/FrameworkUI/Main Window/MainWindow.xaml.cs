@@ -861,12 +861,24 @@ namespace FrameworkUI
                 Directory.CreateDirectory(ShellPublicVariables.AvalonDockLayoutFolderPath);
             }
             // 
-            // Serialize the Default valonDock layout.
+            // Serialize the Default AvalonDock layout. Only update the project's cached
+            // layout if the serialize-and-read round-trip succeeds. Previously a mid-write
+            // failure (disk full, permissions) left a partial/corrupted file on disk which
+            // the next ReadAllBytes would happily persist as the new project layout,
+            // silently corrupting future sessions.
             var layoutSerializer = new XmlLayoutSerializer(MainDock);
-            layoutSerializer.Serialize(ShellPublicVariables.DefaultAvalonDockLayoutFilePath);
-
-            // Save to Project
-            ProjectNode.Project.AvalonDockLayout = UtilityFunctions.UTF8BytesToString(File.ReadAllBytes(ShellPublicVariables.DefaultAvalonDockLayoutFilePath));
+            try
+            {
+                layoutSerializer.Serialize(ShellPublicVariables.DefaultAvalonDockLayoutFilePath);
+                ProjectNode.Project.AvalonDockLayout = UtilityFunctions.UTF8BytesToString(File.ReadAllBytes(ShellPublicVariables.DefaultAvalonDockLayoutFilePath));
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+            {
+                FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(
+                    new BasicMessageItem(MessageType.Warning,
+                        $"Failed to save dock layout: {ex.Message}",
+                        null, "MainWindow", string.Empty, "SaveLayout"));
+            }
         }
 
         #endregion

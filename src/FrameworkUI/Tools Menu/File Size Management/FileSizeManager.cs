@@ -109,8 +109,17 @@ namespace FrameworkUI
         {
             // Set the project file
             _project = project;
-            // Get the 'before' file size text
-            _fileSizeBefore = GetFileSizeText(_project.FullFileName);
+            // Get the 'before' file size text. Guard against a missing file (new / unsaved
+            // project, file moved between open and compact) - FileInfo.Length throws
+            // FileNotFoundException on an absent path, on the UI thread.
+            if (!string.IsNullOrEmpty(_project.FullFileName) && File.Exists(_project.FullFileName))
+            {
+                _fileSizeBefore = GetFileSizeText(_project.FullFileName);
+            }
+            else
+            {
+                _fileSizeBefore = string.Empty;
+            }
 
             // Begin compaction
             ShellPublicVariables.CompactionInProgress = true;
