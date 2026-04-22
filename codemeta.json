@@ -5,7 +5,7 @@
   "description": "A free and open-source .NET 10 application framework for building Windows desktop project management applications. Provides a docking application shell with theming, project explorer, undo/redo, and specialized controls for charting, numeric input, databases, expression parsing, and directed acyclic graphs.",
   "version": "1.0.0",
   "dateCreated": "2025-12-29",
-  "dateModified": "2026-04-22",
+  "dateModified": "2026-04-29",
   "license": "https://spdx.org/licenses/BSD-3-Clause",
   "codeRepository": "https://github.com/USACE-RMC/WPF-Framework",
   "issueTracker": "https://github.com/USACE-RMC/WPF-Framework/issues",
