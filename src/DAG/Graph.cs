@@ -208,10 +208,11 @@ namespace DAG
                 node = ReadNodeRequested(nodeElement);
                 if (node == null) { continue; }
                 string key = node.NodeGuid.ToString();
-                if (!nodes.ContainsKey(key))
-                {
-                    nodes.Add(key, node);
-                }
+                // Skip duplicate-GUID nodes entirely. Previously the duplicate was added to Nodes
+                // but not to the GUID lookup dictionary, so any connection targeting it silently
+                // routed to the first node instead.
+                if (nodes.ContainsKey(key)) { continue; }
+                nodes.Add(key, node);
                 Nodes.Add(node);
             }
 
@@ -756,7 +757,10 @@ namespace DAG
                     }
                 }
 
-                RemoveConnections(connectionsToRemove.ToArray());
+                // ForceRemoveConnections rather than RemoveConnections: the connector is already
+                // gone from the node, so these connections are dangling and cancellation by a
+                // PreviewConnectionsRemoved subscriber would leave the graph in an invalid state.
+                ForceRemoveConnections(connectionsToRemove.ToArray());
             }
         }
 
@@ -777,7 +781,8 @@ namespace DAG
                     }
                 }
 
-                RemoveConnections(connectionsToRemove.ToArray());
+                // ForceRemoveConnections: see the matching comment in Outputs_CollectionChanged.
+                ForceRemoveConnections(connectionsToRemove.ToArray());
             }
         }
 
