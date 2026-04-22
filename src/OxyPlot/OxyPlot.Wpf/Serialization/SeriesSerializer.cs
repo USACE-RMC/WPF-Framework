@@ -128,7 +128,12 @@ namespace OxyPlot.Wpf.Serialization
 
             foreach (var el in element.Elements())
             {
-                if (el.Name != SeriesItemTag && el.Name != SeriesPropertiesTag) continue;
+                // SeriesPropertiesTag is the outer collection element (parent of these
+                // children), not an item tag. Only accept SeriesItemTag for individual
+                // series entries; the prior filter would have let a stray nested
+                // <Series> element through into XElementToSeries where it would
+                // silently fail to resolve a SeriesType and return null.
+                if (el.Name != SeriesItemTag) continue;
                 var tempSeries = XElementToSeries(el);
                 if (tempSeries == null) continue;
                 plot.Series.Add(tempSeries);

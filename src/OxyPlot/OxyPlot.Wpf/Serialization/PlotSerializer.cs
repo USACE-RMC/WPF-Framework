@@ -223,10 +223,12 @@ namespace OxyPlot.Wpf.Serialization
             if (plot == null) return;
             if (element.Name != GeneralPropertiesTag) return;
 
-            // Get enabled or not
-            bool isEnabled;
-            GetBooleanAttribute(element, nameof(plot.IsEnabled), out isEnabled);
-            plot.IsEnabled = isEnabled;
+            // Get enabled or not. Only assign when the attribute is actually present; otherwise
+            // leave plot.IsEnabled at its current (typically true) default. The previous code
+            // force-set IsEnabled=false on any XML that predates this attribute, silently
+            // disabling loaded plots.
+            if (GetBooleanAttribute(element, nameof(plot.IsEnabled), out bool isEnabled))
+                plot.IsEnabled = isEnabled;
 
             // Set up converters
             var weightConverter = new FontWeightConverter();
@@ -825,7 +827,10 @@ namespace OxyPlot.Wpf.Serialization
             if (string.IsNullOrEmpty(value)) return false;
 
             vp = value.FromPrettyVectorText();
-            return true;
+            // FromPrettyVectorText returns default(ScreenVector) == (0,0) on parse failure.
+            // Callers that use the return value as a "parsed successfully" guard would have
+            // applied the zero vector silently under the previous unconditional `return true`.
+            return !vp.Equals(default(OxyPlot.ScreenVector));
         }
 
         /// <summary>
@@ -861,7 +866,9 @@ namespace OxyPlot.Wpf.Serialization
             if (string.IsNullOrEmpty(value)) return false;
 
             v = value.FromPrettyVectorString();
-            return true;
+            // See note in GetScreenVectorAttribute: returns false on parse failure so callers
+            // can guard against applying a default (0,0) vector.
+            return v != default(Vector);
         }
 
         #endregion
