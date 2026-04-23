@@ -317,7 +317,6 @@ namespace FrameworkUI
         /// <summary>
         /// Adds the handlers from the source component to the destination component
         /// </summary>
-        /// <typeparam name="T">An IComponent type</typeparam>
         /// <param name="destinationComponent">The destination component.</param>
         /// <param name="sourceComponent">The source component.</param>
         public static void CopyClick(this MenuItem destinationComponent, MenuItem sourceComponent)

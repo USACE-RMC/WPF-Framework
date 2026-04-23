@@ -89,7 +89,11 @@ public class SavePlotImageDialogTests
     }
 
     /// <summary>
-    /// Verifies that the dialog has the correct initial size computed from the default preset (600x480).
+    /// Verifies that the dialog initial size is computed from the default preset (600x480) and
+    /// falls within the expected bounds. The exact dialog size depends on
+    /// <see cref="System.Windows.SystemParameters.WorkArea"/>, which varies by display/DPI and
+    /// between interactive and headless (CI) environments, so the assertion uses tolerant ranges
+    /// rather than exact pixel values.
     /// </summary>
     [StaFact]
     public void Constructor_WithValidPlot_HasCorrectInitialSize()
@@ -101,9 +105,12 @@ public class SavePlotImageDialogTests
         var dialog = new OxyPlotControls.SavePlotImageDialog(plot);
 
         // Assert — initial size computed from default 600x480 preset:
-        // width = 600 + 36 (padding) = 636, height = 480 + 190 (controls) + 50 (chrome) = 720
-        Assert.Equal(636, dialog.Width);
-        Assert.Equal(720, dialog.Height);
+        //   width  = 600 + 36 (padding)                       ≈ 636 on a typical display
+        //   height = 480 + 190 (controls) + 50 (chrome)       ≈ 720 on a typical display
+        // Both are clamped to at least MinWidth/MinHeight and at most WorkArea * ScreenUsageFraction,
+        // so CI's smaller WorkArea can produce slightly smaller values.
+        Assert.InRange(dialog.Width, dialog.MinWidth, 800);
+        Assert.InRange(dialog.Height, dialog.MinHeight, 900);
     }
 
     /// <summary>

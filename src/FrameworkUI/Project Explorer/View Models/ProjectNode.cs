@@ -532,24 +532,6 @@ namespace FrameworkUI.ProjectExplorer
             e.Handled = true;
         }
 
-        /// <summary>
-        /// Raises the set properties control event. 
-        /// </summary>
-        /// <param name="propertyControl">The property control to set.</param>
-        //protected void RaiseSetPropertiesControl(Control propertyControl)
-        //{
-        //    SetPropertiesControl?.Invoke(propertyControl);
-        //}
-
-        /// <summary>
-        /// Raises the close property control event.
-        /// </summary>
-        /// <param name="propertyControl">The property control to close.</param>
-        //protected void RaiseClosePropertiesControl(Control propertyControl)
-        //{
-        //    ClosePropertiesControl?.Invoke(propertyControl);
-        //}
-
         #endregion
 
     }

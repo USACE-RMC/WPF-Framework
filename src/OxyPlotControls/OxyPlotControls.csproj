@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>OxyPlotControls</RootNamespace>
     <AssemblyName>OxyPlotControls</AssemblyName>
-    <NoWarn>$(NoWarn);CA1416</NoWarn>
+    <NoWarn>$(NoWarn);CA1416;CS0618</NoWarn>
 
     <IsWpfFrameworkLibrary>true</IsWpfFrameworkLibrary>
     <PackageId>RMC.OxyPlotControls</PackageId>

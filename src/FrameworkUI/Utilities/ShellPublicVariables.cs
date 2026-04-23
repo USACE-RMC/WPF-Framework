@@ -35,13 +35,11 @@ namespace FrameworkUI
     /// </summary>
     /// <remarks>
     /// <para>
-    ///     Authors:
-/// <para>
-/// <b> Authors: </b>
-/// <list type="bullet">
-///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>
-/// </list>
-/// </para>
+    /// <b>Authors:</b>
+    /// </para>
+    /// <list type="bullet">
+    ///     <item>Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil</item>
+    /// </list>
     /// </remarks>
     public static class ShellPublicVariables
     {

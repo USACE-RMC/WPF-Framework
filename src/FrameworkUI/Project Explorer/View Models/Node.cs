@@ -893,7 +893,7 @@ namespace FrameworkUI.ProjectExplorer
 
         /// <summary>
         /// When header loses focus, update rename text box.
-        /// </summary
+        /// </summary>
         protected virtual void HeaderRenameTextbox_LostFocus(object sender, RoutedEventArgs e)
         {
             if (_hitTestResult == null || !(_hitTestResult.VisualHit is TextBox))

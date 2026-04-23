@@ -878,7 +878,7 @@ namespace FrameworkUI
                 FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(
                     new BasicMessageItem(MessageType.Warning,
                         $"Failed to save dock layout: {ex.Message}",
-                        null, "MainWindow", string.Empty, "SaveLayout"));
+                        this, "MainWindow", string.Empty, "SaveLayout"));
             }
         }
 

@@ -40,11 +40,12 @@ namespace FrameworkUI.ProjectExplorer
     /// </summary>
     /// <remarks>
     /// <para>
-    ///     Authors:
-    ///     Woody Fields
-    ///     Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil
+    /// <b>Authors:</b>
     /// </para>
-    /// </para>
+    /// <list type="bullet">
+    ///     <item>Woody Fields</item>
+    ///     <item>Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil</item>
+    /// </list>
     /// </remarks>
     public partial class NodeHeader : UserControl
     {

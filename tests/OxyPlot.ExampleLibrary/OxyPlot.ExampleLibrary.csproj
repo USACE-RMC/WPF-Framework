@@ -6,6 +6,7 @@
     <Description>Example models for OxyPlot.</Description>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>11</LangVersion>
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Bergensbanen.csv" />

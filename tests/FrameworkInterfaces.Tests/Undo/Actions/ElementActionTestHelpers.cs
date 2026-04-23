@@ -230,6 +230,7 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         /// </summary>
         public event ElementRemovedEventHandler? ElementRemoved;
 
+#pragma warning disable CS0067 // Events are never used (mock implementation satisfies interface)
         /// <summary>
         /// Occurs when a child element transitions from clean to dirty.
         /// </summary>
@@ -238,7 +239,6 @@ namespace FrameworkInterfaces.Tests.Undo.Actions
         /// <summary>
         /// Occurs before the collection is saved.
         /// </summary>
-#pragma warning disable CS0067 // Event is never used (mock implementation satisfies interface)
         public event PreviewObjectSavedEventHandler? PreviewObjectSaved;
 
         /// <summary>
