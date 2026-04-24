@@ -61,7 +61,7 @@ public class GetNearestPointThreadSafetyTests
     /// completes without throwing.
     /// </summary>
     [Fact]
-    public void GetNearestPoint_DoesNotThrow_UnderConcurrentPointsMutation()
+    public async Task GetNearestPoint_DoesNotThrow_UnderConcurrentPointsMutation()
     {
         var series = new LineSeries();
         for (int i = 0; i < 1000; i++)
@@ -115,7 +115,7 @@ public class GetNearestPointThreadSafetyTests
         finally
         {
             cts.Cancel();
-            mutator.Wait(TimeSpan.FromSeconds(5));
+            await mutator.WaitAsync(TimeSpan.FromSeconds(5));
         }
 
         // Reaching this assertion means no InvalidOperationException bubbled out of
