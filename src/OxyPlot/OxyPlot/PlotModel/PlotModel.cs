@@ -714,7 +714,7 @@ namespace OxyPlot
         {
             double mindist = double.MaxValue;
             Series.Series nearestSeries = null;
-            foreach (var series in this.Series.Reverse().Where(s => s.IsVisible))
+            foreach (var series in this.Series.Reverse().Where(s => s.IsVisible && s.IsHitTestEnabled))
             {
                 var thr = series.GetNearestPoint(point, true) ?? series.GetNearestPoint(point, false);
 

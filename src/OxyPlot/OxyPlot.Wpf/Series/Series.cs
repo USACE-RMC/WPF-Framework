@@ -108,6 +108,22 @@ namespace OxyPlot.Wpf
             new PropertyMetadata(null, AppearanceChanged));
 
         /// <summary>
+        /// Identifies the <see cref="IsHitTestEnabled"/> dependency property.
+        /// </summary>
+        /// <remarks>
+        /// Uses <see cref="HitTestRoutingChanged"/> instead of <see cref="AppearanceChanged"/>
+        /// or <see cref="DataChanged"/>. Toggling hit-test routing is neither a visual change
+        /// nor a data change, so it must not trigger <c>InvalidatePlot</c> or fire
+        /// <c>PropertyChanged</c>. Setting the DP directly updates the internal series so
+        /// the change is picked up on the next tracker event without forcing a render.
+        /// </remarks>
+        public static readonly DependencyProperty IsHitTestEnabledProperty = DependencyProperty.Register(
+            nameof(IsHitTestEnabled),
+            typeof(bool),
+            typeof(Series),
+            new PropertyMetadata(true, HitTestRoutingChanged));
+
+        /// <summary>
         /// Identifies the <see cref="EdgeRenderingMode"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty EdgeRenderingModeProperty = DependencyProperty.Register(
@@ -213,6 +229,24 @@ namespace OxyPlot.Wpf
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this series participates in tracker hit-tests.
+        /// The default is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Set to <c>false</c> for dense or decorative series (e.g. MCMC chain traces, overlay
+        /// reference lines) where per-point hit-testing provides no diagnostic value. When
+        /// disabled, the series is skipped by the tracker on every mouse move, avoiding the
+        /// O(n) nearest-point scan that would otherwise saturate the UI thread on large datasets.
+        /// This is a tracker-routing flag only: it does not affect rendering, does not trigger
+        /// <c>InvalidatePlot</c>, and does not fire <see cref="PropertyChanged"/>.
+        /// </remarks>
+        public bool IsHitTestEnabled
+        {
+            get => (bool)this.GetValue(IsHitTestEnabledProperty);
+            set => this.SetValue(IsHitTestEnabledProperty, value);
+        }
+
+        /// <summary>
         /// Gets or sets the edge rendering mode for the series. The default is <see cref="EdgeRenderingMode.Automatic"/>.
         /// </summary>
         /// <value>The edge rendering mode that controls anti-aliasing behavior.</value>
@@ -261,6 +295,28 @@ namespace OxyPlot.Wpf
             var series = (Series)d;
             if (series.SuppressPropertyChanged) return;
             series.OnDataChanged();
+        }
+
+        /// <summary>
+        /// Handles changes to the <see cref="IsHitTestEnabled"/> dependency property.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The event arguments containing property change information.</param>
+        /// <remarks>
+        /// Hit-test routing is neither a visual nor a data change, so this callback must NOT
+        /// trigger <c>InvalidatePlot</c> or fire <see cref="PropertyChanged"/>. Instead it
+        /// directly pushes the new value to <see cref="InternalSeries"/> so the tracker
+        /// (which reads from the internal model on every mouse move) picks up the change
+        /// without a render. The next call to <see cref="SynchronizeProperties"/> will reassert
+        /// the same value via the normal pathway; there is no race.
+        /// </remarks>
+        protected static void HitTestRoutingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var series = (Series)d;
+            if (series.InternalSeries != null)
+            {
+                series.InternalSeries.IsHitTestEnabled = (bool)e.NewValue;
+            }
         }
 
         /// <summary>
@@ -324,6 +380,7 @@ namespace OxyPlot.Wpf
             s.TrackerFormatString = this.TrackerFormatString;
             s.TrackerKey = this.TrackerKey;
             s.IsVisible = this.Visibility == Visibility.Visible;
+            s.IsHitTestEnabled = this.IsHitTestEnabled;
             s.Font = this.FontFamily?.ToString();
             s.FontSize = this.FontSize;
             s.FontWeight = this.FontWeight.ToOpenTypeWeight();

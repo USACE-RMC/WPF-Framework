@@ -23,6 +23,7 @@ namespace OxyPlot.Series
         protected Series()
         {
             this.IsVisible = true;
+            this.IsHitTestEnabled = true;
             this.Background = OxyColors.Undefined;
             this.RenderInLegend = true;
         }
@@ -37,6 +38,19 @@ namespace OxyPlot.Series
         /// Gets or sets a value indicating whether this series is visible. The default is <c>true</c>.
         /// </summary>
         public bool IsVisible { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this series participates in tracker hit-tests. The default is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Set to <c>false</c> for dense or decorative series where per-point hit-testing has no
+        /// diagnostic value (e.g. MCMC chain traces, overlay reference lines). When disabled,
+        /// <see cref="HitTestOverride"/> returns <c>null</c> immediately and
+        /// <see cref="PlotModel.GetSeriesFromPoint"/> skips the series, so the O(n) nearest-point
+        /// scan does not run on every mouse move for this series. This is a tracker-routing flag
+        /// only; it does not affect rendering and does not fire PropertyChanged.
+        /// </remarks>
+        public bool IsHitTestEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets the title of the series. The default is <c>null</c>.
@@ -153,6 +167,11 @@ namespace OxyPlot.Series
         /// </returns>
         protected override HitTestResult HitTestOverride(HitTestArguments args)
         {
+            if (!this.IsHitTestEnabled)
+            {
+                return null;
+            }
+
             var thr = this.GetNearestPoint(args.Point, true) ?? this.GetNearestPoint(args.Point, false);
 
             if (thr != null)
