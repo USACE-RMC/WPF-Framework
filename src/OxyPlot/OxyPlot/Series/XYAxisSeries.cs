@@ -314,27 +314,76 @@ namespace OxyPlot.Series
             double index = -1;
 
             double minimumDistance = double.MaxValue;
-            int i = startIdx;
-            foreach (var p in points.Skip(startIdx))
+
+            // Fast path for IList<DataPoint> (the common case: series points are stored in a List).
+            // Indexed access is both slightly faster than a LINQ iterator state machine and, more
+            // importantly, does not throw InvalidOperationException if the underlying collection
+            // is mutated on another thread during the scan.
+            //
+            // Concurrent mutation (still unsafe for List<T> in general, but documented as a rare
+            // real-world scenario in OxyPlot upstream issue #1482) is handled with two layers of
+            // defense: (1) re-read list.Count on every iteration so a shrink terminates the loop
+            // cleanly, and (2) catch ArgumentOutOfRangeException from the indexer for the narrow
+            // window between the bounds check and the element access. Both combined let the hit-
+            // test survive a race without bubbling an exception up to the controller.
+            //
+            // Fallback for arbitrary IEnumerable<DataPoint>: snapshot to an array once at entry.
+            // This avoids the thread-unsafe `foreach (var p in points.Skip(startIdx))` pattern that
+            // builds an enumerator over a potentially mutable source.
+            if (points is IList<DataPoint> list)
             {
-                if (!this.IsValidPoint(p))
+                for (int i = startIdx; i < list.Count; i++)
                 {
-                    i++;
-                    continue;
+                    DataPoint p;
+                    try
+                    {
+                        p = list[i];
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        // Concurrent mutation shrank the list under us. Stop cleanly.
+                        break;
+                    }
+
+                    if (!this.IsValidPoint(p))
+                    {
+                        continue;
+                    }
+
+                    var sp = this.Transform(p.x, p.y);
+                    double d2 = (sp - point).LengthSquared;
+
+                    if (d2 < minimumDistance)
+                    {
+                        dpn = p;
+                        spn = sp;
+                        minimumDistance = d2;
+                        index = i;
+                    }
                 }
-
-                var sp = this.Transform(p.x, p.y);
-                double d2 = (sp - point).LengthSquared;
-
-                if (d2 < minimumDistance)
+            }
+            else
+            {
+                var snapshot = points.Skip(startIdx).ToArray();
+                for (int k = 0; k < snapshot.Length; k++)
                 {
-                    dpn = p;
-                    spn = sp;
-                    minimumDistance = d2;
-                    index = i;
-                }
+                    var p = snapshot[k];
+                    if (!this.IsValidPoint(p))
+                    {
+                        continue;
+                    }
 
-                i++;
+                    var sp = this.Transform(p.x, p.y);
+                    double d2 = (sp - point).LengthSquared;
+
+                    if (d2 < minimumDistance)
+                    {
+                        dpn = p;
+                        spn = sp;
+                        minimumDistance = d2;
+                        index = startIdx + k;
+                    }
+                }
             }
 
             if (minimumDistance < double.MaxValue)
