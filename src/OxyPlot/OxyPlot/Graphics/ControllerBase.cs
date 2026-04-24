@@ -55,6 +55,20 @@ namespace OxyPlot
         protected IList<ManipulatorBase<OxyTouchEventArgs>> TouchManipulators { get; private set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether <see cref="MouseHoverManipulators"/> continue to run while
+        /// a mouse button is held (i.e., during pan / zoom-rectangle drag). The default is <c>false</c>.
+        /// </summary>
+        /// <remarks>
+        /// When <c>false</c> (the default), hover manipulators — most importantly the tracker — are skipped
+        /// on every <see cref="HandleMouseMove"/> while any <see cref="MouseDownManipulators"/> is active.
+        /// The tracker tooltip is not visible mid-drag anyway, and on large datasets its per-mouse-move
+        /// O(points) scan can saturate the UI thread and back up the pan/zoom render queue, producing
+        /// multi-second perceived lag. Suppressing hover during drag eliminates that cascade.
+        /// Set to <c>true</c> to restore the legacy behavior.
+        /// </remarks>
+        public bool EnableHoverDuringDrag { get; set; }
+
+        /// <summary>
         /// Handles the specified gesture.
         /// </summary>
         /// <param name="view">The plot view.</param>
@@ -168,9 +182,17 @@ namespace OxyPlot
                     m.Delta(args);
                 }
 
-                foreach (var m in this.MouseHoverManipulators)
+                // Skip hover (tracker) manipulators while any mouse-down manipulator is active
+                // (i.e., pan or zoom-rectangle drag is in progress). The tracker tooltip is not
+                // visible mid-drag anyway, and on large datasets its per-mouse-move O(n) scan
+                // saturates the UI thread and backs up the pan/zoom render queue. Consumers that
+                // need the legacy always-on behavior can opt in via EnableHoverDuringDrag.
+                if (this.EnableHoverDuringDrag || this.MouseDownManipulators.Count == 0)
                 {
-                    m.Delta(args);
+                    foreach (var m in this.MouseHoverManipulators)
+                    {
+                        m.Delta(args);
+                    }
                 }
 
                 return args.Handled;
