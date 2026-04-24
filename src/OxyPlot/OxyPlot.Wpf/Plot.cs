@@ -1123,6 +1123,21 @@ namespace OxyPlot.Wpf
                 return;
             }
 
+#if DEBUG
+            // Per-phase timing to locate the real bottleneck when the aggregate InvalidatePlot
+            // is slower than expected. Gated on the same flag as the outer diagnostic.
+            bool diagnose = InvalidatePlotDiagnosticsEnabled && InvalidatePlotPhaseDiagnosticsEnabled
+                            && this.ActualModel != null
+                            && (string.IsNullOrEmpty(InvalidatePlotDiagnosticsTitleFilter)
+                                || (this.ActualModel.Title ?? string.Empty).IndexOf(
+                                        InvalidatePlotDiagnosticsTitleFilter,
+                                        System.StringComparison.OrdinalIgnoreCase) >= 0);
+            long t0 = 0, tSync = 0, tBase = 0;
+            bool ranSync = false;
+            bool entryNeedsSync = this._needsSynchronization;
+            if (diagnose) t0 = System.Diagnostics.Stopwatch.GetTimestamp();
+#endif
+
             if (this._needsSynchronization || updateData)
             {
                 this.SynchronizeProperties();
@@ -1130,10 +1145,53 @@ namespace OxyPlot.Wpf
                 this.SynchronizeAxes();
                 this.SynchronizeAnnotations();
                 this._needsSynchronization = false;
+#if DEBUG
+                ranSync = true;
+#endif
             }
 
+#if DEBUG
+            if (diagnose) tSync = System.Diagnostics.Stopwatch.GetTimestamp();
+#endif
+
             base.InvalidatePlot(updateData);
+
+#if DEBUG
+            if (diagnose)
+            {
+                tBase = System.Diagnostics.Stopwatch.GetTimestamp();
+                double ticksPerMs = System.Diagnostics.Stopwatch.Frequency / 1000.0;
+                double syncMs = (tSync - t0) / ticksPerMs;
+                double baseMs = (tBase - tSync) / ticksPerMs;
+
+                // Render-complete measurement: ContextIdle fires after the dispatcher has drained
+                // the full render. Total includes the WPF composition cost.
+                var paintSw = System.Diagnostics.Stopwatch.StartNew();
+                long callId = System.Threading.Interlocked.Increment(ref _invalidatePhaseCallCounter);
+                string phaseTag = $"sync={(ranSync ? "Y" : "N")} entryNeedsSync={(entryNeedsSync ? "Y" : "N")} updateData={(updateData ? "T" : "F")}";
+                this.Dispatcher.BeginInvoke(
+                    new System.Action(() =>
+                    {
+                        paintSw.Stop();
+                        System.Diagnostics.Debug.WriteLine(
+                            $"[InvalidatePhase #{callId,6}] {phaseTag} syncMs={syncMs,6:F2} baseMs={baseMs,6:F2} paintMs={paintSw.ElapsedMilliseconds,5}");
+                    }),
+                    System.Windows.Threading.DispatcherPriority.ContextIdle);
+            }
+#endif
         }
+
+#if DEBUG
+        /// <summary>
+        /// When true and <see cref="OxyPlot.Wpf.PlotViewBase.InvalidatePlotDiagnosticsEnabled"/>
+        /// is also true, logs per-phase timing for every <see cref="InvalidatePlot"/> call:
+        /// synchronization cost, Model.Update + render-queue cost, and render-complete cost
+        /// (measured via a ContextIdle callback).
+        /// </summary>
+        public static bool InvalidatePlotPhaseDiagnosticsEnabled { get; set; }
+
+        private static long _invalidatePhaseCallCounter;
+#endif
 
         /// <summary>
         /// Called when visual appearance changes.
