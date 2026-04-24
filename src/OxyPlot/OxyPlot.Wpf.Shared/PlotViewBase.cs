@@ -192,6 +192,10 @@ namespace OxyPlot.Wpf
                 return;
             }
 
+#if DEBUG
+            DiagnoseInvalidatePlotCall(updateData);
+#endif
+
             lock (this.ActualModel.SyncRoot)
             {
                 ((IPlotModel)this.ActualModel).Update(updateData);
@@ -207,6 +211,74 @@ namespace OxyPlot.Wpf
                 }));
             }
         }
+
+#if DEBUG
+        /// <summary>
+        /// Set to <c>true</c> to enable per-call <see cref="InvalidatePlot"/> diagnostics
+        /// (caller chain + timing). Consumers flip this on just before reproducing a suspected
+        /// invalidation loop and off immediately after, to keep the log focused.
+        /// </summary>
+        /// <remarks>
+        /// Debug-only. Has no effect in Release builds.
+        /// </remarks>
+        public static bool InvalidatePlotDiagnosticsEnabled { get; set; }
+
+        /// <summary>
+        /// Restrict diagnostics output to plots whose <see cref="PlotModel.Title"/> contains this
+        /// substring (case-insensitive). Null or empty = log all plots. Use this to silence
+        /// unrelated plots when reproducing a loop against a single plot.
+        /// </summary>
+        public static string InvalidatePlotDiagnosticsTitleFilter { get; set; }
+
+        private static readonly System.Threading.ThreadLocal<long> _lastInvalidateTicks =
+            new System.Threading.ThreadLocal<long>(() => 0);
+
+        private static long _invalidateCallCounter;
+
+        private void DiagnoseInvalidatePlotCall(bool updateData)
+        {
+            if (!InvalidatePlotDiagnosticsEnabled) return;
+
+            var model = this.ActualModel;
+            if (model == null) return;
+
+            // Title filter so the log is focused on the plot under investigation.
+            var filter = InvalidatePlotDiagnosticsTitleFilter;
+            if (!string.IsNullOrEmpty(filter))
+            {
+                var title = model.Title ?? string.Empty;
+                if (title.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0) return;
+            }
+
+            long callId = System.Threading.Interlocked.Increment(ref _invalidateCallCounter);
+
+            // Per-thread inter-call timing. InvalidatePlot is UI-thread-only in practice, but we
+            // use ThreadLocal to be safe if any background-thread caller slips through.
+            long nowTicks = DateTime.UtcNow.Ticks;
+            long prevTicks = _lastInvalidateTicks.Value;
+            _lastInvalidateTicks.Value = nowTicks;
+            double dtMs = prevTicks == 0 ? -1 : (nowTicks - prevTicks) / 10_000.0;
+
+            // Capture up to 8 frames of the call stack, skipping this method and InvalidatePlot.
+            var stackTrace = new System.Diagnostics.StackTrace(skipFrames: 2, fNeedFileInfo: false);
+            var sb = new System.Text.StringBuilder(256);
+            int frameCount = System.Math.Min(stackTrace.FrameCount, 8);
+            for (int i = 0; i < frameCount; i++)
+            {
+                var frame = stackTrace.GetFrame(i);
+                var method = frame?.GetMethod();
+                if (method == null) continue;
+                var type = method.DeclaringType;
+                string typeName = type != null ? (type.Name ?? string.Empty) : "?";
+                if (i > 0) sb.Append(" <- ");
+                sb.Append(typeName).Append('.').Append(method.Name);
+            }
+
+            string titleForLog = model.Title ?? "(no title)";
+            System.Diagnostics.Debug.WriteLine(
+                $"[InvalidatePlot #{callId,6} title=\"{titleForLog}\" updateData={(updateData ? "T" : "F"),-1} dt={dtMs,7:F2}ms] {sb}");
+        }
+#endif
 
         /// <inheritdoc/>
         public override void OnApplyTemplate()

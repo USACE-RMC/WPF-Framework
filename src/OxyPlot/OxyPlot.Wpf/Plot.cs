@@ -1080,8 +1080,49 @@ namespace OxyPlot.Wpf
         /// Invalidates the plot and updates the model.
         /// </summary>
         /// <param name="updateData">Whether to update data.</param>
+        /// <remarks>
+        /// <para>
+        /// When <see cref="Series.SuppressPropertyChanged"/> is set on this plot, all invalidation
+        /// work is deferred. This gate catches not only the Plot's own direct InvalidatePlot calls
+        /// but also the cascading calls that flow back in from child Series. There are two common
+        /// cascades that previously bypassed suppression and produced the multi-second lag on
+        /// many-series plots (e.g. a 20-chain MCMC trace):
+        /// </para>
+        /// <list type="number">
+        /// <item>
+        /// <description>
+        /// <b>Logical-tree inherited-DP cascade:</b> adding a Series wrapper to <see cref="Series"/>
+        /// causes WPF to re-evaluate every inherited DependencyProperty (Visibility, Background,
+        /// FontFamily, FontSize, FontWeight, Foreground). Each change fires <c>AppearanceChanged</c>
+        /// on the wrapper, which calls back into Plot.InvalidatePlot. For N series × 6 inherited
+        /// DPs = 6N synchronous Model.Update calls during bulk Series.Add.
+        /// </description>
+        /// </item>
+        /// <item>
+        /// <description>
+        /// <b>ItemsSource-per-series cascade:</b> assigning ItemsSource on each wrapper fires
+        /// <c>OnItemsSourceChanged</c> → <c>OnDataChanged</c> → InvalidatePlot(true). For N series
+        /// assignments that's N full Model.Update(true) cycles.
+        /// </description>
+        /// </item>
+        /// </list>
+        /// <para>
+        /// The gate marks <c>_needsSynchronization = true</c> so the final explicit
+        /// <c>InvalidatePlot(true)</c> (issued after <see cref="Series.SuppressPropertyChanged"/>
+        /// is cleared) runs the full sync, but skips the ~120 redundant Update calls during the
+        /// bulk-update window. Consumers MUST pair <c>SuppressPropertyChanged=true</c> with an
+        /// explicit <c>InvalidatePlot(...)</c> after clearing — otherwise the plot state may be
+        /// inconsistent until the next user interaction.
+        /// </para>
+        /// </remarks>
         public override void InvalidatePlot(bool updateData = true)
         {
+            if (this.SuppressPropertyChanged)
+            {
+                this._needsSynchronization = true;
+                return;
+            }
+
             if (this._needsSynchronization || updateData)
             {
                 this.SynchronizeProperties();
