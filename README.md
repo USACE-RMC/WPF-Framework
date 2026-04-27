@@ -1,7 +1,7 @@
 # WPF Framework
 
 [![CI](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml/badge.svg)](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml)
-[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
+[![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 
 WPF Framework is a free and open-source .NET 10.0 application framework for building desktop project management applications, developed by the U.S. Army Corps of Engineers Risk Management Center ([USACE-RMC](https://www.rmc.usace.army.mil/)). It provides a complete application shell with docking layout, project explorer, theme switching, undo/redo, and specialized controls for charting, databases, expression parsing, and directed acyclic graphs.
 
@@ -150,7 +150,7 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ## License
 
-This project is licensed under a BSD-3-Clause license. See [LICENSE](LICENSE) for details.
+This project is licensed under the Zero-Clause BSD (0BSD) license — a permissive license with no attribution or notice requirements. See [LICENSE](LICENSE) for details.
 
 ## Authors
 

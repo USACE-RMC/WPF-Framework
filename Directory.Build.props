@@ -11,7 +11,6 @@
     <Authors>C. Haden Smith, Woodrow L. Fields, Julian Gonzalez</Authors>
     <Company>USACE-RMC</Company>
     <Product>WPF Framework</Product>
-    <Copyright>Copyright (c) 2026 U.S. Army Corps of Engineers, Risk Management Center</Copyright>
     <PackageProjectUrl>https://github.com/USACE-RMC/WPF-Framework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/USACE-RMC/WPF-Framework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -23,9 +22,8 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <DebugType>embedded</DebugType>
 
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>0BSD</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 
     <!--
       Treat XML-doc warnings as errors so missing or malformed documentation on public
@@ -42,7 +40,6 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsWpfFrameworkLibrary)' == 'true'">
-    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="\" Visible="false" />
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
 
     <!-- Reproducible builds: https://github.com/dotnet/reproducible-builds -->
