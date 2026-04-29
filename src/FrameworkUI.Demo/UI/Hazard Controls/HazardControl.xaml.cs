@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -390,7 +391,7 @@ namespace FrameworkUI.Demo.UI
 
                 if (Element.IsUncertain)
                 {
-                    ConfidenceInterval.Title = (Element.ConfidenceIntervalWidth * 100).ToString("F0") + "% Confidence Interval";
+                    ConfidenceInterval.Title = (Element.ConfidenceIntervalWidth * 100).ToString("F0", CultureInfo.CurrentCulture) + "% Confidence Interval";
                     Plot.Series.Add(ConfidenceInterval);
                     Plot.Series.Add(MeanLine);
                 }
@@ -438,8 +439,8 @@ namespace FrameworkUI.Demo.UI
         private void SetFrequencyCurveTableColumnHeaders()
         {
             double alpha = (1 - Element.ConfidenceIntervalWidth) / 2;
-            UpperColumn.Header = ((1 - alpha) * 100).ToString("F1") + "%-ile";
-            LowerColumn.Header = (alpha * 100).ToString("F1") + "%-ile";
+            UpperColumn.Header = ((1 - alpha) * 100).ToString("F1", CultureInfo.CurrentCulture) + "%-ile";
+            LowerColumn.Header = (alpha * 100).ToString("F1", CultureInfo.CurrentCulture) + "%-ile";
         }
 
         /// <summary>

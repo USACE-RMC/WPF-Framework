@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
         xmlns:local="clr-namespace:GenericControls.Demo"
         xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
         mc:Ignorable="d"
@@ -478,7 +479,7 @@
 
                             <TextBlock Text="Numeric Value:" FontSize="11" Opacity="0.7"
                                        Foreground="{DynamicResource EnvironmentWindowText}" Margin="0,0,0,5"/>
-                            <TextBlock Text="{Binding NumericProperty, StringFormat=N2}"
+                            <TextBlock Text="{Binding NumericProperty, StringFormat=N2, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}"
                                        FontSize="18" FontWeight="Bold"
                                        Foreground="{DynamicResource EnvironmentWindowText}" Margin="0,0,0,15"/>
 

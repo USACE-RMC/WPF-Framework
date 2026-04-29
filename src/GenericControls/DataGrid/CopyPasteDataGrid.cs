@@ -847,6 +847,18 @@ namespace GenericControls
                                             y.SetValue(Items[rowIndex + i], double.NaN, null);
                                         }
                                     }
+                                    else if (IsNumericType(y.PropertyType))
+                                    {
+                                        // Non-double numeric (int/long/decimal/etc): parse as double with
+                                        // dual-culture fallback first, then convert to the target type.
+                                        // Convert.ChangeType alone uses Thread.CurrentCulture and silently
+                                        // misparses cross-culture clipboard data ("1,234" US vs DE).
+                                        if (double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.CurrentCulture, out double parsed) ||
+                                            double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.InvariantCulture, out parsed))
+                                        {
+                                            y.SetValue(Items[rowIndex + i], Convert.ChangeType(parsed, y.PropertyType, CultureInfo.InvariantCulture), null);
+                                        }
+                                    }
                                     else
                                     {
                                         y.SetValue(Items[rowIndex + i], Convert.ChangeType(clipboardData[i][j], y.PropertyType), null);
@@ -952,6 +964,16 @@ namespace GenericControls
                                         else
                                         {
                                             y.SetValue(Items[rowIndex + i], double.NaN, null);
+                                        }
+                                    }
+                                    else if (IsNumericType(y.PropertyType))
+                                    {
+                                        // Non-double numeric (int/long/decimal/etc): parse as double with
+                                        // dual-culture fallback first, then convert to the target type.
+                                        if (double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.CurrentCulture, out double parsed) ||
+                                            double.TryParse(clipboardData[i][j], NumberStyles.Any, CultureInfo.InvariantCulture, out parsed))
+                                        {
+                                            y.SetValue(Items[rowIndex + i], Convert.ChangeType(parsed, y.PropertyType, CultureInfo.InvariantCulture), null);
                                         }
                                     }
                                     else

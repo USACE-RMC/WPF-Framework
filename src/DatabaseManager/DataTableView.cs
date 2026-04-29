@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 #if NET9_0_OR_GREATER
@@ -2743,6 +2744,21 @@ namespace DatabaseManager
             }
         }
 
+        // Try CurrentCulture first (matches how the user typed/pasted), fall back to
+        // InvariantCulture so cross-machine data (e.g., a US-format CSV pasted on a German
+        // machine) is still readable.
+        private static bool TryParseDoubleDualCulture(string text, out double result)
+        {
+            return double.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out result)
+                || double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
+        }
+
+        private static bool TryParseSingleDualCulture(string text, out float result)
+        {
+            return float.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out result)
+                || float.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
+        }
+
         /// <summary>
         /// Converts the input value to the specified type.
         /// </summary>
@@ -2767,7 +2783,7 @@ namespace DatabaseManager
                         if (value.GetType() != typeof(double))
                         {
                             double test;
-                            if (double.TryParse(value.ToString(), out test) == false)
+                            if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                             { 
                                 return false; 
                             }
@@ -2781,7 +2797,7 @@ namespace DatabaseManager
                         if (value.GetType() != typeof(float))
                         {
                             float test;
-                            if (float.TryParse(value.ToString(), out test) == false)
+                            if (TryParseSingleDualCulture(value.ToString(), out test) == false)
                             { 
                                 return false; 
                             }
@@ -2794,7 +2810,7 @@ namespace DatabaseManager
                     {
                         double test;
                         long test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         { 
                             return false; 
                         }
@@ -2813,7 +2829,7 @@ namespace DatabaseManager
                     {
                         double test;
                         ulong test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         { 
                             return false;
                         }
@@ -2832,7 +2848,7 @@ namespace DatabaseManager
                     {
                         double test;
                         int test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         { 
                             return false;
                         }
@@ -2851,7 +2867,7 @@ namespace DatabaseManager
                     {
                         double test;
                         uint test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         { 
                             return false; 
                         }
@@ -2870,7 +2886,7 @@ namespace DatabaseManager
                     {
                         double test;
                         short test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         {
                             return false; 
                         }
@@ -2889,7 +2905,7 @@ namespace DatabaseManager
                     {
                         double test;
                         ushort test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         { 
                             return false; 
                         }
@@ -2908,7 +2924,7 @@ namespace DatabaseManager
                     {
                         double test;
                         byte test2;
-                        if (double.TryParse(value.ToString(), out test) == false)
+                        if (TryParseDoubleDualCulture(value.ToString(), out test) == false)
                         { 
                             return false;
                         }

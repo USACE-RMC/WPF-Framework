@@ -1,14 +1,15 @@
 ﻿<UserControl x:Class="FrameworkUI.Demo.UI.HazardControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:FrameworkUI.Demo.UI"
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:oxyCntrls="clr-namespace:OxyPlotControls;assembly=OxyPlotControls"
              xmlns:dbCntrls="clr-namespace:DatabaseControls;assembly=DatabaseControls"
-             mc:Ignorable="d" 
+             xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
+             mc:Ignorable="d"
              MinWidth="100"
              MinHeight="100"
              d:DesignHeight="450" d:DesignWidth="800"
@@ -177,7 +178,7 @@
                                                HeaderStyle="{DynamicResource Left_ColumnHeaderStyle}"
                                                CellStyle="{DynamicResource Left_CellStyle}"/>
                                 <DataGridTextColumn x:Name="SystematicDataValueColumn" Header="User-Specified" IsReadOnly="True"  MinWidth="50" Width="0.5*"
-                                               Binding="{Binding Path=Value, StringFormat={}{0:#,##0.####}, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource NAConverter}}" 
+                                               Binding="{Binding Path=Value, StringFormat={}{0:#,##0.####}, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource NAConverter}, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}"
                                                HeaderStyle="{DynamicResource Center_ColumnHeaderStyle}"
                                                CellStyle="{DynamicResource Right_CellStyle}"/>
                             </cntrls:CopyPasteDataGrid.Columns>

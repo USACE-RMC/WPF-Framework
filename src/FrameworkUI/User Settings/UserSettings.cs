@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 
@@ -267,13 +268,13 @@ namespace FrameworkUI
                         else if (elementName == nameof(MaxWindowMenuItems))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int maxItems))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int maxItems))
                                 MaxWindowMenuItems = maxItems;
                         }
                         else if (elementName == nameof(MaxRecentFileItems))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int maxRecent))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int maxRecent))
                                 MaxRecentFileItems = maxRecent;
                         }
                         else if (elementName == nameof(ShowUndoRedoButtons))
@@ -298,7 +299,7 @@ namespace FrameworkUI
                         else if (elementName == nameof(AutoRecoverInterval))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int interval))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int interval))
                                 AutoRecoverInterval = Math.Max(1, interval);
                         }
                         else if (elementName == nameof(KeepLastBackupVersion))
@@ -341,25 +342,25 @@ namespace FrameworkUI
                         else if (elementName == nameof(ErrorColor))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int argb))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argb))
                                 ErrorColor = UtilityFunctions.IntegerToColor(ref argb);
                         }
                         else if (elementName == nameof(WarningColor))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int argb))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argb))
                                 WarningColor = UtilityFunctions.IntegerToColor(ref argb);
                         }
                         else if (elementName == nameof(MessageColor))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int argb))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argb))
                                 MessageColor = UtilityFunctions.IntegerToColor(ref argb);
                         }
                         else if (elementName == nameof(EventColor))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int argb))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argb))
                                 EventColor = UtilityFunctions.IntegerToColor(ref argb);
                         }
                         // Defaults
@@ -370,7 +371,7 @@ namespace FrameworkUI
                         else if (elementName == nameof(DefaultValueDigits))
                         {
                             innerXml = xmlReader.ReadInnerXml();
-                            if (int.TryParse(innerXml, out int digits))
+                            if (int.TryParse(innerXml, NumberStyles.Integer, CultureInfo.InvariantCulture, out int digits))
                                 DefaultValueDigits = digits;
                         }
                     }
@@ -427,11 +428,11 @@ namespace FrameworkUI
                 xmlWriter.WriteEndElement();
                 // 
                 xmlWriter.WriteStartElement(nameof(MaxWindowMenuItems));
-                xmlWriter.WriteString(MaxWindowMenuItems.ToString());
+                xmlWriter.WriteString(MaxWindowMenuItems.ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
-                // 
+                //
                 xmlWriter.WriteStartElement(nameof(MaxRecentFileItems));
-                xmlWriter.WriteString(MaxRecentFileItems.ToString());
+                xmlWriter.WriteString(MaxRecentFileItems.ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 //
                 xmlWriter.WriteStartElement(nameof(ShowUndoRedoButtons));
@@ -449,7 +450,7 @@ namespace FrameworkUI
                 xmlWriter.WriteEndElement();
                 // 
                 xmlWriter.WriteStartElement(nameof(AutoRecoverInterval));
-                xmlWriter.WriteString(AutoRecoverInterval.ToString());
+                xmlWriter.WriteString(AutoRecoverInterval.ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 // 
                 xmlWriter.WriteStartElement(nameof(KeepLastBackupVersion));
@@ -479,19 +480,19 @@ namespace FrameworkUI
                 xmlWriter.WriteEndElement();
                 // 
                 xmlWriter.WriteStartElement(nameof(ErrorColor));
-                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(ErrorColor).ToString());
+                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(ErrorColor).ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 //
                 xmlWriter.WriteStartElement(nameof(WarningColor));
-                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(WarningColor).ToString());
+                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(WarningColor).ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 //
                 xmlWriter.WriteStartElement(nameof(MessageColor));
-                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(MessageColor).ToString());
+                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(MessageColor).ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 //
                 xmlWriter.WriteStartElement(nameof(EventColor));
-                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(EventColor).ToString());
+                xmlWriter.WriteString(UtilityFunctions.ColorToInteger(EventColor).ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 // 
                 // Defaults
@@ -501,7 +502,7 @@ namespace FrameworkUI
                 xmlWriter.WriteEndElement();
                 // 
                 xmlWriter.WriteStartElement(nameof(DefaultValueDigits));
-                xmlWriter.WriteString(DefaultValueDigits.ToString());
+                xmlWriter.WriteString(DefaultValueDigits.ToString(CultureInfo.InvariantCulture));
                 xmlWriter.WriteEndElement();
                 // 
                 // The end of settings.

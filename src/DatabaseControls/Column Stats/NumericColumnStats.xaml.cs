@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -427,7 +428,7 @@ namespace DatabaseControls
 
                 if (update)
                 {
-                    object[] formattedBreaks = breaks.Select(b => (object)b.ToString("F15")).ToArray();
+                    object[] formattedBreaks = breaks.Select(b => (object)b.ToString("F15", CultureInfo.InvariantCulture)).ToArray();
                     BreaksTable.DataView.EditColumn(0, formattedBreaks);
                 }
 
@@ -572,9 +573,9 @@ namespace DatabaseControls
                 };
 
                 // Format Count (index 0) as integer, all others as F15
-                columnStrings[0] = ((int)columnData[0]).ToString();
+                columnStrings[0] = ((int)columnData[0]).ToString(CultureInfo.InvariantCulture);
                 for (int i = 1; i < columnData.Length; i++)
-                    columnStrings[i] = double.IsNaN(columnData[i]) ? "" : columnData[i].ToString("F15");
+                    columnStrings[i] = double.IsNaN(columnData[i]) ? "" : columnData[i].ToString("F15", CultureInfo.InvariantCulture);
 
                 if (_sortedData.Length != Data.Length)
                 {
@@ -767,7 +768,7 @@ namespace DatabaseControls
             for (int i = 0; i < ranges.Count; i++)
             {
                 // Set breaks table
-                breaksDataTable.Rows.Add(ranges[i].Item2.ToString("F15"), rangeCounts[i]);
+                breaksDataTable.Rows.Add(ranges[i].Item2.ToString("F15", CultureInfo.InvariantCulture), rangeCounts[i]);
 
                 if (ranges[i].Item2 == ranges[i].Item1)
                 {

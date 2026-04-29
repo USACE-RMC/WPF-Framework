@@ -7,7 +7,8 @@
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" 
+             xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
+             mc:Ignorable="d"
              d:DesignHeight="382" d:DesignWidth="300" MinWidth="200">
     <UserControl.Resources>
         <cntrls:BooleanToVisibilityConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed"/>
@@ -419,7 +420,7 @@
                 <cntrls:CopyPasteDataGrid.Columns>
                     <DataGridTextColumn x:Name="NameColumn" IsReadOnly="True" Width="140" Binding="{Binding Path=DisplayName}" 
                                         CellStyle="{StaticResource ReadOnlyTextBackgroundCellStyle}"/>
-                    <DataGridTextColumn x:Name="ValueColumn" IsReadOnly="False" Width="*" Binding="{Binding Path=Value, StringFormat={}{0:0.####}}"
+                    <DataGridTextColumn x:Name="ValueColumn" IsReadOnly="False" Width="*" Binding="{Binding Path=Value, StringFormat={}{0:0.####}, ConverterCulture={x:Static glob:CultureInfo.CurrentCulture}}"
                                         CellStyle="{StaticResource ParameterValueCellStyle}"
                                         EditingElementStyle="{StaticResource DataGridEditingTextBoxStyle}"/>
                 </cntrls:CopyPasteDataGrid.Columns>

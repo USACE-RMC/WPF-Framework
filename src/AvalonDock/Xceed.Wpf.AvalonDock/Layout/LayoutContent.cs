@@ -742,11 +742,11 @@ namespace Xceed.Wpf.AvalonDock.Layout
       if( reader.MoveToAttribute( "PreviousContainerId" ) )
         PreviousContainerId = reader.Value;
       if( reader.MoveToAttribute( "PreviousContainerIndex" ) )
-        PreviousContainerIndex = int.Parse( reader.Value );
+        PreviousContainerIndex = int.Parse( reader.Value, CultureInfo.InvariantCulture );
       if( reader.MoveToAttribute( "InitialContainerId" ) )
         InitialContainerId = reader.Value;
       if( reader.MoveToAttribute( "InitialContainerIndex" ) )
-        InitialContainerIndex = int.Parse( reader.Value );
+        InitialContainerIndex = int.Parse( reader.Value, CultureInfo.InvariantCulture );
 
       if( reader.MoveToAttribute( "FloatingLeft" ) )
         FloatingLeft = double.Parse( reader.Value, CultureInfo.InvariantCulture );
@@ -819,7 +819,7 @@ namespace Xceed.Wpf.AvalonDock.Layout
         if( paneSerializable != null )
         {
           writer.WriteAttributeString( "PreviousContainerId", paneSerializable.Id );
-          writer.WriteAttributeString( "PreviousContainerIndex", _previousContainerIndex.ToString() );
+          writer.WriteAttributeString( "PreviousContainerIndex", _previousContainerIndex.ToString( CultureInfo.InvariantCulture ) );
         }
       }
       if( _initialContainer != null )
@@ -828,7 +828,7 @@ namespace Xceed.Wpf.AvalonDock.Layout
         if( paneSerializable != null )
         {
           writer.WriteAttributeString( "InitialContainerId", paneSerializable.Id );
-          writer.WriteAttributeString( "InitialContainerIndex", _initialContainerIndex.ToString() );
+          writer.WriteAttributeString( "InitialContainerIndex", _initialContainerIndex.ToString( CultureInfo.InvariantCulture ) );
         }
       }
 

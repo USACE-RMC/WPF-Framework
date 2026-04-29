@@ -1,4 +1,5 @@
 ﻿using Numerics.Distributions;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -138,7 +139,7 @@ namespace NumericControls.Distributions.Univariate
                     {
                         sb.Append(shortNames[i]);
                         sb.Append("=");
-                        sb.Append(string.Format("{0:0.#####}", paramVals[i]));
+                        sb.Append(string.Format(CultureInfo.CurrentCulture, "{0:0.#####}", paramVals[i]));
                         if (i != shortNames.Count() - 1)
                             sb.Append(", ");
                     }

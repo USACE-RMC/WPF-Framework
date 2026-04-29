@@ -553,7 +553,7 @@ namespace OxyPlotControls
             if (_ignoreMaxMinChange) return;
 
             double newNumber;
-            if (!double.TryParse(newValue.ToString(), out newNumber))
+            if (!double.TryParse(newValue.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out newNumber))
             {
                 if (newValue.GetType() != typeof(double)) return;
                 newNumber = (double)newValue;
@@ -581,7 +581,7 @@ namespace OxyPlotControls
             if (_ignoreMaxMinChange) return;
 
             double newNumber;
-            if (!double.TryParse(newValue.ToString(), out newNumber))
+            if (!double.TryParse(newValue.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out newNumber))
             {
                 if (newValue.GetType() != typeof(double)) return;
                 newNumber = (double)newValue;
@@ -649,10 +649,10 @@ namespace OxyPlotControls
             if (_isSyncingFromStringFormat) return;
             if (e.PropertyName == nameof(GenericControls.NumericAutoPropertyControl.Number))
             {
-                if (DecimalPlaces.Number.ToString() == "NaN")
+                if (double.IsNaN(DecimalPlaces.Number))
                     _stringFormatDecimals = "";
                 else
-                    _stringFormatDecimals = DecimalPlaces.Number.ToString();
+                    _stringFormatDecimals = ((int)DecimalPlaces.Number).ToString(CultureInfo.InvariantCulture);
 
                 Axis.StringFormat = _stringFormatCategory + _stringFormatDecimals;
             }
@@ -668,7 +668,7 @@ namespace OxyPlotControls
         private void DecimalPlaces_PreviewNumberChanged(object oldValue, object newValue, ref bool cancel)
         {
             double newNumber;
-            if (!double.TryParse(newValue.ToString(), out newNumber))
+            if (!double.TryParse(newValue.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out newNumber))
             {
                 if (newValue.GetType() != typeof(double)) return;
                 newNumber = (double)newValue;
@@ -748,7 +748,7 @@ namespace OxyPlotControls
                 if (Axis.StringFormat != null && Axis.StringFormat.Length > 1)
                 {
                     stringFormatDecimal = Axis.StringFormat.Substring(1);
-                    if (double.TryParse(stringFormatDecimal, out double decimals))
+                    if (double.TryParse(stringFormatDecimal, NumberStyles.Integer, CultureInfo.InvariantCulture, out double decimals))
                     {
                         DecimalPlaces.Number = decimals;
                     }
@@ -778,9 +778,9 @@ namespace OxyPlotControls
         public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
         {
             double startPosition;
-            double.TryParse(values[0]?.ToString(), out startPosition);
+            double.TryParse(values[0]?.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out startPosition);
             double endPosition;
-            double.TryParse(values[1]?.ToString(), out endPosition);
+            double.TryParse(values[1]?.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out endPosition);
 
             if (values[2] == null)
             {

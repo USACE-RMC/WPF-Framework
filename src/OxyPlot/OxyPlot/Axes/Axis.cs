@@ -11,6 +11,7 @@ namespace OxyPlot.Axes
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using OxyPlot.Series;
     using OxyPlot.Utilities;
@@ -1885,7 +1886,7 @@ namespace OxyPlot.Axes
 
             // Function to remove 'double precision noise'
             // TODO: can this be improved
-            Func<double, double> removeNoise = x => double.Parse(x.ToString("e14"));
+            Func<double, double> removeNoise = x => double.Parse(x.ToString("e14", CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
 
             // decrease interval until interval count becomes less than maxIntervalCount
             while (true)

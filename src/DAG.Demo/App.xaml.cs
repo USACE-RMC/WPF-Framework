@@ -1,5 +1,3 @@
-using System;
-using System.Configuration;
 using System.Windows;
 
 namespace DAG.Demo
@@ -9,5 +7,15 @@ namespace DAG.Demo
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            // Set WPF to use the current culture for all bindings (international number support)
+            // This ensures StringFormat in XAML bindings uses the user's locale settings
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(
+                        System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag)));
+        }
     }
 }

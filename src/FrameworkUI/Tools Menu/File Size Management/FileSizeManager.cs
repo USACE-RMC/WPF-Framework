@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Threading;
 using FrameworkInterfaces;
@@ -344,7 +345,7 @@ namespace FrameworkUI
                     unit = "bytes";
                 }
 
-                return value.ToString("N2") + " " + unit;
+                return value.ToString("N2", CultureInfo.CurrentCulture) + " " + unit;
             }
             catch (Exception ex)
             {

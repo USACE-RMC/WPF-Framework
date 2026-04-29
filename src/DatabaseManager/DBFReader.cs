@@ -1778,7 +1778,7 @@ namespace DatabaseManager
                         for (int i = 0; i < nRecords; i++)
                         {
                             recordBytes = _parentDbfReader.DbReader.ReadBytes(recordLen);
-                            asciiBytes = System.Text.Encoding.ASCII.GetBytes(columnData[i].ToString("0.00000000000e+000").PadRight(fieldLength, ' '));
+                            asciiBytes = System.Text.Encoding.ASCII.GetBytes(columnData[i].ToString("0.00000000000e+000", CultureInfo.InvariantCulture).PadRight(fieldLength, ' '));
                             writeBwDbf.Write(recordBytes);
                             writeBwDbf.Write(asciiBytes);
                         }
@@ -1888,7 +1888,7 @@ namespace DatabaseManager
                         for (int i = 0; i < nRecords; i++)
                         {
                             recordBytes = _parentDbfReader.DbReader.ReadBytes(recordLen);
-                            asciiBytes = System.Text.Encoding.ASCII.GetBytes(columnData[i].ToString("0.00000000000e+000").PadRight(fieldLength, ' '));
+                            asciiBytes = System.Text.Encoding.ASCII.GetBytes(columnData[i].ToString("0.00000000000e+000", CultureInfo.InvariantCulture).PadRight(fieldLength, ' '));
                             writeBwDbf.Write(recordBytes);
                             writeBwDbf.Write(asciiBytes);
                         }
@@ -3712,12 +3712,12 @@ namespace DatabaseManager
                                     }
                                 case var case14 when case14 == typeof(float[]):
                                     {
-                                        cellText = ((float[])recordData[column])[i].ToString("0.00000000000e+000");
+                                        cellText = ((float[])recordData[column])[i].ToString("0.00000000000e+000", CultureInfo.InvariantCulture);
                                         break;
                                     }
                                 case var case15 when case15 == typeof(double[]):
                                     {
-                                        cellText = ((double[])recordData[column])[i].ToString("0.00000000000e+000");
+                                        cellText = ((double[])recordData[column])[i].ToString("0.00000000000e+000", CultureInfo.InvariantCulture);
                                         break;
                                     }
                                 case var case16 when case16 == typeof(bool[]):
@@ -3933,7 +3933,7 @@ namespace DatabaseManager
                             else if (row[c] is double || row[c] is float)
                             {
                                 // col is floating point (single or double)
-                                cellText = Convert.ToDouble(row[c]).ToString("0.00000000000e+000");
+                                cellText = Convert.ToDouble(row[c]).ToString("0.00000000000e+000", CultureInfo.InvariantCulture);
                             }
                             else if (row[c] is int)
                             {

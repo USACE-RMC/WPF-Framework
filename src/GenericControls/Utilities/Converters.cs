@@ -1631,15 +1631,15 @@ namespace GenericControls
             if (value.GetType() != typeof(string))
                 return "N/A";
             string val = (string)value;
-            // 
+            //
             double doubleVal;
-            if (!double.TryParse(val, out doubleVal))
+            if (!double.TryParse(val, NumberStyles.Any, culture, out doubleVal))
                 return "N/A";
             if (double.IsNaN(doubleVal))
                 return "N/A";
             if (double.IsInfinity(doubleVal))
                 return "N/A";
-            // 
+            //
             return val;
         }
 

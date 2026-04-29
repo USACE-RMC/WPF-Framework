@@ -8,6 +8,17 @@ namespace ExpressionParserControls.Demo
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            // Set WPF to use the current culture for all bindings (international number support)
+            // This ensures StringFormat in XAML bindings uses the user's locale settings
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(
+                        System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag)));
+        }
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             ThemeService.Instance.Initialize(Theme.Light);
