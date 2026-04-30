@@ -81,13 +81,25 @@ namespace OxyPlot.Wpf
         /// <param name="e">A <see cref="T:System.Windows.Input.MouseWheelEventArgs" /> that contains the event data.</param>
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
-            base.OnMouseWheel(e);
-            if (e.Handled || !this.IsMouseWheelEnabled)
+#if DEBUG
+            // Open a new wheel-event scope at the very top of the WPF event handler. Every traced
+            // method below this point logs against this wheel sequence number and timestamp,
+            // producing a single coherent block per wheel tick.
+            OxyPlot.PlotDiagnostics.BeginWheel();
+            using (OxyPlot.PlotDiagnostics.Trace("PlotViewBase.OnMouseWheel",
+                $"delta={e.Delta}"))
             {
-                return;
-            }
+#endif
+                base.OnMouseWheel(e);
+                if (e.Handled || !this.IsMouseWheelEnabled)
+                {
+                    return;
+                }
 
-            e.Handled = this.ActualController.HandleMouseWheel(this, e.ToMouseWheelEventArgs(this));
+                e.Handled = this.ActualController.HandleMouseWheel(this, e.ToMouseWheelEventArgs(this));
+#if DEBUG
+            }
+#endif
         }
 
         /// <summary>

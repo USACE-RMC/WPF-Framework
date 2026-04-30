@@ -80,37 +80,87 @@ namespace OxyPlot
                         l.EnsureLegendProperties();
                     }
 
-                    for (var i = 0; i < 10; i++) // make we sure we don't loop infinitely
+#if DEBUG
+                    int marginIters = 0;
+                    using (PlotDiagnostics.Trace("PlotModel.Render.PlotAreaLayout"))
+#endif
                     {
-                        this.UpdatePlotArea(rc);
-                        this.UpdateAxisTransforms();
-                        this.UpdateIntervals();
-
-                        if (!this.AdjustPlotMargins(rc))
+                        for (var i = 0; i < 10; i++) // make we sure we don't loop infinitely
                         {
-                            break;
+                            this.UpdatePlotArea(rc);
+                            this.UpdateAxisTransforms();
+                            this.UpdateIntervals();
+
+                            if (!this.AdjustPlotMargins(rc))
+                            {
+                                break;
+                            }
+#if DEBUG
+                            marginIters++;
+#endif
                         }
+#if DEBUG
+                        if (PlotDiagnostics.IsActive)
+                        {
+                            PlotDiagnostics.Log($"PlotModel.Render.PlotAreaLayout marginIters={marginIters + 1}");
+                        }
+#endif
                     }
 
                     if (this.PlotType == PlotType.Cartesian)
                     {
-                        this.EnforceCartesianTransforms();
-                        this.UpdateIntervals();
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Render.EnforceCartesian"))
+#endif
+                        {
+                            this.EnforceCartesianTransforms();
+                            this.UpdateIntervals();
+                        }
                     }
 
-                    this.RenderBackgrounds(rc);
-                    this.RenderAnnotations(rc, AnnotationLayer.BelowAxes);
-                    this.RenderAxes(rc, AxisLayer.BelowSeries);
-                    this.RenderAnnotations(rc, AnnotationLayer.BelowSeries);
-                    this.RenderSeries(rc);
-                    this.RenderAnnotations(rc, AnnotationLayer.AboveSeries);
-                    this.RenderTitle(rc);
-                    this.RenderBox(rc);
-                    this.RenderAxes(rc, AxisLayer.AboveSeries);
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Backgrounds"))
+#endif
+                    { this.RenderBackgrounds(rc); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Annotations(BelowAxes)"))
+#endif
+                    { this.RenderAnnotations(rc, AnnotationLayer.BelowAxes); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Axes(BelowSeries)"))
+#endif
+                    { this.RenderAxes(rc, AxisLayer.BelowSeries); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Annotations(BelowSeries)"))
+#endif
+                    { this.RenderAnnotations(rc, AnnotationLayer.BelowSeries); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Series", $"count={this.Series.Count}"))
+#endif
+                    { this.RenderSeries(rc); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Annotations(AboveSeries)"))
+#endif
+                    { this.RenderAnnotations(rc, AnnotationLayer.AboveSeries); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Title"))
+#endif
+                    { this.RenderTitle(rc); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Box"))
+#endif
+                    { this.RenderBox(rc); }
+#if DEBUG
+                    using (PlotDiagnostics.Trace("PlotModel.Render.Axes(AboveSeries)"))
+#endif
+                    { this.RenderAxes(rc, AxisLayer.AboveSeries); }
 
                     if (this.IsLegendVisible)
                     {
-                        this.RenderLegends(rc);
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Render.Legends"))
+#endif
+                        { this.RenderLegends(rc); }
                     }
 
                     if (rc.ClipCount != initialClipCount + 1)

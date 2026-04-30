@@ -799,54 +799,95 @@ namespace OxyPlot
         /// <param name="updateData">if set to <c>true</c> , all data collections will be updated.</param>
         void IPlotModel.Update(bool updateData)
         {
-            lock (this.SyncRoot)
+#if DEBUG
+            using (PlotDiagnostics.Trace("PlotModel.Update", $"updateData={updateData} series={this.Series.Count} axes={this.Axes.Count}"))
+#endif
             {
-                try
+                lock (this.SyncRoot)
                 {
-                    this.lastPlotException = null;
-                    this.OnUpdating();
-
-                    // Updates the default axes
-                    this.EnsureDefaultAxes();
-
-                    // Update data of the series
-                    if (updateData || !this.isDataUpdated)
+                    try
                     {
-                        foreach (var s in this.Series)
+                        this.lastPlotException = null;
+                        this.OnUpdating();
+
+                        // Updates the default axes
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Update.EnsureDefaultAxes"))
+#endif
                         {
-                            if (s.IsVisible)
+                            this.EnsureDefaultAxes();
+                        }
+
+                        // Update data of the series
+                        if (updateData || !this.isDataUpdated)
+                        {
+#if DEBUG
+                            using (PlotDiagnostics.Trace("PlotModel.Update.SeriesUpdateData"))
+#endif
                             {
-                                s.UpdateData();
+                                foreach (var s in this.Series)
+                                {
+                                    if (s.IsVisible)
+                                    {
+                                        s.UpdateData();
+                                    }
+                                }
+                            }
+
+                            this.isDataUpdated = true;
+                        }
+
+                        // Updates bar series managers and associated category axes
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Update.UpdateBarSeriesManagers"))
+#endif
+                        {
+                            this.UpdateBarSeriesManagers();
+                        }
+
+                        // Update the max and min of the axes
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Update.UpdateMaxMin"))
+#endif
+                        {
+                            this.UpdateMaxMin(updateData);
+                        }
+
+                        // Update category axes that are not managed by bar series managers
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Update.UpdateUnmanagedCategoryAxes"))
+#endif
+                        {
+                            this.UpdateUnmanagedCategoryAxes();
+                        }
+
+                        // Update undefined colors
+#if DEBUG
+                        using (PlotDiagnostics.Trace("PlotModel.Update.ResetDefaultColor+SetDefaultValues"))
+#endif
+                        {
+                            this.ResetDefaultColor();
+                            foreach (var s in this.Series)
+                            {
+                                if (this.AssignColorsToInvisibleSeries || s.IsVisible)
+                                {
+                                    s.SetDefaultValues();
+                                }
                             }
                         }
 
-                        this.isDataUpdated = true;
-                    }
-
-                    // Updates bar series managers and associated category axes
-                    this.UpdateBarSeriesManagers();
-
-                    // Update the max and min of the axes
-                    this.UpdateMaxMin(updateData);
-
-                    // Update category axes that are not managed by bar series managers
-                    this.UpdateUnmanagedCategoryAxes();
-
-                    // Update undefined colors
-                    this.ResetDefaultColor();
-                    foreach (var s in this.Series)
-                    {
-                        if (this.AssignColorsToInvisibleSeries || s.IsVisible)
+#if DEBUG
+                        int updatedSubs = this.Updated?.GetInvocationList().Length ?? 0;
+                        using (PlotDiagnostics.Trace("PlotModel.Update.OnUpdated", $"subs={updatedSubs}"))
+#endif
                         {
-                            s.SetDefaultValues();
+                            this.OnUpdated();
                         }
                     }
-
-                    this.OnUpdated();
-                }
-                catch (Exception e)
-                {
-                    this.lastPlotException = e;
+                    catch (Exception e)
+                    {
+                        this.lastPlotException = e;
+                    }
                 }
             }
         }

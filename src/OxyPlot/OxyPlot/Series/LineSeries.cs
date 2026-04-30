@@ -336,20 +336,26 @@ namespace OxyPlot.Series
                 return;
             }
 
-            this.VerifyAxes();
-
-            this.RenderPoints(rc, actualPoints);
-
-            if (this.LabelFormatString != null)
+#if DEBUG
+            using (PlotDiagnostics.Trace("LineSeries.Render",
+                $"title=\"{this.Title ?? "(no title)"}\" pts={actualPoints.Count}"))
+#endif
             {
-                // render point labels (not optimized for performance)
-                this.RenderPointLabels(rc);
-            }
+                this.VerifyAxes();
 
-            if (this.LineLegendPosition != LineLegendPosition.None && !string.IsNullOrEmpty(this.Title))
-            {
-                // renders a legend on the line
-                this.RenderLegendOnLine(rc);
+                this.RenderPoints(rc, actualPoints);
+
+                if (this.LabelFormatString != null)
+                {
+                    // render point labels (not optimized for performance)
+                    this.RenderPointLabels(rc);
+                }
+
+                if (this.LineLegendPosition != LineLegendPosition.None && !string.IsNullOrEmpty(this.Title))
+                {
+                    // renders a legend on the line
+                    this.RenderLegendOnLine(rc);
+                }
             }
         }
 
@@ -473,6 +479,16 @@ namespace OxyPlot.Series
                 && !(this.YAxis is NormalProbabilityAxis);
 
             this.decimationActive = useFused || this.Decimator != null;
+
+#if DEBUG
+            if (PlotDiagnostics.IsActive)
+            {
+                PlotDiagnostics.Log(
+                    $"LineSeries.RenderPoints title=\"{this.Title ?? "(no title)"}\" useFused={useFused} " +
+                    $"isXMonotonic={this.IsXMonotonic} decimator={(this.Decimator == OxyPlot.Decimator.Decimate ? "std" : (this.Decimator == null ? "none" : "custom"))} " +
+                    $"rendersToScreen={rc.RendersToScreen} startIdx={startIdx} pts={points.Count}");
+            }
+#endif
 
             if (useFused)
             {

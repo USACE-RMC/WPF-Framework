@@ -208,12 +208,45 @@ namespace OxyPlot.Wpf
             this.clipPushed = false;
         }
 
-        /// <inheritdoc/>
         /// <summary>
         /// Maximum number of vertices per StreamGeometry tile.
-        /// Keeps WPF's stroke tessellation within L2 cache for better performance.
         /// </summary>
-        private const int StreamGeometryTileSize = 1024;
+        /// <remarks>
+        /// Earlier versions split at 1024 to "keep stroke tessellation within L2 cache." In
+        /// practice, 20-LineSeries plots with a fused decimator output ~1000–4000 points each
+        /// and the per-tile <c>StreamGeometry</c> + <c>DrawGeometry</c> overhead was the dominant
+        /// per-series cost. With <see cref="StreamGeometryContext.PolyLineTo"/> (bulk
+        /// native-side append) replacing the <c>LineTo</c> loop, large geometries are cheap and
+        /// further splitting hurts more than it helps. The tile size is now large enough that a
+        /// typical fused-decimated chain renders as a single geometry. Pathological inputs
+        /// (>16k screen-space points per series) still fall back to tiling for safety.
+        /// </remarks>
+        private const int StreamGeometryTileSize = 16384;
+
+        /// <summary>
+        /// Reusable buffer for <see cref="StreamGeometryContext.PolyLineTo"/> calls. Avoids
+        /// allocating a fresh <see cref="Point"/>[] per series per render. Grown as needed and
+        /// reused across all <c>DrawLine</c>/<c>DrawLineSegments</c> calls within and across
+        /// frames. Per-render-context (one context per plot) so no concurrency concerns.
+        /// </summary>
+        private Point[] polyPointBuffer = new Point[2048];
+
+        /// <summary>
+        /// Ensures <see cref="polyPointBuffer"/> has at least <paramref name="capacity"/> slots.
+        /// </summary>
+        private void EnsurePolyBuffer(int capacity)
+        {
+            if (this.polyPointBuffer.Length < capacity)
+            {
+                int newSize = this.polyPointBuffer.Length;
+                while (newSize < capacity)
+                {
+                    newSize *= 2;
+                }
+
+                this.polyPointBuffer = new Point[newSize];
+            }
+        }
 
         /// <inheritdoc/>
         public override void DrawLine(
@@ -241,7 +274,9 @@ namespace OxyPlot.Wpf
             int n = points.Count;
             if (n > StreamGeometryTileSize)
             {
-                // Split into overlapping tiles for better WPF tessellation performance.
+                // Pathological case: extremely long polylines fall back to tiled rendering for
+                // safety. With StreamGeometryTileSize = 16384, only inputs above that size hit
+                // this path. Most fused-decimated series never do.
                 int start = 0;
                 while (start < n - 1)
                 {
@@ -259,16 +294,38 @@ namespace OxyPlot.Wpf
         /// <summary>
         /// Draws a line segment range as a single StreamGeometry.
         /// </summary>
+        /// <remarks>
+        /// Uses <see cref="StreamGeometryContext.PolyLineTo(IList{Point}, bool, bool)"/> for the
+        /// bulk of the points instead of a per-point <see cref="StreamGeometryContext.LineTo"/>
+        /// loop. <c>PolyLineTo</c> hands the entire vertex array to the native MIL layer in one
+        /// call, eliminating the managed-call overhead that dominates for large polylines.
+        /// Reuses <see cref="polyPointBuffer"/> across calls to avoid per-render allocations.
+        /// </remarks>
         private void DrawLineRange(IList<ScreenPoint> points, int from, int to, Pen pen, double actualThickness, bool snap)
         {
+            int count = to - from;
+            if (count < 2)
+            {
+                return;
+            }
+
+            this.EnsurePolyBuffer(count);
+            var buf = this.polyPointBuffer;
+            for (int i = 0; i < count; i++)
+            {
+                buf[i] = this.ToPoint(points[from + i], actualThickness, snap);
+            }
+
             var sg = new StreamGeometry();
             using (var sgc = sg.Open())
             {
-                sgc.BeginFigure(this.ToPoint(points[from], actualThickness, snap), false, false);
-                for (int i = from + 1; i < to; i++)
-                {
-                    sgc.LineTo(this.ToPoint(points[i], actualThickness, snap), true, false);
-                }
+                sgc.BeginFigure(buf[0], false, false);
+
+                // PolyLineTo accepts an IList<Point>; pass an ArraySegment-equivalent via
+                // a slice-list wrapper to avoid allocating a trimmed array. Since WPF's
+                // implementation copies internally, slicing isn't required for correctness,
+                // but a wrapper keeps the call zero-alloc.
+                sgc.PolyLineTo(new ArraySegmentList<Point>(buf, 1, count - 1), true, false);
             }
 
             sg.Freeze();
@@ -298,6 +355,9 @@ namespace OxyPlot.Wpf
             var actualThickness = this.GetActualStrokeThickness(thickness, edgeRenderingMode);
             bool snap = this.ShouldSnapPoints(edgeRenderingMode, points);
 
+            // DrawLineSegments uses alternating stroked/unstroked figures (each segment is a
+            // separate move-line pair), so PolyLineTo can't batch the whole list. The LineTo
+            // loop here is unavoidable, but the geometry is still built in one StreamGeometry.
             var sg = new StreamGeometry();
             using (var sgc = sg.Open())
             {
@@ -313,6 +373,75 @@ namespace OxyPlot.Wpf
 
             sg.Freeze();
             this.dc.DrawGeometry(null, pen, sg);
+        }
+
+        /// <summary>
+        /// Lightweight zero-alloc <see cref="IList{T}"/> view over an array slice.
+        /// Used to pass a sub-range of <see cref="polyPointBuffer"/> to
+        /// <see cref="StreamGeometryContext.PolyLineTo(IList{Point}, bool, bool)"/> without
+        /// allocating a new array each call.
+        /// </summary>
+        private sealed class ArraySegmentList<T> : IList<T>
+        {
+            private readonly T[] array;
+            private readonly int offset;
+            private readonly int count;
+
+            public ArraySegmentList(T[] array, int offset, int count)
+            {
+                this.array = array;
+                this.offset = offset;
+                this.count = count;
+            }
+
+            public T this[int index]
+            {
+                get => this.array[this.offset + index];
+                set => throw new NotSupportedException();
+            }
+
+            public int Count => this.count;
+            public bool IsReadOnly => true;
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                for (int i = 0; i < this.count; i++)
+                {
+                    yield return this.array[this.offset + i];
+                }
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+            public bool Contains(T item)
+            {
+                int end = this.offset + this.count;
+                var cmp = EqualityComparer<T>.Default;
+                for (int i = this.offset; i < end; i++)
+                {
+                    if (cmp.Equals(this.array[i], item)) return true;
+                }
+                return false;
+            }
+
+            public void CopyTo(T[] target, int targetIndex) => Array.Copy(this.array, this.offset, target, targetIndex, this.count);
+
+            public int IndexOf(T item)
+            {
+                int end = this.offset + this.count;
+                var cmp = EqualityComparer<T>.Default;
+                for (int i = this.offset; i < end; i++)
+                {
+                    if (cmp.Equals(this.array[i], item)) return i - this.offset;
+                }
+                return -1;
+            }
+
+            public void Add(T item) => throw new NotSupportedException();
+            public void Clear() => throw new NotSupportedException();
+            public void Insert(int index, T item) => throw new NotSupportedException();
+            public bool Remove(T item) => throw new NotSupportedException();
+            public void RemoveAt(int index) => throw new NotSupportedException();
         }
 
         /// <inheritdoc/>

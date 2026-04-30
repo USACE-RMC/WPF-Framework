@@ -81,15 +81,140 @@ namespace OxyPlot.Wpf
         private Canvas overlays;
 
         /// <summary>
-        /// The zoom control.
+        /// The zoom-rectangle drag overlay. Renders the zoom-rectangle affordance via a single
+        /// <see cref="UIElement.InvalidateVisual"/> per mouse-move with no layout-pass overhead.
         /// </summary>
-        private ContentControl zoomControl;
+        /// <remarks>
+        /// Replaces the historical <see cref="ContentControl"/> + <see cref="ControlTemplate"/>
+        /// approach (see <see cref="ZoomRectangleAdorner"/> for rationale). Sized once to the
+        /// full plot area and positioned at <c>(0, 0)</c>; only its internal rectangle bounds
+        /// change during a drag.
+        /// </remarks>
+        private ZoomRectangleAdorner zoomAdorner;
 
         /// <summary>
         /// True when a render has been scheduled via Dispatcher.BeginInvoke but has not yet executed.
         /// Prevents redundant render dispatches during rapid zoom/pan mouse events.
         /// </summary>
         private bool renderPending;
+
+        /// <summary>
+        /// Backing field for <see cref="DisableShapeAntiAliasing"/>.
+        /// </summary>
+        private bool disableShapeAntiAliasing;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether shape anti-aliasing is disabled inside the
+        /// hosted plot presenter. Default is <c>false</c> (anti-aliasing on).
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When set to <c>true</c>, applies <see cref="EdgeMode.Aliased"/> to the presenter via
+        /// <c>RenderOptions.SetEdgeMode</c>. WPF's stroke-tessellation pass for anti-aliased
+        /// lines is the dominant per-series cost on dense multi-series plots (e.g. 20-chain
+        /// MCMC traces); disabling it produces a multi-x speedup for line rendering. Markers,
+        /// fills, and text are unaffected.
+        /// </para>
+        /// <para>
+        /// Recommended for trace, density, and scientific plots where many line series are
+        /// rendered together and pixel-exact line edges are not visually critical. Leave
+        /// <c>false</c> for plots that rely on anti-aliased thick strokes or curved geometry
+        /// where the visual quality difference is noticeable.
+        /// </para>
+        /// </remarks>
+        public bool DisableShapeAntiAliasing
+        {
+            get => this.disableShapeAntiAliasing;
+            set
+            {
+                if (this.disableShapeAntiAliasing == value) return;
+                this.disableShapeAntiAliasing = value;
+                this.ApplyAntiAliasingPreference();
+            }
+        }
+
+        /// <summary>
+        /// Pushes the current <see cref="DisableShapeAntiAliasing"/> setting onto the hosted
+        /// plot presenter via <c>RenderOptions.SetEdgeMode</c>. Called from the property setter
+        /// and from <see cref="OnApplyTemplate"/>. Walks the presenter's <c>Visual</c> property
+        /// (if any) to also apply the mode to the underlying <see cref="System.Windows.Media.DrawingVisual"/>,
+        /// without requiring a type reference to the OxyPlot.Wpf-specific <c>DrawingVisualHost</c>
+        /// from this Shared assembly.
+        /// </summary>
+        private void ApplyAntiAliasingPreference()
+        {
+            if (this.plotPresenter == null) return;
+            var mode = this.disableShapeAntiAliasing ? EdgeMode.Aliased : EdgeMode.Unspecified;
+            RenderOptions.SetEdgeMode(this.plotPresenter, mode);
+
+            // DrawingVisualHost exposes its inner DrawingVisual via a public Visual property.
+            // Reflect to avoid a circular reference back to OxyPlot.Wpf.
+            var visualProp = this.plotPresenter.GetType().GetProperty("Visual",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            if (visualProp?.GetValue(this.plotPresenter) is System.Windows.Media.Visual innerVisual)
+            {
+                RenderOptions.SetEdgeMode(innerVisual, mode);
+            }
+        }
+
+        /// <summary>
+        /// Backing field for <see cref="UseBitmapCache"/>.
+        /// </summary>
+        private bool useBitmapCache;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the rasterized output of the plot's hosted
+        /// presenter is cached as a bitmap in video memory via WPF's <see cref="BitmapCache"/>
+        /// mechanism. Default <c>false</c>.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When <c>true</c>, the underlying <c>DrawingVisualHost.UseBitmapCache</c> property is
+        /// enabled, which assigns a <see cref="BitmapCache"/> to <see cref="UIElement.CacheMode"/>.
+        /// WPF rasterizes the plot's visual subtree once into a GPU bitmap and reuses the bitmap
+        /// on subsequent compositor frames; the cache regenerates only when the subtree's
+        /// content actually changes (i.e., on each <c>Plot.InvalidatePlot</c>). Markers, fills,
+        /// and other plot elements are unaffected.
+        /// </para>
+        /// <para>
+        /// <b>When this helps.</b> Scenarios where the plot is static but the surface is
+        /// repeatedly composited — dragging a transient overlay (e.g., the magnifier-glass zoom
+        /// rectangle) over the plot, parent panel resize animations, dock-splitter drags, plot
+        /// scrolling into and out of viewport. Without the cache, WPF re-rasterizes the plot's
+        /// vector geometry under the dirty region on every compositor frame.
+        /// </para>
+        /// <para>
+        /// <b>When this doesn't help.</b> Real-time streaming plots that re-render every frame
+        /// see no benefit and pay a small per-render overhead. Default is off; opt in per plot.
+        /// </para>
+        /// </remarks>
+        public bool UseBitmapCache
+        {
+            get => this.useBitmapCache;
+            set
+            {
+                if (this.useBitmapCache == value) return;
+                this.useBitmapCache = value;
+                this.ApplyBitmapCachePreference();
+            }
+        }
+
+        /// <summary>
+        /// Pushes the current <see cref="UseBitmapCache"/> setting onto the hosted plot
+        /// presenter. Called from the property setter and from <see cref="OnApplyTemplate"/>.
+        /// Reflects on a public <c>UseBitmapCache</c> property exposed by the presenter (the
+        /// OxyPlot.Wpf <c>DrawingVisualHost</c>) without requiring a circular reference.
+        /// </summary>
+        private void ApplyBitmapCachePreference()
+        {
+            if (this.plotPresenter == null) return;
+            var prop = this.plotPresenter.GetType().GetProperty("UseBitmapCache",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            if (prop != null && prop.CanWrite)
+            {
+                prop.SetValue(this.plotPresenter, this.useBitmapCache);
+            }
+        }
 
         /// <summary>
         /// Initializes static members of the <see cref="PlotViewBase" /> class.
@@ -175,10 +300,7 @@ namespace OxyPlot.Wpf
         /// </summary>
         public void HideZoomRectangle()
         {
-            if (this.zoomControl != null)
-            {
-                this.zoomControl.Visibility = Visibility.Collapsed;
-            }
+            this.zoomAdorner?.ClearBounds();
         }
 
         /// <summary>
@@ -194,22 +316,49 @@ namespace OxyPlot.Wpf
 
 #if DEBUG
             DiagnoseInvalidatePlotCall(updateData);
+            using (OxyPlot.PlotDiagnostics.Trace("PlotViewBase.InvalidatePlot", $"updateData={updateData} renderPending={this.renderPending}"))
+            {
 #endif
 
-            lock (this.ActualModel.SyncRoot)
-            {
-                ((IPlotModel)this.ActualModel).Update(updateData);
-            }
-
-            if (!this.renderPending)
-            {
-                this.renderPending = true;
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+                lock (this.ActualModel.SyncRoot)
                 {
-                    this.renderPending = false;
-                    this.Render();
-                }));
+                    ((IPlotModel)this.ActualModel).Update(updateData);
+                }
+
+                if (!this.renderPending)
+                {
+                    this.renderPending = true;
+#if DEBUG
+                    int wheelSeqAtDispatch = OxyPlot.PlotDiagnostics.CurrentWheelSeq;
+                    long dispatchTicks = System.Diagnostics.Stopwatch.GetTimestamp();
+#endif
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+                    {
+                        this.renderPending = false;
+#if DEBUG
+                        if (OxyPlot.PlotDiagnostics.WheelTraceEnabled && wheelSeqAtDispatch != 0)
+                        {
+                            double queueMs = (System.Diagnostics.Stopwatch.GetTimestamp() - dispatchTicks) * 1000.0
+                                             / System.Diagnostics.Stopwatch.Frequency;
+                            System.Diagnostics.Debug.WriteLine(
+                                $"[W#{wheelSeqAtDispatch,4}] PlotViewBase.Render DEQUEUED (Loaded) queueMs={queueMs,8:F2}");
+                        }
+                        var renderSw = System.Diagnostics.Stopwatch.StartNew();
+#endif
+                        this.Render();
+#if DEBUG
+                        renderSw.Stop();
+                        if (OxyPlot.PlotDiagnostics.WheelTraceEnabled && wheelSeqAtDispatch != 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine(
+                                $"[W#{wheelSeqAtDispatch,4}] PlotViewBase.Render EXIT renderMs={renderSw.Elapsed.TotalMilliseconds,8:F2}");
+                        }
+#endif
+                    }));
+                }
+#if DEBUG
             }
+#endif
         }
 
 #if DEBUG
@@ -295,12 +444,26 @@ namespace OxyPlot.Wpf
             this.plotPresenter.UpdateLayout();
             this.renderContext = this.CreateRenderContext();
 
+            // Propagate any DisableShapeAntiAliasing / UseBitmapCache preference set before the
+            // template was applied (the presenter is created here for the first time).
+            this.ApplyAntiAliasingPreference();
+            this.ApplyBitmapCachePreference();
+
             this.overlays = new Canvas();
             this.grid.Children.Add(this.overlays);
 
-            this.zoomControl = new ContentControl();
-            this.zoomControl.Focusable = false;
-            this.overlays.Children.Add(this.zoomControl);
+            this.zoomAdorner = new ZoomRectangleAdorner();
+            // The adorner renders the zoom-rectangle drag affordance with no layout-pass overhead
+            // per mouse-move (see ZoomRectangleAdorner remarks for the full rationale). It sits
+            // at (0, 0) of the overlay canvas; the rectangle to draw is set via SetBounds.
+            // Bind Width/Height so the adorner fills the overlay canvas (Canvas does not
+            // auto-size its children); without this its render area would be 0x0 and OnRender
+            // would draw nothing.
+            this.zoomAdorner.SetBinding(WidthProperty,
+                new System.Windows.Data.Binding(nameof(Canvas.ActualWidth)) { Source = this.overlays });
+            this.zoomAdorner.SetBinding(HeightProperty,
+                new System.Windows.Data.Binding(nameof(Canvas.ActualHeight)) { Source = this.overlays });
+            this.overlays.Children.Add(this.zoomAdorner);
 
             // add additional grid on top of everthing else to fix issue of mouse events getting lost
             // it must be added last so it covers all other controls
@@ -411,19 +574,15 @@ namespace OxyPlot.Wpf
         /// Shows the zoom rectangle.
         /// </summary>
         /// <param name="r">The rectangle.</param>
+        /// <remarks>
+        /// Called on every mouse-move during a magnifier-glass zoom-rectangle drag (60–125 Hz),
+        /// so the body must be cheap. Delegates to <see cref="ZoomRectangleAdorner.SetBounds"/>,
+        /// which only updates an internal field and calls <see cref="UIElement.InvalidateVisual"/>
+        /// — no WPF layout pass per mouse-move.
+        /// </remarks>
         public void ShowZoomRectangle(OxyRect r)
         {
-            if (this.zoomControl == null)
-            {
-                return;
-            }
-
-            this.zoomControl.Width = r.Width;
-            this.zoomControl.Height = r.Height;
-            Canvas.SetLeft(this.zoomControl, r.Left);
-            Canvas.SetTop(this.zoomControl, r.Top);
-            this.zoomControl.Template = this.ZoomRectangleTemplate;
-            this.zoomControl.Visibility = Visibility.Visible;
+            this.zoomAdorner?.SetBounds(new Rect(r.Left, r.Top, r.Width, r.Height));
         }
 
         /// <summary>
@@ -499,18 +658,28 @@ namespace OxyPlot.Wpf
         /// </summary>
         protected virtual void RenderOverride()
         {
-            var dpiScale = this.UpdateDpi();
-            this.ClearBackground();
-
-            if (this.ActualModel != null)
+#if DEBUG
+            using (OxyPlot.PlotDiagnostics.Trace("PlotViewBase.RenderOverride"))
+#endif
             {
-                // round width and height to full device pixels
-                var width = ((int)(this.plotPresenter.ActualWidth * dpiScale)) / dpiScale;
-                var height = ((int)(this.plotPresenter.ActualHeight * dpiScale)) / dpiScale;
+                var dpiScale = this.UpdateDpi();
+                this.ClearBackground();
 
-                lock (this.ActualModel.SyncRoot)
+                if (this.ActualModel != null)
                 {
-                    ((IPlotModel)this.ActualModel).Render(this.renderContext, new OxyRect(0, 0, width, height));
+                    // round width and height to full device pixels
+                    var width = ((int)(this.plotPresenter.ActualWidth * dpiScale)) / dpiScale;
+                    var height = ((int)(this.plotPresenter.ActualHeight * dpiScale)) / dpiScale;
+
+                    lock (this.ActualModel.SyncRoot)
+                    {
+#if DEBUG
+                        using (OxyPlot.PlotDiagnostics.Trace("PlotModel.Render", $"size={width:F0}x{height:F0}"))
+#endif
+                        {
+                            ((IPlotModel)this.ActualModel).Render(this.renderContext, new OxyRect(0, 0, width, height));
+                        }
+                    }
                 }
             }
         }

@@ -1283,46 +1283,61 @@ namespace OxyPlot.Axes
         /// <param name="x">The coordinate to zoom at.</param>
         public virtual void ZoomAt(double factor, double x)
         {
-            if (!this.IsZoomEnabled)
+#if DEBUG
+            using (PlotDiagnostics.Trace("Axis.ZoomAt", $"axis={this.Position} key={this.Key ?? "(none)"} factor={factor:F4}"))
+#endif
             {
-                return;
+                if (!this.IsZoomEnabled)
+                {
+                    return;
+                }
+
+                var oldMinimum = this.ActualMinimum;
+                var oldMaximum = this.ActualMaximum;
+
+                double dx0 = (this.ActualMinimum - x) * this.scale;
+                double dx1 = (this.ActualMaximum - x) * this.scale;
+                this.scale *= factor;
+
+                double newMinimum = (dx0 / this.scale) + x;
+                double newMaximum = (dx1 / this.scale) + x;
+
+                if (newMaximum - newMinimum > this.MaximumRange)
+                {
+                    var mid = (newMinimum + newMaximum) * 0.5;
+                    newMaximum = mid + (this.MaximumRange * 0.5);
+                    newMinimum = mid - (this.MaximumRange * 0.5);
+                }
+
+                if (newMaximum - newMinimum < this.MinimumRange)
+                {
+                    var mid = (newMinimum + newMaximum) * 0.5;
+                    newMaximum = mid + (this.MinimumRange * 0.5);
+                    newMinimum = mid - (this.MinimumRange * 0.5);
+                }
+
+                newMinimum = Math.Max(newMinimum, this.AbsoluteMinimum);
+                newMaximum = Math.Min(newMaximum, this.AbsoluteMaximum);
+
+                this.ViewMinimum = newMinimum;
+                this.ViewMaximum = newMaximum;
+#if DEBUG
+                using (PlotDiagnostics.Trace("Axis.ZoomAt.UpdateActualMaxMin"))
+#endif
+                {
+                    this.UpdateActualMaxMin();
+                }
+
+                var deltaMinimum = this.ActualMinimum - oldMinimum;
+                var deltaMaximum = this.ActualMaximum - oldMaximum;
+
+#if DEBUG
+                using (PlotDiagnostics.Trace("Axis.ZoomAt.OnAxisChanged"))
+#endif
+                {
+                    this.OnAxisChanged(new AxisChangedEventArgs(AxisChangeTypes.Zoom, deltaMinimum, deltaMaximum));
+                }
             }
-
-            var oldMinimum = this.ActualMinimum;
-            var oldMaximum = this.ActualMaximum;
-
-            double dx0 = (this.ActualMinimum - x) * this.scale;
-            double dx1 = (this.ActualMaximum - x) * this.scale;
-            this.scale *= factor;
-
-            double newMinimum = (dx0 / this.scale) + x;
-            double newMaximum = (dx1 / this.scale) + x;
-
-            if (newMaximum - newMinimum > this.MaximumRange)
-            {
-                var mid = (newMinimum + newMaximum) * 0.5;
-                newMaximum = mid + (this.MaximumRange * 0.5);
-                newMinimum = mid - (this.MaximumRange * 0.5);
-            }
-
-            if (newMaximum - newMinimum < this.MinimumRange)
-            {
-                var mid = (newMinimum + newMaximum) * 0.5;
-                newMaximum = mid + (this.MinimumRange * 0.5);
-                newMinimum = mid - (this.MinimumRange * 0.5);
-            }
-
-            newMinimum = Math.Max(newMinimum, this.AbsoluteMinimum);
-            newMaximum = Math.Min(newMaximum, this.AbsoluteMaximum);
-
-            this.ViewMinimum = newMinimum;
-            this.ViewMaximum = newMaximum;
-            this.UpdateActualMaxMin();
-
-            var deltaMinimum = this.ActualMinimum - oldMinimum;
-            var deltaMaximum = this.ActualMaximum - oldMaximum;
-
-            this.OnAxisChanged(new AxisChangedEventArgs(AxisChangeTypes.Zoom, deltaMinimum, deltaMaximum));
         }
 
         /// <summary>
@@ -1929,12 +1944,23 @@ namespace OxyPlot.Axes
         /// <param name="args">The <see cref="OxyPlot.Axes.AxisChangedEventArgs" /> instance containing the event data.</param>
         protected virtual void OnAxisChanged(AxisChangedEventArgs args)
         {
-            this.UpdateActualMaxMin();
+#if DEBUG
+            using (PlotDiagnostics.Trace("Axis.OnAxisChanged.UpdateActualMaxMin"))
+#endif
+            {
+                this.UpdateActualMaxMin();
+            }
 
             var handler = this.AxisChanged;
             if (handler != null)
             {
-                handler(this, args);
+#if DEBUG
+                int subscriberCount = handler.GetInvocationList().Length;
+                using (PlotDiagnostics.Trace("Axis.OnAxisChanged.HandlerInvoke", $"subs={subscriberCount}"))
+#endif
+                {
+                    handler(this, args);
+                }
             }
         }
 

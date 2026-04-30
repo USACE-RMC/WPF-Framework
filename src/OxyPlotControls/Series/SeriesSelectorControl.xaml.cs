@@ -220,7 +220,9 @@ namespace OxyPlotControls
             }
 
             SeriesPropertyControlComboBox.SelectedIndex = index - 1;
-            Plot.InvalidatePlot(true);
+            // Reordering series Z-order is structural, not data — same series objects in a
+            // different sequence. updateData=false skips the per-series UpdateData walk.
+            Plot.InvalidatePlot(false);
         }
 
         /// <summary>
@@ -250,7 +252,9 @@ namespace OxyPlotControls
             }
 
             SeriesPropertyControlComboBox.SelectedIndex = index + 1;
-            Plot.InvalidatePlot(true);
+            // Reordering series Z-order is structural, not data — same series objects in a
+            // different sequence. updateData=false skips the per-series UpdateData walk.
+            Plot.InvalidatePlot(false);
         }
 
         /// <summary>

@@ -65,7 +65,9 @@ namespace OxyPlot
                     this.YAxis.Zoom(p0.Y, p1.Y);
                 }
 
-                this.PlotView.InvalidatePlot();
+                // Zoom only changes axis range, not series data, so updateData=false avoids
+                // a redundant per-series UpdateData walk on every zoom-rectangle release.
+                this.PlotView.InvalidatePlot(false);
             }
 
             e.Handled = true;

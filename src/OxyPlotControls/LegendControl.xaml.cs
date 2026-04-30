@@ -118,11 +118,12 @@ namespace OxyPlotControls
         /// <param name="e">The event arguments.</param>
         private void LegendPropertyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Invalidate the plot to refresh the legend display
-            // Use true to force a full update including layout recalculation
+            // Legend property changes (orientation, position, font, padding, etc.) are display-only;
+            // no series data changes, so updateData=false avoids walking every series via
+            // PlotModel.Update(true) for what is purely a layout/style refresh.
             if (Plot != null)
             {
-                Plot.InvalidatePlot(true);
+                Plot.InvalidatePlot(false);
             }
 
             UpdateOrientationEnabled();

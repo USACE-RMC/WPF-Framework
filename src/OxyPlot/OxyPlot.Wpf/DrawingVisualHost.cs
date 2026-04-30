@@ -55,6 +55,94 @@ namespace OxyPlot.Wpf
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the rasterized output of this element is
+        /// cached as a bitmap in video memory via <see cref="UIElement.CacheMode"/> +
+        /// <see cref="BitmapCache"/>. Default <c>false</c>.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When <c>true</c>, WPF renders this element's visual subtree once into a GPU bitmap
+        /// and reuses the bitmap on subsequent compositor frames. The cache regenerates only
+        /// when the structure of the subtree changes — which for a plot means whenever the
+        /// inner <see cref="DrawingVisual"/>'s content is rewritten via
+        /// <see cref="DrawingVisual.RenderOpen"/> (i.e., on every <c>Plot.InvalidatePlot</c>).
+        /// </para>
+        /// <para>
+        /// <b>When this helps.</b> Scenarios where the plot is static but the surface is
+        /// repeatedly composited: dragging a transient overlay (e.g., the magnifier-glass zoom
+        /// rectangle) over the plot, parent panel resize animations, dock-splitter drags, or
+        /// the plot scrolling into and out of viewport. Without the cache, WPF re-rasterizes
+        /// the plot's geometry under the dirty region on every compositor frame.
+        /// </para>
+        /// <para>
+        /// <b>When this doesn't help (and may slightly regress).</b> Scenarios where every
+        /// frame re-renders the plot (e.g., real-time streaming data). The cache regenerates
+        /// each render, paying a small overhead with no reuse benefit.
+        /// </para>
+        /// <para>
+        /// <see cref="BitmapCache.RenderAtScale"/> is set to the current per-monitor DPI scale
+        /// to keep the cached bitmap sharp. <see cref="BitmapCache.SnapsToDevicePixels"/> is
+        /// enabled to align with the existing pixel-snapping configuration.
+        /// </para>
+        /// </remarks>
+        public bool UseBitmapCache
+        {
+            get => this.CacheMode is BitmapCache;
+            set
+            {
+                if (value)
+                {
+                    var dpiInfo = VisualTreeHelper.GetDpi(this);
+                    var scale = dpiInfo.PixelsPerDip > 0 ? dpiInfo.PixelsPerDip : 1.0;
+                    this.CacheMode = new BitmapCache
+                    {
+                        RenderAtScale = scale,
+                        SnapsToDevicePixels = true,
+                        EnableClearType = false,
+                    };
+                }
+                else
+                {
+                    this.CacheMode = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether anti-aliasing is disabled for shape rendering
+        /// inside the hosted <see cref="DrawingVisual"/>. Default is <c>false</c> (anti-aliasing on).
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When set to <c>true</c>, applies <see cref="EdgeMode.Aliased"/> to the visual via
+        /// <c>RenderOptions.SetEdgeMode</c>. This disables WPF's stroke-tessellation
+        /// anti-aliasing for the entire visual.
+        /// </para>
+        /// <para>
+        /// <b>Why it matters for performance.</b> WPF's stroked-geometry tessellation runs on the
+        /// render thread and is the dominant per-series cost for plots with many <see cref="OxyPlot.Series.LineSeries"/>
+        /// instances (e.g. a 20-chain MCMC trace at 1751 points each). Disabling anti-aliasing
+        /// skips the tessellation entirely and yields a multi-x speedup for line rendering.
+        /// Markers, fills, and text are unaffected (text uses its own rendering path). For thin
+        /// strokes (≤2 px) the visual difference is barely perceptible; for trace/density plots
+        /// the perf gain is decisive.
+        /// </para>
+        /// <para>
+        /// Background: this is the same root cause flagged by OxyPlot upstream issue #1286
+        /// ("LineSeries has bad performance with large amount of data due to aliased=false").
+        /// </para>
+        /// </remarks>
+        public bool DisableShapeAntiAliasing
+        {
+            get => RenderOptions.GetEdgeMode(this.visual) == EdgeMode.Aliased;
+            set
+            {
+                RenderOptions.SetEdgeMode(this.visual, value ? EdgeMode.Aliased : EdgeMode.Unspecified);
+                RenderOptions.SetEdgeMode(this, value ? EdgeMode.Aliased : EdgeMode.Unspecified);
+            }
+        }
+
+        /// <summary>
         /// Gets the hosted <see cref="DrawingVisual"/>.
         /// </summary>
         public DrawingVisual Visual => this.visual;

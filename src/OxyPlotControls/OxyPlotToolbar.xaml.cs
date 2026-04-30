@@ -448,8 +448,9 @@ namespace OxyPlotControls
         {
             if (Plot == null) return;
 
+            // ResetAllAxes already calls InvalidatePlot(false). A second InvalidatePlot
+            // here was running PlotModel.Update twice for every Zoom-To-Extents click.
             Plot.ResetAllAxes();
-            Plot.InvalidatePlot(false);
             Plot.Focus();
         }
 
@@ -1705,6 +1706,20 @@ namespace OxyPlotControls
         /// </summary>
         private void PlotModelMouseMove(object? sender, OxyMouseEventArgs e)
         {
+            // Fast-path: while any mouse button is held (zoom-rect drag, pan, annotation drag,
+            // etc.) skip the annotation-hit-test + cursor-update logic below. That logic exists
+            // for hover-discovery of annotation handles; during an active drag the user is
+            // committed to a manipulator and the per-mouse-move work is wasted (and on plots
+            // with many annotations or shapes, expensive). The annotation-add early-out below
+            // still runs for the in-progress add-annotation tools.
+            if (_addAnnotationToolMode == AddToolMode.None
+                && (Mouse.LeftButton == MouseButtonState.Pressed
+                    || Mouse.MiddleButton == MouseButtonState.Pressed
+                    || Mouse.RightButton == MouseButtonState.Pressed))
+            {
+                return;
+            }
+
             // For adding annotations
             if (_addAnnotationToolMode != AddToolMode.None && _targetAddAnnotation != null)
             {
@@ -1757,7 +1772,10 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddPolygonAnnotation:
                         _leaderLine.Points[_leaderLine.Points.Count - 1] = new Point(e.Position.X, e.Position.Y);
-                        Plot.InvalidatePlot(true);
+                        // Mouse-move during polygon drag updates the leader-line preview only;
+                        // no series data changes, so updateData=false avoids a per-mousemove walk
+                        // of all series. Matches the AddPolylineAnnotation case below.
+                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddPolylineAnnotation:

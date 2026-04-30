@@ -39,45 +39,65 @@ namespace OxyPlot
         /// <param name="e">The <see cref="OxyInputEventArgs" /> instance containing the event data.</param>
         public override void Started(OxyMouseEventArgs e)
         {
-            base.Started(e);
-
-            var isZoomEnabled = (this.XAxis != null && this.XAxis.IsZoomEnabled)
-                                || (this.YAxis != null && this.YAxis.IsZoomEnabled);
-
-            if (!isZoomEnabled)
+#if DEBUG
+            using (PlotDiagnostics.Trace("ZoomStepManipulator.Started"))
+#endif
             {
-                return;
-            }
+                base.Started(e);
 
-            var current = this.InverseTransform(e.Position.X, e.Position.Y);
+                var isZoomEnabled = (this.XAxis != null && this.XAxis.IsZoomEnabled)
+                                    || (this.YAxis != null && this.YAxis.IsZoomEnabled);
 
-            var scale = this.Step;
-            if (this.FineControl)
-            {
-                scale *= 3;
-            }
+                if (!isZoomEnabled)
+                {
+                    return;
+                }
 
-            if (scale > 0)
-            {
-                scale = 1 + scale;
-            }
-            else
-            {
-                scale = 1.0 / (1 - scale);
-            }
+                var current = this.InverseTransform(e.Position.X, e.Position.Y);
 
-            if (this.XAxis != null)
-            {
-                this.XAxis.ZoomAt(scale, current.X);
-            }
+                var scale = this.Step;
+                if (this.FineControl)
+                {
+                    scale *= 3;
+                }
 
-            if (this.YAxis != null)
-            {
-                this.YAxis.ZoomAt(scale, current.Y);
-            }
+                if (scale > 0)
+                {
+                    scale = 1 + scale;
+                }
+                else
+                {
+                    scale = 1.0 / (1 - scale);
+                }
 
-            this.PlotView.InvalidatePlot(false);
-            e.Handled = true;
+                if (this.XAxis != null)
+                {
+#if DEBUG
+                    using (PlotDiagnostics.Trace("ZoomStepManipulator.XAxis.ZoomAt", $"scale={scale:F4}"))
+#endif
+                    {
+                        this.XAxis.ZoomAt(scale, current.X);
+                    }
+                }
+
+                if (this.YAxis != null)
+                {
+#if DEBUG
+                    using (PlotDiagnostics.Trace("ZoomStepManipulator.YAxis.ZoomAt", $"scale={scale:F4}"))
+#endif
+                    {
+                        this.YAxis.ZoomAt(scale, current.Y);
+                    }
+                }
+
+#if DEBUG
+                using (PlotDiagnostics.Trace("ZoomStepManipulator.PlotView.InvalidatePlot"))
+#endif
+                {
+                    this.PlotView.InvalidatePlot(false);
+                }
+                e.Handled = true;
+            }
         }
     }
 }

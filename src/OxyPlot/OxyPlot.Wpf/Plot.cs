@@ -1135,7 +1135,15 @@ namespace OxyPlot.Wpf
             long t0 = 0, tSync = 0, tBase = 0;
             bool ranSync = false;
             bool entryNeedsSync = this._needsSynchronization;
-            if (diagnose) t0 = System.Diagnostics.Stopwatch.GetTimestamp();
+            int gc0_0 = 0, gc1_0 = 0, gc2_0 = 0;
+            if (diagnose)
+            {
+                t0 = System.Diagnostics.Stopwatch.GetTimestamp();
+                gc0_0 = System.GC.CollectionCount(0);
+                gc1_0 = System.GC.CollectionCount(1);
+                gc2_0 = System.GC.CollectionCount(2);
+                OxyPlot.PlotDiagnostics.Log("Plot.InvalidatePlot ENTER");
+            }
 #endif
 
             if (this._needsSynchronization || updateData)
@@ -1164,6 +1172,12 @@ namespace OxyPlot.Wpf
                 double syncMs = (tSync - t0) / ticksPerMs;
                 double baseMs = (tBase - tSync) / ticksPerMs;
 
+                // GC counter delta — catches a stop-the-world collection eating wall-clock time
+                // outside the InvalidatePlot pipeline.
+                int gc0_d = System.GC.CollectionCount(0) - gc0_0;
+                int gc1_d = System.GC.CollectionCount(1) - gc1_0;
+                int gc2_d = System.GC.CollectionCount(2) - gc2_0;
+
                 // Render-complete measurement: ContextIdle fires after the dispatcher has drained
                 // the full render. Total includes the WPF composition cost.
                 var paintSw = System.Diagnostics.Stopwatch.StartNew();
@@ -1174,21 +1188,52 @@ namespace OxyPlot.Wpf
                     {
                         paintSw.Stop();
                         System.Diagnostics.Debug.WriteLine(
-                            $"[InvalidatePhase #{callId,6}] {phaseTag} syncMs={syncMs,6:F2} baseMs={baseMs,6:F2} paintMs={paintSw.ElapsedMilliseconds,5}");
+                            $"[InvalidatePhase #{callId,6}] {phaseTag} syncMs={syncMs,6:F2} baseMs={baseMs,6:F2} paintMs={paintSw.ElapsedMilliseconds,5} gc0={gc0_d} gc1={gc1_d} gc2={gc2_d}");
                     }),
                     System.Windows.Threading.DispatcherPriority.ContextIdle);
+
+                // First-frame measurement: hook CompositionTarget.Rendering exactly once. This fires
+                // on the next WPF render-tree commit, which is when the user actually sees pixels
+                // change. If this is large but paintMs is small, the slowness lives in the WPF
+                // visual tree commit / DWM compositor, not the OxyPlot pipeline.
+                long invalidateEntryTicks = t0;
+                int captureCallId = (int)callId;
+                System.EventHandler firstFrameHandler = null;
+                firstFrameHandler = (s, ev) =>
+                {
+                    long now = System.Diagnostics.Stopwatch.GetTimestamp();
+                    double firstFrameMs = (now - invalidateEntryTicks) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[FirstFrame #{captureCallId,6}] msFromInvalidate={firstFrameMs,7:F2}");
+                    System.Windows.Media.CompositionTarget.Rendering -= firstFrameHandler;
+                };
+                System.Windows.Media.CompositionTarget.Rendering += firstFrameHandler;
+
+                OxyPlot.PlotDiagnostics.Log($"Plot.InvalidatePlot EXIT (renderQueued, callId={callId})");
             }
 #endif
         }
 
 #if DEBUG
+        private static bool _invalidatePlotPhaseDiagnosticsEnabled;
+
         /// <summary>
         /// When true and <see cref="OxyPlot.Wpf.PlotViewBase.InvalidatePlotDiagnosticsEnabled"/>
         /// is also true, logs per-phase timing for every <see cref="InvalidatePlot"/> call:
-        /// synchronization cost, Model.Update + render-queue cost, and render-complete cost
-        /// (measured via a ContextIdle callback).
+        /// synchronization cost, Model.Update + render-queue cost, render-complete cost (via a
+        /// ContextIdle callback), first-frame cost (via <c>CompositionTarget.Rendering</c>), GC
+        /// counter delta, and a full wheel-zoom stack trace via <see cref="OxyPlot.PlotDiagnostics"/>.
         /// </summary>
-        public static bool InvalidatePlotPhaseDiagnosticsEnabled { get; set; }
+        public static bool InvalidatePlotPhaseDiagnosticsEnabled
+        {
+            get => _invalidatePlotPhaseDiagnosticsEnabled;
+            set
+            {
+                _invalidatePlotPhaseDiagnosticsEnabled = value;
+                // Mirror to the core-side flag so the wheel-stack trace activates with the same toggle.
+                OxyPlot.PlotDiagnostics.WheelTraceEnabled = value;
+            }
+        }
 
         private static long _invalidatePhaseCallCounter;
 #endif

@@ -236,10 +236,32 @@ namespace OxyPlot
         /// <returns><c>true</c> if the event was handled.</returns>
         public virtual bool HandleMouseWheel(IView view, OxyMouseWheelEventArgs args)
         {
-            lock (this.GetSyncRoot(view))
+#if DEBUG
+            using (PlotDiagnostics.Trace("ControllerBase.HandleMouseWheel"))
+#endif
             {
-                var command = this.GetCommand(new OxyMouseWheelGesture(args.ModifierKeys));
-                return this.HandleCommand(command, view, args);
+#if DEBUG
+                long lockT0 = PlotDiagnostics.IsActive ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
+#endif
+                lock (this.GetSyncRoot(view))
+                {
+#if DEBUG
+                    if (PlotDiagnostics.IsActive)
+                    {
+                        double lockMs = (System.Diagnostics.Stopwatch.GetTimestamp() - lockT0) * 1000.0
+                                        / System.Diagnostics.Stopwatch.Frequency;
+                        PlotDiagnostics.Log($"ControllerBase.HandleMouseWheel lockAcquired={lockMs:F2}ms");
+                    }
+#endif
+                    IViewCommand command;
+#if DEBUG
+                    using (PlotDiagnostics.Trace("ControllerBase.GetCommand(MouseWheelGesture)"))
+#endif
+                    {
+                        command = this.GetCommand(new OxyMouseWheelGesture(args.ModifierKeys));
+                    }
+                    return this.HandleCommand(command, view, args);
+                }
             }
         }
 
@@ -529,7 +551,12 @@ namespace OxyPlot
                 return false;
             }
 
-            command.Execute(view, this, args);
+#if DEBUG
+            using (PlotDiagnostics.Trace("ControllerBase.HandleCommand", command.GetType().Name))
+#endif
+            {
+                command.Execute(view, this, args);
+            }
             return args.Handled;
         }
 

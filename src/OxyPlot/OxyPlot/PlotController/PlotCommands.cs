@@ -255,8 +255,14 @@ namespace OxyPlot
         /// <param name="factor">The zoom speed factor. Default value is 1.</param>
         private static void HandleZoomByWheel(IPlotView view, OxyMouseWheelEventArgs args, double factor = 1)
         {
-            var m = new ZoomStepManipulator(view) { Step = args.Delta * 0.001 * factor, FineControl = args.IsControlDown };
-            m.Started(args);
+#if DEBUG
+            using (PlotDiagnostics.Trace("PlotCommands.HandleZoomByWheel",
+                $"step={args.Delta * 0.001 * factor:F4} fineCtl={args.IsControlDown}"))
+#endif
+            {
+                var m = new ZoomStepManipulator(view) { Step = args.Delta * 0.001 * factor, FineControl = args.IsControlDown };
+                m.Started(args);
+            }
         }
 
         /// <summary>

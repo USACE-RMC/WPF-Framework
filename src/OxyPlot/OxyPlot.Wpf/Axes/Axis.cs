@@ -1021,8 +1021,17 @@ namespace OxyPlot.Wpf
 
         /// <summary>
         /// Handles changes to the Minimum/Maximum properties.
-        /// Resets zoom state when user explicitly sets a value, then triggers a full data update.
+        /// Resets zoom state when user explicitly sets a value, then triggers a synchronized re-render.
         /// </summary>
+        /// <remarks>
+        /// Min/Max is an axis-range change, not a data change. Previously this called
+        /// <see cref="OnDataChanged"/> which routed through <c>InvalidatePlot()</c> (default
+        /// <c>updateData=true</c>) — that walked every visible series via
+        /// <c>series.UpdateData()</c> for what is purely a range adjustment. Routing through
+        /// <see cref="OnVisualChanged"/> instead sets <c>_needsSynchronization = true</c> (so
+        /// the next sync pushes the new Min/Max into the internal axis) and then issues
+        /// <c>InvalidatePlot(false)</c>, skipping the per-series data walk.
+        /// </remarks>
         private static void MinMaxChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var axis = (Axis)d;
@@ -1035,7 +1044,7 @@ namespace OxyPlot.Wpf
                 axis.InternalAxis.Reset();
             }
 
-            axis.OnDataChanged();
+            axis.OnVisualChanged();
         }
 
         /// <summary>
