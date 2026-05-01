@@ -170,12 +170,7 @@ namespace OxyPlot.Wpf
         {
             var annotation = (Annotation)d;
             var pc = annotation.Parent as IPlotView;
-            // Use the per-collection annotation dirty flag so a single annotation DP write
-            // (e.g. dragging an arrow's EndPoint) triggers only SynchronizeAnnotations on the
-            // next render — not the full Synchronize{Properties, Series, Axes, Annotations}
-            // pass that the legacy _needsSynchronization flag would force. On a dense
-            // multi-LineSeries plot this cuts per-move sync work by ~95%.
-            if (pc is Plot plot) plot._annotationsDirty = true;
+            if (pc is Plot plot) plot._needsSynchronization = true;
             pc?.InvalidatePlot(false);
             if (annotation.SuppressPropertyChanged) return;
             annotation.OnPropertyChanged(e.Property.Name);
