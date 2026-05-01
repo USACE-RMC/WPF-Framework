@@ -1301,8 +1301,11 @@ namespace OxyPlot.Wpf
         /// debug diagnostics and that handler firing+unsubscribing. Coalesces rapid InvalidatePlot
         /// calls (faster than 60Hz render tick) into a single subscribed handler so the log
         /// shows one [FirstFrame] line per render, not N stale lines from N redundant handlers.
+        /// Per-instance so two Plot controls in the same process don't share state — otherwise
+        /// a Rendering tick fired for one plot would clear the other's pending flag and produce
+        /// misleading diagnostics.
         /// </summary>
-        private static bool _firstFrameHandlerPending;
+        private bool _firstFrameHandlerPending;
 #endif
 
         /// <summary>
