@@ -1793,7 +1793,15 @@ namespace OxyPlotControls
                             _doubleClicked = e.ClickCount > 1;
                             if (e.ClickCount < 2)
                             {
-                                ((Wpf.PolylineAnnotation)_targetAddAnnotation).Points.Add(_targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position));
+                                // Mirror the polygon path's IsDefined guard: if axes are not yet
+                                // laid out (AvalonDock dock/undock window) ConvertScreenPointToDataPoint
+                                // returns DataPoint.Undefined; skip rather than appending NaN to the
+                                // polyline points.
+                                var nextDataPoint = ConvertScreenPointToDataPoint(e.Position);
+                                if (nextDataPoint.IsDefined())
+                                {
+                                    ((Wpf.PolylineAnnotation)_targetAddAnnotation).Points.Add(nextDataPoint);
+                                }
                             }
                         }
                         break;
