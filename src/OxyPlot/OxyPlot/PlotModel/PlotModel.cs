@@ -714,8 +714,15 @@ namespace OxyPlot
         {
             double mindist = double.MaxValue;
             Series.Series nearestSeries = null;
-            foreach (var series in this.Series.Reverse().Where(s => s.IsVisible && s.IsHitTestEnabled))
+            // Iterate in reverse via index instead of LINQ Reverse().Where(). Reverse() on a
+            // Collection<Series> allocates an iterator on every mouse-move (60Hz), creating
+            // continuous Gen0 GC pressure. The indexed loop is identical in semantics — visit
+            // the topmost (last-added) series first — and zero-allocation.
+            for (int i = this.Series.Count - 1; i >= 0; i--)
             {
+                var series = this.Series[i];
+                if (!series.IsVisible || !series.IsHitTestEnabled) continue;
+
                 var thr = series.GetNearestPoint(point, true) ?? series.GetNearestPoint(point, false);
 
                 if (thr == null)

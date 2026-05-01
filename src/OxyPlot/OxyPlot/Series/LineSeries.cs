@@ -46,6 +46,20 @@ namespace OxyPlot.Series
         private bool decimationActive;
 
         /// <summary>
+        /// Single-element marker-size array passed to <c>IRenderContext.DrawMarkers</c>.
+        /// Cached so we don't allocate a new <c>double[]</c> on every render call. Rebuilt
+        /// when <see cref="MarkerSize"/> changes.
+        /// </summary>
+        private double[] markerSizeArray;
+
+        /// <summary>
+        /// The <see cref="MarkerSize"/> value reflected in <see cref="markerSizeArray"/>.
+        /// Compared on each render to detect a marker-size change and rebuild the array.
+        /// NaN sentinel forces initialization on first use.
+        /// </summary>
+        private double markerSizeArrayValue = double.NaN;
+
+        /// <summary>
         /// The default color.
         /// </summary>
         private OxyColor defaultColor;
@@ -464,19 +478,20 @@ namespace OxyPlot.Series
             }
 
             // Determine if fused extract-decimate-transform is possible.
-            // Requires: rendering to screen, monotonic X, standard decimator,
-            // and both axes must use the base linear transform ((x - offset) * scale).
-            // Axes that override Transform (LogarithmicAxis, NormalProbabilityAxis,
-            // GumbelProbabilityAxis) fall back to the existing pipeline.
+            // Requires: rendering to screen, monotonic X, standard decimator. The fused path
+            // supports linear axes plus base-10 LogarithmicAxis (covers the overwhelming
+            // common case; LogarithmicAxis.Base defaults to 10). Non-base-10 log axes,
+            // GumbelProbabilityAxis, and NormalProbabilityAxis use transforms that cannot be
+            // cheaply inlined and fall back to the slow path.
             bool useFused = rc.RendersToScreen
                 && this.IsXMonotonic
                 && this.Decimator == OxyPlot.Decimator.Decimate
-                && !this.XAxis.IsLogarithmic()
                 && !(this.XAxis is GumbelProbabilityAxis)
                 && !(this.XAxis is NormalProbabilityAxis)
-                && !this.YAxis.IsLogarithmic()
                 && !(this.YAxis is GumbelProbabilityAxis)
-                && !(this.YAxis is NormalProbabilityAxis);
+                && !(this.YAxis is NormalProbabilityAxis)
+                && !(this.XAxis is LogarithmicAxis xLogAxisCheck && xLogAxisCheck.Base != 10)
+                && !(this.YAxis is LogarithmicAxis yLogAxisCheck && yLogAxisCheck.Base != 10);
 
             this.decimationActive = useFused || this.Decimator != null;
 
@@ -685,15 +700,22 @@ namespace OxyPlot.Series
             }
             if (!hasValidPoint) return false;
 
-            // Cache axis transform parameters for inline computation.
-            // Only called for linear axes (base Axis.Transform: (x - offset) * scale).
+            // Cache axis transform parameters for inline computation. Linear axes use the
+            // base Axis.Transform formula (v - offset) * scale; logarithmic axes use the
+            // same formula composed with Math.Log10. The xIsLog/yIsLog booleans are captured
+            // by the local functions below — the resulting per-point branch is far cheaper
+            // than the virtual Transform() call it replaces (~10ns → ~1ns per point).
+            // IsValidPoint already filters non-positive values when an axis is logarithmic,
+            // so Math.Log10 is never called on invalid inputs here.
+            bool xIsLog = this.XAxis.IsLogarithmic();
+            bool yIsLog = this.YAxis.IsLogarithmic();
             double xOffset = this.XAxis.Offset;
             double xScale = this.XAxis.Scale;
             double yOffset = this.YAxis.Offset;
             double yScale = this.YAxis.Scale;
 
-            double TransformX(double v) => (v - xOffset) * xScale;
-            double TransformY(double v) => (v - yOffset) * yScale;
+            double TransformX(double v) => xIsLog ? (System.Math.Log10(v) - xOffset) * xScale : (v - xOffset) * xScale;
+            double TransformY(double v) => yIsLog ? (System.Math.Log10(v) - yOffset) * yScale : (v - yOffset) * yScale;
 
             // First valid point
             double firstSX = TransformX(currentPoint.X);
@@ -877,16 +899,25 @@ namespace OxyPlot.Series
             {
                 var markerBinOffset = this.MarkerResolution > 0 ? this.Transform(this.MinX, this.MinY) : default(ScreenPoint);
 
+                // Reuse the cached single-element size array across renders; only rebuild when
+                // MarkerSize actually changes. Eliminates a per-render-per-series double[]
+                // allocation that adds up across many-series plots.
+                if (this.markerSizeArray == null || this.markerSizeArrayValue != this.MarkerSize)
+                {
+                    this.markerSizeArray = new[] { this.MarkerSize };
+                    this.markerSizeArrayValue = this.MarkerSize;
+                }
+
                 rc.DrawMarkers(
-                    pointsToRender, 
-                    this.MarkerType, 
-                    this.MarkerOutline, 
-                    new[] { this.MarkerSize }, 
-                    this.ActualMarkerFill, 
-                    this.MarkerStroke, 
-                    this.MarkerStrokeThickness, 
+                    pointsToRender,
+                    this.MarkerType,
+                    this.MarkerOutline,
+                    this.markerSizeArray,
+                    this.ActualMarkerFill,
+                    this.MarkerStroke,
+                    this.MarkerStrokeThickness,
                     this.EdgeRenderingMode,
-                    this.MarkerResolution, 
+                    this.MarkerResolution,
                     markerBinOffset);
             }
         }

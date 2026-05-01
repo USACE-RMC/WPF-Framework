@@ -86,18 +86,27 @@ namespace OxyPlot.Wpf
             // method below this point logs against this wheel sequence number and timestamp,
             // producing a single coherent block per wheel tick.
             OxyPlot.PlotDiagnostics.BeginWheel();
-            using (OxyPlot.PlotDiagnostics.Trace("PlotViewBase.OnMouseWheel",
-                $"delta={e.Delta}"))
+            try
             {
-#endif
-                base.OnMouseWheel(e);
-                if (e.Handled || !this.IsMouseWheelEnabled)
+                using (OxyPlot.PlotDiagnostics.Trace("PlotViewBase.OnMouseWheel",
+                    $"delta={e.Delta}"))
                 {
-                    return;
-                }
+#endif
+                    base.OnMouseWheel(e);
+                    if (e.Handled || !this.IsMouseWheelEnabled)
+                    {
+                        return;
+                    }
 
-                e.Handled = this.ActualController.HandleMouseWheel(this, e.ToMouseWheelEventArgs(this));
+                    e.Handled = this.ActualController.HandleMouseWheel(this, e.ToMouseWheelEventArgs(this));
 #if DEBUG
+                }
+            }
+            finally
+            {
+                // Close the wheel scope so subsequent unrelated invalidations (mouse-move, pan,
+                // render) don't emit trace lines attributed to this wheel sequence number.
+                OxyPlot.PlotDiagnostics.EndWheel();
             }
 #endif
         }

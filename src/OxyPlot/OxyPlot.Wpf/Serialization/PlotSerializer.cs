@@ -819,6 +819,10 @@ namespace OxyPlot.Wpf.Serialization
         /// <param name="attributeName">The name of the attribute to read.</param>
         /// <param name="vp">When this method returns, contains the parsed ScreenVector if successful.</param>
         /// <returns><c>true</c> if the attribute exists and was successfully parsed; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        /// Distinguishes a genuine <c>(0,0)</c> value from a malformed attribute: returns
+        /// <c>true</c> only when the attribute exists and parses to a valid pair of doubles.
+        /// </remarks>
         public static bool GetScreenVectorAttribute(XElement el, string attributeName, out OxyPlot.ScreenVector vp)
         {
             vp = default(OxyPlot.ScreenVector);
@@ -826,8 +830,7 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            vp = value.FromPrettyVectorText();
-            return true;
+            return value.TryFromPrettyVectorText(out vp);
         }
 
         /// <summary>
@@ -855,6 +858,10 @@ namespace OxyPlot.Wpf.Serialization
         /// <param name="attributeName">The name of the attribute to read.</param>
         /// <param name="v">When this method returns, contains the parsed Vector if successful.</param>
         /// <returns><c>true</c> if the attribute exists and was successfully parsed; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        /// Distinguishes a genuine <c>(0,0)</c> value from a malformed attribute: returns
+        /// <c>true</c> only when the attribute exists and parses to a valid pair of doubles.
+        /// </remarks>
         public static bool GetVectorAttribute(XElement el, string attributeName, out Vector v)
         {
             v = default(Vector);
@@ -862,8 +869,7 @@ namespace OxyPlot.Wpf.Serialization
             string value = el.Attribute(attributeName)!.Value;
             if (string.IsNullOrEmpty(value)) return false;
 
-            v = value.FromPrettyVectorString();
-            return true;
+            return value.TryFromPrettyVectorString(out v);
         }
 
         #endregion

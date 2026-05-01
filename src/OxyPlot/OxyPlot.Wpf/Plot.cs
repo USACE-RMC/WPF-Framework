@@ -52,6 +52,15 @@ namespace OxyPlot.Wpf
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
+        /// Backing field for <see cref="SuppressPropertyChanged"/>. Marked <c>volatile</c> so
+        /// reads on the dispatcher thread reliably observe writes from any thread without a
+        /// memory barrier at the call site. The <see cref="InvalidatePlot"/> gate reads this
+        /// flag once per call, so a stale-read race could miss a suppressed bulk-update window
+        /// or render mid-suppression on consumers that prepare data on a worker thread.
+        /// </summary>
+        private volatile bool suppressPropertyChanged;
+
+        /// <summary>
         /// Gets or sets whether <see cref="PropertyChanged"/> events are suppressed.
         /// When true, no PropertyChanged events fire from this Plot instance,
         /// including relayed item and collection change events.
@@ -59,9 +68,16 @@ namespace OxyPlot.Wpf
         /// <remarks>
         /// Use this to suppress events during bulk operations such as deserialization,
         /// theme application, or programmatic series population where the undo system
-        /// should not record individual changes.
+        /// should not record individual changes. The backing field is <c>volatile</c> so
+        /// cross-thread writes are visible without explicit synchronization at the call site,
+        /// but the broader <see cref="InvalidatePlot"/> pipeline still expects dispatch-thread
+        /// access for visual-tree mutations.
         /// </remarks>
-        public bool SuppressPropertyChanged { get; set; }
+        public bool SuppressPropertyChanged
+        {
+            get => this.suppressPropertyChanged;
+            set => this.suppressPropertyChanged = value;
+        }
 
         /// <summary>
         /// Occurs when an axis is replaced via <see cref="ReplaceAxis"/>,
@@ -520,6 +536,16 @@ namespace OxyPlot.Wpf
         /// internal axis ranges change and the WPF wrappers are untouched.
         /// </summary>
         internal bool _needsSynchronization = true;
+
+        /// <summary>
+        /// When true, the next non-gated <see cref="InvalidatePlot"/> call must run with
+        /// <c>updateData=true</c> regardless of the caller's argument, because at least one
+        /// suppressed call requested a data refresh. Set inside the suppression gate when
+        /// <c>updateData=true</c> is dropped; cleared as soon as it is consumed by a non-gated
+        /// call. This guarantees a data refresh is never silently lost across a suppression
+        /// window, even if the consumer's final flush call passes <c>updateData=false</c>.
+        /// </summary>
+        private bool _pendingUpdateData;
 
         /// <summary>
         /// Initializes static members of the <see cref="Plot"/> class.
@@ -1082,7 +1108,7 @@ namespace OxyPlot.Wpf
         /// <param name="updateData">Whether to update data.</param>
         /// <remarks>
         /// <para>
-        /// When <see cref="Series.SuppressPropertyChanged"/> is set on this plot, all invalidation
+        /// When <see cref="Plot.SuppressPropertyChanged"/> is set on this plot, all invalidation
         /// work is deferred. This gate catches not only the Plot's own direct InvalidatePlot calls
         /// but also the cascading calls that flow back in from child Series. There are two common
         /// cascades that previously bypassed suppression and produced the multi-second lag on
@@ -1114,13 +1140,36 @@ namespace OxyPlot.Wpf
         /// explicit <c>InvalidatePlot(...)</c> after clearing — otherwise the plot state may be
         /// inconsistent until the next user interaction.
         /// </para>
+        /// <para>
+        /// The <paramref name="updateData"/> flag is preserved across the suppression window:
+        /// any suppressed call with <c>updateData=true</c> sets a private pending flag that
+        /// promotes the next non-gated call to <c>updateData=true</c>, even if the consumer's
+        /// final flush passes <c>updateData=false</c>. This guarantees a data refresh requested
+        /// during the suppression window is never silently dropped.
+        /// </para>
         /// </remarks>
         public override void InvalidatePlot(bool updateData = true)
         {
             if (this.SuppressPropertyChanged)
             {
                 this._needsSynchronization = true;
+                // Preserve a deferred data-refresh request across the suppression window.
+                // Without this, a suppressed InvalidatePlot(true) would be silently lost
+                // when the consumer ends suppression with InvalidatePlot(false).
+                if (updateData)
+                {
+                    this._pendingUpdateData = true;
+                }
                 return;
+            }
+
+            // Consume any data-refresh request that was deferred during a suppression window.
+            // This must happen before the sync block so the consolidated updateData flag
+            // controls both Synchronize* and base.InvalidatePlot below.
+            if (this._pendingUpdateData)
+            {
+                updateData = true;
+                this._pendingUpdateData = false;
             }
 
 #if DEBUG
@@ -1196,18 +1245,28 @@ namespace OxyPlot.Wpf
                 // on the next WPF render-tree commit, which is when the user actually sees pixels
                 // change. If this is large but paintMs is small, the slowness lives in the WPF
                 // visual tree commit / DWM compositor, not the OxyPlot pipeline.
-                long invalidateEntryTicks = t0;
-                int captureCallId = (int)callId;
-                System.EventHandler firstFrameHandler = null;
-                firstFrameHandler = (s, ev) =>
+                // Coalesce: if a previous InvalidatePlot already subscribed a handler that hasn't
+                // fired yet (rapid 60Hz wheel zoom outpaces CompositionTarget.Rendering), skip
+                // re-subscribing. Otherwise N stale handlers accumulate and fire simultaneously
+                // on the next render tick, producing N redundant log lines and adding subscribe
+                // overhead per call.
+                if (!_firstFrameHandlerPending)
                 {
-                    long now = System.Diagnostics.Stopwatch.GetTimestamp();
-                    double firstFrameMs = (now - invalidateEntryTicks) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
-                    System.Diagnostics.Debug.WriteLine(
-                        $"[FirstFrame #{captureCallId,6}] msFromInvalidate={firstFrameMs,7:F2}");
-                    System.Windows.Media.CompositionTarget.Rendering -= firstFrameHandler;
-                };
-                System.Windows.Media.CompositionTarget.Rendering += firstFrameHandler;
+                    _firstFrameHandlerPending = true;
+                    long invalidateEntryTicks = t0;
+                    int captureCallId = (int)callId;
+                    System.EventHandler firstFrameHandler = null;
+                    firstFrameHandler = (s, ev) =>
+                    {
+                        long now = System.Diagnostics.Stopwatch.GetTimestamp();
+                        double firstFrameMs = (now - invalidateEntryTicks) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+                        System.Diagnostics.Debug.WriteLine(
+                            $"[FirstFrame #{captureCallId,6}] msFromInvalidate={firstFrameMs,7:F2}");
+                        System.Windows.Media.CompositionTarget.Rendering -= firstFrameHandler;
+                        _firstFrameHandlerPending = false;
+                    };
+                    System.Windows.Media.CompositionTarget.Rendering += firstFrameHandler;
+                }
 
                 OxyPlot.PlotDiagnostics.Log($"Plot.InvalidatePlot EXIT (renderQueued, callId={callId})");
             }
@@ -1236,6 +1295,14 @@ namespace OxyPlot.Wpf
         }
 
         private static long _invalidatePhaseCallCounter;
+
+        /// <summary>
+        /// True between subscribing a CompositionTarget.Rendering handler in InvalidatePlot's
+        /// debug diagnostics and that handler firing+unsubscribing. Coalesces rapid InvalidatePlot
+        /// calls (faster than 60Hz render tick) into a single subscribed handler so the log
+        /// shows one [FirstFrame] line per render, not N stale lines from N redundant handlers.
+        /// </summary>
+        private static bool _firstFrameHandlerPending;
 #endif
 
         /// <summary>

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Reflection;
 using System.Windows.Media;
 using OxyPlot;
@@ -22,15 +21,20 @@ namespace OxyPlotControls.Tests.Rendering;
 public class DrawTextCacheTests
 {
     /// <summary>
-    /// Accessor for the private <c>drawTextCache</c> field so tests can inspect its contents
-    /// without exposing implementation details on the public API.
+    /// Returns the entry count of the private <c>drawTextCache</c> field so tests can inspect
+    /// cache state without exposing implementation details on the public API. The cache was
+    /// migrated from <see cref="System.Collections.Generic.Dictionary{TKey,TValue}"/> to a
+    /// bounded LRU (private nested type), so we read the public <c>Count</c> property
+    /// reflectively instead of casting to <see cref="System.Collections.IDictionary"/>.
     /// </summary>
-    private static IDictionary GetDrawTextCache(DrawingVisualRenderContext rc)
+    private static int GetDrawTextCacheCount(DrawingVisualRenderContext rc)
     {
         var field = typeof(DrawingVisualRenderContext).GetField(
             "drawTextCache",
             BindingFlags.Instance | BindingFlags.NonPublic)!;
-        return (IDictionary)field.GetValue(rc)!;
+        var cache = field.GetValue(rc)!;
+        var countProp = cache.GetType().GetProperty("Count", BindingFlags.Instance | BindingFlags.Public)!;
+        return (int)countProp.GetValue(cache)!;
     }
 
     /// <summary>
@@ -70,8 +74,7 @@ public class DrawTextCacheTests
 
         rc.CloseDrawing();
 
-        var cache = GetDrawTextCache(rc);
-        Assert.Single(cache);
+        Assert.Equal(1, GetDrawTextCacheCount(rc));
     }
 
     /// <summary>
@@ -92,8 +95,7 @@ public class DrawTextCacheTests
 
         rc.CloseDrawing();
 
-        var cache = GetDrawTextCache(rc);
-        Assert.Equal(2, cache.Count);
+        Assert.Equal(2, GetDrawTextCacheCount(rc));
     }
 
     /// <summary>
@@ -114,8 +116,7 @@ public class DrawTextCacheTests
 
         rc.CloseDrawing();
 
-        var cache = GetDrawTextCache(rc);
-        Assert.Equal(2, cache.Count);
+        Assert.Equal(2, GetDrawTextCacheCount(rc));
     }
 
     /// <summary>
@@ -135,11 +136,10 @@ public class DrawTextCacheTests
 
         rc.CloseDrawing();
 
-        var cache = GetDrawTextCache(rc);
-        Assert.Single(cache);
+        Assert.Equal(1, GetDrawTextCacheCount(rc));
 
         rc.DpiScale = 1.5;
 
-        Assert.Empty(cache);
+        Assert.Equal(0, GetDrawTextCacheCount(rc));
     }
 }

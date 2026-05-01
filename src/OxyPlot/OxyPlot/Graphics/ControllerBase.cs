@@ -224,6 +224,20 @@ namespace OxyPlot
                     this.MouseDownManipulators.Remove(m);
                 }
 
+                // After the last drag manipulator finishes, fire one final hover delta so the
+                // tracker / crosshair / tooltip refreshes to the mouse-up position. Without this,
+                // the suppress-hover-during-drag optimization (HandleMouseMove above) leaves the
+                // tracker frozen at its pre-drag position until the user moves the mouse again.
+                // Skip when EnableHoverDuringDrag is set — that mode already delivered live
+                // updates throughout the drag, so a final tick would be redundant.
+                if (!this.EnableHoverDuringDrag && this.MouseDownManipulators.Count == 0)
+                {
+                    foreach (var m in this.MouseHoverManipulators)
+                    {
+                        m.Delta(args);
+                    }
+                }
+
                 return args.Handled;
             }
         }

@@ -101,9 +101,19 @@ namespace OxyPlotControls
             {
                 _lastAppliedTheme = currentTheme;
                 Plot.SuppressPropertyChanged = true;
-                var theme = OxyPlotThemeManager.GetThemeFor(currentTheme);
-                OxyPlotThemeManager.ApplyTheme(Plot, theme);
-                Plot.SuppressPropertyChanged = false;
+                try
+                {
+                    var theme = OxyPlotThemeManager.GetThemeFor(currentTheme);
+                    OxyPlotThemeManager.ApplyTheme(Plot, theme);
+                }
+                finally
+                {
+                    Plot.SuppressPropertyChanged = false;
+                    // ApplyTheme's internal InvalidatePlot was gated out by the Plot-level
+                    // suppression flag above; flush now that the gate is closed so the theme
+                    // takes effect immediately rather than at the next user interaction.
+                    Plot.InvalidatePlot(false);
+                }
             }
         }
 
@@ -129,9 +139,18 @@ namespace OxyPlotControls
 
             _lastAppliedTheme = e.NewTheme;
             Plot.SuppressPropertyChanged = true;
-            var theme = OxyPlotThemeManager.GetThemeFor(e.NewTheme);
-            OxyPlotThemeManager.ApplyTheme(Plot, theme);
-            Plot.SuppressPropertyChanged = false;
+            try
+            {
+                var theme = OxyPlotThemeManager.GetThemeFor(e.NewTheme);
+                OxyPlotThemeManager.ApplyTheme(Plot, theme);
+            }
+            finally
+            {
+                Plot.SuppressPropertyChanged = false;
+                // ApplyTheme's internal InvalidatePlot was gated out by the Plot-level
+                // suppression flag above; flush now that the gate is closed.
+                Plot.InvalidatePlot(false);
+            }
         }
 
         #endregion
@@ -218,9 +237,18 @@ namespace OxyPlotControls
                 if (oxyToolBar.IsLoaded)
                 {
                     newPlot.SuppressPropertyChanged = true;
-                    var theme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
-                    OxyPlotThemeManager.ApplyTheme(newPlot, theme);
-                    newPlot.SuppressPropertyChanged = false;
+                    try
+                    {
+                        var theme = OxyPlotThemeManager.GetThemeFor(ThemeService.Instance.CurrentTheme);
+                        OxyPlotThemeManager.ApplyTheme(newPlot, theme);
+                    }
+                    finally
+                    {
+                        newPlot.SuppressPropertyChanged = false;
+                        // ApplyTheme's internal InvalidatePlot was gated out by the Plot-level
+                        // suppression flag above; flush now that the gate is closed.
+                        newPlot.InvalidatePlot(false);
+                    }
                 }
             }
         }
@@ -668,11 +696,21 @@ namespace OxyPlotControls
 
                 // Unsuppress PropertyChanged and notify the plot so undo bridges
                 // can rebuild their shadow state to match the final property values.
+                // try/finally guarantees suppression is cleared even if NotifyAnnotationsModified
+                // or InvalidatePlot throws — otherwise the annotation would remain permanently
+                // silenced and break undo/redo for that annotation.
                 if (_targetAddAnnotation != null)
                 {
-                    _targetAddAnnotation.SuppressPropertyChanged = false;
-                    Plot.NotifyAnnotationsModified();
-                    Plot.InvalidatePlot(false);
+                    try
+                    {
+                        _targetAddAnnotation.SuppressPropertyChanged = false;
+                        Plot.NotifyAnnotationsModified();
+                        Plot.InvalidatePlot(false);
+                    }
+                    finally
+                    {
+                        _targetAddAnnotation.SuppressPropertyChanged = false;
+                    }
                 }
 
                 if (_addAnnotationToolMode == AddToolMode.AddPolygonAnnotation || _addAnnotationToolMode == AddToolMode.AddPolylineAnnotation)
@@ -710,11 +748,26 @@ namespace OxyPlotControls
         {
             if (_addAnnotationToolMode == AddToolMode.None) return;
 
-            // Remove the in-progress annotation from the plot before stopping
-            if (_targetAddAnnotation != null && Plot.Annotations.Contains(_targetAddAnnotation))
+            // Remove the in-progress annotation from the plot before stopping.
+            // Always clear suppression on the tracked annotation — even if it never made it
+            // into Plot.Annotations (e.g. an exception fired between SuppressPropertyChanged=true
+            // and the Plot.Annotations.Add call). Otherwise the orphaned annotation would
+            // remain permanently silenced and a future reuse via the same reference would
+            // suppress all change notifications.
+            if (_targetAddAnnotation != null)
             {
-                _targetAddAnnotation.SuppressPropertyChanged = false;
-                Plot.Annotations.Remove(_targetAddAnnotation);
+                try
+                {
+                    _targetAddAnnotation.SuppressPropertyChanged = false;
+                    if (Plot.Annotations.Contains(_targetAddAnnotation))
+                    {
+                        Plot.Annotations.Remove(_targetAddAnnotation);
+                    }
+                }
+                finally
+                {
+                    _targetAddAnnotation.SuppressPropertyChanged = false;
+                }
             }
 
             // For polygon/polyline that may not be added yet, just clear the leader line
@@ -816,8 +869,16 @@ namespace OxyPlotControls
                     newArrow.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newArrow.IsEnabled) return;
-                        newArrow.Color = _originalColor;
-                        newArrow.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newArrow.Color = _originalColor;
+                        }
+                        finally
+                        {
+                            // Guarantee suppression is cleared even if the Color setter throws,
+                            // so PropertyChanged (and undo bridge) are not silenced indefinitely.
+                            newArrow.SuppressPropertyChanged = false;
+                        }
                         newArrow.RaisePropertyChanged(nameof(newArrow.StartPoint), nameof(newArrow.EndPoint), nameof(newArrow.Color));
                     };
                 }
@@ -863,8 +924,14 @@ namespace OxyPlotControls
                     newText.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newText.IsEnabled) return;
-                        newText.Background = _originalColor;
-                        newText.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newText.Background = _originalColor;
+                        }
+                        finally
+                        {
+                            newText.SuppressPropertyChanged = false;
+                        }
                         newText.RaisePropertyChanged(nameof(newText.TextPosition), nameof(newText.Background));
                     };
                 }
@@ -938,8 +1005,14 @@ namespace OxyPlotControls
                     newRect.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newRect.IsEnabled) return;
-                        newRect.Fill = _originalColor;
-                        newRect.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newRect.Fill = _originalColor;
+                        }
+                        finally
+                        {
+                            newRect.SuppressPropertyChanged = false;
+                        }
                         newRect.RaisePropertyChanged(nameof(newRect.MinimumX), nameof(newRect.MaximumX), nameof(newRect.MinimumY), nameof(newRect.MaximumY), nameof(newRect.Fill));
                     };
                 }
@@ -1013,8 +1086,14 @@ namespace OxyPlotControls
                     newEllipse.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newEllipse.IsEnabled) return;
-                        newEllipse.Fill = _originalColor;
-                        newEllipse.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newEllipse.Fill = _originalColor;
+                        }
+                        finally
+                        {
+                            newEllipse.SuppressPropertyChanged = false;
+                        }
                         newEllipse.RaisePropertyChanged(nameof(newEllipse.X), nameof(newEllipse.Y), nameof(newEllipse.Width), nameof(newEllipse.Height), nameof(newEllipse.Fill));
                     };
                 }
@@ -1064,8 +1143,14 @@ namespace OxyPlotControls
                     newPoint.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newPoint.IsEnabled) return;
-                        newPoint.Fill = _originalColor;
-                        newPoint.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newPoint.Fill = _originalColor;
+                        }
+                        finally
+                        {
+                            newPoint.SuppressPropertyChanged = false;
+                        }
                         newPoint.RaisePropertyChanged(nameof(newPoint.X), nameof(newPoint.Y), nameof(newPoint.Fill));
                     };
                 }
@@ -1169,8 +1254,14 @@ namespace OxyPlotControls
                     newPolygon.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newPolygon.IsEnabled) return;
-                        newPolygon.Fill = _originalColor;
-                        newPolygon.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newPolygon.Fill = _originalColor;
+                        }
+                        finally
+                        {
+                            newPolygon.SuppressPropertyChanged = false;
+                        }
                         newPolygon.RaisePropertyChanged(nameof(newPolygon.Points), nameof(newPolygon.Fill));
                     };
                 }
@@ -1260,8 +1351,14 @@ namespace OxyPlotControls
                     newPolyline.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newPolyline.IsEnabled) return;
-                        newPolyline.Color = _originalColor;
-                        newPolyline.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newPolyline.Color = _originalColor;
+                        }
+                        finally
+                        {
+                            newPolyline.SuppressPropertyChanged = false;
+                        }
                         newPolyline.RaisePropertyChanged(nameof(newPolyline.Points), nameof(newPolyline.Color));
                     };
                 }
@@ -1331,8 +1428,14 @@ namespace OxyPlotControls
                     newLine.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newLine.IsEnabled) return;
-                        newLine.Color = _originalColor;
-                        newLine.SuppressPropertyChanged = false;
+                        try
+                        {
+                            newLine.Color = _originalColor;
+                        }
+                        finally
+                        {
+                            newLine.SuppressPropertyChanged = false;
+                        }
                         newLine.RaisePropertyChanged(nameof(newLine.X), nameof(newLine.Y), nameof(newLine.Intercept), nameof(newLine.Color));
                         CloseLineAnnotationTooltip(newLine);
                     };
@@ -1623,12 +1726,20 @@ namespace OxyPlotControls
                     case AddToolMode.AddPolygonAnnotation:
                         if (_targetAddAnnotation == null)
                         {
+                            // Defend against plots without default axes (e.g. category-only or
+                            // not-yet-laid-out plots). Without this, an Undefined point would be
+                            // added to the polygon and render as garbage / NaN.
+                            var dataPointClicked = ConvertScreenPointToDataPoint(e.Position);
+                            if (!dataPointClicked.IsDefined())
+                            {
+                                break;
+                            }
+
                             var newPolygon = new Wpf.PolygonAnnotation();
                             newPolygon.SuppressPropertyChanged = true;
                             newPolygon.Text = "Polygon Annotation";
 
                             newPolygon.Points = new System.Collections.Generic.List<DataPoint>();
-                            var dataPointClicked = ConvertScreenPointToDataPoint(e.Position);
                             newPolygon.Points.Add(dataPointClicked);
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
@@ -1645,8 +1756,12 @@ namespace OxyPlotControls
                             }
                             if (e.ClickCount < 2)
                             {
-                                _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
-                                polyAnnotation.Points.Add(ConvertScreenPointToDataPoint(e.Position));
+                                var nextDataPoint = ConvertScreenPointToDataPoint(e.Position);
+                                if (nextDataPoint.IsDefined())
+                                {
+                                    _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
+                                    polyAnnotation.Points.Add(nextDataPoint);
+                                }
                             }
                         }
                         break;
@@ -1654,6 +1769,13 @@ namespace OxyPlotControls
                     case AddToolMode.AddPolylineAnnotation:
                         if (_targetAddAnnotation == null)
                         {
+                            // Defend against plots without default axes — see polygon comment above.
+                            var dataPointClicked = ConvertScreenPointToDataPoint(e.Position);
+                            if (!dataPointClicked.IsDefined())
+                            {
+                                break;
+                            }
+
                             var newPolyline = new Wpf.PolylineAnnotation();
                             newPolyline.SuppressPropertyChanged = true;
                             newPolyline.Text = "Polyline Annotation";
@@ -1661,7 +1783,6 @@ namespace OxyPlotControls
                             newPolyline.Points = new System.Collections.Generic.List<DataPoint>();
                             Plot.Annotations.Add(newPolyline);
                             PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newPolyline);
-                            var dataPointClicked = ConvertScreenPointToDataPoint(e.Position);
                             newPolyline.Points.Add(dataPointClicked);
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));
                             _leaderLine.Points.Add(new Point(e.Position.X, e.Position.Y));

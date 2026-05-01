@@ -1071,7 +1071,11 @@ namespace OxyPlot.Wpf
         /// </summary>
         protected void OnVisualChanged()
         {
-            // Set _needsSynchronization before InvalidatePlot so the sync is not skipped.
+            // Load-bearing ordering: _needsSynchronization MUST be set before InvalidatePlot.
+            // If suppression is active, Plot.InvalidatePlot short-circuits at the gate but the
+            // _needsSynchronization=true survives, so the next non-gated invalidation runs the
+            // sync that picks up this axis's WPF DP change. Reordering (or omitting) the flag
+            // would silently lose the visual update across a suppression window.
             // OnVisualChanged is only called from WPF DP change callbacks (not zoom/pan),
             // so this does not affect zoom/pan performance.
             if (this.Parent is Plot plot)

@@ -67,8 +67,26 @@ namespace OxyPlot
         }
 
         /// <summary>
+        /// Closes the current wheel-event scope on this thread: clears the per-thread sequence
+        /// number and start clock so subsequent unrelated calls (mouse-move, pan, render) don't
+        /// emit trace output attributed to the last wheel event. Call this exactly once at the
+        /// end of the WPF <c>OnMouseWheel</c> handler, paired with <see cref="BeginWheel"/>.
+        /// </summary>
+        public static void EndWheel()
+        {
+            _wheelSeq = 0;
+            _wheelStartTicks = 0;
+        }
+
+        /// <summary>
         /// Returns the current wheel sequence number for this thread, or 0 if no wheel scope is open.
         /// </summary>
+        /// <remarks>
+        /// Backed by a <c>[ThreadStatic]</c> field. Reads from any thread other than the one that
+        /// called <see cref="BeginWheel"/> (e.g. a background diagnostic logger or the WPF render
+        /// thread) always return 0. Intended for use only from the UI thread that processes the
+        /// wheel event.
+        /// </remarks>
         public static int CurrentWheelSeq => _wheelSeq;
 
         /// <summary>
@@ -148,6 +166,11 @@ namespace OxyPlot
         /// No-op in Release builds.
         /// </summary>
         public static int BeginWheel() => 0;
+
+        /// <summary>
+        /// No-op in Release builds.
+        /// </summary>
+        public static void EndWheel() { }
 
         /// <summary>
         /// No-op in Release builds.

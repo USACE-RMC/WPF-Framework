@@ -84,10 +84,22 @@ namespace OxyPlot.Wpf
         /// Avoids redundant FormattedText allocations during margin-adjustment iterations
         /// and across frames when axis tick labels haven't changed.
         /// </summary>
-        private readonly Dictionary<(string text, string fontFamily, double fontSize, bool isBold), OxySize> measureCache = new Dictionary<(string, string, double, bool), OxySize>();
+        /// <summary>
+        /// Maximum number of entries retained in <see cref="measureCache"/> and
+        /// <see cref="drawTextCache"/> before LRU eviction removes the least-recently-used entry.
+        /// On a real-time / streaming plot the unique-label count grows monotonically with time
+        /// (each frame produces fresh numeric labels). An unbounded dictionary would leak —
+        /// 512 entries comfortably accommodates a frame's worth of axis ticks plus repeating
+        /// legend / annotation text, while capping retained <see cref="FormattedText"/> objects
+        /// at a fixed memory ceiling.
+        /// </summary>
+        private const int TextCacheCapacity = 512;
+
+        private readonly LruCache<(string text, string fontFamily, double fontSize, bool isBold, TextFormattingMode mode, string cultureName), OxySize> measureCache =
+            new LruCache<(string, string, double, bool, TextFormattingMode, string), OxySize>(TextCacheCapacity);
 
         /// <summary>
-        /// The DrawText FormattedText cache, keyed by (text, fontFamily, fontSize, isBold, color).
+        /// The DrawText FormattedText cache, keyed by (text, fontFamily, fontSize, isBold, color, mode, cultureName).
         /// Axis tick labels, axis titles, and legend entries typically repeat across frames;
         /// caching the <see cref="FormattedText"/> eliminates ~100 allocations per render on
         /// a typical plot and measurably reduces GC pressure on long-running dashboards.
@@ -97,9 +109,14 @@ namespace OxyPlot.Wpf
         /// construction (no <c>SetForegroundBrush</c>, <c>SetFontWeight</c>, <c>TextDecorations</c>,
         /// <c>SetMaxTextWidth</c>, etc.). <see cref="DrawText"/> only reads <c>Width</c>/<c>Height</c>
         /// and passes the instance to <see cref="DrawingContext.DrawText"/> — safe reuse.
-        /// Cache is cleared when <see cref="DpiScale"/> changes (mirrors <see cref="measureCache"/>).
+        /// The key includes <see cref="TextFormattingMode"/> and the current UI culture name so
+        /// mode switches and culture changes (e.g. user toggling RTL locale) produce a fresh
+        /// <see cref="FormattedText"/> instead of returning a stale layout. Cache is bounded to
+        /// <see cref="TextCacheCapacity"/> entries via LRU eviction and cleared when
+        /// <see cref="DpiScale"/> or <see cref="TextFormattingMode"/> changes.
         /// </remarks>
-        private readonly Dictionary<(string text, string fontFamily, double fontSize, bool isBold, OxyColor color), FormattedText> drawTextCache = new Dictionary<(string, string, double, bool, OxyColor), FormattedText>();
+        private readonly LruCache<(string text, string fontFamily, double fontSize, bool isBold, OxyColor color, TextFormattingMode mode, string cultureName), FormattedText> drawTextCache =
+            new LruCache<(string, string, double, bool, OxyColor, TextFormattingMode, string), FormattedText>(TextCacheCapacity);
 
         /// <summary>
         /// The active drawing context, or null if not currently rendering.
@@ -142,11 +159,27 @@ namespace OxyPlot.Wpf
             }
         }
 
+        private TextFormattingMode textFormattingMode = TextFormattingMode.Display;
+
         /// <summary>
         /// Gets or sets the text formatting mode.
+        /// Changing this value clears both text caches so cached <see cref="FormattedText"/>
+        /// and measurement results that were built under the old mode aren't returned.
         /// </summary>
         /// <value>The text formatting mode. The default value is <see cref="System.Windows.Media.TextFormattingMode.Display"/>.</value>
-        public TextFormattingMode TextFormattingMode { get; set; } = TextFormattingMode.Display;
+        public TextFormattingMode TextFormattingMode
+        {
+            get => this.textFormattingMode;
+            set
+            {
+                if (this.textFormattingMode != value)
+                {
+                    this.textFormattingMode = value;
+                    this.measureCache.Clear();
+                    this.drawTextCache.Clear();
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets the visual offset for pixel snapping calculations.
@@ -381,6 +414,15 @@ namespace OxyPlot.Wpf
         /// <see cref="StreamGeometryContext.PolyLineTo(IList{Point}, bool, bool)"/> without
         /// allocating a new array each call.
         /// </summary>
+        /// <remarks>
+        /// The indexer performs an unchecked offset+index access. The single caller
+        /// (<see cref="DrawLineRange"/>) early-exits when <c>count &lt; 2</c>, so the segment
+        /// length passed here is always <c>count - 1 &gt;= 1</c> and the empty-slice path is
+        /// unreachable. If a future caller bypasses that guard and passes <c>count == 0</c>,
+        /// <c>PolyLineTo</c> will receive an empty <c>IList&lt;Point&gt;</c> — WPF's
+        /// implementation iterates via <c>Count</c> and the indexer, both of which are safe
+        /// here, but no figure will be drawn.
+        /// </remarks>
         private sealed class ArraySegmentList<T> : IList<T>
         {
             private readonly T[] array;
@@ -442,6 +484,80 @@ namespace OxyPlot.Wpf
             public void Insert(int index, T item) => throw new NotSupportedException();
             public bool Remove(T item) => throw new NotSupportedException();
             public void RemoveAt(int index) => throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Bounded least-recently-used cache. Used by <see cref="measureCache"/> and
+        /// <see cref="drawTextCache"/> so live-data plots (real-time dashboards, oscilloscope
+        /// views) cannot accumulate a per-frame stream of distinct numeric labels indefinitely.
+        /// On lookup, hits are moved to the front of the recency list; on insert, the oldest
+        /// entry is evicted if the capacity is exceeded.
+        /// </summary>
+        /// <remarks>
+        /// Single-threaded by design — all access is from the WPF render thread holding the
+        /// DrawingContext. No locking; introducing concurrency here would require external
+        /// synchronization at the call site.
+        /// </remarks>
+        private sealed class LruCache<TKey, TValue>
+        {
+            private readonly int capacity;
+            private readonly Dictionary<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>> map;
+            private readonly LinkedList<KeyValuePair<TKey, TValue>> list = new LinkedList<KeyValuePair<TKey, TValue>>();
+
+            public LruCache(int capacity)
+            {
+                if (capacity < 1) throw new ArgumentOutOfRangeException(nameof(capacity));
+                this.capacity = capacity;
+                this.map = new Dictionary<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>>(capacity);
+            }
+
+            public int Count => this.map.Count;
+
+            public bool TryGetValue(TKey key, out TValue value)
+            {
+                if (this.map.TryGetValue(key, out var node))
+                {
+                    // Move-to-front: this entry is now the most recently used.
+                    this.list.Remove(node);
+                    this.list.AddFirst(node);
+                    value = node.Value.Value;
+                    return true;
+                }
+                value = default!;
+                return false;
+            }
+
+            public TValue this[TKey key]
+            {
+                set
+                {
+                    if (this.map.TryGetValue(key, out var existing))
+                    {
+                        // Replace existing entry; move to front.
+                        this.list.Remove(existing);
+                        this.map.Remove(key);
+                    }
+
+                    var newNode = new LinkedListNode<KeyValuePair<TKey, TValue>>(
+                        new KeyValuePair<TKey, TValue>(key, value));
+                    this.list.AddFirst(newNode);
+                    this.map[key] = newNode;
+
+                    // Evict oldest if over capacity.
+                    if (this.map.Count > this.capacity)
+                    {
+                        var oldest = this.list.Last!;
+                        this.list.RemoveLast();
+                        this.map.Remove(oldest.Value.Key);
+                    }
+                }
+            }
+
+            public void Clear()
+            {
+                this.map.Clear();
+                this.list.Clear();
+            }
         }
 
         /// <inheritdoc/>
@@ -635,9 +751,13 @@ namespace OxyPlot.Wpf
                 return;
             }
 
-            // Each ellipse generates 3 path commands (BeginFigure + 2 ArcTo).
-            // Tile at ~500 ellipses (1500 path commands) for cache-efficient tessellation.
-            const int ellipseTileSize = 500;
+            // Each ellipse generates 3 path commands (BeginFigure + 2 ArcTo). Tile at 4096
+            // ellipses (~12k path commands) per StreamGeometry — well below the line-tile
+            // ceiling of 16384 and large enough that high-density marker plots (5k+ markers
+            // across 20 series) emit a small number of frozen geometries instead of dozens.
+            // The previous 500-ellipse tile dated from the canvas-renderer era; the
+            // DrawingVisual path handles much larger geometry batches efficiently.
+            const int ellipseTileSize = 4096;
             int count = rectangles.Count;
             int start = 0;
 
@@ -688,18 +808,19 @@ namespace OxyPlot.Wpf
                 return;
             }
 
-            // Cache lookup: same (text, font, size, weight, color) produces an identical
-            // FormattedText render. Axis tick labels and repeated legend text hit this path
-            // on every frame — caching saves ~100 allocations per render on a typical plot.
+            // Cache lookup: same (text, font, size, weight, color, mode, culture) produces an
+            // identical FormattedText render. Axis tick labels and repeated legend text hit this
+            // path on every frame — caching saves ~100 allocations per render on a typical plot.
             // NEVER mutate cached FormattedText instances (see drawTextCache docs).
             var isBold = fontWeight > FontWeights.Normal;
-            var drawKey = (text, fontFamily ?? "Segoe UI", fontSize > 0 ? fontSize : 12, isBold, fill);
+            var culture = CultureInfo.CurrentUICulture;
+            var drawKey = (text, fontFamily ?? "Segoe UI", fontSize > 0 ? fontSize : 12, isBold, fill, this.TextFormattingMode, culture.Name);
             if (!this.drawTextCache.TryGetValue(drawKey, out var ft))
             {
                 var typeface = this.CreateTypeface(fontFamily, fontWeight);
                 ft = new FormattedText(
                     text,
-                    CultureInfo.CurrentUICulture,
+                    culture,
                     FlowDirection.LeftToRight,
                     typeface,
                     fontSize > 0 ? fontSize : 12,
@@ -776,7 +897,8 @@ namespace OxyPlot.Wpf
             }
 
             var isBold = fontWeight > FontWeights.Normal;
-            var cacheKey = (text, fontFamily ?? "Segoe UI", fontSize > 0 ? fontSize : 12, isBold);
+            var culture = CultureInfo.CurrentUICulture;
+            var cacheKey = (text, fontFamily ?? "Segoe UI", fontSize > 0 ? fontSize : 12, isBold, this.TextFormattingMode, culture.Name);
             if (this.measureCache.TryGetValue(cacheKey, out var cached))
             {
                 return cached;
@@ -785,7 +907,7 @@ namespace OxyPlot.Wpf
             var typeface = this.CreateTypeface(fontFamily, fontWeight);
             var ft = new FormattedText(
                 text,
-                CultureInfo.CurrentUICulture,
+                culture,
                 FlowDirection.LeftToRight,
                 typeface,
                 fontSize > 0 ? fontSize : 12,

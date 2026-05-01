@@ -273,7 +273,19 @@ namespace OxyPlot.Series
 
             if (minimumDistance < double.MaxValue)
             {
-                var item = this.GetItem((int)Math.Round(index));
+                // GetItem may dereference the underlying ItemsSource at the captured index;
+                // if the source mutated between scan and this lookup (concurrent producer),
+                // the index can be stale. Treat that as "no item" rather than propagating
+                // the exception out of the hit-test path.
+                object item;
+                try
+                {
+                    item = this.GetItem((int)Math.Round(index));
+                }
+                catch (System.ArgumentOutOfRangeException)
+                {
+                    item = null;
+                }
                 return new TrackerHitResult
                 {
                     Series = this,
@@ -332,6 +344,159 @@ namespace OxyPlot.Series
             // builds an enumerator over a potentially mutable source.
             if (points is IList<DataPoint> list)
             {
+                // Fast path for IsXMonotonic series: bisect on data X to find a candidate
+                // index, then expand outward in both directions stopping when the screen-X
+                // distance to the cursor exceeds the running best total distance — no point
+                // further out can be closer in Euclidean distance. This converts the per-mouse-
+                // move cost from O(N) to O(log N + k), where k is the small set of points
+                // within the running best distance. The 16-element threshold avoids overhead
+                // for tiny series where the linear scan is already free.
+                int remaining = list.Count - startIdx;
+                if (this.IsXMonotonic && remaining >= 16)
+                {
+                    DataPoint queryDp;
+                    bool inverseOk;
+                    try
+                    {
+                        queryDp = this.InverseTransform(point);
+                        inverseOk = true;
+                    }
+                    catch
+                    {
+                        // InverseTransform unavailable (e.g. axis not initialized); fall through
+                        // to the linear scan below by leaving inverseOk=false.
+                        queryDp = default;
+                        inverseOk = false;
+                    }
+
+                    if (inverseOk)
+                    {
+                        double targetX = queryDp.X;
+
+                        // Bisect: smallest index in [startIdx, list.Count-1] whose X >= targetX,
+                        // or list.Count-1 if all X < targetX. Defensive against concurrent
+                        // mutation: re-read list.Count each iteration (already implicit) and
+                        // catch out-of-range from the indexer.
+                        int lo = startIdx;
+                        int hi = list.Count - 1;
+                        bool bisectOk = true;
+                        while (lo < hi)
+                        {
+                            int mid = lo + ((hi - lo) >> 1);
+                            DataPoint mp;
+                            try
+                            {
+                                mp = list[mid];
+                            }
+                            catch (ArgumentOutOfRangeException)
+                            {
+                                bisectOk = false;
+                                break;
+                            }
+                            if (mp.x < targetX) lo = mid + 1;
+                            else hi = mid;
+                        }
+
+                        if (bisectOk)
+                        {
+                            int center = lo < list.Count ? lo : list.Count - 1;
+
+                            // Expand outward; early-terminate each direction when screen-X
+                            // distance squared exceeds the best total distance squared.
+                            int li = center;
+                            int ri = center + 1;
+                            bool leftDone = li < startIdx;
+                            bool rightDone = ri >= list.Count;
+
+                            while (!leftDone || !rightDone)
+                            {
+                                if (!leftDone)
+                                {
+                                    DataPoint p;
+                                    try
+                                    {
+                                        p = list[li];
+                                    }
+                                    catch (ArgumentOutOfRangeException)
+                                    {
+                                        leftDone = true;
+                                        p = default;
+                                    }
+                                    if (!leftDone && this.IsValidPoint(p))
+                                    {
+                                        var sp = this.Transform(p.x, p.y);
+                                        double dxL = sp.X - point.X;
+                                        double dxLSq = dxL * dxL;
+                                        if (minimumDistance < double.MaxValue && dxLSq > minimumDistance)
+                                        {
+                                            leftDone = true;
+                                        }
+                                        else
+                                        {
+                                            double d2 = (sp - point).LengthSquared;
+                                            if (d2 < minimumDistance)
+                                            {
+                                                dpn = p;
+                                                spn = sp;
+                                                minimumDistance = d2;
+                                                index = li;
+                                            }
+                                        }
+                                    }
+                                    if (!leftDone)
+                                    {
+                                        li--;
+                                        if (li < startIdx) leftDone = true;
+                                    }
+                                }
+
+                                if (!rightDone)
+                                {
+                                    DataPoint p;
+                                    try
+                                    {
+                                        p = list[ri];
+                                    }
+                                    catch (ArgumentOutOfRangeException)
+                                    {
+                                        rightDone = true;
+                                        p = default;
+                                    }
+                                    if (!rightDone && this.IsValidPoint(p))
+                                    {
+                                        var sp = this.Transform(p.x, p.y);
+                                        double dxR = sp.X - point.X;
+                                        double dxRSq = dxR * dxR;
+                                        if (minimumDistance < double.MaxValue && dxRSq > minimumDistance)
+                                        {
+                                            rightDone = true;
+                                        }
+                                        else
+                                        {
+                                            double d2 = (sp - point).LengthSquared;
+                                            if (d2 < minimumDistance)
+                                            {
+                                                dpn = p;
+                                                spn = sp;
+                                                minimumDistance = d2;
+                                                index = ri;
+                                            }
+                                        }
+                                    }
+                                    if (!rightDone)
+                                    {
+                                        ri++;
+                                        if (ri >= list.Count) rightDone = true;
+                                    }
+                                }
+                            }
+
+                            goto AfterIListScan;
+                        }
+                    }
+                }
+
+                // Linear scan fallback (small series, non-monotonic, or fast path declined).
                 for (int i = startIdx; i < list.Count; i++)
                 {
                     DataPoint p;
@@ -342,6 +507,43 @@ namespace OxyPlot.Series
                     catch (ArgumentOutOfRangeException)
                     {
                         // Concurrent mutation shrank the list under us. Stop cleanly.
+                        break;
+                    }
+
+                    if (!this.IsValidPoint(p))
+                    {
+                        continue;
+                    }
+
+                    var sp = this.Transform(p.x, p.y);
+                    double d2 = (sp - point).LengthSquared;
+
+                    if (d2 < minimumDistance)
+                    {
+                        dpn = p;
+                        spn = sp;
+                        minimumDistance = d2;
+                        index = i;
+                    }
+                }
+                AfterIListScan:;
+            }
+            else if (points is IReadOnlyList<DataPoint> roList)
+            {
+                // IReadOnlyList<DataPoint> fast path: the same indexed scan as IList<DataPoint>,
+                // but covers consumers that supply read-only collections (immutable arrays,
+                // IReadOnlyList views, ImmutableList, etc.) without falling through to the
+                // allocating snapshot fallback below. Re-reads roList.Count each iteration so
+                // a shrink terminates the loop cleanly.
+                for (int i = startIdx; i < roList.Count; i++)
+                {
+                    DataPoint p;
+                    try
+                    {
+                        p = roList[i];
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
                         break;
                     }
 
@@ -388,7 +590,19 @@ namespace OxyPlot.Series
 
             if (minimumDistance < double.MaxValue)
             {
-                var item = this.GetItem((int)Math.Round(index));
+                // GetItem may dereference the underlying ItemsSource at the captured index;
+                // if the source mutated between scan and this lookup (concurrent producer),
+                // the index can be stale. Treat that as "no item" rather than propagating
+                // the exception out of the hit-test path.
+                object item;
+                try
+                {
+                    item = this.GetItem((int)Math.Round(index));
+                }
+                catch (System.ArgumentOutOfRangeException)
+                {
+                    item = null;
+                }
                 return new TrackerHitResult
                 {
                     Series = this,

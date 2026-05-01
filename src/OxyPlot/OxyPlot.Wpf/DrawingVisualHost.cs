@@ -161,5 +161,23 @@ namespace OxyPlot.Wpf
         {
             return this.visual;
         }
+
+        /// <summary>
+        /// Re-applies <see cref="BitmapCache.RenderAtScale"/> when the host moves between
+        /// monitors with different DPI scales. Without this, an active <see cref="BitmapCache"/>
+        /// retains the original monitor's <c>PixelsPerDip</c> and renders blurry on the new
+        /// monitor (low-DPI cache scaled up) or unnecessarily oversharp (high-DPI cache scaled
+        /// down) until <see cref="UseBitmapCache"/> is toggled off and on.
+        /// </summary>
+        /// <param name="oldDpi">The DPI scale before the change.</param>
+        /// <param name="newDpi">The DPI scale after the change.</param>
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+            if (this.CacheMode is BitmapCache bc)
+            {
+                bc.RenderAtScale = newDpi.PixelsPerDip > 0 ? newDpi.PixelsPerDip : 1.0;
+            }
+        }
     }
 }

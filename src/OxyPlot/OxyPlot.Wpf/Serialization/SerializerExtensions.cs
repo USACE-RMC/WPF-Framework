@@ -37,15 +37,36 @@ namespace OxyPlot.Wpf.Serialization
         /// </summary>
         /// <param name="svString">The string in "X, Y" format.</param>
         /// <returns>A <see cref="ScreenVector"/> parsed from the string, or default if parsing fails.</returns>
+        /// <remarks>
+        /// Returns <c>default(ScreenVector)</c> (i.e., <c>(0,0)</c>) on parse failure. A genuine
+        /// <c>(0,0)</c> input is indistinguishable from a malformed input through this overload.
+        /// Use <see cref="TryFromPrettyVectorText(string, out ScreenVector)"/> when callers need
+        /// to differentiate parse success from a zero vector.
+        /// </remarks>
         public static ScreenVector FromPrettyVectorText(this string svString)
         {
+            return svString.TryFromPrettyVectorText(out var v) ? v : default(ScreenVector);
+        }
+
+        /// <summary>
+        /// Attempts to parse a formatted "X, Y" string into a <see cref="ScreenVector"/>.
+        /// </summary>
+        /// <param name="svString">The string in "X, Y" format.</param>
+        /// <param name="value">When this method returns, the parsed <see cref="ScreenVector"/>
+        /// on success, or <c>default(ScreenVector)</c> on failure.</param>
+        /// <returns><c>true</c> if the string parsed successfully; otherwise <c>false</c>.</returns>
+        public static bool TryFromPrettyVectorText(this string svString, out ScreenVector value)
+        {
+            value = default(ScreenVector);
+            if (svString == null) return false;
             var svStringSplit = svString.Split(new[] { ", " }, StringSplitOptions.None);
-            if (svStringSplit.Length != 2) return default(ScreenVector);
+            if (svStringSplit.Length != 2) return false;
 
             double x, y;
-            if (double.TryParse(svStringSplit[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x) == false) return default(ScreenVector);
-            if (double.TryParse(svStringSplit[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y) == false) return default(ScreenVector);
-            return new ScreenVector(x, y);
+            if (!double.TryParse(svStringSplit[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x)) return false;
+            if (!double.TryParse(svStringSplit[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y)) return false;
+            value = new ScreenVector(x, y);
+            return true;
         }
 
         /// <summary>
@@ -148,15 +169,36 @@ namespace OxyPlot.Wpf.Serialization
         /// </summary>
         /// <param name="vString">The string in "X, Y" format.</param>
         /// <returns>A <see cref="Vector"/> parsed from the string, or default if parsing fails.</returns>
+        /// <remarks>
+        /// Returns <c>default(Vector)</c> (i.e., <c>(0,0)</c>) on parse failure. A genuine
+        /// <c>(0,0)</c> input is indistinguishable from a malformed input through this overload.
+        /// Use <see cref="TryFromPrettyVectorString(string, out Vector)"/> when callers need to
+        /// differentiate parse success from a zero vector.
+        /// </remarks>
         public static Vector FromPrettyVectorString(this string vString)
         {
+            return vString.TryFromPrettyVectorString(out var v) ? v : default(Vector);
+        }
+
+        /// <summary>
+        /// Attempts to parse a formatted "X, Y" string into a <see cref="Vector"/>.
+        /// </summary>
+        /// <param name="vString">The string in "X, Y" format.</param>
+        /// <param name="value">When this method returns, the parsed <see cref="Vector"/> on
+        /// success, or <c>default(Vector)</c> on failure.</param>
+        /// <returns><c>true</c> if the string parsed successfully; otherwise <c>false</c>.</returns>
+        public static bool TryFromPrettyVectorString(this string vString, out Vector value)
+        {
+            value = default(Vector);
+            if (vString == null) return false;
             var vStringSplit = vString.Split(new[] { ", " }, StringSplitOptions.None);
-            if (vStringSplit.Length != 2) return default(Vector);
+            if (vStringSplit.Length != 2) return false;
 
             double x, y;
-            if (double.TryParse(vStringSplit[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x) == false) return default(Vector);
-            if (double.TryParse(vStringSplit[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y) == false) return default(Vector);
-            return new Vector(x, y);
+            if (!double.TryParse(vStringSplit[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x)) return false;
+            if (!double.TryParse(vStringSplit[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y)) return false;
+            value = new Vector(x, y);
+            return true;
         }
 
         /// <summary>

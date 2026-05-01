@@ -121,6 +121,22 @@ namespace OxyPlot.Wpf
         /// <c>false</c> for plots that rely on anti-aliased thick strokes or curved geometry
         /// where the visual quality difference is noticeable.
         /// </para>
+        /// <para>
+        /// <b>Recommended pairings with <see cref="UseBitmapCache"/></b>:
+        /// </para>
+        /// <list type="bullet">
+        /// <item><description><b>Static plot</b> (report view, finished chart): set both
+        /// <see cref="DisableShapeAntiAliasing"/>=<c>true</c> and <see cref="UseBitmapCache"/>=<c>true</c>.
+        /// Aliasing is invisible at typical thin strokes and the bitmap cache eliminates
+        /// re-rasterization on overlay drags / dock splits.</description></item>
+        /// <item><description><b>Real-time / streaming plot</b> (oscilloscope, live data): leave both
+        /// at the default <c>false</c>. Every frame regenerates the geometry, so neither lever
+        /// helps and <see cref="UseBitmapCache"/>=<c>true</c> would add bitmap-encode overhead.</description></item>
+        /// <item><description><b>Interactive zoom/pan plot on large static data</b> (multi-LineSeries
+        /// trace plot): set <see cref="DisableShapeAntiAliasing"/>=<c>true</c> and
+        /// <see cref="UseBitmapCache"/>=<c>false</c>. Aliasing accelerates the per-zoom render;
+        /// the bitmap cache is invalidated on every zoom/pan and offers no benefit.</description></item>
+        /// </list>
         /// </remarks>
         public bool DisableShapeAntiAliasing
         {
@@ -186,6 +202,10 @@ namespace OxyPlot.Wpf
         /// <para>
         /// <b>When this doesn't help.</b> Real-time streaming plots that re-render every frame
         /// see no benefit and pay a small per-render overhead. Default is off; opt in per plot.
+        /// </para>
+        /// <para>
+        /// See <see cref="DisableShapeAntiAliasing"/> for the three-scenario pairing table
+        /// (static / real-time / interactive) that pairs both flags for best results.
         /// </para>
         /// </remarks>
         public bool UseBitmapCache
@@ -451,6 +471,16 @@ namespace OxyPlot.Wpf
 
             this.overlays = new Canvas();
             this.grid.Children.Add(this.overlays);
+
+            // Clear bindings on the previous adorner instance (if any) before discarding the
+            // reference. Otherwise the WPF binding objects retain a Source reference back to
+            // the old overlay Canvas, keeping the prior visual subtree alive across
+            // re-template events (AvalonDock dock/undock, theme switches that re-template
+            // the control).
+            if (this.zoomAdorner != null)
+            {
+                System.Windows.Data.BindingOperations.ClearAllBindings(this.zoomAdorner);
+            }
 
             this.zoomAdorner = new ZoomRectangleAdorner();
             // The adorner renders the zoom-rectangle drag affordance with no layout-pass overhead

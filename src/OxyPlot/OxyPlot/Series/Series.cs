@@ -48,7 +48,11 @@ namespace OxyPlot.Series
         /// <see cref="HitTestOverride"/> returns <c>null</c> immediately and
         /// <see cref="PlotModel.GetSeriesFromPoint"/> skips the series, so the O(n) nearest-point
         /// scan does not run on every mouse move for this series. This is a tracker-routing flag
-        /// only; it does not affect rendering and does not fire PropertyChanged.
+        /// only; it does not affect rendering and does not fire PropertyChanged. Consumers wiring
+        /// undo-redo through PropertyChanged on the WPF wrapper's DependencyProperty
+        /// (<c>OxyPlot.Wpf.Series.IsHitTestEnabled</c>) get correct undo behavior automatically;
+        /// consumers that mutate this flag on the core <see cref="Series"/> instance directly
+        /// must record state transitions externally — this property is intentionally silent.
         /// </remarks>
         public bool IsHitTestEnabled { get; set; }
 
