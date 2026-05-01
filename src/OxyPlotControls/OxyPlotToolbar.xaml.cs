@@ -1552,6 +1552,63 @@ namespace OxyPlotControls
         }
 
         /// <summary>
+        /// Updates the line-annotation tooltip during an adorner-driven drag, where the
+        /// annotation's <see cref="Wpf.LineAnnotation.X"/> / <see cref="Wpf.LineAnnotation.Y"/>
+        /// DPs have been deferred until MouseUp. The displayed value comes from the cursor's
+        /// inverse-transformed data point instead of the (stale) annotation DP.
+        /// </summary>
+        /// <param name="lineAnnotation">The line annotation whose tooltip is shown.</param>
+        /// <param name="cursorScreen">The current cursor position in screen coordinates.</param>
+        private void UpdateLineAnnotationTooltip(Wpf.LineAnnotation lineAnnotation, ScreenPoint cursorScreen)
+        {
+            if (lineAnnotation.ToolTip == null) return;
+            var cursorData = lineAnnotation.InternalAnnotation.InverseTransform(cursorScreen);
+
+            switch (lineAnnotation.Type)
+            {
+                case OxyPlot.Annotations.LineAnnotationType.Horizontal:
+                    {
+                        DataPoint dataPoint;
+                        if (!lineAnnotation.InternalAnnotation.XAxis!.IsReversed)
+                        {
+                            dataPoint = new DataPoint(lineAnnotation.InternalAnnotation.XAxis.ActualMinimum, cursorData.Y);
+                        }
+                        else
+                        {
+                            dataPoint = new DataPoint(lineAnnotation.InternalAnnotation.XAxis.ActualMaximum, cursorData.Y);
+                        }
+                        var toolTip = (ToolTip)lineAnnotation.ToolTip;
+                        toolTip.Content = lineAnnotation.InternalAnnotation.YAxis!.FormatValue(cursorData.Y);
+                        toolTip.UpdateLayout();
+                        var anchor = lineAnnotation.InternalAnnotation.Transform(dataPoint);
+                        toolTip.VerticalOffset = anchor.Y - toolTip.ActualHeight / 2;
+                        toolTip.HorizontalOffset = anchor.X - toolTip.ActualWidth;
+                    }
+                    break;
+
+                case OxyPlot.Annotations.LineAnnotationType.Vertical:
+                    {
+                        DataPoint dataPoint;
+                        if (!lineAnnotation.InternalAnnotation.YAxis!.IsReversed)
+                        {
+                            dataPoint = new DataPoint(cursorData.X, lineAnnotation.InternalAnnotation.YAxis.ActualMinimum);
+                        }
+                        else
+                        {
+                            dataPoint = new DataPoint(cursorData.X, lineAnnotation.InternalAnnotation.YAxis.ActualMaximum);
+                        }
+                        var toolTip = (ToolTip)lineAnnotation.ToolTip;
+                        toolTip.Content = lineAnnotation.InternalAnnotation.XAxis!.FormatValue(cursorData.X);
+                        toolTip.UpdateLayout();
+                        var anchor = lineAnnotation.InternalAnnotation.Transform(dataPoint);
+                        toolTip.VerticalOffset = anchor.Y;
+                        toolTip.HorizontalOffset = anchor.X - toolTip.ActualWidth / 2;
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Close the line annotation tooltip.
         /// </summary>
         private void CloseLineAnnotationTooltip(Wpf.LineAnnotation lineAnnotation)
@@ -1927,13 +1984,29 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
-                        ((Wpf.LineAnnotation)_targetAddAnnotation).X = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).X;
-                        UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
+                        {
+                            // Adorner-only preview during drag — final X is committed at
+                            // MouseUp. The line spans the full plot height at the cursor X.
+                            var line = (Wpf.LineAnnotation)_targetAddAnnotation;
+                            var plotArea = Plot.ActualModel.PlotArea;
+                            var top = new Point(e.Position.X, plotArea.Top);
+                            var bottom = new Point(e.Position.X, plotArea.Bottom);
+                            _dragAdorner.ShowAxisLine(top, bottom);
+                            UpdateLineAnnotationTooltip(line, e.Position);
+                        }
                         break;
 
                     case AddToolMode.AddHorizontalLineAnnotation:
-                        ((Wpf.LineAnnotation)_targetAddAnnotation).Y = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).Y;
-                        UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
+                        {
+                            // Adorner-only preview during drag — final Y is committed at
+                            // MouseUp. The line spans the full plot width at the cursor Y.
+                            var line = (Wpf.LineAnnotation)_targetAddAnnotation;
+                            var plotArea = Plot.ActualModel.PlotArea;
+                            var left = new Point(plotArea.Left, e.Position.Y);
+                            var right = new Point(plotArea.Right, e.Position.Y);
+                            _dragAdorner.ShowAxisLine(left, right);
+                            UpdateLineAnnotationTooltip(line, e.Position);
+                        }
                         break;
 
                     case AddToolMode.AddRectangleAnnotation:
@@ -2239,7 +2312,19 @@ namespace OxyPlotControls
             }
             else if (_addAnnotationToolMode == AddToolMode.AddHorizontalLineAnnotation || _addAnnotationToolMode == AddToolMode.AddVerticalLineAnnotation)
             {
-                CloseLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
+                // Commit the final cursor position to the X/Y DP (deferred from MouseMove for
+                // the adorner fast-path).
+                var lineCommit = (Wpf.LineAnnotation)_targetAddAnnotation;
+                var commitData = lineCommit.InternalAnnotation.InverseTransform(e.Position);
+                if (_addAnnotationToolMode == AddToolMode.AddVerticalLineAnnotation)
+                {
+                    lineCommit.X = commitData.X;
+                }
+                else
+                {
+                    lineCommit.Y = commitData.Y;
+                }
+                CloseLineAnnotationTooltip(lineCommit);
                 StopAddAnnotation();
             }
             else if (_addAnnotationToolMode == AddToolMode.AddRectangleAnnotation)
