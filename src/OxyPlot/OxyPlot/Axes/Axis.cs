@@ -323,7 +323,22 @@ namespace OxyPlot.Axes
         /// <summary>
         /// Gets or sets the filter function. The default value is <c>null</c>.
         /// </summary>
-        public Func<double, bool> FilterFunction { get; set; }
+        private Func<double, bool> filterFunction;
+        private bool hasFilterFunction;
+
+        /// <summary>
+        /// Gets or sets the filter function. The default is <c>null</c>.
+        /// </summary>
+        /// <value>The filter function.</value>
+        public Func<double, bool> FilterFunction
+        {
+            get => this.filterFunction;
+            set
+            {
+                this.filterFunction = value;
+                this.hasFilterFunction = value != null;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the maximum value that can be shown using this axis. Values greater or equal to this value will not be shown. The default value is <c>double.MaxValue</c>.
@@ -855,12 +870,16 @@ namespace OxyPlot.Axes
 #pragma warning disable 1718
             // ReSharper disable EqualExpressionComparison
             // ReSharper disable CompareOfFloatsByEqualityOperator
+            // hasFilterFunction is a cached bool flag mirrored from FilterFunction null-state;
+            // the JIT predicts this branch as always-false in the common case (no filter set)
+            // after a single observation, whereas the original null-check on the property
+            // could not be devirtualized.
             return value == value &&
                 value != 1.0 / 0.0 &&
                 value != -1.0 / 0.0 &&
                 value < this.FilterMaxValue &&
                 value > this.FilterMinValue &&
-                (this.FilterFunction == null || this.FilterFunction(value));
+                (!this.hasFilterFunction || this.filterFunction(value));
             // ReSharper restore CompareOfFloatsByEqualityOperator
             // ReSharper restore EqualExpressionComparison
 #pragma warning restore 1718

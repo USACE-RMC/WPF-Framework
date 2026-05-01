@@ -273,11 +273,22 @@ namespace OxyPlot.Axes
         /// <returns>A new IList containing the resulting values.</returns>
         internal IList<double> PowList(IList<double> logInput, bool clip = false)
         {
-            return
-                logInput.Where(item => !clip || !(item < this.LogClipMinimum))
-                    .TakeWhile(item => !clip || !(item > this.LogClipMaximum))
-                    .Select(item => Math.Pow(this.Base, item))
-                    .ToList();
+            // Direct loop instead of Where().TakeWhile().Select().ToList() — the LINQ chain
+            // allocated three iterator state machines plus a List per call. Tick generation
+            // runs in every AdjustPlotMargins iteration, so this fires multiple times per
+            // render on log-axis plots.
+            var result = new List<double>(logInput.Count);
+            for (int i = 0; i < logInput.Count; i++)
+            {
+                var item = logInput[i];
+                if (clip)
+                {
+                    if (item < this.LogClipMinimum) continue;
+                    if (item > this.LogClipMaximum) break; // mirror TakeWhile semantics
+                }
+                result.Add(Math.Pow(this.Base, item));
+            }
+            return result;
         }
 
         /// <summary>
@@ -288,11 +299,18 @@ namespace OxyPlot.Axes
         /// <returns>A new IList containing the resulting values.</returns>
         internal IList<double> LogList(IList<double> input, bool clip = false)
         {
-            return
-                input.Where(item => !clip || !(item < this.ClipMinimum))
-                    .TakeWhile(item => !clip || !(item > this.ClipMaximum))
-                    .Select(item => Math.Log(item, this.Base))
-                    .ToList();
+            var result = new List<double>(input.Count);
+            for (int i = 0; i < input.Count; i++)
+            {
+                var item = input[i];
+                if (clip)
+                {
+                    if (item < this.ClipMinimum) continue;
+                    if (item > this.ClipMaximum) break;
+                }
+                result.Add(Math.Log(item, this.Base));
+            }
+            return result;
         }
 
         /// <summary>

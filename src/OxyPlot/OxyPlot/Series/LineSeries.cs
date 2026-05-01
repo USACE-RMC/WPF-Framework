@@ -860,11 +860,25 @@ namespace OxyPlot.Series
         /// <param name="rc">The render context.</param>
         protected void RenderPointLabels(IRenderContext rc)
         {
-            int index = -1;
-            foreach (var point in this.ActualPoints)
+            // Restrict label rendering to the visible window for monotonic series. On a
+            // 100k-point dataset, labels for off-screen points were previously formatted
+            // and submitted to DrawText anyway — even though they would clip outside the
+            // plot area. The window indices were already computed by RenderPoints upstream.
+            var actualPoints = this.ActualPoints;
+            int startIdx = 0;
+            int endIdx = actualPoints.Count;
+            if (this.IsXMonotonic)
             {
-                index++;
+                startIdx = Math.Max(0, this.WindowStartIndex);
+                if (this.WindowEndIndex >= 0 && this.WindowEndIndex < actualPoints.Count)
+                {
+                    endIdx = Math.Min(actualPoints.Count, this.WindowEndIndex + 2);
+                }
+            }
 
+            for (int index = startIdx; index < endIdx; index++)
+            {
+                var point = actualPoints[index];
                 if (!this.IsValidPoint(point))
                 {
                     continue;
