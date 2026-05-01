@@ -212,11 +212,18 @@ namespace OxyPlot
         /// <returns><c>true</c> if the margins were adjusted.</returns>
         private bool AdjustPlotMargins(IRenderContext rc)
         {
+            // Only re-measure axes whose transform parameters have changed since the last
+            // pass. The stabilization loop in RenderOverride may call AdjustPlotMargins up
+            // to 10 times — without this guard, every call re-measures every visible axis,
+            // which iterates ticks, formats labels, and calls rc.MeasureText for each tick.
+            // Comparison-based dirty detection (vs. an explicit dirty flag) avoids the risk
+            // of missing a code path that mutates the axis.
             foreach (var axis in this.Axes)
             {
-                if (axis.IsAxisVisible)
+                if (axis.IsAxisVisible && axis.NeedsMeasure())
                 {
                     axis.Measure(rc);
+                    axis.MarkMeasured();
                 }
             }
 

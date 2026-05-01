@@ -891,6 +891,59 @@ namespace OxyPlot.Axes
         }
 
         /// <summary>
+        /// Cached <see cref="Scale"/> at the time of the last <see cref="Measure"/> call —
+        /// used by <see cref="NeedsMeasure"/> to skip redundant measurement passes during
+        /// the plot-margin stabilization loop.
+        /// </summary>
+        private double lastMeasuredScale = double.NaN;
+
+        /// <summary>
+        /// Cached <see cref="Offset"/> at the time of the last <see cref="Measure"/> call.
+        /// </summary>
+        private double lastMeasuredOffset = double.NaN;
+
+        /// <summary>
+        /// Cached <see cref="ActualMinimum"/> at the time of the last <see cref="Measure"/> call.
+        /// </summary>
+        private double lastMeasuredMin = double.NaN;
+
+        /// <summary>
+        /// Cached <see cref="ActualMaximum"/> at the time of the last <see cref="Measure"/> call.
+        /// </summary>
+        private double lastMeasuredMax = double.NaN;
+
+        /// <summary>
+        /// Returns <c>true</c> if any of the parameters that affect tick layout
+        /// (<see cref="Scale"/>, <see cref="Offset"/>, <see cref="ActualMinimum"/>,
+        /// <see cref="ActualMaximum"/>) have changed since the last <see cref="Measure"/>
+        /// call. Always returns <c>true</c> on the first call (NaN sentinels). Used by
+        /// the plot-margin stabilization loop to skip re-measuring axes that haven't moved.
+        /// </summary>
+        public bool NeedsMeasure()
+        {
+            // Use bit-equality to handle the NaN-sentinel "first call" case correctly:
+            // double.NaN != double.NaN, so the comparisons below always trigger a measure
+            // on the first call, and all four parameters become tracked thereafter.
+            return this.lastMeasuredScale != this.Scale
+                || this.lastMeasuredOffset != this.Offset
+                || this.lastMeasuredMin != this.ActualMinimum
+                || this.lastMeasuredMax != this.ActualMaximum;
+        }
+
+        /// <summary>
+        /// Records the parameters that were in effect for the most recent <see cref="Measure"/>
+        /// call. Subsequent <see cref="NeedsMeasure"/> checks compare against these values to
+        /// detect whether the axis has moved.
+        /// </summary>
+        public void MarkMeasured()
+        {
+            this.lastMeasuredScale = this.Scale;
+            this.lastMeasuredOffset = this.Offset;
+            this.lastMeasuredMin = this.ActualMinimum;
+            this.lastMeasuredMax = this.ActualMaximum;
+        }
+
+        /// <summary>
         /// Measures the size of the axis and updates <see cref="DesiredMargin"/> accordingly. This takes into account the axis title as well as tick labels
         /// potentially exceeding the axis range.
         /// </summary>
