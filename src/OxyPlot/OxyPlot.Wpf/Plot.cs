@@ -553,26 +553,29 @@ namespace OxyPlot.Wpf
         /// the next sync pass — avoids re-creating all axes and annotation models for an
         /// unrelated series-only edit.
         /// </summary>
-        private bool _seriesDirty;
+        internal bool _seriesDirty;
 
         /// <summary>
         /// Set to <c>true</c> when an item in <see cref="Axes"/> changed. Triggers
         /// <see cref="SynchronizeAxes"/> alone on the next sync pass.
         /// </summary>
-        private bool _axesDirty;
+        internal bool _axesDirty;
 
         /// <summary>
         /// Set to <c>true</c> when an item in <see cref="Annotations"/> changed. Triggers
-        /// <see cref="SynchronizeAnnotations"/> alone on the next sync pass.
+        /// <see cref="SynchronizeAnnotations"/> alone on the next sync pass. Set by
+        /// <see cref="Annotation.AppearanceChanged"/> on every annotation DP write — exposed
+        /// internally so that path can flag only the affected collection rather than the
+        /// legacy "force full sync" <c>_needsSynchronization</c>.
         /// </summary>
-        private bool _annotationsDirty;
+        internal bool _annotationsDirty;
 
         /// <summary>
         /// Set to <c>true</c> when a Plot-level DP changed (background, title, legend
         /// appearance, etc.). Triggers <see cref="SynchronizeProperties"/> alone on the
         /// next sync pass.
         /// </summary>
-        private bool _propertiesDirty;
+        internal bool _propertiesDirty;
 
         /// <summary>
         /// When true, the next non-gated <see cref="InvalidatePlot"/> call must run with

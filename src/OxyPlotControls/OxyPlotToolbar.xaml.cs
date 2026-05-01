@@ -398,6 +398,34 @@ namespace OxyPlotControls
         /// </summary>
         private Point _anchorScreenPoint;
 
+        // --- Drag-shadow fields (Phase 5) -------------------------------------------------
+        // The MouseMove handlers for an in-progress drag on an existing annotation update
+        // these screen-space fields by delta and feed them to _dragAdorner — no DPs are
+        // written until MouseUp. Reused across annotation types since only one drag is
+        // active at a time.
+
+        /// <summary>Drag-shadow first endpoint (arrow start, line, polygon vertex 0, etc.)</summary>
+        private Point _dragP1;
+
+        /// <summary>Drag-shadow second endpoint (arrow end, line, etc.)</summary>
+        private Point _dragP2;
+
+        /// <summary>Drag-shadow rectangle corners in screen space (rect / ellipse).</summary>
+        private double _dragMinX, _dragMaxX, _dragMinY, _dragMaxY;
+
+        /// <summary>Cached arrow head dimensions captured at MouseDown.</summary>
+        private double _dragArrowHeadLen, _dragArrowHeadWidth;
+
+        /// <summary>Cached point-marker radius captured at MouseDown.</summary>
+        private double _dragPointRadius;
+
+        /// <summary>Drag-shadow polygon/polyline vertices in screen space.</summary>
+        private List<Point>? _dragPolyPts;
+
+        /// <summary>Cached text content + font size for text-drag preview.</summary>
+        private string _dragTextContent = string.Empty;
+        private double _dragTextFontSize;
+
         private bool _moveStartPoint = false;
         private bool _moveEndPoint = false;
         private int _movePointIndex = -1;
@@ -867,13 +895,20 @@ namespace OxyPlotControls
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index != 2;
                         _moveEndPoint = ae.HitTestResult.Index != 1;
-                        _originalColor = newArrow.Color;
                         newArrow.SuppressPropertyChanged = true;
-                        newArrow.Color = Colors.Red;
+
+                        // Snapshot the arrow's screen-space endpoints. MouseMove updates these
+                        // directly without writing DPs; MouseUp commits final state.
+                        var startScreen = newArrow.InternalAnnotation.Transform(newArrow.StartPoint);
+                        var endScreen = newArrow.InternalAnnotation.Transform(newArrow.EndPoint);
+                        _dragP1 = new Point(startScreen.X, startScreen.Y);
+                        _dragP2 = new Point(endScreen.X, endScreen.Y);
+                        double thickness = newArrow.StrokeThickness > 0 ? newArrow.StrokeThickness : 2;
+                        _dragArrowHeadLen = newArrow.HeadLength * thickness;
+                        _dragArrowHeadWidth = newArrow.HeadWidth * thickness;
+                        _dragAdorner.ShowArrow(_dragP1, _dragP2, _dragArrowHeadLen, _dragArrowHeadWidth);
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
@@ -883,17 +918,12 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var startScreenPoint = newArrow.InternalAnnotation.Transform(new DataPoint(newArrow.StartPoint.X, newArrow.StartPoint.Y));
-                        var endScreenPoint = newArrow.InternalAnnotation.Transform(new DataPoint(newArrow.EndPoint.X, newArrow.EndPoint.Y));
-
-                        var startDataPoint = newArrow.InternalAnnotation.InverseTransform(new ScreenPoint(startScreenPoint.X + dx, startScreenPoint.Y + dy));
-                        var endDataPoint = newArrow.InternalAnnotation.InverseTransform(new ScreenPoint(endScreenPoint.X + dx, endScreenPoint.Y + dy));
-
-                        if (_moveStartPoint) newArrow.StartPoint = startDataPoint;
-                        if (_moveEndPoint) newArrow.EndPoint = endDataPoint;
-
+                        if (_moveStartPoint) _dragP1 = new Point(_dragP1.X + dx, _dragP1.Y + dy);
+                        if (_moveEndPoint) _dragP2 = new Point(_dragP2.X + dx, _dragP2.Y + dy);
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+
+                        // Adorner-only update; no DP writes, no plot re-render.
+                        _dragAdorner.ShowArrow(_dragP1, _dragP2, _dragArrowHeadLen, _dragArrowHeadWidth);
                         ae.Handled = true;
                     };
 
@@ -902,15 +932,24 @@ namespace OxyPlotControls
                         if (!newArrow.IsEnabled) return;
                         try
                         {
-                            newArrow.Color = _originalColor;
+                            // Commit final endpoints from the screen-space drag shadow.
+                            if (_moveStartPoint)
+                            {
+                                newArrow.StartPoint = newArrow.InternalAnnotation.InverseTransform(
+                                    new ScreenPoint(_dragP1.X, _dragP1.Y));
+                            }
+                            if (_moveEndPoint)
+                            {
+                                newArrow.EndPoint = newArrow.InternalAnnotation.InverseTransform(
+                                    new ScreenPoint(_dragP2.X, _dragP2.Y));
+                            }
                         }
                         finally
                         {
-                            // Guarantee suppression is cleared even if the Color setter throws,
-                            // so PropertyChanged (and undo bridge) are not silenced indefinitely.
                             newArrow.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
                         }
-                        newArrow.RaisePropertyChanged(nameof(newArrow.StartPoint), nameof(newArrow.EndPoint), nameof(newArrow.Color));
+                        newArrow.RaisePropertyChanged(nameof(newArrow.StartPoint), nameof(newArrow.EndPoint));
                     };
                 }
                 else if (item is Wpf.TextAnnotation)
@@ -926,29 +965,48 @@ namespace OxyPlotControls
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
-                        _originalColor = newText.Background;
                         newText.SuppressPropertyChanged = true;
-                        newText.Background = Colors.Red;
+
+                        // Snapshot the text's screen-space anchor + cache content/size.
+                        var anchorScreen = newText.InternalAnnotation.Transform(newText.TextPosition);
+                        _dragP1 = new Point(anchorScreen.X, anchorScreen.Y);
+                        _dragTextContent = newText.Text ?? string.Empty;
+                        _dragTextFontSize = newText.FontSize > 0 ? newText.FontSize : 12;
+                        var ft = new System.Windows.Media.FormattedText(
+                            _dragTextContent,
+                            System.Globalization.CultureInfo.CurrentUICulture,
+                            FlowDirection.LeftToRight,
+                            new System.Windows.Media.Typeface(newText.FontFamily?.ToString() ?? "Segoe UI"),
+                            _dragTextFontSize,
+                            System.Windows.Media.Brushes.Red,
+                            pixelsPerDip: 1.0);
+                        var bounds = new Rect(_dragP1.X, _dragP1.Y, ft.Width, ft.Height);
+                        _dragAdorner.ShowText(_dragP1, _dragTextContent, _dragTextFontSize, bounds);
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
                     newText.InternalAnnotation.MouseMove += (s, ae) =>
                     {
                         if (!newText.IsEnabled) return;
+                        if (!_moveStartPoint) return;
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var theScreenPoint = newText.InternalAnnotation.Transform(new DataPoint(newText.TextPosition.X, newText.TextPosition.Y));
-                        var theDataPoint = newText.InternalAnnotation.InverseTransform(new ScreenPoint(theScreenPoint.X + dx, theScreenPoint.Y + dy));
-
-                        if (_moveStartPoint) newText.TextPosition = theDataPoint;
-
+                        _dragP1 = new Point(_dragP1.X + dx, _dragP1.Y + dy);
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+
+                        var ft = new System.Windows.Media.FormattedText(
+                            _dragTextContent,
+                            System.Globalization.CultureInfo.CurrentUICulture,
+                            FlowDirection.LeftToRight,
+                            new System.Windows.Media.Typeface("Segoe UI"),
+                            _dragTextFontSize,
+                            System.Windows.Media.Brushes.Red,
+                            pixelsPerDip: 1.0);
+                        var bounds = new Rect(_dragP1.X, _dragP1.Y, ft.Width, ft.Height);
+                        _dragAdorner.ShowText(_dragP1, _dragTextContent, _dragTextFontSize, bounds);
                         ae.Handled = true;
                     };
 
@@ -957,13 +1015,18 @@ namespace OxyPlotControls
                         if (!newText.IsEnabled) return;
                         try
                         {
-                            newText.Background = _originalColor;
+                            if (_moveStartPoint)
+                            {
+                                newText.TextPosition = newText.InternalAnnotation.InverseTransform(
+                                    new ScreenPoint(_dragP1.X, _dragP1.Y));
+                            }
                         }
                         finally
                         {
                             newText.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
                         }
-                        newText.RaisePropertyChanged(nameof(newText.TextPosition), nameof(newText.Background));
+                        newText.RaisePropertyChanged(nameof(newText.TextPosition));
                     };
                 }
                 else if (item is Wpf.RectangleAnnotation)
@@ -993,13 +1056,18 @@ namespace OxyPlotControls
                             _moveStartPoint = !_scaleMaxX && !_scaleMaxY && !_scaleMinX && !_scaleMinY;
                         }
 
-                        _originalColor = newRect.Fill;
                         newRect.SuppressPropertyChanged = true;
-                        newRect.Fill = Colors.Red;
+
+                        // Snapshot the rect's screen-space corners; MouseMove updates the
+                        // shadow by delta and feeds it to the adorner; MouseUp commits DPs.
+                        _dragMaxX = upperRight.X;
+                        _dragMaxY = upperRight.Y;
+                        _dragMinX = lowerLeft.X;
+                        _dragMinY = lowerLeft.Y;
+                        _dragAdorner.ShowRect(MakeRect(
+                            new Point(_dragMinX, _dragMinY), new Point(_dragMaxX, _dragMaxY)));
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
@@ -1009,27 +1077,21 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var upperRightScreenPoint = newRect.InternalAnnotation.Transform(newRect.MaximumX, newRect.MaximumY);
-                        var lowerLeftScreenPoint = newRect.InternalAnnotation.Transform(newRect.MinimumX, newRect.MinimumY);
 
-                        var upperRightDataPoint = newRect.InternalAnnotation.InverseTransform(new ScreenPoint(upperRightScreenPoint.X + dx, upperRightScreenPoint.Y + dy));
-                        var lowerLeftDataPoint = newRect.InternalAnnotation.InverseTransform(new ScreenPoint(lowerLeftScreenPoint.X + dx, lowerLeftScreenPoint.Y + dy));
-
-                        if (_scaleMaxX) newRect.MaximumX = upperRightDataPoint.X;
-                        if (_scaleMaxY) newRect.MaximumY = upperRightDataPoint.Y;
-                        if (_scaleMinX) newRect.MinimumX = lowerLeftDataPoint.X;
-                        if (_scaleMinY) newRect.MinimumY = lowerLeftDataPoint.Y;
+                        if (_scaleMaxX) _dragMaxX += dx;
+                        if (_scaleMaxY) _dragMaxY += dy;
+                        if (_scaleMinX) _dragMinX += dx;
+                        if (_scaleMinY) _dragMinY += dy;
 
                         if (_moveStartPoint)
                         {
-                            newRect.MaximumX = upperRightDataPoint.X;
-                            newRect.MaximumY = upperRightDataPoint.Y;
-                            newRect.MinimumX = lowerLeftDataPoint.X;
-                            newRect.MinimumY = lowerLeftDataPoint.Y;
+                            _dragMaxX += dx; _dragMaxY += dy;
+                            _dragMinX += dx; _dragMinY += dy;
                         }
 
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+                        _dragAdorner.ShowRect(MakeRect(
+                            new Point(_dragMinX, _dragMinY), new Point(_dragMaxX, _dragMaxY)));
                         ae.Handled = true;
                     };
 
@@ -1038,13 +1100,22 @@ namespace OxyPlotControls
                         if (!newRect.IsEnabled) return;
                         try
                         {
-                            newRect.Fill = _originalColor;
+                            // Commit final corners from the screen-space shadow.
+                            var upperRightData = newRect.InternalAnnotation.InverseTransform(
+                                new ScreenPoint(_dragMaxX, _dragMaxY));
+                            var lowerLeftData = newRect.InternalAnnotation.InverseTransform(
+                                new ScreenPoint(_dragMinX, _dragMinY));
+                            if (_scaleMaxX || _moveStartPoint) newRect.MaximumX = upperRightData.X;
+                            if (_scaleMaxY || _moveStartPoint) newRect.MaximumY = upperRightData.Y;
+                            if (_scaleMinX || _moveStartPoint) newRect.MinimumX = lowerLeftData.X;
+                            if (_scaleMinY || _moveStartPoint) newRect.MinimumY = lowerLeftData.Y;
                         }
                         finally
                         {
                             newRect.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
                         }
-                        newRect.RaisePropertyChanged(nameof(newRect.MinimumX), nameof(newRect.MaximumX), nameof(newRect.MinimumY), nameof(newRect.MaximumY), nameof(newRect.Fill));
+                        newRect.RaisePropertyChanged(nameof(newRect.MinimumX), nameof(newRect.MaximumX), nameof(newRect.MinimumY), nameof(newRect.MaximumY));
                     };
                 }
                 else if (item is Wpf.EllipseAnnotation)
@@ -1074,13 +1145,17 @@ namespace OxyPlotControls
                             _moveStartPoint = !_scaleMaxX && !_scaleMaxY && !_scaleMinX && !_scaleMinY;
                         }
 
-                        _originalColor = newEllipse.Fill;
                         newEllipse.SuppressPropertyChanged = true;
-                        newEllipse.Fill = Colors.Red;
+
+                        // Snapshot ellipse bounding box in screen space.
+                        _dragMaxX = upperRight.X;
+                        _dragMaxY = upperRight.Y;
+                        _dragMinX = lowerLeft.X;
+                        _dragMinY = lowerLeft.Y;
+                        _dragAdorner.ShowEllipse(MakeRect(
+                            new Point(_dragMinX, _dragMinY), new Point(_dragMaxX, _dragMaxY)));
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
@@ -1090,27 +1165,21 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var upperRightScreenPoint = newEllipse.InternalAnnotation.Transform(newEllipse.MaximumX, newEllipse.MaximumY);
-                        var lowerLeftScreenPoint = newEllipse.InternalAnnotation.Transform(newEllipse.MinimumX, newEllipse.MinimumY);
 
-                        var upperRightDataPoint = newEllipse.InternalAnnotation.InverseTransform(new ScreenPoint(upperRightScreenPoint.X + dx, upperRightScreenPoint.Y + dy));
-                        var lowerLeftDataPoint = newEllipse.InternalAnnotation.InverseTransform(new ScreenPoint(lowerLeftScreenPoint.X + dx, lowerLeftScreenPoint.Y + dy));
-
-                        if (_scaleMaxX) newEllipse.MaximumX = upperRightDataPoint.X;
-                        if (_scaleMaxY) newEllipse.MaximumY = upperRightDataPoint.Y;
-                        if (_scaleMinX) newEllipse.MinimumX = lowerLeftDataPoint.X;
-                        if (_scaleMinY) newEllipse.MinimumY = lowerLeftDataPoint.Y;
+                        if (_scaleMaxX) _dragMaxX += dx;
+                        if (_scaleMaxY) _dragMaxY += dy;
+                        if (_scaleMinX) _dragMinX += dx;
+                        if (_scaleMinY) _dragMinY += dy;
 
                         if (_moveStartPoint)
                         {
-                            newEllipse.MaximumX = upperRightDataPoint.X;
-                            newEllipse.MaximumY = upperRightDataPoint.Y;
-                            newEllipse.MinimumX = lowerLeftDataPoint.X;
-                            newEllipse.MinimumY = lowerLeftDataPoint.Y;
+                            _dragMaxX += dx; _dragMaxY += dy;
+                            _dragMinX += dx; _dragMinY += dy;
                         }
 
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+                        _dragAdorner.ShowEllipse(MakeRect(
+                            new Point(_dragMinX, _dragMinY), new Point(_dragMaxX, _dragMaxY)));
                         ae.Handled = true;
                     };
 
@@ -1119,13 +1188,21 @@ namespace OxyPlotControls
                         if (!newEllipse.IsEnabled) return;
                         try
                         {
-                            newEllipse.Fill = _originalColor;
+                            var upperRightData = newEllipse.InternalAnnotation.InverseTransform(
+                                new ScreenPoint(_dragMaxX, _dragMaxY));
+                            var lowerLeftData = newEllipse.InternalAnnotation.InverseTransform(
+                                new ScreenPoint(_dragMinX, _dragMinY));
+                            if (_scaleMaxX || _moveStartPoint) newEllipse.MaximumX = upperRightData.X;
+                            if (_scaleMaxY || _moveStartPoint) newEllipse.MaximumY = upperRightData.Y;
+                            if (_scaleMinX || _moveStartPoint) newEllipse.MinimumX = lowerLeftData.X;
+                            if (_scaleMinY || _moveStartPoint) newEllipse.MinimumY = lowerLeftData.Y;
                         }
                         finally
                         {
                             newEllipse.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
                         }
-                        newEllipse.RaisePropertyChanged(nameof(newEllipse.X), nameof(newEllipse.Y), nameof(newEllipse.Width), nameof(newEllipse.Height), nameof(newEllipse.Fill));
+                        newEllipse.RaisePropertyChanged(nameof(newEllipse.MinimumX), nameof(newEllipse.MaximumX), nameof(newEllipse.MinimumY), nameof(newEllipse.MaximumY));
                     };
                 }
                 else if (item is Wpf.PointAnnotation)
@@ -1141,33 +1218,29 @@ namespace OxyPlotControls
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
-                        _originalColor = newPoint.Fill;
                         newPoint.SuppressPropertyChanged = true;
-                        newPoint.Fill = Colors.Red;
+
+                        // Snapshot the point's screen position for the adorner.
+                        var ptScreen = newPoint.InternalAnnotation.Transform(new DataPoint(newPoint.X, newPoint.Y));
+                        _dragP1 = new Point(ptScreen.X, ptScreen.Y);
+                        _dragPointRadius = newPoint.Size > 0 ? newPoint.Size : 5;
+                        _dragAdorner.ShowPoint(_dragP1, _dragPointRadius);
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
                     newPoint.InternalAnnotation.MouseMove += (s, ae) =>
                     {
                         if (!newPoint.IsEnabled) return;
+                        if (!_moveStartPoint) return;
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var theScreenPoint = newPoint.InternalAnnotation.Transform(new DataPoint(newPoint.X, newPoint.Y));
-                        var theDataPoint = newPoint.InternalAnnotation.InverseTransform(new ScreenPoint(theScreenPoint.X + dx, theScreenPoint.Y + dy));
-
-                        if (_moveStartPoint)
-                        {
-                            newPoint.X = theDataPoint.X;
-                            newPoint.Y = theDataPoint.Y;
-                        }
-
+                        _dragP1 = new Point(_dragP1.X + dx, _dragP1.Y + dy);
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+
+                        _dragAdorner.ShowPoint(_dragP1, _dragPointRadius);
                         ae.Handled = true;
                     };
 
@@ -1176,13 +1249,20 @@ namespace OxyPlotControls
                         if (!newPoint.IsEnabled) return;
                         try
                         {
-                            newPoint.Fill = _originalColor;
+                            if (_moveStartPoint)
+                            {
+                                var data = newPoint.InternalAnnotation.InverseTransform(
+                                    new ScreenPoint(_dragP1.X, _dragP1.Y));
+                                newPoint.X = data.X;
+                                newPoint.Y = data.Y;
+                            }
                         }
                         finally
                         {
                             newPoint.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
                         }
-                        newPoint.RaisePropertyChanged(nameof(newPoint.X), nameof(newPoint.Y), nameof(newPoint.Fill));
+                        newPoint.RaisePropertyChanged(nameof(newPoint.X), nameof(newPoint.Y));
                     };
                 }
                 else if (item is Wpf.PolygonAnnotation)
@@ -1246,13 +1326,18 @@ namespace OxyPlotControls
                             }
                         }
 
-                        _originalColor = newPolygon.Fill;
                         newPolygon.SuppressPropertyChanged = true;
-                        newPolygon.Fill = Colors.Red;
+
+                        // Snapshot polygon vertices in screen space for the adorner.
+                        _dragPolyPts = new List<Point>(newPolygon.Points.Count);
+                        for (int i = 0; i < newPolygon.Points.Count; i++)
+                        {
+                            var sp = newPolygon.InternalAnnotation.Transform(newPolygon.Points[i]);
+                            _dragPolyPts.Add(new Point(sp.X, sp.Y));
+                        }
+                        _dragAdorner.ShowPolyshape(_dragPolyPts, closed: true);
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
@@ -1263,22 +1348,22 @@ namespace OxyPlotControls
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
 
-                        if (_movePointIndex > -1)
+                        if (_movePointIndex > -1 && _dragPolyPts != null && _movePointIndex < _dragPolyPts.Count)
                         {
-                            var screenPoint = newPolygon.InternalAnnotation.Transform(new DataPoint(newPolygon.Points[_movePointIndex].X, newPolygon.Points[_movePointIndex].Y));
-                            newPolygon.Points[_movePointIndex] = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                            var p = _dragPolyPts[_movePointIndex];
+                            _dragPolyPts[_movePointIndex] = new Point(p.X + dx, p.Y + dy);
                         }
-                        else if (_moveStartPoint)
+                        else if (_moveStartPoint && _dragPolyPts != null)
                         {
-                            for (int i = 0; i < newPolygon.Points.Count; i++)
+                            for (int i = 0; i < _dragPolyPts.Count; i++)
                             {
-                                var screenPoint = newPolygon.InternalAnnotation.Transform(new DataPoint(newPolygon.Points[i].X, newPolygon.Points[i].Y));
-                                newPolygon.Points[i] = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                                var p = _dragPolyPts[i];
+                                _dragPolyPts[i] = new Point(p.X + dx, p.Y + dy);
                             }
                         }
 
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+                        if (_dragPolyPts != null) _dragAdorner.ShowPolyshape(_dragPolyPts, closed: true);
                         ae.Handled = true;
                     };
 
@@ -1287,13 +1372,26 @@ namespace OxyPlotControls
                         if (!newPolygon.IsEnabled) return;
                         try
                         {
-                            newPolygon.Fill = _originalColor;
+                            // Commit the screen-space polygon shadow back to data-coordinate
+                            // points on the annotation.
+                            if (_dragPolyPts != null && (_movePointIndex > -1 || _moveStartPoint))
+                            {
+                                var newPts = new List<DataPoint>(_dragPolyPts.Count);
+                                for (int i = 0; i < _dragPolyPts.Count; i++)
+                                {
+                                    var sp = new ScreenPoint(_dragPolyPts[i].X, _dragPolyPts[i].Y);
+                                    newPts.Add(newPolygon.InternalAnnotation.InverseTransform(sp));
+                                }
+                                newPolygon.Points = newPts;
+                            }
                         }
                         finally
                         {
                             newPolygon.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
+                            _dragPolyPts = null;
                         }
-                        newPolygon.RaisePropertyChanged(nameof(newPolygon.Points), nameof(newPolygon.Fill));
+                        newPolygon.RaisePropertyChanged(nameof(newPolygon.Points));
                     };
                 }
                 else if (item is Wpf.PolylineAnnotation)
@@ -1343,13 +1441,18 @@ namespace OxyPlotControls
 
                         if (!onLine) _moveStartPoint = true;
 
-                        _originalColor = newPolyline.Color;
                         newPolyline.SuppressPropertyChanged = true;
-                        newPolyline.Color = Colors.Red;
+
+                        // Snapshot polyline vertices in screen space.
+                        _dragPolyPts = new List<Point>(newPolyline.Points.Count);
+                        for (int i = 0; i < newPolyline.Points.Count; i++)
+                        {
+                            var sp = newPolyline.InternalAnnotation.Transform(newPolyline.Points[i]);
+                            _dragPolyPts.Add(new Point(sp.X, sp.Y));
+                        }
+                        _dragAdorner.ShowPolyshape(_dragPolyPts, closed: false);
 
                         GetSelectedObjects(s!, ae);
-
-                        Plot.ActualModel.InvalidatePlot(false);
                         ae.Handled = true;
                     };
 
@@ -1360,22 +1463,22 @@ namespace OxyPlotControls
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
 
-                        if (_movePointIndex > -1)
+                        if (_movePointIndex > -1 && _dragPolyPts != null && _movePointIndex < _dragPolyPts.Count)
                         {
-                            var screenPoint = newPolyline.InternalAnnotation.Transform(new DataPoint(newPolyline.Points[_movePointIndex].X, newPolyline.Points[_movePointIndex].Y));
-                            newPolyline.Points[_movePointIndex] = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                            var p = _dragPolyPts[_movePointIndex];
+                            _dragPolyPts[_movePointIndex] = new Point(p.X + dx, p.Y + dy);
                         }
-                        else if (_moveStartPoint)
+                        else if (_moveStartPoint && _dragPolyPts != null)
                         {
-                            for (int i = 0; i < newPolyline.Points.Count; i++)
+                            for (int i = 0; i < _dragPolyPts.Count; i++)
                             {
-                                var screenPoint = newPolyline.InternalAnnotation.Transform(new DataPoint(newPolyline.Points[i].X, newPolyline.Points[i].Y));
-                                newPolyline.Points[i] = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                                var p = _dragPolyPts[i];
+                                _dragPolyPts[i] = new Point(p.X + dx, p.Y + dy);
                             }
                         }
 
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+                        if (_dragPolyPts != null) _dragAdorner.ShowPolyshape(_dragPolyPts, closed: false);
                         ae.Handled = true;
                     };
 
@@ -1384,13 +1487,24 @@ namespace OxyPlotControls
                         if (!newPolyline.IsEnabled) return;
                         try
                         {
-                            newPolyline.Color = _originalColor;
+                            if (_dragPolyPts != null && (_movePointIndex > -1 || _moveStartPoint))
+                            {
+                                var newPts = new List<DataPoint>(_dragPolyPts.Count);
+                                for (int i = 0; i < _dragPolyPts.Count; i++)
+                                {
+                                    var sp = new ScreenPoint(_dragPolyPts[i].X, _dragPolyPts[i].Y);
+                                    newPts.Add(newPolyline.InternalAnnotation.InverseTransform(sp));
+                                }
+                                newPolyline.Points = newPts;
+                            }
                         }
                         finally
                         {
                             newPolyline.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
+                            _dragPolyPts = null;
                         }
-                        newPolyline.RaisePropertyChanged(nameof(newPolyline.Points), nameof(newPolyline.Color));
+                        newPolyline.RaisePropertyChanged(nameof(newPolyline.Points));
                     };
                 }
                 else if (item is Wpf.LineAnnotation)
@@ -1407,9 +1521,14 @@ namespace OxyPlotControls
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
 
-                        _originalColor = newLine.Color;
                         newLine.SuppressPropertyChanged = true;
-                        newLine.Color = Colors.Red;
+
+                        // Snapshot the line's anchor point in screen space.
+                        var anchorScreen = newLine.InternalAnnotation.Transform(new DataPoint(newLine.X, newLine.Y));
+                        _dragP1 = new Point(anchorScreen.X, anchorScreen.Y);
+
+                        // Show initial adorner preview (full-plot-area-spanning line).
+                        UpdateLineDragAdorner(newLine);
 
                         GetSelectedObjects(s!, ae);
 
@@ -1421,38 +1540,22 @@ namespace OxyPlotControls
                         }
 
                         OpenLineAnnotationTooltip(newLine);
-                        UpdateLineAnnotationTooltip(newLine);
-                        Plot.ActualModel.InvalidatePlot(false);
+                        UpdateLineAnnotationTooltip(newLine, ae.Position);
                         ae.Handled = true;
                     };
 
                     newLine.InternalAnnotation.MouseMove += (s, ae) =>
                     {
                         if (!newLine.IsEnabled) return;
+                        if (!_moveStartPoint) return;
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var screenPoint = newLine.InternalAnnotation.Transform(new DataPoint(newLine.X, newLine.Y));
-                        var dataPoint = newLine.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
-
-                        if (_moveStartPoint)
-                        {
-                            if (newLine.Type == OxyPlot.Annotations.LineAnnotationType.LinearEquation)
-                            {
-                                dx = dataPoint.X - newLine.X;
-                                dy = dataPoint.Y - newLine.Y;
-                                newLine.Intercept += (dy - newLine.Slope * dx);
-                            }
-                            else
-                            {
-                                newLine.X = dataPoint.X;
-                                newLine.Y = dataPoint.Y;
-                            }
-                            UpdateLineAnnotationTooltip(newLine);
-                        }
-
+                        _dragP1 = new Point(_dragP1.X + dx, _dragP1.Y + dy);
                         _lastScreenPoint = ae.Position;
-                        Plot.ActualModel.InvalidatePlot(false);
+
+                        UpdateLineDragAdorner(newLine);
+                        UpdateLineAnnotationTooltip(newLine, ae.Position);
                         ae.Handled = true;
                     };
 
@@ -1461,13 +1564,29 @@ namespace OxyPlotControls
                         if (!newLine.IsEnabled) return;
                         try
                         {
-                            newLine.Color = _originalColor;
+                            if (_moveStartPoint)
+                            {
+                                var commitData = newLine.InternalAnnotation.InverseTransform(
+                                    new ScreenPoint(_dragP1.X, _dragP1.Y));
+                                if (newLine.Type == OxyPlot.Annotations.LineAnnotationType.LinearEquation)
+                                {
+                                    double dx = commitData.X - newLine.X;
+                                    double dy = commitData.Y - newLine.Y;
+                                    newLine.Intercept += (dy - newLine.Slope * dx);
+                                }
+                                else
+                                {
+                                    newLine.X = commitData.X;
+                                    newLine.Y = commitData.Y;
+                                }
+                            }
                         }
                         finally
                         {
                             newLine.SuppressPropertyChanged = false;
+                            _dragAdorner.Clear();
                         }
-                        newLine.RaisePropertyChanged(nameof(newLine.X), nameof(newLine.Y), nameof(newLine.Intercept), nameof(newLine.Color));
+                        newLine.RaisePropertyChanged(nameof(newLine.X), nameof(newLine.Y), nameof(newLine.Intercept));
                         CloseLineAnnotationTooltip(newLine);
                     };
                 }
@@ -3514,6 +3633,59 @@ namespace OxyPlotControls
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Updates the drag adorner to render a screen-space line annotation preview based on
+        /// the current <see cref="_dragP1"/> anchor and the line's type (vertical / horizontal /
+        /// linear-equation). Endpoints are clipped to the plot area so the line spans the full
+        /// width or height as the placed annotation would.
+        /// </summary>
+        private void UpdateLineDragAdorner(Wpf.LineAnnotation line)
+        {
+            var plotArea = Plot.ActualModel.PlotArea;
+            switch (line.Type)
+            {
+                case OxyPlot.Annotations.LineAnnotationType.Vertical:
+                    _dragAdorner.ShowAxisLine(
+                        new Point(_dragP1.X, plotArea.Top),
+                        new Point(_dragP1.X, plotArea.Bottom));
+                    break;
+                case OxyPlot.Annotations.LineAnnotationType.Horizontal:
+                    _dragAdorner.ShowAxisLine(
+                        new Point(plotArea.Left, _dragP1.Y),
+                        new Point(plotArea.Right, _dragP1.Y));
+                    break;
+                case OxyPlot.Annotations.LineAnnotationType.LinearEquation:
+                    {
+                        // For sloped lines compute the intersection with the plot's left/right
+                        // edges in data space using the (potentially shifted) intercept, then
+                        // transform back to screen.
+                        double dx = (newLineDeltaX(line, _dragP1));
+                        double dy = (newLineDeltaY(line, _dragP1));
+                        double newIntercept = line.Intercept + (dy - line.Slope * dx);
+                        var leftData = line.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, 0));
+                        var rightData = line.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, 0));
+                        var leftScreen = line.InternalAnnotation.Transform(new DataPoint(leftData.X, line.Slope * leftData.X + newIntercept));
+                        var rightScreen = line.InternalAnnotation.Transform(new DataPoint(rightData.X, line.Slope * rightData.X + newIntercept));
+                        _dragAdorner.ShowAxisLine(
+                            new Point(leftScreen.X, leftScreen.Y),
+                            new Point(rightScreen.X, rightScreen.Y));
+                        break;
+                    }
+            }
+        }
+
+        private static double newLineDeltaX(Wpf.LineAnnotation line, Point dragP1)
+        {
+            var d = line.InternalAnnotation.InverseTransform(new ScreenPoint(dragP1.X, dragP1.Y));
+            return d.X - line.X;
+        }
+
+        private static double newLineDeltaY(Wpf.LineAnnotation line, Point dragP1)
+        {
+            var d = line.InternalAnnotation.InverseTransform(new ScreenPoint(dragP1.X, dragP1.Y));
+            return d.Y - line.Y;
         }
 
         /// <summary>
