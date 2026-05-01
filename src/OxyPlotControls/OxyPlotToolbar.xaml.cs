@@ -1891,11 +1891,39 @@ namespace OxyPlotControls
                 switch (_addAnnotationToolMode)
                 {
                     case AddToolMode.AddArrowAnnotation:
-                        ((Wpf.ArrowAnnotation)_targetAddAnnotation).EndPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                        {
+                            // Adorner-only preview during drag — no DP writes, no plot
+                            // re-render. Final EndPoint is committed at MouseUp.
+                            var arrow = (Wpf.ArrowAnnotation)_targetAddAnnotation;
+                            var cursor = new Point(e.Position.X, e.Position.Y);
+                            // OxyPlot HeadLength/Width are multipliers on StrokeThickness;
+                            // multiply through so the preview's arrowhead matches the
+                            // size the placed arrow will render at.
+                            double thickness = arrow.StrokeThickness > 0 ? arrow.StrokeThickness : 2;
+                            _dragAdorner.ShowArrow(_anchorScreenPoint, cursor,
+                                arrow.HeadLength * thickness, arrow.HeadWidth * thickness);
+                        }
                         break;
 
                     case AddToolMode.AddTextAnnotation:
-                        ((Wpf.TextAnnotation)_targetAddAnnotation).TextPosition = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                        {
+                            // Adorner-only preview: render the placeholder text in red at the
+                            // cursor with a dashed bounding box. Final TextPosition is committed
+                            // at MouseUp.
+                            var text = (Wpf.TextAnnotation)_targetAddAnnotation;
+                            var cursor = new Point(e.Position.X, e.Position.Y);
+                            double fontSize = text.FontSize > 0 ? text.FontSize : 12;
+                            var ft = new System.Windows.Media.FormattedText(
+                                text.Text ?? string.Empty,
+                                System.Globalization.CultureInfo.CurrentUICulture,
+                                FlowDirection.LeftToRight,
+                                new System.Windows.Media.Typeface(text.FontFamily?.ToString() ?? "Segoe UI"),
+                                fontSize,
+                                System.Windows.Media.Brushes.Red,
+                                pixelsPerDip: 1.0);
+                            var bounds = new Rect(cursor.X, cursor.Y, ft.Width, ft.Height);
+                            _dragAdorner.ShowText(cursor, text.Text ?? string.Empty, fontSize, bounds);
+                        }
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
@@ -1927,10 +1955,11 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddPointAnnotation:
                         {
-                            var mouseDataPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                            // Adorner-only preview during drag — final X/Y committed at MouseUp.
                             var point = (Wpf.PointAnnotation)_targetAddAnnotation;
-                            point.X = mouseDataPoint.X;
-                            point.Y = mouseDataPoint.Y;
+                            var cursor = new Point(e.Position.X, e.Position.Y);
+                            double radius = point.Size > 0 ? point.Size : 5;
+                            _dragAdorner.ShowPoint(cursor, radius);
                         }
                         break;
 
@@ -2290,6 +2319,9 @@ namespace OxyPlotControls
                 if (_addAnnotationToolMode == AddToolMode.AddArrowAnnotation)
                 {
                     var arrow = (Wpf.ArrowAnnotation)_targetAddAnnotation;
+                    // Commit the final dragged endpoint to the EndPoint DP (deferred from
+                    // MouseMove for the adorner fast-path).
+                    arrow.EndPoint = arrow.InternalAnnotation.InverseTransform(e.Position);
                     if (Math.Abs(arrow.StartPoint.X - arrow.EndPoint.X) < 0.000000001 && Math.Abs(arrow.StartPoint.Y - arrow.EndPoint.Y) < 0.000000001)
                     {
                         // Offset the start point (tail) by 5% of plot width in screen space,
@@ -2302,6 +2334,20 @@ namespace OxyPlotControls
                             new ScreenPoint(arrowScreen.X + shiftPixels, arrowScreen.Y));
                         arrow.StartPoint = shiftedData;
                     }
+                }
+                else if (_addAnnotationToolMode == AddToolMode.AddTextAnnotation)
+                {
+                    // Commit the final TextPosition deferred from MouseMove.
+                    var text = (Wpf.TextAnnotation)_targetAddAnnotation;
+                    text.TextPosition = text.InternalAnnotation.InverseTransform(e.Position);
+                }
+                else if (_addAnnotationToolMode == AddToolMode.AddPointAnnotation)
+                {
+                    // Commit the final X/Y deferred from MouseMove.
+                    var pointA = (Wpf.PointAnnotation)_targetAddAnnotation;
+                    var commitData = pointA.InternalAnnotation.InverseTransform(e.Position);
+                    pointA.X = commitData.X;
+                    pointA.Y = commitData.Y;
                 }
                 StopAddAnnotation();
             }
