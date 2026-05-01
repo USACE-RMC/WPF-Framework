@@ -637,7 +637,19 @@ namespace OxyPlot.Series
         {
             DataPoint currentPoint = default(DataPoint);
 		    bool hasValidPoint = false;
-		    
+
+            // Detect the fast-path conditions once, outside the per-point loop. When both axes
+            // use default filters and no FilterFunction is set (the common case for telemetry
+            // data), validity reduces to a NaN/Infinity check that can be inlined as a struct
+            // comparison rather than a virtual IsValidPoint dispatch — multiplied by N points
+            // this is a measurable speedup for large datasets in the fallback path.
+            bool fastValidity = this.XAxis != null && this.YAxis != null
+                && this.XAxis.FilterFunction == null && this.YAxis.FilterFunction == null
+                && this.XAxis.FilterMinValue == double.MinValue
+                && this.XAxis.FilterMaxValue == double.MaxValue
+                && this.YAxis.FilterMinValue == double.MinValue
+                && this.YAxis.FilterMaxValue == double.MaxValue;
+
             // Skip all undefined points
 		    for (; pointIdx < points.Count; pointIdx++)
 		    {
@@ -646,9 +658,12 @@ namespace OxyPlot.Series
 			    {
 				    return false;
 			    }
-			    
+
 				// ReSharper disable once AssignmentInConditionalExpression
-			    if (hasValidPoint = this.IsValidPoint(currentPoint))
+			    bool isValid = fastValidity
+                    ? IsFiniteFast(currentPoint.X) && IsFiniteFast(currentPoint.Y)
+                    : this.IsValidPoint(currentPoint);
+                if (hasValidPoint = isValid)
 			    {
 				    break;
 			    }
@@ -682,7 +697,10 @@ namespace OxyPlot.Series
 				{
 					break;
 				}
-				if (!this.IsValidPoint(currentPoint))
+				bool isValidLoop = fastValidity
+                    ? IsFiniteFast(currentPoint.X) && IsFiniteFast(currentPoint.Y)
+                    : this.IsValidPoint(currentPoint);
+                if (!isValidLoop)
 			    {
 				    break;
 			    }
@@ -694,6 +712,25 @@ namespace OxyPlot.Series
 			previousContiguousLineSegmentEndPoint = screenPoint;
 
             return true;
+        }
+
+        /// <summary>
+        /// Inlinable finite-value check used by the validity-fast-path in
+        /// <see cref="ExtractNextContiguousLineSegment"/>. Equivalent to
+        /// <c>!double.IsNaN(value) &amp;&amp; !double.IsInfinity(value)</c> but written as a
+        /// pair of struct comparisons so the JIT can inline it inside hot loops.
+        /// </summary>
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        private static bool IsFiniteFast(double value)
+        {
+            // value == value rejects NaN; the bound check rejects ±Infinity. The constants are
+            // double.MaxValue / double.MinValue so finite values pass and infinities fail.
+            // CS1718 suppression: the self-comparison is intentional — that's the canonical
+            // NaN check; mirrors Axis.IsValidValue.
+#pragma warning disable 1718
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return value == value && value <= double.MaxValue && value >= double.MinValue;
+#pragma warning restore 1718
         }
 
         /// <summary>
