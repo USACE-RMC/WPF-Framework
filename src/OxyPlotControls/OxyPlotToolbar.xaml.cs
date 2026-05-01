@@ -1900,19 +1900,23 @@ namespace OxyPlotControls
                         break;
 
                     case AddToolMode.AddPolygonAnnotation:
+                        // The leader-line preview is a plain WPF Polyline — mutating its Points
+                        // collection invalidates only the leader-line shape itself. The polygon
+                        // annotation isn't yet in Plot.Annotations during placement (added at
+                        // click 3), so a Plot.InvalidatePlot here re-renders the entire plot
+                        // for nothing.
                         _leaderLine.Points[_leaderLine.Points.Count - 1] = new Point(e.Position.X, e.Position.Y);
-                        // Mouse-move during polygon drag updates the leader-line preview only;
-                        // no series data changes, so updateData=false avoids a per-mousemove walk
-                        // of all series. Matches the AddPolylineAnnotation case below.
-                        Plot.InvalidatePlot(false);
                         break;
 
                     case AddToolMode.AddPolylineAnnotation:
                         {
+                            // Same rationale as AddPolygonAnnotation: leader-line is a WPF
+                            // Polyline that updates itself. The committed PolylineAnnotation in
+                            // Plot.Annotations isn't changing between clicks, so a plot-level
+                            // InvalidatePlot would be wasted work.
                             var polyAnnotation = (Wpf.PolylineAnnotation)_targetAddAnnotation;
                             _leaderLine.Points[0] = ConvertDataPointToPoint(polyAnnotation.Points[polyAnnotation.Points.Count - 1]);
                             _leaderLine.Points[_leaderLine.Points.Count - 1] = new Point(e.Position.X, e.Position.Y);
-                            Plot.InvalidatePlot(false);
                         }
                         break;
                 }
