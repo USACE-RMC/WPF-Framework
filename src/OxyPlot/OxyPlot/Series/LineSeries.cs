@@ -473,7 +473,9 @@ namespace OxyPlot.Series
             {
                 var xmin = this.XAxis.ClipMinimum;
                 xmax = this.XAxis.ClipMaximum;
-                this.WindowStartIndex = this.UpdateWindowStartIndex(points, point => point.X, xmin, this.WindowStartIndex);
+                // Specialised IList<DataPoint> overload — no Func<T,double> delegate, the
+                // JIT inlines the .x field read on every binary-search step.
+                this.WindowStartIndex = this.UpdateWindowStartIndex(points, xmin, this.WindowStartIndex);
                 startIdx = this.WindowStartIndex;
             }
 

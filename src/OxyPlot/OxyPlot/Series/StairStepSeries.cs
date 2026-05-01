@@ -232,7 +232,8 @@ namespace OxyPlot.Series
                 double xClipMin = this.XAxis.ClipMinimum;
                 xClipMax = this.XAxis.ClipMaximum;
 
-                this.WindowStartIndex = this.UpdateWindowStartIndex(points, point => point.X, xClipMin, this.WindowStartIndex);
+                // Specialised IList<DataPoint> overload — see XYAxisSeries.UpdateWindowStartIndex.
+                this.WindowStartIndex = this.UpdateWindowStartIndex(points, xClipMin, this.WindowStartIndex);
                 offset = this.WindowStartIndex;
             }
 

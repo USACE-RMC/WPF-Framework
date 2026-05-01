@@ -235,8 +235,9 @@ namespace OxyPlot.Series
                 // determine render range
                 var xmin = this.XAxis.ClipMinimum;
                 xmax = this.XAxis.ClipMaximum;
-                this.WindowStartIndex = this.UpdateWindowStartIndex(actualPoints, point => point.X, xmin, this.WindowStartIndex);
-                this.WindowStartIndex2 = this.UpdateWindowStartIndex(actualPoints2, point => point.X, xmin, this.WindowStartIndex2);
+                // Specialised IList<DataPoint> overload — see XYAxisSeries.UpdateWindowStartIndex.
+                this.WindowStartIndex = this.UpdateWindowStartIndex(actualPoints, xmin, this.WindowStartIndex);
+                this.WindowStartIndex2 = this.UpdateWindowStartIndex(actualPoints2, xmin, this.WindowStartIndex2);
 
                 startIdx = this.WindowStartIndex;
                 startIdx2 = this.WindowStartIndex2;

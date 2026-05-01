@@ -1120,5 +1120,120 @@ namespace OxyPlot.Series
 
             return start;
         }
+
+        /// <summary>
+        /// Specialised <see cref="UpdateWindowStartIndex{T}"/> overload for
+        /// <see cref="IList{T}"/> of <see cref="DataPoint"/>. Avoids the
+        /// <see cref="Func{T, TResult}"/> delegate dispatch on every binary-search step,
+        /// which on a 500k-point series is called dozens of times per render.
+        /// </summary>
+        /// <param name="items">Data points.</param>
+        /// <param name="targetX">X coordinate of visible window start.</param>
+        /// <param name="lastIndex">Last window index.</param>
+        /// <returns>The new window start index.</returns>
+        protected int UpdateWindowStartIndex(IList<DataPoint> items, double targetX, int lastIndex)
+        {
+            lastIndex = this.FindWindowStartIndex(items, targetX, lastIndex);
+            if (lastIndex > 0)
+            {
+                lastIndex--;
+            }
+
+            return lastIndex;
+        }
+
+        /// <summary>
+        /// Specialised <see cref="FindWindowStartIndex{T}"/> overload for
+        /// <see cref="IList{T}"/> of <see cref="DataPoint"/>. Reads <c>DataPoint.x</c>
+        /// directly instead of going through a <see cref="Func{T, TResult}"/>; the JIT
+        /// can then inline the field access on every binary-search step.
+        /// </summary>
+        /// <param name="items">vector of data points</param>
+        /// <param name="targetX">target x.</param>
+        /// <param name="initialGuess">initial guess index.</param>
+        /// <returns>
+        /// index of x with max(x) &lt;= target x or 0 if cannot find
+        /// </returns>
+        public int FindWindowStartIndex(IList<DataPoint> items, double targetX, int initialGuess)
+        {
+            int start = 0;
+            int nominalEnd = items.Count - 1;
+            while (nominalEnd > 0 && double.IsNaN(items[nominalEnd].x))
+                nominalEnd -= 1;
+            int end = nominalEnd;
+            int curGuess = Math.Max(0, Math.Min(end, initialGuess));
+
+            double GetX(int index)
+            {
+                while (index <= nominalEnd)
+                {
+                    double guessX = items[index].x;
+                    if (double.IsNaN(guessX))
+                        index += 1;
+                    else
+                        return guessX;
+                }
+                return items[nominalEnd].x;
+            }
+
+            while (start < end)
+            {
+                double guessX = GetX(curGuess);
+                if (guessX.Equals(targetX))
+                {
+                    start = curGuess;
+                    break;
+                }
+                else if (guessX > targetX)
+                {
+                    end = curGuess - 1;
+                }
+                else
+                {
+                    start = curGuess;
+                }
+
+                if (start >= end)
+                {
+                    break;
+                }
+
+                double endX = GetX(end);
+                double startX = GetX(start);
+
+                if (endX == startX)
+                {
+                    break;
+                }
+
+                var m = (end - start + 1) / (endX - startX);
+
+                curGuess = start + (int)((targetX - startX) * m);
+                curGuess = Math.Max(start + 1, Math.Min(curGuess, end));
+            }
+
+            // Post-search adjustment (mirrors the generic overload).
+            while (start > 0)
+            {
+                double val = items[start].x;
+                if (double.IsNaN(val) || val > targetX)
+                    start -= 1;
+                else
+                    break;
+            }
+
+            for (int i = start + 1; i < items.Count; i++)
+            {
+                double val = items[i].x;
+                if (double.IsNaN(val))
+                    continue;
+                if (val <= targetX)
+                    start = i;
+                else
+                    break;
+            }
+
+            return start;
+        }
     }
 }
