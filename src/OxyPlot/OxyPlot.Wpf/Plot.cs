@@ -535,7 +535,44 @@ namespace OxyPlot.Wpf
         /// This avoids expensive re-synchronization during zoom/pan, where only
         /// internal axis ranges change and the WPF wrappers are untouched.
         /// </summary>
+        /// <remarks>
+        /// Semantics: this is the "force full sync" flag. Setting it to <c>true</c> guarantees
+        /// every Synchronize* method runs on the next non-gated <see cref="InvalidatePlot"/>.
+        /// Internal callers that know which collection changed should set the corresponding
+        /// per-collection dirty flag (<see cref="_seriesDirty"/>, <see cref="_axesDirty"/>,
+        /// <see cref="_annotationsDirty"/>, <see cref="_propertiesDirty"/>) instead — those
+        /// trigger only the sync work that actually applies. External callers that don't have
+        /// that granularity can keep setting <c>_needsSynchronization = true</c>; that path
+        /// is preserved as a conservative "sync everything" fallback for backward compatibility.
+        /// </remarks>
         internal bool _needsSynchronization = true;
+
+        /// <summary>
+        /// Set to <c>true</c> when an item in <see cref="Series"/> changed (collection mutation
+        /// or item-level PropertyChanged). Triggers <see cref="SynchronizeSeries"/> alone on
+        /// the next sync pass — avoids re-creating all axes and annotation models for an
+        /// unrelated series-only edit.
+        /// </summary>
+        private bool _seriesDirty;
+
+        /// <summary>
+        /// Set to <c>true</c> when an item in <see cref="Axes"/> changed. Triggers
+        /// <see cref="SynchronizeAxes"/> alone on the next sync pass.
+        /// </summary>
+        private bool _axesDirty;
+
+        /// <summary>
+        /// Set to <c>true</c> when an item in <see cref="Annotations"/> changed. Triggers
+        /// <see cref="SynchronizeAnnotations"/> alone on the next sync pass.
+        /// </summary>
+        private bool _annotationsDirty;
+
+        /// <summary>
+        /// Set to <c>true</c> when a Plot-level DP changed (background, title, legend
+        /// appearance, etc.). Triggers <see cref="SynchronizeProperties"/> alone on the
+        /// next sync pass.
+        /// </summary>
+        private bool _propertiesDirty;
 
         /// <summary>
         /// When true, the next non-gated <see cref="InvalidatePlot"/> call must run with
@@ -1203,13 +1240,31 @@ namespace OxyPlot.Wpf
             }
 #endif
 
-            if (this._needsSynchronization || updateData)
+            // Dispatch synchronization by per-collection dirty flags. _needsSynchronization
+            // (legacy "force full sync" flag) and updateData=true both promote to "sync
+            // everything" — preserves backward compatibility with external callers that set
+            // _needsSynchronization directly. Otherwise only the dirty collections re-sync,
+            // which on a 20-series plot means a single Series.Color change runs only
+            // SynchronizeSeries (~20 CreateModel calls) instead of all four sync methods
+            // (~22 CreateModel calls plus Plot-property and legend copy work).
+            bool forceAll = this._needsSynchronization || updateData;
+            bool needSyncProps = forceAll || this._propertiesDirty;
+            bool needSyncSeries = forceAll || this._seriesDirty;
+            bool needSyncAxes = forceAll || this._axesDirty;
+            bool needSyncAnnotations = forceAll || this._annotationsDirty;
+
+            if (needSyncProps || needSyncSeries || needSyncAxes || needSyncAnnotations)
             {
-                this.SynchronizeProperties();
-                this.SynchronizeSeries();
-                this.SynchronizeAxes();
-                this.SynchronizeAnnotations();
+                if (needSyncProps) this.SynchronizeProperties();
+                if (needSyncSeries) this.SynchronizeSeries();
+                if (needSyncAxes) this.SynchronizeAxes();
+                if (needSyncAnnotations) this.SynchronizeAnnotations();
+
                 this._needsSynchronization = false;
+                this._propertiesDirty = false;
+                this._seriesDirty = false;
+                this._axesDirty = false;
+                this._annotationsDirty = false;
 #if DEBUG
                 ranSync = true;
 #endif
@@ -1325,7 +1380,11 @@ namespace OxyPlot.Wpf
         {
             var plot = (Plot)d;
             if (plot.SuppressPropertyChanged) return;
-            plot._needsSynchronization = true;
+            // A Plot-level DP changed (background, title, legend properties, etc.).
+            // Only Plot-level properties need re-syncing; series, axes, and annotations are
+            // unaffected. Setting only _propertiesDirty avoids re-creating their model
+            // wrappers on every appearance tweak.
+            plot._propertiesDirty = true;
             plot.InvalidatePlot(false);
             plot.OnPropertyChanged(e.Property.Name);
         }
@@ -1338,7 +1397,7 @@ namespace OxyPlot.Wpf
         {
             this.UpdateItemSubscriptions(e, this.subscribedSeries);
             this.SyncLogicalTree(e);
-            this._needsSynchronization = true;
+            this._seriesDirty = true;
             if (this.SuppressPropertyChanged) return;
             this.InvalidatePlot();
             this.OnPropertyChanged("Series");
@@ -1352,7 +1411,7 @@ namespace OxyPlot.Wpf
         {
             this.UpdateItemSubscriptions(e, this.subscribedAxes);
             this.SyncLogicalTree(e);
-            this._needsSynchronization = true;
+            this._axesDirty = true;
             if (this.SuppressPropertyChanged) return;
             this.InvalidatePlot();
             this.OnPropertyChanged("Axes");
@@ -1366,7 +1425,7 @@ namespace OxyPlot.Wpf
         {
             this.UpdateItemSubscriptions(e, this.subscribedAnnotations);
             this.SyncLogicalTree(e);
-            this._needsSynchronization = true;
+            this._annotationsDirty = true;
             if (this.SuppressPropertyChanged) return;
             this.InvalidatePlot();
             this.OnPropertyChanged("Annotations");
@@ -1451,23 +1510,28 @@ namespace OxyPlot.Wpf
         /// </summary>
         private void OnCollectionItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this._needsSynchronization = true;
-
+            // Dispatch sync work to only the affected collection. A Series.Color edit, for
+            // example, no longer triggers SynchronizeAxes + SynchronizeAnnotations.
             string prefix;
             if (sender is Annotation)
             {
+                this._annotationsDirty = true;
                 prefix = "Annotation";
             }
             else if (sender is Series)
             {
+                this._seriesDirty = true;
                 prefix = "Series";
             }
             else if (sender is Axis)
             {
+                this._axesDirty = true;
                 prefix = "Axis";
             }
             else
             {
+                // Unknown sender — fall back to the conservative full-sync path.
+                this._needsSynchronization = true;
                 prefix = "Item";
             }
 
