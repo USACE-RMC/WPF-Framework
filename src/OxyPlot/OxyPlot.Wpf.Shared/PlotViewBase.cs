@@ -99,6 +99,14 @@ namespace OxyPlot.Wpf
         private bool renderPending;
 
         /// <summary>
+        /// Cached DPI scale. Filled lazily on first <see cref="UpdateDpi"/> call and invalidated
+        /// in <see cref="OnDpiChanged"/> + <see cref="OnApplyTemplate"/>. Avoids the
+        /// <see cref="PresentationSource.FromVisual"/> COM-boundary walk on every render —
+        /// which fires once per pan/zoom step at 60Hz.
+        /// </summary>
+        private double? cachedDpiScale;
+
+        /// <summary>
         /// Backing field for <see cref="DisableShapeAntiAliasing"/>.
         /// </summary>
         private bool disableShapeAntiAliasing;
@@ -263,6 +271,13 @@ namespace OxyPlot.Wpf
         private void OnPlotViewLoaded(object sender, RoutedEventArgs e)
         {
             this.LayoutUpdated += this.OnLayoutUpdated;
+            // Once Loaded fires we know we're in a tree (Window, Popup, ElementHost, etc.).
+            // OnLayoutUpdated still walks the tree for the rare popup-hosting edge case where
+            // Loaded can fire before the popup is fully composed.
+            this.isInVisualTree = true;
+            // DPI may have changed since the last Loaded (cross-monitor / theme reload);
+            // force re-fetch on next render.
+            this.cachedDpiScale = null;
         }
 
         /// <summary>
@@ -271,6 +286,7 @@ namespace OxyPlot.Wpf
         private void OnPlotViewUnloaded(object sender, RoutedEventArgs e)
         {
             this.LayoutUpdated -= this.OnLayoutUpdated;
+            this.isInVisualTree = false;
         }
 
         /// <summary>
@@ -459,6 +475,10 @@ namespace OxyPlot.Wpf
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+            // Force DPI re-fetch on next render — template re-application may move the
+            // visual to a different PresentationSource (AvalonDock detach to floating window
+            // on a different monitor, theme switch that re-templates, etc.).
+            this.cachedDpiScale = null;
             this.grid = this.GetTemplateChild(PartGrid) as Grid;
             if (this.grid == null)
             {
@@ -684,7 +704,16 @@ namespace OxyPlot.Wpf
             {
                 return;
             }
-            this.isInVisualTree = this.IsInVisualTree();
+
+            // Skip the full IsInVisualTree() tree walk on every render. The Loaded/Unloaded
+            // events maintain the cached value; OnLayoutUpdated handles edge cases (popup
+            // hosting, ElementHost) where Loaded doesn't reliably reflect tree connectivity.
+            // Only re-walk when the cached value says "not in tree" — to discover transitions
+            // we may have missed.
+            if (!this.isInVisualTree)
+            {
+                this.isInVisualTree = this.IsInVisualTree();
+            }
 
             this.RenderOverride();
         }
@@ -724,11 +753,35 @@ namespace OxyPlot.Wpf
         /// Updates the DPI scale of the render context.
         /// </summary>
         /// <returns>The DPI scale.</returns>
+        /// <remarks>
+        /// Caches the DPI scale across renders. <see cref="PresentationSource.FromVisual"/>
+        /// is a non-trivial COM-boundary lookup; calling it on every render adds avoidable
+        /// overhead when the DPI changes only on monitor switch. The cache is invalidated in
+        /// <see cref="OnDpiChanged"/> (per-monitor DPI change) and reset in
+        /// <see cref="OnApplyTemplate"/> (presenter recreation).
+        /// </remarks>
         protected virtual double UpdateDpi()
         {
+            if (this.cachedDpiScale.HasValue)
+            {
+                return this.cachedDpiScale.Value;
+            }
+
             var transformMatrix = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice;
             var scale = transformMatrix == null ? 1 : (transformMatrix.Value.M11 + transformMatrix.Value.M22) / 2;
+            this.cachedDpiScale = scale;
             return scale;
+        }
+
+        /// <summary>
+        /// Invalidates the cached DPI scale when the host moves between monitors with
+        /// different DPI. Forces the next <see cref="UpdateDpi"/> to re-fetch from
+        /// <see cref="PresentationSource"/>.
+        /// </summary>
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+            this.cachedDpiScale = null;
         }
 
         /// <summary>
