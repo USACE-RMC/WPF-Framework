@@ -129,6 +129,21 @@ namespace OxyPlot.Wpf
         private bool clipPushed;
 
         /// <summary>
+        /// Reusable translation transform for rotated text rendering. Mutated in place before
+        /// each push so that DrawText doesn't allocate two transforms per rotated call. Single-
+        /// threaded use is safe — DrawingContext copies the matrix during PushTransform, and
+        /// by the time control returns to the next DrawText call, the previous Pop has already
+        /// committed the prior render.
+        /// </summary>
+        private readonly TranslateTransform reusableTranslateTransform = new TranslateTransform();
+
+        /// <summary>
+        /// Reusable rotation transform for rotated text rendering. Same single-threaded
+        /// in-place mutation pattern as <see cref="reusableTranslateTransform"/>.
+        /// </summary>
+        private readonly RotateTransform reusableRotateTransform = new RotateTransform();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DrawingVisualRenderContext"/> class.
         /// </summary>
         public DrawingVisualRenderContext()
@@ -872,8 +887,15 @@ namespace OxyPlot.Wpf
 
             if (hasRotation)
             {
-                this.dc.PushTransform(new TranslateTransform(p.X, p.Y));
-                this.dc.PushTransform(new RotateTransform(rotate));
+                // Reuse the cached transforms (mutate in place) instead of allocating new ones
+                // per rotated text — eliminates 2N heap allocations per render where N is the
+                // count of rotated text labels (axis titles, angled tick labels, rotated
+                // annotations).
+                this.reusableTranslateTransform.X = p.X;
+                this.reusableTranslateTransform.Y = p.Y;
+                this.reusableRotateTransform.Angle = rotate;
+                this.dc.PushTransform(this.reusableTranslateTransform);
+                this.dc.PushTransform(this.reusableRotateTransform);
                 this.dc.DrawText(ft, new Point(dx, dy));
                 this.dc.Pop();
                 this.dc.Pop();
