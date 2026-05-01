@@ -31,7 +31,7 @@ namespace OxyPlotControls.Demo
         /// Dependency property for the test axis name binding property.
         /// </summary>
         public static readonly DependencyProperty TestAxisNameBindingProperty =
-            DependencyProperty.Register(nameof(TestAxisNameBinding), typeof(string), typeof(MainWindow), new FrameworkPropertyMetadata("Test Y"));
+            DependencyProperty.Register(nameof(TestAxisNameBinding), typeof(string), typeof(MainWindow), new FrameworkPropertyMetadata("Y"));
 
         /// <summary>
         /// Gets or sets the test axis name binding value.
@@ -968,7 +968,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -979,7 +979,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1061,7 +1061,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1072,7 +1072,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1161,7 +1161,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1172,7 +1172,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1270,7 +1270,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1281,7 +1281,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1356,7 +1356,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1367,7 +1367,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1420,7 +1420,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1434,7 +1434,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1502,7 +1502,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1515,7 +1515,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1574,7 +1574,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Bottom,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1587,7 +1587,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1667,7 +1667,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1678,7 +1678,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
@@ -1744,7 +1744,7 @@ namespace OxyPlotControls.Demo
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test Y",
+                Title = "Y",
                 Key = "y"
             };
 
@@ -1755,7 +1755,7 @@ namespace OxyPlotControls.Demo
                 TitleFontSize = 20,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dash,
-                Title = "Test X",
+                Title = "X",
                 Key = "x"
             };
 
