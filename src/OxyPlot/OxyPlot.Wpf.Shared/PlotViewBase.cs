@@ -352,7 +352,13 @@ namespace OxyPlot.Wpf
                     int wheelSeqAtDispatch = OxyPlot.PlotDiagnostics.CurrentWheelSeq;
                     long dispatchTicks = System.Diagnostics.Stopwatch.GetTimestamp();
 #endif
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+                    // DispatcherPriority.Render runs at the same priority as WPF's internal
+                    // composition tick — the deferred render therefore executes at the start
+                    // of the next frame budget rather than after pending Layout/DataBind
+                    // work drains (which is what DispatcherPriority.Loaded would do). Cuts
+                    // ~one full dispatcher cycle (~16ms at 60Hz) of latency on rapid wheel
+                    // zoom + pan. The renderPending flag still guards against double-queuing.
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
                     {
                         this.renderPending = false;
 #if DEBUG
@@ -361,7 +367,7 @@ namespace OxyPlot.Wpf
                             double queueMs = (System.Diagnostics.Stopwatch.GetTimestamp() - dispatchTicks) * 1000.0
                                              / System.Diagnostics.Stopwatch.Frequency;
                             System.Diagnostics.Debug.WriteLine(
-                                $"[W#{wheelSeqAtDispatch,4}] PlotViewBase.Render DEQUEUED (Loaded) queueMs={queueMs,8:F2}");
+                                $"[W#{wheelSeqAtDispatch,4}] PlotViewBase.Render DEQUEUED (Render) queueMs={queueMs,8:F2}");
                         }
                         var renderSw = System.Diagnostics.Stopwatch.StartNew();
 #endif
@@ -743,7 +749,10 @@ namespace OxyPlot.Wpf
         {
             if (!this.Dispatcher.CheckAccess())
             {
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, action);
+                // Render priority matches the deferred-render dispatch in InvalidatePlot,
+                // so cross-thread invocations don't sit behind pending Layout/DataBind
+                // work in the dispatcher queue.
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Render, action);
             }
             else
             {
