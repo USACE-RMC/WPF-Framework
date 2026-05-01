@@ -229,6 +229,20 @@ namespace OxyPlot.Wpf
         /// Sets the clipping area to the specified rectangle.
         /// Called by <see cref="ClippingRenderContext"/> when the active clip region changes.
         /// </summary>
+        /// <summary>
+        /// Cached frozen <see cref="RectangleGeometry"/> reused across <see cref="SetClip"/>
+        /// calls. The plot-area clipping rect is the same value across most calls within a
+        /// render (each series clips to the same plot area) and the same across most renders
+        /// (only changes on resize).
+        /// </summary>
+        private RectangleGeometry cachedClipGeometry;
+
+        /// <summary>
+        /// The <see cref="OxyRect"/> reflected in <see cref="cachedClipGeometry"/>. Compared on
+        /// each <see cref="SetClip"/> call to detect when the cache must rebuild.
+        /// </summary>
+        private OxyRect cachedClipRect;
+
         /// <param name="clippingRect">The clipping rectangle.</param>
         protected override void SetClip(OxyRect clippingRect)
         {
@@ -237,7 +251,17 @@ namespace OxyPlot.Wpf
                 return;
             }
 
-            this.dc.PushClip(new RectangleGeometry(ToRect(clippingRect)));
+            // Reuse the cached frozen geometry when the clip rect hasn't changed since the
+            // last call. On a 20-series plot, SetClip is called once per series with the same
+            // plot-area rect — without this, 20 RectangleGeometry allocations per render.
+            if (this.cachedClipGeometry == null || !this.cachedClipRect.Equals(clippingRect))
+            {
+                this.cachedClipGeometry = new RectangleGeometry(ToRect(clippingRect));
+                this.cachedClipGeometry.Freeze();
+                this.cachedClipRect = clippingRect;
+            }
+
+            this.dc.PushClip(this.cachedClipGeometry);
             this.clipPushed = true;
         }
 
@@ -997,16 +1021,57 @@ namespace OxyPlot.Wpf
             // The tracker popup is rendered on the overlays Canvas, which is independent of this render context.
         }
 
+        /// <summary>
+        /// Reusable buffer for image-cache eviction in <see cref="CleanUp"/>. Avoids the
+        /// per-render LINQ + List allocation that would otherwise fire on every render even
+        /// for plots that don't use images.
+        /// </summary>
+        private List<OxyImage> imageEvictBuffer;
+
         /// <inheritdoc/>
         public override void CleanUp()
         {
-            // Remove unreferenced images from the cache.
-            var imagesToRelease = this.imageCache.Keys.Where(i => !this.imagesInUse.Contains(i)).ToList();
-            foreach (var i in imagesToRelease)
+            // Fast path: no images cached, nothing to evict.
+            if (this.imageCache.Count == 0)
             {
-                this.imageCache.Remove(i);
+                this.imagesInUse.Clear();
+                return;
             }
 
+            // Fast path: every cached image was used this frame — clear the in-use set and
+            // exit without walking the cache.
+            if (this.imageCache.Count == this.imagesInUse.Count)
+            {
+                this.imagesInUse.Clear();
+                return;
+            }
+
+            // Slow path: at least one cached image was not used this frame. Reuse a private
+            // List buffer (Clear+Add) instead of the LINQ Where().ToList() that would allocate
+            // a fresh list on every render.
+            if (this.imageEvictBuffer == null)
+            {
+                this.imageEvictBuffer = new List<OxyImage>();
+            }
+            else
+            {
+                this.imageEvictBuffer.Clear();
+            }
+
+            foreach (var key in this.imageCache.Keys)
+            {
+                if (!this.imagesInUse.Contains(key))
+                {
+                    this.imageEvictBuffer.Add(key);
+                }
+            }
+
+            for (int i = 0; i < this.imageEvictBuffer.Count; i++)
+            {
+                this.imageCache.Remove(this.imageEvictBuffer[i]);
+            }
+
+            this.imageEvictBuffer.Clear();
             this.imagesInUse.Clear();
         }
 
