@@ -8,6 +8,7 @@ namespace OxyPlot.Wpf
 {
     using System;
     using System.Windows.Input;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Base class for WPF PlotView implementations.
@@ -76,9 +77,37 @@ namespace OxyPlot.Wpf
         }
 
         /// <summary>
+        /// Pending wheel delta accumulated since the last coalesced flush. See
+        /// <see cref="FlushAccumulatedWheel"/>.
+        /// </summary>
+        private int pendingWheelDelta;
+
+        /// <summary>
+        /// Cached position + modifier-keys snapshot from the most recent wheel event in the
+        /// accumulation window. Used as the position for the synthesised coalesced wheel
+        /// event — taking the latest position keeps zoom-at-cursor accurate.
+        /// </summary>
+        private OxyMouseWheelEventArgs latestWheelArgs;
+
+        /// <summary>
+        /// True when a coalesced-wheel flush is pending in the dispatcher queue. Subsequent
+        /// wheel events accumulate into <see cref="pendingWheelDelta"/> instead of dispatching
+        /// their own work.
+        /// </summary>
+        private bool wheelFlushScheduled;
+
+        /// <summary>
         /// Called before the <see cref="E:System.Windows.UIElement.MouseWheel" /> event occurs to provide handling for the event in a derived class without attaching a delegate.
         /// </summary>
         /// <param name="e">A <see cref="T:System.Windows.Input.MouseWheelEventArgs" /> that contains the event data.</param>
+        /// <remarks>
+        /// Wheel events are coalesced via <see cref="FlushAccumulatedWheel"/>: rapid wheel
+        /// scrolls (high-Hz mice, trackpad inertia) produce N independent events, each of which
+        /// would otherwise trigger a synchronous <c>Model.Update</c> + render-queue dispatch.
+        /// On a multi-LineSeries large-data plot these stack up to multi-frame latency before
+        /// the first paint catches up. The coalescer accumulates deltas and dispatches one
+        /// combined wheel event per dispatcher tick, summed at the latest pointer position.
+        /// </remarks>
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
 #if DEBUG
@@ -98,7 +127,27 @@ namespace OxyPlot.Wpf
                         return;
                     }
 
-                    e.Handled = this.ActualController.HandleMouseWheel(this, e.ToMouseWheelEventArgs(this));
+                    // Mark handled now to prevent the ScrollViewer (or any ancestor) from
+                    // also processing this event. The actual zoom dispatch is deferred to
+                    // the coalesced flush below.
+                    e.Handled = true;
+
+                    // Accumulate delta and capture the latest pointer position + modifiers.
+                    // OxyMouseWheelEventArgs is small and intentionally allocated each event
+                    // so the snapshot reflects the wheel-tick state exactly.
+                    this.pendingWheelDelta += e.Delta;
+                    this.latestWheelArgs = e.ToMouseWheelEventArgs(this);
+
+                    if (!this.wheelFlushScheduled)
+                    {
+                        this.wheelFlushScheduled = true;
+                        // Render priority matches the deferred-render dispatcher and lands
+                        // before the next composition tick — so the user sees the combined
+                        // zoom on the very next frame.
+                        this.Dispatcher.BeginInvoke(
+                            DispatcherPriority.Render,
+                            new Action(this.FlushAccumulatedWheel));
+                    }
 #if DEBUG
                 }
             }
@@ -109,6 +158,31 @@ namespace OxyPlot.Wpf
                 OxyPlot.PlotDiagnostics.EndWheel();
             }
 #endif
+        }
+
+        /// <summary>
+        /// Dispatches the accumulated wheel delta as a single
+        /// <see cref="OxyMouseWheelEventArgs"/> through the controller. Resets the pending
+        /// state so the next wheel event starts a fresh accumulation window.
+        /// </summary>
+        private void FlushAccumulatedWheel()
+        {
+            int delta = this.pendingWheelDelta;
+            var args = this.latestWheelArgs;
+            this.pendingWheelDelta = 0;
+            this.latestWheelArgs = null;
+            this.wheelFlushScheduled = false;
+
+            if (delta == 0 || args == null)
+            {
+                return;
+            }
+
+            // Synthesise a combined wheel event at the latest pointer position. Position +
+            // ModifierKeys are taken from the most recent event; Delta is the sum across
+            // the window so cumulative zoom matches what the user saw.
+            args.Delta = delta;
+            this.ActualController.HandleMouseWheel(this, args);
         }
 
         /// <summary>
