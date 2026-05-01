@@ -707,6 +707,12 @@ namespace OxyPlot.Series
             // than the virtual Transform() call it replaces (~10ns → ~1ns per point).
             // IsValidPoint already filters non-positive values when an axis is logarithmic,
             // so Math.Log10 is never called on invalid inputs here.
+            //
+            // Implicit coupling with the useFused gate above: if xIsLog or yIsLog is true,
+            // the gate has already verified Base == 10 (LogarithmicAxis subclasses with a
+            // non-10 base fall through to the slow path). If a future axis subclass overrides
+            // IsLogarithmic() to return true without honoring the Base==10 contract, the
+            // gate must be updated alongside this inline.
             bool xIsLog = this.XAxis.IsLogarithmic();
             bool yIsLog = this.YAxis.IsLogarithmic();
             double xOffset = this.XAxis.Offset;

@@ -545,6 +545,14 @@ namespace OxyPlot.Wpf
         /// call. This guarantees a data refresh is never silently lost across a suppression
         /// window, even if the consumer's final flush call passes <c>updateData=false</c>.
         /// </summary>
+        /// <remarks>
+        /// Intentionally non-volatile: both the writer (suppression-gate branch in
+        /// <see cref="InvalidatePlot"/>) and the consumer (just below the gate, same method)
+        /// run on the dispatcher thread. The cross-thread visibility we need is on
+        /// <see cref="SuppressPropertyChanged"/>, not on this flag — once a gated write
+        /// observes <c>SuppressPropertyChanged==true</c>, the corresponding pending-flag
+        /// write is already on the dispatcher thread.
+        /// </remarks>
         private bool _pendingUpdateData;
 
         /// <summary>
