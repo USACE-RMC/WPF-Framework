@@ -467,6 +467,7 @@ namespace OxyPlot.Series
             var broken = areBrokenLinesRendered ? new List<ScreenPoint>(2) : null;
 
             int startIdx = 0;
+            int endIdx = points.Count;
             double xmax = double.MaxValue;
 
             if (this.IsXMonotonic)
@@ -477,6 +478,20 @@ namespace OxyPlot.Series
                 // JIT inlines the .x field read on every binary-search step.
                 this.WindowStartIndex = this.UpdateWindowStartIndex(points, xmin, this.WindowStartIndex);
                 startIdx = this.WindowStartIndex;
+
+                // Symmetric upper bound: cap outer-loop iteration at the visible window edge
+                // for the slow fallback path (custom decimator, non-base-10 log axis,
+                // probability axes). The fused path already exits cleanly when X > xmax inside
+                // FusedExtractAndDecimate, so this bound only tightens the worst case for the
+                // fallback — and never affects correctness because ExtractNextContiguousLineSegment
+                // also returns false when X > xmax.
+                this.WindowEndIndex = this.UpdateWindowEndIndex(points, xmax, this.WindowEndIndex);
+                if (this.WindowEndIndex >= 0 && this.WindowEndIndex < points.Count)
+                {
+                    // Add one for line-continuity past the right edge (matches how Window
+                    // StartIndex steps back by one for left-edge continuity).
+                    endIdx = Math.Min(points.Count, this.WindowEndIndex + 2);
+                }
             }
 
             // Determine if fused extract-decimate-transform is possible.
@@ -549,7 +564,11 @@ namespace OxyPlot.Series
                     this.contiguousScreenPointsBuffer = new List<ScreenPoint>(points.Count);
                 }
 
-                for (int i = startIdx; i < points.Count; i++)
+                // Cap outer iteration at endIdx (== WindowEndIndex+2 for monotonic, points.Count
+                // otherwise). For non-monotonic data we still scan the full collection because
+                // X is unsorted and ExtractNextContiguousLineSegment's internal clipCount is
+                // the only safe terminator.
+                for (int i = startIdx; i < endIdx; i++)
                 {
                     if (!this.ExtractNextContiguousLineSegment(points, ref i, ref lastValidPoint, xmax, broken, this.contiguousScreenPointsBuffer))
                     {

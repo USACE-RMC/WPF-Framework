@@ -101,6 +101,17 @@ namespace OxyPlot.Series
         /// </summary>
         protected int WindowStartIndex { get; set; }
 
+        /// <summary>
+        /// Gets or sets the last visible window end position in the data points collection
+        /// (inclusive). For <see cref="IsXMonotonic"/> series, this is computed alongside
+        /// <see cref="WindowStartIndex"/> by symmetric bisect on the data X axis. Series may
+        /// use it as an explicit upper bound on render-time iteration, eliminating O(N)
+        /// behaviour when only a small window is visible. Defaults to <see cref="int.MaxValue"/>
+        /// (no upper bound) so series that don't compute it fall back to the existing
+        /// per-point clip-count termination.
+        /// </summary>
+        protected int WindowEndIndex { get; set; } = int.MaxValue;
+
         /// <inheritdoc/>
         public override OxyRect GetClippingRect()
         {
@@ -1234,6 +1245,79 @@ namespace OxyPlot.Series
             }
 
             return start;
+        }
+
+        /// <summary>
+        /// Updates the visible window end index for an <see cref="IList{T}"/> of
+        /// <see cref="DataPoint"/>. Symmetric to
+        /// <see cref="UpdateWindowStartIndex(IList{DataPoint}, double, int)"/>: returns the
+        /// largest index whose X is &lt;= <paramref name="targetX"/>, plus one for line
+        /// continuity past the right edge. Returns <see cref="int.MaxValue"/> if the search
+        /// can't bound the window (e.g. all values past the target are NaN).
+        /// </summary>
+        /// <param name="items">Data points (assumed monotonic in X).</param>
+        /// <param name="targetX">X coordinate of visible window end.</param>
+        /// <param name="lastIndex">Last computed window end index (used as initial guess).</param>
+        /// <returns>The new window end index (inclusive).</returns>
+        protected int UpdateWindowEndIndex(IList<DataPoint> items, double targetX, int lastIndex)
+        {
+            int idx = this.FindWindowEndIndex(items, targetX, lastIndex);
+            if (idx < items.Count - 1)
+            {
+                idx++;
+            }
+            return idx;
+        }
+
+        /// <summary>
+        /// Finds the largest index in a monotonic-X data-point list whose X &lt;= targetX.
+        /// Mirrors <see cref="FindWindowStartIndex(IList{DataPoint}, double, int)"/> but
+        /// finds the right boundary of the visible window. Used to bound render-time
+        /// iteration so the slow fallback path doesn't scan past the visible edge.
+        /// </summary>
+        public int FindWindowEndIndex(IList<DataPoint> items, double targetX, int initialGuess)
+        {
+            if (items.Count == 0) return -1;
+
+            int last = items.Count - 1;
+            // Step back over trailing NaN.
+            while (last > 0 && double.IsNaN(items[last].x))
+                last -= 1;
+
+            // If even the last valid X is <= target, return last directly.
+            if (items[last].x <= targetX) return last;
+
+            // Bisect: smallest index where X > targetX, then return idx-1.
+            int lo = 0, hi = last;
+            int initial = Math.Max(0, Math.Min(last, initialGuess));
+            // Use the initial guess as a hint to skip ahead in the common case where
+            // the window has only shifted slightly between renders.
+            if (items[initial].x > targetX)
+            {
+                hi = initial;
+            }
+            else
+            {
+                lo = initial;
+            }
+
+            while (lo < hi)
+            {
+                int mid = lo + ((hi - lo) >> 1);
+                double midX = items[mid].x;
+                if (double.IsNaN(midX))
+                {
+                    // Step over NaN by treating it as "<= targetX" so we keep moving right.
+                    lo = mid + 1;
+                    continue;
+                }
+                if (midX <= targetX) lo = mid + 1;
+                else hi = mid;
+            }
+
+            // lo is the smallest index with X > targetX (or last if not found). Return lo-1
+            // unless lo==0 (no points in window).
+            return lo > 0 ? lo - 1 : 0;
         }
     }
 }
