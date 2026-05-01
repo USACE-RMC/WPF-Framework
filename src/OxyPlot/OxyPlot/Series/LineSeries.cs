@@ -230,6 +230,23 @@ namespace OxyPlot.Series
         public IInterpolationAlgorithm InterpolationAlgorithm { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximum number of points per render segment for which spline
+        /// smoothing (<see cref="InterpolationAlgorithm"/>) is applied. When set to a positive
+        /// value, <see cref="RenderLineAndMarkers"/> skips smoothing for segments larger than
+        /// this threshold and renders the raw decimated line directly. The default <c>0</c>
+        /// disables the threshold (smoothing always runs when an interpolation algorithm is
+        /// set). Recommended value for large-data plots: <c>1000</c>.
+        /// </summary>
+        /// <remarks>
+        /// Spline smoothing is O(N) on its input plus a fresh allocation of the smoothed
+        /// point list every render. On a 100k-point segment this is a noticeable per-frame
+        /// cost; on dense telemetry data it is rarely visible since the smoothing operates
+        /// on already-decimated screen points. Setting <c>MaxSmoothingPoints = 1000</c> turns
+        /// off smoothing automatically once the visible point count crosses that threshold.
+        /// </remarks>
+        public int MaxSmoothingPoints { get; set; }
+
+        /// <summary>
         /// Gets or sets the thickness of the curve.
         /// </summary>
         /// <value>The stroke thickness.</value>
@@ -948,9 +965,19 @@ namespace OxyPlot.Series
             var screenPoints = pointsToRender;
             if (this.InterpolationAlgorithm != null)
             {
-                // spline smoothing (should only be used on small datasets)
-                var resampledPoints = ScreenPointHelper.ResamplePoints(pointsToRender, this.MinimumSegmentLength);
-                screenPoints = this.InterpolationAlgorithm.CreateSpline(resampledPoints, false, 0.25);
+                // Spline smoothing (should only be used on small datasets). When
+                // MaxSmoothingPoints is set and the current segment exceeds it, skip the
+                // smooth — the decimated raw line is visually indistinguishable at that
+                // density, and skipping eliminates the per-render allocation and O(N) walk.
+                if (this.MaxSmoothingPoints > 0 && pointsToRender.Count > this.MaxSmoothingPoints)
+                {
+                    // Smoothing skipped — the raw points are used as-is.
+                }
+                else
+                {
+                    var resampledPoints = ScreenPointHelper.ResamplePoints(pointsToRender, this.MinimumSegmentLength);
+                    screenPoints = this.InterpolationAlgorithm.CreateSpline(resampledPoints, false, 0.25);
+                }
             }
 
             // clip the line segments with the clipping rectangle
