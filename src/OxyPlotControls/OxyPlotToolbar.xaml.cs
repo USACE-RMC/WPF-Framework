@@ -197,6 +197,8 @@ namespace OxyPlotControls
                 if (oldPlot.grid != null)
                 {
                     oldPlot.grid.Children.Remove(oxyToolBar._leaderLineCanvas);
+                    oldPlot.grid.Children.Remove(oxyToolBar._dragAdorner);
+                    System.Windows.Data.BindingOperations.ClearAllBindings(oxyToolBar._dragAdorner);
                 }
             }
 
@@ -231,6 +233,16 @@ namespace OxyPlotControls
 
                 // Set up leader line for adding polyline and polygon annotations
                 newPlot.grid.Children.Add(oxyToolBar._leaderLineCanvas);
+
+                // Wire the lightweight annotation place/drag preview overlay. Mirrors the
+                // magnifier-zoom ZoomRectangleAdorner pattern: bind Width/Height to the grid
+                // so the adorner fills the plot area; mouse handlers update its preview state
+                // via Show*() per move without re-rendering the plot.
+                oxyToolBar._dragAdorner.SetBinding(WidthProperty,
+                    new System.Windows.Data.Binding(nameof(Grid.ActualWidth)) { Source = newPlot.grid });
+                oxyToolBar._dragAdorner.SetBinding(HeightProperty,
+                    new System.Windows.Data.Binding(nameof(Grid.ActualHeight)) { Source = newPlot.grid });
+                newPlot.grid.Children.Add(oxyToolBar._dragAdorner);
 
                 // Apply current theme to the newly connected plot (only if toolbar is already loaded;
                 // during initial construction, the Loaded handler will apply the theme instead)
@@ -373,6 +385,19 @@ namespace OxyPlotControls
         private Polyline _leaderLine = new Polyline();
         private Canvas _leaderLineCanvas = new Canvas();
         private ScreenPoint _lastScreenPoint = ScreenPoint.Undefined;
+
+        /// <summary>
+        /// Lightweight overlay that draws annotation place / drag previews without re-rendering
+        /// the plot. Mirrors the magnifier-zoom adorner pattern; see AnnotationDragAdorner docs.
+        /// </summary>
+        private readonly Wpf.AnnotationDragAdorner _dragAdorner = new Wpf.AnnotationDragAdorner();
+
+        /// <summary>
+        /// Screen-space anchor captured at MouseDown for shapes whose drag preview is computed
+        /// from a fixed corner / start point (rectangle, ellipse, arrow, line, point, text).
+        /// </summary>
+        private Point _anchorScreenPoint;
+
         private bool _moveStartPoint = false;
         private bool _moveEndPoint = false;
         private int _movePointIndex = -1;
@@ -692,6 +717,9 @@ namespace OxyPlotControls
             {
                 bool annotationWasCreated = _targetAddAnnotation != null;
 
+                // Hide any annotation drag preview before the real annotation re-renders.
+                _dragAdorner.Clear();
+
                 ClearMarkerOverlays();
 
                 // Unsuppress PropertyChanged and notify the plot so undo bridges
@@ -747,6 +775,9 @@ namespace OxyPlotControls
         private void CancelAddAnnotation()
         {
             if (_addAnnotationToolMode == AddToolMode.None) return;
+
+            // Clear adorner preview so cancellation doesn't leave a ghost outline.
+            _dragAdorner.Clear();
 
             // Remove the in-progress annotation from the plot before stopping.
             // Always clear suppression on the tracked annotation — even if it never made it
@@ -1571,6 +1602,11 @@ namespace OxyPlotControls
 
             if (_addAnnotationToolMode != AddToolMode.None)
             {
+                // Capture the click position in screen coordinates for the adorner-driven
+                // drag preview. Used by rectangle / ellipse / arrow / point / text / line
+                // placement to draw a faithful preview without writing DPs per mouse-move.
+                _anchorScreenPoint = new Point(e.Position.X, e.Position.Y);
+
                 switch (_addAnnotationToolMode)
                 {
                     case AddToolMode.AddArrowAnnotation:
@@ -1874,19 +1910,18 @@ namespace OxyPlotControls
 
                     case AddToolMode.AddRectangleAnnotation:
                         {
-                            var mouseDataPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                            var rect = (Wpf.RectangleAnnotation)_targetAddAnnotation;
-                            rect.MaximumX = mouseDataPoint.X;
-                            rect.MaximumY = mouseDataPoint.Y;
+                            // Adorner-only preview during drag — no DP writes, no plot
+                            // re-render. The final MaximumX/MaximumY are written once at
+                            // MouseUp from e.Position.
+                            var cursor = new Point(e.Position.X, e.Position.Y);
+                            _dragAdorner.ShowRect(MakeRect(_anchorScreenPoint, cursor));
                         }
                         break;
 
                     case AddToolMode.AddEllipseAnnotation:
                         {
-                            var mouseDataPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                            var ellipse = (Wpf.EllipseAnnotation)_targetAddAnnotation;
-                            ellipse.MaximumX = mouseDataPoint.X;
-                            ellipse.MaximumY = mouseDataPoint.Y;
+                            var cursor = new Point(e.Position.X, e.Position.Y);
+                            _dragAdorner.ShowEllipse(MakeRect(_anchorScreenPoint, cursor));
                         }
                         break;
 
@@ -2180,8 +2215,15 @@ namespace OxyPlotControls
             }
             else if (_addAnnotationToolMode == AddToolMode.AddRectangleAnnotation)
             {
+                // Commit the final dragged corner to the annotation DPs (deferred from
+                // MouseMove for the adorner fast-path).
+                var rectangleCommit = (Wpf.RectangleAnnotation)_targetAddAnnotation;
+                var commitData = rectangleCommit.InternalAnnotation.InverseTransform(e.Position);
+                rectangleCommit.MaximumX = commitData.X;
+                rectangleCommit.MaximumY = commitData.Y;
+
                 // Check to see if the size of rectangle is at least 10 pixels in height and width
-                var rectangle = (Wpf.RectangleAnnotation)_targetAddAnnotation;
+                var rectangle = rectangleCommit;
                 ScreenPoint upperRight = rectangle.InternalAnnotation.Transform(rectangle.MaximumX, rectangle.MaximumY);
                 ScreenPoint lowerLeft = rectangle.InternalAnnotation.Transform(rectangle.MinimumX, rectangle.MinimumY);
                 double pixelWidth = Math.Abs(upperRight.X - lowerLeft.X);
@@ -2209,8 +2251,15 @@ namespace OxyPlotControls
             }
             else if (_addAnnotationToolMode == AddToolMode.AddEllipseAnnotation)
             {
+                // Commit the final dragged corner to the annotation DPs (deferred from
+                // MouseMove for the adorner fast-path).
+                var ellipseCommit = (Wpf.EllipseAnnotation)_targetAddAnnotation;
+                var commitData = ellipseCommit.InternalAnnotation.InverseTransform(e.Position);
+                ellipseCommit.MaximumX = commitData.X;
+                ellipseCommit.MaximumY = commitData.Y;
+
                 // Check to see if the size of the ellipse is at least 10 pixels in height and width
-                var ellipse = (Wpf.EllipseAnnotation)_targetAddAnnotation;
+                var ellipse = ellipseCommit;
                 ScreenPoint upperRight = ellipse.InternalAnnotation.Transform(ellipse.MaximumX, ellipse.MaximumY);
                 ScreenPoint lowerLeft = ellipse.InternalAnnotation.Transform(ellipse.MinimumX, ellipse.MinimumY);
                 double pixelWidth = Math.Abs(upperRight.X - lowerLeft.X);
@@ -3334,6 +3383,20 @@ namespace OxyPlotControls
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Builds a normalised <see cref="Rect"/> from two opposite corners. Used by the
+        /// adorner-driven annotation placement preview; the user may drag in any of the four
+        /// quadrants relative to the anchor click, so we can't assume <c>p1.X &lt; p2.X</c>.
+        /// </summary>
+        private static Rect MakeRect(Point p1, Point p2)
+        {
+            double x = Math.Min(p1.X, p2.X);
+            double y = Math.Min(p1.Y, p2.Y);
+            double w = Math.Abs(p2.X - p1.X);
+            double h = Math.Abs(p2.Y - p1.Y);
+            return new Rect(x, y, w, h);
         }
 
         /// <summary>
