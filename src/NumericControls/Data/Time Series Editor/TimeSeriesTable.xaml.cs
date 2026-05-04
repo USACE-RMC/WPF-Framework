@@ -301,6 +301,17 @@ namespace NumericControls
             {
                 Series = new TimeSeries();
             }
+            // When the control is unloaded (e.g. window closing or tab removed), unsubscribe from
+            // the live TimeSeries so a long-lived data model does not pin this control in memory.
+            // SeriesProperty resubscribes its CollectionChanged handler whenever Series changes.
+            Unloaded += (s, e) =>
+            {
+                if (_previousSeries != null)
+                {
+                    _previousSeries.CollectionChanged -= Series_CollectionChanged;
+                    _previousSeries = null;
+                }
+            };
             TimeSeriesDataGrid.RowType = typeof(SeriesOrdinate<DateTime, double>);
             TimeSeriesDataGrid.PasteAddsRows = true;
             TimeSeriesDataGrid.ItemsSource = _rowItems;

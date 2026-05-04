@@ -68,9 +68,13 @@ namespace NumericControls
             }
             thisControl.CurveRows.Clear();
             OrdinateRowItem rowItem;
+            int index = 0;
             foreach (Ordinate o in newCurve)
             {
-                rowItem = new OrdinateRowItem(o.X, o.Y, thisControl.XColumnHeader, thisControl.YColumnHeader, thisControl.CurveRows, thisControl.MinimumX, thisControl.MaximumX, thisControl.MinimumY, thisControl.MaximumY, newCurve.StrictX, newCurve.StrictY, newCurve.OrderX, newCurve.OrderY);
+                rowItem = new OrdinateRowItem(o.X, o.Y, thisControl.XColumnHeader, thisControl.YColumnHeader, thisControl.CurveRows, thisControl.MinimumX, thisControl.MaximumX, thisControl.MinimumY, thisControl.MaximumY, newCurve.StrictX, newCurve.StrictY, newCurve.OrderX, newCurve.OrderY)
+                {
+                    Index = index++
+                };
                 rowItem.PropertyChanged += thisControl.RowItemPropertyChanged;
                 thisControl.CurveRows.Add(rowItem);
             }
@@ -84,7 +88,10 @@ namespace NumericControls
         private void RowItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OrdinateRowItem rItem = (OrdinateRowItem)sender;
-            int dataIndex = CurveRows.IndexOf(rItem);
+            // Use the cached positional index instead of CurveRows.IndexOf which is O(n) and
+            // value-equality based. With duplicate (X, Y) pairs IndexOf would target the wrong row.
+            int dataIndex = rItem.Index;
+            if (dataIndex < 0 || dataIndex >= OrderedData.Count) return;
             OrderedData[dataIndex] = rItem.GetOrdinate();
         }
 

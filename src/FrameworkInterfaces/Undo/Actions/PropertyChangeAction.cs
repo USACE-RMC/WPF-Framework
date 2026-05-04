@@ -46,6 +46,21 @@ namespace FrameworkInterfaces.Undo.Actions
         /// Gets or sets the time window in milliseconds for merging rapid changes to the same property.
         /// Must be greater than or equal to zero. Default is 500 ms.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The merge-window comparison in <see cref="CanMergeWith(IUndoableAction)"/> is
+        /// computed against <see cref="System.Diagnostics.Stopwatch.GetTimestamp"/>, a
+        /// high-resolution monotonic counter — <i>not</i> against
+        /// <see cref="System.DateTime.Now"/>. This makes the merge logic immune to system
+        /// clock adjustments (NTP corrections, manual time changes, DST transitions). A
+        /// wall-clock jump can never disable a legitimate merge or, worse, accept a stale
+        /// merge whose true elapsed time exceeds this window.
+        /// </para>
+        /// <para>
+        /// The public <see cref="Timestamp"/> property remains a <see cref="System.DateTime"/>
+        /// for display purposes; only the merge-window calculation uses the monotonic ticks.
+        /// </para>
+        /// </remarks>
         public static int MergeWindowMilliseconds
         {
             get => _mergeWindowMilliseconds;

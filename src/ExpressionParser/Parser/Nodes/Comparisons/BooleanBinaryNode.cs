@@ -151,7 +151,7 @@ namespace ExpressionParser
             if (ContainsVariable())
             {
                 if (!(_leftNode == null))
-                    result?.AddRange(_leftNode.GetVariableNodes());
+                    result.AddRange(_leftNode.GetVariableNodes());
                 if (!(_rightNode == null))
                     result.AddRange(_rightNode.GetVariableNodes());
             }

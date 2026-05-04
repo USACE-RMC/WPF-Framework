@@ -2376,41 +2376,36 @@ namespace DatabaseManager
         public int SearchColumn(int startIndex, int endIndex, string columnName, string searchValue, bool matchCase, bool wholeWord)
         {
             if (_columnNames.Contains(columnName) == false)
-            { 
-                return -1; 
+            {
+                return -1;
             }
             int loopStep = 1;
             string cellValue;
-            if (matchCase == false)
-            { 
-                searchValue = searchValue.ToLower();
-            }
+            // Avoid ToLower() — culture-dependent and allocates per-call. Use StringComparison
+            // overloads of Contains/Equals so we never copy the string just to compare it.
+            var comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
             if (startIndex > endIndex)
             {
-                loopStep = -1; 
+                loopStep = -1;
             }
             object[] columnArray = GetColumn(columnName);
             if (columnArray.Length == 0)
-            { 
-                return -1; 
+            {
+                return -1;
             }
             for (int i = startIndex; loopStep >= 0 ? i <= endIndex : i >= endIndex; i += loopStep)
             {
                 cellValue = columnArray[i].ToString();
-                if (matchCase == false)
-                { 
-                    cellValue = cellValue.ToLower();
-                }
                 if (wholeWord == false)
                 {
-                    if (cellValue.Contains(searchValue))
+                    if (cellValue != null && searchValue != null && cellValue.Contains(searchValue, comparison))
                     {
                         return i;
                     }
                 }
-                else if ((searchValue ?? "") == (cellValue ?? ""))
-                { 
-                    return i; 
+                else if (string.Equals(searchValue ?? "", cellValue ?? "", comparison))
+                {
+                    return i;
                 }
             }
             return -1;

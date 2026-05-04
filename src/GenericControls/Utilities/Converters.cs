@@ -1153,7 +1153,10 @@ namespace GenericControls
             if (value == null)
                 return null;
             double stringDouble;
-            double.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out stringDouble);
+            // Honor the supplied IValueConverter culture (defaults to the binding's CurrentCulture)
+            // so that "1,5" parses correctly under de-DE while "1.5" still works under en-US, instead
+            // of locking to InvariantCulture which silently breaks comma-decimal locales.
+            double.TryParse(value.ToString(), NumberStyles.Any, culture ?? CultureInfo.InvariantCulture, out stringDouble);
             return stringDouble;
         }
 
@@ -1219,7 +1222,10 @@ namespace GenericControls
             if (value == null)
                 return null;
             double stringDouble;
-            double.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out stringDouble);
+            // Honor the supplied IValueConverter culture (defaults to the binding's CurrentCulture)
+            // so that "1,5" parses correctly under de-DE while "1.5" still works under en-US, instead
+            // of locking to InvariantCulture which silently breaks comma-decimal locales.
+            double.TryParse(value.ToString(), NumberStyles.Any, culture ?? CultureInfo.InvariantCulture, out stringDouble);
             return stringDouble;
         }
     }

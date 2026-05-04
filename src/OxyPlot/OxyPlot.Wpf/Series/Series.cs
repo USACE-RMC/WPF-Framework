@@ -233,12 +233,20 @@ namespace OxyPlot.Wpf
         /// The default is <c>true</c>.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// Set to <c>false</c> for dense or decorative series (e.g. MCMC chain traces, overlay
         /// reference lines) where per-point hit-testing provides no diagnostic value. When
         /// disabled, the series is skipped by the tracker on every mouse move, avoiding the
         /// O(n) nearest-point scan that would otherwise saturate the UI thread on large datasets.
         /// This is a tracker-routing flag only: it does not affect rendering, does not trigger
         /// <c>InvalidatePlot</c>, and does not fire <see cref="PropertyChanged"/>.
+        /// </para>
+        /// <para>
+        /// This property round-trips through
+        /// <c>OxyPlot.Wpf.Serialization.SeriesSerializer</c> — saved plot configurations
+        /// preserve the hit-test flag so reopening a plot keeps tracker-routing exactly
+        /// as the user left it.
+        /// </para>
         /// </remarks>
         public bool IsHitTestEnabled
         {
@@ -250,6 +258,12 @@ namespace OxyPlot.Wpf
         /// Gets or sets the edge rendering mode for the series. The default is <see cref="EdgeRenderingMode.Automatic"/>.
         /// </summary>
         /// <value>The edge rendering mode that controls anti-aliasing behavior.</value>
+        /// <remarks>
+        /// This property round-trips through
+        /// <c>OxyPlot.Wpf.Serialization.SeriesSerializer</c> — saved plot configurations
+        /// preserve the edge-rendering selection (e.g., <c>Adaptive</c>, <c>PreferSpeed</c>)
+        /// rather than reverting to <see cref="EdgeRenderingMode.Automatic"/> on reload.
+        /// </remarks>
         public EdgeRenderingMode EdgeRenderingMode
         {
             get => (EdgeRenderingMode)this.GetValue(EdgeRenderingModeProperty);

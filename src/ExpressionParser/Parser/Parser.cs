@@ -19,6 +19,16 @@ namespace ExpressionParser.Parser
         /// <param name="ignoreCase">Specifies whether string comparisons should be case-insensitive.</param>
         /// <param name="availableVariables">Optional dictionary mapping variable names to their expected types. Variables not in this dictionary will be marked as undeclared.</param>
         /// <returns>A parse tree root node that can be evaluated; returns null if the token list is null.</returns>
+        /// <remarks>
+        /// <para>
+        /// <b>Threading contract:</b> the static <see cref="Parse(List{Token}, bool, Dictionary{string, ResultType})"/> method is safe to invoke
+        /// from multiple threads concurrently because each invocation builds an independent AST. However the
+        /// returned <see cref="IParserNode"/> tree is <i>not</i> thread-safe per AST instance — some nodes (notably
+        /// <see cref="Numerics.IncrementNode"/>) carry mutable evaluation state. Once an AST is produced, treat it
+        /// as a single-threaded resource: confine all <c>Evaluate()</c>/<c>Simplify()</c> calls and variable-value
+        /// updates on its <see cref="VariableNode"/>s to one thread, or wrap access in your own synchronization.
+        /// </para>
+        /// </remarks>
         public static IParserNode Parse(List<Token> tokens, bool ignoreCase = false, Dictionary<string, ResultType> availableVariables = null)
         {
             if (tokens == null)
@@ -41,6 +51,16 @@ namespace ExpressionParser.Parser
         /// <param name="ignoreCase">Specifies whether string comparisons should be case-insensitive.</param>
         /// <param name="availableVariables">Optional dictionary mapping variable names to their expected types. Variables not in this dictionary will be marked as undeclared.</param>
         /// <returns>A parse tree root node that can be evaluated; returns null if the input string is null.</returns>
+        /// <remarks>
+        /// <para>
+        /// <b>Threading contract:</b> the static <see cref="Parse(string, bool, Dictionary{string, ResultType})"/> method is safe to invoke
+        /// from multiple threads concurrently because each invocation builds an independent AST. However the
+        /// returned <see cref="IParserNode"/> tree is <i>not</i> thread-safe per AST instance — some nodes (notably
+        /// <see cref="Numerics.IncrementNode"/>) carry mutable evaluation state. Once an AST is produced, treat it
+        /// as a single-threaded resource: confine all <c>Evaluate()</c>/<c>Simplify()</c> calls and variable-value
+        /// updates on its <see cref="VariableNode"/>s to one thread, or wrap access in your own synchronization.
+        /// </para>
+        /// </remarks>
         public static IParserNode Parse(string stringToParse, bool ignoreCase = false, Dictionary<string, ResultType> availableVariables = null)
         {
             if (stringToParse == null)

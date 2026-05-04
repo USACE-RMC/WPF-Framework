@@ -123,15 +123,13 @@ namespace ExpressionParser
             if (ContainsErrors)
                 return new ParseNodeResult(null, ResultType.Error);
             // 
-            Random randy;
-            if (_seed == null)
-            {
-                randy = new Random();
-            }
-            else
-            {
-                randy = new Random(Convert.ToInt32(_seed.Evaluate().Result));
-            }
+            // When no seed is supplied, use Random.Shared (a thread-safe, lock-free instance
+            // introduced in .NET 6). It is preferable to `new Random()` because consecutive
+            // `new Random()` calls in tight loops can produce identical seeds (clock granularity)
+            // and the resulting sequence is non-thread-safe.
+            Random randy = _seed == null
+                ? Random.Shared
+                : new Random(Convert.ToInt32(_seed.Evaluate().Result));
             // 
             if (OutputType == ResultType.Double)
             {

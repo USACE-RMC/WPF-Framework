@@ -125,6 +125,15 @@ namespace FrameworkUI
             if (index >= 0) RemoveItem(index);
             var item = new RecentFileItem(filePath);
             Collection.Insert(0, item);
+            // Trim the collection to NumberOfFilesToDisplay so it doesn't grow unbounded.
+            // Only trim when a positive cap is configured (NumberOfFilesToDisplay defaults to 0).
+            if (NumberOfFilesToDisplay > 0)
+            {
+                while (Collection.Count > NumberOfFilesToDisplay)
+                {
+                    RemoveItem(Collection.Count - 1);
+                }
+            }
             AddToJumpList(filePath);
             SaveToXML();
         }
@@ -172,6 +181,20 @@ namespace FrameworkUI
 
             var jumpList = JumpList.GetJumpList(Application.Current);
             if (jumpList == null) return;
+
+            // De-duplicate: remove any existing JumpItem matching this file path before inserting.
+            // Without this, opening the same file repeatedly accumulates duplicate entries in the
+            // Windows JumpList, and the trim below only removes the oldest — leaving stale dupes
+            // visible in the taskbar's Recent Files category.
+            for (int i = jumpList.JumpItems.Count - 1; i >= 0; i--)
+            {
+                if (jumpList.JumpItems[i] is JumpTask existing &&
+                    string.Equals(existing.Arguments, filePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    jumpList.JumpItems.RemoveAt(i);
+                }
+            }
+
             jumpList.JumpItems.Insert(0, task);
             if (jumpList.JumpItems.Count > NumberOfFilesToDisplay)
             {
@@ -232,30 +255,38 @@ namespace FrameworkUI
         /// </summary>
         public void LoadFromXML()
         {
-            // Check if the recent file list exists. 
-            if (File.Exists(FilePath) == true)
+            try
             {
-                // Clear collection
-                ClearAll();
-                // Load recent files from disk
-                var xml = new XmlDocument();
-                xml.Load(FilePath);
-                var recentFilesNode = xml.GetElementsByTagName("RecentFiles").Item(0);
-                if (recentFilesNode == null) return;
-
-                foreach (XmlNode node in recentFilesNode.ChildNodes)
+                // Check if the recent file list exists.
+                if (File.Exists(FilePath) == true)
                 {
-                    // Check to see if the file still exists
-                    var pathAttribute = node.Attributes?["Path"];
-                    if (pathAttribute == null) continue;
+                    // Clear collection
+                    ClearAll();
+                    // Load recent files from disk
+                    var xml = new XmlDocument();
+                    xml.Load(FilePath);
+                    var recentFilesNode = xml.GetElementsByTagName("RecentFiles").Item(0);
+                    if (recentFilesNode == null) return;
 
-                    string filePath = pathAttribute.Value;
-                    if (File.Exists(filePath))
+                    foreach (XmlNode node in recentFilesNode.ChildNodes)
                     {
-                        var item = new RecentFileItem(filePath);
-                        Collection.Add(item);
+                        // Check to see if the file still exists
+                        var pathAttribute = node.Attributes?["Path"];
+                        if (pathAttribute == null) continue;
+
+                        string filePath = pathAttribute.Value;
+                        if (File.Exists(filePath))
+                        {
+                            var item = new RecentFileItem(filePath);
+                            Collection.Add(item);
+                        }
                     }
                 }
+            }
+            catch (Exception ex) when (ex is XmlException || ex is IOException || ex is UnauthorizedAccessException)
+            {
+                // If the XML file is corrupted or inaccessible, drop the list and fall through to LoadJumpList.
+                ClearAll();
             }
             LoadJumpList();
         }
@@ -297,9 +328,32 @@ namespace FrameworkUI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The event arguments.</param>
+        /// <remarks>
+        /// <para>
+        /// <b>Parent contract:</b> <see cref="RecentFiles"/> derives from
+        /// <see cref="System.Windows.Controls.Separator"/> and is intended to live
+        /// inside a <see cref="System.Windows.Controls.MenuItem"/> (typically the
+        /// File menu). This handler runs on the <c>Loaded</c> event and walks the
+        /// logical parent: if <c>Parent</c> is not a <c>MenuItem</c>, the wiring is
+        /// silently skipped (a Debug.WriteLine is emitted) so a misconfigured XAML
+        /// host cannot crash application startup. Hosts that need to embed
+        /// <c>RecentFiles</c> elsewhere (toolbar, ribbon, custom shell) must subclass
+        /// it and override the menu wiring.
+        /// </para>
+        /// </remarks>
         private void ConnectToMenu(object sender, RoutedEventArgs e)
         {
-            if (Parent is not MenuItem parentItem) throw new ApplicationException("Parent must be a MenuItem");
+            // The parent must be a MenuItem for SubmenuOpened wiring below to make sense, but a
+            // misconfigured XAML host (e.g. RecentFiles dropped into a ContextMenu, ToolBar, or
+            // any non-MenuItem container) is a developer error — not a reason to crash the app
+            // at startup. Log and skip; the recent-files feature simply won't activate there.
+            if (Parent is not MenuItem parentItem)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"RecentFiles.ConnectToMenu: Parent must be a MenuItem but is '{Parent?.GetType().FullName ?? "null"}'. " +
+                    "Recent files menu wiring skipped.");
+                return;
+            }
             if (FileMenu != null && FileMenu.Equals(parentItem)) return;
             if (FileMenu != null) FileMenu.SubmenuOpened -= FileMenu_SubMenuOpened;
             FileMenu = parentItem;

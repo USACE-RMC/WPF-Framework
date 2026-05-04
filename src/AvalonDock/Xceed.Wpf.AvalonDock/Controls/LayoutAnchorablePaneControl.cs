@@ -122,7 +122,13 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     private void OnLayoutUpdated( object sender, EventArgs e )
     {
+      // _model is typed as LayoutAnchorablePane (which implements
+      // ILayoutPositionableElementWithActualSize), but defensively guard the cast: if the model
+      // is detached (e.g. during shutdown or layout reload) the cast can return null and this
+      // path would NRE on the property setter.
       var modelWithAtcualSize = _model as ILayoutPositionableElementWithActualSize;
+      if( modelWithAtcualSize == null )
+        return;
       modelWithAtcualSize.ActualWidth = ActualWidth;
       modelWithAtcualSize.ActualHeight = ActualHeight;
     }

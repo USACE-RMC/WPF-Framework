@@ -24,9 +24,15 @@ namespace SoftwareUpdate
     /// </remarks>
     public class SemanticVersion : IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
-        // Regex pattern for semantic version parsing
+        // Regex pattern for semantic version parsing.
+        // Pre-release identifiers (per SemVer 2.0 §9) are dot-separated tokens; numeric tokens
+        // MUST NOT include leading zeros (so "1.0.0-alpha.01" is invalid). Build metadata
+        // (§10) keeps the broader [0-9A-Za-z-] alphabet — leading zeros are allowed there.
+        // Each pre-release identifier must be either a non-zero numeric ("0", or [1-9][0-9]*)
+        // or contain at least one non-digit character.
+        private const string PreReleaseIdentifier = @"(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)";
         private static readonly Regex VersionPattern = new Regex(
-            @"^v?(?<major>\d+)\.(?<minor>\d+)(?:\.(?<patch>\d+))?(?:-(?<prerelease>[0-9A-Za-z\-\.]+))?(?:\+(?<build>[0-9A-Za-z\-\.]+))?$",
+            @"^v?(?<major>\d+)\.(?<minor>\d+)(?:\.(?<patch>\d+))?(?:-(?<prerelease>" + PreReleaseIdentifier + @"(?:\." + PreReleaseIdentifier + @")*))?(?:\+(?<build>[0-9A-Za-z\-]+(?:\.[0-9A-Za-z\-]+)*))?$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
@@ -128,6 +134,26 @@ namespace SoftwareUpdate
 
             var preRelease = match.Groups["prerelease"].Success ? match.Groups["prerelease"].Value : null;
             var build = match.Groups["build"].Success ? match.Groups["build"].Value : null;
+
+            // SemVer 2.0 §9: numeric identifiers in the pre-release portion MUST NOT include
+            // leading zeros. The base regex accepts the broader `[0-9A-Za-z-.]+` character
+            // class, so re-validate any all-digit dot-separated sub-identifiers here. (We do
+            // not enforce this for build metadata per §10, which permits leading zeros.)
+            if (preRelease != null)
+            {
+                foreach (var part in preRelease.Split('.'))
+                {
+                    // Empty segments (e.g. "alpha..1") are invalid per §9.
+                    if (part.Length == 0) return false;
+                    // Numeric-only segment longer than 1 character starting with '0' is invalid.
+                    bool isAllDigits = true;
+                    for (int i = 0; i < part.Length; i++)
+                    {
+                        if (!char.IsDigit(part[i])) { isAllDigits = false; break; }
+                    }
+                    if (isAllDigits && part.Length > 1 && part[0] == '0') return false;
+                }
+            }
 
             version = new SemanticVersion(major, minor, patch, preRelease, build);
             return true;

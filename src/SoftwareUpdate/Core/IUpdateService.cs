@@ -86,6 +86,28 @@ namespace SoftwareUpdate
         ///     <item>Restart the application</item>
         /// </list>
         /// </para>
+        /// <para>
+        /// <b>Lifecycle contract — this method does not return.</b> The reference
+        /// implementation <c>GitHubUpdateService.InstallUpdateAndRestart</c> calls
+        /// <see cref="System.Environment.Exit(int)"/> after spawning the updater, so
+        /// <i>no code in the calling application runs after this method returns</i>:
+        /// <c>finally</c> blocks, <c>Application.Exit</c> handlers, <c>OnClosing</c>
+        /// overrides, and IDisposable.Dispose calls are all skipped.
+        /// </para>
+        /// <para>
+        /// <b>Callers MUST flush user-visible state before invoking</b> — including but
+        /// not limited to:
+        /// <list type="bullet">
+        ///     <item>Persisting <c>UserSettings</c> / <c>RecentFiles</c> via their <c>Save</c> methods</item>
+        ///     <item>Prompting to save dirty projects (the framework's normal close-flow handler is a good model)</item>
+        ///     <item>Closing open file/database handles, stopping background workers, and flushing logs</item>
+        /// </list>
+        /// </para>
+        /// <para>
+        /// See the FrameworkUI shell's <c>MainWindow.DownloadAndInstallUpdateAsync</c>
+        /// for an example consumer that runs the dirty-project save flow before
+        /// invoking this method.
+        /// </para>
         /// </remarks>
         void InstallUpdateAndRestart(string downloadedFilePath);
 
@@ -110,11 +132,35 @@ namespace SoftwareUpdate
         /// <summary>
         /// Occurs when an update check completes.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b>Threading:</b> handlers may be invoked on a thread-pool thread, not on
+        /// the UI thread. This event is raised from <see cref="CheckForUpdateAsync"/>
+        /// after the asynchronous network I/O completes, so the continuation can run
+        /// on any <see cref="System.Threading.SynchronizationContext"/>.
+        /// WPF consumers that touch UI elements from the handler MUST marshal back to
+        /// the UI thread via <c>Application.Current.Dispatcher.Invoke</c> (or
+        /// <c>BeginInvoke</c>) — accessing dependency properties off the dispatcher
+        /// thread will throw <see cref="System.InvalidOperationException"/>.
+        /// </para>
+        /// </remarks>
         event EventHandler<UpdateCheckResult>? UpdateCheckCompleted;
 
         /// <summary>
         /// Occurs when an error occurs during update operations.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b>Threading:</b> handlers may be invoked on a thread-pool thread, not on
+        /// the UI thread. This event is raised from any of the asynchronous update
+        /// methods (<see cref="CheckForUpdateAsync"/>, <see cref="DownloadUpdateAsync"/>)
+        /// when an unrecoverable error occurs, so the continuation can run on any
+        /// <see cref="System.Threading.SynchronizationContext"/>.
+        /// WPF consumers that touch UI elements (e.g., showing a <c>MessageBox</c>) MUST
+        /// marshal back to the UI thread via <c>Application.Current.Dispatcher.Invoke</c>
+        /// or <c>BeginInvoke</c>.
+        /// </para>
+        /// </remarks>
         event EventHandler<Exception>? UpdateError;
     }
 }

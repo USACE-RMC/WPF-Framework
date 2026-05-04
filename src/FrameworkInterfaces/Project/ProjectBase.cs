@@ -526,21 +526,42 @@ namespace FrameworkInterfaces
         /// <inheritdoc/>
         public void SaveAs(string newFullFileName)
         {
-            // Create a copy of the current project and rename it
-            File.Copy(FullFileName, newFullFileName, true);
+            // Wrap in try/catch so transient I/O errors (disk full, network drive, AV-locked file,
+            // permission denied) surface with informative context instead of an opaque
+            // "The process cannot access the file" propagating up from File.Copy.
+            try
+            {
+                // Create a copy of the current project and rename it
+                File.Copy(FullFileName, newFullFileName, true);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                throw new IOException(
+                    $"Failed to save project as '{newFullFileName}'. Source: '{FullFileName}'. {ex.Message}",
+                    ex);
+            }
         }
 
         /// <inheritdoc/>
         public void ZipProject(string zipFileName)
         {
-            if (File.Exists(zipFileName))
+            try
             {
-                File.Delete(zipFileName);
-            }
+                if (File.Exists(zipFileName))
+                {
+                    File.Delete(zipFileName);
+                }
 
-            using (var archive = ZipFile.Open(zipFileName, ZipArchiveMode.Create))
+                using (var archive = ZipFile.Open(zipFileName, ZipArchiveMode.Create))
+                {
+                    archive.CreateEntryFromFile(FullFileName, Path.GetFileName(FullFileName));
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                archive.CreateEntryFromFile(FullFileName, Path.GetFileName(FullFileName));
+                throw new IOException(
+                    $"Failed to zip project to '{zipFileName}'. Source: '{FullFileName}'. {ex.Message}",
+                    ex);
             }
         }
 

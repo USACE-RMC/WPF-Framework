@@ -169,7 +169,17 @@ namespace Themes
                 return false;
             }
 
-            return Enum.TryParse(themeName, ignoreCase: true, out theme);
+            // Enum.TryParse will succeed for any integer string (including values outside the enum
+            // range), so we additionally check that the parsed value is a defined enum member.
+            if (!Enum.TryParse(themeName, ignoreCase: true, out Theme parsed) ||
+                !Enum.IsDefined(typeof(Theme), parsed))
+            {
+                theme = Theme.Light;
+                return false;
+            }
+
+            theme = parsed;
+            return true;
         }
 
         #endregion

@@ -397,13 +397,22 @@ namespace FrameworkInterfaces.Messaging
             if (item == null) throw new ArgumentNullException(nameof(item));
 
             IMessageItem[]? toNotify = null;
+            string? deferredCode = null;
 
             lock (_lockObject)
             {
-                if (AddItemInternal(item))
+                if (AddItemInternal(item, out deferredCode))
                 {
                     toNotify = new IMessageItem[] { item };
                 }
+            }
+
+            // Mutate item.Code outside the lock — the property setter raises PropertyChanged
+            // synchronously, which can re-enter the Messenger from a UI-thread subscriber.
+            // Holding _lockObject during that re-entry would deadlock.
+            if (deferredCode != null)
+            {
+                item.Code = deferredCode;
             }
 
             // Raise event outside the lock to prevent deadlock from re-entrant subscribers
@@ -428,6 +437,8 @@ namespace FrameworkInterfaces.Messaging
             if (items == null) throw new ArgumentNullException(nameof(items));
 
             IMessageItem[]? toNotify = null;
+            // Deferred Code mutations to be applied OUTSIDE the lock; see comment in Add(IMessageItem).
+            List<(IMessageItem item, string newCode)>? deferredCodeMutations = null;
 
             lock (_lockObject)
             {
@@ -435,15 +446,29 @@ namespace FrameworkInterfaces.Messaging
                 foreach (IMessageItem item in items)
                 {
                     if (item == null) continue;
-                    if (AddItemInternal(item))
+                    if (AddItemInternal(item, out var newCode))
                     {
                         newMessages.Add(item);
+                        if (newCode != null)
+                        {
+                            deferredCodeMutations ??= new List<(IMessageItem, string)>();
+                            deferredCodeMutations.Add((item, newCode));
+                        }
                     }
                 }
 
                 if (newMessages.Count > 0)
                 {
                     toNotify = newMessages.ToArray();
+                }
+            }
+
+            // Apply deferred Code mutations outside the lock (avoid re-entrant deadlock).
+            if (deferredCodeMutations != null)
+            {
+                foreach (var (item, newCode) in deferredCodeMutations)
+                {
+                    item.Code = newCode;
                 }
             }
 
@@ -547,9 +572,15 @@ namespace FrameworkInterfaces.Messaging
         /// Handles event code uniquification for <see cref="MessageType.Event"/> items.
         /// </summary>
         /// <param name="item">The message item to add.</param>
+        /// <param name="deferredCode">When the item is an <see cref="MessageType.Event"/> whose code had to be
+        /// changed for uniqueness, this receives the new value to be assigned to <c>item.Code</c> AFTER the
+        /// caller releases <c>_lockObject</c>. The Code setter raises <c>PropertyChanged</c> synchronously, which
+        /// can re-enter Messenger from a UI subscriber — that re-entry must not happen while the lock is held.
+        /// Receives <c>null</c> when no Code change is needed.</param>
         /// <returns><c>true</c> if the item was added; <c>false</c> if it was a duplicate or had no source.</returns>
-        private bool AddItemInternal(IMessageItem item)
+        private bool AddItemInternal(IMessageItem item, out string? deferredCode)
         {
+            deferredCode = null;
             if (item.Source == null) return false;
 
             if (item.Type == MessageType.Event)
@@ -559,7 +590,7 @@ namespace FrameworkInterfaces.Messaging
                     _messagesBySource.Add(item.Source, new Dictionary<string, IMessageItem>());
                 }
 
-                // Ensure that the event code is unique by appending counter if needed
+                // Ensure that the event code is unique by appending counter if needed.
                 var srcMsgs = _messagesBySource[item.Source];
                 string originalCode = item.Code;
                 string code = originalCode;
@@ -570,9 +601,15 @@ namespace FrameworkInterfaces.Messaging
                     code = $"{originalCode}{counter}";
                     counter++;
                 }
-                item.Code = code;
 
-                srcMsgs.Add(item.Code, item);
+                // Store under the unique code without mutating item.Code (the setter would synchronously
+                // fire PropertyChanged → potentially re-enter Messenger via a UI subscriber while we still
+                // hold _lockObject). The mutation is deferred to the caller post-lock release.
+                srcMsgs.Add(code, item);
+                if (!ReferenceEquals(code, originalCode) && code != originalCode)
+                {
+                    deferredCode = code;
+                }
                 return true;
             }
             else

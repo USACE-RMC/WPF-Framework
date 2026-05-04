@@ -107,6 +107,12 @@ namespace FrameworkUI
             {
                 ThemeManager.SetTheme(ThemeColor.Light);
             }
+            else
+            {
+                // Unknown / unrecognized theme value (corrupt setting, future theme name, etc.) — fall back to Light
+                // so that ThemeManager always loads a valid theme dictionary before any UI renders.
+                ThemeManager.SetTheme(ThemeColor.Light);
+            }
             // Dummy call using Avalon Themes method so that the dlls will be copied with the ProjectUI control.
             var avalonDummy = new Xceed.Wpf.AvalonDock.Themes.Vs2013BlueTheme();
         }
@@ -1807,11 +1813,15 @@ namespace FrameworkUI
                 AutoBackup.DeleteBackupProjectFile();
             }
 
-            // Save user settings
-            UserSettings.Save(ShellPublicVariables.UserSettingsFilePath);
+            // Save user settings — guard against disk-full / permission / locked-file errors at shutdown
+            // so a transient failure here doesn't crash the close (loses unsaved Recent Files updates,
+            // but the project itself was already saved above).
+            try { UserSettings.Save(ShellPublicVariables.UserSettingsFilePath); }
+            catch (Exception ex) { Debug.WriteLine($"[Closing] UserSettings.Save failed: {ex.Message}"); }
 
-            // Save Recent Files
-            RecentFiles.SaveToXML();
+            // Save Recent Files — same shutdown-resilience rationale.
+            try { RecentFiles.SaveToXML(); }
+            catch (Exception ex) { Debug.WriteLine($"[Closing] RecentFiles.SaveToXML failed: {ex.Message}"); }
         }
 
         /// <summary>

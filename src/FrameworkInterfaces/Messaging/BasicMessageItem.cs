@@ -13,6 +13,26 @@ namespace FrameworkInterfaces
     /// source when the message is clicked.
     /// </para>
     /// <para>
+    /// <b>Identity is captured at construction time</b> when the full constructor is used.
+    /// <see cref="Equals(IMessageItem)"/> and <see cref="GetHashCode"/> hash by private
+    /// snapshots of the <see cref="Code"/>, <see cref="Source"/> element/collection name
+    /// (for <see cref="IElement"/> sources), or project name (for <see cref="IProject"/>
+    /// sources) — the values present at the moment the message was constructed.
+    /// As a consequence, mutating <c>Source.Name</c>, <c>Source.ParentCollection.Name</c>,
+    /// or <see cref="Code"/> after the message has been added to a
+    /// <c>HashSet&lt;BasicMessageItem&gt;</c> or <c>Dictionary</c> does <i>not</i> change
+    /// its hash bucket — Contains/Remove continue to work. This is also what makes the
+    /// <see cref="Messaging.Messenger"/> auto-increment of event-type <c>Code</c> values
+    /// safe.
+    /// </para>
+    /// <para>
+    /// <b>Parameterless ctor + property-init pattern:</b> when the parameterless
+    /// constructor is used and properties are set afterward, the snapshot fields remain
+    /// null and equality/hash fall back to current state. The fall-back path preserves
+    /// historical semantics but does <i>not</i> protect against post-add mutations.
+    /// For hash-stable usage in collections, prefer the full constructor.
+    /// </para>
+    /// <para>
     /// <b> Authors: </b>
     /// <list type="bullet">
     ///     <item> Haden Smith, USACE Risk Management Center, cole.h.smith@usace.army.mil </item>

@@ -552,12 +552,9 @@ namespace OxyPlotControls
         {
             if (_ignoreMaxMinChange) return;
 
-            double newNumber;
-            if (!double.TryParse(newValue.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out newNumber))
-            {
-                if (newValue.GetType() != typeof(double)) return;
-                newNumber = (double)newValue;
-            }
+            // newValue always comes in boxed as a double from NumericTextBox; the prior
+            // double.TryParse(newValue.ToString(), ...) round-trip was vestigial.
+            if (newValue is not double newNumber) return;
 
             if (newNumber >= AxisMaximum.Number)
             {
@@ -580,12 +577,9 @@ namespace OxyPlotControls
         {
             if (_ignoreMaxMinChange) return;
 
-            double newNumber;
-            if (!double.TryParse(newValue.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out newNumber))
-            {
-                if (newValue.GetType() != typeof(double)) return;
-                newNumber = (double)newValue;
-            }
+            // newValue always comes in boxed as a double from NumericTextBox; the prior
+            // double.TryParse(newValue.ToString(), ...) round-trip was vestigial.
+            if (newValue is not double newNumber) return;
 
             if (newNumber <= AxisMinimum.Number)
             {
@@ -667,12 +661,9 @@ namespace OxyPlotControls
         /// <param name="cancel">Set to true to cancel the change.</param>
         private void DecimalPlaces_PreviewNumberChanged(object oldValue, object newValue, ref bool cancel)
         {
-            double newNumber;
-            if (!double.TryParse(newValue.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out newNumber))
-            {
-                if (newValue.GetType() != typeof(double)) return;
-                newNumber = (double)newValue;
-            }
+            // newValue always comes in boxed as a double from NumericTextBox; the prior
+            // double.TryParse(newValue.ToString(), ...) round-trip was vestigial.
+            if (newValue is not double newNumber) return;
             DecimalPlaces.Number = Math.Floor(newNumber);
         }
 
@@ -777,10 +768,10 @@ namespace OxyPlotControls
         /// </summary>
         public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
         {
-            double startPosition;
-            double.TryParse(values[0]?.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out startPosition);
-            double endPosition;
-            double.TryParse(values[1]?.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out endPosition);
+            // values[0] / values[1] are bound to Axis.StartPosition / Axis.EndPosition (double).
+            // The prior double.TryParse(values[i]?.ToString(), ...) round-trip was vestigial.
+            double startPosition = values[0] is double s ? s : 0d;
+            double endPosition = values[1] is double e ? e : 0d;
 
             if (values[2] == null)
             {

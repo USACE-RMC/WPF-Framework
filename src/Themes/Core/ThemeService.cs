@@ -210,7 +210,10 @@ namespace Themes
 
             if (!app.Dispatcher.CheckAccess())
             {
-                app.Dispatcher.BeginInvoke(() => SetTheme(theme));
+                // Use Invoke (synchronous) so any exception thrown on the UI thread surfaces
+                // back to the original caller. BeginInvoke would fire-and-forget, swallowing
+                // failures and making caller-side error handling impossible.
+                app.Dispatcher.Invoke(() => SetTheme(theme));
                 return;
             }
 

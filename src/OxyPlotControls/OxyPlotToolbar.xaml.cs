@@ -22,14 +22,48 @@ namespace OxyPlotControls
     /// <summary>
     /// OxyPlot toolbar control providing pan, zoom, annotation, and export functionality.
     /// </summary>
-    public partial class OxyPlotToolbar : UserControl, IDisposable
+    /// <remarks>
+    /// <para>
+    /// <b>Lifetime:</b> the toolbar uses five custom <see cref="System.Windows.Input.Cursor"/>
+    /// instances loaded from embedded resources (move-points, add-point, pan-hand, pan-hand-closed,
+    /// zoom). They are held in a private static cache (<c>CursorCache</c>) so they load exactly once
+    /// per process and are shared across every toolbar instance. Because cursors are immutable
+    /// process-lifetime resources, the toolbar deliberately does <i>not</i> implement
+    /// <see cref="IDisposable"/> and consumers do not need to dispose it. Repeatedly creating and
+    /// tearing down the toolbar (e.g., per-document tabs) no longer leaks HCURSOR handles.
+    /// </para>
+    /// </remarks>
+    public partial class OxyPlotToolbar : UserControl
     {
-        private bool _disposed = false;
         /// <summary>
         /// Tracks which theme was last applied to the plot. Used to detect when the theme changed
         /// while the toolbar was unloaded (inactive tab) so it can be reapplied on next load.
         /// </summary>
         private Themes.Theme? _lastAppliedTheme;
+
+        /// <summary>
+        /// Static cache of toolbar cursors loaded once from embedded resources and shared across
+        /// all toolbar instances. Cursors are immutable, process-lifetime resources, so each
+        /// toolbar instance does not need to own or dispose them. This removes the
+        /// IDisposable contract previously imposed on consumers and prevents the cursor handle
+        /// leak that occurred when consumers forgot to call <c>Dispose()</c>.
+        /// </summary>
+        private static class CursorCache
+        {
+            internal static readonly Cursor MovePoints = LoadCursor(Properties.Resources.SelectPointCursor);
+            internal static readonly Cursor AddPoint = LoadCursor(Properties.Resources.AddPointCursor);
+            internal static readonly Cursor PanHand = LoadCursor(Properties.Resources.Pan_Hand);
+            internal static readonly Cursor PanHandClosed = LoadCursor(Properties.Resources.Pan_Hand_Closed);
+            internal static readonly Cursor Zoom = LoadCursor(Properties.Resources.ZoomIn);
+
+            private static Cursor LoadCursor(byte[] cursorBytes)
+            {
+                using (var ms = new MemoryStream(cursorBytes))
+                {
+                    return new Cursor(ms);
+                }
+            }
+        }
 
         #region Construction
 
@@ -40,39 +74,7 @@ namespace OxyPlotControls
         {
             InitializeComponent();
 
-            // Set up custom cursors from embedded resources
-            try
-            {
-                using (var ms = new MemoryStream(Properties.Resources.SelectPointCursor))
-                {
-                    _movePointsCursor = new Cursor(ms);
-                }
-                using (var ms = new MemoryStream(Properties.Resources.AddPointCursor))
-                {
-                    _addPointCursor = new Cursor(ms);
-                }
-                using (var ms = new MemoryStream(Properties.Resources.Pan_Hand))
-                {
-                    _panHandCursor = new Cursor(ms);
-                }
-                using (var ms = new MemoryStream(Properties.Resources.Pan_Hand_Closed))
-                {
-                    _panHandClosedCursor = new Cursor(ms);
-                }
-                using (var ms = new MemoryStream(Properties.Resources.ZoomIn))
-                {
-                    _zoomCursor = new Cursor(ms);
-                }
-            }
-            catch
-            {
-                _movePointsCursor?.Dispose();
-                _addPointCursor?.Dispose();
-                _panHandCursor?.Dispose();
-                _panHandClosedCursor?.Dispose();
-                _zoomCursor?.Dispose();
-                throw;
-            }
+            // Custom cursors are loaded once into CursorCache; no per-instance setup required.
 
             // Create leader line canvas and leader line
             _leaderLine.StrokeThickness = 2;
@@ -119,7 +121,10 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Handles the Unloaded event. Unsubscribes from theme changes.
-        /// Does not call Dispose because the control may be re-loaded (e.g., tab switching).
+        /// Plot-side event subscriptions are managed by <see cref="InitializePlot"/> (the Plot
+        /// dependency-property changed callback), so they are detached automatically when the
+        /// Plot binding is cleared. Cursors live in <see cref="CursorCache"/> and are not
+        /// per-instance, so there is nothing to dispose here.
         /// </summary>
         private void OxyPlotToolbar_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -214,13 +219,13 @@ namespace OxyPlotControls
 
                 newPlot.ApplyTemplate(); // Needed to set the canvas
 
-                // Define the zooming cursor
-                newPlot.ZoomHorizontalCursor = oxyToolBar._zoomCursor;
-                newPlot.ZoomRectangleCursor = oxyToolBar._zoomCursor;
-                newPlot.ZoomVerticalCursor = oxyToolBar._zoomCursor;
+                // Define the zooming cursor (cached static cursors).
+                newPlot.ZoomHorizontalCursor = _zoomCursor;
+                newPlot.ZoomRectangleCursor = _zoomCursor;
+                newPlot.ZoomVerticalCursor = _zoomCursor;
 
-                // Define the pan cursor
-                newPlot.PanCursor = oxyToolBar._panHandCursor;
+                // Define the pan cursor.
+                newPlot.PanCursor = _panHandCursor;
 
                 // Set up the mouse bindings
                 if (oxyToolBar.PointerButton.IsChecked == true) oxyToolBar.PointerButton_Click(oxyToolBar, new RoutedEventArgs());
@@ -350,12 +355,13 @@ namespace OxyPlotControls
             AddHorizontalLineAnnotation
         }
 
-        // Custom Cursors
-        private Cursor _movePointsCursor;
-        private Cursor _addPointCursor;
-        private Cursor _panHandCursor;
-        private Cursor _panHandClosedCursor;
-        private Cursor _zoomCursor;
+        // Custom cursors live in the static CursorCache nested type above; access them
+        // through the helper properties below to keep call sites readable.
+        private static Cursor _movePointsCursor => CursorCache.MovePoints;
+        private static Cursor _addPointCursor => CursorCache.AddPoint;
+        private static Cursor _panHandCursor => CursorCache.PanHand;
+        private static Cursor _panHandClosedCursor => CursorCache.PanHandClosed;
+        private static Cursor _zoomCursor => CursorCache.Zoom;
 
         /// <summary>
         /// The distance in screen pixels used for annotation hit-testing, edge detection, and point proximity checks.
@@ -4432,56 +4438,6 @@ namespace OxyPlotControls
             {
                 dps.Points.Add(new OxyPlot.Series.ScatterErrorPoint(p.Y, p.X, p.LowerErrorX, p.UpperErrorX, p.LowerErrorY, p.UpperErrorY, p.Size, p.Value, p.Tag));
             }
-        }
-
-        #endregion
-
-        #region IDisposable
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="OxyPlotToolbar"/> and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    // Unsubscribe from events to prevent memory leaks
-                    ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
-                    if (Plot != null)
-                    {
-                        Plot.Annotations.CollectionChanged -= PlotModelAnnotationCollectionChanged;
-                        Plot.LayoutUpdated -= ToolBarLayoutUpdated;
-
-                        // Unsubscribe from PlotModel mouse events
-                        if (Plot.ActualModel != null)
-                        {
-                            Plot.ActualModel.MouseDown -= PlotModelMouseDown;
-                            Plot.ActualModel.MouseMove -= PlotModelMouseMove;
-                            Plot.ActualModel.MouseUp -= PlotModelMouseUp;
-                        }
-                    }
-
-                    // Dispose managed resources (cursors)
-                    _movePointsCursor?.Dispose();
-                    _addPointCursor?.Dispose();
-                    _panHandCursor?.Dispose();
-                    _panHandClosedCursor?.Dispose();
-                    _zoomCursor?.Dispose();
-                }
-                _disposed = true;
-            }
-        }
-
-        /// <summary>
-        /// Releases all resources used by the <see cref="OxyPlotToolbar"/>.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion

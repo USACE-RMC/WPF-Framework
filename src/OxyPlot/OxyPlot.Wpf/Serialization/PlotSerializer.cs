@@ -16,6 +16,7 @@ namespace OxyPlot.Wpf.Serialization
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Media;
     using System.Xml.Linq;
@@ -317,10 +318,12 @@ namespace OxyPlot.Wpf.Serialization
                 var backgroundElement = chartElement.Element("BackgroundBrush");
                 if (backgroundElement != null)
                 {
-                    var firstElement = backgroundElement.Elements().GetEnumerator();
-                    if (firstElement.MoveNext())
+                    // FirstOrDefault avoids the manual GetEnumerator() pattern (which leaks the
+                    // enumerator if not disposed) and reads cleanly.
+                    var firstChild = backgroundElement.Elements().FirstOrDefault();
+                    if (firstChild != null)
                     {
-                        var bg = DeserializeFromXElement(firstElement.Current) as Brush;
+                        var bg = DeserializeFromXElement(firstChild) as Brush;
                         if (bg != null) plot.Background = bg;
                     }
                 }
@@ -328,10 +331,10 @@ namespace OxyPlot.Wpf.Serialization
                 var borderElement = chartElement.Element("BorderBrush");
                 if (borderElement != null)
                 {
-                    var firstElement = borderElement.Elements().GetEnumerator();
-                    if (firstElement.MoveNext())
+                    var firstChild = borderElement.Elements().FirstOrDefault();
+                    if (firstChild != null)
                     {
-                        var bg = DeserializeFromXElement(firstElement.Current) as Brush;
+                        var bg = DeserializeFromXElement(firstChild) as Brush;
                         if (bg != null) plot.BorderBrush = bg;
                     }
                 }
@@ -354,10 +357,10 @@ namespace OxyPlot.Wpf.Serialization
                 var backgroundElement = plotAreaElement.Element("BackgroundBrush");
                 if (backgroundElement != null)
                 {
-                    var firstElement = backgroundElement.Elements().GetEnumerator();
-                    if (firstElement.MoveNext())
+                    var firstChild = backgroundElement.Elements().FirstOrDefault();
+                    if (firstChild != null)
                     {
-                        var bg = DeserializeFromXElement(firstElement.Current) as Brush;
+                        var bg = DeserializeFromXElement(firstChild) as Brush;
                         if (bg != null) plot.PlotAreaBackground = bg;
                     }
                 }

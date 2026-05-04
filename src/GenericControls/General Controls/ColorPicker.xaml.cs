@@ -32,8 +32,26 @@ namespace GenericControls
         private bool _isLoaded = false;
 
         /// <summary>
-        /// Dependency property for the selected color. 
+        /// Dependency property for the selected color.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <b>Property type is <see cref="SolidColorBrush"/></b>, not
+        /// <see cref="System.Windows.Media.Color"/>. Bindings and code-behind must
+        /// supply (and read back) a <c>SolidColorBrush</c>; assigning a raw
+        /// <c>Color</c> will not type-check at the DP level. Callers that hold a
+        /// <c>Color</c> should wrap it: <c>new SolidColorBrush(myColor)</c>.
+        /// </para>
+        /// <para>
+        /// <b>Grayscale-hue retention:</b> when a grayscale color (saturation ≈ 0)
+        /// is assigned, the slider's hue position is intentionally preserved from
+        /// the prior selection rather than snapping back to red (hue = 0). This
+        /// keeps the slider stable while the user moves the marker through the
+        /// neutral column of the color preview, so subsequent saturation/value
+        /// changes do not jump the chosen hue. For the assignment path, see
+        /// <c>UpdateSliderPosition</c>.
+        /// </para>
+        /// </remarks>
         public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(SolidColorBrush), typeof(ColorPicker), new UIPropertyMetadata(Brushes.Black, ColorCallback));
 
         /// <summary>

@@ -802,6 +802,12 @@ namespace OxyPlot.Wpf
         /// <summary>
         /// Gets or sets the default text color.
         /// </summary>
+        /// <remarks>
+        /// This property round-trips through
+        /// <c>OxyPlot.Wpf.Serialization.PlotSerializer.GeneralPropertiesToXElement</c>
+        /// and is restored on load — saved plot configurations preserve the chosen
+        /// text color rather than reverting to the framework default.
+        /// </remarks>
         public Color TextColor
         {
             get => (Color)this.GetValue(TextColorProperty);

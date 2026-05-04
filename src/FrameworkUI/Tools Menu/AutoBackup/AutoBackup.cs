@@ -164,30 +164,39 @@ namespace FrameworkUI
         /// Any existing backup file will be deleted before the new backup is created.
         /// </para>
         /// </remarks>
-        public static void CreateBackupProjectFile()
+        /// <returns><c>true</c> if a backup was successfully created; <c>false</c> if the project was missing,
+        /// the source file did not exist, or an I/O / permission error prevented the copy.</returns>
+        public static bool CreateBackupProjectFile()
         {
-            if (Project == null) return;
-            if (string.IsNullOrEmpty(Project.FullFileName)) return;
-            if (!File.Exists(Project.FullFileName)) return;
+            // Snapshot Project / FullFileName once. The static Project property can change between
+            // calls (e.g. user opens a different project mid-backup), so we want a stable view.
+            var project = Project;
+            if (project == null) return false;
+            var sourcePath = project.FullFileName;
+            if (string.IsNullOrEmpty(sourcePath)) return false;
+            if (!File.Exists(sourcePath)) return false;
 
             try
             {
-                // Delete existing backup first
-                DeleteBackupProjectFile();
+                // Delete existing backup first (uses the same snapshot)
+                DeleteBackupProjectFile(sourcePath);
 
                 // Create backup copy
-                string backupPath = Project.FullFileName + ShellPublicVariables.BackupExtension;
-                File.Copy(Project.FullFileName, backupPath, overwrite: true);
+                string backupPath = sourcePath + ShellPublicVariables.BackupExtension;
+                File.Copy(sourcePath, backupPath, overwrite: true);
+                return true;
             }
             catch (IOException ex)
             {
                 // File may be in use - log but don't interrupt user workflow
                 Debug.WriteLine($"AutoBackup.CreateBackupProjectFile: IOException - {ex.Message}");
+                return false;
             }
             catch (UnauthorizedAccessException ex)
             {
                 // No permission - log but don't interrupt user workflow
                 Debug.WriteLine($"AutoBackup.CreateBackupProjectFile: UnauthorizedAccessException - {ex.Message}");
+                return false;
             }
         }
 
@@ -200,12 +209,23 @@ namespace FrameworkUI
         /// </remarks>
         public static void DeleteBackupProjectFile()
         {
-            if (Project == null) return;
-            if (string.IsNullOrEmpty(Project.FullFileName)) return;
+            var project = Project;
+            if (project == null) return;
+            DeleteBackupProjectFile(project.FullFileName);
+        }
+
+        /// <summary>
+        /// Deletes the backup file associated with a specific source project path.
+        /// </summary>
+        /// <param name="sourceProjectPath">The current project's full file path. The backup path is derived by
+        /// appending <see cref="ShellPublicVariables.BackupExtension"/>.</param>
+        private static void DeleteBackupProjectFile(string? sourceProjectPath)
+        {
+            if (string.IsNullOrEmpty(sourceProjectPath)) return;
 
             try
             {
-                string backupPath = Project.FullFileName + ShellPublicVariables.BackupExtension;
+                string backupPath = sourceProjectPath + ShellPublicVariables.BackupExtension;
                 if (File.Exists(backupPath))
                 {
                     File.Delete(backupPath);
@@ -264,7 +284,18 @@ namespace FrameworkUI
         /// </summary>
         private static void BackgroundWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
-            CreateBackupProjectFile();
+            // Honor a cancellation request that arrived between RunWorkerAsync and DoWork.
+            var worker = sender as BackgroundWorker;
+            if (worker?.CancellationPending == true)
+            {
+                e.Cancel = true;
+                e.Result = false;
+                return;
+            }
+
+            // Surface success/failure on the completed args so WorkerComplete only reports
+            // "saved" when a backup actually happened.
+            e.Result = CreateBackupProjectFile();
         }
 
         /// <summary>
@@ -273,6 +304,10 @@ namespace FrameworkUI
         private static void BackgroundWorker_WorkerComplete(object? sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled) return;
+            // Don't claim a backup happened if DoWork bailed out (no project, file missing,
+            // I/O exception, permission denied). Errors were already logged via Debug.WriteLine.
+            if (e.Error != null) return;
+            if (e.Result is bool success && !success) return;
 
             string projectName = Project?.Name ?? "Unknown";
             ReportProgress?.Invoke($"A backup file for the project '{projectName}' was saved.");

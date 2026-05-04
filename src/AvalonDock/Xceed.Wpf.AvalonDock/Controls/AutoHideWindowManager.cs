@@ -80,8 +80,12 @@ namespace Xceed.Wpf.AvalonDock.Controls
       _closingTimer.Interval = TimeSpan.FromMilliseconds( 50 );
       _closingTimer.Tick += ( s, e ) =>
       {
+        // _manager.AutoHideWindow.Model is set to null after Hide() runs (see
+        // LayoutAutoHideWindowControl.HideInternal). A late-arriving timer tick that fires after
+        // Hide can otherwise NRE on the cast deref.
+        var model = _manager.AutoHideWindow.Model as LayoutAnchorable;
         if( _manager.AutoHideWindow.IsWin32MouseOver
-          || ( ( LayoutAnchorable )_manager.AutoHideWindow.Model ).IsActive
+          || ( model != null && model.IsActive )
           || _manager.AutoHideWindow.IsResizing )
           return;
 
@@ -106,8 +110,10 @@ namespace Xceed.Wpf.AvalonDock.Controls
       _closeTimer.Interval = TimeSpan.FromMilliseconds( _manager.AutoHideWindowClosingTimer );
       _closeTimer.Tick += ( s, e ) =>
       {
+        // Same null-Model guard as SetupClosingTimer above.
+        var model = _manager.AutoHideWindow.Model as LayoutAnchorable;
         if( _manager.AutoHideWindow.IsWin32MouseOver
-          || ( ( LayoutAnchorable )_manager.AutoHideWindow.Model ).IsActive
+          || ( model != null && model.IsActive )
           || _manager.AutoHideWindow.IsResizing )
         {
           _closeTimer.Stop();

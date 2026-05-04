@@ -177,7 +177,21 @@ namespace ExpressionParser
             double result = _operation(Convert.ToDouble(_number.Evaluate().Result), digit);
             if (digit <= 0d)
             {
-                return new ParseNodeResult((int)Math.Round(result), ResultType.Integer);
+                double rounded = Math.Round(result);
+                // ROUND/ROUNDUP/ROUNDDOWN with non-positive digits historically produced an
+                // ResultType.Integer (32-bit int). When the rounded value falls outside Int32
+                // range, an int cast silently overflows to garbage (e.g. 3,000,000,000 → -1,294,967,296).
+                // Promote to long when it fits, otherwise return the unboxed double so callers can
+                // still handle the magnitude without data loss.
+                if (rounded >= int.MinValue && rounded <= int.MaxValue)
+                {
+                    return new ParseNodeResult((int)rounded, ResultType.Integer);
+                }
+                if (rounded >= long.MinValue && rounded <= long.MaxValue)
+                {
+                    return new ParseNodeResult((long)rounded, ResultType.Integer);
+                }
+                return new ParseNodeResult(rounded, ResultType.Double);
             }
             else
             {

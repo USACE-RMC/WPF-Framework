@@ -157,11 +157,10 @@ namespace DAG
             Connections = new ReadOnlyCollection<Tuple<OutConnector, InConnector>>(_connections);
             if (el == null || el.Name != this.GetType().Name) { return; }
 
-            // Clear the existing nodes.
+            // Clear the existing nodes. _connections was just initialized empty above,
+            // so there is nothing to capture or clear here — the prior ConnectionsRemoved
+            // invocation always fired with an empty array and was a no-op.
             Nodes.Clear();
-            var connectionList = _connections.ToArray();
-            _connections.Clear();
-            ConnectionsRemoved?.Invoke(connectionList);
 
             // Set the scale
             if (el.Attribute(nameof(Scale)) != null)

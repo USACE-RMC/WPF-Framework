@@ -115,14 +115,12 @@ namespace OxyPlotControls.Demo
             // OxyPlot controls need explicit invalidation because they use a custom rendering pipeline
             ThemeService.Instance.ThemeChanged += OnThemeChanged;
 
-            // Unsubscribe when the window closes to prevent memory leaks, and dispose the
-            // OxyPlotToolbar so its custom-cursor resources are released. The toolbar
-            // implements IDisposable specifically for cursor cleanup; without Dispose the
-            // Cursor objects were kept alive until process GC.
+            // Unsubscribe when the window closes to prevent memory leaks. As of the
+            // OxyPlotToolbar refactor, cursor resources live in a process-wide static
+            // cache so the toolbar no longer implements IDisposable.
             Closing += (s, e) =>
             {
                 ThemeService.Instance.ThemeChanged -= OnThemeChanged;
-                OxyPlotToolBar?.Dispose();
             };
         }
 

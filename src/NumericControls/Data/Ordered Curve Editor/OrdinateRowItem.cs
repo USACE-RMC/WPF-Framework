@@ -34,6 +34,16 @@ namespace NumericControls
         private double _y;
 
         /// <summary>
+        /// The positional index of this ordinate within the parent <c>CurveRows</c> collection.
+        /// Cached for O(1) lookup in <c>RowItemPropertyChanged</c> instead of an
+        /// <c>ObservableCollection.IndexOf</c> call (which is O(n) and uses value equality —
+        /// duplicate (X, Y) pairs would resolve to the wrong row). Mirrors the same pattern
+        /// in <see cref="TimeSeriesRowItem"/>. Updated by <c>OrderedDataTableEditor</c> after
+        /// each rebuild of the row collection.
+        /// </summary>
+        public int Index { get; set; } = -1;
+
+        /// <summary>
         /// Gets or sets the maximum allowed X value.
         /// </summary>
         public double MaxXValue

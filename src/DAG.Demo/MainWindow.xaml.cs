@@ -37,7 +37,7 @@ namespace DAG.Demo
 
         private void GraphCanvas_PreviewCanvasContextMenu(ContextMenu cm, Point canvasPosition)
         {
-            Image addIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,/DAG.Demo;component/Resources/Add.png")) };
+            Image addIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/DAG.Demo;component/Resources/Add.png")) };
             var cmi = new MenuItem() { Header = "Add Node", Tag = canvasPosition, Icon = addIcon };
             cmi.Click += Cmi_Click;
             cm.Items.Add(cmi);
@@ -85,7 +85,7 @@ namespace DAG.Demo
 
         private void GraphCanvas_PreviewNodeContextMenu(ContextMenu cm, DAG.NodeBase node)
         {
-            Image editIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,/DAG.Demo;component/Resources/EditWindow.png")) };
+            Image editIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/DAG.Demo;component/Resources/EditWindow.png")) };
             var cmi = new MenuItem() { Header = "Edit", Tag = node, Icon = editIcon };
             cmi.Click += (s, e) => { MessageBox.Show("Nothing here"); };
             cm.Items.Add(cmi);

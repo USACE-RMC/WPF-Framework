@@ -330,6 +330,29 @@ namespace SoftwareUpdate.Updater
                     File.Delete(_args.ZipPath);
                     _log("Deleted update package.");
                 }
+
+                // Best-effort: also delete the parent directory if it is the per-download
+                // staging folder created by GitHubUpdateService at "%TEMP%/SoftwareUpdate/{guid}".
+                // Restrict the cleanup to that exact pattern so we never recursively delete
+                // a user-supplied path or anything outside %TEMP%.
+                var zipDir = Path.GetDirectoryName(_args.ZipPath);
+                if (!string.IsNullOrEmpty(zipDir) && Directory.Exists(zipDir))
+                {
+                    var tempRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "SoftwareUpdate"));
+                    var fullZipDir = Path.GetFullPath(zipDir);
+                    var parent = Path.GetDirectoryName(fullZipDir);
+                    var isInTempStagingArea =
+                        parent != null &&
+                        string.Equals(Path.GetFullPath(parent), tempRoot, StringComparison.OrdinalIgnoreCase) &&
+                        // The leaf must be a GUID-shaped name (32 hex chars, no dashes — Guid("N")).
+                        Guid.TryParseExact(Path.GetFileName(fullZipDir), "N", out _);
+
+                    if (isInTempStagingArea && Directory.GetFileSystemEntries(fullZipDir).Length == 0)
+                    {
+                        Directory.Delete(fullZipDir);
+                        _log("Deleted empty staging directory.");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -388,10 +411,26 @@ namespace SoftwareUpdate.Updater
             };
 
             // Process.Start can return null when UseShellExecute redirects to an already-running
-            // instance. Guard the null before calling Dispose through the using.
-            var started = Process.Start(startInfo);
-            started?.Dispose();
-            _log("Application restarted.");
+            // instance, and can throw on AV-blocked or otherwise-unstartable executables. Log
+            // either outcome so the post-install state is auditable instead of silently treated
+            // as success — the user may otherwise see no app come back and have no idea why.
+            try
+            {
+                var started = Process.Start(startInfo);
+                if (started == null)
+                {
+                    _log($"Warning: Process.Start returned null for {exePath}. Update applied, but the application " +
+                         "could not be restarted automatically. Please launch it manually.");
+                    return;
+                }
+                started.Dispose();
+                _log("Application restarted.");
+            }
+            catch (Exception ex)
+            {
+                _log($"Error: Failed to restart application at {exePath}: {ex.GetType().Name}: {ex.Message}. " +
+                     "Update applied successfully but please launch the application manually.");
+            }
         }
 
         /// <summary>

@@ -110,9 +110,25 @@ namespace SoftwareUpdate.Updater
                 errors.Add("--pid is required and must be a valid process ID");
 
             if (string.IsNullOrEmpty(ZipPath))
+            {
                 errors.Add("--zip is required");
+            }
             else if (!System.IO.File.Exists(ZipPath))
-                errors.Add($"Zip file not found: {ZipPath}");
+            {
+                // The updater waits up to 60 seconds for the parent process to exit before it
+                // does anything. During that window the zip can disappear: AV scanners, Windows
+                // %TEMP% cleanup, OneDrive sync, or even the user manually deleting it can wipe
+                // the file before we ever get to extraction. Surface a clearer message so support
+                // logs (and the user) understand what happened instead of seeing only the bare
+                // path. The fix is informational; the underlying race is unchanged here. The
+                // larger-touch remediation is to copy the zip into the install dir before the
+                // parent exits — see GitHubUpdateService.InstallUpdateAndRestart for the staging
+                // approach.
+                errors.Add(
+                    $"Zip file not found at the expected path: {ZipPath}. " +
+                    "It may have been removed by anti-virus, %TEMP% cleanup, or another process " +
+                    "between download and the parent application's exit. Try the update again.");
+            }
 
             if (string.IsNullOrEmpty(TargetDirectory))
                 errors.Add("--target is required");

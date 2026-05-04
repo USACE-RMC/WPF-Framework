@@ -97,6 +97,16 @@ namespace FrameworkUI
         /// </remarks>
         public static void SetTheme(ThemeColor theme)
         {
+            // Marshal to UI thread when called from a worker. Mirrors the pattern in
+            // Themes.ThemeService.SetTheme — ResourceDictionary mutation and the
+            // raised ThemeChanged event must occur on the dispatcher thread.
+            var app = Application.Current;
+            if (app != null && !app.Dispatcher.CheckAccess())
+            {
+                app.Dispatcher.Invoke(() => SetTheme(theme));
+                return;
+            }
+
             // Convert to Themes.Theme enum and update ThemeService
             var themesTheme = ConvertToThemesTheme(theme);
 
@@ -194,12 +204,21 @@ namespace FrameworkUI
         /// <param name="lightString">The light theme URI string.</param>
         private static void RemoveProjectUIThemeDictionaries(string blueString, string darkString, string lightString)
         {
+            // Only consider dictionaries whose Source explicitly references FrameworkUI's pack URI segment.
+            // Without the assembly-segment guard, EndsWith could match dictionaries with the same relative
+            // suffix from a different assembly (e.g. RmcCore;component/Themes/VS2013/BlueTheme.xaml).
+            const string assemblySegment = "/FrameworkUI;component/";
             for (int i = Application.Current.Resources.MergedDictionaries.Count - 1; i >= 0; i -= 1)
             {
                 var source = Application.Current.Resources.MergedDictionaries[i].Source;
                 if (source != null)
                 {
                     var originalString = source.OriginalString;
+                    if (!originalString.Contains(assemblySegment, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     if (originalString.EndsWith(blueString, StringComparison.OrdinalIgnoreCase) ||
                         originalString.EndsWith(darkString, StringComparison.OrdinalIgnoreCase) ||
                         originalString.EndsWith(lightString, StringComparison.OrdinalIgnoreCase))

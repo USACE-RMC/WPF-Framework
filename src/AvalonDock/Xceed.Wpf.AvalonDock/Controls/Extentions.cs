@@ -90,6 +90,11 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     public static T FindVisualAncestor<T>( this DependencyObject dependencyObject ) where T : class
     {
+      // Defensive null-check: callers occasionally pass an originalSource whose visual
+      // tree was already torn down. VisualTreeHelper.GetParent(null) throws ArgumentNullException.
+      if( dependencyObject == null )
+        return null;
+
       DependencyObject target = dependencyObject;
       do
       {
@@ -101,6 +106,10 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     public static T FindLogicalAncestor<T>( this DependencyObject dependencyObject ) where T : class
     {
+      // Same null-guard rationale as FindVisualAncestor.
+      if( dependencyObject == null )
+        return null;
+
       DependencyObject target = dependencyObject;
       do
       {

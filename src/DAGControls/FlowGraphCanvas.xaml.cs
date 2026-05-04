@@ -515,7 +515,7 @@ namespace DAGControls
                     {
                         _targetNode = node.Key;
                         ContextMenu cm = new ContextMenu();
-                        BitmapImage bmp = new BitmapImage(new Uri("pack://application:,,/DAGControls;component/Resources/Delete.png"));
+                        BitmapImage bmp = new BitmapImage(new Uri("pack://application:,,,/DAGControls;component/Resources/Delete.png"));
                         Image deleteIcon = new Image() { Source = bmp };
                         MenuItem cmi = new MenuItem() { Header = "Delete", Icon = deleteIcon };
                         cmi.Click += Cmi_Click;

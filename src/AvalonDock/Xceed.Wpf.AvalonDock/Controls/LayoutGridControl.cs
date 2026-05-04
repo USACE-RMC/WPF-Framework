@@ -94,22 +94,42 @@ namespace Xceed.Wpf.AvalonDock.Controls
     {
       base.OnInitialized( e );
 
-      _model.ChildrenTreeChanged += ( s, args ) =>
-          {
-            if( args.Change != ChildrenTreeChange.DirectChildrenChanged )
-              return;
-            if( _asyncRefreshCalled.HasValue &&
-                      _asyncRefreshCalled.Value == args.Change )
-              return;
-            _asyncRefreshCalled = args.Change;
-            Dispatcher.BeginInvoke( new Action( () =>
-                  {
-                    _asyncRefreshCalled = null;
-                    UpdateChildren();
-                  } ), DispatcherPriority.Normal, null );
-          };
+      // Use a named handler (not an anonymous lambda) so we can detach it on Unload. An anonymous
+      // lambda would keep _model -> this rooted indefinitely, leaking the LayoutGridControl after
+      // the visual tree is replaced (e.g. layout reload, theme switch).
+      _model.ChildrenTreeChanged += OnModelChildrenTreeChanged;
 
       this.LayoutUpdated += new EventHandler( OnLayoutUpdated );
+      this.Unloaded += OnLayoutGridControlUnloaded;
+    }
+
+    #endregion
+
+    #region Lifecycle
+
+    private void OnModelChildrenTreeChanged( object s, ChildrenTreeChangedEventArgs args )
+    {
+      if( args.Change != ChildrenTreeChange.DirectChildrenChanged )
+        return;
+      if( _asyncRefreshCalled.HasValue &&
+                _asyncRefreshCalled.Value == args.Change )
+        return;
+      _asyncRefreshCalled = args.Change;
+      Dispatcher.BeginInvoke( new Action( () =>
+            {
+              _asyncRefreshCalled = null;
+              UpdateChildren();
+            } ), DispatcherPriority.Normal, null );
+    }
+
+    private void OnLayoutGridControlUnloaded( object sender, RoutedEventArgs e )
+    {
+      // Detach to break the model -> control reference so GC can reclaim the control.
+      if( _model != null )
+      {
+        _model.ChildrenTreeChanged -= OnModelChildrenTreeChanged;
+      }
+      this.Unloaded -= OnLayoutGridControlUnloaded;
     }
 
     #endregion
@@ -130,7 +150,14 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     private void OnLayoutUpdated( object sender, EventArgs e )
     {
+      // Defensive null-guard on the cast: _model is typed as LayoutPositionableGroup<T> which
+      // implements ILayoutPositionableElementWithActualSize, but during teardown the cast can
+      // return null and the size assignments below would NRE.
       var modelWithAtcualSize = _model as ILayoutPositionableElementWithActualSize;
+      if( modelWithAtcualSize == null )
+      {
+        return;
+      }
       modelWithAtcualSize.ActualWidth = ActualWidth;
       modelWithAtcualSize.ActualHeight = ActualHeight;
 

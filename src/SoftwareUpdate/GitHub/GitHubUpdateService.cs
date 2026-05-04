@@ -97,9 +97,43 @@ namespace SoftwareUpdate.GitHub
         /// <inheritdoc/>
         public event EventHandler<Exception>? UpdateError;
 
+        /// <summary>
+        /// Throws <see cref="InvalidOperationException"/> if the current <see cref="State"/> is
+        /// not in <paramref name="allowed"/>. Public methods call this at entry to enforce the
+        /// state machine: <see cref="CheckForUpdateAsync"/> rejects re-entry while a previous
+        /// install is in flight; <see cref="DownloadUpdateAsync"/> requires an UpdateAvailable
+        /// outcome from a prior check; <see cref="InstallUpdateAndRestart"/> requires a
+        /// completed download (ReadyToInstall).
+        /// </summary>
+        /// <param name="caller">The calling method's name (used in the exception message).</param>
+        /// <param name="allowed">The set of states that permit the call to proceed.</param>
+        /// <exception cref="InvalidOperationException">Thrown when <see cref="State"/> is not allowed.</exception>
+        private void EnsureState(string caller, params UpdateState[] allowed)
+        {
+            UpdateState current;
+            lock (_lock) { current = _state; }
+            if (Array.IndexOf(allowed, current) < 0)
+            {
+                throw new InvalidOperationException(
+                    $"{caller} cannot run while the update service is in the {current} state. " +
+                    $"Expected one of: {string.Join(", ", allowed)}.");
+            }
+        }
+
         /// <inheritdoc/>
         public async Task<UpdateCheckResult> CheckForUpdateAsync(CancellationToken cancellationToken = default)
         {
+            // A check may run from any state EXCEPT Installing (the updater process is mid-handoff
+            // and the in-process service should not race it).
+            EnsureState(nameof(CheckForUpdateAsync),
+                UpdateState.Idle,
+                UpdateState.Checking,
+                UpdateState.UpdateAvailable,
+                UpdateState.UpToDate,
+                UpdateState.Downloading,
+                UpdateState.ReadyToInstall,
+                UpdateState.Error);
+
             State = UpdateState.Checking;
 
             try
@@ -194,7 +228,9 @@ namespace SoftwareUpdate.GitHub
                         lock (_lock)
                         {
                             _availableUpdate = updateInfo;
-                            isSkipped = _skippedVersions.Contains(releaseVersion.ToString());
+                            // Use the metadata-stripped key so two builds of "1.2.3" with different
+                            // build metadata still match the same skip entry.
+                            isSkipped = _skippedVersions.Contains(GetSkipKey(releaseVersion));
                             _state = UpdateState.UpdateAvailable;
                         }
 
@@ -247,8 +283,12 @@ namespace SoftwareUpdate.GitHub
             IProgress<UpdateDownloadProgress>? progress = null,
             CancellationToken cancellationToken = default)
         {
+            // Argument validation runs before the state check so that misuse (a null update)
+            // surfaces as an ArgumentNullException regardless of state — callers shouldn't have
+            // to drive the state machine just to get the right exception type for a bad arg.
             if (update == null)
                 throw new ArgumentNullException(nameof(update));
+            EnsureState(nameof(DownloadUpdateAsync), UpdateState.UpdateAvailable);
 
             State = UpdateState.Downloading;
 
@@ -307,15 +347,17 @@ namespace SoftwareUpdate.GitHub
 
                         while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
                         {
-                            await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
-                            totalRead += bytesRead;
-
-                            // Security: Enforce maximum download size to prevent DoS
-                            if (totalRead > MaxDownloadSizeBytes)
+                            // Security: Enforce maximum download size BEFORE writing the chunk to disk.
+                            // Checking after WriteAsync meant the over-limit chunk was already on disk
+                            // before the throw, partially defeating the DoS guard.
+                            if (totalRead + bytesRead > MaxDownloadSizeBytes)
                             {
                                 throw new InvalidOperationException(
                                     $"Download exceeded maximum allowed size of {MaxDownloadSizeBytes / 1024 / 1024} MB.");
                             }
+
+                            await fileStream.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                            totalRead += bytesRead;
 
                             // Report progress
                             if (progress != null)
@@ -404,6 +446,8 @@ namespace SoftwareUpdate.GitHub
             if (!File.Exists(downloadedFilePath))
                 throw new FileNotFoundException("Downloaded update file not found.", downloadedFilePath);
 
+            EnsureState(nameof(InstallUpdateAndRestart), UpdateState.ReadyToInstall);
+
             State = UpdateState.Installing;
 
             var updaterPath = Options.ResolvedUpdaterPath;
@@ -430,6 +474,30 @@ namespace SoftwareUpdate.GitHub
             var targetDir = Options.ResolvedInstallDirectory;
             var mainExe = Options.ResolvedMainExecutableName;
 
+            // Stage the zip into the install directory under a stable name BEFORE we exit. If
+            // the download landed in %TEMP% (typical), AV scanners and Windows temp-cleanup can
+            // delete it during the 60-second window between parent exit and updater extraction,
+            // leaving the updater unable to find its payload. Copying into the install dir
+            // (which is generally not subject to %TEMP% sweeps) closes that window. We use a
+            // GUID-suffixed name so concurrent or repeated update attempts don't collide.
+            var stagedZipPath = downloadedFilePath;
+            try
+            {
+                var stagedDir = Path.Combine(targetDir, "updates_pending");
+                Directory.CreateDirectory(stagedDir);
+                var stagedName = $"update_{Guid.NewGuid():N}{Path.GetExtension(downloadedFilePath)}";
+                stagedZipPath = Path.Combine(stagedDir, stagedName);
+                File.Copy(downloadedFilePath, stagedZipPath, overwrite: true);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+            {
+                // If staging fails (read-only install dir, permission issue), fall back to the
+                // original temp path. The softer Validate failure in UpdaterArguments will then
+                // surface a clearer message if the zip is later swept up.
+                Debug.WriteLine($"[Update] Failed to stage zip into install dir, falling back to temp path: {ex.Message}");
+                stagedZipPath = downloadedFilePath;
+            }
+
             // Use ArgumentList for safe argument passing (no manual quoting/escaping)
             var startInfo = new ProcessStartInfo
             {
@@ -440,7 +508,7 @@ namespace SoftwareUpdate.GitHub
             startInfo.ArgumentList.Add("--pid");
             startInfo.ArgumentList.Add(currentPid.ToString());
             startInfo.ArgumentList.Add("--zip");
-            startInfo.ArgumentList.Add(downloadedFilePath);
+            startInfo.ArgumentList.Add(stagedZipPath);
             startInfo.ArgumentList.Add("--target");
             startInfo.ArgumentList.Add(targetDir);
             startInfo.ArgumentList.Add("--exe");
@@ -466,7 +534,7 @@ namespace SoftwareUpdate.GitHub
 
             lock (_lock)
             {
-                _skippedVersions.Add(version.ToString());
+                _skippedVersions.Add(GetSkipKey(version));
             }
             SaveSkippedVersions();
         }
@@ -478,8 +546,29 @@ namespace SoftwareUpdate.GitHub
 
             lock (_lock)
             {
-                return _skippedVersions.Contains(version.ToString());
+                return _skippedVersions.Contains(GetSkipKey(version));
             }
+        }
+
+        /// <summary>
+        /// Builds the persisted "skip" key for a <see cref="SemanticVersion"/>.
+        /// </summary>
+        /// <remarks>
+        /// SemVer 2.0 §10 declares that build metadata MUST be ignored when determining version
+        /// precedence — two versions that differ only in <c>+build</c> metadata represent the
+        /// same release. <see cref="SemanticVersion.ToString"/> includes that metadata, so using
+        /// it directly would let "1.2.3+build.42" be marked skipped while "1.2.3+build.43" is
+        /// still surfaced. This helper returns <c>MAJOR.MINOR.PATCH[-PRERELEASE]</c> so a single
+        /// skip entry covers every metadata variant of the same release.
+        /// </remarks>
+        /// <param name="version">The version whose skip key should be computed.</param>
+        /// <returns>The metadata-stripped persistence key.</returns>
+        private static string GetSkipKey(SemanticVersion version)
+        {
+            var key = $"{version.Major}.{version.Minor}.{version.Patch}";
+            if (version.IsPreRelease)
+                key += "-" + version.PreRelease;
+            return key;
         }
 
         /// <inheritdoc/>
@@ -569,6 +658,12 @@ namespace SoftwareUpdate.GitHub
         /// <summary>
         /// Loads skipped versions from disk.
         /// </summary>
+        /// <remarks>
+        /// Migration: prior to F-005 the file persisted full <see cref="SemanticVersion.ToString"/>
+        /// output, which embedded any build metadata (<c>+build.42</c>). Each line is now reduced
+        /// to a metadata-stripped key (<c>MAJOR.MINOR.PATCH[-PRERELEASE]</c>) so old entries from
+        /// previous versions still match against skip checks computed by <c>GetSkipKey</c>.
+        /// </remarks>
         private void LoadSkippedVersions()
         {
             _skippedVersions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -581,8 +676,19 @@ namespace SoftwareUpdate.GitHub
                     var lines = File.ReadAllLines(filePath);
                     foreach (var line in lines)
                     {
-                        if (!string.IsNullOrWhiteSpace(line))
-                            _skippedVersions.Add(line.Trim());
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        var trimmed = line.Trim();
+
+                        // Migrate legacy "1.2.3+build.42" entries to "1.2.3" so the in-memory set
+                        // always uses the same key shape that SkipVersion / IsVersionSkipped emit.
+                        if (SemanticVersion.TryParse(trimmed, out var parsed) && parsed != null)
+                        {
+                            _skippedVersions.Add(GetSkipKey(parsed));
+                        }
+                        else
+                        {
+                            _skippedVersions.Add(trimmed);
+                        }
                     }
                 }
             }
@@ -618,8 +724,11 @@ namespace SoftwareUpdate.GitHub
                 }
 
                 // Write to a temp file then atomically rename to prevent a partial write
-                // from corrupting the persisted file.
-                var tempPath = filePath + ".tmp";
+                // from corrupting the persisted file. Use a per-call unique temp suffix so two
+                // concurrent saves never collide on the same on-disk path: a fixed ".tmp" suffix
+                // would let a second writer truncate or rename a temp file the first writer is
+                // still using, producing zero-byte or corrupt output.
+                var tempPath = filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
                 File.WriteAllLines(tempPath, versionsCopy);
                 File.Move(tempPath, filePath, overwrite: true);
             }
@@ -650,6 +759,13 @@ namespace SoftwareUpdate.GitHub
                 if (disposing)
                 {
                     _httpClient?.Dispose();
+
+                    // Drop subscriber references so the service does not pin handlers (and any
+                    // captured target objects) past disposal. Without this, a subscriber's
+                    // closure can keep a reference to the service alive — and vice versa — for
+                    // the lifetime of the host process.
+                    UpdateCheckCompleted = null;
+                    UpdateError = null;
                 }
                 _disposed = true;
             }

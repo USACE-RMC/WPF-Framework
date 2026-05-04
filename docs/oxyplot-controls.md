@@ -19,7 +19,7 @@ The OxyPlotControls library provides WPF controls for configuring and interactin
 
 ## OxyPlotToolbar
 
-`OxyPlotToolbar` is a `UserControl` (implementing `IDisposable`) that attaches to an `OxyPlot.Wpf.Plot` and provides interactive charting tools.
+`OxyPlotToolbar` is a `UserControl` that attaches to an `OxyPlot.Wpf.Plot` and provides interactive charting tools. Custom cursors are held in a process-wide static cache, so each toolbar instance is cheap and no explicit disposal is required.
 
 ### Dependency Properties
 
@@ -244,7 +244,7 @@ The `OxyPlotControls.Demo` project demonstrates the toolbar, property editors, a
 
 ## Best Practices
 
-- **Dispose the toolbar** -- `OxyPlotToolbar` implements `IDisposable` for cursor cleanup. The `Unloaded` event handles this automatically, but explicit disposal is recommended when programmatically removing toolbars.
+- **No toolbar disposal required** -- `OxyPlotToolbar` keeps its custom cursors in a static `CursorCache`, so individual toolbar instances do not own disposable resources. Theme-event subscriptions are released by the `Unloaded` handler, and Plot-side event subscriptions are released when the `Plot` dependency property is cleared or replaced.
 - **Refresh bindings after deserialization** -- call `OxyPlotPropertiesControl.RefreshPlotBindings()` after `OxyPlotSettingsSerializer.FromXelement()` to ensure all property editors reflect the restored values.
 - **Use `WithThemedModel` for export** -- when exporting to images or PDF, use `OxyPlotThemeManager.WithThemedModel` to temporarily apply the report theme without permanently modifying the plot.
 - **Suppress property changes during theme application** -- set `Plot.SuppressPropertyChanged = true` before calling `ApplyTheme` to prevent undo/redo recording of theme changes. The toolbar handles this automatically.
