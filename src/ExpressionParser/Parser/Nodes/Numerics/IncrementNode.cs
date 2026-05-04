@@ -100,7 +100,14 @@ namespace ExpressionParser
                 _errorMessages.Add(new ParseError(token, errorString + " for the increment function"));
             //
             if (!(_initialNumber == null))
-                OutputType = _initialNumber.OutputType == ResultType.Double || _step.OutputType == ResultType.Double ? ResultType.Double : ResultType.Integer;
+            {
+                // ResultType is a flags enum — check FloatingPoint (Double | Single)
+                // so float-typed start/step values widen to Double instead of falling
+                // through to Integer arithmetic and silently rounding.
+                bool initialIsFloat = (_initialNumber.OutputType & ResultType.FloatingPoint) > 0;
+                bool stepIsFloat = (_step.OutputType & ResultType.FloatingPoint) > 0;
+                OutputType = (initialIsFloat || stepIsFloat) ? ResultType.Double : ResultType.Integer;
+            }
             // 
             if (_errorMessages.Count > 0)
                 OutputType = ResultType.Error;

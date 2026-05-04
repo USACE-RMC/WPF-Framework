@@ -112,7 +112,12 @@ namespace ExpressionParser
                 {
                     if (Parser.Parser.IsNumericType(_ifTrue) && Parser.Parser.IsNumericType(_ifFalse))
                     {
-                        OutputType = _ifTrue.OutputType == ResultType.Double || _ifFalse.OutputType == ResultType.Double ? ResultType.Double : ResultType.Integer;
+                        // ResultType is a flags enum — check FloatingPoint (Double | Single)
+                        // so Single-typed branches widen to Double instead of falling through
+                        // to Integer arithmetic and silently rounding.
+                        bool trueIsFloat = (_ifTrue.OutputType & ResultType.FloatingPoint) > 0;
+                        bool falseIsFloat = (_ifFalse.OutputType & ResultType.FloatingPoint) > 0;
+                        OutputType = (trueIsFloat || falseIsFloat) ? ResultType.Double : ResultType.Integer;
                     }
                     else
                     {
@@ -150,16 +155,25 @@ namespace ExpressionParser
             }
             //
             var result = Evaluate().Result;
+
+            // Numeric output types are flags. Test by group rather than equality so
+            // Single/Short/Byte are routed correctly: floating-point widens to
+            // DecimalNode; integer types collapse to IntegerNode.
+            if ((OutputType & ResultType.FloatingPoint) > 0)
+                return new DecimalNode(Convert.ToDouble(result));
+            if ((OutputType & ResultType.IntegerValue) > 0)
+                return new IntegerNode(Convert.ToInt32(result));
+
             switch (OutputType)
             {
-                case ResultType.Integer:
-                    return new IntegerNode(Convert.ToInt32(result));
-                case ResultType.Double:
-                    return new DecimalNode(Convert.ToDouble(result));
                 case ResultType.Boolean:
                     return new BooleanNode(Convert.ToBoolean(result));
                 case ResultType.String:
                     return new StringNode(Convert.ToString(result));
+                case ResultType.Error:
+                    // Re-evaluation in caller will surface the error path; preserve
+                    // the existing default-numeric fallback for compatibility.
+                    return new DecimalNode(Convert.ToDouble(result));
                 default:
                     return new DecimalNode(Convert.ToDouble(result));
             }

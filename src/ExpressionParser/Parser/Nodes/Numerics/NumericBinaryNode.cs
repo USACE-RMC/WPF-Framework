@@ -78,7 +78,13 @@ namespace ExpressionParser
             }
             if (!(_leftNode == null) && !(_rightNode == null))
             {
-                OutputType = _leftNode.OutputType == ResultType.Double || _rightNode.OutputType == ResultType.Double ? ResultType.Double : ResultType.Integer;
+                // ResultType is a flags enum — Single, Short, Byte are distinct values
+                // from Double. Check FloatingPoint (Double | Single) so float-typed
+                // variables widen to Double instead of falling through to Integer
+                // arithmetic and silently rounding.
+                bool leftIsFloat = (_leftNode.OutputType & ResultType.FloatingPoint) > 0;
+                bool rightIsFloat = (_rightNode.OutputType & ResultType.FloatingPoint) > 0;
+                OutputType = (leftIsFloat || rightIsFloat) ? ResultType.Double : ResultType.Integer;
             }
             if (token.Type == TokenType.Division || token.Type == TokenType.Exponent)
                 OutputType = ResultType.Double;
