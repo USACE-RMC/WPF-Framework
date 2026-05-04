@@ -2488,12 +2488,54 @@ namespace FrameworkUI
                     GenericControls.MessageBox.Show("The file name is too long. Please shorten the name to have less than 250 characters before trying to restore.", "File name error!", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                // Rename the backup file 
-                File.Move(fullFileName, newFileName);
-                // Open project
-                OpenProject(newFileName);
-                // Log Event
-                FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(new BasicMessageItem(MessageType.Event, $"The backup project file '{fullFileName}{ShellPublicVariables.BackupExtension}' was restored.", ProjectNode.Project, "Project", ProjectNode.Project.Name, "RestoreFromBackup"));
+                // Copy (don't move) the backup so a failed open leaves the original
+                // .bak intact and the user can try a different recovery path. Move-
+                // then-open consumed the backup name before knowing the open succeeded;
+                // any open failure (corrupt file, version mismatch, missing dependencies)
+                // left the user with no .bak to retry.
+                try
+                {
+                    File.Copy(fullFileName, newFileName, overwrite: false);
+                }
+                catch (Exception copyEx)
+                {
+                    GenericControls.MessageBox.Show(
+                        $"Failed to copy the backup file:\n\n{copyEx.Message}",
+                        "Restore Failed",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+
+                // Open project. If this throws or otherwise fails, leave the original
+                // backup file in place so the user can attempt restore again.
+                bool openSucceeded = false;
+                try
+                {
+                    OpenProject(newFileName);
+                    openSucceeded = ProjectNode?.Project != null;
+                }
+                catch (Exception openEx)
+                {
+                    GenericControls.MessageBox.Show(
+                        $"Failed to open the restored project. The original backup file has been preserved at:\n{fullFileName}\n\n{openEx.Message}",
+                        "Restore Failed",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    // Clean up the half-restored copy so it doesn't masquerade as a usable project.
+                    try { File.Delete(newFileName); } catch (Exception deleteEx) { Debug.WriteLine(deleteEx.Message); }
+                    return;
+                }
+
+                if (openSucceeded && ProjectNode?.Project is not null)
+                {
+                    // Only delete the original backup once the restored project is known good.
+                    try { File.Delete(fullFileName); } catch (Exception deleteEx) { Debug.WriteLine(deleteEx.Message); }
+
+                    // Log Event
+                    var restoredProject = ProjectNode.Project;
+                    FrameworkInterfaces.Messaging.Messenger.GetInstance().Add(new BasicMessageItem(MessageType.Event, $"The backup project file '{fullFileName}{ShellPublicVariables.BackupExtension}' was restored.", restoredProject, "Project", restoredProject.Name, "RestoreFromBackup"));
+                }
             }
         }
 
