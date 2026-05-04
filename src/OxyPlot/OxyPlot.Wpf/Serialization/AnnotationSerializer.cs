@@ -330,7 +330,15 @@ namespace OxyPlot.Wpf.Serialization
             else if (annotationTypeString == typeof(FunctionAnnotation).ToString())
                 annotation = new FunctionAnnotation();
             else
-                annotation = new TextAnnotation();
+            {
+                // Unknown annotation type. Previously fell through to `new TextAnnotation()`,
+                // which silently substituted a phantom empty text annotation in the user's
+                // plot. Return null instead — the caller (XElementToAnnotations) already
+                // skips null entries, matching the SeriesSerializer pattern.
+                System.Diagnostics.Debug.WriteLine(
+                    $"[AnnotationSerializer] Unknown AnnotationType '{annotationTypeString}'; skipping.");
+                return null;
+            }
 
             // General Properties
             var generalElement = element.Element("General");
