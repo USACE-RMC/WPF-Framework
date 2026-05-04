@@ -1777,87 +1777,10 @@ namespace FrameworkUI
                 return;
             }
 
-            bool userSavedBeforeClosing = false;
-
-            // See if there are any unsaved elements. Ask if they want to save.
-            var unSavedElementItems = new ObservableCollection<UnsavedElement>();
-            if (ProjectNode?.Project?.ElementCollections != null)
+            if (!TryPromptToSaveDirtyState(out bool userSavedBeforeClosing))
             {
-                for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
-                {
-                    for (int j = 0; j < ProjectNode.Project.ElementCollections[i].Count; j++)
-                    {
-                        if (ProjectNode.Project.ElementCollections[i].ElementAt(j).IsDirty == true)
-                        {
-                            unSavedElementItems.Add(new UnsavedElement(ProjectNode.Project.ElementCollections[i].ElementAt(j)));
-                        }
-                    }
-                }
-            }
-            // If there is, open the Save Window Dialog
-            if (unSavedElementItems.Count > 0)
-            {
-                var saveElementsDialog = new SaveElementsDialog() { ElementItems = unSavedElementItems };
-                saveElementsDialog.ShowDialog();
-                // 
-                if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.YesSave)
-                {
-                    // If the user clicks "Save", then proceed with closing application
-                    userSavedBeforeClosing = true;
-                    SaveProject();
-                }
-                else if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.NoSave)
-                {
-                    // If the user clicks "Don't Save", then proceed with closing application
-                    userSavedBeforeClosing = false;
-                }
-                else if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.Cancel)
-                {
-                    // If the user clicks Cancel or closes the dialog, then cancel closing
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            else
-            {
-                // Check to see if the Project or Element collections need to be saved
-                bool isDirty = false;
-                if (ProjectNode?.Project is not null && ProjectNode.Project.IsDirty == true)
-                {
-                    isDirty = true;
-                }
-                else if (ProjectNode?.Project is { ElementCollections: { } elementCollections })
-                {
-                    for (int i = 0; i < elementCollections.Count; i++)
-                    {
-                        if (elementCollections[i].IsDirty == true)
-                        {
-                            isDirty = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (isDirty == true)
-                {
-                    MessageBoxResult result = GenericControls.MessageBox.Show("The project has unsaved changes. Would you like to save before closing?", "Save Changes",
-                                                                MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        userSavedBeforeClosing = true;
-                        SaveProject();
-                    }
-                    if (result == MessageBoxResult.No)
-                    {
-                        userSavedBeforeClosing = false;
-                    }
-                    if (result == MessageBoxResult.Cancel)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                }
-
+                e.Cancel = true;
+                return;
             }
 
 
@@ -1889,6 +1812,100 @@ namespace FrameworkUI
 
             // Save Recent Files
             RecentFiles.SaveToXML();
+        }
+
+        /// <summary>
+        /// Prompts the user to save unsaved project state (elements and/or project file).
+        /// Used by both the application-close flow and the auto-update install flow so
+        /// dirty work is never silently lost when the process exits.
+        /// </summary>
+        /// <param name="userSaved">
+        /// Set to <c>true</c> if the user chose Save (project was saved), <c>false</c> if
+        /// they chose Don't Save or no save was needed.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if the caller should proceed (user saved or chose not to save, or
+        /// nothing was dirty); <c>false</c> if the user cancelled.
+        /// </returns>
+        private bool TryPromptToSaveDirtyState(out bool userSaved)
+        {
+            userSaved = false;
+
+            // See if there are any unsaved elements. Ask if they want to save.
+            var unSavedElementItems = new ObservableCollection<UnsavedElement>();
+            if (ProjectNode?.Project?.ElementCollections != null)
+            {
+                for (int i = 0; i < ProjectNode.Project.ElementCollections.Count; i++)
+                {
+                    for (int j = 0; j < ProjectNode.Project.ElementCollections[i].Count; j++)
+                    {
+                        if (ProjectNode.Project.ElementCollections[i].ElementAt(j).IsDirty == true)
+                        {
+                            unSavedElementItems.Add(new UnsavedElement(ProjectNode.Project.ElementCollections[i].ElementAt(j)));
+                        }
+                    }
+                }
+            }
+            // If there is, open the Save Window Dialog
+            if (unSavedElementItems.Count > 0)
+            {
+                var saveElementsDialog = new SaveElementsDialog() { ElementItems = unSavedElementItems };
+                saveElementsDialog.ShowDialog();
+                if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.YesSave)
+                {
+                    userSaved = true;
+                    SaveProject();
+                }
+                else if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.NoSave)
+                {
+                    userSaved = false;
+                }
+                else if (saveElementsDialog.Result == SaveElementsDialog.DialogResultType.Cancel)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Check to see if the Project or Element collections need to be saved
+                bool isDirty = false;
+                if (ProjectNode?.Project is not null && ProjectNode.Project.IsDirty == true)
+                {
+                    isDirty = true;
+                }
+                else if (ProjectNode?.Project is { ElementCollections: { } elementCollections })
+                {
+                    for (int i = 0; i < elementCollections.Count; i++)
+                    {
+                        if (elementCollections[i].IsDirty == true)
+                        {
+                            isDirty = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isDirty == true)
+                {
+                    MessageBoxResult result = GenericControls.MessageBox.Show("The project has unsaved changes. Would you like to save before closing?", "Save Changes",
+                                                                MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        userSaved = true;
+                        SaveProject();
+                    }
+                    if (result == MessageBoxResult.No)
+                    {
+                        userSaved = false;
+                    }
+                    if (result == MessageBoxResult.Cancel)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -2609,6 +2626,16 @@ namespace FrameworkUI
 
                 if (downloadResult.Success)
                 {
+                    if (ShellPublicVariables.SimulationInProgress == true)
+                    {
+                        GenericControls.MessageBox.Show(
+                            "A simulation is currently running. Please wait for it to finish before installing the update.",
+                            "Cannot Install Update",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                        return;
+                    }
+
                     var confirmResult = GenericControls.MessageBox.Show(
                         "Update downloaded successfully.\n\n" +
                         "The application will now close to install the update and restart automatically.\n\n" +
@@ -2619,6 +2646,21 @@ namespace FrameworkUI
 
                     if (confirmResult == MessageBoxResult.Yes && downloadResult.FilePath != null)
                     {
+                        // Prompt to save any unsaved project / element state. The updater
+                        // calls Environment.Exit(0) so any dirty state not flushed here is lost.
+                        if (!TryPromptToSaveDirtyState(out _))
+                        {
+                            return;
+                        }
+
+                        // Persist user settings + recent files before the updater terminates
+                        // the process. Wrapped defensively so a settings I/O error doesn't
+                        // block the install.
+                        try { UserSettings.Save(ShellPublicVariables.UserSettingsFilePath); }
+                        catch (Exception saveEx) { Debug.WriteLine($"[Update] UserSettings.Save failed: {saveEx.Message}"); }
+                        try { RecentFiles.SaveToXML(); }
+                        catch (Exception saveEx) { Debug.WriteLine($"[Update] RecentFiles.SaveToXML failed: {saveEx.Message}"); }
+
                         UpdateService.InstallUpdateAndRestart(downloadResult.FilePath);
                     }
                 }
