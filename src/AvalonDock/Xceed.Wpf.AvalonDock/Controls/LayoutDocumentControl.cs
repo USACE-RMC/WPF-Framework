@@ -190,7 +190,20 @@ namespace Xceed.Wpf.AvalonDock.Controls
                 this.Resources.Add( x.Key, x.Value );
               }
             }
-            catch( Exception ) { }
+            // Narrow from catch-all so genuine bugs (OOM, ThreadAbort, NullReference)
+            // are no longer silently swallowed. The expected faults during resource
+            // copy are duplicate-key adds (ArgumentException) and concurrent
+            // dictionary mutation (InvalidOperationException).
+            catch( ArgumentException ex )
+            {
+              System.Diagnostics.Trace.WriteLine(
+                $"[LayoutDocumentControl] Skipping duplicate resource key '{x.Key}': {ex.Message}" );
+            }
+            catch( InvalidOperationException ex )
+            {
+              System.Diagnostics.Trace.WriteLine(
+                $"[LayoutDocumentControl] Resource dictionary changed during copy of key '{x.Key}': {ex.Message}" );
+            }
           } );
         }
         current = current.Parent as FrameworkElement;
