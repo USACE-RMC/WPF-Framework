@@ -240,5 +240,45 @@ namespace OxyPlot.Wpf.Serialization
 
             return dpList;
         }
+
+        /// <summary>
+        /// Converts an array of <see cref="double"/> values to an XML element for serialization.
+        /// Each value becomes a <c>&lt;Value&gt;</c> child element using <c>G17</c> invariant-culture
+        /// formatting so the array round-trips exactly across locales.
+        /// </summary>
+        /// <param name="values">The array of doubles to serialize. May be null.</param>
+        /// <param name="name">The name for the parent XML element.</param>
+        /// <returns>An <see cref="XElement"/> containing all values as child elements (empty when <paramref name="values"/> is null).</returns>
+        public static XElement ToXElement(this double[] values, string name)
+        {
+            var el = new XElement(name);
+            if (values != null)
+            {
+                foreach (var v in values)
+                {
+                    el.Add(new XElement("Value", v.ToString("G17", System.Globalization.CultureInfo.InvariantCulture)));
+                }
+            }
+            return el;
+        }
+
+        /// <summary>
+        /// Parses an XML element produced by <see cref="ToXElement(double[], string)"/> back into
+        /// a <see cref="double"/>[] array.
+        /// </summary>
+        /// <param name="element">The XML element containing <c>&lt;Value&gt;</c> children.</param>
+        /// <returns>The parsed array, or an empty array when the element has no parseable values.</returns>
+        public static double[] DoublesFromXElement(this XElement element)
+        {
+            var list = new List<double>();
+            foreach (var v in element.Elements("Value"))
+            {
+                if (double.TryParse(v.Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var d))
+                {
+                    list.Add(d);
+                }
+            }
+            return list.ToArray();
+        }
     }
 }

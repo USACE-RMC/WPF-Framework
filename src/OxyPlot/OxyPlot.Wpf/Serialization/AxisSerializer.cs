@@ -128,6 +128,15 @@ namespace OxyPlot.Wpf.Serialization
             numericProperties.SetAttributeValue(nameof(axis.AbsoluteMinimum), axis.AbsoluteMinimum.ToString("G17", CultureInfo.InvariantCulture));
             numericProperties.SetAttributeValue(nameof(axis.FilterMaxValue), axis.FilterMaxValue.ToString("G17", CultureInfo.InvariantCulture));
             numericProperties.SetAttributeValue(nameof(axis.FilterMinValue), axis.FilterMinValue.ToString("G17", CultureInfo.InvariantCulture));
+            // User-settable padding/range properties — previously not persisted. Only the
+            // properties exposed as DPs on the WPF Axis wrapper are serialized here:
+            // MaximumPadding, MinimumPadding, MaximumRange, MinimumRange.
+            // Margin and data-margin properties exist on the model but are not WPF DPs;
+            // adding them as wrapper DPs is tracked as a future enhancement.
+            numericProperties.SetAttributeValue(nameof(axis.MaximumPadding), axis.MaximumPadding.ToString("G17", CultureInfo.InvariantCulture));
+            numericProperties.SetAttributeValue(nameof(axis.MinimumPadding), axis.MinimumPadding.ToString("G17", CultureInfo.InvariantCulture));
+            numericProperties.SetAttributeValue(nameof(axis.MaximumRange), axis.MaximumRange.ToString("G17", CultureInfo.InvariantCulture));
+            numericProperties.SetAttributeValue(nameof(axis.MinimumRange), axis.MinimumRange.ToString("G17", CultureInfo.InvariantCulture));
             axisProperties.Add(numericProperties);
 
             // Style Properties
@@ -155,6 +164,8 @@ namespace OxyPlot.Wpf.Serialization
             titleProperties.SetAttributeValue(nameof(axis.TitleFontWeight), FontWeightConverterInstance.ConvertToInvariantString(axis.TitleFontWeight));
             titleProperties.SetAttributeValue(nameof(axis.AxisTitleDistance), axis.AxisTitleDistance.ToString("G17", CultureInfo.InvariantCulture));
             titleProperties.SetAttributeValue(nameof(axis.Unit), axis.Unit);
+            titleProperties.SetAttributeValue(nameof(axis.ClipTitle), axis.ClipTitle.ToString());
+            titleProperties.SetAttributeValue(nameof(axis.TitleClippingLength), axis.TitleClippingLength.ToString("G17", CultureInfo.InvariantCulture));
             axisProperties.Add(titleProperties);
 
             // Label Properties
@@ -167,6 +178,8 @@ namespace OxyPlot.Wpf.Serialization
             labelProperties.SetAttributeValue(nameof(axis.AxisTickToLabelDistance), axis.AxisTickToLabelDistance.ToString("G17", CultureInfo.InvariantCulture));
             labelProperties.SetAttributeValue(nameof(axis.StringFormat), axis.StringFormat);
             labelProperties.SetAttributeValue(nameof(axis.UseSuperExponentialFormat), axis.UseSuperExponentialFormat.ToString());
+            // IntervalLength controls label-density target — previously not persisted.
+            labelProperties.SetAttributeValue(nameof(axis.IntervalLength), axis.IntervalLength.ToString("G17", CultureInfo.InvariantCulture));
             axisProperties.Add(labelProperties);
 
             // Major Gridline Properties
@@ -176,6 +189,10 @@ namespace OxyPlot.Wpf.Serialization
             majorGridlineProperties.SetAttributeValue(nameof(axis.MajorGridlineThickness), axis.MajorGridlineThickness.ToString("G17", CultureInfo.InvariantCulture));
             majorGridlineProperties.SetAttributeValue(nameof(axis.MajorStep), axis.MajorStep.ToString("G17", CultureInfo.InvariantCulture));
             majorGridlineProperties.SetAttributeValue(nameof(axis.MajorTickSize), axis.MajorTickSize.ToString("G17", CultureInfo.InvariantCulture));
+            // MinimumMajorStep, MaximumMajorIntervalCount, MinimumMajorIntervalCount,
+            // CropGridlines exist on the model but not as WPF Axis wrapper DPs; not
+            // serialized here. Add them as wrapper DPs (with Plot.SynchronizeProperties
+            // wiring) before persisting via this serializer.
             axisProperties.Add(majorGridlineProperties);
 
             // Minor Gridline Properties
@@ -185,6 +202,8 @@ namespace OxyPlot.Wpf.Serialization
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorGridlineThickness), axis.MinorGridlineThickness.ToString("G17", CultureInfo.InvariantCulture));
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorStep), axis.MinorStep.ToString("G17", CultureInfo.InvariantCulture));
             minorGridlineProperties.SetAttributeValue(nameof(axis.MinorTickSize), axis.MinorTickSize.ToString("G17", CultureInfo.InvariantCulture));
+            // MinimumMinorStep exists on the model but not as a WPF Axis wrapper DP;
+            // not serialized here.
             axisProperties.Add(minorGridlineProperties);
 
             // Extra Gridline Properties
@@ -192,12 +211,16 @@ namespace OxyPlot.Wpf.Serialization
             extraGridlineProperties.SetAttributeValue(nameof(axis.ExtraGridlineColor), axis.ExtraGridlineColor.ToString());
             extraGridlineProperties.SetAttributeValue(nameof(axis.ExtraGridlineStyle), axis.ExtraGridlineStyle.ToString());
             extraGridlineProperties.SetAttributeValue(nameof(axis.ExtraGridlineThickness), axis.ExtraGridlineThickness.ToString("G17", CultureInfo.InvariantCulture));
+            // Explicit gridline values (the axis.ExtraGridlines double[]) — previously not persisted.
+            extraGridlineProperties.Add(axis.ExtraGridlines.ToXElement(nameof(axis.ExtraGridlines)));
             axisProperties.Add(extraGridlineProperties);
 
             // Tick Style Properties
             var tickStyleProperties = new XElement("Tick");
             tickStyleProperties.SetAttributeValue(nameof(axis.TickStyle), axis.TickStyle.ToString());
             tickStyleProperties.SetAttributeValue(nameof(axis.TicklineColor), axis.TicklineColor.ToString());
+            // MinorTicklineColor exists on the model but not as a WPF Axis wrapper DP;
+            // not serialized here.
             axisProperties.Add(tickStyleProperties);
 
             // Concrete axis implementation properties
@@ -407,6 +430,10 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetDoubleAttribute(numbersElement, nameof(axis.AbsoluteMinimum), out var absoluteMinimum)) axis.AbsoluteMinimum = absoluteMinimum;
                 if (GetDoubleAttribute(numbersElement, nameof(axis.FilterMaxValue), out var filterMaxValue)) axis.FilterMaxValue = filterMaxValue;
                 if (GetDoubleAttribute(numbersElement, nameof(axis.FilterMinValue), out var filterMinValue)) axis.FilterMinValue = filterMinValue;
+                if (GetDoubleAttribute(numbersElement, nameof(axis.MaximumPadding), out var maximumPadding)) axis.MaximumPadding = maximumPadding;
+                if (GetDoubleAttribute(numbersElement, nameof(axis.MinimumPadding), out var minimumPadding)) axis.MinimumPadding = minimumPadding;
+                if (GetDoubleAttribute(numbersElement, nameof(axis.MaximumRange), out var maximumRange)) axis.MaximumRange = maximumRange;
+                if (GetDoubleAttribute(numbersElement, nameof(axis.MinimumRange), out var minimumRange)) axis.MinimumRange = minimumRange;
             }
 
             // Style Properties
@@ -450,6 +477,8 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetFontWeightAttribute(titleElement, nameof(axis.TitleFontWeight), FontWeightConverterInstance, out var titleFontWeight)) axis.TitleFontWeight = titleFontWeight;
                 if (GetDoubleAttribute(titleElement, nameof(axis.AxisTitleDistance), out var axisTitleDistance)) axis.AxisTitleDistance = axisTitleDistance;
                 if (GetStringAttribute(titleElement, nameof(axis.Unit), out var unit)) axis.Unit = unit;
+                if (GetBooleanAttribute(titleElement, nameof(axis.ClipTitle), out var clipTitle)) axis.ClipTitle = clipTitle;
+                if (GetDoubleAttribute(titleElement, nameof(axis.TitleClippingLength), out var titleClippingLength)) axis.TitleClippingLength = titleClippingLength;
 
                 // Backward compatibility
                 if (GetColorAttribute(titleElement, "Color", out titleColor)) axis.TitleColor = titleColor;
@@ -471,6 +500,7 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetDoubleAttribute(labelElement, nameof(axis.AxisTickToLabelDistance), out var axisTickToLabelDistance)) axis.AxisTickToLabelDistance = axisTickToLabelDistance;
                 if (GetStringAttribute(labelElement, nameof(axis.StringFormat), out var stringFormat)) axis.StringFormat = stringFormat;
                 if (GetBooleanAttribute(labelElement, nameof(axis.UseSuperExponentialFormat), out var useSuperExponentialFormat)) axis.UseSuperExponentialFormat = useSuperExponentialFormat;
+                if (GetDoubleAttribute(labelElement, nameof(axis.IntervalLength), out var intervalLength)) axis.IntervalLength = intervalLength;
 
                 // Backward compatibility
                 if (GetColorAttribute(labelElement, "Color", out textColor)) axis.TextColor = textColor;
@@ -523,6 +553,12 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetColorAttribute(extraGridlineElement, nameof(axis.ExtraGridlineColor), out var extraGridlineColor)) axis.ExtraGridlineColor = extraGridlineColor;
                 if (GetEnumAttribute(extraGridlineElement, nameof(axis.ExtraGridlineStyle), out OxyPlot.LineStyle extraGridlineStyle)) axis.ExtraGridlineStyle = extraGridlineStyle;
                 if (GetDoubleAttribute(extraGridlineElement, nameof(axis.ExtraGridlineThickness), out var extraGridlineThickness)) axis.ExtraGridlineThickness = extraGridlineThickness;
+                // Read explicit gridline values (the double[] array). Empty array if absent.
+                var extraGridlinesValuesElement = extraGridlineElement.Element(nameof(axis.ExtraGridlines));
+                if (extraGridlinesValuesElement != null)
+                {
+                    axis.ExtraGridlines = extraGridlinesValuesElement.DoublesFromXElement();
+                }
             }
 
             // Tick Style Properties
