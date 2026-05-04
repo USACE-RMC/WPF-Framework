@@ -214,9 +214,23 @@ namespace Themes
                 return;
             }
 
-            Theme oldTheme;
-            ResourceDictionary newColorDictionary;
+            // Build the new dictionary outside the lock. Loading XAML via pack URI can be
+            // slow and can recursively touch other resource dictionaries; doing it under
+            // the lock would extend the critical section unnecessarily.
+            var newColorDictionary = new ResourceDictionary
+            {
+                Source = new Uri(ThemeResourceHelper.GetColorDictionaryUri(theme), UriKind.Absolute)
+            };
 
+            // Capture state under the lock, but DO NOT touch MergedDictionaries here.
+            // WPF resource invalidation can synchronously fire callbacks into subscribers
+            // that re-enter the CurrentTheme getter (which acquires _lock). Holding _lock
+            // during MergedDictionaries.Remove/Add would risk a deadlock; mutate after the
+            // lock is released. The whole method is already serialized on the UI thread
+            // via the BeginInvoke marshal above, so MergedDictionaries access is single-
+            // threaded even after lock release.
+            Theme oldTheme;
+            ResourceDictionary? oldColorDictionary;
             lock (_lock)
             {
                 if (!_isInitialized)
@@ -231,24 +245,21 @@ namespace Themes
                 }
 
                 oldTheme = _currentTheme;
+                oldColorDictionary = _currentColorDictionary;
+
                 _currentTheme = theme;
-
-                // Remove old color dictionary
-                if (_currentColorDictionary != null)
-                {
-                    app.Resources.MergedDictionaries.Remove(_currentColorDictionary);
-                }
-
-                // Create and add new color dictionary
-                newColorDictionary = new ResourceDictionary
-                {
-                    Source = new Uri(ThemeResourceHelper.GetColorDictionaryUri(theme), UriKind.Absolute)
-                };
-                app.Resources.MergedDictionaries.Add(newColorDictionary);
                 _currentColorDictionary = newColorDictionary;
             }
 
-            // Raise event outside the lock to prevent deadlocks
+            // Mutate MergedDictionaries and raise the event outside the lock so that
+            // subscribers (and synchronous WPF resource-invalidation callbacks) can
+            // safely call back into the service.
+            if (oldColorDictionary != null)
+            {
+                app.Resources.MergedDictionaries.Remove(oldColorDictionary);
+            }
+            app.Resources.MergedDictionaries.Add(newColorDictionary);
+
             OnThemeChanged(new ThemeChangedEventArgs(oldTheme, theme, newColorDictionary));
         }
 
