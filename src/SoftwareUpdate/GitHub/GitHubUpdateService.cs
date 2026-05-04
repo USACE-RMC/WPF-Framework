@@ -183,7 +183,8 @@ namespace SoftwareUpdate.GitHub
                             ReleaseNotes = release.Body,
                             PublishedAt = release.GetPublishedDateTime(),
                             IsPreRelease = release.PreRelease,
-                            ReleasePageUrl = release.HtmlUrl
+                            ReleasePageUrl = release.HtmlUrl,
+                            Sha256Checksum = ExtractSha256Checksum(release.Body)
                         };
 
                         // Atomically update AvailableUpdate, IsSkipped, and State in a single lock
@@ -540,6 +541,29 @@ namespace SoftwareUpdate.GitHub
                 var hashBytes = sha256.ComputeHash(stream);
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
             }
+        }
+
+        // Pre-compiled regex for SHA256 checksum extraction. Matches "SHA256:" (case-insensitive)
+        // followed by optional whitespace and exactly 64 hex characters. The release-notes convention
+        // documented for this framework is `SHA256: <hex>` somewhere in the body of the GitHub release.
+        private static readonly Regex Sha256ChecksumPattern = new Regex(
+            @"SHA256\s*[:=]\s*([0-9a-fA-F]{64})",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
+        /// Extracts a SHA256 checksum from GitHub release notes when present.
+        /// </summary>
+        /// <param name="releaseBody">The body of the GitHub release (markdown).</param>
+        /// <returns>
+        /// The lowercase 64-character hex checksum if a <c>SHA256: &lt;hex&gt;</c> token is present
+        /// in the release notes; otherwise <c>null</c>. Absence is treated as silent-skip per the
+        /// documented contract on <see cref="UpdateInfo.Sha256Checksum"/>.
+        /// </returns>
+        private static string? ExtractSha256Checksum(string? releaseBody)
+        {
+            if (string.IsNullOrEmpty(releaseBody)) return null;
+            var match = Sha256ChecksumPattern.Match(releaseBody);
+            return match.Success ? match.Groups[1].Value.ToLowerInvariant() : null;
         }
 
         /// <summary>
