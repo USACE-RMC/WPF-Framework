@@ -89,8 +89,20 @@ namespace ExpressionParser.Parser
                                     {
                                         if (int.TryParse(token.TokenString, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intValue))
                                             newNode = new IntegerNode(intValue);
+                                        else if (long.TryParse(token.TokenString, NumberStyles.Integer, CultureInfo.InvariantCulture, out long longValue))
+                                            // Out of int range but representable as long — promote to a
+                                            // double-backed DecimalNode rather than silently producing
+                                            // IntegerNode(0), which previously caused 9999999999 * 2 to
+                                            // evaluate to 0.
+                                            newNode = new DecimalNode((double)longValue);
+                                        else if (double.TryParse(token.TokenString, NumberStyles.Integer, CultureInfo.InvariantCulture, out double dblValue))
+                                            newNode = new DecimalNode(dblValue);
                                         else
-                                            newNode = new IntegerNode(0);
+                                        {
+                                            var fallback = new IntegerNode(0);
+                                            fallback.GetErrors.Add(new ParseError(token, "integer literal '" + token.TokenString + "' is not parseable; using 0 as a placeholder."));
+                                            newNode = fallback;
+                                        }
                                         break;
                                     }
                                 case TokenType.DecimalNumber:
