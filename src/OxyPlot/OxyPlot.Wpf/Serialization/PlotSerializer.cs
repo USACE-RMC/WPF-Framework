@@ -167,6 +167,9 @@ namespace OxyPlot.Wpf.Serialization
         {
             var generalProperties = new XElement(GeneralPropertiesTag);
             generalProperties.SetAttributeValue(nameof(plot.IsEnabled), plot.IsEnabled.ToString());
+            // Global text color applies to every default-colored text element on the plot.
+            // Previously not persisted: round-trip silently reset TextColor to default.
+            generalProperties.SetAttributeValue(nameof(plot.TextColor), plot.TextColor.ToString());
 
             var weightConverter = new FontWeightConverter();
 
@@ -229,6 +232,8 @@ namespace OxyPlot.Wpf.Serialization
             // disabling loaded plots.
             if (GetBooleanAttribute(element, nameof(plot.IsEnabled), out bool isEnabled))
                 plot.IsEnabled = isEnabled;
+            if (GetColorAttribute(element, nameof(plot.TextColor), out Color textColor))
+                plot.TextColor = textColor;
 
             // Set up converters
             var weightConverter = new FontWeightConverter();
