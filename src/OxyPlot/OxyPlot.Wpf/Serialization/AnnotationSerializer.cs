@@ -68,13 +68,26 @@ namespace OxyPlot.Wpf.Serialization
         /// </summary>
         /// <param name="plot">The plot containing annotations to serialize.</param>
         /// <returns>An <see cref="XElement"/> containing all serialized annotations.</returns>
+        /// <remarks>
+        /// Only <see cref="TextualAnnotation"/>-derived annotations are serialized. Non-textual
+        /// annotations such as <c>ImageAnnotation</c> are skipped with a diagnostic trace —
+        /// previously they were silently dropped on Save/Open. Full round-trip support for
+        /// <c>ImageAnnotation</c> requires base64-encoding the <c>OxyImage</c> blob and is
+        /// tracked as a follow-up; the diagnostic ensures the loss is no longer invisible.
+        /// </remarks>
         public static XElement AnnotationsToXElement(Plot plot)
         {
             var annotationProperties = new XElement(AnnotationsPropertiesTag);
             foreach (var annotation in plot.Annotations)
             {
                 var textualAnnotation = annotation as TextualAnnotation;
-                if (textualAnnotation == null) continue;
+                if (textualAnnotation == null)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[AnnotationSerializer] Annotation of type '{annotation?.GetType().FullName}' is not a TextualAnnotation and will not be persisted. " +
+                        "Save/Open will lose this annotation. (Issue D-001 — full round-trip pending.)");
+                    continue;
+                }
                 annotationProperties.Add(AnnotationToXElement(textualAnnotation));
             }
 
