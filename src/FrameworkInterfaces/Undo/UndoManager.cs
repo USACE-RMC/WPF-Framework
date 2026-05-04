@@ -160,17 +160,34 @@ namespace FrameworkInterfaces.Undo
             Interlocked.Exchange(ref _isExecutingAction, 1);
             try
             {
-                action.Undo();
+                try
+                {
+                    action.Undo();
+                }
+                catch
+                {
+                    // Restore the action to the undo stack so it isn't lost from
+                    // both stacks. Without this, an exception in action.Undo
+                    // (e.g. a property setter validation throw, a dynamic-dispatch
+                    // RuntimeBinderException, an IndexOutOfRangeException after
+                    // the collection shrunk) would silently drop the action —
+                    // the user could no longer undo or redo to that point.
+                    lock (_lockObject)
+                    {
+                        _undoStack.Push(action);
+                    }
+                    throw;
+                }
+
+                lock (_lockObject)
+                {
+                    _redoStack.Push(action);
+                    _currentIndex--;
+                }
             }
             finally
             {
                 Interlocked.Exchange(ref _isExecutingAction, 0);
-            }
-
-            lock (_lockObject)
-            {
-                _redoStack.Push(action);
-                _currentIndex--;
             }
 
             OnStateChanged();
@@ -209,17 +226,30 @@ namespace FrameworkInterfaces.Undo
             Interlocked.Exchange(ref _isExecutingAction, 1);
             try
             {
-                action.Execute();
+                try
+                {
+                    action.Execute();
+                }
+                catch
+                {
+                    // Restore the action to the redo stack so it isn't lost from
+                    // both stacks. Mirrors Undo's restoration logic — see comment there.
+                    lock (_lockObject)
+                    {
+                        _redoStack.Push(action);
+                    }
+                    throw;
+                }
+
+                lock (_lockObject)
+                {
+                    _undoStack.Push(action);
+                    _currentIndex++;
+                }
             }
             finally
             {
                 Interlocked.Exchange(ref _isExecutingAction, 0);
-            }
-
-            lock (_lockObject)
-            {
-                _undoStack.Push(action);
-                _currentIndex++;
             }
 
             OnStateChanged();
@@ -386,6 +416,12 @@ namespace FrameworkInterfaces.Undo
             {
                 Interlocked.Exchange(ref _isExecutingAction, 0);
             }
+
+            // Notify subscribers that undo/redo state changed. Without this, UI
+            // elements bound to CanUndo/CanRedo / Description stay stale and the
+            // user sees the rolled-back action description on the Undo button as
+            // though it were still pending.
+            OnStateChanged();
         }
 
         #endregion

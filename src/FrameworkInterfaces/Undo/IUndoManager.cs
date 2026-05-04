@@ -88,8 +88,17 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         /// <param name="action">The action to execute.</param>
         /// <remarks>
+        /// <para>
         /// Use this when you want the undo manager to execute the action.
         /// The action's Execute() method will be called.
+        /// </para>
+        /// <para>
+        /// <b>Re-entrancy:</b> Calling ExecuteAction from inside another action's
+        /// Execute() (or from a property-change event raised by that Execute) is a
+        /// no-op — the nested call is silently dropped to prevent recursive recording.
+        /// Callers that need to chain multiple actions should use <see cref="BeginTransaction"/>
+        /// rather than calling ExecuteAction recursively.
+        /// </para>
         /// </remarks>
         void ExecuteAction(IUndoableAction action);
 
