@@ -210,11 +210,22 @@ namespace FrameworkInterfaces
         /// Raise property changed event.
         /// </summary>
         /// <param name="propertyName">Name of property that changed.</param>
-        /// <param name="isDirty">True to mark element as dirty.</param>
+        /// <param name="isDirty">
+        /// When <c>true</c>, marks the element as dirty (the typical case). When
+        /// <c>false</c>, leaves the existing dirty state untouched ("notify-only").
+        /// This matches <see cref="ElementBase.RaisePropertyChange(string, bool)"/>
+        /// promote-only semantics — previously the assignment was unconditional, so
+        /// passing <c>false</c> silently CLEARED the dirty flag, dropping unsaved-change
+        /// indicators when a subclass merely wanted to notify of a derived/computed
+        /// property change.
+        /// </param>
         protected void RaisePropertyChange(string propertyName, bool isDirty = true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            IsDirty = isDirty;
+            if (isDirty)
+            {
+                IsDirty = true;
+            }
         }
 
         /// <summary>
