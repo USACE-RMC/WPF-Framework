@@ -276,18 +276,21 @@ namespace OxyPlot.Axes
         /// </remarks>
         internal override void UpdateActualMaxMin()
         {
+            // Let the base class resolve ActualMin/Max from ViewMaximum, Maximum, or
+            // CalculateActualMaximum() (and the same for Minimum). The base also runs
+            // CoerceActualMaxMin which can produce 0/100 sentinels for a still-NaN axis
+            // — values that are outside the probability domain (_epsilon, 0.999).
+            base.UpdateActualMaxMin();
 
-            if (!double.IsNaN(this.ActualMinimum) || this.ActualMinimum <= _epsilon)
+            // Constrain to the valid probability range. The probability transform is
+            // undefined at 0 and 1; falling outside this range produces ±Infinity in
+            // PostInverseTransform and breaks rendering.
+            if (double.IsNaN(this.ActualMinimum) || this.ActualMinimum < _epsilon)
             {
                 this.ActualMinimum = _epsilon;
             }
 
-            if (this.ActualMinimum < _epsilon)
-            {
-                this.ActualMinimum = _epsilon;
-            }
-
-            if (!double.IsNaN(this.ActualMaximum) || this.ActualMaximum >= 0.999)
+            if (double.IsNaN(this.ActualMaximum) || this.ActualMaximum > 0.999)
             {
                 this.ActualMaximum = 0.999;
             }
@@ -297,9 +300,6 @@ namespace OxyPlot.Axes
                 this.ActualMinimum = _epsilon;
                 this.ActualMaximum = 0.999;
             }
-
-            base.UpdateActualMaxMin();
-
         }
 
         /// <summary>
