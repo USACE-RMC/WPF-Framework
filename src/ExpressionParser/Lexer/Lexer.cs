@@ -152,11 +152,36 @@ namespace ExpressionParser
         {
             var result = new StringBuilder();
             hasDecimal = false;
+            bool hasExponent = false;
             for (; currentPosition < s.Length; currentPosition++)
             {
-                if (char.IsDigit(s[currentPosition]) == false)
+                char c = s[currentPosition];
+
+                // Scientific notation: consume an `e`/`E` followed by optional sign and digits.
+                // Without this, `1.5e10` lexed as `1.5` then identifier `e10`, producing the
+                // confusing parser error "Cannot have two values next to each other without
+                // an operator". A double with `e` is also implicitly a floating-point literal.
+                if ((c == 'e' || c == 'E') && !hasExponent && result.Length > 0)
                 {
-                    if (s[currentPosition] != '.')
+                    int peek = currentPosition + 1;
+                    if (peek < s.Length && (s[peek] == '+' || s[peek] == '-')) peek++;
+                    if (peek < s.Length && char.IsDigit(s[peek]))
+                    {
+                        hasExponent = true;
+                        hasDecimal = true; // promote to DecimalNumber
+                        result.Append(c);
+                        if (s[currentPosition + 1] == '+' || s[currentPosition + 1] == '-')
+                        {
+                            currentPosition++;
+                            result.Append(s[currentPosition]);
+                        }
+                        continue;
+                    }
+                }
+
+                if (char.IsDigit(c) == false)
+                {
+                    if (c != '.')
                     {
                         currentPosition -= 1;
                         break;
@@ -168,9 +193,9 @@ namespace ExpressionParser
                     }
                     hasDecimal = true;
                 }
-                result.Append(s[currentPosition]);
+                result.Append(c);
             }
-            // 
+            //
             return result.ToString();
         }
 
