@@ -310,6 +310,10 @@ namespace FrameworkInterfaces
 
             ElementList.RemoveAt(startIndex);
             ElementList.Insert(endIndex, element);
+            // Record the move so it participates in undo/redo. Without this call,
+            // any reorder (drag-drop in TreeView, programmatic) was non-undoable
+            // — Ctrl+Z after a drag-reorder did nothing.
+            RecordMoveElement(element, startIndex, endIndex);
             SetIsDirty(true);
         }
 
