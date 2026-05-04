@@ -35,26 +35,18 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                 />
 
-            <Rectangle Width="25" Height="25" Grid.Column="1" Margin="7.5"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                    >
-                <Rectangle.RenderTransform>
+            <!-- Path (visual tree element) so DynamicResource on Fill resolves; the
+                 previous DrawingBrush > GeometryDrawing.Brush silently failed because
+                 Freezables can't resolve DynamicResource. -->
+            <Path Width="25" Height="25" Grid.Column="1" Margin="7.5"
+                  VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z">
+                <Path.RenderTransform>
                     <RotateTransform Angle="270" CenterX="12.5" CenterY="12.5" />
-                </Rectangle.RenderTransform>
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Path.RenderTransform>
+            </Path>
         </Grid>
     </Viewbox>
 
@@ -80,26 +72,15 @@
                                 HorizontalAlignment="Stretch" VerticalAlignment="Top"
                             />
 
-            <Rectangle Width="25" Height="25" Grid.Column="0" Margin="7.5"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               >
-                <Rectangle.RenderTransform>
+            <Path Width="25" Height="25" Grid.Column="0" Margin="7.5"
+                  VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z">
+                <Path.RenderTransform>
                     <RotateTransform Angle="90" CenterX="12.5" CenterY="12.5" />
-                </Rectangle.RenderTransform>
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Path.RenderTransform>
+            </Path>
         </Grid>
     </Viewbox>
 
@@ -126,23 +107,11 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                 />
 
-            <Rectangle Width="25" Height="25" Grid.Row="1" Margin="7.5"
-                       VerticalAlignment="Top"
-                       HorizontalAlignment="Center"
-                                                                       >
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+            <Path Width="25" Height="25" Grid.Row="1" Margin="7.5"
+                  VerticalAlignment="Top" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z" />
         </Grid>
     </Viewbox>
 
@@ -169,26 +138,15 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                     />
 
-            <Rectangle Width="25" Height="25" Grid.Row="0" Margin="7.5"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       >
-                <Rectangle.RenderTransform>
+            <Path Width="25" Height="25" Grid.Row="0" Margin="7.5"
+                  VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z">
+                <Path.RenderTransform>
                     <RotateTransform Angle="180" CenterX="12.5" CenterY="12.5" />
-                </Rectangle.RenderTransform>
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Path.RenderTransform>
+            </Path>
         </Grid>
     </Viewbox>
 
@@ -331,23 +289,11 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                 />
 
-            <Rectangle Width="25" Height="25" Grid.Row="1" Margin="7.5"
-                       VerticalAlignment="Top"
-                       HorizontalAlignment="Center"
-                                                                       >
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+            <Path Width="25" Height="25" Grid.Row="1" Margin="7.5"
+                  VerticalAlignment="Top" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z" />
         </Grid>
     </Viewbox>
 
@@ -373,26 +319,15 @@
                                 HorizontalAlignment="Stretch" VerticalAlignment="Top"
                             />
 
-            <Rectangle Width="25" Height="25" Grid.Column="0" Margin="7.5"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               >
-                <Rectangle.RenderTransform>
+            <Path Width="25" Height="25" Grid.Column="0" Margin="7.5"
+                  VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z">
+                <Path.RenderTransform>
                     <RotateTransform Angle="90" CenterX="12.5" CenterY="12.5" />
-                </Rectangle.RenderTransform>
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Path.RenderTransform>
+            </Path>
         </Grid>
     </Viewbox>
 
@@ -419,26 +354,15 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                     />
 
-            <Rectangle Width="25" Height="25" Grid.Row="0" Margin="7.5"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       >
-                <Rectangle.RenderTransform>
+            <Path Width="25" Height="25" Grid.Row="0" Margin="7.5"
+                  VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z">
+                <Path.RenderTransform>
                     <RotateTransform Angle="180" CenterX="12.5" CenterY="12.5" />
-                </Rectangle.RenderTransform>
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Path.RenderTransform>
+            </Path>
         </Grid>
     </Viewbox>
 
@@ -464,26 +388,15 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Top"
                 />
 
-            <Rectangle Width="25" Height="25" Grid.Column="1" Margin="7.5"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                    >
-                <Rectangle.RenderTransform>
+            <Path Width="25" Height="25" Grid.Column="1" Margin="7.5"
+                  VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Stretch="Fill"
+                  Fill="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
+                  Data="F1M1,15L8,1 15,15z">
+                <Path.RenderTransform>
                     <RotateTransform Angle="270" CenterX="12.5" CenterY="12.5" />
-                </Rectangle.RenderTransform>
-                <Rectangle.Fill>
-                    <DrawingBrush>
-                        <DrawingBrush.Drawing>
-                            <DrawingGroup>
-                                <DrawingGroup.Children>
-                                    <GeometryDrawing Brush="{DynamicResource {x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}}"
-                                                     Geometry="F1M1,15L8,1 15,15z" />
-                                </DrawingGroup.Children>
-                            </DrawingGroup>
-                        </DrawingBrush.Drawing>
-                    </DrawingBrush>
-                </Rectangle.Fill>
-            </Rectangle>
+                </Path.RenderTransform>
+            </Path>
         </Grid>
     </Viewbox>
 
