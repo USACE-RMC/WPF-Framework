@@ -285,15 +285,42 @@ namespace DatabaseManager
         #region Database Table Management
 
         /// <summary>
+        /// Validates a table or column identifier for safe inclusion in SQL via
+        /// <c>[bracket]</c> quoting. Rejects names that contain a closing bracket
+        /// (which would break the quote) or null bytes. Public entry points that
+        /// build SQL from caller-supplied identifiers should call this once at the
+        /// boundary so internal SQL construction can trust the input.
+        /// </summary>
+        /// <param name="name">The identifier to validate.</param>
+        /// <param name="paramName">Name of the parameter being validated, for the exception message.</param>
+        /// <exception cref="ArgumentException">The identifier is null, empty, or contains <c>]</c> or a null byte.</exception>
+        private static void ValidateIdentifier(string name, string paramName)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("Identifier must not be null or empty.", paramName);
+            }
+            if (name.IndexOf(']') >= 0 || name.IndexOf('\0') >= 0)
+            {
+                throw new ArgumentException(
+                    $"Identifier '{name}' contains characters that are not safe for SQL bracket-quoting (']' or null byte).",
+                    paramName);
+            }
+        }
+
+        /// <summary>
         /// Copy table.
         /// </summary>
         /// <param name="existingTableName">The name of the table to copy.</param>
         /// <param name="newTableName">The name of the new table.</param>
         public void CopyTable(string existingTableName, string newTableName)
         {
+            ValidateIdentifier(existingTableName, nameof(existingTableName));
+            ValidateIdentifier(newTableName, nameof(newTableName));
+
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
-            { 
+            {
                 Open();
             }
             if (_tableNames.Contains(existingTableName) == false)
@@ -344,10 +371,13 @@ namespace DatabaseManager
         /// <param name="newTableName">The new name of the table.</param>
         public void RenameTable(string oldTableName, string newTableName)
         {
+            ValidateIdentifier(oldTableName, nameof(oldTableName));
+            ValidateIdentifier(newTableName, nameof(newTableName));
+
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
-            { 
-                Open(); 
+            {
+                Open();
             }
             if (_tableNames.Contains(oldTableName) == false)
             { 
@@ -567,10 +597,20 @@ namespace DatabaseManager
         /// <param name="newColumnTypes">Array of table column types.</param>
         public void CreateTable(string newTableName, string[] tableColumnNames, Type[] newColumnTypes)
         {
+            ValidateIdentifier(newTableName, nameof(newTableName));
+            if (tableColumnNames == null)
+            {
+                throw new ArgumentNullException(nameof(tableColumnNames));
+            }
+            for (int i = 0; i < tableColumnNames.Length; i++)
+            {
+                ValidateIdentifier(tableColumnNames[i], $"{nameof(tableColumnNames)}[{i}]");
+            }
+
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
-            { 
-                Open(); 
+            {
+                Open();
             }
             var sb = new System.Text.StringBuilder(500);
             sb.Append("Create Table [").Append(newTableName).Append("] (");
@@ -679,6 +719,7 @@ namespace DatabaseManager
         /// <param name="maxAttempts">Optional. Maximum number of attempts to write to table from parallel loops. Default = 8.</param>
         public void AppendRows(string tableName, DataTable newRowData, int maxAttempts = 8)
         {
+            ValidateIdentifier(tableName, nameof(tableName));
 
             for (int ma = maxAttempts; ma >= 0; ma -= 1)
             {
@@ -835,6 +876,7 @@ namespace DatabaseManager
         /// <param name="tableName">Table name.</param>
         public void DeleteTable(string tableName)
         {
+            ValidateIdentifier(tableName, nameof(tableName));
             if (_tableNames.Contains(tableName) == false) { return; }
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
@@ -859,6 +901,7 @@ namespace DatabaseManager
         /// <param name="tableName">Table name.</param>
         public void DeleteTableData(string tableName)
         {
+            ValidateIdentifier(tableName, nameof(tableName));
             if (_tableNames.Contains(tableName) == false) { return; }
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
@@ -888,6 +931,7 @@ namespace DatabaseManager
         /// <returns>A <see cref="DataTableView"/> instance for managing the specified table.</returns>
         public override DataTableView GetTableManager(string tableName)
         {
+            ValidateIdentifier(tableName, nameof(tableName));
             return new SqLiteTableManager(this, tableName, _dbConnection);
         }
 
@@ -898,6 +942,7 @@ namespace DatabaseManager
         /// <returns>The number of rows in the table.</returns>
         public override long GetStoredNumberOfRows(string tableName)
         {
+            ValidateIdentifier(tableName, nameof(tableName));
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
             { 
@@ -918,12 +963,13 @@ namespace DatabaseManager
         /// <inheritdoc/>
         public override int GetStoredNumberOfColumns(string tableName)
         {
+            ValidateIdentifier(tableName, nameof(tableName));
             bool wasOpen = _dataBaseOpen;
             if (_dataBaseOpen == false)
-            { 
+            {
                 Open();
             }
-            // 
+            //
             int columnCount;
             using (var command = new SQLiteCommand("PRAGMA table_info([" + tableName + "])", _dbConnection))
             {
@@ -1384,6 +1430,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, byte[][] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -1420,6 +1467,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, byte[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -1456,6 +1504,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, double[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 {
@@ -1492,6 +1541,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, int[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -1529,6 +1579,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, long[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -1565,6 +1616,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, short[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -1601,6 +1653,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, float[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -1637,6 +1690,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, bool[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 {
@@ -1673,6 +1727,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void AddColumnToDatabase(string columnName, string[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -2041,6 +2096,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, bool[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -2093,6 +2149,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, byte[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 {
@@ -2146,6 +2203,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, byte[][] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 {
@@ -2195,6 +2253,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, double[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -2247,6 +2306,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, int[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -2299,6 +2359,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, short[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -2351,6 +2412,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, long[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 {
@@ -2403,6 +2465,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, float[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
@@ -2455,6 +2518,7 @@ namespace DatabaseManager
             /// </summary>
             protected override void EditDatabaseColumn(string columnName, string[] columnData)
             {
+                ValidateIdentifier(columnName, nameof(columnName));
                 bool wasOpen = _parentDatabase.DataBaseOpen;
                 if (_parentDatabase.DataBaseOpen == false)
                 { 
