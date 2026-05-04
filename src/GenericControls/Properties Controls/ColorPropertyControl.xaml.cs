@@ -28,12 +28,19 @@ namespace GenericControls
         public ColorPropertyControl()
         {
             InitializeComponent();
+            // Per-instance default (DP default is null — see DP registration).
+            if (SelectedColor == null)
+            {
+                SelectedColor = new SolidColorBrush(Colors.Black);
+            }
         }
 
         /// <summary>
         /// Dependency property for the <see cref="SelectedColor"/> property.
         /// </summary>
-        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ColorPropertyControl), new UIPropertyMetadata(new SolidColorBrush(Colors.Black)));
+        // Default null — reference-type DP defaults are shared across all instances.
+        // Per-instance default initialized in the constructor.
+        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ColorPropertyControl), new UIPropertyMetadata(null));
         /// <summary>
         /// Gets or sets the selected color represented as a <see cref="SolidColorBrush"/>.
         /// </summary>

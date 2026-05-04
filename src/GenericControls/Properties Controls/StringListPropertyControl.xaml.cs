@@ -29,12 +29,17 @@ namespace GenericControls
         public StringListPropertyControl()
         {
             InitializeComponent();
+            if (StringList == null)
+            {
+                StringList = new List<string>();
+            }
         }
 
         /// <summary>
         /// Backing dependency property for <see cref="StringList"/>.
         /// </summary>
-        public static readonly DependencyProperty StringListProperty = DependencyProperty.Register(nameof(StringList), typeof(IList<string>), typeof(StringListPropertyControl), new PropertyMetadata(new List<string>(), StringListPropertyChanged_Callback));
+        // Default null — reference-type DP defaults are shared across all instances.
+        public static readonly DependencyProperty StringListProperty = DependencyProperty.Register(nameof(StringList), typeof(IList<string>), typeof(StringListPropertyControl), new PropertyMetadata(null, StringListPropertyChanged_Callback));
         /// <summary>
         /// Gets/sets the list of strings displayed in the control.
         /// </summary>

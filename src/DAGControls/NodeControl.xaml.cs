@@ -66,11 +66,13 @@ namespace DAGControls
         /// <summary>
         /// Identifies the <see cref="HeaderColor"/> dependency property.
         /// </summary>
+        // Default null — reference-type DP defaults are shared across all instances.
+        // Per-instance default initialized in the constructor.
         public static readonly DependencyProperty HeaderColorProperty = DependencyProperty.Register(
             nameof(HeaderColor),
             typeof(SolidColorBrush),
             typeof(NodeControl),
-            new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Red)));
+            new FrameworkPropertyMetadata((SolidColorBrush)null));
 
         /// <summary>
         /// Identifies the <see cref="NodeIcon"/> dependency property.
@@ -176,6 +178,11 @@ namespace DAGControls
         public NodeControl(NodeBase node)
         {
             InitializeComponent();
+            // Per-instance default (DP default is null — see DP registration).
+            if (HeaderColor == null)
+            {
+                HeaderColor = new SolidColorBrush(Colors.Red);
+            }
             Node = node;
 
             RefreshInConnectors();

@@ -32,6 +32,10 @@ namespace GenericControls
         public NumericPropertySelectorControl()
         {
             InitializeComponent();
+            if (NumericOptions == null)
+            {
+                NumericOptions = new List<double> { 0d, 1d, 2d, 3d, 4d, 5d };
+            }
         }
 
         /// <summary>
@@ -56,7 +60,8 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="NumericOptions"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty NumericOptionsProperty = DependencyProperty.Register(nameof(NumericOptions), typeof(IList<double>), typeof(NumericPropertySelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
+        // Default null — reference-type DP defaults are shared across all instances.
+        public static readonly DependencyProperty NumericOptionsProperty = DependencyProperty.Register(nameof(NumericOptions), typeof(IList<double>), typeof(NumericPropertySelectorControl), new PropertyMetadata(null));
         /// <summary>
         /// gets/sets the list of numeric options available for selection. 
         /// </summary>

@@ -271,7 +271,8 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="SelectedColor"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 24, 24, 25))));
+        // Default null — reference-type DP defaults are shared across all instances.
+        public static readonly DependencyProperty SelectedColorProperty = DependencyProperty.Register(nameof(SelectedColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(null));
         /// <summary>
         /// Gets or sets the brush used to render selected tick marks.
         /// </summary>
@@ -309,7 +310,8 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="FaceColor"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty FaceColorProperty = DependencyProperty.Register(nameof(FaceColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(255, 240, 240, 245))));
+        // Default null — reference-type DP defaults are shared across all instances.
+        public static readonly DependencyProperty FaceColorProperty = DependencyProperty.Register(nameof(FaceColor), typeof(SolidColorBrush), typeof(ClockControl), new UIPropertyMetadata(null));
         /// <summary>
         /// Gets or sets the brush used for coloring the face of the clock.
         /// </summary>
@@ -416,6 +418,18 @@ namespace GenericControls
 
             // This call is required by the designer.
             this.InitializeComponent();
+            // Per-instance defaults for the SelectedColor and FaceColor DPs. The DP
+            // defaults are null because a shared SolidColorBrush across every
+            // ClockControl instance would let one instance's color change leak
+            // visually to others.
+            if (SelectedColor == null)
+            {
+                SelectedColor = new SolidColorBrush(Color.FromArgb(255, 24, 24, 25));
+            }
+            if (FaceColor == null)
+            {
+                FaceColor = new SolidColorBrush(Color.FromArgb(255, 240, 240, 245));
+            }
             // 
             // Add any initialization after the InitializeComponent() call.
             _clockMajorNumberStyle = (Style)this.FindResource("ClockMajorValueStyle");

@@ -126,7 +126,11 @@ namespace NumericControls
         /// <summary>
         /// Identifies the <see cref="Series"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(new TimeSeries(), SetData));
+        // Default is null (not `new TimeSeries()`) — every reference-type DP default is
+        // a SHARED instance across all TimeSeriesTable instances; two unbound editors
+        // would mutate one another's data. Per-instance initialization happens in the
+        // constructor.
+        public static readonly DependencyProperty SeriesProperty = DependencyProperty.Register(nameof(Series), typeof(TimeSeries), typeof(TimeSeriesTable), new PropertyMetadata(null, SetData));
 
         /// <summary>
         /// Handles changes to the Series property and configures the grid for the time interval type.
@@ -291,6 +295,12 @@ namespace NumericControls
         public TimeSeriesTable()
         {
             InitializeComponent();
+            // Per-instance initialization (the SeriesProperty default is now null to
+            // avoid sharing one TimeSeries instance across every unbound editor).
+            if (Series == null)
+            {
+                Series = new TimeSeries();
+            }
             TimeSeriesDataGrid.RowType = typeof(SeriesOrdinate<DateTime, double>);
             TimeSeriesDataGrid.PasteAddsRows = true;
             TimeSeriesDataGrid.ItemsSource = _rowItems;

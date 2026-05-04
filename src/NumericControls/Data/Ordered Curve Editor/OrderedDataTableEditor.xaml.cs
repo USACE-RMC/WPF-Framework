@@ -30,12 +30,20 @@ namespace NumericControls
         public OrderedDataTableEditor()
         {
             InitializeComponent();
+            // Per-instance OrderedData (DP default is null — see DP registration).
+            if (OrderedData == null)
+            {
+                OrderedData = new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending);
+            }
         }
 
         /// <summary>
         /// Dependency property for the OrderedData property.
         /// </summary>
-        public static readonly DependencyProperty OrderedDataProperty = DependencyProperty.Register(nameof(OrderedData), typeof(OrderedPairedData), typeof(OrderedDataTableEditor), new PropertyMetadata(new OrderedPairedData(false, SortOrder.Ascending, false, SortOrder.Ascending), SetData));
+        // Default null — every reference-type DP default is a SHARED instance across
+        // all OrderedDataTableEditor instances; two unbound editors would mutate one
+        // another's data. Per-instance initialization in the constructor.
+        public static readonly DependencyProperty OrderedDataProperty = DependencyProperty.Register(nameof(OrderedData), typeof(OrderedPairedData), typeof(OrderedDataTableEditor), new PropertyMetadata(null, SetData));
 
         /// <summary>
         /// Handles changes to the OrderedData property and updates the data grid.

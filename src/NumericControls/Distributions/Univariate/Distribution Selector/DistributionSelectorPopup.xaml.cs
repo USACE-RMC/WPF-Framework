@@ -32,11 +32,18 @@ namespace NumericControls.Distributions.Univariate
         public DistributionSelectorPopup()
         {
             InitializeComponent();
+            // Per-instance default (DP default is null — see DP registration).
+            if (SelectedDistribution == null)
+            {
+                SelectedDistribution = new Normal();
+            }
         }
         /// <summary>
         /// Dependency property for the selected distribution.
         /// </summary>
-        public static readonly DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorPopup), new PropertyMetadata(new Normal(), SetDistribution));
+        // Default null — reference-type DP defaults are shared across all instances.
+        // Per-instance initialization in the constructor.
+        public static readonly DependencyProperty SelectedDistributionProperty = DependencyProperty.Register(nameof(SelectedDistribution), typeof(UnivariateDistributionBase), typeof(DistributionSelectorPopup), new PropertyMetadata(null, SetDistribution));
         /// <summary>
         /// Get and set the selected probability distribution.
         /// </summary>

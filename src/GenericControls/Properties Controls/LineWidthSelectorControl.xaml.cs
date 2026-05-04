@@ -29,6 +29,10 @@ namespace GenericControls
         public LineWidthSelectorControl()
         {
             InitializeComponent();
+            if (WidthOptions == null)
+            {
+                WidthOptions = new List<double> { 0d, 1d, 2d, 3d, 4d, 5d };
+            }
         }
 
         /// <summary>
@@ -53,7 +57,9 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="WidthOptions"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WidthOptionsProperty = DependencyProperty.Register(nameof(WidthOptions), typeof(IList<double>), typeof(LineWidthSelectorControl), new PropertyMetadata(new List<double>(new[] { 0d, 1d, 2d, 3d, 4d, 5d })));
+        // Default null — reference-type DP defaults are shared across all instances.
+        // Per-instance default initialized in the constructor.
+        public static readonly DependencyProperty WidthOptionsProperty = DependencyProperty.Register(nameof(WidthOptions), typeof(IList<double>), typeof(LineWidthSelectorControl), new PropertyMetadata(null));
         /// <summary>
         /// Gets or sets the list of selectable line width options.
         /// </summary>

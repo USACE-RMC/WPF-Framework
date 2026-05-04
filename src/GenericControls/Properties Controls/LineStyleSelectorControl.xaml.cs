@@ -30,6 +30,10 @@ namespace GenericControls
         public LineStyleSelectorControl()
         {
             InitializeComponent();
+            if (SelectedDashArray == null)
+            {
+                SelectedDashArray = new DoubleCollection();
+            }
         }
 
         /// <summary>
@@ -40,7 +44,8 @@ namespace GenericControls
         /// <summary>
         /// Identifies the <see cref="SelectedDashArray"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SelectedDashArrayProperty = DependencyProperty.Register(nameof(SelectedDashArray), typeof(DoubleCollection), typeof(LineStyleSelectorControl), new UIPropertyMetadata(new DoubleCollection()));
+        // Default null — reference-type DP defaults are shared across all instances.
+        public static readonly DependencyProperty SelectedDashArrayProperty = DependencyProperty.Register(nameof(SelectedDashArray), typeof(DoubleCollection), typeof(LineStyleSelectorControl), new UIPropertyMetadata(null));
         /// <summary>
         /// Gets or sets the currently selected dash array pattern.
         /// </summary>
