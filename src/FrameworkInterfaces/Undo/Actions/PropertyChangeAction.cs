@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace FrameworkInterfaces.Undo.Actions
@@ -32,6 +33,12 @@ namespace FrameworkInterfaces.Undo.Actions
         private object? _newValue;
         private readonly PropertyInfo _propertyInfo;
         private readonly object _syncLock = new object();
+
+        // Monotonic timestamp for the merge-window check. Captured separately from
+        // the public DateTime Timestamp so the merge logic is immune to system clock
+        // adjustments (NTP corrections, DST transitions). Stopwatch.GetTimestamp() is
+        // a high-resolution monotonic counter that never moves backward.
+        private readonly long _monotonicTicks;
 
         private static int _mergeWindowMilliseconds = 500;
 
@@ -76,6 +83,7 @@ namespace FrameworkInterfaces.Undo.Actions
             }
             _propertyInfo = propertyInfo;
 
+            _monotonicTicks = Stopwatch.GetTimestamp();
             Timestamp = DateTime.Now;
         }
 
@@ -161,9 +169,13 @@ namespace FrameworkInterfaces.Undo.Actions
             if (!ReferenceEquals(pca._target, _target)) return false;
             if (pca._propertyName != _propertyName) return false;
 
-            // Must be within the merge window
-            var timeDiff = (pca.Timestamp - Timestamp).TotalMilliseconds;
-            if (timeDiff < 0 || timeDiff > MergeWindowMilliseconds) return false;
+            // Must be within the merge window. Use the monotonic counter rather than
+            // wall-clock DateTime so NTP corrections / DST transitions don't disable
+            // legitimate merges (or, worse, accept stale ones if the clock jumps).
+            var deltaTicks = pca._monotonicTicks - _monotonicTicks;
+            if (deltaTicks < 0) return false;
+            var deltaMs = (deltaTicks * 1000.0) / Stopwatch.Frequency;
+            if (deltaMs > MergeWindowMilliseconds) return false;
 
             return true;
         }
@@ -173,7 +185,10 @@ namespace FrameworkInterfaces.Undo.Actions
         {
             if (!(other is PropertyChangeAction pca)) return this;
 
-            // Keep old value from this action, new value from other action
+            // Keep old value from this action, new value from other action.
+            // The new instance's monotonic timestamp captures "now" in its ctor, but
+            // we override Timestamp (DateTime) to match the other action so the
+            // user-visible timestamp shows the latest sub-edit.
             return new PropertyChangeAction(_target, _propertyName, _oldValue, pca._newValue)
             {
                 Timestamp = pca.Timestamp // Use the later timestamp
