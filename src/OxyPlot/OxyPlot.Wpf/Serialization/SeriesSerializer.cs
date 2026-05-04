@@ -174,6 +174,11 @@ namespace OxyPlot.Wpf.Serialization
             generalProperties.SetAttributeValue(nameof(series.Padding), tc.ConvertToInvariantString(series.Padding));
             generalProperties.SetAttributeValue(nameof(series.TrackerFormatString), series.TrackerFormatString);
             generalProperties.SetAttributeValue(nameof(series.TrackerKey), series.TrackerKey);
+            // User-settable perf opt-ins. Previously not persisted: every Save/Open
+            // would silently revert IsHitTestEnabled to true and EdgeRenderingMode to
+            // Automatic, undoing the framework's documented dense-trace perf lever.
+            generalProperties.SetAttributeValue(nameof(series.IsHitTestEnabled), series.IsHitTestEnabled.ToString());
+            generalProperties.SetAttributeValue(nameof(series.EdgeRenderingMode), series.EdgeRenderingMode.ToString());
 
             seriesElement.Add(generalProperties);
 
@@ -638,6 +643,8 @@ namespace OxyPlot.Wpf.Serialization
                 if (GetThicknessAttribute(generalElement, nameof(series.Padding), thicknessConverter, out var padding)) series.Padding = padding;
                 if (GetStringAttribute(generalElement, nameof(series.TrackerFormatString), out var trackerFormatString)) series.TrackerFormatString = trackerFormatString;
                 if (GetStringAttribute(generalElement, nameof(series.TrackerKey), out var trackerKey)) series.TrackerKey = trackerKey;
+                if (GetBooleanAttribute(generalElement, nameof(series.IsHitTestEnabled), out var isHitTestEnabled)) series.IsHitTestEnabled = isHitTestEnabled;
+                if (GetEnumAttribute(generalElement, nameof(series.EdgeRenderingMode), out OxyPlot.EdgeRenderingMode edgeRenderingMode)) series.EdgeRenderingMode = edgeRenderingMode;
             }
 
             // Deserialize XY Axis Series Properties
