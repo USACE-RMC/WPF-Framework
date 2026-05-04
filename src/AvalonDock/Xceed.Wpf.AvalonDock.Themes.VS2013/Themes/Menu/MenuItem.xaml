@@ -65,16 +65,10 @@
                                       VerticalAlignment="Center"
                                       HorizontalAlignment="Stretch"
                                     >
-                <!-- Use DynamicResource directly rather than TemplateBinding Foreground:
-                     the templated parent's Foreground is set via implicit theme style
-                     applied at runtime. If the menu instance is created before the VS2013
-                     theme dictionary has merged into the window resources, the
-                     TemplateBinding resolves to the system-default (un-themed) Foreground,
-                     which can be invisible on dark theme. -->
                 <Path x:Name="ArrowPanelPath"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Fill="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type local:ResourceKeys}, ResourceId=TextBrushKey}}"
+                        VerticalAlignment="Center" 
+                        Fill="{TemplateBinding Foreground}"
                         Data="M0,0 L0,8 L4,4 z"/>
                 </Grid>
                 <Popup IsOpen="{Binding Path=IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" 
