@@ -27,6 +27,15 @@ namespace SoftwareUpdate.Updater
         private const int AutoCloseTimeoutMs = 3000;
 
         /// <summary>
+        /// Timeout for the failure-path "press any key to exit" prompt. Longer than the
+        /// success-path timeout so users with an attached console have time to read the
+        /// error message. The same guarded WaitForKeyWithTimeout helper handles the
+        /// no-console case (when launched with CreateNoWindow=true) by returning
+        /// immediately rather than throwing InvalidOperationException.
+        /// </summary>
+        private const int FailureCloseTimeoutMs = 15000;
+
+        /// <summary>
         /// Polling interval in milliseconds when checking for user key input.
         /// A small value provides responsive key detection without excessive CPU usage.
         /// </summary>
@@ -104,8 +113,16 @@ namespace SoftwareUpdate.Updater
                 Console.WriteLine("The application may need to be reinstalled manually.");
                 Console.WriteLine("Check the log file for details.");
                 Console.WriteLine();
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey(true);
+                Console.WriteLine($"Press any key to exit (auto-closing in {FailureCloseTimeoutMs / 1000} seconds)...");
+                // Use the same guarded wait as the success path. With CreateNoWindow=true the
+                // console is not attached and Console.ReadKey throws InvalidOperationException;
+                // the helper catches that case and returns immediately rather than crashing
+                // the updater mid-failure (which previously left the install in a corrupt state
+                // with no UI feedback). Longer timeout gives users with consoles time to read.
+                if (!WaitForKeyWithTimeout(FailureCloseTimeoutMs))
+                {
+                    Console.WriteLine("Auto-closing...");
+                }
 
                 return 1;
             }
