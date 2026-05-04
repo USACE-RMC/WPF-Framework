@@ -200,7 +200,12 @@ namespace ExpressionParser
                     min = max;
                     max = temp;
                 }
-                return new ParseNodeResult(randy.Next(min, max), OutputType);
+                // Excel's RANDBETWEEN(min, max) is inclusive on both ends; .NET's
+                // Random.Next(min, max) is exclusive on max. Bump by 1 so the
+                // upper bound can occur — required for Excel-formula compatibility.
+                // Guard against int.MaxValue overflow.
+                int upperExclusive = (max == int.MaxValue) ? int.MaxValue : max + 1;
+                return new ParseNodeResult(randy.Next(min, upperExclusive), OutputType);
             }
         }
 
