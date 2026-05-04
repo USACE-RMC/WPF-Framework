@@ -93,7 +93,31 @@ namespace FrameworkInterfaces
             ParameterName = parameterName;
             Code = code;
             TimeStamp = DateTime.Now.ToString("HH:mm:ss");
+
+            // Snapshot the identity-relevant state at construction for use in
+            // GetHashCode / Equals so the hash never changes after the message is
+            // added to a HashSet/Dictionary. Without this, mutations to Code
+            // (Messenger.AddItemInternal does this for Event-type messages),
+            // Source.Name, or ParentCollection.Name change the hash bucket and
+            // break Contains/Remove on the message after it was inserted.
+            _identityCode = code;
+            if (source is IElement element)
+            {
+                _identityElementName = element.Name;
+                _identityParentCollectionName = element.ParentCollection?.Name;
+            }
+            else if (source is IProject project)
+            {
+                _identityProjectName = project.Name;
+            }
         }
+
+        // Identity snapshot fields — set once in the constructor and never changed.
+        // See ctor remarks for rationale.
+        private readonly string _identityCode;
+        private readonly string? _identityElementName;
+        private readonly string? _identityParentCollectionName;
+        private readonly string? _identityProjectName;
 
         #endregion
 
@@ -331,8 +355,17 @@ namespace FrameworkInterfaces
         {
             if (other == null) return false;
 
-            // Compare codes first (null-safe)
-            if (!string.Equals(Code, other.Code, StringComparison.Ordinal))
+            // Use the identity snapshots taken at construction time when available
+            // so two messages remain equal/unequal across mutations to Code or
+            // Source.Name. When the parameterless ctor was used (snapshot fields are
+            // null), fall back to the current property values — preserves existing
+            // semantics for that init pattern at the cost of not protecting against
+            // post-add mutations on that path.
+            var otherBasic = other as BasicMessageItem;
+
+            string? thisCode = _identityCode ?? Code;
+            string? otherCode = otherBasic != null ? (otherBasic._identityCode ?? otherBasic.Code) : other.Code;
+            if (!string.Equals(thisCode, otherCode, StringComparison.Ordinal))
             {
                 return false;
             }
@@ -343,21 +376,24 @@ namespace FrameworkInterfaces
                 return false;
             }
 
-            // Compare IElement sources
+            // Compare IElement sources via name snapshots (with fallback)
             if (Source is IElement element && other.Source is IElement otherElement)
             {
-                // Null-safe comparison of parent collection names
-                string? elementCollectionName = element.ParentCollection?.Name;
-                string? otherElementCollectionName = otherElement.ParentCollection?.Name;
+                string? thisElementName = _identityElementName ?? element.Name;
+                string? thisCollectionName = _identityParentCollectionName ?? element.ParentCollection?.Name;
+                string? otherElementName = otherBasic != null ? (otherBasic._identityElementName ?? otherElement.Name) : otherElement.Name;
+                string? otherCollectionName = otherBasic != null ? (otherBasic._identityParentCollectionName ?? otherElement.ParentCollection?.Name) : otherElement.ParentCollection?.Name;
 
-                return string.Equals(elementCollectionName, otherElementCollectionName, StringComparison.Ordinal) &&
-                       string.Equals(element.Name, otherElement.Name, StringComparison.Ordinal);
+                return string.Equals(thisCollectionName, otherCollectionName, StringComparison.Ordinal) &&
+                       string.Equals(thisElementName, otherElementName, StringComparison.Ordinal);
             }
 
-            // Compare IProject sources
+            // Compare IProject sources via name snapshot (with fallback)
             if (Source is IProject project && other.Source is IProject otherProject)
             {
-                return string.Equals(project.Name, otherProject.Name, StringComparison.Ordinal);
+                string? thisProjectName = _identityProjectName ?? project.Name;
+                string? otherProjectName = otherBasic != null ? (otherBasic._identityProjectName ?? otherProject.Name) : otherProject.Name;
+                return string.Equals(thisProjectName, otherProjectName, StringComparison.Ordinal);
             }
 
             // Source types don't match
@@ -379,22 +415,28 @@ namespace FrameworkInterfaces
             {
                 int hash = 17;
 
-                // Include code in hash
-                hash = hash * 31 + (Code?.GetHashCode() ?? 0);
+                // Hash from identity snapshots taken at construction time so the
+                // returned value is stable across the lifetime of this message —
+                // mutations to Code (Messenger.AddItemInternal) or Source.Name do
+                // not change the bucket once the message has been added to a
+                // HashSet/Dictionary. When the parameterless ctor was used, the
+                // snapshot fields are null and we fall back to current state.
+                hash = hash * 31 + ((_identityCode ?? Code)?.GetHashCode() ?? 0);
 
-                // Include source-specific information
                 if (Source is IElement element)
                 {
-                    hash = hash * 31 + (element.ParentCollection?.Name?.GetHashCode() ?? 0);
-                    hash = hash * 31 + (element.Name?.GetHashCode() ?? 0);
+                    hash = hash * 31 + ((_identityParentCollectionName ?? element.ParentCollection?.Name)?.GetHashCode() ?? 0);
+                    hash = hash * 31 + ((_identityElementName ?? element.Name)?.GetHashCode() ?? 0);
                 }
                 else if (Source is IProject project)
                 {
-                    hash = hash * 31 + (project.Name?.GetHashCode() ?? 0);
+                    hash = hash * 31 + ((_identityProjectName ?? project.Name)?.GetHashCode() ?? 0);
                 }
                 else if (Source != null)
                 {
-                    hash = hash * 31 + Source.GetHashCode();
+                    // For non-IElement/IProject sources, fall back to reference
+                    // identity (immutable for the object's lifetime).
+                    hash = hash * 31 + System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Source);
                 }
 
                 return hash;
