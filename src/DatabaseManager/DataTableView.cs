@@ -466,6 +466,19 @@ namespace DatabaseManager
         /// <param name="cellToEdit">The cell edit object containing row, column, and value.</param>
         private void ApplyCellEdit(CellEdit cellToEdit)
         {
+            // Guard against null/DBNull cell values — cellToEdit.Value.GetType()
+            // would NRE. ConvertToColumnType normally maps null to DBNull before
+            // the edit reaches this stack, so a null here is unexpected; emit a
+            // diagnostic and skip the apply rather than crashing the dispatcher.
+            // The cell retains its prior stored value; a cleared cell should be
+            // routed through ConvertToColumnType (which produces a typed default).
+            if (cellToEdit.Value is null || cellToEdit.Value is DBNull)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"[DataTableView] Skipping null/DBNull cell edit at column {cellToEdit.ColumnIndex}, row {cellToEdit.RowIndex}.");
+                return;
+            }
+
             switch (cellToEdit.Value.GetType())
             {
                 case var @case when @case == typeof(double):
@@ -3031,7 +3044,11 @@ namespace DatabaseManager
 
                 default:
                     {
-                        return new NotImplementedException();
+                        // Throw rather than RETURN an exception object — previously the
+                        // exception was used as a cell value, which crashed downstream
+                        // type-validation with a stack trace far from the root cause.
+                        throw new NotImplementedException(
+                            $"GetDefaultFromType: no default value defined for column type '{columnType}'.");
                     }
             }
         }
