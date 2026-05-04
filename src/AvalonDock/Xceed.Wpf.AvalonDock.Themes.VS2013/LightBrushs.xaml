@@ -31,7 +31,7 @@
     
     <!--AccentColor -->
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabHoveredText}"
-                     Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" options:Freeze="true" />
+                     Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
 
     <!-- Document Well : Overflow Button -->
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellOverflowButtonDefaultGlyph}" Color="#717171" options:Freeze="true" />
@@ -156,7 +156,7 @@
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DockingButtonBackgroundBrushKey}"
                      Color="#20000000" options:Freeze="true" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DockingButtonForegroundBrushKey}"
-                     Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" options:Freeze="true" />
+                     Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrusKey}"
                      Color="Black" options:Freeze="true" />
 
@@ -168,7 +168,7 @@
 
     <!-- Preview Box is the highlighted rectangle that shows when a drop area in a window is indicated -->
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.PreviewBoxBorderBrushKey}"
-                     Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" options:Freeze="true" />
+                     Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.PreviewBoxBackgroundBrushKey}"
                      Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}"
                      Opacity="0.5"
