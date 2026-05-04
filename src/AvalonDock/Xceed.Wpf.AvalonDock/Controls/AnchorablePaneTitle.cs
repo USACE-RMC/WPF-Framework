@@ -170,9 +170,11 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
         if( attachFloatingWindow )
         {
-          //the pane is hosted inside a floating window that contains only an anchorable pane so drag the floating window itself
-          var floatingWndControl = Model.Root.Manager.FloatingWindows.Single( fwc => fwc.Model == parentFloatingWindow );
-          floatingWndControl.AttachDrag( false );
+          //the pane is hosted inside a floating window that contains only an anchorable pane so drag the floating window itself.
+          // FirstOrDefault rather than Single — if the FW was just removed (race during
+          // tear-down) Single throws InvalidOperationException; silently no-op instead.
+          var floatingWndControl = Model.Root.Manager.FloatingWindows.FirstOrDefault( fwc => fwc.Model == parentFloatingWindow );
+          floatingWndControl?.AttachDrag( false );
         }
         else
           _isMouseDown = true;//normal drag

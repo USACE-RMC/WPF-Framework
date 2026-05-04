@@ -272,14 +272,15 @@ namespace Xceed.Wpf.AvalonDock.Controls
         root.CollectGarbage();
       }
 
-      if( this.Content != null )
+      // The HwndSource hook is installed in OnLoaded regardless of Content state,
+      // so cleanup must happen unconditionally — gating on Content!=null leaked
+      // the native hook (and the managed callback closure that pins this) when
+      // Content was cleared before close.
+      if( _hwndSrc != null )
       {
-        if( _hwndSrc != null )
-        {
-          _hwndSrc.RemoveHook( _hwndSrcHook );
-          _hwndSrc.Dispose();
-          _hwndSrc = null;
-        }
+        _hwndSrc.RemoveHook( _hwndSrcHook );
+        _hwndSrc.Dispose();
+        _hwndSrc = null;
       }
 
       base.OnClosed( e );
@@ -385,7 +386,10 @@ namespace Xceed.Wpf.AvalonDock.Controls
         }
       }
 
-      var manager = _model.Root.Manager;
+      // _model can be null and its Root/Manager can be null during shutdown
+      // races. Walk defensively, mirroring OnKeyDown / OnPreviewKeyDown / BringFocusOnDockingManager.
+      var manager = _model?.Root?.Manager;
+      if( manager == null ) return;
       if( manager.Theme != null )
       {
         if( manager.Theme is DictionaryTheme )
@@ -632,7 +636,13 @@ namespace Xceed.Wpf.AvalonDock.Controls
     {
       this.Loaded -= new RoutedEventHandler( OnLoaded );
 
-      this.SetParentToMainWindowOf( Model.Root.Manager );
+      // Defensive walk — Model/Root/Manager can be null during a shutdown race
+      // where the manager unloaded between window creation and OnLoaded.
+      var manager = Model?.Root?.Manager;
+      if( manager != null )
+      {
+        this.SetParentToMainWindowOf( manager );
+      }
 
       _hwndSrc = HwndSource.FromDependencyObject( this ) as HwndSource;
       _hwndSrcHook = new HwndSourceHook( FilterMessage );

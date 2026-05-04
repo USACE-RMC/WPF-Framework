@@ -128,8 +128,12 @@ namespace Xceed.Wpf.AvalonDock.Layout
         if( !IsSinglePane )
           return null;
 
-        var singlePane = RootPanel.Descendents().OfType<LayoutAnchorablePane>().Single( p => p.IsVisible );
-        singlePane.UpdateIsDirectlyHostedInFloatingWindow();
+        // SingleOrDefault rather than Single — IsSinglePane uses OfType<ILayoutAnchorablePane>
+        // (interface) for its predicate, but this lookup uses OfType<LayoutAnchorablePane>
+        // (concrete). If a third-party adds an ILayoutAnchorablePane that isn't a
+        // LayoutAnchorablePane, the guard returns true while Single throws.
+        var singlePane = RootPanel.Descendents().OfType<LayoutAnchorablePane>().SingleOrDefault( p => p.IsVisible );
+        singlePane?.UpdateIsDirectlyHostedInFloatingWindow();
         return singlePane;
       }
     }

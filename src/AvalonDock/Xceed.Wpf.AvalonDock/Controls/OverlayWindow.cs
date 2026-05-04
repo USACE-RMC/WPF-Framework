@@ -104,9 +104,17 @@ namespace Xceed.Wpf.AvalonDock.Controls
       _gridDocumentPaneDropTargets = GetTemplateChild( "PART_DocumentPaneDropTargets" ) as Grid;
       _gridDocumentPaneFullDropTargets = GetTemplateChild( "PART_DocumentPaneFullDropTargets" ) as Grid;
 
-      _gridDockingManagerDropTargets.Visibility = System.Windows.Visibility.Hidden;
-      _gridAnchorablePaneDropTargets.Visibility = System.Windows.Visibility.Hidden;
-      _gridDocumentPaneDropTargets.Visibility = System.Windows.Visibility.Hidden;
+      // Each PART_* GetTemplateChild returns null if the control's template doesn't
+      // include that named element (e.g. a custom non-VS2013 theme). Guard each
+      // mirror the existing _gridDocumentPaneFullDropTargets pattern below — without
+      // this, a custom theme that omits any of these PARTs causes an NRE on first
+      // template apply.
+      if( _gridDockingManagerDropTargets != null )
+        _gridDockingManagerDropTargets.Visibility = System.Windows.Visibility.Hidden;
+      if( _gridAnchorablePaneDropTargets != null )
+        _gridAnchorablePaneDropTargets.Visibility = System.Windows.Visibility.Hidden;
+      if( _gridDocumentPaneDropTargets != null )
+        _gridDocumentPaneDropTargets.Visibility = System.Windows.Visibility.Hidden;
       if( _gridDocumentPaneFullDropTargets != null )
         _gridDocumentPaneFullDropTargets.Visibility = System.Windows.Visibility.Hidden;
 
@@ -750,7 +758,7 @@ namespace Xceed.Wpf.AvalonDock.Controls
     void IOverlayWindow.DragEnter( IDropTarget target )
     {
       var previewBoxPath = target.GetPreviewPath( this, _floatingWindow.Model as LayoutFloatingWindow );
-      if( previewBoxPath != null )
+      if( previewBoxPath != null && _previewBox != null )
       {
         _previewBox.Data = previewBoxPath;
         _previewBox.Visibility = System.Windows.Visibility.Visible;
@@ -759,7 +767,10 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     void IOverlayWindow.DragLeave( IDropTarget target )
     {
-      _previewBox.Visibility = System.Windows.Visibility.Hidden;
+      // _previewBox can be null if the control template doesn't include
+      // PART_PreviewBox (custom non-VS2013 theme).
+      if( _previewBox != null )
+        _previewBox.Visibility = System.Windows.Visibility.Hidden;
     }
 
     void IOverlayWindow.DragDrop( IDropTarget target )

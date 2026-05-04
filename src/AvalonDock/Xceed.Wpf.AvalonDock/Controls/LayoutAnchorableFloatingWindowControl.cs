@@ -145,7 +145,17 @@ namespace Xceed.Wpf.AvalonDock.Controls
         case Win32Helper.WM_NCLBUTTONDOWN: //Left button down on title -> start dragging over docking manager
           if( wParam.ToInt32() == Win32Helper.HT_CAPTION )
           {
-            _model.Descendents().OfType<LayoutAnchorablePane>().First( p => p.ChildrenCount > 0 && p.SelectedContent != null ).SelectedContent.IsActive = true;
+            // FirstOrDefault rather than First — when no LayoutAnchorablePane has children
+            // with non-null SelectedContent (transient state during selection change, or
+            // all panes just emptied), First throws InvalidOperationException and brings
+            // down the dispatcher. Title-bar click is a UX nicety; silently no-op when
+            // there's no candidate.
+            var pane = _model.Descendents().OfType<LayoutAnchorablePane>()
+                .FirstOrDefault( p => p.ChildrenCount > 0 && p.SelectedContent != null );
+            if( pane != null )
+            {
+              pane.SelectedContent.IsActive = true;
+            }
             handled = true;
           }
           break;

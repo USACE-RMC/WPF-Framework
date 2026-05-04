@@ -3226,7 +3226,11 @@ namespace Xceed.Wpf.AvalonDock
 
     void IOverlayWindowHost.HideOverlayWindow()
     {
+      // _overlayWindow can be null if Unloaded fired and DestroyOverlayWindow
+      // ran while a drag was still in progress. Guard so the hide path is a
+      // no-op rather than NRE'ing on the dispatcher.
       _areas = null;
+      if( _overlayWindow == null ) return;
       _overlayWindow.Owner = null;
       _overlayWindow.HideDropTargets();
     }

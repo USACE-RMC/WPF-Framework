@@ -43,7 +43,10 @@ namespace Xceed.Wpf.AvalonDock.Controls
 
     protected override void OnOpened( System.Windows.RoutedEventArgs e )
     {
-      BindingOperations.GetBindingExpression( this, ItemsSourceProperty ).UpdateTarget();
+      // GetBindingExpression returns null when ItemsSource has no binding (set
+      // via direct assignment of an enumerable rather than via {Binding}). The
+      // unguarded .UpdateTarget would NRE on context-menu open in that case.
+      BindingOperations.GetBindingExpression( this, ItemsSourceProperty )?.UpdateTarget();
 
       base.OnOpened( e );
     }
