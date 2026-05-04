@@ -135,6 +135,17 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         private readonly Action? _onActionRecorded;
 
+        /// <summary>
+        /// Number of currently active <see cref="RecordingSuspension"/> scopes. Used to
+        /// support nested SuspendRecording calls correctly: only the outermost
+        /// transition (0→1) actually unsubscribes from PropertyChanged, and only the
+        /// outermost dispose (1→0) re-subscribes. Without this, two nested suspensions
+        /// would unsubscribe once but re-subscribe twice on dispose, leaving the
+        /// handler subscribed twice and recording every property change as TWO
+        /// undo actions.
+        /// </summary>
+        private int _suspendCount;
+
         #endregion
 
         #region Constructor
@@ -568,8 +579,13 @@ namespace FrameworkInterfaces.Undo
             public RecordingSuspension(UndoableStateBridge bridge)
             {
                 _bridge = bridge;
-                // Unsubscribe from events during suspension
-                _bridge._source.PropertyChanged -= _bridge.OnPropertyChanged;
+                // Reference-counted: only the outermost suspension actually unsubscribes.
+                // Inner SuspendRecording calls just bump the counter so a Dispose pair
+                // does not double-subscribe on exit.
+                if (System.Threading.Interlocked.Increment(ref _bridge._suspendCount) == 1)
+                {
+                    _bridge._source.PropertyChanged -= _bridge.OnPropertyChanged;
+                }
             }
 
             /// <summary>
@@ -587,13 +603,25 @@ namespace FrameworkInterfaces.Undo
                     _disposed = true;
                     GC.SuppressFinalize(this);
 
-                    if (_bridge.IsDisposed) return;
+                    if (_bridge.IsDisposed)
+                    {
+                        // Bridge is gone — decrement the counter for accounting but
+                        // skip the shadow-value refresh and re-subscription (would
+                        // resurrect a handler on a disposed bridge).
+                        System.Threading.Interlocked.Decrement(ref _bridge._suspendCount);
+                        return;
+                    }
 
-                    // Update shadow values to current state
-                    _bridge.UpdateShadowValues();
+                    // Reference-counted: only the outermost dispose (1→0) actually
+                    // re-subscribes. Inner disposes just decrement the counter.
+                    if (System.Threading.Interlocked.Decrement(ref _bridge._suspendCount) == 0)
+                    {
+                        // Update shadow values to current state
+                        _bridge.UpdateShadowValues();
 
-                    // Re-subscribe to events
-                    _bridge._source.PropertyChanged += _bridge.OnPropertyChanged;
+                        // Re-subscribe to events
+                        _bridge._source.PropertyChanged += _bridge.OnPropertyChanged;
+                    }
                 }
             }
         }
