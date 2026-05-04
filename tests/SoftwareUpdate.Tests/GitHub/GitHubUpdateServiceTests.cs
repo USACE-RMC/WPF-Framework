@@ -353,10 +353,16 @@ namespace SoftwareUpdate.Tests.GitHub
         }
 
         /// <summary>
-        /// Verifies that DownloadUpdateAsync returns a failed result when the download URL is missing.
+        /// Verifies that DownloadUpdateAsync rejects calls made from the Idle state with an
+        /// <see cref="InvalidOperationException"/>. Per the F-006 state-machine contract, callers
+        /// must run a successful <see cref="GitHubUpdateService.CheckForUpdateAsync"/> first so
+        /// the service is in the <see cref="UpdateState.UpdateAvailable"/> state before download.
+        /// Previously this test asserted that a malformed UpdateInfo (null DownloadUrl) returned
+        /// a failed result; that path is now unreachable because the state guard fires first,
+        /// regardless of the supplied UpdateInfo's contents.
         /// </summary>
         [Fact]
-        public async Task DownloadUpdateAsync_MissingDownloadUrl_ReturnsFailedResult()
+        public async Task DownloadUpdateAsync_FromIdleState_ThrowsInvalidOperationException()
         {
             var options = CreateValidOptions();
             _service = new GitHubUpdateService(options);
@@ -364,13 +370,11 @@ namespace SoftwareUpdate.Tests.GitHub
             var update = new UpdateInfo
             {
                 AssetName = "valid.zip",
-                DownloadUrl = null // Missing URL
+                DownloadUrl = "https://example.com/valid.zip"
             };
 
-            // This should fail gracefully with a result, not throw
-            var result = await _service.DownloadUpdateAsync(update);
-
-            Assert.False(result.Success);
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                _service.DownloadUpdateAsync(update));
         }
 
         #endregion
