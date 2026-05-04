@@ -484,6 +484,29 @@ namespace Xceed.Wpf.AvalonDock.Controls
           this.Resources.MergedDictionaries.Add( new ResourceDictionary() { Source = _manager.Theme.GetResourceUri() } );
         }
       }
+      else
+      {
+        // When Theme property is not set, propagate theme dictionaries from the
+        // DockingManager or its parent Window. FrameworkUI adds VS2013 theme
+        // dictionaries to MainWindow.Resources, not to the DockingManager. Since
+        // NavigatorWindow is a separate Win32 window that does not inherit from
+        // the main window's visual tree, without this fallback it falls back to
+        // base generic.xaml (system grey). Mirrors LayoutFloatingWindowControl.UpdateThemeResources.
+        var sourceDict = _manager.Resources.MergedDictionaries.Count > 0
+            ? _manager.Resources.MergedDictionaries
+            : Window.GetWindow( _manager )?.Resources.MergedDictionaries;
+
+        if( sourceDict != null )
+        {
+          foreach( var rd in sourceDict )
+          {
+            if( !this.Resources.MergedDictionaries.Contains( rd ) )
+            {
+              this.Resources.MergedDictionaries.Add( rd );
+            }
+          }
+        }
+      }
     }
 
     internal void SelectNextDocument()

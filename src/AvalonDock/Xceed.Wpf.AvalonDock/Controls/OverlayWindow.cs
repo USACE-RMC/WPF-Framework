@@ -184,6 +184,34 @@ namespace Xceed.Wpf.AvalonDock.Controls
           Resources.MergedDictionaries.Add( new ResourceDictionary() { Source = _host.Manager.Theme.GetResourceUri() } );
         }
       }
+      else
+      {
+        // When Theme property is not set, propagate theme dictionaries from the
+        // DockingManager or its parent Window. FrameworkUI adds VS2013 theme
+        // dictionaries to MainWindow.Resources, not to the DockingManager. The
+        // OverlayWindow is a separate Win32 window that does not inherit from
+        // the main window's visual tree, so without this fallback the dock-drop
+        // overlay renders system-grey instead of themed. Mirrors
+        // LayoutFloatingWindowControl.UpdateThemeResources.
+        var manager = _host?.Manager;
+        if( manager != null )
+        {
+          var sourceDict = manager.Resources.MergedDictionaries.Count > 0
+              ? manager.Resources.MergedDictionaries
+              : Window.GetWindow( manager )?.Resources.MergedDictionaries;
+
+          if( sourceDict != null )
+          {
+            foreach( var rd in sourceDict )
+            {
+              if( !Resources.MergedDictionaries.Contains( rd ) )
+              {
+                Resources.MergedDictionaries.Add( rd );
+              }
+            }
+          }
+        }
+      }
     }
 
     internal void EnableDropTargets()
