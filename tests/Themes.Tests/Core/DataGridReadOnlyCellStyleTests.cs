@@ -13,6 +13,46 @@ public class DataGridReadOnlyCellStyleTests
     private static readonly XNamespace XamlNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
 
     /// <summary>
+    /// Verifies selectable cell helper styles inherit the shared selectable base style.
+    /// </summary>
+    /// <param name="styleKey">The selectable cell style key.</param>
+    [Theory]
+    [InlineData("Left_CellStyle")]
+    [InlineData("Center_CellStyle")]
+    [InlineData("Center_ReadOnly_CellStyle")]
+    [InlineData("Right_CellStyle")]
+    [InlineData("Right_ReadOnly_CellStyle")]
+    [InlineData("DataGridCellStyle")]
+    public void SelectableCellStyles_InheritSelectableBaseStyle(string styleKey)
+    {
+        XElement style = GetStyle(styleKey);
+
+        Assert.Equal("{StaticResource SelectableDataGridCellStyle}", (string?)style.Attribute("BasedOn"));
+    }
+
+    /// <summary>
+    /// Verifies the selectable cell base style uses theme resources for active and inactive selection.
+    /// </summary>
+    [Fact]
+    public void SelectableDataGridCellStyle_UsesThemeSelectionResources()
+    {
+        XElement style = GetStyle("SelectableDataGridCellStyle");
+
+        Assert.Contains(
+            style.Descendants(PresentationNamespace + "Setter"),
+            setter => HasSetter(setter, "Background", "{DynamicResource DataGrid.Row.Selection.Background}"));
+        Assert.Contains(
+            style.Descendants(PresentationNamespace + "Setter"),
+            setter => HasSetter(setter, "Foreground", "{DynamicResource DataGrid.Row.Selection.Foreground}"));
+        Assert.Contains(
+            style.Descendants(PresentationNamespace + "Setter"),
+            setter => HasSetter(setter, "Background", "{DynamicResource DataGrid.Row.Selection.Inactive.Background}"));
+        Assert.Contains(
+            style.Descendants(PresentationNamespace + "Setter"),
+            setter => HasSetter(setter, "Foreground", "{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"));
+    }
+
+    /// <summary>
     /// Verifies read-only cell styles remain selectable by mouse.
     /// </summary>
     /// <param name="styleKey">The read-only cell style key.</param>

@@ -438,29 +438,88 @@
     <!-- DATAGRID CELL STYLES (Backward Compatible)                                   -->
     <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 
+    <!-- Selectable DataGrid Cell Style shared by grid-level and manual column styles -->
+    <Style x:Key="SelectableDataGridCellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <!-- Custom template to prevent default WPF template from using SystemColors for inactive selection -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                    <ControlTemplate.Resources>
+                        <!-- Implicit TextBox style for editing cells. WPF DataGrid creates the
+                             editing TextBox outside the visual tree, so it does not reliably
+                             inherit the application-level implicit TextBox style. Defining it
+                             here ensures the editing TextBox uses theme-aware colors instead of
+                             the WPF default white background. Columns with an explicit
+                             EditingElementStyle override this implicit style. -->
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowText}"/>
+                            <Setter Property="CaretBrush" Value="{DynamicResource TextBox.Caret}"/>
+                            <Setter Property="SelectionBrush" Value="{DynamicResource TextBox.Selection.Background}"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    </ControlTemplate.Resources>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <!-- Cell selection highlighting for extended selection mode -->
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+            </Trigger>
+            <!-- Inactive selection (when DataGrid loses focus) -->
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True"/>
+                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
+            </MultiTrigger>
+            <!-- Focus border for keyboard navigation -->
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- Left-aligned Cell Style -->
-    <Style x:Key="Left_CellStyle" TargetType="{x:Type DataGridCell}">
+    <Style x:Key="Left_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}">
         <Setter Property="TextBlock.TextAlignment" Value="Left"/>
     </Style>
 
     <!-- Center-aligned Cell Style -->
-    <Style x:Key="Center_CellStyle" TargetType="{x:Type DataGridCell}">
+    <Style x:Key="Center_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}">
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
     </Style>
 
     <!-- Center-aligned Read-Only Cell Style -->
-    <Style x:Key="Center_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
+    <Style x:Key="Center_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}">
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
     </Style>
 
     <!-- Right-aligned Cell Style -->
-    <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
+    <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}">
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
     </Style>
 
     <!-- Right-aligned Read-Only Cell Style -->
-    <Style x:Key="Right_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
+    <Style x:Key="Right_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}">
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
     </Style>
@@ -789,63 +848,7 @@
     </Style>
 
     <!-- DataGrid Cell Style for CopyPasteDataGrid -->
-    <Style x:Key="CopyPasteDataGridCellStyle" TargetType="{x:Type DataGridCell}">
-        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <!-- Custom template to prevent default WPF template from using SystemColors for inactive selection -->
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DataGridCell}">
-                    <ControlTemplate.Resources>
-                        <!-- Implicit TextBox style for editing cells. WPF DataGrid creates the
-                             editing TextBox outside the visual tree, so it does not reliably
-                             inherit the application-level implicit TextBox style. Defining it
-                             here ensures the editing TextBox uses theme-aware colors instead of
-                             the WPF default white background. Columns with an explicit
-                             EditingElementStyle override this implicit style. -->
-                        <Style TargetType="{x:Type TextBox}">
-                            <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowText}"/>
-                            <Setter Property="CaretBrush" Value="{DynamicResource TextBox.Caret}"/>
-                            <Setter Property="SelectionBrush" Value="{DynamicResource TextBox.Selection.Background}"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        </Style>
-                    </ControlTemplate.Resources>
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="True">
-                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <!-- Cell selection highlighting for extended selection mode -->
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
-                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
-            </Trigger>
-            <!-- Inactive selection (when DataGrid loses focus) -->
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsSelected" Value="True"/>
-                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
-                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
-            </MultiTrigger>
-            <!-- Focus border for keyboard navigation -->
-            <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
+    <Style x:Key="CopyPasteDataGridCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}"/>
 
     <Style x:Key="CopyPasteDataGridStyle" TargetType="{x:Type local:CopyPasteDataGrid}">
         <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
@@ -914,63 +917,7 @@
     </Style>
 
     <!-- DataGrid Cell Style for ValidationDataGrid (includes error handling) -->
-    <Style x:Key="ValidationDataGridCellStyle" TargetType="{x:Type DataGridCell}">
-        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <!-- Custom template to prevent default WPF template from using SystemColors for inactive selection -->
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DataGridCell}">
-                    <ControlTemplate.Resources>
-                        <!-- Implicit TextBox style for editing cells. WPF DataGrid creates the
-                             editing TextBox outside the visual tree, so it does not reliably
-                             inherit the application-level implicit TextBox style. Defining it
-                             here ensures the editing TextBox uses theme-aware colors instead of
-                             the WPF default white background. Columns with an explicit
-                             EditingElementStyle override this implicit style. -->
-                        <Style TargetType="{x:Type TextBox}">
-                            <Setter Property="Background" Value="{DynamicResource TextBox.Static.Background}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowText}"/>
-                            <Setter Property="CaretBrush" Value="{DynamicResource TextBox.Caret}"/>
-                            <Setter Property="SelectionBrush" Value="{DynamicResource TextBox.Selection.Background}"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        </Style>
-                    </ControlTemplate.Resources>
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="True">
-                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <!-- Cell selection highlighting for extended selection mode -->
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
-                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
-            </Trigger>
-            <!-- Inactive selection (when DataGrid loses focus) -->
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsSelected" Value="True"/>
-                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
-                <Setter Property="Foreground" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
-            </MultiTrigger>
-            <!-- Focus border for keyboard navigation -->
-            <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                <Setter Property="BorderBrush" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
-                <Setter Property="BorderThickness" Value="1"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
+    <Style x:Key="ValidationDataGridCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource SelectableDataGridCellStyle}"/>
 
     <Style x:Key="ValidationDataGridStyle" TargetType="{x:Type local:ValidationDataGrid}">
         <Setter Property="Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
