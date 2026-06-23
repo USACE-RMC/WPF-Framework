@@ -451,12 +451,18 @@
     <!-- Center-aligned Read-Only Cell Style -->
     <Style x:Key="Center_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-        <Setter Property="TextBlock.Background" Value="{DynamicResource EnvironmentWindowBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
     </Style>
 
     <!-- Right-aligned Cell Style -->
     <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+    </Style>
+
+    <!-- Right-aligned Read-Only Cell Style -->
+    <Style x:Key="Right_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
+        <Setter Property="TextBlock.TextAlignment" Value="Right"/>
+        <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
     </Style>
 
     <!-- Disabled Cell Style -->

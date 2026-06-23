@@ -25,7 +25,6 @@
     <Style x:Key="Center_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
-        <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 
     <Style x:Key="Right_CellStyle" TargetType="{x:Type DataGridCell}">
@@ -35,7 +34,6 @@
     <Style x:Key="Right_ReadOnly_CellStyle" TargetType="{x:Type DataGridCell}">
         <Setter Property="TextBlock.TextAlignment" Value="Right"/>
         <Setter Property="Foreground" Value="{DynamicResource EnvironmentToolWindowDisabledText}"/>
-        <Setter Property="IsHitTestVisible" Value="False"/>
     </Style>
 
     <Style x:Key="Disabled_CellStyle" TargetType="{x:Type DataGridCell}">
