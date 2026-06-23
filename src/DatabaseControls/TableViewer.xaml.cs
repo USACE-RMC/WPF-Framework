@@ -180,6 +180,12 @@ namespace DatabaseControls
             nameof(SelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromArgb(240, 0, 120, 215)), OnVisualPropertyChanged));
 
         /// <summary>
+        /// Identifies the <see cref="InactiveSelectedColor"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty InactiveSelectedColorProperty = DependencyProperty.Register(
+            nameof(InactiveSelectedColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromRgb(196, 213, 240)), OnVisualPropertyChanged));
+
+        /// <summary>
         /// Identifies the <see cref="ActiveCellForeground"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ActiveCellForegroundProperty = DependencyProperty.Register(
@@ -202,6 +208,12 @@ namespace DatabaseControls
         /// </summary>
         public static readonly DependencyProperty SelectedForegroundColorProperty = DependencyProperty.Register(
             nameof(SelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Colors.White), OnVisualPropertyChanged));
+
+        /// <summary>
+        /// Identifies the <see cref="InactiveSelectedForegroundColor"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty InactiveSelectedForegroundColorProperty = DependencyProperty.Register(
+            nameof(InactiveSelectedForegroundColor), typeof(Brush), typeof(TableViewer), new UIPropertyMetadata(new SolidColorBrush(Color.FromRgb(30, 30, 30)), OnVisualPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="DeSelectedForegroundColor"/> dependency property.
@@ -452,6 +464,16 @@ namespace DatabaseControls
         }
 
         /// <summary>
+        /// Gets or sets the background color for selected cells when table selection is inactive.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used to fill inactive selected cells.</value>
+        public Brush InactiveSelectedColor
+        {
+            get => (Brush)GetValue(InactiveSelectedColorProperty);
+            set => SetValue(InactiveSelectedColorProperty, value);
+        }
+
+        /// <summary>
         /// Gets or sets the foreground color for the active cell.
         /// </summary>
         /// <value>The <see cref="Brush"/> used for the active cell's text.</value>
@@ -489,6 +511,16 @@ namespace DatabaseControls
         {
             get => (Brush)GetValue(SelectedForegroundColorProperty);
             set => SetValue(SelectedForegroundColorProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the foreground color for selected cells when table selection is inactive.
+        /// </summary>
+        /// <value>The <see cref="Brush"/> used for inactive selected cell text.</value>
+        public Brush InactiveSelectedForegroundColor
+        {
+            get => (Brush)GetValue(InactiveSelectedForegroundColorProperty);
+            set => SetValue(InactiveSelectedForegroundColorProperty, value);
         }
 
         /// <summary>
@@ -639,6 +671,8 @@ namespace DatabaseControls
             _cellEditTextBox.LostFocus += EditTextLostFocus;
             EditorToolbar.IsEnabled = false;
             GotFocus += (_, _) => UpdatePasteButtonState();
+            GridPanel.GotKeyboardFocus += TableSelectionFocusChanged;
+            GridPanel.LostKeyboardFocus += TableSelectionFocusChanged;
         }
 
         #endregion
@@ -685,6 +719,16 @@ namespace DatabaseControls
                     tv.UpdateRowHeaders();
                 }, System.Windows.Threading.DispatcherPriority.Render);
             }
+        }
+
+        /// <summary>
+        /// Handles table body keyboard focus changes by repainting selected cells with active or inactive selection brushes.
+        /// </summary>
+        /// <param name="sender">The source of the keyboard focus change.</param>
+        /// <param name="e">The keyboard focus event data.</param>
+        private void TableSelectionFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            RefreshSelectionVisuals();
         }
 
         private static void LoadView(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1714,9 +1758,11 @@ namespace DatabaseControls
         private void SelectCell(int columnIndex, int rowIndex)
         {
             var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
-            cell.Background = SelectedColor;
-            cell.Foreground = SelectedForegroundColor;
+            bool selectionActive = IsTableSelectionActive();
+            cell.Background = selectionActive ? SelectedColor : InactiveSelectedColor;
+            cell.Foreground = selectionActive ? SelectedForegroundColor : InactiveSelectedForegroundColor;
         }
+
         private void DeSelectCell(int columnIndex, int rowIndex)
         {
             var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
@@ -1726,6 +1772,7 @@ namespace DatabaseControls
 
         private void SetActiveCell()
         {
+            if (!IsTableSelectionActive()) return;
             if (GridPanel.Children.Count == 0) return;
             int firstRowTableIndex = (int)Math.Floor(VerticalScrollbar.Value);
             int lastRowTableIndex = firstRowTableIndex + _visibleRowCount - 1;
@@ -1736,6 +1783,26 @@ namespace DatabaseControls
                 cell.Background = ActiveCellBackground;
                 cell.Foreground = ActiveCellForeground;
             }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the table selection should use active selection colors.
+        /// </summary>
+        /// <returns><c>true</c> when the table body or in-place editor contains keyboard focus; otherwise, <c>false</c>.</returns>
+        private bool IsTableSelectionActive()
+        {
+            return GridPanel.IsKeyboardFocusWithin || _cellEditTextBox.IsKeyboardFocusWithin;
+        }
+
+        /// <summary>
+        /// Repaints visible selection cells without changing the selected row, column, or cell collections.
+        /// </summary>
+        private void RefreshSelectionVisuals()
+        {
+            if (DataView == null || GridPanel.Children.Count == 0) return;
+
+            DeSelectAllCells();
+            SetSelectedCells();
         }
 
         /// <summary>
@@ -2346,6 +2413,7 @@ namespace DatabaseControls
         /// </summary>
         private void RowsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GridPanel.Focus();
             if (_selectedRowsOnly)
             {
                 _mouseSelectionMode = SelectionMode.None;
@@ -2509,6 +2577,7 @@ namespace DatabaseControls
         /// </summary>
         private void RowsGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
+            GridPanel.Focus();
             int dataRowIndex = GetDataRowIndex(GetTableRowIndex(e.GetPosition(GridPanel)));
 
             if (_selectedDataRowIndices.BinarySearch(dataRowIndex) < 0)
@@ -2550,6 +2619,7 @@ namespace DatabaseControls
         /// </summary>
         private void ColumnsGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GridPanel.Focus();
             AllCellsSelected = false;
             if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl) &&
                 !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift) && !_selectedRowsOnly)
@@ -2710,6 +2780,7 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void SelectAllLeftMouseDown(object sender, MouseButtonEventArgs e)
         {
+            GridPanel.Focus();
             _mouseSelectionMode = SelectionMode.All;
         }
 
@@ -2978,6 +3049,7 @@ namespace DatabaseControls
         /// <param name="e">The event data.</param>
         private void GridPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GridPanel.Focus();
             Point gridPosition = e.GetPosition(GridPanel);
 
             if (_selectedRowsOnly)
@@ -3214,6 +3286,7 @@ namespace DatabaseControls
 
         private void CreateColumnContextMenu(object sender, MouseButtonEventArgs e)
         {
+            GridPanel.Focus();
             if (DataView.NumberOfRows == 0) return;
 
             Point gridPosition = e.GetPosition(GridPanel);

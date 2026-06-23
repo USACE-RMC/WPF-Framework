@@ -194,6 +194,8 @@
         <!-- Selection Colors -->
         <Setter Property="SelectedColor" Value="{DynamicResource DataGrid.Row.Selection.Background}"/>
         <Setter Property="SelectedForegroundColor" Value="{DynamicResource DataGrid.Row.Selection.Foreground}"/>
+        <Setter Property="InactiveSelectedColor" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Background}"/>
+        <Setter Property="InactiveSelectedForegroundColor" Value="{DynamicResource DataGrid.Row.Selection.Inactive.Foreground}"/>
         <Setter Property="DeSelectedColor" Value="Transparent"/>
         <Setter Property="DeSelectedForegroundColor" Value="{DynamicResource DataGrid.Static.Foreground}"/>
         <Setter Property="ActiveCellBackground" Value="{DynamicResource DataGrid.Cell.Focus.Border}"/>
