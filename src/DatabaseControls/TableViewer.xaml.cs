@@ -671,6 +671,7 @@ namespace DatabaseControls
             _cellEditTextBox.LostFocus += EditTextLostFocus;
             EditorToolbar.IsEnabled = false;
             GotFocus += (_, _) => UpdatePasteButtonState();
+            IsKeyboardFocusWithinChanged += TableSelectionFocusWithinChanged;
             GridPanel.GotKeyboardFocus += TableSelectionFocusChanged;
             GridPanel.LostKeyboardFocus += TableSelectionFocusChanged;
         }
@@ -727,6 +728,16 @@ namespace DatabaseControls
         /// <param name="sender">The source of the keyboard focus change.</param>
         /// <param name="e">The keyboard focus event data.</param>
         private void TableSelectionFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            RefreshSelectionVisuals();
+        }
+
+        /// <summary>
+        /// Handles control-wide keyboard focus changes by repainting selected cells with active or inactive selection brushes.
+        /// </summary>
+        /// <param name="sender">The source of the keyboard focus change.</param>
+        /// <param name="e">The focus-within property change data.</param>
+        private void TableSelectionFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             RefreshSelectionVisuals();
         }
@@ -1791,7 +1802,10 @@ namespace DatabaseControls
         /// <returns><c>true</c> when the table body or in-place editor contains keyboard focus; otherwise, <c>false</c>.</returns>
         private bool IsTableSelectionActive()
         {
-            return GridPanel.IsKeyboardFocusWithin || _cellEditTextBox.IsKeyboardFocusWithin;
+            return IsKeyboardFocusWithin
+                || GridPanel.IsKeyboardFocusWithin
+                || _cellEditTextBox.IsKeyboardFocusWithin
+                || _mouseSelectionMode != SelectionMode.None;
         }
 
         /// <summary>

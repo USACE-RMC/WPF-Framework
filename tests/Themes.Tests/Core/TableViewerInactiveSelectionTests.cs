@@ -59,10 +59,15 @@ public class TableViewerInactiveSelectionTests
     {
         string source = File.ReadAllText(ResolveRepoPath("src/DatabaseControls/TableViewer.xaml.cs"));
         string selectCell = ExtractMethod(source, "private void SelectCell");
+        string isTableSelectionActive = ExtractMethod(source, "private bool IsTableSelectionActive");
 
         Assert.Contains("bool selectionActive = IsTableSelectionActive();", selectCell);
         Assert.Contains("cell.Background = selectionActive ? SelectedColor : InactiveSelectedColor;", selectCell);
         Assert.Contains("cell.Foreground = selectionActive ? SelectedForegroundColor : InactiveSelectedForegroundColor;", selectCell);
+        Assert.Contains("IsKeyboardFocusWithin", isTableSelectionActive);
+        Assert.Contains("GridPanel.IsKeyboardFocusWithin", isTableSelectionActive);
+        Assert.Contains("_cellEditTextBox.IsKeyboardFocusWithin", isTableSelectionActive);
+        Assert.Contains("_mouseSelectionMode != SelectionMode.None", isTableSelectionActive);
     }
 
     /// <summary>
@@ -91,7 +96,9 @@ public class TableViewerInactiveSelectionTests
 
         Assert.Contains("GridPanel.GotKeyboardFocus += TableSelectionFocusChanged;", source);
         Assert.Contains("GridPanel.LostKeyboardFocus += TableSelectionFocusChanged;", source);
+        Assert.Contains("IsKeyboardFocusWithinChanged += TableSelectionFocusWithinChanged;", source);
         Assert.Contains("RefreshSelectionVisuals();", focusHandler);
+        Assert.Contains("RefreshSelectionVisuals();", ExtractMethod(source, "private void TableSelectionFocusWithinChanged"));
         Assert.Contains("DeSelectAllCells();", refreshSelectionVisuals);
         Assert.Contains("SetSelectedCells();", refreshSelectionVisuals);
         Assert.DoesNotContain("_selectedDataRowIndices.Clear()", refreshSelectionVisuals);
