@@ -83,7 +83,7 @@ namespace OxyPlot.Wpf.Serialization
                 var textualAnnotation = annotation as TextualAnnotation;
                 if (textualAnnotation == null)
                 {
-                    System.Diagnostics.Debug.WriteLine(
+                    System.Diagnostics.Trace.WriteLine(
                         $"[AnnotationSerializer] Annotation of type '{annotation?.GetType().FullName}' is not a TextualAnnotation and will not be persisted. " +
                         "Save/Open will lose this annotation. (Issue D-001 — full round-trip pending.)");
                     continue;
@@ -335,7 +335,7 @@ namespace OxyPlot.Wpf.Serialization
                 // which silently substituted a phantom empty text annotation in the user's
                 // plot. Return null instead — the caller (XElementToAnnotations) already
                 // skips null entries, matching the SeriesSerializer pattern.
-                System.Diagnostics.Debug.WriteLine(
+                System.Diagnostics.Trace.WriteLine(
                     $"[AnnotationSerializer] Unknown AnnotationType '{annotationTypeString}'; skipping.");
                 return null;
             }

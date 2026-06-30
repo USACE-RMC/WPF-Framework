@@ -1,6 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$OutputDirectory = "artifacts/packages",
+    [string]$Version,
     [switch]$SkipRestore,
     [switch]$SkipBuild
 )
@@ -11,6 +12,11 @@ $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $outputPath = Join-Path $repoRoot $OutputDirectory
 New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
 
+$versionArgs = @()
+if (-not [string]::IsNullOrWhiteSpace($Version)) {
+    $versionArgs = @("/p:Version=$Version")
+}
+
 if (-not $SkipRestore) {
     & dotnet restore (Join-Path $repoRoot "WPF-Framework.sln")
     if ($LASTEXITCODE -ne 0) {
@@ -19,7 +25,7 @@ if (-not $SkipRestore) {
 }
 
 if (-not $SkipBuild) {
-    & dotnet build (Join-Path $repoRoot "WPF-Framework.sln") -c $Configuration --no-restore
+    & dotnet build (Join-Path $repoRoot "WPF-Framework.sln") -c $Configuration --no-restore @versionArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Build failed before packing."
     }
@@ -33,7 +39,7 @@ $packageProjects = @(
 )
 
 foreach ($project in $packageProjects) {
-    & dotnet pack (Join-Path $repoRoot $project) -c $Configuration --no-build --no-restore -o $outputPath
+    & dotnet pack (Join-Path $repoRoot $project) -c $Configuration --no-build --no-restore -o $outputPath @versionArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Package creation failed for $project."
     }

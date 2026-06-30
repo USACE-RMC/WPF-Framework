@@ -6,6 +6,7 @@ The WPF Framework is a .NET 10.0 desktop application framework developed by the 
 
 | Guide | Description |
 |-------|-------------|
+| [Gallery](gallery.md) | Screenshot guide to the framework control libraries |
 | [Getting Started](getting-started.md) | Step-by-step guide to building your first application |
 | [Architecture](architecture.md) | Solution structure, dependencies, and design patterns |
 | [Themes](themes.md) | Runtime theme switching with Light, Dark, and Blue themes |

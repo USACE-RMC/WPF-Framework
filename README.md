@@ -1,9 +1,13 @@
 # WPF Framework
 
 [![CI](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml/badge.svg)](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml)
+[![NuGet](https://img.shields.io/nuget/v/RMC.Wpf.Framework.Controls)](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/)
 [![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 
 WPF Framework is a free and open-source .NET 10.0 application framework for building desktop project management applications, developed by the U.S. Army Corps of Engineers Risk Management Center ([USACE-RMC](https://www.rmc.usace.army.mil/)). It provides a complete application shell with docking layout, project explorer, theme switching, undo/redo, and specialized controls for charting, databases, expression parsing, and directed acyclic graphs.
+
+> [!NOTE]
+> This repository is under active development. Expect ongoing bug fixes and minor enhancements as the framework is prepared for broader public use.
 
 ## Supported Frameworks
 
@@ -46,17 +50,17 @@ dotnet test WPF-Framework.sln
 ### Build Packages
 
 ```bash
-.\scripts\pack-wpf-framework.ps1 -Configuration Release
+.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.0
 ```
 
 This creates and validates the following NuGet packages in `artifacts/packages/`:
 
 | Package | Includes | Depends on |
 |---------|----------|------------|
-| `RMC.Wpf.Framework.Core` | FrameworkInterfaces, Themes | None |
-| `RMC.Wpf.Framework.Models` | DAG, DatabaseManager, ExpressionParser, OxyPlot libraries | ClosedXML, DocumentFormat.OpenXml, ExcelNumberFormat, FastMember, SourceGear.sqlite3, System.Data.SQLite |
-| `RMC.Wpf.Framework.Support` | SoftwareUpdate and updater content files | None |
-| `RMC.Wpf.Framework.Controls` | FrameworkUI, control libraries, AvalonDock fork | Core, Models, Support, RMC.Numerics 2.x |
+| [`RMC.Wpf.Framework.Core`](https://www.nuget.org/packages/RMC.Wpf.Framework.Core/) | FrameworkInterfaces, Themes | None |
+| [`RMC.Wpf.Framework.Models`](https://www.nuget.org/packages/RMC.Wpf.Framework.Models/) | DAG, DatabaseManager, ExpressionParser, OxyPlot libraries | ClosedXML, DocumentFormat.OpenXml, ExcelNumberFormat, FastMember, SourceGear.sqlite3, System.Data.SQLite |
+| [`RMC.Wpf.Framework.Support`](https://www.nuget.org/packages/RMC.Wpf.Framework.Support/) | SoftwareUpdate and updater content files | None |
+| [`RMC.Wpf.Framework.Controls`](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/) | FrameworkUI, control libraries, AvalonDock fork | Core, Models, Support, RMC.Numerics 2.x |
 
 ### Minimal Application
 
@@ -82,6 +86,7 @@ Comprehensive documentation is available in the [docs/](docs/index.md) folder:
 
 | Document | Description |
 |----------|-------------|
+| [Gallery](docs/gallery.md) | Screenshot guide to the framework control libraries |
 | [Getting Started](docs/getting-started.md) | Step-by-step guide to building your first application |
 | [Architecture](docs/architecture.md) | Solution structure, dependencies, and design patterns |
 | [Themes](docs/themes.md) | Runtime theme switching with Light, Dark, and Blue themes |

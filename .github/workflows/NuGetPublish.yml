@@ -1,0 +1,70 @@
+name: Publish to NuGet.org
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Extract version from tag
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Restore
+        run: dotnet restore WPF-Framework.sln
+
+      - name: Build
+        shell: pwsh
+        run: dotnet build WPF-Framework.sln -c Release --no-restore /p:Version=$env:VERSION
+
+      - name: Test
+        env:
+          VSTEST_CONNECTION_TIMEOUT: '600'
+        run: dotnet test WPF-Framework.sln -c Release --no-build
+
+      - name: Pack
+        shell: pwsh
+        run: .\scripts\pack-wpf-framework.ps1 -Configuration Release -Version $env:VERSION -OutputDirectory packages -SkipRestore -SkipBuild
+
+      - name: Push to NuGet.org
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_ORG_API_KEY }}
+        run: |
+          $packageIds = @(
+            "RMC.Wpf.Framework.Core",
+            "RMC.Wpf.Framework.Models",
+            "RMC.Wpf.Framework.Support",
+            "RMC.Wpf.Framework.Controls"
+          )
+
+          foreach ($packageId in $packageIds) {
+            $packagePath = Join-Path "packages" "$packageId.$env:VERSION.nupkg"
+            if (-not (Test-Path $packagePath)) {
+              throw "Missing package: $packagePath"
+            }
+
+            dotnet nuget push $packagePath --api-key $env:NUGET_API_KEY --source "https://api.nuget.org/v3/index.json" --skip-duplicate
+            if ($LASTEXITCODE -ne 0) {
+              throw "NuGet push failed for $packagePath."
+            }
+          }
