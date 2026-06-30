@@ -12,21 +12,22 @@ If you plan to submit a pull request, please open an issue first to discuss your
 
 ### Report a Bug
 
-If you find a bug, please [open an issue](../../issues/new) and include:
+If you find a bug, please [open a bug report](../../issues/new/choose) and include:
 
-- Steps to reproduce the problem
-- Input data and configuration (if applicable)
-- Expected behavior vs. actual behavior
-- Software version and operating system
-- Any relevant error messages or screenshots
+- What happened and what you expected instead
+- Steps to reproduce the problem, if you know them
+- The affected area or control, if you know it
+- Software version and operating system details, if available
+- Any relevant error messages, screenshots, logs, or sample files
 
 ### Request a Feature
 
-Feature requests are welcome. Please [open an issue](../../issues/new) describing:
+Feature requests are welcome. Please [open a feature request](../../issues/new/choose) describing:
 
 - The use case or problem you are trying to solve
-- How you envision the feature working
-- Any references to similar implementations in other frameworks
+- What you would like the software or documentation to do
+- How important the request is to your work
+- Any current workaround, examples, screenshots, or files
 
 ### Submit a Pull Request
 
