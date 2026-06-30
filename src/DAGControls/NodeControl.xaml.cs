@@ -212,12 +212,27 @@ namespace DAGControls
             _ = SetBinding(Canvas.TopProperty, b);
         }
 
+        /// <summary>
+        /// Refreshes input connector visuals after the node input collection changes.
+        /// </summary>
+        /// <param name="sender">The input connector collection that raised the event.</param>
+        /// <param name="e">The collection change details.</param>
         private void OnInputsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             => RefreshInConnectors();
 
+        /// <summary>
+        /// Refreshes output connector visuals after the node output collection changes.
+        /// </summary>
+        /// <param name="sender">The output connector collection that raised the event.</param>
+        /// <param name="e">The collection change details.</param>
         private void OnOutputsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
             => RefreshOutConnectors();
 
+        /// <summary>
+        /// Releases node collection subscriptions when the control unloads.
+        /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void OnNodeControlUnloaded(object sender, RoutedEventArgs e)
         {
             if (Node != null)
@@ -278,17 +293,32 @@ namespace DAGControls
 
         #region Private Methods
 
+        /// <summary>
+        /// Refreshes connector visual dictionaries after layout creates item containers.
+        /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             RefreshInConnectors();
             RefreshOutConnectors();
         }
 
+        /// <summary>
+        /// Raises the node delete request for the hosting canvas.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             Delete_Clicked?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// Raises an automatic connection request from the clicked output connector.
+        /// </summary>
+        /// <param name="sender">The output connector host that raised the event.</param>
+        /// <param name="e">The mouse-button event data.</param>
         private void AddButton_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Grid targetGrid = (Grid)sender;

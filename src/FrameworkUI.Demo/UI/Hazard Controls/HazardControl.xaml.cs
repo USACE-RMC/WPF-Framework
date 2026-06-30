@@ -62,7 +62,7 @@ namespace FrameworkUI.Demo.UI
         /// Gets the collection of data points for the mean line series.
         /// </summary>
         /// <value>
-        /// An observable collection of <see cref="DataPoint"/> objects representing the mean curve.
+        /// An observable collection of <see cref="OxyPlot.DataPoint"/> objects representing the mean curve.
         /// </value>
         public ObservableCollection<OxyPlot.DataPoint> MeanLinePoints { get; } = new ObservableCollection<OxyPlot.DataPoint>();
 
@@ -70,7 +70,7 @@ namespace FrameworkUI.Demo.UI
         /// Gets the collection of data points for the mode line series.
         /// </summary>
         /// <value>
-        /// An observable collection of <see cref="DataPoint"/> objects representing the mode (user-specified) curve.
+        /// An observable collection of <see cref="OxyPlot.DataPoint"/> objects representing the mode (user-specified) curve.
         /// </value>
         public ObservableCollection<OxyPlot.DataPoint> ModeLinePoints { get; } = new ObservableCollection<OxyPlot.DataPoint>();
 
@@ -93,9 +93,9 @@ namespace FrameworkUI.Demo.UI
         /// <summary>
         /// Occurs before a mouse click is processed on the control.
         /// </summary>
-        /// <param name="plotClicked">Indicates whether the plot area was clicked.</param>
-        /// <param name="toolbarClicked">Indicates whether the toolbar area was clicked.</param>
-        /// <param name="plot">The plot control that was interacted with.</param>
+        /// <remarks>
+        /// Handlers receive flags for plot and toolbar clicks plus the plot control involved.
+        /// </remarks>
         public event PreviewControlClickedEventHandler PreviewControlClicked;
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace FrameworkUI.Demo.UI
         /// Gets or sets the parametric hazard element bound to this control.
         /// </summary>
         /// <value>
-        /// The <see cref="ParametricHazard"/> instance containing the hazard function data and settings.
+        /// The <see cref="HazardElement"/> instance containing the hazard function data and settings.
         /// </value>
         public HazardElement Element
         {
@@ -357,7 +357,7 @@ namespace FrameworkUI.Demo.UI
         ///     <item><description>Mean curve line (if uncertainty is enabled)</description></item>
         ///     <item><description>Mode (user-specified) curve line</description></item>
         /// </list>
-        /// The axis orientation is determined by the <see cref="ProbabilityAxisCheckBox"/> state.
+        /// The axis orientation is determined by the <c>ProbabilityAxisCheckBox</c> state.
         /// </remarks>
         public void UpdatePlot()
         {

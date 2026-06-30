@@ -24,8 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(RmcNumericsProject)" Condition="'$(UseLocalRmcNumericsProject)' == 'true' And Exists('$(RmcNumericsProject)')" />
-    <PackageReference Include="RMC.Numerics" Version="2.0.1" Condition="'$(UseLocalRmcNumericsProject)' != 'true' Or !Exists('$(RmcNumericsProject)')" />
+    <PackageReference Include="RMC.Numerics" />
     <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
     <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
     <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf.Shared\OxyPlot.Wpf.Shared.csproj" />

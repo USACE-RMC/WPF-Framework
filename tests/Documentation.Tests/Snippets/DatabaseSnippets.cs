@@ -22,9 +22,6 @@ namespace Documentation.Tests.Snippets
             var db = new SQLiteManager("data.sqlite");
             db.Open();
             DataTableView table = db.GetTableManager("MyTable");
-            // NOTE: The doc shows `table.GetValue(column: 0, row: 0)` but the actual API
-            // is `GetCell(columnIndex, rowIndex)`. This is a doc issue to fix.
-            // TODO: docs/database-controls.md should use GetCell instead of GetValue.
             object val = table.GetCell(0, 0);
 
             // SQLite with password
@@ -74,10 +71,6 @@ namespace Documentation.Tests.Snippets
             db.Open();
             var table = db.GetTableManager("MyTable");
 
-            // NOTE: The doc shows `table.SetValue(0, 0, "NewValue")` but the actual API
-            // is `EditCell(rowIndex, columnIndex, value)`. The doc also shows `Undo()`/`Redo()`
-            // but the actual API is `UndoEdit()`/`RedoEdit()`. These are doc issues to fix.
-            // TODO: docs/database-controls.md should use EditCell, UndoEdit, RedoEdit, ApplyEdits.
             table.EditCell(0, 0, "NewValue");   // Records a CellEdit
             table.UndoEdit();                    // Reverts to previous value
             table.RedoEdit();                    // Reapplies "NewValue"
@@ -98,9 +91,6 @@ namespace Documentation.Tests.Snippets
                 });
 
             // Set variable values before evaluation
-            // NOTE: The doc shows `varNode.Value = new ParseNodeResult(...)` but the actual API
-            // is `varNode.SetValue(object)` which accepts a raw value, not a ParseNodeResult.
-            // TODO: docs/database-controls.md should use varNode.SetValue(42.0) instead.
             foreach (var varNode in node.GetVariableNodes())
             {
                 varNode.SetValue(42.0);

@@ -90,6 +90,11 @@ namespace NumericControls.Distributions.Univariate
             Unloaded += Selector_Unloaded;
         }
 
+        /// <summary>
+        /// Subscribes to theme changes and applies the current plot theme.
+        /// </summary>
+        /// <param name="sender">The selector control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Selector_Loaded(object sender, RoutedEventArgs e)
         {
             ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
@@ -105,11 +110,21 @@ namespace NumericControls.Distributions.Univariate
             }
         }
 
+        /// <summary>
+        /// Removes the theme-change subscription when the selector unloads.
+        /// </summary>
+        /// <param name="sender">The selector control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Selector_Unloaded(object sender, RoutedEventArgs e)
         {
             ThemeService.Instance.ThemeChanged -= OnAppThemeChanged;
         }
 
+        /// <summary>
+        /// Applies the new theme to the selector plot.
+        /// </summary>
+        /// <param name="sender">The theme service that raised the event.</param>
+        /// <param name="e">The theme-change details.</param>
         private void OnAppThemeChanged(object? sender, ThemeChangedEventArgs e)
         {
             if (Plot == null) return;
@@ -119,6 +134,9 @@ namespace NumericControls.Distributions.Univariate
             ApplyAxisVisibilityOverrides();
         }
 
+        /// <summary>
+        /// Applies axis title, label, and tick visibility settings after theming.
+        /// </summary>
         private void ApplyAxisVisibilityOverrides()
         {
             var transparentColor = Color.FromArgb(0, 0, 0, 0);
@@ -239,6 +257,11 @@ namespace NumericControls.Distributions.Univariate
             set => SetValue(ShowAxisLabelProperty, value);
         }
 
+        /// <summary>
+        /// Reapplies axis visibility when an axis visibility dependency property changes.
+        /// </summary>
+        /// <param name="d">The selector control whose property changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
         private static void OnShowAxisPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is Selector control && control._lastAppliedTheme != null)

@@ -134,7 +134,7 @@ namespace FrameworkInterfaces
 
         // Identity snapshot fields — set once in the constructor and never changed.
         // See ctor remarks for rationale.
-        private readonly string _identityCode;
+        private readonly string? _identityCode;
         private readonly string? _identityElementName;
         private readonly string? _identityParentCollectionName;
         private readonly string? _identityProjectName;
@@ -469,7 +469,7 @@ namespace FrameworkInterfaces
         /// <param name="left">The first message item to compare.</param>
         /// <param name="right">The second message item to compare.</param>
         /// <returns><c>true</c> if the message items are equal; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(BasicMessageItem left, BasicMessageItem right)
+        public static bool operator ==(BasicMessageItem? left, BasicMessageItem? right)
         {
             if (ReferenceEquals(left, null))
             {
@@ -484,7 +484,7 @@ namespace FrameworkInterfaces
         /// <param name="left">The first message item to compare.</param>
         /// <param name="right">The second message item to compare.</param>
         /// <returns><c>true</c> if the message items are not equal; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(BasicMessageItem left, BasicMessageItem right)
+        public static bool operator !=(BasicMessageItem? left, BasicMessageItem? right)
         {
             return !(left == right);
         }

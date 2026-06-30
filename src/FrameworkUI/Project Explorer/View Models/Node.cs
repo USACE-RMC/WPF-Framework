@@ -619,6 +619,11 @@ namespace FrameworkUI.ProjectExplorer
             _hitTestResult = VisualTreeHelper.HitTest(_nodeHeader.RenameTextBox, pt);
         }
 
+        /// <summary>
+        /// Updates tree selection before a right-click context menu opens.
+        /// </summary>
+        /// <param name="sender">The node that raised the event.</param>
+        /// <param name="e">The mouse-button event data.</param>
         private void Me_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             // ExplorerTreeView pTree = ParentTreeView as ExplorerTreeView;

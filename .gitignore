@@ -417,8 +417,3 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /nul
-
-# AI-assistant metadata (not tracked in this repo)
-CLAUDE.md
-**/CLAUDE.md
-.claude/

@@ -4,6 +4,7 @@
 #pragma warning disable CS8603 // Possible null reference return
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value
 #pragma warning disable CS0414 // Field is assigned but its value is never used
+#pragma warning disable CS0067 // Event is declared to satisfy an interface in snippet stubs
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -285,10 +286,6 @@ namespace Documentation.Tests.Snippets.UndoRedo
         // ---------------------------------------------------------------
         // Snippet: Transaction rollback
         // ---------------------------------------------------------------
-        // NOTE: The doc shows CommitTransaction/RollbackTransaction on IUndoManager, but
-        // these methods only exist on the concrete UndoManager class.
-        // TODO: docs/undo-redo.md should either use UndoManager instead of IUndoManager in
-        // the rollback example, or add these methods to IUndoManager.
         public void Snippet_TransactionRollback(UndoManager undoManager)
         {
             var transaction = undoManager.BeginTransaction("Risky operation");

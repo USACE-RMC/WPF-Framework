@@ -124,12 +124,22 @@ namespace OxyPlotControls.Demo
             };
         }
 
+        /// <summary>
+        /// Updates the demo status text when a plot property changes.
+        /// </summary>
+        /// <param name="sender">The plot object that raised the event.</param>
+        /// <param name="e">The property-change details.</param>
         private void OnPlotPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             _propertyChangedCount++;
             PropertyChangedLabel.Text = $"INPC #{_propertyChangedCount}: {e.PropertyName} at {DateTime.Now:HH:mm:ss.fff}";
         }
 
+        /// <summary>
+        /// Updates the demo status text when a plot collection changes.
+        /// </summary>
+        /// <param name="sender">The plot collection that raised the event.</param>
+        /// <param name="e">The collection-change details.</param>
         private void OnPlotCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             _propertyChangedCount++;
@@ -158,6 +168,15 @@ namespace OxyPlotControls.Demo
             }));
         }
 
+        /// <summary>
+        /// Creates sample normal-distribution points for plot examples.
+        /// </summary>
+        /// <param name="x0">The first x-value.</param>
+        /// <param name="x1">The last x-value.</param>
+        /// <param name="mean">The distribution mean.</param>
+        /// <param name="variance">The distribution variance.</param>
+        /// <param name="n">The number of points to generate.</param>
+        /// <returns>The generated distribution points.</returns>
         private List<DataPoint> CreateNormalDist(double x0, double x1, double mean, double variance, int n = 1001)
         {
             var result = new List<DataPoint>();
@@ -177,11 +196,22 @@ namespace OxyPlotControls.Demo
             return result;
         }
 
+        /// <summary>
+        /// Receives plot-property update notifications from the demo properties control.
+        /// </summary>
+        /// <param name="targetPlot">The plot whose properties were updated.</param>
         private void PlotPropertiesUpdated(Plot targetPlot)
         {
             System.Diagnostics.Debug.WriteLine("Plot Properties");
         }
 
+        /// <summary>
+        /// Expands the requested properties panel from the toolbar.
+        /// </summary>
+        /// <param name="targetPlot">The plot associated with the toolbar request.</param>
+        /// <param name="openProperties">Whether the caller requested opening the properties view.</param>
+        /// <param name="propertyExpander">The properties section to expand.</param>
+        /// <param name="selectedObject">The object to select in the properties view.</param>
         private void OxyPlotToolBar_PropertiesCalled(OxyPlot.Wpf.Plot targetPlot, bool openProperties, OxyPlotControls.OxyPlotPropertiesControl.PropertyEXP? propertyExpander, object selectedObject)
         {
             if (propertyExpander.HasValue)
@@ -190,6 +220,11 @@ namespace OxyPlotControls.Demo
             }
         }
 
+        /// <summary>
+        /// Saves the current plot settings to an XML file.
+        /// </summary>
+        /// <param name="sender">The save button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SaveSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             string saveFile = GenericControls.GeneralMethods.FileSaveDialog("Plot Settings(*.xml) |*.xml", true);
@@ -212,6 +247,11 @@ namespace OxyPlotControls.Demo
             }
         }
 
+        /// <summary>
+        /// Loads plot settings from an XML file.
+        /// </summary>
+        /// <param name="sender">The load button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void LoadSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             string fileToOpen = GenericControls.GeneralMethods.FileOpenDialog("Plot Settings(*.xml) |*.xml");
@@ -556,6 +596,10 @@ namespace OxyPlotControls.Demo
             _categoryAxisLabelsRegistry[axisKey] = labels;
         }
 
+        /// <summary>
+        /// Handles the demo properties-control close request.
+        /// </summary>
+        /// <param name="propertiesControl">The properties control requesting closure.</param>
         private void PropertiesControl_ClosePropertiesCalled(OxyPlotControls.OxyPlotPropertiesControl propertiesControl)
         {
             GenericControls.MessageBox.Show("Close plot properties requested.", "Plot Properties", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -818,6 +862,11 @@ namespace OxyPlotControls.Demo
             RenderTimeLabel.Text = $"{backendName} | Re-render in {sw.ElapsedMilliseconds} ms";
         }
 
+        /// <summary>
+        /// Rebuilds the demo plot for the selected sample series type.
+        /// </summary>
+        /// <param name="sender">The combo box that raised the event.</param>
+        /// <param name="e">The selection-change details.</param>
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItem = Combobox1.SelectedItem as ComboBoxItem;
@@ -950,6 +999,10 @@ namespace OxyPlotControls.Demo
             public OxyColor Color { get; set; }
         }
 
+        /// <summary>
+        /// Builds the line-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void LineSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1045,6 +1098,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the scatter-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void ScatterSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1145,6 +1202,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the scatter-error-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void ScatterErrorSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1254,6 +1315,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the heat-map-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void HeatMapSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1340,6 +1405,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the histogram-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void HistogramSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1404,6 +1473,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the box-plot-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void BoxPlotSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1486,6 +1559,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the column-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void ColumnSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1558,6 +1635,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the bar-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void BarSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1649,6 +1730,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the area-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void AreaSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();
@@ -1728,6 +1813,10 @@ namespace OxyPlotControls.Demo
             TestPlot.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Builds the date-time-series demo plot.
+        /// </summary>
+        /// <param name="boundBool">Whether to create the series from bound data.</param>
         private void DateTimeSeries_Create(bool boundBool)
         {
             TestPlot.Series.Clear();

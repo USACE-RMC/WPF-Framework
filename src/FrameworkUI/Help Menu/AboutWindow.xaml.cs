@@ -21,6 +21,11 @@ namespace FrameworkUI
             Loaded += AboutWindow_Loaded;
         }
 
+        /// <summary>
+        /// Sizes the name column and applies a window icon when the dialog loads.
+        /// </summary>
+        /// <param name="sender">The about window that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void AboutWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Measure the software name and widen the name column if needed

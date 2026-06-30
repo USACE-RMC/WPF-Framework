@@ -24,7 +24,7 @@ namespace ExpressionParser.Parser
         /// <b>Threading contract:</b> the static <see cref="Parse(List{Token}, bool, Dictionary{string, ResultType})"/> method is safe to invoke
         /// from multiple threads concurrently because each invocation builds an independent AST. However the
         /// returned <see cref="IParserNode"/> tree is <i>not</i> thread-safe per AST instance — some nodes (notably
-        /// <see cref="Numerics.IncrementNode"/>) carry mutable evaluation state. Once an AST is produced, treat it
+        /// <see cref="ExpressionParser.IncrementNode"/>) carry mutable evaluation state. Once an AST is produced, treat it
         /// as a single-threaded resource: confine all <c>Evaluate()</c>/<c>Simplify()</c> calls and variable-value
         /// updates on its <see cref="VariableNode"/>s to one thread, or wrap access in your own synchronization.
         /// </para>
@@ -56,7 +56,7 @@ namespace ExpressionParser.Parser
         /// <b>Threading contract:</b> the static <see cref="Parse(string, bool, Dictionary{string, ResultType})"/> method is safe to invoke
         /// from multiple threads concurrently because each invocation builds an independent AST. However the
         /// returned <see cref="IParserNode"/> tree is <i>not</i> thread-safe per AST instance — some nodes (notably
-        /// <see cref="Numerics.IncrementNode"/>) carry mutable evaluation state. Once an AST is produced, treat it
+        /// <see cref="ExpressionParser.IncrementNode"/>) carry mutable evaluation state. Once an AST is produced, treat it
         /// as a single-threaded resource: confine all <c>Evaluate()</c>/<c>Simplify()</c> calls and variable-value
         /// updates on its <see cref="VariableNode"/>s to one thread, or wrap access in your own synchronization.
         /// </para>

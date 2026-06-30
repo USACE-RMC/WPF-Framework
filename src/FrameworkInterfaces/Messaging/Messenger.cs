@@ -88,6 +88,11 @@ namespace FrameworkInterfaces.Messaging
 
         #region Static Helpers
 
+        /// <summary>
+        /// Creates an immutable brush for use as a default message color.
+        /// </summary>
+        /// <param name="color">The color to apply to the brush.</param>
+        /// <returns>A frozen solid-color brush.</returns>
         private static SolidColorBrush CreateFrozenBrush(Color color)
         {
             var brush = new SolidColorBrush(color);

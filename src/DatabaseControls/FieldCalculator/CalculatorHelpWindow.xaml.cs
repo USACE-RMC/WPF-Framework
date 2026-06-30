@@ -27,16 +27,29 @@ namespace DatabaseControls
             Closing += CalculatorHelpWindow_Closing;
         }
 
+        /// <summary>
+        /// Disposes the embedded help browser when the help window closes.
+        /// </summary>
+        /// <param name="sender">The help window that raised the event.</param>
+        /// <param name="e">The closing event data.</param>
         private void CalculatorHelpWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             HelpBrowser?.Dispose();
         }
 
+        /// <summary>
+        /// Loads embedded help content after the window has rendered.
+        /// </summary>
+        /// <param name="sender">The help window that raised the event.</param>
+        /// <param name="e">The event data.</param>
         private void CalculatorHelpWindow_ContentRendered(object? sender, EventArgs e)
         {
             LoadHelpContent();
         }
 
+        /// <summary>
+        /// Loads the selected embedded HTML help file and its image resources.
+        /// </summary>
         private void LoadHelpContent()
         {
             var assembly = Assembly.GetExecutingAssembly();

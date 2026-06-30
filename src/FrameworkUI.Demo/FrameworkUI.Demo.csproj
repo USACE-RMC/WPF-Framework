@@ -1,4 +1,4 @@
-﻿<!-- FrameworkUI.Demo - Demo application for FrameworkUI -->
+<!-- FrameworkUI.Demo - Demo application for FrameworkUI -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -50,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RMC.Numerics" Version="2.0.1" />
+    <PackageReference Include="RMC.Numerics" />
     <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
     <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
     <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf.Shared\OxyPlot.Wpf.Shared.csproj" />

@@ -12,21 +12,21 @@ WPF Framework is a free and open-source .NET 10.0 application framework for buil
 | .NET | 10.0 |
 | OS | Windows 10+ |
 
-WPF Framework is currently distributed as source only. NuGet package publishing is planned for a future release; until then, clone the repository and reference the individual library projects directly, or build them as local NuGet packages.
+WPF Framework can be consumed from source project references or packaged into NuGet bundles with `scripts/pack-wpf-framework.ps1`. The package layout follows the internal dependency map: Core, Models, Support, then Controls.
 
-The framework depends on the [Numerics](https://github.com/USACE-RMC/Numerics) library (built separately and referenced via `HintPath`). See [Prerequisites](#prerequisites) for the expected layout.
+The framework depends on [RMC.Numerics](https://github.com/USACE-RMC/Numerics) through central NuGet package management in `Directory.Packages.props`. Source builds restore the latest compatible 2.x package; NuGet bundles declare compatibility with RMC.Numerics 2.1.1 or later, below 3.0.0.
 
 ## Solution Structure
 
 | Folder | Projects | Description |
 |--------|----------|-------------|
-| **Core** | FrameworkInterfaces, FrameworkUI, Themes | Core contracts, application shell, and theming engine |
-| **Controls** | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls | Reusable WPF control libraries |
+| **Core** | FrameworkInterfaces, Themes | Core contracts and theming engine |
+| **Controls** | FrameworkUI, GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls, Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Application shell, reusable WPF controls, and docking UI |
 | **Models** | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared, DAG | Platform-agnostic model and engine libraries |
 | **Support** | SoftwareUpdate, SoftwareUpdate.Updater | GitHub Releases-based auto-update system |
-| **AvalonDock** | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Modified VS2013-themed docking layout (vendored fork) |
 | **Demos** | FrameworkUI.Demo, GenericControls.Demo, NumericControls.Demo, OxyPlotControls.Demo, DatabaseControls.Demo, ExpressionParserControls.Demo, DAG.Demo | Interactive demo applications |
 | **Tests** | OxyPlot.ExampleLibrary + 13 test projects | Example chart models and xunit, MSTest, and NUnit test suites |
+| **Packaging** | RMC.Wpf.Framework.Core, RMC.Wpf.Framework.Models, RMC.Wpf.Framework.Support, RMC.Wpf.Framework.Controls | NuGet bundle projects |
 
 ## Quick Start
 
@@ -42,6 +42,21 @@ The framework depends on the [Numerics](https://github.com/USACE-RMC/Numerics) l
 dotnet build WPF-Framework.sln
 dotnet test WPF-Framework.sln
 ```
+
+### Build Packages
+
+```bash
+.\scripts\pack-wpf-framework.ps1 -Configuration Release
+```
+
+This creates and validates the following NuGet packages in `artifacts/packages/`:
+
+| Package | Includes | Depends on |
+|---------|----------|------------|
+| `RMC.Wpf.Framework.Core` | FrameworkInterfaces, Themes | None |
+| `RMC.Wpf.Framework.Models` | DAG, DatabaseManager, ExpressionParser, OxyPlot libraries | ClosedXML, DocumentFormat.OpenXml, ExcelNumberFormat, FastMember, SourceGear.sqlite3, System.Data.SQLite |
+| `RMC.Wpf.Framework.Support` | SoftwareUpdate and updater content files | None |
+| `RMC.Wpf.Framework.Controls` | FrameworkUI, control libraries, AvalonDock fork | Core, Models, Support, RMC.Numerics 2.x |
 
 ### Minimal Application
 
@@ -142,7 +157,7 @@ WPF Framework powers the following USACE-RMC desktop applications:
 
 ## Related Libraries
 
-- [Numerics](https://github.com/USACE-RMC/Numerics) — .NET library for numerical computing, statistical analysis, and Bayesian inference (required dependency for NumericControls and DatabaseControls)
+- [RMC.Numerics](https://github.com/USACE-RMC/Numerics) - NuGet package for numerical computing, statistical analysis, and Bayesian inference (required dependency for NumericControls and DatabaseControls)
 
 ## Contributing
 

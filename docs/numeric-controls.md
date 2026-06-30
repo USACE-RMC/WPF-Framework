@@ -21,7 +21,7 @@ xmlns:uni="clr-namespace:NumericControls.Distributions.Univariate;assembly=Numer
 
 ## Dependencies
 
-NumericControls depends on several framework libraries and one external dependency:
+NumericControls depends on several framework libraries and one NuGet dependency:
 
 | Dependency | Type | Description |
 |------------|------|-------------|
@@ -29,7 +29,7 @@ NumericControls depends on several framework libraries and one external dependen
 | **OxyPlotControls** | Project reference | Plot integration for distribution and curve visualization |
 | **Themes** | Project reference | Theme-aware styling and runtime theme switching |
 | **OxyPlot / OxyPlot.Wpf** | Project reference | Chart rendering for PDF plots and curve previews |
-| **[Numerics](https://github.com/USACE-RMC/Numerics)** | External DLL | Statistical distribution types, ordered data structures, time series, and sampling utilities. Must be built separately from a sibling clone of the Numerics repository. |
+| **[RMC.Numerics](https://github.com/USACE-RMC/Numerics)** | NuGet package | Statistical distribution types, ordered data structures, time series, and sampling utilities. Version is centrally managed in `Directory.Packages.props`. |
 
 ---
 
@@ -260,13 +260,13 @@ The **NumericControls.Demo** project (`src/NumericControls.Demo/`) provides a wo
 dotnet run --project src/NumericControls.Demo/NumericControls.Demo.csproj
 ```
 
-> **Note:** The NumericControls.Demo requires the external Numerics DLL to be built and available at its HintPath location. Clone the [Numerics](https://github.com/USACE-RMC/Numerics) repository alongside WPF-Framework and build it first.
+> **Note:** The NumericControls.Demo restores [RMC.Numerics](https://github.com/USACE-RMC/Numerics) from NuGet through central package management.
 
 ---
 
 ## Best Practices and Troubleshooting
 
-1. **Build Numerics first.** NumericControls depends on the external Numerics library. If the Numerics DLL is missing, distribution selectors will have empty dropdowns and curve editors will not function.
+1. **Restore packages first.** NumericControls depends on the RMC.Numerics package. If package restore has not run, distribution selectors and curve editors will not build.
 
 2. **Use two-way binding** on `SelectedDistribution`, `SelectedOrderedData`, `SelectedUncertainOrderedData`, and `Series` properties to ensure the control writes changes back to your view model.
 

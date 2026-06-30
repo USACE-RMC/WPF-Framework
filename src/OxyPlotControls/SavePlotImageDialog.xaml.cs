@@ -389,6 +389,12 @@ namespace OxyPlotControls
             Close();
         }
 
+        /// <summary>
+        /// Validates that the plot and requested export dimensions can be saved.
+        /// </summary>
+        /// <param name="imageWidth">The validated image width.</param>
+        /// <param name="imageHeight">The validated image height.</param>
+        /// <returns><c>true</c> when export inputs are valid.</returns>
         private bool TryValidateExportInputs(out int imageWidth, out int imageHeight)
         {
             imageWidth = 0;
@@ -409,6 +415,10 @@ namespace OxyPlotControls
             return true;
         }
 
+        /// <summary>
+        /// Creates the configured save-file dialog for image export.
+        /// </summary>
+        /// <returns>The configured save-file dialog.</returns>
         private SaveFileDialog CreateSaveFileDialog()
         {
             var saveFileDialog = new SaveFileDialog
@@ -433,6 +443,10 @@ namespace OxyPlotControls
             return saveFileDialog;
         }
 
+        /// <summary>
+        /// Gets the initial folder for the image save dialog.
+        /// </summary>
+        /// <returns>The last used folder, pictures folder, or documents folder.</returns>
         private static string GetInitialDirectory()
         {
             if (!string.IsNullOrEmpty(_lastUsedFolderPath) && Directory.Exists(_lastUsedFolderPath))
@@ -449,6 +463,11 @@ namespace OxyPlotControls
             return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
+        /// <summary>
+        /// Builds a safe default image file name from the plot title.
+        /// </summary>
+        /// <param name="plotTitle">The optional plot title.</param>
+        /// <returns>A sanitized file name without an extension.</returns>
         private static string GetDefaultFileName(string? plotTitle)
         {
             string source = string.IsNullOrWhiteSpace(plotTitle) ? "plot" : plotTitle.Trim();
@@ -469,6 +488,12 @@ namespace OxyPlotControls
             return string.IsNullOrWhiteSpace(sanitized) ? "plot" : sanitized;
         }
 
+        /// <summary>
+        /// Ensures the selected export path has a supported extension.
+        /// </summary>
+        /// <param name="filePath">The path selected by the user.</param>
+        /// <param name="filterIndex">The selected file-dialog filter index.</param>
+        /// <returns>The export path with a supported extension.</returns>
         private static string GetExportFilePath(string filePath, int filterIndex)
         {
             string extension = Path.GetExtension(filePath).ToLowerInvariant();
@@ -480,6 +505,11 @@ namespace OxyPlotControls
             return Path.ChangeExtension(filePath, GetExportExtensionForFilterIndex(filterIndex));
         }
 
+        /// <summary>
+        /// Maps a file-dialog filter index to the export extension.
+        /// </summary>
+        /// <param name="filterIndex">The selected file-dialog filter index.</param>
+        /// <returns>The extension for the selected filter.</returns>
         private static string GetExportExtensionForFilterIndex(int filterIndex)
         {
             return filterIndex switch
@@ -490,6 +520,11 @@ namespace OxyPlotControls
             };
         }
 
+        /// <summary>
+        /// Determines whether an image export extension is supported.
+        /// </summary>
+        /// <param name="extension">The extension to test.</param>
+        /// <returns><c>true</c> when the extension is supported.</returns>
         private static bool IsSupportedExportExtension(string extension)
         {
             return string.Equals(extension, ".png", StringComparison.OrdinalIgnoreCase)

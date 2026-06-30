@@ -23,6 +23,9 @@ namespace DatabaseControls
     {
         #region Enumerables
 
+        /// <summary>
+        /// Defines the selection states supported by the table viewer.
+        /// </summary>
         private enum SelectionMode : byte
         {
             CellSelect = 0,
@@ -33,6 +36,9 @@ namespace DatabaseControls
             EditSelect = 5
         }
 
+        /// <summary>
+        /// Defines the sort state applied to a table column.
+        /// </summary>
         private enum SortOrder : byte
         {
             Ascending = 2,
@@ -84,6 +90,11 @@ namespace DatabaseControls
         public static readonly DependencyProperty AllCellsSelectedProperty = DependencyProperty.Register(
             nameof(AllCellsSelected), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false, OnAllCellsSelectedChanged));
 
+        /// <summary>
+        /// Updates the select-all button when the all-cells selection state changes.
+        /// </summary>
+        /// <param name="d">The table viewer whose property changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
         private static void OnAllCellsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TableViewer viewer)
@@ -138,6 +149,11 @@ namespace DatabaseControls
         public static readonly DependencyProperty EditableProperty = DependencyProperty.Register(
             nameof(Editable), typeof(bool), typeof(TableViewer), new UIPropertyMetadata(false, OnEditableChanged));
 
+        /// <summary>
+        /// Updates paste availability when editability changes.
+        /// </summary>
+        /// <param name="d">The table viewer whose property changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
         private static void OnEditableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is TableViewer tv) tv.UpdatePasteButtonState();
@@ -680,6 +696,11 @@ namespace DatabaseControls
 
         #region Loading
 
+        /// <summary>
+        /// Schedules a visual refresh after a styling dependency property changes.
+        /// </summary>
+        /// <param name="d">The table viewer whose visual property changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
         private static void OnVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is not TableViewer tv) return;
@@ -742,6 +763,11 @@ namespace DatabaseControls
             RefreshSelectionVisuals();
         }
 
+        /// <summary>
+        /// Attaches a new <see cref="DataView"/> and rebuilds table state for it.
+        /// </summary>
+        /// <param name="d">The table viewer whose data view changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
         private static void LoadView(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d == null || d.GetType() != typeof(TableViewer)) return;
@@ -1652,6 +1678,11 @@ namespace DatabaseControls
             return GridPanel.RowDefinitions.Count - 1;
         }
 
+        /// <summary>
+        /// Resolves a grid coordinate to the visible table column index.
+        /// </summary>
+        /// <param name="gridPosition">The position relative to the grid panel.</param>
+        /// <returns>The column index at the specified position.</returns>
         private int GetTableColumnIndex(Point gridPosition)
         {
             double runningSum = 0;
@@ -1766,6 +1797,11 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Applies selected styling to a visible cell.
+        /// </summary>
+        /// <param name="columnIndex">The visible column index.</param>
+        /// <param name="rowIndex">The visible row index.</param>
         private void SelectCell(int columnIndex, int rowIndex)
         {
             var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
@@ -1774,6 +1810,11 @@ namespace DatabaseControls
             cell.Foreground = selectionActive ? SelectedForegroundColor : InactiveSelectedForegroundColor;
         }
 
+        /// <summary>
+        /// Applies deselected styling to a visible cell.
+        /// </summary>
+        /// <param name="columnIndex">The visible column index.</param>
+        /// <param name="rowIndex">The visible row index.</param>
         private void DeSelectCell(int columnIndex, int rowIndex)
         {
             var cell = (Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex];
@@ -1781,6 +1822,9 @@ namespace DatabaseControls
             cell.Foreground = DeSelectedForegroundColor;
         }
 
+        /// <summary>
+        /// Applies active-cell styling when the active cell is visible.
+        /// </summary>
         private void SetActiveCell()
         {
             if (!IsTableSelectionActive()) return;
@@ -2023,6 +2067,11 @@ namespace DatabaseControls
 
         }
 
+        /// <summary>
+        /// Releases data-view subscriptions when the table viewer unloads.
+        /// </summary>
+        /// <param name="sender">The table viewer that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void TableViewer_Unloaded(object sender, RoutedEventArgs e)
         {
             _isLoaded = false;
@@ -2164,6 +2213,11 @@ namespace DatabaseControls
             VerticalScrollbar.Value -= e.Delta / 10; // if e.Delta = 30 then table will go up 3 rows
         }
 
+        /// <summary>
+        /// Handles keyboard navigation, selection, editing, and clipboard shortcuts.
+        /// </summary>
+        /// <param name="sender">The grid panel that raised the event.</param>
+        /// <param name="e">The key event data.</param>
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             int firstRowDataIndex = (int)Math.Floor(VerticalScrollbar.Value);
@@ -2979,6 +3033,11 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
+        /// <summary>
+        /// Clears all row, column, and cell selections.
+        /// </summary>
+        /// <param name="sender">The button or menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void DeSelectAll_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedDataRowIndices.Count > 0)
@@ -3003,6 +3062,11 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
+        /// <summary>
+        /// Opens the field calculator in attribute-selection mode and applies matching rows.
+        /// </summary>
+        /// <param name="sender">The button or menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SelectByAttribute_Click(object sender, RoutedEventArgs e)
         {
             var attributeSelector = new FieldCalculator(DataView, _selectedDataRowIndices, null, null, true);
@@ -3043,12 +3107,22 @@ namespace DatabaseControls
             GridPanel.Focus();
         }
 
+        /// <summary>
+        /// Restores the last attribute-selector expression after the dialog renders.
+        /// </summary>
+        /// <param name="sender">The rendered field calculator window.</param>
+        /// <param name="e">The render event data.</param>
         private void SelectorRendered(object? sender, EventArgs e)
         {
             if (sender is FieldCalculator fc)
                 fc.ExpressionCalculator.SetExpressionText(_attributeSelectorString);
         }
 
+        /// <summary>
+        /// Restores the last field-calculator expression after the dialog renders.
+        /// </summary>
+        /// <param name="sender">The rendered field calculator window.</param>
+        /// <param name="e">The render event data.</param>
         private void CalculatorRendered(object? sender, EventArgs e)
         {
             if (sender is FieldCalculator fc)
@@ -3298,6 +3372,11 @@ namespace DatabaseControls
             ((UIElement)sender).ReleaseMouseCapture();
         }
 
+        /// <summary>
+        /// Builds and opens the column context menu for the clicked column.
+        /// </summary>
+        /// <param name="sender">The grid panel that raised the event.</param>
+        /// <param name="e">The mouse-button event data.</param>
         private void CreateColumnContextMenu(object sender, MouseButtonEventArgs e)
         {
             GridPanel.Focus();
@@ -3366,7 +3445,15 @@ namespace DatabaseControls
 
         #region Sorting
 
+        /// <summary>
+        /// Handles the menu command that clears sorting.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void RemoveSort(object sender, RoutedEventArgs e) => RemoveSort();
+        /// <summary>
+        /// Clears all sort state and restores natural row order.
+        /// </summary>
         private void RemoveSort()
         {
             _columnSortOrder = SortOrder.None;
@@ -3383,7 +3470,15 @@ namespace DatabaseControls
             UpdateRowHeaders();
         }
 
+        /// <summary>
+        /// Handles the menu command that sorts the current column descending.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SortColumnDescending(object sender, RoutedEventArgs e) => SortColumnDescending();
+        /// <summary>
+        /// Sorts the current context-menu column in descending order.
+        /// </summary>
         private void SortColumnDescending()
         {
             try
@@ -3419,7 +3514,15 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
+        /// <summary>
+        /// Handles the menu command that sorts the current column ascending.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SortColumnAscending(object sender, RoutedEventArgs e) => SortColumnAscending();
+        /// <summary>
+        /// Sorts the current context-menu column in ascending order.
+        /// </summary>
         private void SortColumnAscending()
         {
             try
@@ -3454,6 +3557,11 @@ namespace DatabaseControls
             catch { Mouse.OverrideCursor = null; }
         }
 
+        /// <summary>
+        /// Sorts row-index mappings for a column using the column data type.
+        /// </summary>
+        /// <param name="columnIndex">The column index to sort.</param>
+        /// <param name="ascending"><c>true</c> for ascending order; otherwise descending.</param>
         private void SortColumn(int columnIndex, bool ascending)
         {
             object[] columnData = DataView.GetColumn(columnIndex);
@@ -3523,12 +3631,22 @@ namespace DatabaseControls
 
         #region Column Context Menu Actions
 
+        /// <summary>
+        /// Opens the statistics window for the current context-menu column.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void CalcColumnStatistics(object sender, RoutedEventArgs e)
         {
             var columnstats = new ColumnStatsWindow(this, _mouseDownColumnIndex) { Owner = Window.GetWindow(this) };
             columnstats.Show();
         }
 
+        /// <summary>
+        /// Opens find and replace for the current context-menu column.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SearchText(object sender, RoutedEventArgs e)
         {
             if (DataView.NumberOfRows > 0)
@@ -3538,6 +3656,11 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Opens the field calculator targeting the current context-menu column.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void OpenFcForSpecificColumn(object sender, RoutedEventArgs e)
         {
             var f = new FieldCalculator(DataView, _selectedDataRowIndices, _readOnlyColumns, DataView.ColumnNames[_mouseDownColumnIndex]);
@@ -3548,6 +3671,11 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Deletes selected editable columns from the data view.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void DeleteColumn(object sender, RoutedEventArgs e)
         {
             var columnIndices = _selectedColumnIndices.ToList();
@@ -3562,6 +3690,11 @@ namespace DatabaseControls
         #endregion
 
         #region Clipboard
+        /// <summary>
+        /// Builds and opens the grid clipboard context menu.
+        /// </summary>
+        /// <param name="sender">The grid panel that raised the event.</param>
+        /// <param name="e">The mouse-button event data.</param>
         private void GridPanel_RightMouseUp(object sender, MouseButtonEventArgs e)
         {
             bool enableCopy = false;
@@ -3600,7 +3733,15 @@ namespace DatabaseControls
             }
             gridMenu.IsOpen = true;
         }
+        /// <summary>
+        /// Handles the menu command that copies the current selection without headers.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Copy(object sender, RoutedEventArgs e) => Copy();
+        /// <summary>
+        /// Copies the current selection without headers.
+        /// </summary>
         private void Copy()
         {
             try
@@ -3612,6 +3753,11 @@ namespace DatabaseControls
                 GenericControls.MessageBox.Show(ex.Message);
             }
         }
+        /// <summary>
+        /// Copies the current selection with column headers.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void CopyWithHeaders(object sender, RoutedEventArgs e)
         {
             try
@@ -3624,6 +3770,10 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Writes the current uniform selection to the clipboard.
+        /// </summary>
+        /// <param name="includeHeaders">Whether to include column headers in the copied text.</param>
         private void CaptureSelectionToClipboard(bool includeHeaders)
         {
             if (!IsSelectionUniform())
@@ -3938,10 +4088,18 @@ namespace DatabaseControls
             return sortedRowsIndices;
         }
 
+        /// <summary>
+        /// Handles the paste command from a menu item or button.
+        /// </summary>
+        /// <param name="sender">The command source.</param>
+        /// <param name="e">The routed event data.</param>
         private void Paste(object sender, RoutedEventArgs e)
         {
             Paste();
         }
+        /// <summary>
+        /// Pastes clipboard text into the current editable table selection.
+        /// </summary>
         private void Paste()
         {
             try
@@ -4243,6 +4401,9 @@ namespace DatabaseControls
 
         #region Undo/Redo
 
+        /// <summary>
+        /// Updates undo, redo, and save button enabled states.
+        /// </summary>
         private void UpdateUndoRedoButtons()
         {
             bool canUndo = DataView.CanUndo();
@@ -4261,6 +4422,11 @@ namespace DatabaseControls
         /// </summary>
         private void Redo_Click(object sender, RoutedEventArgs e) => RedoLastEdit();
 
+        /// <summary>
+        /// Prompts for confirmation and applies pending edits to the data view.
+        /// </summary>
+        /// <param name="sender">The save command source.</param>
+        /// <param name="e">The routed event data.</param>
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             if (GenericControls.MessageBox.Show("Are you sure you want to save edits?", "Apply Edits", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
@@ -4297,12 +4463,18 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Reapplies the last undone edit and refreshes the visible table.
+        /// </summary>
         private void RedoLastEdit()
         {
             DataView.RedoEdit();
             UpdateVisibleRows();
             UpdateUndoRedoButtons();
         }
+        /// <summary>
+        /// Reverts the last edit and refreshes the visible table.
+        /// </summary>
         private void UndoLastEdit()
         {
             DataView.UndoEdit();
@@ -4314,6 +4486,12 @@ namespace DatabaseControls
 
         #region Helper Methods
 
+        /// <summary>
+        /// Updates the displayed text for a visible cell.
+        /// </summary>
+        /// <param name="rowIndex">The visible row index.</param>
+        /// <param name="columnIndex">The visible column index.</param>
+        /// <param name="newText">The text to display.</param>
         private void SetCellText(int rowIndex, int columnIndex, string newText)
         {
             ((Cell)GridPanel.Children[rowIndex * DataView.ColumnNames.Count() + columnIndex]).Text = newText;
@@ -4344,6 +4522,9 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Enables paste controls when editing is allowed and the clipboard has text.
+        /// </summary>
         private void UpdatePasteButtonState()
         {
             if (!Editable)
@@ -4364,6 +4545,11 @@ namespace DatabaseControls
             });
         }
 
+        /// <summary>
+        /// Deletes the currently selected rows from the data view.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void DeleteRows(object sender, RoutedEventArgs e)
         {
             DataView.DeleteRows(_selectedDataRowIndices.ToArray());
@@ -4373,6 +4559,9 @@ namespace DatabaseControls
 
         #region Nested Classes
 
+        /// <summary>
+        /// Renders a table column header with optional sort indicators.
+        /// </summary>
         private class ColumnHeader : Border
         {
             public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
@@ -4405,6 +4594,11 @@ namespace DatabaseControls
             private readonly Viewbox _sortDownViewBox = new Viewbox { Width = 9, Visibility = Visibility.Collapsed, Margin = new Thickness(2, 0, 2, 0) };
             private readonly Viewbox _sortUpViewBox = new Viewbox { Width = 9, Visibility = Visibility.Collapsed, Margin = new Thickness(2, 0, 2, 0) };
 
+            /// <summary>
+            /// Initializes a column header for the specified data column.
+            /// </summary>
+            /// <param name="columnName">The displayed column name.</param>
+            /// <param name="columnType">The column data type shown in the tooltip.</param>
             public ColumnHeader(string columnName, Type columnType)
             {
                 var g = new Grid();
@@ -4453,12 +4647,19 @@ namespace DatabaseControls
                 ToolTip = $"{columnName}\nType: {typeName}";
             }
 
+            /// <summary>
+            /// Hides all sort indicator visuals.
+            /// </summary>
             public void RemoveSorter()
             {
                 _sortDownViewBox.Visibility = Visibility.Collapsed;
                 _sortUpViewBox.Visibility = Visibility.Collapsed;
             }
 
+            /// <summary>
+            /// Shows the sort indicator for the current sort direction.
+            /// </summary>
+            /// <param name="ascending"><c>true</c> to show ascending; otherwise descending.</param>
             public void AddSorter(bool ascending)
             {
                 _sortDownViewBox.Visibility = ascending ? Visibility.Collapsed : Visibility.Visible;
@@ -4466,6 +4667,9 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Renders a table cell with bindable text and styling.
+        /// </summary>
         private class Cell : Border
         {
             public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
@@ -4495,6 +4699,9 @@ namespace DatabaseControls
                 set => SetValue(ForegroundProperty, value);
             }
 
+            /// <summary>
+            /// Initializes a table cell visual.
+            /// </summary>
             public Cell()
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -4510,6 +4717,9 @@ namespace DatabaseControls
             }
         }
 
+        /// <summary>
+        /// Renders a table row header with bindable text and styling.
+        /// </summary>
         private class RowHeader : Border
         {
             public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
@@ -4539,6 +4749,9 @@ namespace DatabaseControls
                 set => SetValue(HeaderBorderStyleProperty, value);
             }
 
+            /// <summary>
+            /// Initializes a row header visual.
+            /// </summary>
             public RowHeader()
             {
                 var tBlock = new TextBlock
@@ -4559,6 +4772,10 @@ namespace DatabaseControls
 
         #region Default Styles
 
+        /// <summary>
+        /// Creates the default text style used by table cells.
+        /// </summary>
+        /// <returns>The default cell text style.</returns>
         private static Style GetDefaultCellTextblockStyle()
         {
             var s = new Style(typeof(TextBlock));
@@ -4573,6 +4790,10 @@ namespace DatabaseControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default text style used by column headers.
+        /// </summary>
+        /// <returns>The default column-header text style.</returns>
         private static Style GetDefaultColumnHeaderTextblockStyle()
         {
             var s = new Style(typeof(TextBlock));
@@ -4588,6 +4809,10 @@ namespace DatabaseControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default border style used by column headers.
+        /// </summary>
+        /// <returns>The default column-header border style.</returns>
         private static Style GetDefaultColumnHeaderBorderStyle()
         {
             var columnHeaderBackground = new LinearGradientBrush(
@@ -4616,6 +4841,10 @@ namespace DatabaseControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default text style used by row headers.
+        /// </summary>
+        /// <returns>The default row-header text style.</returns>
         private static Style GetDefaultRowHeaderTextblockStyle()
         {
             var s = new Style(typeof(TextBlock));
@@ -4629,6 +4858,10 @@ namespace DatabaseControls
             return s;
         }
 
+        /// <summary>
+        /// Creates the default border style used by row headers.
+        /// </summary>
+        /// <returns>The default row-header border style.</returns>
         private static Style GetDefaultRowHeaderBorderStyle()
         {
             var rowHeaderBackground = new LinearGradientBrush(

@@ -618,6 +618,11 @@ namespace DatabaseControls
             public int Row { get; }
             public string Result { get; }
 
+            /// <summary>
+            /// Initializes a preview row with the source row number and evaluated result.
+            /// </summary>
+            /// <param name="row">The one-based row number shown in the preview.</param>
+            /// <param name="result">The expression result for the row.</param>
             public PreviewRow(int row, string result)
             {
                 Row = row;

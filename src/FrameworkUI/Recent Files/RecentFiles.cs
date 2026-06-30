@@ -492,13 +492,30 @@ namespace FrameworkUI
 
         #region File Icon Extraction
 
+        /// <summary>
+        /// Retrieves shell metadata, including icons, for a file system path.
+        /// </summary>
+        /// <param name="pszPath">The file system path to inspect.</param>
+        /// <param name="dwFileAttributes">The file attribute flags supplied to the shell.</param>
+        /// <param name="psfi">The structure that receives shell file information.</param>
+        /// <param name="cbSizeFileInfo">The size of <paramref name="psfi"/>.</param>
+        /// <param name="uFlags">The shell file information flags.</param>
+        /// <returns>A shell handle value for the requested information.</returns>
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
 
+        /// <summary>
+        /// Releases a native icon handle returned by the shell.
+        /// </summary>
+        /// <param name="hIcon">The icon handle to release.</param>
+        /// <returns><c>true</c> when the icon handle is destroyed; otherwise, <c>false</c>.</returns>
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool DestroyIcon(IntPtr hIcon);
 
+        /// <summary>
+        /// Receives shell file information for native icon extraction.
+        /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct SHFILEINFO
         {

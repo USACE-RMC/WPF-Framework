@@ -167,6 +167,7 @@ namespace FrameworkUI.Demo
         /// Gets the image icon representing the element.
         /// </summary>
         private static readonly Lazy<ImageSource> s_icon = new(() => { var img = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")); img.Freeze(); return img; });
+        /// <inheritdoc/>
         public override ImageSource ElementImage => s_icon.Value;
 
         /// <summary>

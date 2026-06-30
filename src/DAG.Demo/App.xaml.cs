@@ -7,6 +7,9 @@ namespace DAG.Demo
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// Initializes culture-aware WPF binding metadata for the demo application.
+        /// </summary>
         public App()
         {
             // Set WPF to use the current culture for all bindings (international number support)

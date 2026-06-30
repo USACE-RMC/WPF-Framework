@@ -327,6 +327,10 @@ namespace GenericControls
         /// </summary>
         /// <returns>The default <see cref="Style"/> for toolbar buttons.</returns>
         private static Style _cachedDefaultButtonStyle;
+        /// <summary>
+        /// Creates or returns the cached default style for compact toolbar buttons.
+        /// </summary>
+        /// <returns>The default stack-panel button style.</returns>
         private static Style DefaultStackPanelButtonStyle()
         {
             if (_cachedDefaultButtonStyle != null)
@@ -482,6 +486,11 @@ namespace GenericControls
 
         private bool _allCellsSelected;
 
+        /// <summary>
+        /// Toggles selection of all cells in the associated data grid.
+        /// </summary>
+        /// <param name="sender">The select-all button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataGrid == null)

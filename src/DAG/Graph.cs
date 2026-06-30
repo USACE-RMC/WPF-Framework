@@ -655,6 +655,11 @@ namespace DAG
 
         #region Event Handlers
 
+        /// <summary>
+        /// Updates connector subscriptions and removes invalid connections when nodes change.
+        /// </summary>
+        /// <param name="sender">The node collection that raised the event.</param>
+        /// <param name="e">The collection change details.</param>
         private void Nodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
@@ -709,6 +714,11 @@ namespace DAG
             }
         }
 
+        /// <summary>
+        /// Removes connections that target outputs removed from a node.
+        /// </summary>
+        /// <param name="sender">The output connector collection that changed.</param>
+        /// <param name="e">The collection change details.</param>
         private void Outputs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -733,6 +743,11 @@ namespace DAG
             }
         }
 
+        /// <summary>
+        /// Removes connections that target inputs removed from a node.
+        /// </summary>
+        /// <param name="sender">The input connector collection that changed.</param>
+        /// <param name="e">The collection change details.</param>
         private void Inputs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -775,6 +790,10 @@ namespace DAG
             ConnectionsRemoved?.Invoke(toRemove);
         }
 
+        /// <summary>
+        /// Removes connections after giving subscribers a chance to cancel the operation.
+        /// </summary>
+        /// <param name="connectionsToRemove">The connections requested for removal.</param>
         private void RemoveConnections(Tuple<OutConnector, InConnector>[] connectionsToRemove)
         {
             if (connectionsToRemove == null || connectionsToRemove.Length == 0) { return; }
@@ -791,6 +810,10 @@ namespace DAG
             }
         }
 
+        /// <summary>
+        /// Adds valid, non-duplicate connections after preview subscribers approve the change.
+        /// </summary>
+        /// <param name="connectionsToAdd">The candidate connections to add.</param>
         private void AddConnections(Tuple<OutConnector, InConnector>[] connectionsToAdd)
         {
             if (connectionsToAdd == null || connectionsToAdd.Length == 0) { return; }

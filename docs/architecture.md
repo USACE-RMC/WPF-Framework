@@ -6,17 +6,17 @@ This document describes the solution structure, dependency graph, design pattern
 
 ## 1. Solution Overview
 
-The solution contains 39 projects organized into seven solution folders:
+The solution contains 43 projects organized around package boundaries, demos, and tests:
 
 | Folder | Projects | Purpose |
 |--------|----------|---------|
-| **Core** | FrameworkInterfaces, FrameworkUI, Themes | Application shell, contracts, and theme system |
-| **Controls** | GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls | Reusable WPF control libraries |
+| **Core** | FrameworkInterfaces, Themes | Contracts and theme system |
+| **Controls** | FrameworkUI, GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls, Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Application shell, reusable WPF controls, and docking UI |
 | **Models** | DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared, DAG | Non-UI logic and vendored forks |
 | **Support** | SoftwareUpdate, SoftwareUpdate.Updater | Auto-update from GitHub Releases |
-| **AvalonDock** | Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | Modified docking layout engine |
 | **Demos** | FrameworkUI.Demo, GenericControls.Demo, NumericControls.Demo, OxyPlotControls.Demo, DatabaseControls.Demo, ExpressionParserControls.Demo, DAG.Demo | Standalone demo applications |
 | **Tests** | OxyPlot.ExampleLibrary + 13 test projects | Example chart models and unit/integration tests |
+| **Packaging** | RMC.Wpf.Framework.Core, RMC.Wpf.Framework.Models, RMC.Wpf.Framework.Support, RMC.Wpf.Framework.Controls | NuGet bundle projects |
 
 ## 2. Dependency Diagram
 
@@ -25,7 +25,7 @@ The following diagram shows the dependency relationships between the main librar
 ```
                           External
                         +-----------+
-                        | Numerics  |
+                        |RMC.Numerics|
                         +-----+-----+
                               |
           +-------------------+-------------------+
@@ -73,6 +73,19 @@ The following diagram shows the dependency relationships between the main librar
 ```
 
 **Leaf dependencies** (no internal project references): FrameworkInterfaces, Themes, DAG, ExpressionParser, OxyPlot.
+
+## 2.1 NuGet Package Map
+
+The packaging projects in `src/Packaging/` create four bundles. Packages should follow this dependency order:
+
+| Package | Included assemblies/content | Package dependencies |
+|---------|-----------------------------|----------------------|
+| `RMC.Wpf.Framework.Core` | FrameworkInterfaces, Themes | None |
+| `RMC.Wpf.Framework.Models` | DAG, DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared | ClosedXML, DocumentFormat.OpenXml, ExcelNumberFormat, FastMember, SourceGear.sqlite3, System.Data.SQLite |
+| `RMC.Wpf.Framework.Support` | SoftwareUpdate plus SoftwareUpdate.Updater content files | None |
+| `RMC.Wpf.Framework.Controls` | FrameworkUI, GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls, Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | `RMC.Wpf.Framework.Core`, `RMC.Wpf.Framework.Models`, `RMC.Wpf.Framework.Support`, `RMC.Numerics` 2.x |
+
+AvalonDock is a vendored UI dependency and is packaged with `RMC.Wpf.Framework.Controls`, not Core. `RMC.Numerics` is consumed as a NuGet package through central package management and should not be referenced through local `HintPath` DLLs. Source builds use the floating `2.*` version, while packages declare a compatible `[2.1.1,3.0.0)` dependency range.
 
 ## 3. Core Framework
 
@@ -124,9 +137,9 @@ Standalone theme resource library with no internal dependencies.
 | Library | Key Controls | Dependencies |
 |---------|-------------|--------------|
 | **GenericControls** | `NumericTextBox`, `NameTextBox`, `ColorPicker`, `CopyPasteDataGrid`, `MessageBox`, `NameDialog`, `ExplorerTreeView` | Themes |
-| **NumericControls** | `DistributionSelector`, `ParameterControl`, `ProbabilityCurveEditor`, `TimeSeriesDataGrid` | GenericControls, OxyPlotControls, Themes, Numerics (external) |
+| **NumericControls** | `DistributionSelector`, `ParameterControl`, `ProbabilityCurveEditor`, `TimeSeriesDataGrid` | GenericControls, OxyPlotControls, Themes, RMC.Numerics |
 | **OxyPlotControls** | `OxyPlotToolbar`, `OxyPlotPropertiesControl`, `PlotSeriesEditor`, `AxisPropertiesControl` | GenericControls, Themes, OxyPlot, OxyPlot.Wpf |
-| **DatabaseControls** | `DatabaseTableViewer`, `FieldCalculator`, `ExpressionEditorControl` | DatabaseManager, ExpressionParser, ExpressionParserControls, GenericControls, OxyPlotControls, Themes, Numerics (external) |
+| **DatabaseControls** | `DatabaseTableViewer`, `FieldCalculator`, `ExpressionEditorControl` | DatabaseManager, ExpressionParser, ExpressionParserControls, GenericControls, OxyPlotControls, Themes, RMC.Numerics |
 | **ExpressionParserControls** | `ExpressionEditorControl`, `FunctionBrowser`, `SyntaxHighlighter` | ExpressionParser, GenericControls, Themes |
 | **DAGControls** | `FlowGraphCanvas`, `NodeView`, `ConnectorView`, `ConnectionView` | DAG |
 
@@ -147,6 +160,11 @@ Standalone theme resource library with no internal dependencies.
 |---------|---------|
 | **SoftwareUpdate** | `IUpdateService` interface, `GitHubUpdateService`, `UpdateOptions`, `SemanticVersion`. Checks GitHub Releases for newer versions, downloads and extracts update assets. |
 | **SoftwareUpdate.Updater** | Standalone executable that applies updates. Waits for the parent process to exit, replaces files, and restarts the application. |
+
+### Vendored UI Libraries
+
+| Library | Purpose |
+|---------|---------|
 | **Xceed.Wpf.AvalonDock** | Modified fork of Xceed AvalonDock. Key modifications: `ContentPresenter` replaced with `ContentControl` for `LayoutItem.View` bindings (.NET 9+ fix), last `LayoutDocumentPane` protection in `CreateFloatingWindowCore`. |
 | **Xceed.Wpf.AvalonDock.Themes.VS2013** | Visual Studio 2013 theme for AvalonDock. Blue, Dark, and Light variants. Uses `DynamicResource` bindings to the Themes color keys. |
 
@@ -199,7 +217,7 @@ Key additions beyond upstream:
 
 | Dependency | Source | Purpose |
 |-----------|--------|---------|
-| **Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) (cloned alongside this repo) | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. Must be built separately. |
+| **RMC.Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) NuGet package, latest compatible 2.x | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. |
 
 All other dependencies are either vendored into the solution (AvalonDock, OxyPlot) or available as NuGet packages (System.Data.SQLite, DocumentFormat.OpenXml, etc.).
 

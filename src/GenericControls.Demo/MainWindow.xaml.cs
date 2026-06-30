@@ -29,7 +29,7 @@ namespace GenericControls.Demo
     /// </para>
     /// <para>
     /// The window serves as its own ViewModel by implementing <see cref="INotifyPropertyChanged"/>,
-    /// with the <see cref="DataContext"/> set to itself. All controls bind directly to properties
+    /// with the <c>DataContext</c> set to itself. All controls bind directly to properties
     /// defined in this class.
     /// </para>
     /// <para>
@@ -428,6 +428,10 @@ namespace GenericControls.Demo
             CPDataGrid2.ItemsSource = CreateSampleDataItems();
         }
 
+        /// <summary>
+        /// Creates sample rows for the copy-paste data-grid demos.
+        /// </summary>
+        /// <returns>A new sample data collection.</returns>
         private static ObservableCollection<SampleDataItem> CreateSampleDataItems()
         {
             return new ObservableCollection<SampleDataItem>

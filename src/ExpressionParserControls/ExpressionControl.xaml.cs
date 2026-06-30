@@ -38,38 +38,43 @@ namespace ExpressionParserControls
         /// </summary>
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ExpressionControl), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnTextPropertyChanged));
 
-    private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var control = (ExpressionControl)d;
-        if (control._formattingExpression || !control.IsLoaded)
-            return;
-
-        string newText = (string)e.NewValue ?? "";
-        string currentText = new System.Windows.Documents.TextRange(
-            control.ExpressionTextBox.Document.ContentStart,
-            control.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
-
-        if (currentText != newText)
+        /// <summary>
+        /// Synchronizes the rich text editor when the bound text value changes.
+        /// </summary>
+        /// <param name="d">The expression control whose text changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
+        private static void OnTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // try/finally so an exception during document rebuild (Blocks.Clear/Add or
-            // the TextChanged reformat) doesn't leave _formattingExpression stuck at true,
-            // which would permanently lock the editor.
-            control._formattingExpression = true;
-            try
+            var control = (ExpressionControl)d;
+            if (control._formattingExpression || !control.IsLoaded)
+                return;
+
+            string newText = (string)e.NewValue ?? "";
+            string currentText = new System.Windows.Documents.TextRange(
+                control.ExpressionTextBox.Document.ContentStart,
+                control.ExpressionTextBox.Document.ContentEnd).Text.Trim(Environment.NewLine.ToCharArray());
+
+            if (currentText != newText)
             {
-                control.ExpressionTextBox.Document.Blocks.Clear();
-                var p = new System.Windows.Documents.Paragraph();
-                p.Inlines.Add(new System.Windows.Documents.Run(newText));
-                control.ExpressionTextBox.Document.Blocks.Add(p);
+                // try/finally so an exception during document rebuild (Blocks.Clear/Add or
+                // the TextChanged reformat) doesn't leave _formattingExpression stuck at true,
+                // which would permanently lock the editor.
+                control._formattingExpression = true;
+                try
+                {
+                    control.ExpressionTextBox.Document.Blocks.Clear();
+                    var p = new System.Windows.Documents.Paragraph();
+                    p.Inlines.Add(new System.Windows.Documents.Run(newText));
+                    control.ExpressionTextBox.Document.Blocks.Add(p);
+                }
+                finally
+                {
+                    control._formattingExpression = false;
+                }
+                // Trigger a TextChanged to reformat with syntax highlighting
+                control.ExpressionTextBox_TextChanged(control.ExpressionTextBox, new TextChangedEventArgs(System.Windows.Controls.RichTextBox.TextChangedEvent, UndoAction.None));
             }
-            finally
-            {
-                control._formattingExpression = false;
-            }
-            // Trigger a TextChanged to reformat with syntax highlighting
-            control.ExpressionTextBox_TextChanged(control.ExpressionTextBox, new TextChangedEventArgs(System.Windows.Controls.RichTextBox.TextChangedEvent, UndoAction.None));
         }
-    }
 
         /// <summary>
         /// Gets or sets the text content of the expression editor.

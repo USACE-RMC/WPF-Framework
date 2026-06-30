@@ -204,6 +204,7 @@ namespace FrameworkUI.Demo
 
         /// <inheritdoc/>
         private static readonly Lazy<ImageSource> s_projectIcon = new(() => { var img = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")); img.Freeze(); return img; });
+        /// <inheritdoc/>
         public override ImageSource ProjectImage => s_projectIcon.Value;
 
         /// <summary>

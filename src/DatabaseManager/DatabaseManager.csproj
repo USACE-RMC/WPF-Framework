@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -16,12 +16,12 @@
 
 	<!-- Shared packages -->
 	<ItemGroup>
-		<PackageReference Include="ClosedXML" Version="0.105.0" />
-		<PackageReference Include="DocumentFormat.OpenXml" Version="3.4.1" />
-		<PackageReference Include="ExcelNumberFormat" Version="1.1" />
-		<PackageReference Include="FastMember" Version="1.5.0" />
-		<PackageReference Include="System.Data.SQLite" Version="2.0.2" />
-		<PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
+		<PackageReference Include="ClosedXML" />
+		<PackageReference Include="DocumentFormat.OpenXml" />
+		<PackageReference Include="ExcelNumberFormat" />
+		<PackageReference Include="FastMember" />
+		<PackageReference Include="System.Data.SQLite" />
+		<PackageReference Include="SourceGear.sqlite3" />
 	</ItemGroup>
 
 </Project>

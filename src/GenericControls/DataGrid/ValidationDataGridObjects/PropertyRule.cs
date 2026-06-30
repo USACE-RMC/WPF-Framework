@@ -114,6 +114,11 @@ namespace GenericControls
             /// </summary>
             public bool HasError;
 
+            /// <summary>
+            /// Initializes a validation rule with an expression and error message.
+            /// </summary>
+            /// <param name="expression">The expression that returns <c>true</c> when the rule fails.</param>
+            /// <param name="message">The message to display for the failed rule.</param>
             internal Rule(Func<bool> expression, string message)
             {
                 Expression = expression;

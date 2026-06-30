@@ -49,13 +49,13 @@ namespace Documentation.Tests.Snippets.GettingStarted
 
         public override string Name
         {
-            get => NameField;
+            get => _name;
             set
             {
-                if (NameField != value)
+                if (_name != value)
                 {
-                    var oldValue = NameField;
-                    NameField = value;
+                    var oldValue = _name;
+                    _name = value;
                     RecordPropertyChange(nameof(Name), oldValue, value);
                 }
             }
@@ -283,10 +283,6 @@ namespace Documentation.Tests.Snippets.GettingStarted
         public override Control GetDocumentControl(IElement element)
         {
             // Return the editor control for the given element
-            // NOTE: The doc shows `return new TextBlock { Text = element.Name }` but TextBlock
-            // does not inherit from Control in WPF. The correct approach is to use a ContentControl
-            // or UserControl wrapper. This is a doc issue to fix.
-            // TODO: docs/getting-started.md should return a Control subclass, not TextBlock.
             return new ContentControl { Content = new TextBlock { Text = element.Name } };
         }
 

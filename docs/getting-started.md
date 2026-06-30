@@ -24,9 +24,17 @@ Create a new WPF Application project targeting `net10.0-windows`. Enable `UseWPF
 </Project>
 ```
 
-## 3. Add Project References
+## 3. Add Framework References
 
-Add `ProjectReference` entries for the framework libraries. At minimum, you need FrameworkInterfaces, FrameworkUI, and Themes:
+For NuGet consumption, reference the Controls bundle. It brings in Core, Models, Support, and RMC.Numerics transitively:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="RMC.Wpf.Framework.Controls" Version="1.0.0" />
+</ItemGroup>
+```
+
+For source development inside this repository, add `ProjectReference` entries for the framework libraries. At minimum, you need FrameworkInterfaces, FrameworkUI, and Themes:
 
 ```xml
 <ItemGroup>

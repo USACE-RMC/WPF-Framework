@@ -244,6 +244,11 @@ namespace DAGControls
             GraphCanvas.LostMouseCapture += GraphCanvas_LostMouseCapture;
         }
 
+        /// <summary>
+        /// Clears drag state when the canvas loses mouse capture.
+        /// </summary>
+        /// <param name="sender">The canvas that raised the event.</param>
+        /// <param name="e">The mouse event data.</param>
         private void GraphCanvas_LostMouseCapture(object sender, MouseEventArgs e)
         {
             _isPanning = false;
@@ -329,6 +334,11 @@ namespace DAGControls
 
         #region Private Methods - Graph Handling
 
+        /// <summary>
+        /// Rebinds graph event handlers when the <see cref="Graph"/> property changes.
+        /// </summary>
+        /// <param name="d">The canvas whose graph changed.</param>
+        /// <param name="e">The dependency-property change details.</param>
         private static void GraphPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             FlowGraphCanvas thisControl = (FlowGraphCanvas)d;
@@ -361,6 +371,9 @@ namespace DAGControls
             thisControl.RedrawGraph();
         }
 
+        /// <summary>
+        /// Rebuilds all node and connection visuals from the current graph model.
+        /// </summary>
         private void RedrawGraph()
         {
             // Unsubscribe event handlers before clearing
@@ -404,6 +417,10 @@ namespace DAGControls
             GraphRedrawn?.Invoke();
         }
 
+        /// <summary>
+        /// Removes visual paths for connections removed from the graph model.
+        /// </summary>
+        /// <param name="connections">The graph connections that were removed.</param>
         private void Graph_ConnectionsRemoved(Tuple<OutConnector, InConnector>[] connections)
         {
             foreach (var connection in connections)
@@ -416,6 +433,10 @@ namespace DAGControls
             }
         }
 
+        /// <summary>
+        /// Adds visual paths for connections added to the graph model.
+        /// </summary>
+        /// <param name="connections">The graph connections that were added.</param>
         private void Graph_ConnectionsAdded(Tuple<OutConnector, InConnector>[] connections)
         {
             foreach (var connection in connections)
@@ -424,6 +445,10 @@ namespace DAGControls
             }
         }
 
+        /// <summary>
+        /// Creates and registers the visual path for a graph connection.
+        /// </summary>
+        /// <param name="connection">The connection to render.</param>
         private void AddConnection(Tuple<OutConnector, InConnector> connection)
         {
             if (_connections.ContainsKey(connection)) { return; }
@@ -455,6 +480,11 @@ namespace DAGControls
             ConnectionAdded?.Invoke(connection, p);
         }
 
+        /// <summary>
+        /// Synchronizes node controls with changes in the graph node collection.
+        /// </summary>
+        /// <param name="sender">The node collection that raised the event.</param>
+        /// <param name="e">The collection change details.</param>
         private void Nodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
@@ -483,6 +513,10 @@ namespace DAGControls
             }
         }
 
+        /// <summary>
+        /// Creates and registers the visual control for a graph node.
+        /// </summary>
+        /// <param name="node">The node to render.</param>
         private void AddNode(NodeBase node)
         {
             if (node == null) { return; }
@@ -500,11 +534,21 @@ namespace DAGControls
 
         #region Private Methods - Mouse Handling
 
+        /// <summary>
+        /// Removes the node selected by the context menu.
+        /// </summary>
+        /// <param name="sender">The menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Cmi_Click(object sender, RoutedEventArgs e)
         {
             _ = Graph.Nodes.Remove(_targetNode);
         }
 
+        /// <summary>
+        /// Starts node movement, connection creation, context-menu display, or panning.
+        /// </summary>
+        /// <param name="sender">The canvas that raised the event.</param>
+        /// <param name="e">The mouse-button event data.</param>
         private void GraphCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.RightButton == MouseButtonState.Pressed)
@@ -596,6 +640,11 @@ namespace DAGControls
             }
         }
 
+        /// <summary>
+        /// Updates the active drag, connection preview, or pan operation.
+        /// </summary>
+        /// <param name="sender">The canvas that raised the event.</param>
+        /// <param name="e">The mouse event data.</param>
         private void GraphCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             Point pos = e.GetPosition(GraphCanvas);
@@ -680,6 +729,11 @@ namespace DAGControls
             _previousLocation = pos;
         }
 
+        /// <summary>
+        /// Completes the active mouse interaction and releases mouse capture.
+        /// </summary>
+        /// <param name="sender">The canvas that raised the event.</param>
+        /// <param name="e">The mouse-button event data.</param>
         private void GraphCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             _isPanning = false;
@@ -747,6 +801,11 @@ namespace DAGControls
             GraphCanvas.ReleaseMouseCapture();
         }
 
+        /// <summary>
+        /// Zooms the graph around the current mouse position.
+        /// </summary>
+        /// <param name="sender">The canvas that raised the event.</param>
+        /// <param name="e">The mouse-wheel event data.</param>
         private void GraphCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Graph == null) return;
@@ -844,6 +903,11 @@ namespace DAGControls
 
         #region Private Methods - Event Handlers
 
+        /// <summary>
+        /// Redraws affected connection paths after a node size changes.
+        /// </summary>
+        /// <param name="sender">The node control that changed size.</param>
+        /// <param name="e">The size-change details.</param>
         private void Node_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!(sender is NodeControl nodeCntrl)) { return; }
@@ -858,6 +922,11 @@ namespace DAGControls
             NodeSizeChanged?.Invoke(nodeCntrl.Node);
         }
 
+        /// <summary>
+        /// Removes the node whose delete command was clicked.
+        /// </summary>
+        /// <param name="sender">The node control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Node_Delete_Clicked(object sender, RoutedEventArgs e)
         {
             _ = Graph.Nodes.Remove(((NodeControl)sender).Node);
@@ -867,6 +936,11 @@ namespace DAGControls
 
         #region Private Methods - Path Drawing
 
+        /// <summary>
+        /// Creates the initial bezier path for a connection source.
+        /// </summary>
+        /// <param name="connectionSource">The output connector visual that starts the path.</param>
+        /// <returns>The created path.</returns>
         private Path CreatePath(Ellipse connectionSource)
         {
             // Identify the center point of node connector. TransformToAncestor throws
@@ -904,6 +978,12 @@ namespace DAGControls
             return p;
         }
 
+        /// <summary>
+        /// Updates a connection path to span the specified start and end points.
+        /// </summary>
+        /// <param name="connector">The connection path to update.</param>
+        /// <param name="startPoint">The start point of the connection.</param>
+        /// <param name="endPoint">The end point of the connection.</param>
         private void DrawConnection(Path connector, Point startPoint, Point endPoint)
         {
             PathFigure pf = ((PathGeometry)connector.Data).Figures[0];
@@ -915,6 +995,12 @@ namespace DAGControls
             b.Point3 = endPoint;
         }
 
+        /// <summary>
+        /// Updates a connection path using output and input connector visuals.
+        /// </summary>
+        /// <param name="connector">The connection path to update.</param>
+        /// <param name="outConnector">The output connector visual.</param>
+        /// <param name="inConnector">The input connector visual.</param>
         private void DrawConnection(Path connector, Ellipse outConnector, Ellipse inConnector)
         {
             // Get Start Point
@@ -932,6 +1018,12 @@ namespace DAGControls
             DrawConnection(connector, startPoint, endPoint);
         }
 
+        /// <summary>
+        /// Translates every point in an existing connection path.
+        /// </summary>
+        /// <param name="connector">The connection path to translate.</param>
+        /// <param name="xTrans">The horizontal translation amount.</param>
+        /// <param name="yTrans">The vertical translation amount.</param>
         private void TranslateConnection(Path connector, double xTrans, double yTrans)
         {
             PathFigure pf = ((PathGeometry)connector.Data).Figures[0];

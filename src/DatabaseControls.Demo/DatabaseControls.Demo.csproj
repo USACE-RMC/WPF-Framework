@@ -15,8 +15,8 @@
 
   	<!-- Shared packages -->
 	<ItemGroup>
-		<PackageReference Include="System.Data.SQLite" Version="2.0.2" />
-		<PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
+		<PackageReference Include="System.Data.SQLite" />
+		<PackageReference Include="SourceGear.sqlite3" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\DatabaseControls\DatabaseControls.csproj" />
@@ -26,7 +26,7 @@
 	  <ProjectReference Include="..\Themes\Themes.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="RMC.Numerics" Version="2.0.1" />
+	  <PackageReference Include="RMC.Numerics" />
 	  <ProjectReference Include="..\OxyPlot\OxyPlot\OxyPlot.csproj" />
 	  <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
 	  <ProjectReference Include="..\OxyPlot\OxyPlot.Wpf.Shared\OxyPlot.Wpf.Shared.csproj" />

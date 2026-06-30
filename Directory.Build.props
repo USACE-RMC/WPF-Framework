@@ -19,44 +19,38 @@
     <FileVersion>1.0.0.0</FileVersion>
 
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IsPackable>false</IsPackable>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <DebugType>embedded</DebugType>
 
     <PackageLicenseExpression>0BSD</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
-    <!--
-      Treat XML-doc warnings as errors so missing or malformed documentation on public
-      API fails the build instead of shipping a partial reference. Scope limited to
-      IsWpfFrameworkLibrary=true so vendored forks (AvalonDock, upstream OxyPlot) are
-      unaffected.
-        CS1591 - missing XML comment for publicly visible type or member
-        CS1572 - XML comment has a param tag for a non-existent parameter
-        CS1573 - parameter has no matching param tag (but other parameters do)
-        CS1574 - XML comment has cref attribute that could not be resolved
-        CS0419 - ambiguous reference in cref attribute
-    -->
+    <!-- Public API XML documentation must be complete on packable RMC libraries. -->
     <WarningsAsErrors>$(WarningsAsErrors);CS1591;CS1572;CS1573;CS1574;CS0419</WarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(UseLocalRmcNumericsProject)' == '' and ('$(MSBuildProjectName)' == 'DatabaseControls' or '$(MSBuildProjectName)' == 'NumericControls')">
-    <BestFitRepositoryRoot Condition="'$(BestFitRepositoryRoot)' == '' and '$(SolutionDir)' != '' and Exists('$(SolutionDir)RMC.BestFit.sln')">$(SolutionDir)</BestFitRepositoryRoot>
-    <BestFitRepositoryRoot Condition="'$(BestFitRepositoryRoot)' == '' and Exists('$(MSBuildStartupDirectory)\RMC.BestFit.sln')">$(MSBuildStartupDirectory)\</BestFitRepositoryRoot>
-    <UseLocalRmcNumericsProject Condition="'$(BestFitRepositoryRoot)' != ''">true</UseLocalRmcNumericsProject>
-    <RmcNumericsProject Condition="'$(RmcNumericsProject)' == '' and '$(BestFitRepositoryRoot)' != ''">$(BestFitRepositoryRoot)..\numerics\Numerics\Numerics.csproj</RmcNumericsProject>
+  <PropertyGroup Condition="'$(EnforceXmlDocumentation)' == 'true'">
+    <!--
+      Release validation enables the full XML documentation warning set. Run
+      scripts\validate-code-xml-docs.ps1 to combine this compiler gate with the
+      private class and method scanner.
+    -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningsAsErrors>$(WarningsAsErrors);CS0419;CS1570;CS1571;CS1572;CS1573;CS1574;CS1584;CS1587;CS1589;CS1591</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsWpfFrameworkLibrary)' == 'true'">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
 
     <!-- Reproducible builds: https://github.com/dotnet/reproducible-builds -->
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39">
+    <PackageReference Include="DotNet.ReproducibleBuilds">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
 
     <!-- Source Link: https://github.com/dotnet/sourcelink -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

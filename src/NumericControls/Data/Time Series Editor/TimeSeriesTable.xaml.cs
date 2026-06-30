@@ -752,6 +752,11 @@ namespace NumericControls
     /// </remarks>
     public class DateToStringConverter : IValueConverter
     {
+        /// <summary>
+        /// Builds the date/time format pattern for the supplied culture.
+        /// </summary>
+        /// <param name="culture">The culture whose date and time patterns are used.</param>
+        /// <returns>The combined short date and short time pattern.</returns>
         private static string BuildPattern(CultureInfo culture)
         {
             return $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";

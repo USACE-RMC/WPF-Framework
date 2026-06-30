@@ -20,6 +20,11 @@ namespace OxyPlotControls.Demo
             PropertiesControl.Plot = plot;
         }
 
+        /// <summary>
+        /// Reactivates the owner window after the properties dialog closes.
+        /// </summary>
+        /// <param name="sender">The dialog that raised the event.</param>
+        /// <param name="e">The closing event data.</param>
         private void OxyPlotPropertiesDialog_Closing(object sender, CancelEventArgs e)
         {
             if (Owner != null)

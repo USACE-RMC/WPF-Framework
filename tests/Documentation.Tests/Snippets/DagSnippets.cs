@@ -34,11 +34,6 @@ namespace Documentation.Tests.Snippets.Dag
             }
         }
 
-        // NOTE: The doc shows `Utilities.SetDouble(value, ref _manningsN, PropertyChanged, this)`
-        // which works only inside NodeBase itself, not from a subclass. From a subclass, use
-        // RaisePropertyChanged() instead. This is a doc issue to fix.
-        // TODO: docs/dag-controls.md should show the RaisePropertyChanged pattern for subclasses.
-
         public HydraulicNode()
         {
             Inputs.Add(new InConnector("Upstream Flow", "cfs", this));

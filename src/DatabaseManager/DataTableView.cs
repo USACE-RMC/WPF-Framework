@@ -2752,15 +2752,28 @@ namespace DatabaseManager
             }
         }
 
-        // Try CurrentCulture first (matches how the user typed/pasted), fall back to
-        // InvariantCulture so cross-machine data (e.g., a US-format CSV pasted on a German
-        // machine) is still readable.
+        /// <summary>
+        /// Parses a double using the current culture, then invariant culture.
+        /// </summary>
+        /// <param name="text">The text to parse.</param>
+        /// <param name="result">The parsed double value.</param>
+        /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+        /// <remarks>
+        /// Current culture matches user-entered values; invariant culture keeps
+        /// cross-machine data such as US-format CSV values readable.
+        /// </remarks>
         private static bool TryParseDoubleDualCulture(string text, out double result)
         {
             return double.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out result)
                 || double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
         }
 
+        /// <summary>
+        /// Parses a single-precision value using the current culture, then invariant culture.
+        /// </summary>
+        /// <param name="text">The text to parse.</param>
+        /// <param name="result">The parsed single-precision value.</param>
+        /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
         private static bool TryParseSingleDualCulture(string text, out float result)
         {
             return float.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out result)

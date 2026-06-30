@@ -23,6 +23,9 @@ namespace DAG.Demo
     public partial class MainWindow : Window
     {
 
+        /// <summary>
+        /// Initializes the demo window and assigns the sample graph.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -30,11 +33,21 @@ namespace DAG.Demo
             GraphCanvas.Graph = new TestGraph();
         }
 
+        /// <summary>
+        /// Adds a sample node at the default demo position.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void AddNodeButton_Click(object sender, RoutedEventArgs e)
         {
             AddNode(new Point(180, 180));
         }
 
+        /// <summary>
+        /// Adds the demo node command to the canvas context menu.
+        /// </summary>
+        /// <param name="cm">The context menu being prepared.</param>
+        /// <param name="canvasPosition">The canvas position where the menu was opened.</param>
         private void GraphCanvas_PreviewCanvasContextMenu(ContextMenu cm, Point canvasPosition)
         {
             Image addIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/DAG.Demo;component/Resources/Add.png")) };
@@ -43,6 +56,11 @@ namespace DAG.Demo
             cm.Items.Add(cmi);
         }
 
+        /// <summary>
+        /// Adds a node near the context-menu position.
+        /// </summary>
+        /// <param name="sender">The context-menu item that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Cmi_Click(object sender, RoutedEventArgs e)
         {
             var p = (Point)((MenuItem)sender).Tag;
@@ -51,6 +69,10 @@ namespace DAG.Demo
 
         private static readonly Random _random = new();
 
+        /// <summary>
+        /// Creates and decorates a sample node at the specified canvas position.
+        /// </summary>
+        /// <param name="p">The canvas position for the node.</param>
         private void AddNode(Point p)
         {
             var newNode = new TestNode() { LeftPosition = p.X, TopPosition = p.Y };
@@ -83,6 +105,11 @@ namespace DAG.Demo
             }
         }
 
+        /// <summary>
+        /// Adds demo-specific node commands to the node context menu.
+        /// </summary>
+        /// <param name="cm">The context menu being prepared.</param>
+        /// <param name="node">The node associated with the menu.</param>
         private void GraphCanvas_PreviewNodeContextMenu(ContextMenu cm, DAG.NodeBase node)
         {
             Image editIcon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/DAG.Demo;component/Resources/EditWindow.png")) };
@@ -91,6 +118,10 @@ namespace DAG.Demo
             cm.Items.Add(cmi);
         }
 
+        /// <summary>
+        /// Displays feedback when the user requests an automatic connection.
+        /// </summary>
+        /// <param name="fromConnector">The output connector that starts the connection.</param>
         private void GraphCanvas_AutoConnection_Clicked(DAG.OutConnector fromConnector)
         {
             ConnectionText.TextDecorations = null;
@@ -98,16 +129,31 @@ namespace DAG.Demo
             if (FindResource("animate") is Storyboard sb1) sb1.Begin(ConnectionText);
         }
 
+        /// <summary>
+        /// Handles the placeholder graph save command in the demo.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void SaveGraphButton_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Implement when FlowGraphCanvas.GraphToXElement() is available
         }
 
+        /// <summary>
+        /// Handles the placeholder graph load command in the demo.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void LoadGraphButton_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Implement when FlowGraphCanvas.LoadFromXElement() is available
         }
 
+        /// <summary>
+        /// Adds a sample rectangle visual to the graph canvas.
+        /// </summary>
+        /// <param name="sender">The button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             Rectangle rect = new Rectangle() { Width = 350, Height = 200, Stroke = Brushes.Black, StrokeThickness = 2 };
@@ -117,12 +163,21 @@ namespace DAG.Demo
             GraphCanvas.AddVisual(rect);
         }
 
+        /// <summary>
+        /// Subscribes to graph connection notifications when the window loads.
+        /// </summary>
+        /// <param name="sender">The window that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             GraphCanvas.Graph.ConnectionsAdded += Graph_ConnectionsAdded;
             GraphCanvas.Graph.ConnectionsRemoved += Graph_ConnectionsRemoved;
         }
 
+        /// <summary>
+        /// Displays connection-removal feedback in the demo status text.
+        /// </summary>
+        /// <param name="connections">The connections that were removed.</param>
         private void Graph_ConnectionsRemoved(Tuple<OutConnector, InConnector>[] connections)
         {
             //Show update
@@ -136,6 +191,10 @@ namespace DAG.Demo
             if (FindResource("animate") is Storyboard sb2) sb2.Begin(ConnectionText);
         }
 
+        /// <summary>
+        /// Displays connection-addition feedback in the demo status text.
+        /// </summary>
+        /// <param name="connections">The connections that were added.</param>
         private void Graph_ConnectionsAdded(Tuple<OutConnector, InConnector>[] connections)
         {
             //Show update
@@ -149,6 +208,10 @@ namespace DAG.Demo
             if (FindResource("animate") is Storyboard sb3) sb3.Begin(ConnectionText);
         }
 
+        /// <summary>
+        /// Unsubscribes from graph notifications before the window closes.
+        /// </summary>
+        /// <param name="e">The close event data.</param>
         protected override void OnClosed(EventArgs e)
         {
             GraphCanvas.Graph.ConnectionsAdded -= Graph_ConnectionsAdded;

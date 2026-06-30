@@ -428,6 +428,10 @@ namespace FrameworkInterfaces.Undo
 
         #region Private Methods
 
+        /// <summary>
+        /// Records an undoable action, merging or stacking it as appropriate.
+        /// </summary>
+        /// <param name="action">The action to record.</param>
         private void RecordActionInternal(IUndoableAction action)
         {
             lock (_lockObject)
@@ -462,6 +466,9 @@ namespace FrameworkInterfaces.Undo
             OnStateChanged();
         }
 
+        /// <summary>
+        /// Removes oldest undo entries when the stack exceeds the configured limit.
+        /// </summary>
         private void TrimUndoStack()
         {
             lock (_lockObject)
@@ -494,6 +501,9 @@ namespace FrameworkInterfaces.Undo
             }
         }
 
+        /// <summary>
+        /// Raises property and state-change notifications for undo manager state.
+        /// </summary>
         private void OnStateChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanUndo)));
@@ -516,11 +526,18 @@ namespace FrameworkInterfaces.Undo
             private readonly UndoManager _manager;
             private bool _disposed = false;
 
+            /// <summary>
+            /// Initializes a transaction scope for the specified manager.
+            /// </summary>
+            /// <param name="manager">The undo manager that owns the transaction.</param>
             public TransactionScope(UndoManager manager)
             {
                 _manager = manager;
             }
 
+            /// <summary>
+            /// Commits the active transaction once when the scope is disposed.
+            /// </summary>
             public void Dispose()
             {
                 if (!_disposed)
@@ -536,6 +553,9 @@ namespace FrameworkInterfaces.Undo
         /// </summary>
         private class NestedTransactionScope : IDisposable
         {
+            /// <summary>
+            /// Emits a diagnostic warning for an unsupported nested transaction.
+            /// </summary>
             public void Dispose()
             {
                 System.Diagnostics.Debug.WriteLine(

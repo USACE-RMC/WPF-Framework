@@ -321,8 +321,8 @@ namespace FrameworkUI.Demo.UI
         /// <param name="element">The element to create a properties control for.</param>
         /// <returns>Always returns null as this method is not implemented.</returns>
         /// <remarks>
-        /// Properties controls in RMC-BestFit are created based on the active document control rather than
-        /// directly from elements. See <see cref="GetPropertiesControl(Control)"/> for the implemented approach.
+        /// Properties controls are created based on the active document control rather than
+        /// directly from elements. See <see cref="GetPropertiesControl(UIElement)"/> for the implemented approach.
         /// </remarks>
         public override Control GetPropertiesControl(IElement element)
         {

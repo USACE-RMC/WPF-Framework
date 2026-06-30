@@ -274,7 +274,17 @@ namespace OxyPlotControls
             Unloaded += OnUnloaded;
         }
 
+        /// <summary>
+        /// Enables plot-change notifications after the control has loaded.
+        /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void OnLoaded(object sender, RoutedEventArgs e) => _suppressPlotChanged = false;
+        /// <summary>
+        /// Suppresses plot-change notifications while the control is unloaded.
+        /// </summary>
+        /// <param name="sender">The control that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void OnUnloaded(object sender, RoutedEventArgs e) { _suppressPlotChanged = true; }
 
         /// <summary>

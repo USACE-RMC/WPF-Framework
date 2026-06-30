@@ -20,6 +20,11 @@ namespace FrameworkUI
             Loaded += TermsAndConditionsWindow_Loaded;
         }
 
+        /// <summary>
+        /// Applies the inherited window icon and default terms document when the dialog loads.
+        /// </summary>
+        /// <param name="sender">The terms window that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void TermsAndConditionsWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Auto-populate window icon from owner or main window
@@ -78,12 +83,22 @@ namespace FrameworkUI
 
         #region Event Handlers
 
+        /// <summary>
+        /// Accepts the dialog and records whether the user agreed.
+        /// </summary>
+        /// <param name="sender">The OK button that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             UserAgreed = IAgreeCheckbox.IsChecked == true;
             this.DialogResult = true;
         }
 
+        /// <summary>
+        /// Enables agreement once the user has scrolled to the end of the terms.
+        /// </summary>
+        /// <param name="sender">The terms document viewer that raised the event.</param>
+        /// <param name="e">The scroll-change details.</param>
         private void RichTextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             double verticalOffset = TCURichTextBox.VerticalOffset;
@@ -112,6 +127,11 @@ namespace FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Updates the OK button based on the agreement checkbox state.
+        /// </summary>
+        /// <param name="sender">The checkbox that raised the event.</param>
+        /// <param name="e">The routed event data.</param>
         private void IAgreeCheckbox_Changed(object sender, RoutedEventArgs e)
         {
             OKButton.IsEnabled = IAgreeCheckbox.IsChecked == true;
@@ -121,6 +141,9 @@ namespace FrameworkUI
 
         #region Helper Methods
 
+        /// <summary>
+        /// Applies the configured visibility for agreement and command buttons.
+        /// </summary>
         private void ApplyShowButtons()
         {
             // Guard against being called before InitializeComponent
@@ -140,6 +163,10 @@ namespace FrameworkUI
             }
         }
 
+        /// <summary>
+        /// Builds the default terms-and-conditions document.
+        /// </summary>
+        /// <returns>The generated terms document.</returns>
         private FlowDocument BuildDefaultTermsDocument()
         {
             string softwareName = ApplicationAttributes.Title;
@@ -188,6 +215,11 @@ namespace FrameworkUI
             return doc;
         }
 
+        /// <summary>
+        /// Creates a heading paragraph for the terms document.
+        /// </summary>
+        /// <param name="text">The heading text.</param>
+        /// <returns>The formatted heading paragraph.</returns>
         private static Paragraph CreateHeading(string text)
         {
             var paragraph = new Paragraph(new Run(text))
@@ -199,6 +231,11 @@ namespace FrameworkUI
             return paragraph;
         }
 
+        /// <summary>
+        /// Creates a body paragraph for the terms document.
+        /// </summary>
+        /// <param name="text">The paragraph text.</param>
+        /// <returns>The formatted body paragraph.</returns>
         private static Paragraph CreateParagraph(string text)
         {
             var paragraph = new Paragraph(new Run(text))

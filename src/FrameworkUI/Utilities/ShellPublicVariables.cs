@@ -130,6 +130,10 @@
         /// </summary>
         public static string SoftwareVersionDate = GetAssemblyDate();
 
+        /// <summary>
+        /// Gets the executing assembly's last-write month and year.
+        /// </summary>
+        /// <returns>The assembly date label, or an empty string when unavailable.</returns>
         private static string GetAssemblyDate()
         {
             try

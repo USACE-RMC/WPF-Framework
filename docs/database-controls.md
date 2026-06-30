@@ -72,14 +72,14 @@ public abstract class DataTableView
     public int NumberOfRows { get; }
 
     // Cell access
-    public abstract object GetValue(int column, int row);
-    public abstract void SetValue(int column, int row, object value);
+    public object GetCell(int columnIndex, int rowIndex);
+    public void EditCell(int rowIndex, int columnIndex, object value);
 
     // Editing
     public void ApplyEdits();       // Commit pending edits to storage
     public void CancelEdits();      // Discard pending edits
-    public void Undo();             // Undo the last edit
-    public void Redo();             // Redo the last undone edit
+    public void UndoEdit();         // Undo the last edit
+    public void RedoEdit();         // Redo the last undone edit
 
     // Structural operations
     public void AddRow();
@@ -129,7 +129,7 @@ var mem = new InMemoryReader(dt);
 
 ### Edit Tracking with Undo/Redo
 
-`DataTableView` maintains an internal edit stack with an index pointer. All cell, row, and column modifications are recorded as `TableEdit` objects. Calling `Undo()` decrements the pointer; `Redo()` increments it. When a new edit is made after undoing, all edits beyond the current pointer are discarded.
+`DataTableView` maintains an internal edit stack with an index pointer. All cell, row, and column modifications are recorded as `TableEdit` objects. Calling `UndoEdit()` decrements the pointer; `RedoEdit()` increments it. When a new edit is made after undoing, all edits beyond the current pointer are discarded.
 
 Edit types include `CellEdit`, `MultiCellEdit`, `AddRowEdit`, `DeleteRowEdit`, `AddColumnEdit`, `DeleteColumnEdit`, and their batch variants (`AddRowsEdit`, `DeleteRowsEdit`, etc.).
 
@@ -163,7 +163,7 @@ A column-scoped search dialog with support for:
 
 Displays summary statistics for a selected column. Automatically determines the appropriate statistics panel based on the column data type:
 
-- **Numeric columns** (`NumericColumnStats`) -- count, minimum, maximum, mean, standard deviation, and additional statistical measures powered by the external Numerics library
+- **Numeric columns** (`NumericColumnStats`) -- count, minimum, maximum, mean, standard deviation, and additional statistical measures powered by the RMC.Numerics package
 - **Text columns** (`AlphabeticColumnStats`) -- count, unique values, and frequency distribution
 
 Statistics can be filtered to selected rows only.
@@ -286,7 +286,7 @@ A browsable list of all parser functions. Supports inserting a selected function
 
 | Dependency | Type | Used By |
 |---|---|---|
-| [Numerics](https://github.com/USACE-RMC/Numerics) | External DLL | ColumnStatsWindow (statistical distributions) |
+| [RMC.Numerics](https://github.com/USACE-RMC/Numerics) | NuGet package | ColumnStatsWindow (statistical distributions) |
 | GenericControls | Project | MessageBox, MetroWindow, property controls |
 | Themes | Project | Theme colors and styles |
 | OxyPlot / OxyPlot.Wpf | Project | Chart rendering in table viewer |

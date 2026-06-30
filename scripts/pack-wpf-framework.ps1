@@ -1,0 +1,96 @@
+param(
+    [string]$Configuration = "Release",
+    [string]$OutputDirectory = "artifacts/packages",
+    [switch]$SkipRestore,
+    [switch]$SkipBuild
+)
+
+$ErrorActionPreference = "Stop"
+
+$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$outputPath = Join-Path $repoRoot $OutputDirectory
+New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
+
+if (-not $SkipRestore) {
+    & dotnet restore (Join-Path $repoRoot "WPF-Framework.sln")
+    if ($LASTEXITCODE -ne 0) {
+        throw "Restore failed before packing."
+    }
+}
+
+if (-not $SkipBuild) {
+    & dotnet build (Join-Path $repoRoot "WPF-Framework.sln") -c $Configuration --no-restore
+    if ($LASTEXITCODE -ne 0) {
+        throw "Build failed before packing."
+    }
+}
+
+$packageProjects = @(
+    "src/Packaging/RMC.Wpf.Framework.Core/RMC.Wpf.Framework.Core.csproj",
+    "src/Packaging/RMC.Wpf.Framework.Models/RMC.Wpf.Framework.Models.csproj",
+    "src/Packaging/RMC.Wpf.Framework.Support/RMC.Wpf.Framework.Support.csproj",
+    "src/Packaging/RMC.Wpf.Framework.Controls/RMC.Wpf.Framework.Controls.csproj"
+)
+
+foreach ($project in $packageProjects) {
+    & dotnet pack (Join-Path $repoRoot $project) -c $Configuration --no-build --no-restore -o $outputPath
+    if ($LASTEXITCODE -ne 0) {
+        throw "Package creation failed for $project."
+    }
+}
+
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+$expectedEntries = @{
+    "RMC.Wpf.Framework.Core" = @(
+        "lib/net10.0-windows7.0/FrameworkInterfaces.dll",
+        "lib/net10.0-windows7.0/Themes.dll")
+    "RMC.Wpf.Framework.Models" = @(
+        "lib/net10.0-windows7.0/DAG.dll",
+        "lib/net10.0-windows7.0/DatabaseManager.dll",
+        "lib/net10.0-windows7.0/ExpressionParser.dll",
+        "lib/net10.0-windows7.0/OxyPlot.dll",
+        "lib/net10.0-windows7.0/OxyPlot.Wpf.dll",
+        "lib/net10.0-windows7.0/OxyPlot.Wpf.Shared.dll")
+    "RMC.Wpf.Framework.Support" = @(
+        "lib/net10.0-windows7.0/SoftwareUpdate.dll",
+        "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.exe",
+        "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.dll",
+        "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.deps.json",
+        "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.runtimeconfig.json")
+    "RMC.Wpf.Framework.Controls" = @(
+        "lib/net10.0-windows7.0/GenericControls.dll",
+        "lib/net10.0-windows7.0/FrameworkUI.dll",
+        "lib/net10.0-windows7.0/DAGControls.dll",
+        "lib/net10.0-windows7.0/DatabaseControls.dll",
+        "lib/net10.0-windows7.0/ExpressionParserControls.dll",
+        "lib/net10.0-windows7.0/NumericControls.dll",
+        "lib/net10.0-windows7.0/OxyPlotControls.dll",
+        "lib/net10.0-windows7.0/Xceed.Wpf.AvalonDock.dll",
+        "lib/net10.0-windows7.0/Xceed.Wpf.AvalonDock.Themes.VS2013.dll")
+}
+
+foreach ($packageId in $expectedEntries.Keys) {
+    $package = Get-ChildItem -Path $outputPath -Filter "$packageId.*.nupkg" |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1
+
+    if ($package -eq $null) {
+        throw "Missing package for $packageId."
+    }
+
+    $zip = [System.IO.Compression.ZipFile]::OpenRead($package.FullName)
+    try {
+        $entries = @($zip.Entries | ForEach-Object { $_.FullName })
+        foreach ($expectedEntry in $expectedEntries[$packageId]) {
+            if ($entries -notcontains $expectedEntry) {
+                throw "$($package.Name) is missing $expectedEntry."
+            }
+        }
+    }
+    finally {
+        $zip.Dispose()
+    }
+}
+
+Write-Host "Packed and validated $($expectedEntries.Count) RMC WPF Framework packages in $outputPath."

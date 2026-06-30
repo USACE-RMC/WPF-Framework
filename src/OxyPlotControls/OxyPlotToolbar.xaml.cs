@@ -57,6 +57,11 @@ namespace OxyPlotControls
             internal static readonly Cursor PanHandClosed = LoadCursor(Properties.Resources.Pan_Hand_Closed);
             internal static readonly Cursor Zoom = LoadCursor(Properties.Resources.ZoomIn);
 
+            /// <summary>
+            /// Creates a WPF cursor from embedded cursor bytes.
+            /// </summary>
+            /// <param name="cursorBytes">The embedded cursor resource bytes.</param>
+            /// <returns>The loaded cursor.</returns>
             private static Cursor LoadCursor(byte[] cursorBytes)
             {
                 using (var ms = new MemoryStream(cursorBytes))
@@ -839,6 +844,11 @@ namespace OxyPlotControls
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, annotation));
         }
 
+        /// <summary>
+        /// Gets the current screen position for a text annotation.
+        /// </summary>
+        /// <param name="annotation">The text annotation to inspect.</param>
+        /// <returns>The annotation screen point, or the plot center when no position is defined.</returns>
         private ScreenPoint GetCurrentTextAnnotationScreenPoint(Wpf.TextAnnotation annotation)
         {
             return annotation.TextPosition.IsDefined()
@@ -3352,6 +3362,13 @@ namespace OxyPlotControls
                 : DataPoint.Undefined;
         }
 
+        /// <summary>
+        /// Resolves the x and y axes used by an annotation.
+        /// </summary>
+        /// <param name="annotation">The annotation whose axes are needed.</param>
+        /// <param name="xAxis">The resolved x-axis.</param>
+        /// <param name="yAxis">The resolved y-axis.</param>
+        /// <returns><c>true</c> when both axes are available; otherwise, <c>false</c>.</returns>
         private bool TryGetAnnotationAxes(Wpf.Annotation annotation, out OxyPlot.Axes.Axis xAxis, out OxyPlot.Axes.Axis yAxis)
         {
             var resolvedXAxis = annotation.InternalAnnotation.XAxis ?? Plot?.ActualModel?.DefaultXAxis;
@@ -3368,6 +3385,13 @@ namespace OxyPlotControls
             return true;
         }
 
+        /// <summary>
+        /// Converts a screen point to an annotation data point.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="screenPoint">The screen point to convert.</param>
+        /// <param name="dataPoint">The converted data point.</param>
+        /// <returns><c>true</c> when conversion succeeds and the point is valid.</returns>
         private bool TryScreenPointToDataPoint(Wpf.Annotation annotation, ScreenPoint screenPoint, out DataPoint dataPoint)
         {
             dataPoint = DataPoint.Undefined;
@@ -3391,6 +3415,13 @@ namespace OxyPlotControls
             return true;
         }
 
+        /// <summary>
+        /// Converts an annotation data point to a screen point.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="dataPoint">The data point to convert.</param>
+        /// <param name="screenPoint">The converted screen point.</param>
+        /// <returns><c>true</c> when conversion succeeds and the point is finite.</returns>
         private bool TryDataPointToScreenPoint(Wpf.Annotation annotation, DataPoint dataPoint, out ScreenPoint screenPoint)
         {
             screenPoint = ScreenPoint.Undefined;
@@ -3410,6 +3441,15 @@ namespace OxyPlotControls
             return true;
         }
 
+        /// <summary>
+        /// Offsets an annotation data point by a screen-space delta.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="dataPoint">The source data point.</param>
+        /// <param name="dx">The horizontal screen offset.</param>
+        /// <param name="dy">The vertical screen offset.</param>
+        /// <param name="offsetDataPoint">The offset data point.</param>
+        /// <returns><c>true</c> when the offset point remains valid.</returns>
         private bool TryOffsetDataPoint(Wpf.Annotation annotation, DataPoint dataPoint, double dx, double dy, out DataPoint offsetDataPoint)
         {
             offsetDataPoint = DataPoint.Undefined;
@@ -3424,6 +3464,15 @@ namespace OxyPlotControls
                 out offsetDataPoint);
         }
 
+        /// <summary>
+        /// Offsets multiple annotation data points by a screen-space delta.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="dataPoints">The source data points.</param>
+        /// <param name="dx">The horizontal screen offset.</param>
+        /// <param name="dy">The vertical screen offset.</param>
+        /// <param name="offsetDataPoints">The offset data points.</param>
+        /// <returns><c>true</c> when every point can be offset.</returns>
         private bool TryOffsetDataPoints(Wpf.Annotation annotation, IList<DataPoint> dataPoints, double dx, double dy, out List<DataPoint> offsetDataPoints)
         {
             offsetDataPoints = new List<DataPoint>(dataPoints.Count);
@@ -3441,6 +3490,14 @@ namespace OxyPlotControls
             return true;
         }
 
+        /// <summary>
+        /// Creates minimum data bounds around a screen-space center point.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="center">The screen-space center for the bounds.</param>
+        /// <param name="minimumPoint">The lower data bound.</param>
+        /// <param name="maximumPoint">The upper data bound.</param>
+        /// <returns><c>true</c> when both bounds are valid data points.</returns>
         private bool TryCreateMinimumScreenBounds(Wpf.Annotation annotation, ScreenPoint center, out DataPoint minimumPoint, out DataPoint maximumPoint)
         {
             minimumPoint = DataPoint.Undefined;
@@ -3485,18 +3542,39 @@ namespace OxyPlotControls
             return IsValidDataPoint(annotation, minimumPoint) && IsValidDataPoint(annotation, maximumPoint);
         }
 
+        /// <summary>
+        /// Determines whether the mouse is within a screen-space tolerance of a data point.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="dataPoint">The data point to test.</param>
+        /// <param name="mousePosition">The current mouse position.</param>
+        /// <param name="tolerance">The screen-space tolerance.</param>
+        /// <returns><c>true</c> when the mouse is near the point.</returns>
         private bool IsMouseNearDataPoint(Wpf.Annotation annotation, DataPoint dataPoint, ScreenPoint mousePosition, double tolerance)
         {
             return TryDataPointToScreenPoint(annotation, dataPoint, out var screenPoint)
                 && (screenPoint - mousePosition).Length < tolerance;
         }
 
+        /// <summary>
+        /// Determines whether a data point is valid for an annotation's axes.
+        /// </summary>
+        /// <param name="annotation">The annotation that supplies axes.</param>
+        /// <param name="dataPoint">The data point to test.</param>
+        /// <returns><c>true</c> when the point is defined, finite, and valid for both axes.</returns>
         private bool IsValidDataPoint(Wpf.Annotation annotation, DataPoint dataPoint)
         {
             return TryGetAnnotationAxes(annotation, out var xAxis, out var yAxis)
                 && IsValidDataPoint(xAxis, yAxis, dataPoint);
         }
 
+        /// <summary>
+        /// Determines whether a data point is valid for the specified axes.
+        /// </summary>
+        /// <param name="xAxis">The x-axis.</param>
+        /// <param name="yAxis">The y-axis.</param>
+        /// <param name="dataPoint">The data point to test.</param>
+        /// <returns><c>true</c> when the point is defined, finite, and valid for both axes.</returns>
         private static bool IsValidDataPoint(OxyPlot.Axes.Axis xAxis, OxyPlot.Axes.Axis yAxis, DataPoint dataPoint)
         {
             return dataPoint.IsDefined()
@@ -3506,11 +3584,23 @@ namespace OxyPlotControls
                 && yAxis.IsValidValue(dataPoint.Y);
         }
 
+        /// <summary>
+        /// Determines whether a double is neither NaN nor infinite.
+        /// </summary>
+        /// <param name="value">The value to test.</param>
+        /// <returns><c>true</c> when the value is finite.</returns>
         private static bool IsFinite(double value)
         {
             return !double.IsNaN(value) && !double.IsInfinity(value);
         }
 
+        /// <summary>
+        /// Clamps a value to the supplied inclusive range.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="minimum">The minimum allowed value.</param>
+        /// <param name="maximum">The maximum allowed value.</param>
+        /// <returns>The clamped value.</returns>
         private static double Clamp(double value, double minimum, double maximum)
         {
             if (maximum < minimum)
@@ -4007,6 +4097,10 @@ namespace OxyPlotControls
             ExportDataTablesToFile(BuildExportDataTables(Plot));
         }
 
+        /// <summary>
+        /// Prompts for an export path and writes the supplied data tables.
+        /// </summary>
+        /// <param name="tableList">The data tables to export.</param>
         private void ExportDataTablesToFile(IList<DataTable> tableList)
         {
             // Show save dialog
@@ -4103,6 +4197,12 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Extracts x and y export values for a data-point series item.
+        /// </summary>
+        /// <param name="wpfSeries">The WPF data-point series.</param>
+        /// <param name="item">The item to export.</param>
+        /// <returns>The exported x and y values.</returns>
         private static (object X, object Y) GetDataPointExportValue(Wpf.DataPointSeries wpfSeries, object? item)
         {
             if (item != null)
@@ -4178,6 +4278,12 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Extracts x and y export values for a scatter-series item.
+        /// </summary>
+        /// <param name="wpfSeries">The WPF scatter series.</param>
+        /// <param name="item">The item to export.</param>
+        /// <returns>The exported x and y values.</returns>
         private static (object X, object Y) GetScatterPointExportValue(Wpf.ScatterPointSeries wpfSeries, object? item)
         {
             if (item != null)
@@ -4245,11 +4351,21 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Extracts central and error-bound values from a scatter error point.
+        /// </summary>
+        /// <param name="point">The scatter error point to export.</param>
+        /// <returns>The lower, central, and upper x and y values.</returns>
         private static (object XLower, object X, object XUpper, object YLower, object Y, object YUpper) GetScatterErrorPointExportValue(OxyPlot.Series.ScatterErrorPoint point)
         {
             return (point.LowerErrorX, point.X, point.UpperErrorX, point.LowerErrorY, point.Y, point.UpperErrorY);
         }
 
+        /// <summary>
+        /// Adds category-axis labels to an exported series table when present.
+        /// </summary>
+        /// <param name="series">The series whose axes are inspected.</param>
+        /// <param name="dataTable">The export table to update.</param>
         private static void AddCategoryAxisLabels(OxyPlot.Series.XYAxisSeries? series, DataTable dataTable)
         {
             if (series?.XAxis is OxyPlot.Axes.CategoryAxis xCategoryAxis)
@@ -4262,6 +4378,12 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Adds a category-label column from an OxyPlot category axis.
+        /// </summary>
+        /// <param name="categoryAxis">The category axis that supplies labels.</param>
+        /// <param name="dataTable">The export table to update.</param>
+        /// <param name="columnName">The export column name.</param>
         private static void AddCategoryAxisLabelColumn(OxyPlot.Axes.CategoryAxis categoryAxis, DataTable dataTable, string columnName)
         {
             dataTable.Columns.Add(columnName, typeof(string));
@@ -4290,6 +4412,13 @@ namespace OxyPlotControls
             }
         }
 
+        /// <summary>
+        /// Gets a string export value from a preferred or fallback property.
+        /// </summary>
+        /// <param name="source">The source item.</param>
+        /// <param name="propertyName">The preferred property name.</param>
+        /// <param name="fallbackPropertyName">The fallback property name.</param>
+        /// <returns>The property value converted to text, or an empty string.</returns>
         private static string GetExportPropertyValue(object? source, string? propertyName, string? fallbackPropertyName = null)
         {
             if (!string.IsNullOrWhiteSpace(propertyName))
@@ -4302,6 +4431,12 @@ namespace OxyPlotControls
                 : "";
         }
 
+        /// <summary>
+        /// Gets a property value as text, returning an empty string when unavailable.
+        /// </summary>
+        /// <param name="source">The source item.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <returns>The property value text, or an empty string.</returns>
         private static string GetPropertyValueOrEmpty(object? source, string? propertyName)
         {
             if (source == null || string.IsNullOrWhiteSpace(propertyName))
@@ -4317,6 +4452,13 @@ namespace OxyPlotControls
             return "";
         }
 
+        /// <summary>
+        /// Attempts to read a property value from a data row, data-row view, or CLR object.
+        /// </summary>
+        /// <param name="source">The source item.</param>
+        /// <param name="propertyName">The property name to read.</param>
+        /// <param name="value">The resolved property value.</param>
+        /// <returns><c>true</c> when the property is found.</returns>
         private static bool TryGetPropertyValue(object source, string propertyName, out object? value)
         {
             if (source is DataRow row && row.Table.Columns.Contains(propertyName))
