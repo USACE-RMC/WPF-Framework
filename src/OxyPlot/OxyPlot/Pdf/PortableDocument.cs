@@ -537,13 +537,10 @@ namespace OxyPlot
         /// <param name="evenOddRule">Use the even-odd region rule if set to <c>true</c>.</param>
         public void SetClippingRectangle(double x, double y, double w, double h, bool evenOddRule = false)
         {
-            // TODO: not working?
-            return;
-
             // Set clipping path using non-zero rule (W)
             // Set clipping path using even-odd rule (W*)
             // End path without filling or stroking (n)
-            // TODO: this.AppendLine("{0} {1} {2} {3} re {4} n", x, y, w, h, evenOddRule ? "W*" : "W");
+            this.AppendLine("{0:0.####} {1:0.####} {2:0.####} {3:0.####} re {4} n", x, y, w, h, evenOddRule ? "W*" : "W");
         }
 
         /// <summary>

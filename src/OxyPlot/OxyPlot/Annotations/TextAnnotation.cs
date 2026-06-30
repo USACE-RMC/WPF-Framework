@@ -76,7 +76,7 @@ namespace OxyPlot.Annotations
 
             base.Render(rc);
 
-            var position = this.Transform(this.TextPosition) + this.Orientate(this.Offset);
+            var position = this.GetActualTextPosition(() => this.PlotModel.PlotArea.Center) + this.Orientate(this.Offset);
 
             var textSize = rc.MeasureText(this.Text, this.ActualFont, this.ActualFontSize, this.ActualFontWeight);
             this.GetActualTextAlignment(out var ha, out var va);

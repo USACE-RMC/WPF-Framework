@@ -117,7 +117,7 @@ namespace OxyPlot
             this.SetLineWidth(thickness);
             if (dashArray != null)
             {
-                this.SetLineDashPattern(dashArray, 0);
+                this.SetLineDashPattern(dashArray, 0, thickness);
             }
 
             this.doc.SetLineJoin(Convert(lineJoin));
@@ -174,7 +174,7 @@ namespace OxyPlot
                 this.SetLineWidth(thickness);
                 if (dashArray != null)
                 {
-                    this.SetLineDashPattern(dashArray, 0);
+                    this.SetLineDashPattern(dashArray, 0, thickness);
                 }
 
                 this.doc.SetLineJoin(Convert(lineJoin));
@@ -383,7 +383,7 @@ namespace OxyPlot
             double width = image.Width / srcWidth * destWidth;
             double y = destY - (srcY / srcHeight * destHeight);
             double height = image.Height / srcHeight * destHeight;
-            this.doc.SetClippingRectangle(destX, this.doc.PageHeight - (destY - destHeight), destWidth, destHeight);
+            this.doc.SetClippingRectangle(destX, this.doc.PageHeight - (destY + destHeight), destWidth, destHeight);
             this.doc.Translate(x, this.doc.PageHeight - (y + height));
             this.doc.Scale(width, height);
             this.doc.DrawImage(image);
@@ -394,7 +394,11 @@ namespace OxyPlot
         protected override void SetClip(OxyRect clippingRectangle)
         {
             this.doc.SaveState();
-            this.doc.SetClippingRectangle(clippingRectangle.Left, clippingRectangle.Bottom, clippingRectangle.Width, clippingRectangle.Height);
+            this.doc.SetClippingRectangle(
+                clippingRectangle.Left,
+                this.doc.PageHeight - clippingRectangle.Bottom,
+                clippingRectangle.Width,
+                clippingRectangle.Height);
         }
 
         /// <inheritdoc/>
@@ -434,11 +438,12 @@ namespace OxyPlot
         /// <summary>
         /// Sets the line dash pattern.
         /// </summary>
-        /// <param name="dashArray">The dash array (in 1/96 inch units).</param>
-        /// <param name="dashPhase">The dash phase (in 1/96 inch units).</param>
-        private void SetLineDashPattern(double[] dashArray, double dashPhase)
+        /// <param name="dashArray">The dash array, expressed in multiples of the stroke thickness.</param>
+        /// <param name="dashPhase">The dash phase, expressed in multiples of the stroke thickness.</param>
+        /// <param name="thickness">The stroke thickness (in 1/96 inch units).</param>
+        private void SetLineDashPattern(double[] dashArray, double dashPhase, double thickness)
         {
-            this.doc.SetLineDashPattern(dashArray.Select(d => d / 96 * 72).ToArray(), dashPhase / 96 * 72);
+            this.doc.SetLineDashPattern(dashArray.Select(d => d * thickness / 96 * 72).ToArray(), dashPhase * thickness / 96 * 72);
         }
     }
 }

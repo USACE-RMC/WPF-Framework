@@ -62,7 +62,7 @@ namespace OxyPlot.Wpf
 
             var rc = new WpfPdfRenderContext(pageWidth, pageHeight, model.Background);
             model.Update(true);
-            model.Render(rc, new OxyRect(0, 0, pageWidth, pageHeight));
+            model.Render(rc, new OxyRect(0, 0, this.Width, this.Height));
             rc.Save(stream);
         }
     }

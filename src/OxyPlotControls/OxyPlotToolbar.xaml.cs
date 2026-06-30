@@ -5,6 +5,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -216,6 +217,10 @@ namespace OxyPlotControls
                     newPlot.ActualModel.MouseUp += oxyToolBar.PlotModelMouseUp;
                 }
                 newPlot.Annotations.CollectionChanged += oxyToolBar.PlotModelAnnotationCollectionChanged;
+                foreach (var annotation in newPlot.Annotations)
+                {
+                    oxyToolBar.AttachAnnotationHandlers(annotation);
+                }
 
                 newPlot.ApplyTemplate(); // Needed to set the canvas
 
@@ -386,14 +391,17 @@ namespace OxyPlotControls
         private bool _scaleMaxY = false;
         private bool _scaleMinX = false;
         private bool _scaleMinY = false;
-        private Color _originalColor = Colors.White;
-
         // Adding Annotations
         private AddToolMode _addAnnotationToolMode = AddToolMode.None;
         private Wpf.Annotation _targetAddAnnotation = null!;
 
         // Annotation marker overlays (WPF elements drawn on the overlay canvas for hit-point markers)
         private readonly List<UIElement> _markerOverlays = new();
+
+        // Tracks toolbar mouse-handler wiring without keeping removed annotations alive.
+        private readonly ConditionalWeakTable<Wpf.Annotation, object> _annotationsWithMouseHandlers = new();
+
+        private static readonly object AnnotationHandlersAttached = new();
 
         /// <summary>
         /// Delegate for the PropertiesCalled event.
@@ -820,6 +828,25 @@ namespace OxyPlotControls
         }
 
         /// <summary>
+        /// Attaches annotation mouse handlers for annotations that already existed before
+        /// the toolbar subscribed to collection changes.
+        /// </summary>
+        /// <param name="annotation">The annotation to wire for toolbar interaction.</param>
+        private void AttachAnnotationHandlers(Wpf.Annotation annotation)
+        {
+            this.PlotModelAnnotationCollectionChanged(
+                this.Plot?.Annotations,
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, annotation));
+        }
+
+        private ScreenPoint GetCurrentTextAnnotationScreenPoint(Wpf.TextAnnotation annotation)
+        {
+            return annotation.TextPosition.IsDefined()
+                ? annotation.InternalAnnotation.Transform(annotation.TextPosition)
+                : Plot.ActualModel.PlotArea.Center;
+        }
+
+        /// <summary>
         /// A new annotation has been added to the plot. Adds the appropriate handlers.
         /// </summary>
         private void PlotModelAnnotationCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -828,6 +855,10 @@ namespace OxyPlotControls
 
             foreach (var item in e.NewItems)
             {
+                if (item is not Wpf.Annotation annotation) continue;
+                if (this._annotationsWithMouseHandlers.TryGetValue(annotation, out _)) continue;
+                this._annotationsWithMouseHandlers.Add(annotation, AnnotationHandlersAttached);
+
                 if (item is Wpf.ArrowAnnotation)
                 {
                     var newArrow = (Wpf.ArrowAnnotation)item;
@@ -842,9 +873,7 @@ namespace OxyPlotControls
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index != 2;
                         _moveEndPoint = ae.HitTestResult.Index != 1;
-                        _originalColor = newArrow.Color;
                         newArrow.SuppressPropertyChanged = true;
-                        newArrow.Color = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -858,14 +887,11 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var startScreenPoint = newArrow.InternalAnnotation.Transform(new DataPoint(newArrow.StartPoint.X, newArrow.StartPoint.Y));
-                        var endScreenPoint = newArrow.InternalAnnotation.Transform(new DataPoint(newArrow.EndPoint.X, newArrow.EndPoint.Y));
+                        TryOffsetDataPoint(newArrow, newArrow.StartPoint, dx, dy, out var startDataPoint);
+                        TryOffsetDataPoint(newArrow, newArrow.EndPoint, dx, dy, out var endDataPoint);
 
-                        var startDataPoint = newArrow.InternalAnnotation.InverseTransform(new ScreenPoint(startScreenPoint.X + dx, startScreenPoint.Y + dy));
-                        var endDataPoint = newArrow.InternalAnnotation.InverseTransform(new ScreenPoint(endScreenPoint.X + dx, endScreenPoint.Y + dy));
-
-                        if (_moveStartPoint) newArrow.StartPoint = startDataPoint;
-                        if (_moveEndPoint) newArrow.EndPoint = endDataPoint;
+                        if (_moveStartPoint && startDataPoint.IsDefined()) newArrow.StartPoint = startDataPoint;
+                        if (_moveEndPoint && endDataPoint.IsDefined()) newArrow.EndPoint = endDataPoint;
 
                         _lastScreenPoint = ae.Position;
                         Plot.ActualModel.InvalidatePlot(false);
@@ -875,17 +901,8 @@ namespace OxyPlotControls
                     newArrow.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newArrow.IsEnabled) return;
-                        try
-                        {
-                            newArrow.Color = _originalColor;
-                        }
-                        finally
-                        {
-                            // Guarantee suppression is cleared even if the Color setter throws,
-                            // so PropertyChanged (and undo bridge) are not silenced indefinitely.
-                            newArrow.SuppressPropertyChanged = false;
-                        }
-                        newArrow.RaisePropertyChanged(nameof(newArrow.StartPoint), nameof(newArrow.EndPoint), nameof(newArrow.Color));
+                        newArrow.SuppressPropertyChanged = false;
+                        newArrow.RaisePropertyChanged(nameof(newArrow.StartPoint), nameof(newArrow.EndPoint));
                     };
                 }
                 else if (item is Wpf.TextAnnotation)
@@ -901,9 +918,7 @@ namespace OxyPlotControls
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
-                        _originalColor = newText.Background;
                         newText.SuppressPropertyChanged = true;
-                        newText.Background = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -917,10 +932,18 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var theScreenPoint = newText.InternalAnnotation.Transform(new DataPoint(newText.TextPosition.X, newText.TextPosition.Y));
-                        var theDataPoint = newText.InternalAnnotation.InverseTransform(new ScreenPoint(theScreenPoint.X + dx, theScreenPoint.Y + dy));
+                        var theDataPoint = DataPoint.Undefined;
+                        if (newText.TextPosition.IsDefined())
+                        {
+                            TryOffsetDataPoint(newText, newText.TextPosition, dx, dy, out theDataPoint);
+                        }
+                        else
+                        {
+                            var theScreenPoint = GetCurrentTextAnnotationScreenPoint(newText);
+                            TryScreenPointToDataPoint(newText, new ScreenPoint(theScreenPoint.X + dx, theScreenPoint.Y + dy), out theDataPoint);
+                        }
 
-                        if (_moveStartPoint) newText.TextPosition = theDataPoint;
+                        if (_moveStartPoint && theDataPoint.IsDefined()) newText.TextPosition = theDataPoint;
 
                         _lastScreenPoint = ae.Position;
                         Plot.ActualModel.InvalidatePlot(false);
@@ -930,15 +953,8 @@ namespace OxyPlotControls
                     newText.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newText.IsEnabled) return;
-                        try
-                        {
-                            newText.Background = _originalColor;
-                        }
-                        finally
-                        {
-                            newText.SuppressPropertyChanged = false;
-                        }
-                        newText.RaisePropertyChanged(nameof(newText.TextPosition), nameof(newText.Background));
+                        newText.SuppressPropertyChanged = false;
+                        newText.RaisePropertyChanged(nameof(newText.TextPosition));
                     };
                 }
                 else if (item is Wpf.RectangleAnnotation)
@@ -968,9 +984,7 @@ namespace OxyPlotControls
                             _moveStartPoint = !_scaleMaxX && !_scaleMaxY && !_scaleMinX && !_scaleMinY;
                         }
 
-                        _originalColor = newRect.Fill;
                         newRect.SuppressPropertyChanged = true;
-                        newRect.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -984,18 +998,15 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var upperRightScreenPoint = newRect.InternalAnnotation.Transform(newRect.MaximumX, newRect.MaximumY);
-                        var lowerLeftScreenPoint = newRect.InternalAnnotation.Transform(newRect.MinimumX, newRect.MinimumY);
+                        TryOffsetDataPoint(newRect, new DataPoint(newRect.MaximumX, newRect.MaximumY), dx, dy, out var upperRightDataPoint);
+                        TryOffsetDataPoint(newRect, new DataPoint(newRect.MinimumX, newRect.MinimumY), dx, dy, out var lowerLeftDataPoint);
 
-                        var upperRightDataPoint = newRect.InternalAnnotation.InverseTransform(new ScreenPoint(upperRightScreenPoint.X + dx, upperRightScreenPoint.Y + dy));
-                        var lowerLeftDataPoint = newRect.InternalAnnotation.InverseTransform(new ScreenPoint(lowerLeftScreenPoint.X + dx, lowerLeftScreenPoint.Y + dy));
+                        if (_scaleMaxX && upperRightDataPoint.IsDefined()) newRect.MaximumX = upperRightDataPoint.X;
+                        if (_scaleMaxY && upperRightDataPoint.IsDefined()) newRect.MaximumY = upperRightDataPoint.Y;
+                        if (_scaleMinX && lowerLeftDataPoint.IsDefined()) newRect.MinimumX = lowerLeftDataPoint.X;
+                        if (_scaleMinY && lowerLeftDataPoint.IsDefined()) newRect.MinimumY = lowerLeftDataPoint.Y;
 
-                        if (_scaleMaxX) newRect.MaximumX = upperRightDataPoint.X;
-                        if (_scaleMaxY) newRect.MaximumY = upperRightDataPoint.Y;
-                        if (_scaleMinX) newRect.MinimumX = lowerLeftDataPoint.X;
-                        if (_scaleMinY) newRect.MinimumY = lowerLeftDataPoint.Y;
-
-                        if (_moveStartPoint)
+                        if (_moveStartPoint && upperRightDataPoint.IsDefined() && lowerLeftDataPoint.IsDefined())
                         {
                             newRect.MaximumX = upperRightDataPoint.X;
                             newRect.MaximumY = upperRightDataPoint.Y;
@@ -1011,15 +1022,8 @@ namespace OxyPlotControls
                     newRect.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newRect.IsEnabled) return;
-                        try
-                        {
-                            newRect.Fill = _originalColor;
-                        }
-                        finally
-                        {
-                            newRect.SuppressPropertyChanged = false;
-                        }
-                        newRect.RaisePropertyChanged(nameof(newRect.MinimumX), nameof(newRect.MaximumX), nameof(newRect.MinimumY), nameof(newRect.MaximumY), nameof(newRect.Fill));
+                        newRect.SuppressPropertyChanged = false;
+                        newRect.RaisePropertyChanged(nameof(newRect.MinimumX), nameof(newRect.MaximumX), nameof(newRect.MinimumY), nameof(newRect.MaximumY));
                     };
                 }
                 else if (item is Wpf.EllipseAnnotation)
@@ -1049,9 +1053,7 @@ namespace OxyPlotControls
                             _moveStartPoint = !_scaleMaxX && !_scaleMaxY && !_scaleMinX && !_scaleMinY;
                         }
 
-                        _originalColor = newEllipse.Fill;
                         newEllipse.SuppressPropertyChanged = true;
-                        newEllipse.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -1065,18 +1067,15 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var upperRightScreenPoint = newEllipse.InternalAnnotation.Transform(newEllipse.MaximumX, newEllipse.MaximumY);
-                        var lowerLeftScreenPoint = newEllipse.InternalAnnotation.Transform(newEllipse.MinimumX, newEllipse.MinimumY);
+                        TryOffsetDataPoint(newEllipse, new DataPoint(newEllipse.MaximumX, newEllipse.MaximumY), dx, dy, out var upperRightDataPoint);
+                        TryOffsetDataPoint(newEllipse, new DataPoint(newEllipse.MinimumX, newEllipse.MinimumY), dx, dy, out var lowerLeftDataPoint);
 
-                        var upperRightDataPoint = newEllipse.InternalAnnotation.InverseTransform(new ScreenPoint(upperRightScreenPoint.X + dx, upperRightScreenPoint.Y + dy));
-                        var lowerLeftDataPoint = newEllipse.InternalAnnotation.InverseTransform(new ScreenPoint(lowerLeftScreenPoint.X + dx, lowerLeftScreenPoint.Y + dy));
+                        if (_scaleMaxX && upperRightDataPoint.IsDefined()) newEllipse.MaximumX = upperRightDataPoint.X;
+                        if (_scaleMaxY && upperRightDataPoint.IsDefined()) newEllipse.MaximumY = upperRightDataPoint.Y;
+                        if (_scaleMinX && lowerLeftDataPoint.IsDefined()) newEllipse.MinimumX = lowerLeftDataPoint.X;
+                        if (_scaleMinY && lowerLeftDataPoint.IsDefined()) newEllipse.MinimumY = lowerLeftDataPoint.Y;
 
-                        if (_scaleMaxX) newEllipse.MaximumX = upperRightDataPoint.X;
-                        if (_scaleMaxY) newEllipse.MaximumY = upperRightDataPoint.Y;
-                        if (_scaleMinX) newEllipse.MinimumX = lowerLeftDataPoint.X;
-                        if (_scaleMinY) newEllipse.MinimumY = lowerLeftDataPoint.Y;
-
-                        if (_moveStartPoint)
+                        if (_moveStartPoint && upperRightDataPoint.IsDefined() && lowerLeftDataPoint.IsDefined())
                         {
                             newEllipse.MaximumX = upperRightDataPoint.X;
                             newEllipse.MaximumY = upperRightDataPoint.Y;
@@ -1092,15 +1091,8 @@ namespace OxyPlotControls
                     newEllipse.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newEllipse.IsEnabled) return;
-                        try
-                        {
-                            newEllipse.Fill = _originalColor;
-                        }
-                        finally
-                        {
-                            newEllipse.SuppressPropertyChanged = false;
-                        }
-                        newEllipse.RaisePropertyChanged(nameof(newEllipse.X), nameof(newEllipse.Y), nameof(newEllipse.Width), nameof(newEllipse.Height), nameof(newEllipse.Fill));
+                        newEllipse.SuppressPropertyChanged = false;
+                        newEllipse.RaisePropertyChanged(nameof(newEllipse.X), nameof(newEllipse.Y), nameof(newEllipse.Width), nameof(newEllipse.Height));
                     };
                 }
                 else if (item is Wpf.PointAnnotation)
@@ -1116,9 +1108,7 @@ namespace OxyPlotControls
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
-                        _originalColor = newPoint.Fill;
                         newPoint.SuppressPropertyChanged = true;
-                        newPoint.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -1132,10 +1122,9 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var theScreenPoint = newPoint.InternalAnnotation.Transform(new DataPoint(newPoint.X, newPoint.Y));
-                        var theDataPoint = newPoint.InternalAnnotation.InverseTransform(new ScreenPoint(theScreenPoint.X + dx, theScreenPoint.Y + dy));
+                        TryOffsetDataPoint(newPoint, new DataPoint(newPoint.X, newPoint.Y), dx, dy, out var theDataPoint);
 
-                        if (_moveStartPoint)
+                        if (_moveStartPoint && theDataPoint.IsDefined())
                         {
                             newPoint.X = theDataPoint.X;
                             newPoint.Y = theDataPoint.Y;
@@ -1149,15 +1138,8 @@ namespace OxyPlotControls
                     newPoint.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newPoint.IsEnabled) return;
-                        try
-                        {
-                            newPoint.Fill = _originalColor;
-                        }
-                        finally
-                        {
-                            newPoint.SuppressPropertyChanged = false;
-                        }
-                        newPoint.RaisePropertyChanged(nameof(newPoint.X), nameof(newPoint.Y), nameof(newPoint.Fill));
+                        newPoint.SuppressPropertyChanged = false;
+                        newPoint.RaisePropertyChanged(nameof(newPoint.X), nameof(newPoint.Y));
                     };
                 }
                 else if (item is Wpf.PolygonAnnotation)
@@ -1172,15 +1154,10 @@ namespace OxyPlotControls
                         ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
-                        var screenToData = newPolygon.InternalAnnotation.InverseTransform(ae.Position);
-                        var screen2ToData = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(ae.Position.X - HitTestTolerance, ae.Position.Y - HitTestTolerance));
-                        var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
-                        var dPoint = newPolygon.InternalAnnotation.InverseTransform(ae.Position);
-
                         _movePointIndex = -1;
                         for (int i = 0; i < newPolygon.Points.Count; i++)
                         {
-                            if (Math.Abs(dPoint.X - newPolygon.Points[i].X) < dxy.X && Math.Abs(dPoint.Y - newPolygon.Points[i].Y) < dxy.Y)
+                            if (IsMouseNearDataPoint(newPolygon, newPolygon.Points[i], ae.Position, HitTestTolerance))
                             {
                                 _movePointIndex = i;
                                 break;
@@ -1195,9 +1172,10 @@ namespace OxyPlotControls
                                 var p1 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[i]);
                                 var p2 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[i + 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(ae.Position, p1, p2);
-                                if ((linePoint - ae.Position).Length < HitTestTolerance)
+                                if ((linePoint - ae.Position).Length < HitTestTolerance
+                                    && TryScreenPointToDataPoint(newPolygon, linePoint, out var insertedPoint))
                                 {
-                                    newPolygon.Points.Insert(i + 1, newPolygon.InternalAnnotation.InverseTransform(linePoint));
+                                    newPolygon.Points.Insert(i + 1, insertedPoint);
                                     onLine = true;
                                     _movePointIndex = i + 1;
                                     break;
@@ -1209,9 +1187,10 @@ namespace OxyPlotControls
                                 var p1 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[0]);
                                 var p2 = newPolygon.InternalAnnotation.Transform(newPolygon.Points[newPolygon.Points.Count - 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(ae.Position, p1, p2);
-                                if ((linePoint - ae.Position).Length < HitTestTolerance)
+                                if ((linePoint - ae.Position).Length < HitTestTolerance
+                                    && TryScreenPointToDataPoint(newPolygon, linePoint, out var insertedPoint))
                                 {
-                                    newPolygon.Points.Add(newPolygon.InternalAnnotation.InverseTransform(linePoint));
+                                    newPolygon.Points.Add(insertedPoint);
                                     _movePointIndex = newPolygon.Points.Count - 1;
                                 }
                                 else
@@ -1221,9 +1200,7 @@ namespace OxyPlotControls
                             }
                         }
 
-                        _originalColor = newPolygon.Fill;
                         newPolygon.SuppressPropertyChanged = true;
-                        newPolygon.Fill = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -1240,15 +1217,16 @@ namespace OxyPlotControls
 
                         if (_movePointIndex > -1)
                         {
-                            var screenPoint = newPolygon.InternalAnnotation.Transform(new DataPoint(newPolygon.Points[_movePointIndex].X, newPolygon.Points[_movePointIndex].Y));
-                            newPolygon.Points[_movePointIndex] = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                            if (TryOffsetDataPoint(newPolygon, newPolygon.Points[_movePointIndex], dx, dy, out var movedPoint))
+                            {
+                                newPolygon.Points[_movePointIndex] = movedPoint;
+                            }
                         }
                         else if (_moveStartPoint)
                         {
-                            for (int i = 0; i < newPolygon.Points.Count; i++)
+                            if (TryOffsetDataPoints(newPolygon, newPolygon.Points, dx, dy, out var movedPoints))
                             {
-                                var screenPoint = newPolygon.InternalAnnotation.Transform(new DataPoint(newPolygon.Points[i].X, newPolygon.Points[i].Y));
-                                newPolygon.Points[i] = newPolygon.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                                newPolygon.Points = movedPoints;
                             }
                         }
 
@@ -1260,15 +1238,8 @@ namespace OxyPlotControls
                     newPolygon.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newPolygon.IsEnabled) return;
-                        try
-                        {
-                            newPolygon.Fill = _originalColor;
-                        }
-                        finally
-                        {
-                            newPolygon.SuppressPropertyChanged = false;
-                        }
-                        newPolygon.RaisePropertyChanged(nameof(newPolygon.Points), nameof(newPolygon.Fill));
+                        newPolygon.SuppressPropertyChanged = false;
+                        newPolygon.RaisePropertyChanged(nameof(newPolygon.Points));
                     };
                 }
                 else if (item is Wpf.PolylineAnnotation)
@@ -1283,15 +1254,10 @@ namespace OxyPlotControls
                         ClearMarkerOverlays();
 
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
-                        var screenToData = newPolyline.InternalAnnotation.InverseTransform(ae.Position);
-                        var screen2ToData = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(ae.Position.X - HitTestTolerance, ae.Position.Y - HitTestTolerance));
-                        var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
-                        var dPoint = newPolyline.InternalAnnotation.InverseTransform(ae.Position);
-
                         _movePointIndex = -1;
                         for (int i = 0; i < newPolyline.Points.Count; i++)
                         {
-                            if (Math.Abs(dPoint.X - newPolyline.Points[i].X) < dxy.X && Math.Abs(dPoint.Y - newPolyline.Points[i].Y) < dxy.Y)
+                            if (IsMouseNearDataPoint(newPolyline, newPolyline.Points[i], ae.Position, HitTestTolerance))
                             {
                                 _movePointIndex = i;
                                 break;
@@ -1306,9 +1272,10 @@ namespace OxyPlotControls
                                 var p1 = newPolyline.InternalAnnotation.Transform(newPolyline.Points[i]);
                                 var p2 = newPolyline.InternalAnnotation.Transform(newPolyline.Points[i + 1]);
                                 var linePoint = ScreenPointHelper.FindPointOnLine(ae.Position, p1, p2);
-                                if ((linePoint - ae.Position).Length < HitTestTolerance)
+                                if ((linePoint - ae.Position).Length < HitTestTolerance
+                                    && TryScreenPointToDataPoint(newPolyline, linePoint, out var insertedPoint))
                                 {
-                                    newPolyline.Points.Insert(i + 1, newPolyline.InternalAnnotation.InverseTransform(linePoint));
+                                    newPolyline.Points.Insert(i + 1, insertedPoint);
                                     onLine = true;
                                     _movePointIndex = i + 1;
                                     break;
@@ -1318,9 +1285,7 @@ namespace OxyPlotControls
 
                         if (!onLine) _moveStartPoint = true;
 
-                        _originalColor = newPolyline.Color;
                         newPolyline.SuppressPropertyChanged = true;
-                        newPolyline.Color = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -1337,15 +1302,16 @@ namespace OxyPlotControls
 
                         if (_movePointIndex > -1)
                         {
-                            var screenPoint = newPolyline.InternalAnnotation.Transform(new DataPoint(newPolyline.Points[_movePointIndex].X, newPolyline.Points[_movePointIndex].Y));
-                            newPolyline.Points[_movePointIndex] = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                            if (TryOffsetDataPoint(newPolyline, newPolyline.Points[_movePointIndex], dx, dy, out var movedPoint))
+                            {
+                                newPolyline.Points[_movePointIndex] = movedPoint;
+                            }
                         }
                         else if (_moveStartPoint)
                         {
-                            for (int i = 0; i < newPolyline.Points.Count; i++)
+                            if (TryOffsetDataPoints(newPolyline, newPolyline.Points, dx, dy, out var movedPoints))
                             {
-                                var screenPoint = newPolyline.InternalAnnotation.Transform(new DataPoint(newPolyline.Points[i].X, newPolyline.Points[i].Y));
-                                newPolyline.Points[i] = newPolyline.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                                newPolyline.Points = movedPoints;
                             }
                         }
 
@@ -1357,15 +1323,8 @@ namespace OxyPlotControls
                     newPolyline.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newPolyline.IsEnabled) return;
-                        try
-                        {
-                            newPolyline.Color = _originalColor;
-                        }
-                        finally
-                        {
-                            newPolyline.SuppressPropertyChanged = false;
-                        }
-                        newPolyline.RaisePropertyChanged(nameof(newPolyline.Points), nameof(newPolyline.Color));
+                        newPolyline.SuppressPropertyChanged = false;
+                        newPolyline.RaisePropertyChanged(nameof(newPolyline.Points));
                     };
                 }
                 else if (item is Wpf.LineAnnotation)
@@ -1382,9 +1341,7 @@ namespace OxyPlotControls
                         _lastScreenPoint = new ScreenPoint(ae.Position.X, ae.Position.Y);
                         _moveStartPoint = ae.HitTestResult.Index == 0;
 
-                        _originalColor = newLine.Color;
                         newLine.SuppressPropertyChanged = true;
-                        newLine.Color = Colors.Red;
 
                         GetSelectedObjects(s!, ae);
 
@@ -1407,21 +1364,26 @@ namespace OxyPlotControls
 
                         double dx = ae.Position.X - _lastScreenPoint.X;
                         double dy = ae.Position.Y - _lastScreenPoint.Y;
-                        var screenPoint = newLine.InternalAnnotation.Transform(new DataPoint(newLine.X, newLine.Y));
-                        var dataPoint = newLine.InternalAnnotation.InverseTransform(new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy));
+                        TryOffsetDataPoint(newLine, new DataPoint(newLine.X, newLine.Y), dx, dy, out var dataPoint);
 
                         if (_moveStartPoint)
                         {
                             if (newLine.Type == OxyPlot.Annotations.LineAnnotationType.LinearEquation)
                             {
-                                dx = dataPoint.X - newLine.X;
-                                dy = dataPoint.Y - newLine.Y;
-                                newLine.Intercept += (dy - newLine.Slope * dx);
+                                if (dataPoint.IsDefined())
+                                {
+                                    dx = dataPoint.X - newLine.X;
+                                    dy = dataPoint.Y - newLine.Y;
+                                    newLine.Intercept += (dy - newLine.Slope * dx);
+                                }
                             }
                             else
                             {
-                                newLine.X = dataPoint.X;
-                                newLine.Y = dataPoint.Y;
+                                if (TryScreenPointToDataPoint(newLine, ae.Position, out var mouseDataPoint))
+                                {
+                                    newLine.X = mouseDataPoint.X;
+                                    newLine.Y = mouseDataPoint.Y;
+                                }
                             }
                             UpdateLineAnnotationTooltip(newLine);
                         }
@@ -1434,15 +1396,8 @@ namespace OxyPlotControls
                     newLine.InternalAnnotation.MouseUp += (s, ae) =>
                     {
                         if (!newLine.IsEnabled) return;
-                        try
-                        {
-                            newLine.Color = _originalColor;
-                        }
-                        finally
-                        {
-                            newLine.SuppressPropertyChanged = false;
-                        }
-                        newLine.RaisePropertyChanged(nameof(newLine.X), nameof(newLine.Y), nameof(newLine.Intercept), nameof(newLine.Color));
+                        newLine.SuppressPropertyChanged = false;
+                        newLine.RaisePropertyChanged(nameof(newLine.X), nameof(newLine.Y), nameof(newLine.Intercept));
                         CloseLineAnnotationTooltip(newLine);
                     };
                 }
@@ -1490,11 +1445,11 @@ namespace OxyPlotControls
                         DataPoint dataPoint;
                         if (!lineAnnotation.InternalAnnotation.XAxis!.IsReversed)
                         {
-                            dataPoint = new DataPoint(lineAnnotation.InternalAnnotation.XAxis.ActualMinimum, lineAnnotation.Y);
+                            dataPoint = new DataPoint(lineAnnotation.InternalAnnotation.XAxis.ClipMinimum, lineAnnotation.Y);
                         }
                         else
                         {
-                            dataPoint = new DataPoint(lineAnnotation.InternalAnnotation.XAxis.ActualMaximum, lineAnnotation.Y);
+                            dataPoint = new DataPoint(lineAnnotation.InternalAnnotation.XAxis.ClipMaximum, lineAnnotation.Y);
                         }
                         var toolTip = (ToolTip)lineAnnotation.ToolTip;
                         toolTip.Content = lineAnnotation.InternalAnnotation.YAxis!.FormatValue(lineAnnotation.Y);
@@ -1510,11 +1465,11 @@ namespace OxyPlotControls
                         DataPoint dataPoint;
                         if (!lineAnnotation.InternalAnnotation.YAxis!.IsReversed)
                         {
-                            dataPoint = new DataPoint(lineAnnotation.X, lineAnnotation.InternalAnnotation.YAxis.ActualMinimum);
+                            dataPoint = new DataPoint(lineAnnotation.X, lineAnnotation.InternalAnnotation.YAxis.ClipMinimum);
                         }
                         else
                         {
-                            dataPoint = new DataPoint(lineAnnotation.X, lineAnnotation.InternalAnnotation.YAxis.ActualMaximum);
+                            dataPoint = new DataPoint(lineAnnotation.X, lineAnnotation.InternalAnnotation.YAxis.ClipMaximum);
                         }
                         var toolTip = (ToolTip)lineAnnotation.ToolTip;
                         toolTip.Content = lineAnnotation.InternalAnnotation.XAxis!.FormatValue(lineAnnotation.X);
@@ -1583,10 +1538,19 @@ namespace OxyPlotControls
                         var newArrow = new Wpf.ArrowAnnotation();
                         newArrow.SuppressPropertyChanged = true;
                         newArrow.Text = "Arrow Annotation";
+                        newArrow.HeadLength = 6;
+                        newArrow.HeadWidth = 2;
+                        newArrow.Veeness = 1;
 
                         Plot.Annotations.Add(newArrow);
+                        if (!TryScreenPointToDataPoint(newArrow, e.Position, out var arrowDataPoint))
+                        {
+                            Plot.Annotations.Remove(newArrow);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newArrow);
-                        newArrow.StartPoint = newArrow.InternalAnnotation.InverseTransform(e.Position);
+                        newArrow.StartPoint = arrowDataPoint;
                         newArrow.EndPoint = newArrow.StartPoint;
                         _targetAddAnnotation = newArrow;
                         break;
@@ -1597,8 +1561,14 @@ namespace OxyPlotControls
                         newText.Text = "Text Annotation";
 
                         Plot.Annotations.Add(newText);
+                        if (!TryScreenPointToDataPoint(newText, e.Position, out var textDataPoint))
+                        {
+                            Plot.Annotations.Remove(newText);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newText);
-                        newText.TextPosition = newText.InternalAnnotation.InverseTransform(e.Position);
+                        newText.TextPosition = textDataPoint;
                         _targetAddAnnotation = newText;
                         break;
 
@@ -1608,9 +1578,16 @@ namespace OxyPlotControls
                         newVLine.Text = "Vertical Line Annotation";
 
                         Plot.Annotations.Add(newVLine);
+                        if (!TryGetAnnotationAxes(newVLine, out _, out var verticalYAxis)
+                            || !TryScreenPointToDataPoint(newVLine, e.Position, out var verticalLineDataPoint))
+                        {
+                            Plot.Annotations.Remove(newVLine);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newVLine);
 
-                        if (newVLine.InternalAnnotation.YAxis!.IsReversed == false)
+                        if (verticalYAxis.IsReversed == false)
                         {
                             newVLine.TextLinePosition = 1;
                             newVLine.TextHorizontalAlignment = System.Windows.HorizontalAlignment.Right;
@@ -1622,15 +1599,9 @@ namespace OxyPlotControls
                         }
 
                         {
-                            OxyRect plotArea = Plot.ActualModel.PlotArea;
-                            var plotLL = newVLine.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                            var plotUR = newVLine.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                            var dataPointClicked = newVLine.InternalAnnotation.InverseTransform(e.Position);
-                            newVLine.X = dataPointClicked.X;
-                            newVLine.Y = dataPointClicked.Y;
+                            newVLine.X = verticalLineDataPoint.X;
+                            newVLine.Y = verticalLineDataPoint.Y;
                             newVLine.Type = OxyPlot.Annotations.LineAnnotationType.Vertical;
-                            newVLine.Intercept = dataPointClicked.Y;
-                            newVLine.Slope = (plotUR.Y - plotLL.Y) / (plotUR.X - plotLL.X);
                             _targetAddAnnotation = newVLine;
 
                             OpenLineAnnotationTooltip(newVLine);
@@ -1644,9 +1615,16 @@ namespace OxyPlotControls
                         newHLine.Text = "Horizontal Line Annotation";
 
                         Plot.Annotations.Add(newHLine);
+                        if (!TryGetAnnotationAxes(newHLine, out var horizontalXAxis, out _)
+                            || !TryScreenPointToDataPoint(newHLine, e.Position, out var horizontalLineDataPoint))
+                        {
+                            Plot.Annotations.Remove(newHLine);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newHLine);
 
-                        if (newHLine.InternalAnnotation.XAxis!.IsReversed == false)
+                        if (horizontalXAxis.IsReversed == false)
                         {
                             newHLine.TextLinePosition = 0;
                             newHLine.TextHorizontalAlignment = System.Windows.HorizontalAlignment.Left;
@@ -1658,15 +1636,9 @@ namespace OxyPlotControls
                         }
 
                         {
-                            OxyRect plotArea = Plot.ActualModel.PlotArea;
-                            var plotLL = newHLine.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                            var plotUR = newHLine.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                            var dataPointClicked = newHLine.InternalAnnotation.InverseTransform(e.Position);
-                            newHLine.X = dataPointClicked.X;
-                            newHLine.Y = dataPointClicked.Y;
+                            newHLine.X = horizontalLineDataPoint.X;
+                            newHLine.Y = horizontalLineDataPoint.Y;
                             newHLine.Type = OxyPlot.Annotations.LineAnnotationType.Horizontal;
-                            newHLine.Intercept = dataPointClicked.Y;
-                            newHLine.Slope = (plotUR.Y - plotLL.Y) / (plotUR.X - plotLL.X);
                             _targetAddAnnotation = newHLine;
 
                             OpenLineAnnotationTooltip(newHLine);
@@ -1680,13 +1652,18 @@ namespace OxyPlotControls
                         newRectangle.Text = "Rectangle Annotation";
 
                         Plot.Annotations.Add(newRectangle);
+                        if (!TryScreenPointToDataPoint(newRectangle, e.Position, out var rectangleDataPoint))
+                        {
+                            Plot.Annotations.Remove(newRectangle);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newRectangle);
                         {
-                            var dataPointClicked = newRectangle.InternalAnnotation.InverseTransform(e.Position);
-                            newRectangle.MinimumX = dataPointClicked.X;
-                            newRectangle.MaximumX = dataPointClicked.X;
-                            newRectangle.MinimumY = dataPointClicked.Y;
-                            newRectangle.MaximumY = dataPointClicked.Y;
+                            newRectangle.MinimumX = rectangleDataPoint.X;
+                            newRectangle.MaximumX = rectangleDataPoint.X;
+                            newRectangle.MinimumY = rectangleDataPoint.Y;
+                            newRectangle.MaximumY = rectangleDataPoint.Y;
                             _targetAddAnnotation = newRectangle;
                         }
                         break;
@@ -1697,13 +1674,18 @@ namespace OxyPlotControls
                         newEllipse.Text = "Ellipse Annotation";
 
                         Plot.Annotations.Add(newEllipse);
+                        if (!TryScreenPointToDataPoint(newEllipse, e.Position, out var ellipseDataPoint))
+                        {
+                            Plot.Annotations.Remove(newEllipse);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newEllipse);
                         {
-                            var dataPointClicked = newEllipse.InternalAnnotation.InverseTransform(e.Position);
-                            newEllipse.MinimumX = dataPointClicked.X;
-                            newEllipse.MaximumX = dataPointClicked.X;
-                            newEllipse.MinimumY = dataPointClicked.Y;
-                            newEllipse.MaximumY = dataPointClicked.Y;
+                            newEllipse.MinimumX = ellipseDataPoint.X;
+                            newEllipse.MaximumX = ellipseDataPoint.X;
+                            newEllipse.MinimumY = ellipseDataPoint.Y;
+                            newEllipse.MaximumY = ellipseDataPoint.Y;
                             _targetAddAnnotation = newEllipse;
                         }
                         break;
@@ -1715,16 +1697,16 @@ namespace OxyPlotControls
                         newPoint.Size = 5;
 
                         Plot.Annotations.Add(newPoint);
+                        if (!TryScreenPointToDataPoint(newPoint, e.Position, out var pointDataPoint))
+                        {
+                            Plot.Annotations.Remove(newPoint);
+                            break;
+                        }
+
                         PropertiesCalled?.Invoke(Plot, true, OxyPlotPropertiesControl.PropertyEXP.Annotations_Text, newPoint);
                         {
-                            var dataPointClicked = newPoint.InternalAnnotation.InverseTransform(e.Position);
-                            OxyRect plotArea = Plot.ActualModel.PlotArea;
-                            var plotLL = newPoint.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Left, plotArea.Bottom));
-                            var plotUR = newPoint.InternalAnnotation.InverseTransform(new ScreenPoint(plotArea.Right, plotArea.Top));
-                            var plotCenter = newPoint.InternalAnnotation.InverseTransform(Plot.ActualModel.PlotArea.Center);
-
-                            newPoint.X = dataPointClicked.X;
-                            newPoint.Y = dataPointClicked.Y;
+                            newPoint.X = pointDataPoint.X;
+                            newPoint.Y = pointDataPoint.Y;
                             _targetAddAnnotation = newPoint;
                         }
                         break;
@@ -1861,47 +1843,67 @@ namespace OxyPlotControls
                 switch (_addAnnotationToolMode)
                 {
                     case AddToolMode.AddArrowAnnotation:
-                        ((Wpf.ArrowAnnotation)_targetAddAnnotation).EndPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                        if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var arrowEndPoint))
+                        {
+                            ((Wpf.ArrowAnnotation)_targetAddAnnotation).EndPoint = arrowEndPoint;
+                        }
                         break;
 
                     case AddToolMode.AddTextAnnotation:
-                        ((Wpf.TextAnnotation)_targetAddAnnotation).TextPosition = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
+                        if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var textPosition))
+                        {
+                            ((Wpf.TextAnnotation)_targetAddAnnotation).TextPosition = textPosition;
+                        }
                         break;
 
                     case AddToolMode.AddVerticalLineAnnotation:
-                        ((Wpf.LineAnnotation)_targetAddAnnotation).X = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).X;
+                        if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var verticalLinePoint))
+                        {
+                            ((Wpf.LineAnnotation)_targetAddAnnotation).X = verticalLinePoint.X;
+                            ((Wpf.LineAnnotation)_targetAddAnnotation).Y = verticalLinePoint.Y;
+                        }
                         UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
                         break;
 
                     case AddToolMode.AddHorizontalLineAnnotation:
-                        ((Wpf.LineAnnotation)_targetAddAnnotation).Y = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position).Y;
+                        if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var horizontalLinePoint))
+                        {
+                            ((Wpf.LineAnnotation)_targetAddAnnotation).X = horizontalLinePoint.X;
+                            ((Wpf.LineAnnotation)_targetAddAnnotation).Y = horizontalLinePoint.Y;
+                        }
                         UpdateLineAnnotationTooltip((Wpf.LineAnnotation)_targetAddAnnotation);
                         break;
 
                     case AddToolMode.AddRectangleAnnotation:
                         {
-                            var mouseDataPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                            var rect = (Wpf.RectangleAnnotation)_targetAddAnnotation;
-                            rect.MaximumX = mouseDataPoint.X;
-                            rect.MaximumY = mouseDataPoint.Y;
+                            if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var mouseDataPoint))
+                            {
+                                var rect = (Wpf.RectangleAnnotation)_targetAddAnnotation;
+                                rect.MaximumX = mouseDataPoint.X;
+                                rect.MaximumY = mouseDataPoint.Y;
+                            }
                         }
                         break;
 
                     case AddToolMode.AddEllipseAnnotation:
                         {
-                            var mouseDataPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                            var ellipse = (Wpf.EllipseAnnotation)_targetAddAnnotation;
-                            ellipse.MaximumX = mouseDataPoint.X;
-                            ellipse.MaximumY = mouseDataPoint.Y;
+                            if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var mouseDataPoint))
+                            {
+                                var ellipse = (Wpf.EllipseAnnotation)_targetAddAnnotation;
+                                ellipse.MaximumX = mouseDataPoint.X;
+                                ellipse.MaximumY = mouseDataPoint.Y;
+                            }
                         }
                         break;
 
                     case AddToolMode.AddPointAnnotation:
                         {
-                            var mouseDataPoint = _targetAddAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                            var point = (Wpf.PointAnnotation)_targetAddAnnotation;
-                            point.X = mouseDataPoint.X;
-                            point.Y = mouseDataPoint.Y;
+                            if (TryScreenPointToDataPoint(_targetAddAnnotation, e.Position, out var mouseDataPoint))
+                            {
+                                var point = (Wpf.PointAnnotation)_targetAddAnnotation;
+                                point.X = mouseDataPoint.X;
+                                point.Y = mouseDataPoint.Y;
+                            }
                         }
                         break;
 
@@ -1916,7 +1918,10 @@ namespace OxyPlotControls
                     case AddToolMode.AddPolylineAnnotation:
                         {
                             var polyAnnotation = (Wpf.PolylineAnnotation)_targetAddAnnotation;
-                            _leaderLine.Points[0] = ConvertDataPointToPoint(polyAnnotation.Points[polyAnnotation.Points.Count - 1]);
+                            if (TryDataPointToScreenPoint(polyAnnotation, polyAnnotation.Points[polyAnnotation.Points.Count - 1], out var leaderStartPoint))
+                            {
+                                _leaderLine.Points[0] = new Point(leaderStartPoint.X, leaderStartPoint.Y);
+                            }
                             _leaderLine.Points[_leaderLine.Points.Count - 1] = new Point(e.Position.X, e.Position.Y);
                             Plot.InvalidatePlot(false);
                         }
@@ -2030,9 +2035,6 @@ namespace OxyPlotControls
                     if (ht.Index == 0)
                     {
                         var polyAnnotation = (Wpf.PolygonAnnotation)a;
-                        var screenToData = polyAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                        var screen2ToData = polyAnnotation.InternalAnnotation.InverseTransform(new ScreenPoint(e.Position.X - HitTestTolerance, e.Position.Y - HitTestTolerance));
-                        var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
 
                         foreach (var p in polyAnnotation.Points)
                         {
@@ -2040,9 +2042,8 @@ namespace OxyPlotControls
                             markerSizes.Add(2);
                         }
 
-                        var dPoint = polyAnnotation.InternalAnnotation.InverseTransform(e.Position);
                         // Check if cursor is over any points
-                        if (polyAnnotation.Points.Any(o => Math.Abs(dPoint.X - o.X) < dxy.X && Math.Abs(dPoint.Y - o.Y) < dxy.Y))
+                        if (polyAnnotation.Points.Any(o => IsMouseNearDataPoint(polyAnnotation, o, e.Position, HitTestTolerance)))
                         {
                             updatedCursor = _movePointsCursor;
                         }
@@ -2084,9 +2085,6 @@ namespace OxyPlotControls
                     if (ht.Index == 0)
                     {
                         var polylineAnnotation = (Wpf.PolylineAnnotation)a;
-                        var screenToData = polylineAnnotation.InternalAnnotation.InverseTransform(e.Position);
-                        var screen2ToData = polylineAnnotation.InternalAnnotation.InverseTransform(new ScreenPoint(e.Position.X - HitTestTolerance, e.Position.Y - HitTestTolerance));
-                        var dxy = new DataPoint(Math.Abs(screenToData.X - screen2ToData.X), Math.Abs(screenToData.Y - screen2ToData.Y));
 
                         foreach (var p in polylineAnnotation.Points)
                         {
@@ -2094,9 +2092,8 @@ namespace OxyPlotControls
                             markerSizes.Add(2);
                         }
 
-                        var dPoint = polylineAnnotation.InternalAnnotation.InverseTransform(e.Position);
                         // Check if cursor is over any points
-                        if (polylineAnnotation.Points.Any(o => Math.Abs(dPoint.X - o.X) < dxy.X && Math.Abs(dPoint.Y - o.Y) < dxy.Y))
+                        if (polylineAnnotation.Points.Any(o => IsMouseNearDataPoint(polylineAnnotation, o, e.Position, HitTestTolerance)))
                         {
                             updatedCursor = _movePointsCursor;
                         }
@@ -2191,20 +2188,18 @@ namespace OxyPlotControls
                 // Correct the height and width if necessary
                 if (pixelWidth < MinAnnotationSize || pixelHeight < MinAnnotationSize)
                 {
-                    var plotLL = rectangle.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Left, Plot.ActualModel.PlotArea.Bottom));
-                    var plotUR = rectangle.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Right, Plot.ActualModel.PlotArea.Top));
-                    double centerXShift = Math.Abs((plotUR.X - plotLL.X) * 0.1);
-                    double centerYShift = Math.Abs((plotUR.Y - plotLL.Y) * 0.1);
-                    var mouseDataPoint = rectangle.InternalAnnotation.InverseTransform(e.Position);
-                    if (pixelWidth < MinAnnotationSize)
+                    if (TryCreateMinimumScreenBounds(rectangle, e.Position, out var minimumPoint, out var maximumPoint))
                     {
-                        rectangle.MinimumX = mouseDataPoint.X - centerXShift;
-                        rectangle.MaximumX = mouseDataPoint.X + centerXShift;
-                    }
-                    if (pixelHeight < MinAnnotationSize)
-                    {
-                        rectangle.MinimumY = mouseDataPoint.Y - centerYShift;
-                        rectangle.MaximumY = mouseDataPoint.Y + centerYShift;
+                        if (pixelWidth < MinAnnotationSize)
+                        {
+                            rectangle.MinimumX = minimumPoint.X;
+                            rectangle.MaximumX = maximumPoint.X;
+                        }
+                        if (pixelHeight < MinAnnotationSize)
+                        {
+                            rectangle.MinimumY = minimumPoint.Y;
+                            rectangle.MaximumY = maximumPoint.Y;
+                        }
                     }
                 }
                 StopAddAnnotation();
@@ -2220,20 +2215,18 @@ namespace OxyPlotControls
                 // Correct the height and width if necessary
                 if (pixelWidth < MinAnnotationSize || pixelHeight < MinAnnotationSize)
                 {
-                    var plotLL = ellipse.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Left, Plot.ActualModel.PlotArea.Bottom));
-                    var plotUR = ellipse.InternalAnnotation.InverseTransform(new ScreenPoint(Plot.ActualModel.PlotArea.Right, Plot.ActualModel.PlotArea.Top));
-                    double centerXShift = Math.Abs((plotUR.X - plotLL.X) * 0.1);
-                    double centerYShift = Math.Abs((plotUR.Y - plotLL.Y) * 0.1);
-                    var mouseDataPoint = ellipse.InternalAnnotation.InverseTransform(e.Position);
-                    if (pixelWidth < MinAnnotationSize)
+                    if (TryCreateMinimumScreenBounds(ellipse, e.Position, out var minimumPoint, out var maximumPoint))
                     {
-                        ellipse.MinimumX = mouseDataPoint.X - centerXShift;
-                        ellipse.MaximumX = mouseDataPoint.X + centerXShift;
-                    }
-                    if (pixelHeight < MinAnnotationSize)
-                    {
-                        ellipse.MinimumY = mouseDataPoint.Y - centerYShift;
-                        ellipse.MaximumY = mouseDataPoint.Y + centerYShift;
+                        if (pixelWidth < MinAnnotationSize)
+                        {
+                            ellipse.MinimumX = minimumPoint.X;
+                            ellipse.MaximumX = maximumPoint.X;
+                        }
+                        if (pixelHeight < MinAnnotationSize)
+                        {
+                            ellipse.MinimumY = minimumPoint.Y;
+                            ellipse.MaximumY = maximumPoint.Y;
+                        }
                     }
                 }
                 StopAddAnnotation();
@@ -2251,9 +2244,10 @@ namespace OxyPlotControls
                         OxyRect plotArea = Plot.ActualModel.PlotArea;
                         double shiftPixels = Math.Abs(plotArea.Right - plotArea.Left) * 0.05;
                         var arrowScreen = arrow.InternalAnnotation.Transform(arrow.EndPoint);
-                        var shiftedData = arrow.InternalAnnotation.InverseTransform(
-                            new ScreenPoint(arrowScreen.X + shiftPixels, arrowScreen.Y));
-                        arrow.StartPoint = shiftedData;
+                        if (TryScreenPointToDataPoint(arrow, new ScreenPoint(arrowScreen.X + shiftPixels, arrowScreen.Y), out var shiftedData))
+                        {
+                            arrow.StartPoint = shiftedData;
+                        }
                     }
                 }
                 StopAddAnnotation();
@@ -3351,28 +3345,180 @@ namespace OxyPlotControls
             {
                 return DataPoint.Undefined;
             }
-            return xAxis.InverseTransform(pt.X, pt.Y, yAxis);
+
+            var dataPoint = xAxis.InverseTransform(pt.X, pt.Y, yAxis);
+            return IsValidDataPoint(xAxis, yAxis, dataPoint)
+                ? dataPoint
+                : DataPoint.Undefined;
         }
 
-        /// <summary>
-        /// Converts a data point to a WPF Point using the plot's default axes.
-        /// </summary>
-        /// <param name="pt">The data point to convert.</param>
-        /// <returns>The corresponding WPF Point.</returns>
-        private Point ConvertDataPointToPoint(DataPoint pt)
+        private bool TryGetAnnotationAxes(Wpf.Annotation annotation, out OxyPlot.Axes.Axis xAxis, out OxyPlot.Axes.Axis yAxis)
         {
-            var sp = Plot.ActualModel.DefaultXAxis.Transform(pt.X, pt.Y, Plot.ActualModel.DefaultYAxis);
-            return new Point(sp.X, sp.Y);
+            var resolvedXAxis = annotation.InternalAnnotation.XAxis ?? Plot?.ActualModel?.DefaultXAxis;
+            var resolvedYAxis = annotation.InternalAnnotation.YAxis ?? Plot?.ActualModel?.DefaultYAxis;
+            if (resolvedXAxis == null || resolvedYAxis == null)
+            {
+                xAxis = null!;
+                yAxis = null!;
+                return false;
+            }
+
+            xAxis = resolvedXAxis;
+            yAxis = resolvedYAxis;
+            return true;
         }
 
-        /// <summary>
-        /// Converts a point from the leader line polyline to a data point.
-        /// </summary>
-        /// <param name="pointIndex">The index of the point in the leader line points collection.</param>
-        /// <returns>The corresponding data point.</returns>
-        private DataPoint ConvertLeaderLinePoint(int pointIndex)
+        private bool TryScreenPointToDataPoint(Wpf.Annotation annotation, ScreenPoint screenPoint, out DataPoint dataPoint)
         {
-            return Plot.ActualModel.DefaultXAxis.InverseTransform(_leaderLine.Points[pointIndex].X, _leaderLine.Points[pointIndex].Y, Plot.ActualModel.DefaultYAxis);
+            dataPoint = DataPoint.Undefined;
+            if (!IsFinite(screenPoint.X) || !IsFinite(screenPoint.Y))
+            {
+                return false;
+            }
+
+            if (!TryGetAnnotationAxes(annotation, out var xAxis, out var yAxis))
+            {
+                return false;
+            }
+
+            var convertedPoint = xAxis.InverseTransform(screenPoint.X, screenPoint.Y, yAxis);
+            if (!IsValidDataPoint(xAxis, yAxis, convertedPoint))
+            {
+                return false;
+            }
+
+            dataPoint = convertedPoint;
+            return true;
+        }
+
+        private bool TryDataPointToScreenPoint(Wpf.Annotation annotation, DataPoint dataPoint, out ScreenPoint screenPoint)
+        {
+            screenPoint = ScreenPoint.Undefined;
+            if (!TryGetAnnotationAxes(annotation, out var xAxis, out var yAxis)
+                || !IsValidDataPoint(xAxis, yAxis, dataPoint))
+            {
+                return false;
+            }
+
+            var convertedPoint = xAxis.Transform(dataPoint.X, dataPoint.Y, yAxis);
+            if (!IsFinite(convertedPoint.X) || !IsFinite(convertedPoint.Y))
+            {
+                return false;
+            }
+
+            screenPoint = convertedPoint;
+            return true;
+        }
+
+        private bool TryOffsetDataPoint(Wpf.Annotation annotation, DataPoint dataPoint, double dx, double dy, out DataPoint offsetDataPoint)
+        {
+            offsetDataPoint = DataPoint.Undefined;
+            if (!TryDataPointToScreenPoint(annotation, dataPoint, out var screenPoint))
+            {
+                return false;
+            }
+
+            return TryScreenPointToDataPoint(
+                annotation,
+                new ScreenPoint(screenPoint.X + dx, screenPoint.Y + dy),
+                out offsetDataPoint);
+        }
+
+        private bool TryOffsetDataPoints(Wpf.Annotation annotation, IList<DataPoint> dataPoints, double dx, double dy, out List<DataPoint> offsetDataPoints)
+        {
+            offsetDataPoints = new List<DataPoint>(dataPoints.Count);
+            foreach (var dataPoint in dataPoints)
+            {
+                if (!TryOffsetDataPoint(annotation, dataPoint, dx, dy, out var offsetDataPoint))
+                {
+                    offsetDataPoints.Clear();
+                    return false;
+                }
+
+                offsetDataPoints.Add(offsetDataPoint);
+            }
+
+            return true;
+        }
+
+        private bool TryCreateMinimumScreenBounds(Wpf.Annotation annotation, ScreenPoint center, out DataPoint minimumPoint, out DataPoint maximumPoint)
+        {
+            minimumPoint = DataPoint.Undefined;
+            maximumPoint = DataPoint.Undefined;
+
+            var plotArea = Plot?.ActualModel?.PlotArea;
+            if (plotArea == null)
+            {
+                return false;
+            }
+
+            double plotWidth = Math.Abs(plotArea.Value.Right - plotArea.Value.Left);
+            double plotHeight = Math.Abs(plotArea.Value.Bottom - plotArea.Value.Top);
+            if (plotWidth <= 0 || plotHeight <= 0)
+            {
+                return false;
+            }
+
+            double boxWidth = Math.Min(MinAnnotationSize, plotWidth);
+            double boxHeight = Math.Min(MinAnnotationSize, plotHeight);
+            double centerX = Clamp(center.X, plotArea.Value.Left, plotArea.Value.Right);
+            double centerY = Clamp(center.Y, plotArea.Value.Top, plotArea.Value.Bottom);
+
+            double left = Clamp(centerX - boxWidth / 2, plotArea.Value.Left, plotArea.Value.Right - boxWidth);
+            double top = Clamp(centerY - boxHeight / 2, plotArea.Value.Top, plotArea.Value.Bottom - boxHeight);
+            double right = left + boxWidth;
+            double bottom = top + boxHeight;
+
+            if (!TryScreenPointToDataPoint(annotation, new ScreenPoint(left, bottom), out var lowerLeftPoint)
+                || !TryScreenPointToDataPoint(annotation, new ScreenPoint(right, top), out var upperRightPoint))
+            {
+                return false;
+            }
+
+            minimumPoint = new DataPoint(
+                Math.Min(lowerLeftPoint.X, upperRightPoint.X),
+                Math.Min(lowerLeftPoint.Y, upperRightPoint.Y));
+            maximumPoint = new DataPoint(
+                Math.Max(lowerLeftPoint.X, upperRightPoint.X),
+                Math.Max(lowerLeftPoint.Y, upperRightPoint.Y));
+
+            return IsValidDataPoint(annotation, minimumPoint) && IsValidDataPoint(annotation, maximumPoint);
+        }
+
+        private bool IsMouseNearDataPoint(Wpf.Annotation annotation, DataPoint dataPoint, ScreenPoint mousePosition, double tolerance)
+        {
+            return TryDataPointToScreenPoint(annotation, dataPoint, out var screenPoint)
+                && (screenPoint - mousePosition).Length < tolerance;
+        }
+
+        private bool IsValidDataPoint(Wpf.Annotation annotation, DataPoint dataPoint)
+        {
+            return TryGetAnnotationAxes(annotation, out var xAxis, out var yAxis)
+                && IsValidDataPoint(xAxis, yAxis, dataPoint);
+        }
+
+        private static bool IsValidDataPoint(OxyPlot.Axes.Axis xAxis, OxyPlot.Axes.Axis yAxis, DataPoint dataPoint)
+        {
+            return dataPoint.IsDefined()
+                && IsFinite(dataPoint.X)
+                && IsFinite(dataPoint.Y)
+                && xAxis.IsValidValue(dataPoint.X)
+                && yAxis.IsValidValue(dataPoint.Y);
+        }
+
+        private static bool IsFinite(double value)
+        {
+            return !double.IsNaN(value) && !double.IsInfinity(value);
+        }
+
+        private static double Clamp(double value, double minimum, double maximum)
+        {
+            if (maximum < minimum)
+            {
+                return minimum;
+            }
+
+            return Math.Max(minimum, Math.Min(maximum, value));
         }
 
         /// <summary>
@@ -3417,19 +3563,21 @@ namespace OxyPlotControls
         /// <summary>
         /// Export series data to file.
         /// </summary>
-        private void ExportDataButton_Click(object sender, RoutedEventArgs e)
+        private static List<DataTable> BuildExportDataTables(Wpf.Plot plot)
         {
             var tableList = new List<DataTable>();
             int tableCount = 0;
             string[] badCharacters = { ":", "\\", "/", "?", "*", "[", "]" };
 
-            foreach (Wpf.Series series in Plot.Series)
+            foreach (Wpf.Series series in plot.Series)
             {
+                series.CreateModel();
+
                 var dataTable = new DataTable("Series");
                 string seriesName = "";
                 tableCount++;
 
-                if (series is Wpf.LineSeries)
+                if (series is Wpf.LineSeries && series is not Wpf.AreaSeries)
                 {
                     seriesName = !string.IsNullOrEmpty(series.Title) ? series.Title : "LineSeries_" + tableCount;
                     foreach (var badChar in badCharacters)
@@ -3443,35 +3591,11 @@ namespace OxyPlotControls
                     dataTable.Columns.Add(seriesName + "_y", typeof(string));
 
                     var oxySeries = (OxyPlot.Series.LineSeries)series.InternalSeries;
+                    var wpfSeries = (Wpf.DataPointSeries)series;
 
-                    if (oxySeries.ItemsSource != null)
+                    foreach (var seriesValue in GetDataPointExportValues(wpfSeries, oxySeries))
                     {
-                        var datalist = oxySeries.ItemsSource as IEnumerable<DataPoint>;
-                        if (datalist != null)
-                        {
-                            foreach (var seriesValue in datalist.ToList())
-                            {
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var obj in oxySeries.ItemsSource.Cast<object>())
-                            {
-                                PropertyInfo? propX = obj.GetType().GetProperty(oxySeries.DataFieldX);
-                                string xVal = propX != null ? Convert.ToString(propX.GetValue(obj, null)) ?? "" : "";
-                                PropertyInfo? propY = obj.GetType().GetProperty(oxySeries.DataFieldY);
-                                string yVal = propY != null ? Convert.ToString(propY.GetValue(obj, null)) ?? "" : "";
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, xVal, yVal);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var seriesValue in oxySeries.Points)
-                        {
-                            dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
-                        }
+                        dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
                     }
                 }
                 else if (series is Wpf.ScatterPointSeries)
@@ -3488,35 +3612,11 @@ namespace OxyPlotControls
                     dataTable.Columns.Add(seriesName + "_y", typeof(string));
 
                     var oxySeries = (OxyPlot.Series.ScatterSeries)series.InternalSeries;
+                    var wpfSeries = (Wpf.ScatterPointSeries)series;
 
-                    if (oxySeries.ItemsSource != null)
+                    foreach (var seriesValue in GetScatterPointExportValues(wpfSeries, oxySeries))
                     {
-                        var datalist = oxySeries.ItemsSource as IEnumerable<OxyPlot.Series.ScatterPoint>;
-                        if (datalist != null)
-                        {
-                            foreach (var seriesValue in datalist.ToList())
-                            {
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var obj in oxySeries.ItemsSource.Cast<object>())
-                            {
-                                PropertyInfo? propX = obj.GetType().GetProperty(oxySeries.DataFieldX);
-                                string xVal = propX != null ? Convert.ToString(propX.GetValue(obj, null)) ?? "" : "";
-                                PropertyInfo? propY = obj.GetType().GetProperty(oxySeries.DataFieldY);
-                                string yVal = propY != null ? Convert.ToString(propY.GetValue(obj, null)) ?? "" : "";
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, xVal, yVal);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var seriesValue in oxySeries.Points)
-                        {
-                            dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
-                        }
+                        dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
                     }
                 }
                 else if (series is Wpf.AreaSeries)
@@ -3535,57 +3635,11 @@ namespace OxyPlotControls
                     dataTable.Columns.Add(seriesName + "_y2", typeof(string));
 
                     var oxySeries = (OxyPlot.Series.AreaSeries)series.InternalSeries;
+                    var wpfSeries = (Wpf.AreaSeries)series;
 
-                    if (oxySeries.ItemsSource != null)
+                    foreach (var seriesValue in GetAreaExportValues(wpfSeries, oxySeries))
                     {
-                        var datalist = oxySeries.ItemsSource as IEnumerable<DataPoint>;
-                        if (datalist != null)
-                        {
-                            foreach (var seriesValue in datalist.ToList())
-                            {
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var obj in oxySeries.ItemsSource.Cast<object>())
-                            {
-                                PropertyInfo? propX = obj.GetType().GetProperty(oxySeries.DataFieldX);
-                                string xVal = Convert.ToString(propX?.GetValue(obj, null)) ?? "";
-                                PropertyInfo? propY = obj.GetType().GetProperty(oxySeries.DataFieldY);
-                                string yVal = Convert.ToString(propY?.GetValue(obj, null)) ?? "";
-
-                                string xVal2 = "";
-                                if (oxySeries.DataFieldX2 != null)
-                                {
-                                    PropertyInfo? propX2 = obj.GetType().GetProperty(oxySeries.DataFieldX2);
-                                    xVal2 = Convert.ToString(propX2?.GetValue(obj, null)) ?? "";
-                                }
-
-                                string yVal2 = "";
-                                if (oxySeries.DataFieldY2 != null)
-                                {
-                                    PropertyInfo? propY2 = obj.GetType().GetProperty(oxySeries.DataFieldY2);
-                                    yVal2 = Convert.ToString(propY2?.GetValue(obj, null)) ?? "";
-                                }
-
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, xVal, yVal, xVal2, yVal2);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < oxySeries.Points.Count; i++)
-                        {
-                            if (oxySeries.Points2.Count > 0)
-                            {
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, oxySeries.Points[i].X, oxySeries.Points[i].Y, oxySeries.Points2[i].X, oxySeries.Points2[i].Y);
-                            }
-                            else
-                            {
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, oxySeries.Points[i].X, oxySeries.Points[i].Y, "", "");
-                            }
-                        }
+                        dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.X, seriesValue.Y, seriesValue.X2, seriesValue.Y2);
                     }
                 }
                 else if (series is Wpf.BoxPlotSeries)
@@ -3704,19 +3758,8 @@ namespace OxyPlotControls
                             int c = 0;
                             foreach (var obj in oxySeries.ItemsSource.Cast<object>())
                             {
-                                string colorVal = "";
-                                if (oxySeries.ColorField != null)
-                                {
-                                    PropertyInfo? propColor = obj.GetType().GetProperty(oxySeries.ColorField);
-                                    colorVal = Convert.ToString(propColor?.GetValue(obj, null)) ?? "";
-                                }
-
-                                string valueVal = "";
-                                if (oxySeries.ValueField != null)
-                                {
-                                    PropertyInfo? propValue = obj.GetType().GetProperty(oxySeries.ValueField);
-                                    valueVal = Convert.ToString(propValue?.GetValue(obj, null)) ?? "";
-                                }
+                                string colorVal = GetPropertyValueOrEmpty(obj, oxySeries.ColorField);
+                                string valueVal = GetPropertyValueOrEmpty(obj, oxySeries.ValueField);
 
                                 dataTable.Rows.Add(dataTable.Rows.Count + 1, c, colorVal, valueVal);
                                 c++;
@@ -3762,19 +3805,8 @@ namespace OxyPlotControls
                             int c = 0;
                             foreach (var obj in oxySeries.ItemsSource.Cast<object>())
                             {
-                                string colorVal = "";
-                                if (oxySeries.ColorField != null)
-                                {
-                                    PropertyInfo? propColor = obj.GetType().GetProperty(oxySeries.ColorField);
-                                    colorVal = Convert.ToString(propColor?.GetValue(obj, null)) ?? "";
-                                }
-
-                                string valueVal = "";
-                                if (oxySeries.ValueField != null)
-                                {
-                                    PropertyInfo? propValue = obj.GetType().GetProperty(oxySeries.ValueField);
-                                    valueVal = Convert.ToString(propValue?.GetValue(obj, null)) ?? "";
-                                }
+                                string colorVal = GetPropertyValueOrEmpty(obj, oxySeries.ColorField);
+                                string valueVal = GetPropertyValueOrEmpty(obj, oxySeries.ValueField);
 
                                 dataTable.Rows.Add(dataTable.Rows.Count + 1, c, colorVal, valueVal);
                                 c++;
@@ -3944,135 +3976,39 @@ namespace OxyPlotControls
                     var oxySeries = (OxyPlot.Series.ScatterErrorSeries)series.InternalSeries;
                     var wpfSeries = (Wpf.ScatterErrorSeries)series;
 
-                    if (oxySeries.ItemsSource != null)
+                    foreach (var seriesValue in GetScatterErrorExportValues(wpfSeries, oxySeries))
                     {
-                        var datalist = oxySeries.ItemsSource as IEnumerable<OxyPlot.Series.ScatterPoint>;
-                        if (datalist != null)
-                        {
-                            foreach (OxyPlot.Series.ScatterErrorPoint seriesValue in datalist.ToList())
-                            {
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.LowerErrorX, seriesValue.X, seriesValue.UpperErrorX, seriesValue.LowerErrorY, seriesValue.Y, seriesValue.UpperErrorY);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var obj in oxySeries.ItemsSource.Cast<object>())
-                            {
-                                PropertyInfo? propX = obj.GetType().GetProperty(oxySeries.DataFieldX);
-                                string xVal = Convert.ToString(propX?.GetValue(obj, null)) ?? "";
-
-                                PropertyInfo? propY = obj.GetType().GetProperty(oxySeries.DataFieldY);
-                                string yVal = Convert.ToString(propY?.GetValue(obj, null)) ?? "";
-
-                                string xLower = "";
-                                if (wpfSeries.DataFieldLowerErrorX != null)
-                                {
-                                    PropertyInfo? propXlower = obj.GetType().GetProperty(wpfSeries.DataFieldLowerErrorX);
-                                    xLower = Convert.ToString(propXlower?.GetValue(obj, null)) ?? "";
-                                }
-
-                                string xUpper = "";
-                                if (wpfSeries.DataFieldUpperErrorX != null)
-                                {
-                                    PropertyInfo? propXupper = obj.GetType().GetProperty(wpfSeries.DataFieldUpperErrorX);
-                                    xUpper = Convert.ToString(propXupper?.GetValue(obj, null)) ?? "";
-                                }
-
-                                string yLower = "";
-                                if (wpfSeries.DataFieldLowerErrorY != null)
-                                {
-                                    PropertyInfo? propYlower = obj.GetType().GetProperty(wpfSeries.DataFieldLowerErrorY);
-                                    yLower = Convert.ToString(propYlower?.GetValue(obj, null)) ?? "";
-                                }
-
-                                string yUpper = "";
-                                if (wpfSeries.DataFieldUpperErrorY != null)
-                                {
-                                    PropertyInfo? propYupper = obj.GetType().GetProperty(wpfSeries.DataFieldUpperErrorY);
-                                    yUpper = Convert.ToString(propYupper?.GetValue(obj, null)) ?? "";
-                                }
-
-                                dataTable.Rows.Add(dataTable.Rows.Count + 1, xLower, xVal, xUpper, yLower, yVal, yUpper);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var seriesValue in oxySeries.Points)
-                        {
-                            dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.LowerErrorX, seriesValue.X, seriesValue.UpperErrorX, seriesValue.LowerErrorY, seriesValue.Y, seriesValue.UpperErrorY);
-                        }
-                    }
-                }
-
-                // Check for item source on a X category axis
-                var xCat = ((OxyPlot.Series.XYAxisSeries)series.InternalSeries).XAxis as OxyPlot.Axes.CategoryAxis;
-                if (xCat != null)
-                {
-                    dataTable.Columns.Add("Xcategory", typeof(string));
-
-                    if (xCat.ItemsSource != null)
-                    {
-                        var xCatList = xCat.ItemsSource as IEnumerable<string>;
-                        if (xCatList != null)
-                        {
-                            for (int i = 0; i < dataTable.Rows.Count; i++)
-                            {
-                                dataTable.Rows[i]["Xcategory"] = xCatList.ElementAt(i);
-                            }
-                        }
-                        else
-                        {
-                            int i = 0;
-                            foreach (var obj in xCat.ItemsSource.Cast<object>())
-                            {
-                                PropertyInfo? propLabel = obj.GetType().GetProperty(xCat.LabelField);
-                                string xVal = Convert.ToString(propLabel?.GetValue(obj, null)) ?? "";
-                                dataTable.Rows[i]["Xcategory"] = xVal;
-                                i++;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // Check for item source on a Y category axis
-                    var yCat = ((OxyPlot.Series.XYAxisSeries)series.InternalSeries).YAxis as OxyPlot.Axes.CategoryAxis;
-                    if (yCat != null)
-                    {
-                        dataTable.Columns.Add("Ycategory", typeof(string));
-
-                        if (yCat.ItemsSource != null)
-                        {
-                            var yCatList = yCat.ItemsSource as IEnumerable<string>;
-                            if (yCatList != null)
-                            {
-                                for (int i = 0; i < dataTable.Rows.Count; i++)
-                                {
-                                    dataTable.Rows[i]["Ycategory"] = yCatList.ElementAt(i);
-                                }
-                            }
-                            else
-                            {
-                                int i = 0;
-                                foreach (var obj in yCat.ItemsSource.Cast<object>())
-                                {
-                                    PropertyInfo? propLabel = obj.GetType().GetProperty(yCat.LabelField);
-                                    string yVal = Convert.ToString(propLabel?.GetValue(obj, null)) ?? "";
-                                    dataTable.Rows[i]["Ycategory"] = yVal;
-                                    i++;
-                                }
-                            }
-                        }
+                        dataTable.Rows.Add(dataTable.Rows.Count + 1, seriesValue.XLower, seriesValue.X, seriesValue.XUpper, seriesValue.YLower, seriesValue.Y, seriesValue.YUpper);
                     }
                 }
 
                 // Skip contour series for now
                 if (series is Wpf.ContourSeries) continue;
+                if (dataTable.Columns.Count == 0) continue;
+
+                AddCategoryAxisLabels(series.InternalSeries as OxyPlot.Series.XYAxisSeries, dataTable);
 
                 tableList.Add(dataTable);
             }
 
+            return tableList;
+        }
+
+        /// <summary>
+        /// Export series data to file.
+        /// </summary>
+        private void ExportDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Plot == null)
+            {
+                return;
+            }
+
+            ExportDataTablesToFile(BuildExportDataTables(Plot));
+        }
+
+        private void ExportDataTablesToFile(IList<DataTable> tableList)
+        {
             // Show save dialog
             string filters = "comma delimited(*.csv) |*.csv|Excel(*.xlsx) |*.xlsx|Sqlite(*.sqlite) |*.sqlite";
             try
@@ -4147,6 +4083,281 @@ namespace OxyPlotControls
             {
                 GenericControls.MessageBox.Show(ex.Message);
             }
+        }
+
+        private static IEnumerable<(object X, object Y)> GetDataPointExportValues(Wpf.DataPointSeries wpfSeries, OxyPlot.Series.DataPointSeries oxySeries)
+        {
+            if (oxySeries.ItemsSource == null)
+            {
+                foreach (var point in oxySeries.Points)
+                {
+                    yield return (point.X, point.Y);
+                }
+
+                yield break;
+            }
+
+            foreach (var item in oxySeries.ItemsSource.Cast<object?>())
+            {
+                yield return GetDataPointExportValue(wpfSeries, item);
+            }
+        }
+
+        private static (object X, object Y) GetDataPointExportValue(Wpf.DataPointSeries wpfSeries, object? item)
+        {
+            if (item != null)
+            {
+                if (wpfSeries.Mapping != null)
+                {
+                    var point = wpfSeries.Mapping(item);
+                    return (point.X, point.Y);
+                }
+
+                if (item is DataPoint dataPoint)
+                {
+                    return (dataPoint.X, dataPoint.Y);
+                }
+
+                if (item is IDataPointProvider pointProvider)
+                {
+                    var point = pointProvider.GetDataPoint();
+                    return (point.X, point.Y);
+                }
+            }
+
+            return (
+                GetExportPropertyValue(item, wpfSeries.DataFieldX, "X"),
+                GetExportPropertyValue(item, wpfSeries.DataFieldY, "Y"));
+        }
+
+        private static IEnumerable<(object X, object Y, object X2, object Y2)> GetAreaExportValues(Wpf.AreaSeries wpfSeries, OxyPlot.Series.AreaSeries oxySeries)
+        {
+            if (oxySeries.ItemsSource == null)
+            {
+                for (int i = 0; i < oxySeries.Points.Count; i++)
+                {
+                    if (i < oxySeries.Points2.Count)
+                    {
+                        yield return (oxySeries.Points[i].X, oxySeries.Points[i].Y, oxySeries.Points2[i].X, oxySeries.Points2[i].Y);
+                    }
+                    else
+                    {
+                        yield return (oxySeries.Points[i].X, oxySeries.Points[i].Y, "", "");
+                    }
+                }
+
+                yield break;
+            }
+
+            foreach (var item in oxySeries.ItemsSource.Cast<object?>())
+            {
+                var firstPoint = GetDataPointExportValue(wpfSeries, item);
+                yield return (
+                    firstPoint.X,
+                    firstPoint.Y,
+                    GetExportPropertyValue(item, wpfSeries.DataFieldX2),
+                    GetExportPropertyValue(item, wpfSeries.DataFieldY2));
+            }
+        }
+
+        private static IEnumerable<(object X, object Y)> GetScatterPointExportValues(Wpf.ScatterPointSeries wpfSeries, OxyPlot.Series.ScatterSeries oxySeries)
+        {
+            if (oxySeries.ItemsSource == null)
+            {
+                foreach (var point in oxySeries.Points)
+                {
+                    yield return (point.X, point.Y);
+                }
+
+                yield break;
+            }
+
+            foreach (var item in oxySeries.ItemsSource.Cast<object?>())
+            {
+                yield return GetScatterPointExportValue(wpfSeries, item);
+            }
+        }
+
+        private static (object X, object Y) GetScatterPointExportValue(Wpf.ScatterPointSeries wpfSeries, object? item)
+        {
+            if (item != null)
+            {
+                if (wpfSeries.Mapping != null)
+                {
+                    var point = wpfSeries.Mapping(item);
+                    return (point.X, point.Y);
+                }
+
+                if (item is OxyPlot.Series.ScatterPoint scatterPoint)
+                {
+                    return (scatterPoint.X, scatterPoint.Y);
+                }
+
+                if (item is DataPoint dataPoint)
+                {
+                    return (dataPoint.X, dataPoint.Y);
+                }
+
+                if (item is OxyPlot.Series.IScatterPointProvider scatterPointProvider)
+                {
+                    var point = scatterPointProvider.GetScatterPoint();
+                    return (point.X, point.Y);
+                }
+            }
+
+            return (
+                GetExportPropertyValue(item, wpfSeries.DataFieldX, "X"),
+                GetExportPropertyValue(item, wpfSeries.DataFieldY, "Y"));
+        }
+
+        private static IEnumerable<(object XLower, object X, object XUpper, object YLower, object Y, object YUpper)> GetScatterErrorExportValues(Wpf.ScatterErrorSeries wpfSeries, OxyPlot.Series.ScatterErrorSeries oxySeries)
+        {
+            if (oxySeries.ItemsSource == null)
+            {
+                foreach (var point in oxySeries.Points)
+                {
+                    yield return GetScatterErrorPointExportValue(point);
+                }
+
+                yield break;
+            }
+
+            foreach (var item in oxySeries.ItemsSource.Cast<object?>())
+            {
+                if (item != null && wpfSeries.Mapping != null)
+                {
+                    yield return GetScatterErrorPointExportValue(wpfSeries.Mapping(item));
+                }
+                else if (item is OxyPlot.Series.ScatterErrorPoint scatterErrorPoint)
+                {
+                    yield return GetScatterErrorPointExportValue(scatterErrorPoint);
+                }
+                else
+                {
+                    yield return (
+                        GetExportPropertyValue(item, wpfSeries.DataFieldLowerErrorX),
+                        GetExportPropertyValue(item, wpfSeries.DataFieldX, "X"),
+                        GetExportPropertyValue(item, wpfSeries.DataFieldUpperErrorX),
+                        GetExportPropertyValue(item, wpfSeries.DataFieldLowerErrorY),
+                        GetExportPropertyValue(item, wpfSeries.DataFieldY, "Y"),
+                        GetExportPropertyValue(item, wpfSeries.DataFieldUpperErrorY));
+                }
+            }
+        }
+
+        private static (object XLower, object X, object XUpper, object YLower, object Y, object YUpper) GetScatterErrorPointExportValue(OxyPlot.Series.ScatterErrorPoint point)
+        {
+            return (point.LowerErrorX, point.X, point.UpperErrorX, point.LowerErrorY, point.Y, point.UpperErrorY);
+        }
+
+        private static void AddCategoryAxisLabels(OxyPlot.Series.XYAxisSeries? series, DataTable dataTable)
+        {
+            if (series?.XAxis is OxyPlot.Axes.CategoryAxis xCategoryAxis)
+            {
+                AddCategoryAxisLabelColumn(xCategoryAxis, dataTable, "Xcategory");
+            }
+            else if (series?.YAxis is OxyPlot.Axes.CategoryAxis yCategoryAxis)
+            {
+                AddCategoryAxisLabelColumn(yCategoryAxis, dataTable, "Ycategory");
+            }
+        }
+
+        private static void AddCategoryAxisLabelColumn(OxyPlot.Axes.CategoryAxis categoryAxis, DataTable dataTable, string columnName)
+        {
+            dataTable.Columns.Add(columnName, typeof(string));
+            if (categoryAxis.ItemsSource == null)
+            {
+                return;
+            }
+
+            if (categoryAxis.ItemsSource is IEnumerable<string> labels)
+            {
+                int i = 0;
+                foreach (var label in labels.Take(dataTable.Rows.Count))
+                {
+                    dataTable.Rows[i][columnName] = label;
+                    i++;
+                }
+
+                return;
+            }
+
+            int rowIndex = 0;
+            foreach (var item in categoryAxis.ItemsSource.Cast<object?>().Take(dataTable.Rows.Count))
+            {
+                dataTable.Rows[rowIndex][columnName] = GetPropertyValueOrEmpty(item, categoryAxis.LabelField);
+                rowIndex++;
+            }
+        }
+
+        private static string GetExportPropertyValue(object? source, string? propertyName, string? fallbackPropertyName = null)
+        {
+            if (!string.IsNullOrWhiteSpace(propertyName))
+            {
+                return GetPropertyValueOrEmpty(source, propertyName);
+            }
+
+            return !string.IsNullOrWhiteSpace(fallbackPropertyName)
+                ? GetPropertyValueOrEmpty(source, fallbackPropertyName)
+                : "";
+        }
+
+        private static string GetPropertyValueOrEmpty(object? source, string? propertyName)
+        {
+            if (source == null || string.IsNullOrWhiteSpace(propertyName))
+            {
+                return "";
+            }
+
+            if (TryGetPropertyValue(source, propertyName, out var value))
+            {
+                return Convert.ToString(value) ?? "";
+            }
+
+            return "";
+        }
+
+        private static bool TryGetPropertyValue(object source, string propertyName, out object? value)
+        {
+            if (source is DataRow row && row.Table.Columns.Contains(propertyName))
+            {
+                value = row[propertyName];
+                return true;
+            }
+
+            if (source is DataRowView rowView && rowView.DataView.Table?.Columns.Contains(propertyName) == true)
+            {
+                value = rowView[propertyName];
+                return true;
+            }
+
+            if (source is IDictionary<string, object?> genericDictionary && genericDictionary.TryGetValue(propertyName, out value))
+            {
+                return true;
+            }
+
+            if (source is System.Collections.IDictionary dictionary && dictionary.Contains(propertyName))
+            {
+                value = dictionary[propertyName];
+                return true;
+            }
+
+            var property = source.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+            if (property != null)
+            {
+                value = property.GetValue(source, null);
+                return true;
+            }
+
+            var descriptor = System.ComponentModel.TypeDescriptor.GetProperties(source).Find(propertyName, false);
+            if (descriptor != null)
+            {
+                value = descriptor.GetValue(source);
+                return true;
+            }
+
+            value = null;
+            return false;
         }
 
         /// <summary>

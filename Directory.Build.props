@@ -39,6 +39,13 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS1591;CS1572;CS1573;CS1574;CS0419</WarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(UseLocalRmcNumericsProject)' == '' and ('$(MSBuildProjectName)' == 'DatabaseControls' or '$(MSBuildProjectName)' == 'NumericControls')">
+    <BestFitRepositoryRoot Condition="'$(BestFitRepositoryRoot)' == '' and '$(SolutionDir)' != '' and Exists('$(SolutionDir)RMC.BestFit.sln')">$(SolutionDir)</BestFitRepositoryRoot>
+    <BestFitRepositoryRoot Condition="'$(BestFitRepositoryRoot)' == '' and Exists('$(MSBuildStartupDirectory)\RMC.BestFit.sln')">$(MSBuildStartupDirectory)\</BestFitRepositoryRoot>
+    <UseLocalRmcNumericsProject Condition="'$(BestFitRepositoryRoot)' != ''">true</UseLocalRmcNumericsProject>
+    <RmcNumericsProject Condition="'$(RmcNumericsProject)' == '' and '$(BestFitRepositoryRoot)' != ''">$(BestFitRepositoryRoot)..\numerics\Numerics\Numerics.csproj</RmcNumericsProject>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(IsWpfFrameworkLibrary)' == 'true'">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
 

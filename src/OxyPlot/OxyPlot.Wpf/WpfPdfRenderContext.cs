@@ -10,6 +10,7 @@
 namespace OxyPlot.Wpf
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Provides a PDF render context that converts text to geometry paths using WPF's
@@ -35,6 +36,53 @@ namespace OxyPlot.Wpf
         {
         }
 
+        /// <inheritdoc/>
+        public override void DrawEllipse(
+            OxyRect rect,
+            OxyColor fill,
+            OxyColor stroke,
+            double thickness,
+            EdgeRenderingMode edgeRenderingMode)
+        {
+            base.DrawEllipse(ToPdfRect(rect), fill, stroke, thickness, edgeRenderingMode);
+        }
+
+        /// <inheritdoc/>
+        public override void DrawLine(
+            IList<ScreenPoint> points,
+            OxyColor stroke,
+            double thickness,
+            EdgeRenderingMode edgeRenderingMode,
+            double[] dashArray,
+            LineJoin lineJoin)
+        {
+            base.DrawLine(ToPdfPoints(points), stroke, thickness, edgeRenderingMode, dashArray, lineJoin);
+        }
+
+        /// <inheritdoc/>
+        public override void DrawPolygon(
+            IList<ScreenPoint> points,
+            OxyColor fill,
+            OxyColor stroke,
+            double thickness,
+            EdgeRenderingMode edgeRenderingMode,
+            double[] dashArray,
+            LineJoin lineJoin)
+        {
+            base.DrawPolygon(ToPdfPoints(points), fill, stroke, thickness, edgeRenderingMode, dashArray, lineJoin);
+        }
+
+        /// <inheritdoc/>
+        public override void DrawRectangle(
+            OxyRect rect,
+            OxyColor fill,
+            OxyColor stroke,
+            double thickness,
+            EdgeRenderingMode edgeRenderingMode)
+        {
+            base.DrawRectangle(ToPdfRect(rect), fill, stroke, thickness, edgeRenderingMode);
+        }
+
         /// <summary>
         /// Draws text at the specified position by converting it to geometry paths.
         /// </summary>
@@ -55,21 +103,23 @@ namespace OxyPlot.Wpf
                 return;
             }
 
-            // fontSize is in DIP (1/96 inch). Measure in DIP then convert to points.
+            // fontSize is in DIP (1/96 inch). Measure in DIP then convert to points
+            // only for the final PDF path geometry.
             var textSizeDip = TextToGeometryHelper.MeasureText(text, fontFamily, fontSize, fontWeight);
             double width = textSizeDip.Width * DipToPoints;
             double height = textSizeDip.Height * DipToPoints;
 
             if (maxSize != null)
             {
-                if (width > maxSize.Value.Width)
+                var maxSizePoints = ToPdfSize(maxSize.Value);
+                if (width > maxSizePoints.Width)
                 {
-                    width = Math.Max(maxSize.Value.Width, 0);
+                    width = Math.Max(maxSizePoints.Width, 0);
                 }
 
-                if (height > maxSize.Value.Height)
+                if (height > maxSizePoints.Height)
                 {
-                    height = Math.Max(maxSize.Value.Height, 0);
+                    height = Math.Max(maxSizePoints.Height, 0);
                 }
             }
 
@@ -102,10 +152,11 @@ namespace OxyPlot.Wpf
             this.doc.SaveState();
             this.doc.SetFillColor(fill);
 
-            // p.X, p.Y are in points (model renders to a points-sized OxyRect).
+            // The model renders in WPF DIP coordinates. Convert the anchor point to PDF points.
             // Flip Y for PDF coordinate system (Y-up).
-            double pdfY = this.doc.PageHeight - p.Y;
-            this.doc.Translate(p.X, pdfY);
+            double pdfX = p.X * DipToPoints;
+            double pdfY = this.doc.PageHeight - (p.Y * DipToPoints);
+            this.doc.Translate(pdfX, pdfY);
 
             if (Math.Abs(rotate) > 1e-6)
             {
@@ -116,7 +167,7 @@ namespace OxyPlot.Wpf
             this.doc.Translate(dx, dy);
 
             // The geometry is in DIP with Y-down. We need to:
-            // 1. Scale DIP → points (multiply by DipToPoints)
+            // 1. Scale DIP to points (multiply by DipToPoints)
             // 2. Flip Y (negate Y scale)
             // 3. Shift up by height so flipped text extends upward from baseline
             // Combined: Transform(scale, 0, 0, -scale, 0, height)
@@ -130,13 +181,88 @@ namespace OxyPlot.Wpf
         }
 
         /// <summary>
-        /// Measures text using WPF font metrics. Returns size in points for consistency
-        /// with the PDF coordinate system used by the model render rectangle.
+        /// Measures text using WPF font metrics. Returns size in DIP so model layout
+        /// matches the WPF drawing and SVG renderers; drawing converts to PDF points.
         /// </summary>
         public override OxySize MeasureText(string text, string fontFamily, double fontSize, double fontWeight)
         {
-            var sizeDip = TextToGeometryHelper.MeasureText(text, fontFamily, fontSize, fontWeight);
-            return new OxySize(sizeDip.Width * DipToPoints, sizeDip.Height * DipToPoints);
+            return TextToGeometryHelper.MeasureText(text, fontFamily, fontSize, fontWeight);
+        }
+
+        /// <inheritdoc/>
+        public override void DrawImage(
+            OxyImage source,
+            double srcX,
+            double srcY,
+            double srcWidth,
+            double srcHeight,
+            double destX,
+            double destY,
+            double destWidth,
+            double destHeight,
+            double opacity,
+            bool interpolate)
+        {
+            base.DrawImage(
+                source,
+                srcX,
+                srcY,
+                srcWidth,
+                srcHeight,
+                destX * DipToPoints,
+                destY * DipToPoints,
+                destWidth * DipToPoints,
+                destHeight * DipToPoints,
+                opacity,
+                interpolate);
+        }
+
+        /// <inheritdoc/>
+        protected override void SetClip(OxyRect clippingRectangle)
+        {
+            base.SetClip(ToPdfRect(clippingRectangle));
+        }
+
+        /// <summary>
+        /// Converts a screen point from WPF device-independent pixels to PDF points.
+        /// </summary>
+        private static ScreenPoint ToPdfPoint(ScreenPoint point)
+        {
+            return new ScreenPoint(point.X * DipToPoints, point.Y * DipToPoints);
+        }
+
+        /// <summary>
+        /// Converts a rectangle from WPF device-independent pixels to PDF points.
+        /// </summary>
+        private static OxyRect ToPdfRect(OxyRect rect)
+        {
+            return new OxyRect(
+                rect.Left * DipToPoints,
+                rect.Top * DipToPoints,
+                rect.Width * DipToPoints,
+                rect.Height * DipToPoints);
+        }
+
+        /// <summary>
+        /// Converts a size from WPF device-independent pixels to PDF points.
+        /// </summary>
+        private static OxySize ToPdfSize(OxySize size)
+        {
+            return new OxySize(size.Width * DipToPoints, size.Height * DipToPoints);
+        }
+
+        /// <summary>
+        /// Converts screen points from WPF device-independent pixels to PDF points.
+        /// </summary>
+        private static IList<ScreenPoint> ToPdfPoints(IList<ScreenPoint> points)
+        {
+            var scaled = new ScreenPoint[points.Count];
+            for (int i = 0; i < points.Count; i++)
+            {
+                scaled[i] = ToPdfPoint(points[i]);
+            }
+
+            return scaled;
         }
     }
 }
