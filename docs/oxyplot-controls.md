@@ -135,8 +135,8 @@ A dialog window for exporting charts as image files. Extends `MetroDialogWindow`
 - Preset and custom dimension selection
 - Live WYSIWYG bitmap preview that scales to fit the dialog
 - Report theme toggle -- exports with a white-background print-optimized theme
-- Duplicate file name detection
-- Persists last-used folder path across invocations
+- Native Windows Save As dialog for file name, file type, folder, extension, and overwrite handling
+- Persists last-used export folder path across invocations
 
 ```csharp
 var dialog = new SavePlotImageDialog(myPlot);

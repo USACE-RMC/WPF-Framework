@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
         mc:Ignorable="d"
-        Title="Save Plot Image" SizeToContent="Manual" Width="700" Height="650"
+        Title="Export Plot Image" SizeToContent="Manual" Width="700" Height="650"
         MinWidth="500" MinHeight="450"
         WindowStartupLocation="CenterOwner"
         Style="{DynamicResource MetroDialogStyle}"
@@ -13,7 +13,7 @@
 
     <DockPanel Margin="6" LastChildFill="True">
 
-        <!-- ═══ TOP: Image Size, Dimensions & Report Theme ═══ -->
+        <!-- TOP: Image Size, Dimensions & Report Theme -->
         <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -24,7 +24,6 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Row 0: Image Size Preset -->
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Image Size:"
                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,4,8,4"/>
             <ComboBox Name="ImageSizeComboBox" Grid.Row="0" Grid.Column="1"
@@ -42,7 +41,6 @@
                 <ComboBoxItem Content="Custom"/>
             </ComboBox>
 
-            <!-- Row 1: Report Theme checkbox + Custom dimensions (when visible) -->
             <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,2,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -56,7 +54,6 @@
                           Checked="ReportThemeCheckBox_Changed"
                           Unchecked="ReportThemeCheckBox_Changed"/>
 
-                <!-- Width & Height (visible only when Custom is selected) -->
                 <Grid x:Name="CustomDimensionsPanel" Grid.Column="1" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -80,62 +77,21 @@
             </Grid>
         </Grid>
 
-        <!-- ═══ BOTTOM: File Controls & Buttons ═══ -->
-        <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <!-- BOTTOM: Buttons -->
+        <Grid DockPanel.Dock="Bottom" Margin="0,6,0,0" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
-            <!-- File Type -->
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="File Type:"
-                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,4,8,4"/>
-            <ComboBox Name="FileTypeComboBox" Grid.Row="0" Grid.Column="1"
-                      Margin="0,4" VerticalAlignment="Center" SelectedIndex="0"
-                      SelectionChanged="FileTypeComboBox_SelectionChanged">
-                <ComboBoxItem Content="PNG (.png)"/>
-                <ComboBoxItem Content="PDF (.pdf)"/>
-                <ComboBoxItem Content="SVG (.svg)"/>
-            </ComboBox>
-
-            <!-- Directory -->
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Directory:"
-                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,4,8,4"/>
-            <cntrls:FolderSelectorControl x:Name="FolderPathControl" Grid.Row="1" Grid.Column="1"
-                                           Title="" ShowLeaderLine="False"
-                                           PropertyWidth="10*" MaxPropertyWidth="2000" MinPropertyWidth="200"
-                                           Margin="-3,4,0,4" HorizontalAlignment="Stretch"
-                                           TextChanged="FolderPathControl_TextChanged"/>
-
-            <!-- File Name -->
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="File Name:"
-                       HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,4,8,4"/>
-            <cntrls:NameTextBox x:Name="FileNameTextBox" Grid.Row="2" Grid.Column="1"
-                                Height="22" Margin="0,4"
-                                CanBeBlank="False" CharacterLimit="200"/>
-
-            <!-- Buttons -->
-            <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Button Name="SaveButton" Content="Save" IsDefault="True" Grid.Column="0"
-                        Width="75" Height="24" Margin="6,0,0,0" Cursor="Hand"
-                        Click="SaveButton_Click"/>
-                <Button Name="CancelButton" Content="Cancel" IsCancel="True" Grid.Column="1"
-                        Width="75" Height="24" Margin="6,0,0,0" Cursor="Hand"
-                        Click="CancelButton_Click"/>
-            </Grid>
+            <Button Name="SaveAsButton" Content="Save As..." IsDefault="True" Grid.Column="0"
+                    Width="90" Height="24" Margin="6,0,0,0" Cursor="Hand"
+                    Click="SaveAsButton_Click"/>
+            <Button Name="CancelButton" Content="Cancel" IsCancel="True" Grid.Column="1"
+                    Width="75" Height="24" Margin="6,0,0,0" Cursor="Hand"
+                    Click="CancelButton_Click"/>
         </Grid>
 
-        <!-- ═══ CENTER: Plot Preview ═══ -->
+        <!-- CENTER: Plot Preview -->
         <Border BorderBrush="{DynamicResource SeparatorBorder}" BorderThickness="1"
                 Margin="0,2,0,0" Background="{DynamicResource EnvironmentWindowBackground}">
             <Grid Name="PreviewContainer" SizeChanged="PreviewContainer_SizeChanged">

@@ -1,37 +1,41 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using GenericControls;
+using Microsoft.Win32;
 using OxyPlot.Wpf;
 
 namespace OxyPlotControls
 {
     /// <summary>
-    /// A dialog window for saving OxyPlot charts as image files.
-    /// Provides a live plot preview that scales with the selected export dimensions,
-    /// and inline controls for file type, directory, and file name.
-    /// Supports PNG, PDF, and SVG formats with customizable dimensions.
+    /// A dialog window for exporting OxyPlot charts.
+    /// Provides a live plot preview, export dimensions, report-theme selection,
+    /// and delegates file name, type, overwrite, and folder selection to the
+    /// native Windows Save As dialog.
     /// </summary>
     public partial class SavePlotImageDialog : MetroDialogWindow
     {
-        private Plot _sourcePlot;
-        private DispatcherTimer _resizeDebounceTimer;
+        private const string SaveFileFilter = "PNG Image (*.png)|*.png|PDF Document (*.pdf)|*.pdf|SVG Vector Image (*.svg)|*.svg";
+        private const int PngFilterIndex = 1;
+        private const int PdfFilterIndex = 2;
+        private const int SvgFilterIndex = 3;
+        private const int DefaultFileNameMaxLength = 200;
+
+        private readonly Plot _sourcePlot;
+        private readonly DispatcherTimer _resizeDebounceTimer;
         private bool _isInitialized;
         private bool _useReportTheme = true;
-        private static string _lastUsedFolderPath = "";
+        private static string _lastUsedFolderPath = string.Empty;
         private double _desiredPreviewWidth;
         private double _desiredPreviewHeight;
 
         // Layout constants for dialog sizing calculations.
-        // These estimate the non-preview space (controls, chrome, margins) so the dialog
-        // is sized appropriately. The preview itself uses explicit dimensions and does not
-        // depend on these constants being pixel-perfect.
-        private const double ControlsPanelHeight = 190;
+        // These estimate the non-preview space so the preview can scale to the selected export size.
+        private const double ControlsPanelHeight = 110;
         private const double DialogChromeHeight = 50;
         private const double DialogHorizontalPadding = 36;
         private const double MinPreviewWidth = 280;
@@ -48,7 +52,6 @@ namespace OxyPlotControls
 
             _sourcePlot = thePlot;
 
-            // Set theme-aware window icon
             SetThemeAwareIcon();
 
             _resizeDebounceTimer = new DispatcherTimer
@@ -74,38 +77,21 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Handles the ContentRendered event to initialize the dialog with default values and render the first preview.
+        /// Handles the ContentRendered event to initialize the dialog and render the first preview.
         /// </summary>
         private void SavePlotImageDialog_ContentRendered(object? sender, EventArgs e)
         {
-            // Set tooltips showing current plot dimensions
             WidthTextBox.ToolTip = "Current Plot Width is " + ((int)_sourcePlot.ActualWidth).ToString() + " px";
             HeightTextBox.ToolTip = "Current Plot Height is " + ((int)_sourcePlot.ActualHeight).ToString() + " px";
 
-            // Initialize folder path: last used > Pictures > Documents
-            if (!string.IsNullOrEmpty(_lastUsedFolderPath) && Directory.Exists(_lastUsedFolderPath))
-                FolderPathControl.Text = _lastUsedFolderPath;
-            else
-            {
-                string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                FolderPathControl.Text = Directory.Exists(picturesPath) ? picturesPath
-                    : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            }
-
-            // Initialize file name
-            FileNameTextBox.Text = "plot";
-
-            // Populate existing file names for duplicate detection
-            UpdateExistingFileNames();
-
             _isInitialized = true;
 
-            // Defer first preview render until layout is complete
+            // Defer first preview render until layout is complete.
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(UpdatePreview));
         }
 
         /// <summary>
-        /// Handles the Closing event to activate the owner window and persist the folder path.
+        /// Handles the Closing event to activate the owner window.
         /// </summary>
         private void SavePlotImageDialog_Closing(object? sender, CancelEventArgs e)
         {
@@ -113,9 +99,6 @@ namespace OxyPlotControls
             // visual tree has been torn down and UpdatePreview() accesses disposed elements.
             _resizeDebounceTimer.Stop();
             _resizeDebounceTimer.Tick -= ResizeDebounceTimer_Tick;
-
-            if (!string.IsNullOrEmpty(FolderPathControl.Text))
-                _lastUsedFolderPath = FolderPathControl.Text;
 
             if (Owner != null) Owner.Activate();
         }
@@ -130,7 +113,7 @@ namespace OxyPlotControls
             {
                 var iconBrush = FindResource("EnvironmentWindowText") as SolidColorBrush ?? Brushes.Black;
 
-                // Camera/save icon: simple camera shape matching the toolbar CameraIcon
+                // Camera/save icon: simple camera shape matching the toolbar CameraIcon.
                 var geometry = Geometry.Parse(
                     "F0 M 5.40625 1.828125 C 5.2435365 1.828125 5.1126068 1.9997109 5.03125 2.140625 " +
                     "C 4.7248392 2.671344 4.09375 3.734375 4.09375 3.734375 L 2.4375 3.734375 " +
@@ -157,7 +140,7 @@ namespace OxyPlotControls
             }
             catch
             {
-                // Fall back gracefully - no icon if resource resolution fails
+                // Fall back gracefully - no icon if resource resolution fails.
             }
         }
 
@@ -239,20 +222,18 @@ namespace OxyPlotControls
 
         /// <summary>
         /// Computes the optimal dialog dimensions for the given export size.
-        /// Used both for initial sizing (before the window is shown) and subsequent resizes.
+        /// Used both for initial sizing before the window is shown and subsequent resizes.
         /// </summary>
         private static (double dialogWidth, double dialogHeight, double previewWidth, double previewHeight) ComputeDialogSize(int exportWidth, int exportHeight)
         {
-            // Get available screen space
             var workArea = SystemParameters.WorkArea;
             double maxDialogWidth = workArea.Width * ScreenUsageFraction;
             double maxDialogHeight = workArea.Height * ScreenUsageFraction;
 
-            // Compute available preview space
             double availablePreviewWidth = maxDialogWidth - DialogHorizontalPadding;
             double availablePreviewHeight = maxDialogHeight - ControlsPanelHeight - DialogChromeHeight;
 
-            // Scale to fit — never upscale beyond the export dimensions
+            // Scale to fit and never upscale beyond the export dimensions.
             double scaleX = availablePreviewWidth / exportWidth;
             double scaleY = availablePreviewHeight / exportHeight;
             double scale = Math.Min(scaleX, scaleY);
@@ -261,11 +242,9 @@ namespace OxyPlotControls
             double previewWidth = Math.Max(exportWidth * scale, MinPreviewWidth);
             double previewHeight = Math.Max(exportHeight * scale, MinPreviewHeight);
 
-            // Compute dialog dimensions
             double dialogWidth = previewWidth + DialogHorizontalPadding;
             double dialogHeight = previewHeight + ControlsPanelHeight + DialogChromeHeight;
 
-            // Enforce min/max
             dialogWidth = Math.Clamp(dialogWidth, 500, maxDialogWidth);
             dialogHeight = Math.Clamp(dialogHeight, 450, maxDialogHeight);
 
@@ -287,14 +266,12 @@ namespace OxyPlotControls
             _desiredPreviewWidth = previewWidth;
             _desiredPreviewHeight = previewHeight;
 
-            // Re-center on owner, clamped to the work area
             if (Owner != null)
             {
                 var workArea = SystemParameters.WorkArea;
                 double newLeft = Owner.Left + (Owner.ActualWidth - Width) / 2;
                 double newTop = Owner.Top + (Owner.ActualHeight - Height) / 2;
 
-                // Clamp to work area so the title bar stays accessible
                 Left = Math.Max(workArea.Left, Math.Min(newLeft, workArea.Right - Width));
                 Top = Math.Max(workArea.Top, Math.Min(newTop, workArea.Bottom - Height));
             }
@@ -312,13 +289,9 @@ namespace OxyPlotControls
 
             if (_desiredPreviewWidth <= 0 || _desiredPreviewHeight <= 0) return;
 
-            // Render at exactly the desired preview dimensions so the preview
-            // is always the correct size, regardless of how much space the container has.
             int previewWidth = Math.Max((int)_desiredPreviewWidth, 100);
             int previewHeight = Math.Max((int)_desiredPreviewHeight, 100);
 
-            // Set explicit dimensions on the Image — with Stretch="None" and Center alignment,
-            // the preview is always exactly the right size even if the container is slightly larger.
             PreviewImage.Width = previewWidth;
             PreviewImage.Height = previewHeight;
 
@@ -350,7 +323,7 @@ namespace OxyPlotControls
             }
             catch (Exception)
             {
-                // Silently handle preview render failures
+                // Preview is helpful but not required for export.
             }
         }
 
@@ -380,67 +353,18 @@ namespace OxyPlotControls
         }
 
         /// <summary>
-        /// Gets the file extension for the currently selected file type.
+        /// Handles the Save As button click event to collect a file path and export the plot.
         /// </summary>
-        private string GetSelectedFileExtension()
+        private void SaveAsButton_Click(object sender, RoutedEventArgs e)
         {
-            return FileTypeComboBox.SelectedIndex switch
-            {
-                0 => ".png",
-                1 => ".pdf",
-                2 => ".svg",
-                _ => ".png"
-            };
-        }
+            if (!TryValidateExportInputs(out int imageWidth, out int imageHeight)) return;
 
-        /// <summary>
-        /// Handles the Save button click event to validate inputs and export the plot.
-        /// </summary>
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_sourcePlot == null) return;
-            if (_sourcePlot.ActualModel == null)
-            {
-                GenericControls.MessageBox.Show("The plot has no model to export.", "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            var saveFileDialog = CreateSaveFileDialog();
+            if (saveFileDialog.ShowDialog() != true) return;
 
-            // Validate folder
-            string folderPath = FolderPathControl.Text?.Trim() ?? "";
-            if (string.IsNullOrEmpty(folderPath) || !Directory.Exists(folderPath))
-            {
-                GenericControls.MessageBox.Show("The specified directory does not exist. Please select a valid folder.", "Invalid Folder", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            string saveFile = GetExportFilePath(saveFileDialog.FileName, saveFileDialog.FilterIndex);
+            string extension = Path.GetExtension(saveFile).ToLowerInvariant();
 
-            // Validate file name
-            if (!FileNameTextBox.IsValid)
-            {
-                var errors = FileNameTextBox.GetErrorMessages();
-                string errorMessage = errors.Count > 0 ? string.Join("\n", errors) : "File name is not valid.";
-                GenericControls.MessageBox.Show(errorMessage, "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            string fileName = FileNameTextBox.Text?.Trim() ?? "";
-            if (string.IsNullOrEmpty(fileName))
-            {
-                GenericControls.MessageBox.Show("Please enter a file name.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            // Validate dimensions
-            if (!TryGetExportDimensions(out int imageWidth, out int imageHeight))
-            {
-                GenericControls.MessageBox.Show("Image dimensions are not valid. Width and height must be between 50 and 10,000 pixels.", "Invalid Dimensions", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            // Construct full file path
-            string extension = GetSelectedFileExtension();
-            string saveFile = Path.Combine(folderPath, fileName + extension);
-
-            // Export
             try
             {
                 if (_useReportTheme)
@@ -461,16 +385,124 @@ namespace OxyPlotControls
                 return;
             }
 
-            _lastUsedFolderPath = folderPath;
+            _lastUsedFolderPath = Path.GetDirectoryName(saveFile) ?? string.Empty;
             Close();
+        }
+
+        private bool TryValidateExportInputs(out int imageWidth, out int imageHeight)
+        {
+            imageWidth = 0;
+            imageHeight = 0;
+
+            if (_sourcePlot.ActualModel == null)
+            {
+                GenericControls.MessageBox.Show("The plot has no model to export.", "Cannot Save", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            if (!TryGetExportDimensions(out imageWidth, out imageHeight))
+            {
+                GenericControls.MessageBox.Show("Image dimensions are not valid. Width and height must be between 50 and 10,000 pixels.", "Invalid Dimensions", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            return true;
+        }
+
+        private SaveFileDialog CreateSaveFileDialog()
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Title = "Save Plot Image As",
+                Filter = SaveFileFilter,
+                FilterIndex = PngFilterIndex,
+                DefaultExt = "png",
+                AddExtension = true,
+                OverwritePrompt = true,
+                ValidateNames = true,
+                CheckPathExists = true,
+                FileName = GetDefaultFileName(_sourcePlot.Model?.Title ?? _sourcePlot.ActualModel?.Title)
+            };
+
+            string initialDirectory = GetInitialDirectory();
+            if (Directory.Exists(initialDirectory))
+            {
+                saveFileDialog.InitialDirectory = initialDirectory;
+            }
+
+            return saveFileDialog;
+        }
+
+        private static string GetInitialDirectory()
+        {
+            if (!string.IsNullOrEmpty(_lastUsedFolderPath) && Directory.Exists(_lastUsedFolderPath))
+            {
+                return _lastUsedFolderPath;
+            }
+
+            string picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            if (Directory.Exists(picturesPath))
+            {
+                return picturesPath;
+            }
+
+            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+
+        private static string GetDefaultFileName(string? plotTitle)
+        {
+            string source = string.IsNullOrWhiteSpace(plotTitle) ? "plot" : plotTitle.Trim();
+            char[] invalidCharacters = Path.GetInvalidFileNameChars();
+            var fileName = new char[source.Length];
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                fileName[i] = Array.IndexOf(invalidCharacters, source[i]) >= 0 ? '_' : source[i];
+            }
+
+            string sanitized = new string(fileName).Trim().TrimEnd('.');
+            if (sanitized.Length > DefaultFileNameMaxLength)
+            {
+                sanitized = sanitized.Substring(0, DefaultFileNameMaxLength).Trim().TrimEnd('.');
+            }
+
+            return string.IsNullOrWhiteSpace(sanitized) ? "plot" : sanitized;
+        }
+
+        private static string GetExportFilePath(string filePath, int filterIndex)
+        {
+            string extension = Path.GetExtension(filePath).ToLowerInvariant();
+            if (IsSupportedExportExtension(extension))
+            {
+                return filePath;
+            }
+
+            return Path.ChangeExtension(filePath, GetExportExtensionForFilterIndex(filterIndex));
+        }
+
+        private static string GetExportExtensionForFilterIndex(int filterIndex)
+        {
+            return filterIndex switch
+            {
+                PdfFilterIndex => ".pdf",
+                SvgFilterIndex => ".svg",
+                _ => ".png"
+            };
+        }
+
+        private static bool IsSupportedExportExtension(string extension)
+        {
+            return string.Equals(extension, ".png", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(extension, ".pdf", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(extension, ".svg", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
         /// Exports the given PlotModel to the specified file using the appropriate exporter.
         /// </summary>
-        private void ExportModel(OxyPlot.PlotModel model, string filePath, string extension, int width, int height)
+        private static void ExportModel(OxyPlot.PlotModel model, string filePath, string extension, int width, int height)
         {
-            switch (extension)
+            switch (extension.ToLowerInvariant())
             {
                 case ".png":
                     var exporter = new PngExporter { Width = width, Height = height, Background = model.Background };
@@ -491,6 +523,8 @@ namespace OxyPlotControls
                         OxyPlot.Wpf.WpfPdfExporter.Export(model, fs, width, height);
                     }
                     break;
+                default:
+                    throw new NotSupportedException("Unsupported plot export format: " + extension);
             }
         }
 
@@ -500,51 +534,6 @@ namespace OxyPlotControls
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
-        }
-
-        /// <summary>
-        /// Handles the SelectionChanged event of the FileTypeComboBox to refresh the existing file names list.
-        /// </summary>
-        private void FileTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!_isInitialized) return;
-            UpdateExistingFileNames();
-        }
-
-        /// <summary>
-        /// Handles the TextChanged event of the FolderPathControl to refresh the existing file names list.
-        /// </summary>
-        private void FolderPathControl_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (!_isInitialized) return;
-            UpdateExistingFileNames();
-        }
-
-        /// <summary>
-        /// Updates the NameTextBox InvalidStrings with existing file names (without extension)
-        /// in the selected directory that match the selected file type.
-        /// </summary>
-        private void UpdateExistingFileNames()
-        {
-            string folder = FolderPathControl.Text?.Trim() ?? "";
-            if (!Directory.Exists(folder))
-            {
-                FileNameTextBox.InvalidStrings = Array.Empty<string>();
-                return;
-            }
-
-            try
-            {
-                string extension = GetSelectedFileExtension();
-                var existingNames = Directory.GetFiles(folder, "*" + extension)
-                    .Select(f => Path.GetFileNameWithoutExtension(f))
-                    .ToArray();
-                FileNameTextBox.InvalidStrings = existingNames;
-            }
-            catch (Exception)
-            {
-                FileNameTextBox.InvalidStrings = Array.Empty<string>();
-            }
         }
     }
 }
