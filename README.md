@@ -1,6 +1,7 @@
 # WPF Framework
 
 [![CI](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml/badge.svg)](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml)
+[![DOI](https://zenodo.org/badge/1125074377.svg)](https://zenodo.org/badge/latestdoi/1125074377)
 [![NuGet](https://img.shields.io/nuget/v/RMC.Wpf.Framework.Controls)](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/)
 [![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 
