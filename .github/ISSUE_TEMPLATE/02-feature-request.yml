@@ -13,7 +13,7 @@ body:
     attributes:
       label: What problem would this solve?
       description: Describe the user need or workflow problem.
-      placeholder: Example: I need to compare several scenarios without exporting each result manually.
+      placeholder: "Example: I need to compare several scenarios without exporting each result manually."
     validations:
       required: true
 
@@ -22,7 +22,7 @@ body:
     attributes:
       label: What would you like to happen?
       description: Describe the feature or improvement.
-      placeholder: Example: Add a button to export all scenario results to one Excel file.
+      placeholder: "Example: Add a button to export all scenario results to one Excel file."
     validations:
       required: true
 
@@ -43,7 +43,7 @@ body:
     attributes:
       label: Current workaround
       description: How are you handling this now, if at all?
-      placeholder: Example: I manually copy results from each scenario into Excel.
+      placeholder: "Example: I manually copy results from each scenario into Excel."
     validations:
       required: false
 
@@ -52,7 +52,7 @@ body:
     attributes:
       label: Affected area or control
       description: Name the project, window, tool, or control if you know it.
-      placeholder: Example: Project explorer, theme system, NumericControls
+      placeholder: "Example: Project explorer, theme system, NumericControls"
     validations:
       required: false
 

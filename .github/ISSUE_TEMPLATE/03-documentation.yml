@@ -8,7 +8,7 @@ body:
     attributes:
       label: Where is the documentation issue?
       description: Link to the page, section, help topic, or file if possible.
-      placeholder: Example: User Guide, Section 3.2, Importing Data
+      placeholder: "Example: User Guide, Section 3.2, Importing Data"
     validations:
       required: true
 
@@ -31,7 +31,7 @@ body:
     attributes:
       label: Describe the issue
       description: What is confusing, missing, or incorrect?
-      placeholder: Example: The guide says to select an output folder, but the current interface uses a file picker instead.
+      placeholder: "Example: The guide says to select an output folder, but the current interface uses a file picker instead."
     validations:
       required: true
 
@@ -40,7 +40,7 @@ body:
     attributes:
       label: Suggested change
       description: Optional. Suggest wording or content that would help.
-      placeholder: Example: Add a screenshot showing the current import window.
+      placeholder: "Example: Add a screenshot showing the current import window."
     validations:
       required: false
 
