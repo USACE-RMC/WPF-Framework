@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml/badge.svg)](https://github.com/USACE-RMC/WPF-Framework/actions/workflows/Integration.yml)
 [![DOI](https://zenodo.org/badge/1125074377.svg)](https://zenodo.org/badge/latestdoi/1125074377)
-[![NuGet](https://img.shields.io/nuget/v/RMC.Wpf.Framework.Controls)](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/)
+[![NuGet](https://img.shields.io/nuget/v/rmc.wpf.framework.controls)](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/)
 [![License: 0BSD](https://img.shields.io/badge/License-0BSD-blue.svg)](LICENSE)
 
 WPF Framework is a free and open-source .NET 10.0 application framework for building desktop project management applications, developed by the U.S. Army Corps of Engineers Risk Management Center ([USACE-RMC](https://www.rmc.usace.army.mil/)). It provides a complete application shell with docking layout, project explorer, theme switching, undo/redo, and specialized controls for charting, databases, expression parsing, and directed acyclic graphs.
