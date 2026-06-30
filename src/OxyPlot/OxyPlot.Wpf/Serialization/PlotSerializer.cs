@@ -98,7 +98,8 @@ namespace OxyPlot.Wpf.Serialization
             "LegendTitle", "LegendTitleColor", "LegendTitleFont", "LegendTitleFontSize", "LegendTitleFontWeight",
             "LegendTextColor", "LegendFont", "LegendFontSize", "LegendFontWeight",
             "LegendSymbolLength", "LegendSymbolMargin", "LegendSymbolPlacement",
-            "LegendColumnSpacing", "LegendItemAlignment", "LegendItemOrder", "LegendItemSpacing", "LegendLineSpacing",
+            "LegendColumnSpacing", "LegendItemAlignment", "LegendItemClickTogglesSeriesVisibility",
+            "LegendItemOrder", "LegendItemSpacing", "LegendLineSpacing",
         };
 
         #endregion
@@ -424,6 +425,7 @@ namespace OxyPlot.Wpf.Serialization
             itemProperties.SetAttributeValue(nameof(plot.LegendSymbolPlacement), plot.LegendSymbolPlacement.ToString());
             itemProperties.SetAttributeValue(nameof(plot.LegendColumnSpacing), plot.LegendColumnSpacing.ToString("G17", CultureInfo.InvariantCulture));
             itemProperties.SetAttributeValue(nameof(plot.LegendItemAlignment), plot.LegendItemAlignment.ToString());
+            itemProperties.SetAttributeValue(nameof(plot.LegendItemClickTogglesSeriesVisibility), plot.LegendItemClickTogglesSeriesVisibility);
             itemProperties.SetAttributeValue(nameof(plot.LegendItemOrder), plot.LegendItemOrder.ToString());
             itemProperties.SetAttributeValue(nameof(plot.LegendItemSpacing), plot.LegendItemSpacing.ToString("G17", CultureInfo.InvariantCulture));
             itemProperties.SetAttributeValue(nameof(plot.LegendLineSpacing), plot.LegendLineSpacing.ToString("G17", CultureInfo.InvariantCulture));
@@ -561,6 +563,9 @@ namespace OxyPlot.Wpf.Serialization
 
                 System.Windows.HorizontalAlignment legendItemAlignment;
                 if (GetEnumAttribute(itemsElement, nameof(plot.LegendItemAlignment), out legendItemAlignment)) plot.LegendItemAlignment = legendItemAlignment;
+
+                bool legendItemClickTogglesSeriesVisibility;
+                if (GetBooleanAttribute(itemsElement, nameof(plot.LegendItemClickTogglesSeriesVisibility), out legendItemClickTogglesSeriesVisibility)) plot.LegendItemClickTogglesSeriesVisibility = legendItemClickTogglesSeriesVisibility;
 
                 LegendItemOrder legendItemOrder;
                 if (GetEnumAttribute(itemsElement, nameof(plot.LegendItemOrder), out legendItemOrder)) plot.LegendItemOrder = legendItemOrder;

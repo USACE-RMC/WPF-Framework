@@ -60,6 +60,7 @@ namespace OxyPlot.Legends
             this.LegendItemAlignment = HorizontalAlignment.Left;
             this.LegendSymbolPlacement = LegendSymbolPlacement.Left;
 
+            this.LegendItemClickTogglesSeriesVisibility = false;
             this.ShowInvisibleSeries = true;
 
             this.SeriesInvisibleTextColor = OxyColor.FromAColor(64, this.LegendTextColor);
@@ -91,7 +92,7 @@ namespace OxyPlot.Legends
                     {
                         if (kvp.Value.Contains(point))
                         {
-                            if (this.ShowInvisibleSeries)
+                            if (this.LegendItemClickTogglesSeriesVisibility && this.ShowInvisibleSeries)
                             {
                                 kvp.Key.IsVisible = !kvp.Key.IsVisible;
                                 this.PlotModel.InvalidatePlot(false);
@@ -131,6 +132,11 @@ namespace OxyPlot.Legends
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether clicking a legend item toggles the corresponding series visibility.
+        /// </summary>
+        public bool LegendItemClickTogglesSeriesVisibility { get; set; }
 
         private Dictionary<Series.Series, OxyRect> SeriesPosMap { get; set; }
 

@@ -286,6 +286,15 @@ namespace OxyPlot.Wpf
             new PropertyMetadata(System.Windows.HorizontalAlignment.Left, AppearanceChanged));
 
         /// <summary>
+        /// Identifies the <see cref="LegendItemClickTogglesSeriesVisibility"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty LegendItemClickTogglesSeriesVisibilityProperty = DependencyProperty.Register(
+            nameof(LegendItemClickTogglesSeriesVisibility),
+            typeof(bool),
+            typeof(Plot),
+            new PropertyMetadata(false, AppearanceChanged));
+
+        /// <summary>
         /// Identifies the <see cref="LegendItemOrder"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty LegendItemOrderProperty = DependencyProperty.Register(
@@ -920,6 +929,15 @@ namespace OxyPlot.Wpf
         {
             get => (System.Windows.HorizontalAlignment)this.GetValue(LegendItemAlignmentProperty);
             set => this.SetValue(LegendItemAlignmentProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether clicking a legend item toggles the corresponding series visibility.
+        /// </summary>
+        public bool LegendItemClickTogglesSeriesVisibility
+        {
+            get => (bool)this.GetValue(LegendItemClickTogglesSeriesVisibilityProperty);
+            set => this.SetValue(LegendItemClickTogglesSeriesVisibilityProperty, value);
         }
 
         /// <summary>
@@ -1617,6 +1635,7 @@ namespace OxyPlot.Wpf
             legend.LegendBorder = this.LegendBorder.ToOxyColor();
             legend.LegendBorderThickness = this.LegendBorderThickness;
             legend.LegendItemAlignment = this.LegendItemAlignment.ToHorizontalAlignment();
+            legend.LegendItemClickTogglesSeriesVisibility = this.LegendItemClickTogglesSeriesVisibility;
             legend.LegendItemOrder = this.LegendItemOrder;
             legend.LegendItemSpacing = this.LegendItemSpacing;
             legend.LegendLineSpacing = this.LegendLineSpacing;

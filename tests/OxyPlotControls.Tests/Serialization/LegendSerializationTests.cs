@@ -293,6 +293,7 @@ public class LegendSerializationTests
             LegendSymbolPlacement = LegendSymbolPlacement.Left,
             LegendColumnSpacing = 10,
             LegendItemAlignment = HorizontalAlignment.Left,
+            LegendItemClickTogglesSeriesVisibility = true,
             LegendItemOrder = LegendItemOrder.Normal,
             LegendItemSpacing = 8,
             LegendLineSpacing = 4
@@ -309,6 +310,7 @@ public class LegendSerializationTests
         Assert.Equal("Left", itemsElement.Attribute("LegendSymbolPlacement")?.Value);
         Assert.Equal("10", itemsElement.Attribute("LegendColumnSpacing")?.Value);
         Assert.Equal("Left", itemsElement.Attribute("LegendItemAlignment")?.Value);
+        Assert.Equal("true", itemsElement.Attribute("LegendItemClickTogglesSeriesVisibility")?.Value);
         Assert.Equal("Normal", itemsElement.Attribute("LegendItemOrder")?.Value);
         Assert.Equal("8", itemsElement.Attribute("LegendItemSpacing")?.Value);
         Assert.Equal("4", itemsElement.Attribute("LegendLineSpacing")?.Value);
@@ -327,6 +329,7 @@ public class LegendSerializationTests
                 new XAttribute("LegendSymbolPlacement", "Right"),
                 new XAttribute("LegendColumnSpacing", "12"),
                 new XAttribute("LegendItemAlignment", "Center"),
+                new XAttribute("LegendItemClickTogglesSeriesVisibility", "True"),
                 new XAttribute("LegendItemOrder", "Reverse"),
                 new XAttribute("LegendItemSpacing", "10"),
                 new XAttribute("LegendLineSpacing", "5")));
@@ -341,9 +344,26 @@ public class LegendSerializationTests
         Assert.Equal(LegendSymbolPlacement.Right, plot.LegendSymbolPlacement);
         Assert.Equal(12, plot.LegendColumnSpacing);
         Assert.Equal(HorizontalAlignment.Center, plot.LegendItemAlignment);
+        Assert.True(plot.LegendItemClickTogglesSeriesVisibility);
         Assert.Equal(LegendItemOrder.Reverse, plot.LegendItemOrder);
         Assert.Equal(10, plot.LegendItemSpacing);
         Assert.Equal(5, plot.LegendLineSpacing);
+    }
+
+    [StaFact]
+    public void XElementToLegendProperties_ItemClickToggleMissing_DefaultsToFalse()
+    {
+        // Arrange
+        var plot = new Plot();
+        var element = new XElement(PlotSerializer.LegendPropertiesTag,
+            new XElement("Items",
+                new XAttribute("LegendItemAlignment", "Left")));
+
+        // Act
+        PlotSerializer.XElementToLegendProperties(plot, element);
+
+        // Assert
+        Assert.False(plot.LegendItemClickTogglesSeriesVisibility);
     }
 
     [StaFact]
@@ -358,6 +378,7 @@ public class LegendSerializationTests
             LegendSymbolPlacement = LegendSymbolPlacement.Right,
             LegendColumnSpacing = 15,
             LegendItemAlignment = HorizontalAlignment.Right,
+            LegendItemClickTogglesSeriesVisibility = true,
             LegendItemOrder = LegendItemOrder.Reverse,
             LegendItemSpacing = 12,
             LegendLineSpacing = 6
@@ -375,6 +396,7 @@ public class LegendSerializationTests
         Assert.Equal(originalPlot.LegendSymbolPlacement, deserializedPlot.LegendSymbolPlacement);
         Assert.Equal(originalPlot.LegendColumnSpacing, deserializedPlot.LegendColumnSpacing);
         Assert.Equal(originalPlot.LegendItemAlignment, deserializedPlot.LegendItemAlignment);
+        Assert.Equal(originalPlot.LegendItemClickTogglesSeriesVisibility, deserializedPlot.LegendItemClickTogglesSeriesVisibility);
         Assert.Equal(originalPlot.LegendItemOrder, deserializedPlot.LegendItemOrder);
         Assert.Equal(originalPlot.LegendItemSpacing, deserializedPlot.LegendItemSpacing);
         Assert.Equal(originalPlot.LegendLineSpacing, deserializedPlot.LegendLineSpacing);
@@ -584,6 +606,7 @@ public class LegendSerializationTests
             LegendSymbolPlacement = LegendSymbolPlacement.Left,
             LegendColumnSpacing = 12,
             LegendItemAlignment = HorizontalAlignment.Left,
+            LegendItemClickTogglesSeriesVisibility = true,
             LegendItemOrder = LegendItemOrder.Normal,
             LegendItemSpacing = 8,
             LegendLineSpacing = 4
@@ -614,6 +637,7 @@ public class LegendSerializationTests
         Assert.Equal(originalPlot.LegendSymbolPlacement, deserializedPlot.LegendSymbolPlacement);
         Assert.Equal(originalPlot.LegendColumnSpacing, deserializedPlot.LegendColumnSpacing);
         Assert.Equal(originalPlot.LegendItemAlignment, deserializedPlot.LegendItemAlignment);
+        Assert.Equal(originalPlot.LegendItemClickTogglesSeriesVisibility, deserializedPlot.LegendItemClickTogglesSeriesVisibility);
         Assert.Equal(originalPlot.LegendItemOrder, deserializedPlot.LegendItemOrder);
         Assert.Equal(originalPlot.LegendItemSpacing, deserializedPlot.LegendItemSpacing);
         Assert.Equal(originalPlot.LegendLineSpacing, deserializedPlot.LegendLineSpacing);
