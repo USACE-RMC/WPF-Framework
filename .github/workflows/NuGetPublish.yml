@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -45,10 +46,16 @@ jobs:
         shell: pwsh
         run: .\scripts\pack-wpf-framework.ps1 -Configuration Release -Version $env:VERSION -OutputDirectory packages -SkipRestore -SkipBuild
 
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: USACE-RMC
+
       - name: Push to NuGet.org
         shell: pwsh
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_ORG_API_KEY }}
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
           $packageIds = @(
             "RMC.Wpf.Framework.Core",
