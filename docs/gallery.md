@@ -15,7 +15,6 @@ Screenshots belong in `docs/assets/gallery/` using the filenames shown below.
   - [Date, Time, and Color](#date-time-and-color)
   - [Property Editors](#property-editors)
   - [Data Grid](#data-grid)
-  - [Color Collection](#color-collection)
 - [NumericControls](#numericcontrols)
   - [Distribution Selector](#distribution-selector)
   - [Uncertain Curve Editor](#uncertain-curve-editor)
