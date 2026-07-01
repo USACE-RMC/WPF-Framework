@@ -90,7 +90,7 @@ See: [Generic Controls](generic-controls.md)
 
 ### Property Editors
 
-![Generic property editors in blue theme](assets/gallery/generic-property-editors-blue.png)
+![Generic property editors in blue theme](assets/gallery/generic-property-editors-light.png)
 
 Property editors for text, numbers, booleans, fonts, colors, lines, alignment, points, dates, and custom content.
 
@@ -104,13 +104,6 @@ Data grid toolbar and copy/paste data grid controls for editable tabular workflo
 
 See: [Generic Controls](generic-controls.md)
 
-### Color Collection
-
-![Generic color collection editor in blue theme](assets/gallery/generic-color-collection-blue.png)
-
-Editable color collection with popup color editing.
-
-See: [Generic Controls](generic-controls.md)
 
 ## NumericControls
 

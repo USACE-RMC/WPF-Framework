@@ -13,9 +13,8 @@ Save screenshots in this folder using the filenames below. Blue theme is the def
 
 - `generic-input-controls-blue.png`
 - `generic-date-time-color-blue.png`
-- `generic-property-editors-blue.png`
+- `generic-property-editors-light.png`
 - `generic-datagrid-blue.png`
-- `generic-color-collection-blue.png`
 
 ## NumericControls
 
