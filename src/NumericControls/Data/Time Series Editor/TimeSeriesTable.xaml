@@ -59,6 +59,36 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="DateTime_CellStyleDisabled" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource Right_CellStyleDisabled}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RuleMap[DateTime].HasError}" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RuleMap[DateTime].ErrorMessage}"/>
+                    <Setter Property="BorderBrush" Value="{Binding ErrorCellBorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cntrls:ValidationDataGrid}}}"/>
+                    <Setter Property="Background" Value="{Binding ErrorCellBackgroundBrush, RelativeSource={RelativeSource AncestorType={x:Type cntrls:ValidationDataGrid}}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DateTime_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource Right_CellStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RuleMap[DateTime].HasError}" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RuleMap[DateTime].ErrorMessage}"/>
+                    <Setter Property="BorderBrush" Value="{Binding ErrorCellBorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cntrls:ValidationDataGrid}}}"/>
+                    <Setter Property="Background" Value="{Binding ErrorCellBackgroundBrush, RelativeSource={RelativeSource AncestorType={x:Type cntrls:ValidationDataGrid}}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Value_CellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource Right_CellStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RuleMap[Value].HasError}" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RuleMap[Value].ErrorMessage}"/>
+                    <Setter Property="BorderBrush" Value="{Binding ErrorCellBorderBrush, RelativeSource={RelativeSource AncestorType={x:Type cntrls:ValidationDataGrid}}}"/>
+                    <Setter Property="Background" Value="{Binding ErrorCellBackgroundBrush, RelativeSource={RelativeSource AncestorType={x:Type cntrls:ValidationDataGrid}}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="DataGridCellStyle1" TargetType="{x:Type DataGridCell}">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -144,7 +174,7 @@
         </StackPanel>
 
         <!-- Time series data grid with date/time and value columns -->
-        <cntrls:CopyPasteDataGrid
+        <cntrls:ValidationDataGrid
             x:Name="TimeSeriesDataGrid"
             Grid.Row="1"
             RowHeight="25"
@@ -157,7 +187,7 @@
             PreviewPasteData="TimeSeriesDataGrid_PreviewPasteData"
             DataPasted="TimeSeriesDataGrid_DataPasted"
             PreviewKeyDown="TimeSeriesDataGrid_PreviewKeyDown">
-            <cntrls:CopyPasteDataGrid.Columns>
+            <cntrls:ValidationDataGrid.Columns>
                 <DataGridTemplateColumn 
                     x:Name="DateTimeSelectorColumn"  
                     Header="" 
@@ -227,7 +257,7 @@
                     MinWidth="30"
                     Binding="{Binding DateTime, NotifyOnTargetUpdated=True, Mode=TwoWay, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource DateConverter}}" 
                     HeaderStyle="{StaticResource WrappedColumnHeaderStyle}"
-                    CellStyle="{StaticResource Right_CellStyleDisabled}"/>
+                    CellStyle="{StaticResource DateTime_CellStyleDisabled}"/>
 
                 <DataGridTextColumn
                     x:Name="ValueColumn"
@@ -235,10 +265,10 @@
                     Width="*"
                     Binding="{Binding Value, UpdateSourceTrigger=LostFocus, Mode=TwoWay, FallbackValue=N/A, TargetNullValue=N/A, Converter={StaticResource NAConverter}}"
                     HeaderStyle="{StaticResource WrappedColumnHeaderStyle}"
-                    CellStyle="{StaticResource Right_CellStyle}"
+                    CellStyle="{StaticResource Value_CellStyle}"
                     EditingElementStyle="{StaticResource DataGridEditingTextBoxStyle}"/>
 
-            </cntrls:CopyPasteDataGrid.Columns>
-        </cntrls:CopyPasteDataGrid>
+            </cntrls:ValidationDataGrid.Columns>
+        </cntrls:ValidationDataGrid>
     </Grid>
 </UserControl>

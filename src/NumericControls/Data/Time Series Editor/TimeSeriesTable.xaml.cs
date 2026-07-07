@@ -86,11 +86,31 @@ namespace NumericControls
         private void RebuildRowItems()
         {
             _rowItems.Clear();
-            if (Series == null) return;
-            for (int i = 0; i < Series.Count; i++)
+            if (Series != null)
             {
-                _rowItems.Add(new TimeSeriesRowItem(_rowItems, Series[i], Series, i));
+                for (int i = 0; i < Series.Count; i++)
+                {
+                    _rowItems.Add(new TimeSeriesRowItem(_rowItems, Series[i], Series, i));
+                }
             }
+            ValidateRows();
+        }
+
+        /// <summary>
+        /// Forces validation on the bound row items when the grid has been initialized.
+        /// </summary>
+        private void ValidateRows()
+        {
+            TimeSeriesDataGrid?.ValidateTable();
+        }
+
+        /// <summary>
+        /// Refreshes the grid view and revalidates the underlying row items.
+        /// </summary>
+        private void RefreshGridAndValidateRows()
+        {
+            TimeSeriesDataGrid?.Items.Refresh();
+            ValidateRows();
         }
 
         /// <summary>
@@ -113,11 +133,12 @@ namespace NumericControls
                         rowItem.SetOrdinate((SeriesOrdinate<DateTime, double>)e.NewItems[i]);
                     }
                 }
+                ValidateRows();
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 RebuildRowItems();
-                TimeSeriesDataGrid.Items.Refresh();
+                RefreshGridAndValidateRows();
             }
         }
 
@@ -153,10 +174,11 @@ namespace NumericControls
 
             thisControl.DateTimeColumn.IsReadOnly = true;
             thisControl.DateTimeSelectorColumn.Visibility = Visibility.Collapsed;
-            thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("Right_CellStyleDisabled");
+            thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("DateTime_CellStyleDisabled");
             if (e.NewValue == null)
             {
                 thisControl._rowItems.Clear();
+                thisControl.RefreshGridAndValidateRows();
                 return;
             }
             TimeSeries newSeries = e.NewValue as TimeSeries;
@@ -164,12 +186,13 @@ namespace NumericControls
             {
                 thisControl._rowItems.Clear();
                 thisControl.TimeSeriesDataGrid.IsEnabled = false;
+                thisControl.RefreshGridAndValidateRows();
                 return;
             }
 
             if (newSeries.TimeInterval == TimeInterval.Irregular)
             {
-                thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("Right_CellStyle");
+                thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("DateTime_CellStyle");
                 thisControl.DateTimeSelectorColumn.Visibility = Visibility.Visible;
                 thisControl.DateTimeColumn.IsReadOnly = false;
             }
@@ -472,6 +495,7 @@ namespace NumericControls
 
                 // Rebuild RowItems since values changed in-place
                 RebuildRowItems();
+                RefreshGridAndValidateRows();
 
                 // Fire DataPasted as a signal to unsuppress and raise reset
                 DataPasted?.Invoke();
@@ -538,7 +562,7 @@ namespace NumericControls
             // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
             // Must happen before PasteClipboard resumes so Items[rowIndex + i] finds the new rows.
             RebuildRowItems();
-            TimeSeriesDataGrid.Items.Refresh();
+            RefreshGridAndValidateRows();
 
             RowsAdded?.Invoke(startRowIndex, nRows);
         }
@@ -625,16 +649,19 @@ namespace NumericControls
             // Cancel CopyPasteDataGrid's own delete — we handle both collections ourselves
             cancel = true;
 
+            var sourceRowIndices = MapVisibleRowIndicesToSourceRowIndices(rowindices);
+            if (sourceRowIndices.Count == 0) return;
+
             // Fire public event to allow consumer to suppress
             bool userCancel = false;
-            PreviewDeleteRows?.Invoke(rowindices, ref userCancel);
+            PreviewDeleteRows?.Invoke(sourceRowIndices, ref userCancel);
             if (userCancel) return;
 
             // Start Time
             DateTime startTime = (Series == null || Series.Count == 0) ? new DateTime(2020, 1, 1, 0, 0, 0) : Series[0].Index;
 
             // Delete from Series in reverse order to maintain indices
-            var sorted = rowindices.OrderByDescending(i => i).ToList();
+            var sorted = sourceRowIndices.OrderByDescending(i => i).ToList();
             foreach (int idx in sorted)
             {
                 if (idx >= 0 && idx < Series.Count)
@@ -645,9 +672,34 @@ namespace NumericControls
 
             // Rebuild all RowItems to sync _rowItems with Series and fix positional indices.
             RebuildRowItems();
-            TimeSeriesDataGrid.Items.Refresh();
+            RefreshGridAndValidateRows();
 
-            RowsDeleted?.Invoke(rowindices);
+            RowsDeleted?.Invoke(sourceRowIndices);
+        }
+
+        /// <summary>
+        /// Converts row indices from the current sorted view to indices in the backing row collection.
+        /// </summary>
+        /// <param name="rowindices">The row indices from the current grid view.</param>
+        /// <returns>The corresponding distinct source indices in ascending order.</returns>
+        private List<int> MapVisibleRowIndicesToSourceRowIndices(IEnumerable<int> rowindices)
+        {
+            var sourceRowIndices = new HashSet<int>();
+            if (rowindices == null) return sourceRowIndices.ToList();
+
+            foreach (int rowIndex in rowindices)
+            {
+                if (rowIndex < 0 || rowIndex >= TimeSeriesDataGrid.Items.Count) continue;
+                if (TimeSeriesDataGrid.Items[rowIndex] is not TimeSeriesRowItem rowItem) continue;
+
+                int sourceIndex = _rowItems.IndexOf(rowItem);
+                if (sourceIndex >= 0)
+                {
+                    sourceRowIndices.Add(sourceIndex);
+                }
+            }
+
+            return sourceRowIndices.OrderBy(index => index).ToList();
         }
 
         /// <summary>
@@ -718,6 +770,7 @@ namespace NumericControls
             // RebuildRowItems removed — Series_CollectionChanged(Reset) handles it
             // when consumer calls RaiseCollectionChangedReset() in the DataPasted handler.
             DataPasted?.Invoke();
+            ValidateRows();
         }
 
     }
