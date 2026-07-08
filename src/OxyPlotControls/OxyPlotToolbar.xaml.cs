@@ -1599,7 +1599,7 @@ namespace OxyPlotControls
 
                         if (verticalYAxis.IsReversed == false)
                         {
-                            newVLine.TextLinePosition = 1;
+                            newVLine.TextLinePosition = 0;
                             newVLine.TextHorizontalAlignment = System.Windows.HorizontalAlignment.Right;
                         }
                         else
@@ -1641,7 +1641,7 @@ namespace OxyPlotControls
                         }
                         else
                         {
-                            newHLine.TextLinePosition = 1;
+                            newHLine.TextLinePosition = 0;
                             newHLine.TextHorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                         }
 
