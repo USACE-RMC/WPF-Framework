@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using SoftwareUpdate.GitHub;
 
 namespace SoftwareUpdate.Utilities
 {
@@ -22,9 +24,9 @@ namespace SoftwareUpdate.Utilities
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This method spawns the SoftwareUpdate.Updater.exe process which handles the actual file replacement.
-        /// The updater will wait for the current process to exit before extracting files, then optionally
-        /// restart the main application.
+        /// This method copies the complete updater payload to a disposable directory and launches that copy
+        /// to handle file replacement. The updater waits for the current process to exit before applying
+        /// staged files, then optionally restarts the main application.
         /// </para>
         /// <para>
         /// If <paramref name="exitApplication"/> is true (the default), this method will call
@@ -72,6 +74,39 @@ namespace SoftwareUpdate.Utilities
             bool createBackup = true,
             bool exitApplication = true)
         {
+            LaunchUpdater(
+                updaterPath,
+                zipPath,
+                targetDirectory,
+                mainExecutable,
+                createBackup,
+                exitApplication,
+                additionalPreservedRelativePaths: null);
+        }
+
+        /// <summary>
+        /// Launches the updater while preserving additional installation-relative paths.
+        /// </summary>
+        /// <param name="updaterPath">The full path to the updater executable.</param>
+        /// <param name="zipPath">The full path to the downloaded update archive.</param>
+        /// <param name="targetDirectory">The installation directory to update.</param>
+        /// <param name="mainExecutable">The main executable filename to restart.</param>
+        /// <param name="createBackup">Whether to create a targeted backup.</param>
+        /// <param name="exitApplication">Whether to exit the current application after launch.</param>
+        /// <param name="additionalPreservedRelativePaths">
+        /// Optional installation-relative paths that the updater must preserve.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when a required path or name is empty.</exception>
+        /// <exception cref="FileNotFoundException">Thrown when the updater or update archive is missing.</exception>
+        public static void LaunchUpdater(
+            string updaterPath,
+            string zipPath,
+            string targetDirectory,
+            string mainExecutable,
+            bool createBackup,
+            bool exitApplication,
+            IEnumerable<string>? additionalPreservedRelativePaths)
+        {
             if (string.IsNullOrEmpty(updaterPath))
                 throw new ArgumentNullException(nameof(updaterPath));
             if (string.IsNullOrEmpty(zipPath))
@@ -86,12 +121,23 @@ namespace SoftwareUpdate.Utilities
             if (!File.Exists(zipPath))
                 throw new FileNotFoundException("Update zip file not found.", zipPath);
 
+            var preservedPaths = new List<string>();
+            if (additionalPreservedRelativePaths != null)
+            {
+                foreach (var preservedPath in additionalPreservedRelativePaths)
+                {
+                    ValidatePreservedPath(preservedPath);
+                    preservedPaths.Add(preservedPath);
+                }
+            }
+
             var currentPid = Process.GetCurrentProcess().Id;
+            var runnerUpdaterPath = GitHubUpdateService.CreateUpdaterRunner(updaterPath);
 
             // Use ArgumentList for safe argument passing (no manual quoting/escaping)
             var startInfo = new ProcessStartInfo
             {
-                FileName = updaterPath,
+                FileName = runnerUpdaterPath,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -106,15 +152,54 @@ namespace SoftwareUpdate.Utilities
             if (createBackup)
                 startInfo.ArgumentList.Add("--backup");
 
-            var process = Process.Start(startInfo);
+            foreach (var preservedPath in preservedPaths)
+            {
+                startInfo.ArgumentList.Add("--preserve");
+                startInfo.ArgumentList.Add(preservedPath);
+            }
+
+            Process? process;
+            try
+            {
+                process = Process.Start(startInfo);
+            }
+            catch
+            {
+                GitHubUpdateService.DeleteUpdaterRunner(Path.GetDirectoryName(runnerUpdaterPath));
+                throw;
+            }
+
             if (process == null)
             {
+                GitHubUpdateService.DeleteUpdaterRunner(Path.GetDirectoryName(runnerUpdaterPath));
                 throw new InvalidOperationException("Failed to start the updater process.");
             }
 
             if (exitApplication)
             {
                 Environment.Exit(0);
+            }
+        }
+
+        /// <summary>
+        /// Validates an installation-relative path passed to the updater.
+        /// </summary>
+        /// <param name="path">The path to validate.</param>
+        private static void ValidatePreservedPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || Path.IsPathRooted(path) || path.Contains(':'))
+                throw new ArgumentException("Preserved paths must be non-empty relative paths.", nameof(path));
+
+            var segments = path.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length == 0 || Array.Exists(segments, segment =>
+                    segment is "." or ".." ||
+                    segment.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+                    segment.EndsWith(" ", StringComparison.Ordinal) ||
+                    segment.EndsWith(".", StringComparison.Ordinal)))
+            {
+                throw new ArgumentException(
+                    "Preserved paths cannot contain current-directory or parent-directory segments.",
+                    nameof(path));
             }
         }
     }

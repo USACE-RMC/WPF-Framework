@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SoftwareUpdate.Updater
 {
@@ -38,6 +39,11 @@ namespace SoftwareUpdate.Updater
         public bool CreateBackup { get; set; }
 
         /// <summary>
+        /// Gets additional installation-relative paths that must be preserved.
+        /// </summary>
+        public IList<string> PreservedRelativePaths { get; } = new List<string>();
+
+        /// <summary>
         /// Parses command-line arguments.
         /// </summary>
         /// <param name="args">The command-line arguments array.</param>
@@ -59,6 +65,15 @@ namespace SoftwareUpdate.Updater
                     if (key == "backup")
                     {
                         result.CreateBackup = true;
+                        continue;
+                    }
+
+                    if (key == "preserve")
+                    {
+                        if (i + 1 < args.Length && !args[i + 1].StartsWith("--"))
+                        {
+                            result.PreservedRelativePaths.Add(UnquoteArgument(args[++i]));
+                        }
                         continue;
                     }
 
@@ -138,6 +153,14 @@ namespace SoftwareUpdate.Updater
             if (string.IsNullOrEmpty(MainExecutable))
                 errors.Add("--exe is required");
 
+            foreach (var preservedPath in PreservedRelativePaths)
+            {
+                if (!IsValidRelativePath(preservedPath))
+                {
+                    errors.Add($"--preserve must be a safe relative path: {preservedPath}");
+                }
+            }
+
             if (errors.Count > 0)
             {
                 throw new ArgumentException(string.Join(Environment.NewLine, errors));
@@ -161,6 +184,24 @@ namespace SoftwareUpdate.Updater
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// Determines whether a preserved path is relative and traversal-free.
+        /// </summary>
+        /// <param name="path">The path to validate.</param>
+        /// <returns><see langword="true"/> when the path is safe.</returns>
+        private static bool IsValidRelativePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || System.IO.Path.IsPathRooted(path) || path.Contains(':'))
+                return false;
+
+            var segments = path.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+            return segments.Length > 0 && !segments.Any(segment =>
+                segment is "." or ".." ||
+                segment.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0 ||
+                segment.EndsWith(" ", StringComparison.Ordinal) ||
+                segment.EndsWith(".", StringComparison.Ordinal));
         }
     }
 }

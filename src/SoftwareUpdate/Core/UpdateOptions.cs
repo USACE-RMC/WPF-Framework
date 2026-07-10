@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -76,6 +78,26 @@ namespace SoftwareUpdate
         /// Default is true.
         /// </summary>
         public bool CreateBackup { get; set; } = true;
+
+        /// <summary>
+        /// Gets additional installation-relative paths that the updater must preserve.
+        /// </summary>
+        /// <remarks>
+        /// The updater always preserves its built-in runtime paths, including <c>settings</c>,
+        /// <c>logs</c>, <c>updates_pending</c>, and backup directories. Entries added here are
+        /// validated as relative paths and preserve both the path itself and its descendants.
+        /// </remarks>
+        public IList<string> AdditionalPreservedRelativePaths { get; } = new List<string>();
+
+        /// <summary>
+        /// Gets or sets whether downloads without a valid SHA256 checksum must be rejected.
+        /// </summary>
+        /// <remarks>
+        /// The default is <see langword="false"/> for compatibility. When enabled, GitHub
+        /// release notes must contain a <c>SHA256: &lt;64-character hexadecimal value&gt;</c>
+        /// token for the selected update asset.
+        /// </remarks>
+        public bool RequireSha256Checksum { get; set; }
 
         /// <summary>
         /// Gets or sets the path to store skipped version preferences.
@@ -187,6 +209,37 @@ namespace SoftwareUpdate
             if (RequestTimeoutSeconds < 1 || RequestTimeoutSeconds > 300)
                 throw new ArgumentOutOfRangeException(nameof(RequestTimeoutSeconds),
                     "RequestTimeoutSeconds must be between 1 and 300.");
+
+            foreach (var preservedPath in AdditionalPreservedRelativePaths)
+            {
+                ValidatePreservedPath(preservedPath);
+            }
+        }
+
+        /// <summary>
+        /// Validates an installation-relative path that must be preserved during updates.
+        /// </summary>
+        /// <param name="path">The relative path to validate.</param>
+        private static void ValidatePreservedPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || Path.IsPathRooted(path) || path.Contains(':'))
+            {
+                throw new ArgumentException(
+                    "Additional preserved paths must be non-empty relative paths.",
+                    nameof(AdditionalPreservedRelativePaths));
+            }
+
+            var segments = path.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length == 0 || segments.Any(segment =>
+                    segment is "." or ".." ||
+                    segment.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+                    segment.EndsWith(" ", StringComparison.Ordinal) ||
+                    segment.EndsWith(".", StringComparison.Ordinal)))
+            {
+                throw new ArgumentException(
+                    "Additional preserved paths cannot contain current-directory or parent-directory segments.",
+                    nameof(AdditionalPreservedRelativePaths));
+            }
         }
     }
 }

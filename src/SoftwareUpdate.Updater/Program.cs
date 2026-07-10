@@ -14,7 +14,8 @@ namespace SoftwareUpdate.Updater
     /// the update package and restarts the application.
     /// </para>
     /// <para>
-    /// Usage: SoftwareUpdate.Updater.exe --pid [pid] --zip [path] --target [dir] --exe [name] [--backup]
+    /// Usage: SoftwareUpdate.Updater.exe --pid [pid] --zip [path] --target [dir] --exe [name]
+    /// [--backup] [--preserve relative-path]
     /// </para>
     /// </remarks>
     internal class Program

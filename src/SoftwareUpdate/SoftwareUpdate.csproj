@@ -17,4 +17,8 @@
     <PackageTags>auto-update; github-releases; semver; software-update; installer; usace-rmc</PackageTags>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="SoftwareUpdate.Tests" />
+  </ItemGroup>
+
 </Project>

@@ -138,10 +138,21 @@ namespace NumericControls
 
         /// <summary>
         /// Adds validation rules for the time series row item properties.
-        /// Validates that the value is a valid number.
+        /// Validates that irregular date-time entries are in ascending data order
+        /// and that the value is a valid number.
         /// </summary>
         public override void AddValidationRules()
         {
+            AddRule(nameof(DateTime),
+                () => _series != null
+                    && _series.TimeInterval == TimeInterval.Irregular
+                    && OrderRule<DateTime, TimeSeriesRowItem>(
+                        row => row.DateTime.Ticks,
+                        nameof(DateTime),
+                        ascending: true,
+                        canBeEqual: false),
+                "Date/time values must be in ascending data order. Grid sorting does not reorder the time series used by the plot.",
+                new[] { nameof(DateTime) });
             AddRule(nameof(Value), () => double.IsInfinity(Value), "The value must be a finite number.", new[] { nameof(Value) });
         }
 

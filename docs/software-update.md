@@ -54,8 +54,10 @@ var options = new UpdateOptions
     GitHubOwner = "USACE-RMC",
     GitHubRepo = "RMC-BestFit",
     CurrentVersion = new SemanticVersion(2, 0, 0),
-    AssetNamePattern = "RMC-BestFit.*.zip"
+    AssetNamePattern = "RMC-BestFit.*.zip",
+    RequireSha256Checksum = true
 };
+options.AdditionalPreservedRelativePaths.Add("data/user");
 ```
 
 ### 3. Create the update service
@@ -191,9 +193,9 @@ Assets:
 
 Mark pre-release versions as "pre-release" in GitHub. They are excluded by default unless `IncludePreReleases = true`. Draft releases are always excluded.
 
-### Optional SHA256 checksum
+### SHA256 checksum policy
 
-If the `UpdateInfo.Sha256Checksum` property is populated, the download is validated against it. Set this property via the release metadata if your build pipeline generates checksums.
+When release notes contain `SHA256: <64-character hexadecimal value>`, the download is validated against it. Set `RequireSha256Checksum = true` to reject releases that do not provide this token. The default remains optional for compatibility.
 
 ## UpdateOptions Reference
 
@@ -208,6 +210,8 @@ If the `UpdateInfo.Sha256Checksum` property is populated, the download is valida
 | `InstallDirectory` | `string?` | `null` | Installation directory. Defaults to the entry assembly's directory. |
 | `MainExecutableName` | `string?` | `null` | Executable to restart after update. Defaults to the current process name. |
 | `CreateBackup` | `bool` | `true` | Whether to create a backup before updating. |
+| `AdditionalPreservedRelativePaths` | `IList<string>` | Empty | Additional installation-relative paths that must never be changed by an update. |
+| `RequireSha256Checksum` | `bool` | `false` | Whether release notes must provide a valid SHA256 checksum. |
 | `SkippedVersionsFilePath` | `string?` | `null` | Path for storing skipped versions. Defaults to `%LOCALAPPDATA%/{repo}/skipped_versions.txt`. |
 | `RequestTimeoutSeconds` | `int` | `30` | HTTP request timeout in seconds. |
 | `UpdaterExecutablePath` | `string?` | `null` | Path to the updater executable. Defaults to `SoftwareUpdate.Updater.exe` in the install directory. |
@@ -291,7 +295,7 @@ else if (!result.Success)
 
 ### 2. Download update
 
-`DownloadUpdateAsync()` downloads the asset to a temp directory (`%TEMP%/SoftwareUpdate/{repo}/`) with progress reporting every 100ms. If a SHA256 checksum is provided, it validates the download.
+`DownloadUpdateAsync()` downloads the asset to a GUID-named directory under `%TEMP%/SoftwareUpdate/` with progress reporting every 100ms. If a SHA256 checksum is provided, it validates the download; required-checksum mode fails before network transfer when metadata is missing or malformed.
 
 ```csharp
 var downloadResult = await updateService.DownloadUpdateAsync(
@@ -321,7 +325,7 @@ else
 
 ### 3. Install and restart
 
-`InstallUpdateAndRestart()` launches the updater process with the required arguments and calls `Environment.Exit(0)`. No code executes after this call.
+`InstallUpdateAndRestart()` copies the complete updater payload to a disposable `%TEMP%/SoftwareUpdate/runner-{guid}` directory, launches that copy, and calls `Environment.Exit(0)`. Running outside the installation allows the update to replace all installed updater files. No code executes after this call.
 
 ```csharp
 updateService.InstallUpdateAndRestart(downloadResult.FilePath!);
@@ -344,24 +348,29 @@ Skipped versions are persisted to `ResolvedSkippedVersionsPath`.
 
 ## Backup and Recovery
 
-When `CreateBackup` is `true` (the default), the updater creates a backup of the current installation before extracting new files.
+When `CreateBackup` is `true` (the default), the updater backs up only existing files that the validated update manifest will overwrite.
 
 - **Backup location:** `{TargetDirectory}/.backup_{timestamp}/`
 - **Retention:** Only the 2 most recent backups are kept. Older backups are deleted during cleanup.
-- **Recovery:** If the extraction or file replacement fails, the updater automatically restores the entire backup directory.
+- **Recovery:** If file replacement fails, overwritten files are restored and files or directories introduced by the failed update are removed.
 
-To disable backups, set `UpdateOptions.CreateBackup = false`. Without backups, a failed update cannot be automatically restored.
+To disable backups, set `UpdateOptions.CreateBackup = false`. Newly introduced files are still removed after failure, but overwritten files cannot be restored.
+
+The updater always preserves root-level `settings`, `logs`, and `updates_pending` paths plus every `.backup_*` path. These built-in protections cannot be disabled by callers or archive layout.
 
 ## Deployment
 
 ### File layout
 
-Deploy `SoftwareUpdate.Updater.exe` alongside your main application:
+Deploy the complete updater payload alongside your main application:
 
 ```
 MyApp/
   MyApp.exe
-  SoftwareUpdate.Updater.exe   <-- Required for installation
+  SoftwareUpdate.Updater.exe
+  SoftwareUpdate.Updater.dll
+  SoftwareUpdate.Updater.deps.json
+  SoftwareUpdate.Updater.runtimeconfig.json
   SoftwareUpdate.dll
   ... other assemblies ...
 ```
@@ -379,6 +388,7 @@ The updater accepts these command-line arguments (built automatically by `Instal
 | `--target <dir>` | Yes | Target installation directory |
 | `--exe <name>` | Yes | Main executable name to restart |
 | `--backup` | No | Flag to create a backup before updating |
+| `--preserve <path>` | No | Repeatable installation-relative path to preserve |
 
 ### UpdaterBootstrapper
 
@@ -391,7 +401,8 @@ UpdaterBootstrapper.LaunchUpdater(
     targetDirectory: @"C:\MyApp",
     mainExecutable: "MyApp.exe",
     createBackup: true,
-    exitApplication: true  // calls Environment.Exit(0)
+    exitApplication: true,  // calls Environment.Exit(0)
+    additionalPreservedRelativePaths: new[] { "data/user" }
 );
 ```
 
@@ -452,7 +463,8 @@ The updater process itself logs all operations to `{TargetDirectory}/logs/update
 
 ### Updater process considerations
 
-- The updater waits up to 60 seconds for the main application to exit. If the application does not exit in time, the updater proceeds.
-- The updater detects single root folders in zip files and extracts their contents directly, avoiding nested directories.
-- Zip entries containing path traversal sequences (`..`) are skipped with a warning.
+- The updater waits up to 60 seconds for the main application to exit and aborts without changing files if the timeout expires.
+- The updater detects a single wrapper folder and removes it while applying protection checks both before and after removal.
+- The entire archive is preflighted and staged before installation; unsafe paths, collisions, reparse points, excessive file counts, and excessive uncompressed size abort the update.
+- Settings, logs, backups, and update staging remain untouched by archive content.
 - The updater console auto-closes after 3 seconds on success. On failure, it waits for a key press.

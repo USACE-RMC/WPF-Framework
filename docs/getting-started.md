@@ -30,7 +30,7 @@ For NuGet consumption, reference the Controls bundle. It brings in Core, Models,
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="RMC.Wpf.Framework.Controls" Version="1.0.0" />
+  <PackageReference Include="RMC.Wpf.Framework.Controls" Version="1.0.1" />
 </ItemGroup>
 ```
 

@@ -51,7 +51,7 @@ dotnet test WPF-Framework.sln
 ### Build Packages
 
 ```bash
-.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.0
+.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.1
 ```
 
 This creates and validates the following NuGet packages in `artifacts/packages/`:
@@ -144,7 +144,7 @@ Multi-format database abstraction supporting SQLite, CSV, DBF, and in-memory tab
 
 ### Software Updates
 
-Automatic update checking and installation from GitHub Releases with SemVer 2.0, SHA256 checksum validation, and backup/recovery.
+Automatic update checking and staged installation from GitHub Releases with SemVer 2.0, SHA256 checksum validation, protected settings, transactional rollback, and safe replacement of the updater itself.
 
 ## Support
 
