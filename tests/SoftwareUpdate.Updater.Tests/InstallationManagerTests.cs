@@ -435,6 +435,25 @@ namespace SoftwareUpdate.Updater.Tests
         }
 
         /// <summary>
+        /// Verifies that an existing installation directory is not mistaken for a release wrapper.
+        /// </summary>
+        [Fact]
+        public void ExtractUpdate_SingleExistingInstallRoot_DoesNotFlattenFiles()
+        {
+            var targetDir = CreateSubDir("target");
+            Directory.CreateDirectory(Path.Combine(targetDir, "plugins"));
+            var zipPath = CreateTestZip("plugins-only.zip", new[]
+            {
+                ("plugins/new-plugin.dll", "plugin")
+            });
+
+            new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute();
+
+            Assert.True(File.Exists(Path.Combine(targetDir, "plugins", "new-plugin.dll")));
+            Assert.False(File.Exists(Path.Combine(targetDir, "new-plugin.dll")));
+        }
+
+        /// <summary>
         /// Verifies that ExtractUpdate skips backup directories found within update archives.
         /// </summary>
         [Fact]

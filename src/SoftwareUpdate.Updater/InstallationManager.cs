@@ -182,7 +182,8 @@ namespace SoftwareUpdate.Updater
             var preservedPaths = BuildPreservedPaths();
             var stripPrefix = DetermineWrapperPrefix(
                 archiveFiles.Select(file => file.OriginalPath),
-                preservedPaths);
+                preservedPaths,
+                targetDirectory);
             var plans = new List<UpdateFilePlan>();
             long totalUncompressedBytes = 0;
 
@@ -296,10 +297,12 @@ namespace SoftwareUpdate.Updater
         /// </summary>
         /// <param name="paths">The normalized archive file paths.</param>
         /// <param name="preservedPaths">The protected installation paths.</param>
+        /// <param name="targetDirectory">The installation root.</param>
         /// <returns>The wrapper prefix, or <see langword="null"/>.</returns>
         private static string? DetermineWrapperPrefix(
             IEnumerable<string> paths,
-            IReadOnlyList<string> preservedPaths)
+            IReadOnlyList<string> preservedPaths,
+            string targetDirectory)
         {
             var pathList = paths.ToList();
             if (pathList.Count == 0)
@@ -314,7 +317,9 @@ namespace SoftwareUpdate.Updater
                     string.Equals(installRoot, root, StringComparison.OrdinalIgnoreCase)) ||
                 preservedPaths.Any(path =>
                     string.Equals(path, root, StringComparison.OrdinalIgnoreCase) ||
-                    path.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase)))
+                    path.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase)) ||
+                File.Exists(Path.Combine(targetDirectory, root)) ||
+                Directory.Exists(Path.Combine(targetDirectory, root)))
             {
                 return null;
             }
