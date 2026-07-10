@@ -85,15 +85,25 @@ namespace NumericControls
         /// </summary>
         private void RebuildRowItems()
         {
-            _rowItems.Clear();
-            if (Series != null)
+            using (TimeSeriesDataGrid?.SuspendValidation(validateOnResume: false))
             {
-                for (int i = 0; i < Series.Count; i++)
+                var rebuiltRowItems = new ObservableCollection<object>();
+                if (Series != null)
                 {
-                    _rowItems.Add(new TimeSeriesRowItem(_rowItems, Series[i], Series, i));
+                    for (int i = 0; i < Series.Count; i++)
+                    {
+                        rebuiltRowItems.Add(new TimeSeriesRowItem(rebuiltRowItems, Series[i], Series, i, TimeSeriesDataGrid));
+                    }
+                }
+
+                // Populate while detached so the DataGrid receives one ItemsSource change instead
+                // of one CollectionChanged notification for every ordinate in a large series.
+                _rowItems = rebuiltRowItems;
+                if (TimeSeriesDataGrid != null)
+                {
+                    TimeSeriesDataGrid.ItemsSource = _rowItems;
                 }
             }
-            ValidateRows();
         }
 
         /// <summary>
@@ -131,14 +141,37 @@ namespace NumericControls
                     {
                         var rowItem = (TimeSeriesRowItem)_rowItems[rowIndex];
                         rowItem.SetOrdinate((SeriesOrdinate<DateTime, double>)e.NewItems[i]);
+                        rowItem.ForceValidation();
                     }
                 }
-                ValidateRows();
+                ValidateFollowingDateTime(e.NewStartingIndex, e.NewItems.Count);
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 RebuildRowItems();
                 RefreshGridAndValidateRows();
+            }
+        }
+
+        /// <summary>
+        /// Revalidates the first unchanged row following a contiguous replacement range.
+        /// </summary>
+        /// <param name="startingIndex">The first replaced series index.</param>
+        /// <param name="replacedCount">The number of replaced ordinates.</param>
+        /// <remarks>
+        /// Replaced rows are validated by the replace handler. Only the following row has an
+        /// additional ordering relationship affected by the replacement.
+        /// </remarks>
+        private void ValidateFollowingDateTime(int startingIndex, int replacedCount)
+        {
+            if (Series == null || Series.TimeInterval != TimeInterval.Irregular)
+                return;
+
+            int followingIndex = startingIndex + replacedCount;
+            if (followingIndex >= 0 && followingIndex < _rowItems.Count
+                && _rowItems[followingIndex] is TimeSeriesRowItem followingRow)
+            {
+                followingRow.ValidateProperty(nameof(TimeSeriesRowItem.DateTime));
             }
         }
 
@@ -177,16 +210,16 @@ namespace NumericControls
             thisControl.DateTimeColumn.CellStyle = (Style)thisControl.TryFindResource("DateTime_CellStyleDisabled");
             if (e.NewValue == null)
             {
-                thisControl._rowItems.Clear();
-                thisControl.RefreshGridAndValidateRows();
+                thisControl.RebuildRowItems();
+                if (thisControl.IsLoaded) thisControl.ValidateRows();
                 return;
             }
             TimeSeries newSeries = e.NewValue as TimeSeries;
             if (newSeries == null)
             {
-                thisControl._rowItems.Clear();
+                thisControl.RebuildRowItems();
                 thisControl.TimeSeriesDataGrid.IsEnabled = false;
-                thisControl.RefreshGridAndValidateRows();
+                if (thisControl.IsLoaded) thisControl.ValidateRows();
                 return;
             }
 
@@ -199,6 +232,10 @@ namespace NumericControls
 
             // Build RowItems from the new series
             thisControl.RebuildRowItems();
+
+            // ValidationDataGrid performs the initial pass from its Loaded handler. Series
+            // assignments after loading validate once here after the complete table is bound.
+            if (thisControl.IsLoaded) thisControl.ValidateRows();
 
             // Subscribe to CollectionChanged for undo replay sync
             newSeries.CollectionChanged += thisControl.Series_CollectionChanged;
