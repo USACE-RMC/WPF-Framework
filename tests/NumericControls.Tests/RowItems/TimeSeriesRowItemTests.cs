@@ -103,5 +103,22 @@ namespace NumericControls.Tests.RowItems
 
             Assert.False(Row(rows, 1).RuleMap[nameof(TimeSeriesRowItem.DateTime)].HasError);
         }
+
+        /// <summary>
+        /// Verifies ordering validation uses the stored series index without searching a parent row collection.
+        /// </summary>
+        [Fact]
+        public void DateTimeRule_WithoutParentRowCollection_UsesSeriesIndex()
+        {
+            var start = new DateTime(2020, 1, 1);
+            var series = new TimeSeries(TimeInterval.Irregular);
+            series.Add(new SeriesOrdinate<DateTime, double>(start.AddDays(1), 1d));
+            series.Add(new SeriesOrdinate<DateTime, double>(start, 2d));
+            var row = new TimeSeriesRowItem(null, series[1], series, 1);
+
+            row.ForceValidation();
+
+            Assert.True(row.RuleMap[nameof(TimeSeriesRowItem.DateTime)].HasError);
+        }
     }
 }

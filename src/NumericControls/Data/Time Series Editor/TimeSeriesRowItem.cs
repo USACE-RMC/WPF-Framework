@@ -34,7 +34,8 @@ namespace NumericControls
         /// <param name="ordinate">The time series ordinate to be wrapped by this row item.</param>
         /// <param name="series">The time series collection that contains the ordinate, used for clone-and-replace on edits.</param>
         /// <param name="index">The positional index of this ordinate within the series, used for O(1) replacement.</param>
-        public TimeSeriesRowItem(ObservableCollection<object> observableCollection, SeriesOrdinate<DateTime, double> ordinate, TimeSeries series, int index) : base(observableCollection)
+        /// <param name="parentDataGrid">The parent validation grid used to honor bulk validation suppression.</param>
+        public TimeSeriesRowItem(ObservableCollection<object> observableCollection, SeriesOrdinate<DateTime, double> ordinate, TimeSeries series, int index, ValidationDataGrid parentDataGrid = null) : base(observableCollection, parentDataGrid)
         {
             _ordinate = ordinate;
             _series = series;
@@ -137,6 +138,24 @@ namespace NumericControls
         }
 
         /// <summary>
+        /// Determines whether this ordinate violates strict ascending date-time order.
+        /// </summary>
+        /// <returns><see langword="true"/> when the current date-time is less than or equal to its predecessor; otherwise, <see langword="false"/>.</returns>
+        /// <remarks>
+        /// The stored positional index makes this check O(1). Searching the parent row collection
+        /// for every row makes full-table validation O(n²) for large irregular series.
+        /// </remarks>
+        private bool IsDateTimeOutOfOrder()
+        {
+            if (_series == null || _series.TimeInterval != TimeInterval.Irregular)
+                return false;
+            if (_index <= 0 || _index >= _series.Count)
+                return false;
+
+            return _ordinate.Index <= _series[_index - 1].Index;
+        }
+
+        /// <summary>
         /// Adds validation rules for the time series row item properties.
         /// Validates that irregular date-time entries are in ascending data order
         /// and that the value is a valid number.
@@ -144,16 +163,9 @@ namespace NumericControls
         public override void AddValidationRules()
         {
             AddRule(nameof(DateTime),
-                () => _series != null
-                    && _series.TimeInterval == TimeInterval.Irregular
-                    && OrderRule<DateTime, TimeSeriesRowItem>(
-                        row => row.DateTime.Ticks,
-                        nameof(DateTime),
-                        ascending: true,
-                        canBeEqual: false),
-                "Date/time values must be in ascending data order. Grid sorting does not reorder the time series used by the plot.",
-                new[] { nameof(DateTime) });
-            AddRule(nameof(Value), () => double.IsInfinity(Value), "The value must be a finite number.", new[] { nameof(Value) });
+                IsDateTimeOutOfOrder,
+                "Date/time values must be in ascending data order. Grid sorting does not reorder the time series used by the plot.");
+            AddRule(nameof(Value), () => double.IsInfinity(Value), "The value must be a finite number.");
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ dotnet test WPF-Framework.sln
 ### Build Packages
 
 ```bash
-.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.1
+.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.2
 ```
 
 This creates and validates the following NuGet packages in `artifacts/packages/`:

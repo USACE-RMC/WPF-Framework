@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/USACE-RMC/WPF-Framework" />
     <readme>README.md</readme>
     <description>WPF controls, framework UI, DAG controls, database controls, numeric controls, OxyPlot controls, and AvalonDock assemblies for the RMC WPF Framework.</description>
-    <releaseNotes>Version 1.0.1 improves irregular time-series ordering validation and defaults new OxyPlot line annotations to editable text.</releaseNotes>
+    <releaseNotes>Version 1.0.2 improves time-series table validation performance, preserves ordering checks after edits, and avoids repeated full-table scans while rebuilding large series.</releaseNotes>
     <tags>RMC WPF framework controls AvalonDock OxyPlot numeric database DAG</tags>
     <dependencies>
       <group targetFramework="net10.0-windows7.0">

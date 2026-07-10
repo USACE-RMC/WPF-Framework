@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/USACE-RMC/WPF-Framework" />
     <readme>README.md</readme>
     <description>Software update services and deployable updater helper for the RMC WPF Framework.</description>
-    <releaseNotes>Version 1.0.1 protects settings and runtime data during updates, supports transactional rollback, checksum enforcement, and safe replacement of the installed updater payload.</releaseNotes>
+    <releaseNotes>Version 1.0.2 carries forward protected, transactional self-updates and ships a version-aligned updater payload.</releaseNotes>
     <tags>RMC WPF framework software-update updater</tags>
     <dependencies>
       <group targetFramework="net10.0-windows7.0" />

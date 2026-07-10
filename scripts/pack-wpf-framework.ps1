@@ -77,10 +77,10 @@ $expectedEntries = @{
 }
 
 $expectedReleaseNotes = @{
-    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.1 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.1 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Support" = "Version 1.0.1 protects settings and runtime data during updates, supports transactional rollback, checksum enforcement, and safe replacement of the installed updater payload."
-    "RMC.Wpf.Framework.Controls" = "Version 1.0.1 improves irregular time-series ordering validation and defaults new OxyPlot line annotations to editable text."
+    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.2 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.2 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Support" = "Version 1.0.2 carries forward protected, transactional self-updates and ships a version-aligned updater payload."
+    "RMC.Wpf.Framework.Controls" = "Version 1.0.2 improves time-series table validation performance, preserves ordering checks after edits, and avoids repeated full-table scans while rebuilding large series."
 }
 
 foreach ($packageId in $expectedEntries.Keys) {

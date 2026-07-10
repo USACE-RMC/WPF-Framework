@@ -27,6 +27,39 @@ namespace GenericControls
     public sealed class ValidationDataGrid : CopyPasteDataGrid
     {
 
+        /// <summary>
+        /// Restores validation when a suspension scope is disposed.
+        /// </summary>
+        private sealed class ValidationSuspension : IDisposable
+        {
+            private ValidationDataGrid _owner;
+            private readonly bool _validateOnResume;
+
+            /// <summary>
+            /// Initializes a new validation suspension scope.
+            /// </summary>
+            /// <param name="owner">The grid whose validation is suspended.</param>
+            /// <param name="validateOnResume">Whether to request validation after the outermost scope is disposed.</param>
+            public ValidationSuspension(ValidationDataGrid owner, bool validateOnResume)
+            {
+                _owner = owner;
+                _validateOnResume = validateOnResume;
+            }
+
+            /// <summary>
+            /// Releases this suspension scope and optionally requests deferred validation.
+            /// </summary>
+            public void Dispose()
+            {
+                ValidationDataGrid owner = _owner;
+                if (owner == null)
+                    return;
+
+                _owner = null;
+                owner.ResumeValidation(_validateOnResume);
+            }
+        }
+
         #region Construction
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationDataGrid"/> class.
@@ -67,6 +100,10 @@ namespace GenericControls
         #region Members
 
         private Dictionary<string, Type> _propertyTypes = new Dictionary<string, Type>();
+
+        private int _validationSuspensionCount;
+        private bool _operationValidationSuppressed;
+        private bool _validationRequestedOnResume;
 
 
         /// <summary>
@@ -113,7 +150,7 @@ namespace GenericControls
         /// <summary>
         /// Gets a value indicating whether validation should be suppressed.
         /// </summary>
-        public bool SuppressValidation { get; private set; } = false;
+        public bool SuppressValidation => _operationValidationSuppressed || _validationSuspensionCount > 0;
 
 
         /// <summary>
@@ -124,6 +161,51 @@ namespace GenericControls
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Suspends row validation until the returned scope is disposed.
+        /// </summary>
+        /// <param name="validateOnResume">Whether to validate once after the outermost suspension scope is disposed.</param>
+        /// <returns>An exception-safe scope that restores validation when disposed.</returns>
+        /// <remarks>
+        /// Scopes may be nested. Validation requested while suspended is deferred until both
+        /// scoped and grid-operation suppression have ended.
+        /// </remarks>
+        public IDisposable SuspendValidation(bool validateOnResume = true)
+        {
+            _validationSuspensionCount++;
+            return new ValidationSuspension(this, validateOnResume);
+        }
+
+        /// <summary>
+        /// Releases one validation suspension and runs any requested validation after the outermost scope.
+        /// </summary>
+        /// <param name="validateOnResume">Whether this scope requests validation on resume.</param>
+        private void ResumeValidation(bool validateOnResume)
+        {
+            if (_validationSuspensionCount <= 0)
+                return;
+
+            if (validateOnResume)
+            {
+                _validationRequestedOnResume = true;
+            }
+
+            _validationSuspensionCount--;
+            TryRunDeferredValidation();
+        }
+
+        /// <summary>
+        /// Runs a deferred validation request when no suppression remains active.
+        /// </summary>
+        private void TryRunDeferredValidation()
+        {
+            if (SuppressValidation || !_validationRequestedOnResume)
+                return;
+
+            _validationRequestedOnResume = false;
+            ValidateTable();
+        }
 
         /// <summary>
         /// Determines whether the BeginEdit command can execute.
@@ -450,7 +532,10 @@ namespace GenericControls
         public void ValidateTable()
         {
             if (SuppressValidation == true)
+            {
+                _validationRequestedOnResume = true;
                 return;
+            }
             if (ItemsSource == null)
                 return;
             IList<object> itemsList = (IList<object>)ItemsSource;
@@ -458,16 +543,21 @@ namespace GenericControls
                 return;
             // Do bulk validation
             PerformingBulkValidation = true;
-            DataGridRowItem rowitem;
-            for (int i = 0, loopTo = itemsList.Count - 1; i <= loopTo; i++)
+            try
             {
-                if (!(itemsList[i] is DataGridRowItem))
-                    continue;
-                rowitem = (DataGridRowItem)itemsList[i];
-                rowitem.ForceValidation();
+                DataGridRowItem rowitem;
+                for (int i = 0, loopTo = itemsList.Count - 1; i <= loopTo; i++)
+                {
+                    if (!(itemsList[i] is DataGridRowItem))
+                        continue;
+                    rowitem = (DataGridRowItem)itemsList[i];
+                    rowitem.ForceValidation();
+                }
             }
-            PerformingBulkValidation = false;
-            SuppressValidation = false;
+            finally
+            {
+                PerformingBulkValidation = false;
+            }
             // Validate the first row.
             // This fires the unique rule if it is used.
             // Guard with the same is-check used in the loop: non-DataGridRowItem sources
@@ -486,7 +576,7 @@ namespace GenericControls
         /// <param name="cancelPaste">Reference to a flag that can cancel the paste operation.</param>
         private void Grid_PreviewPasteData(string[][] clipboardData, ref bool cancelPaste)
         {
-            SuppressValidation = true;
+            _operationValidationSuppressed = true;
         }
 
         /// <summary>
@@ -494,8 +584,9 @@ namespace GenericControls
         /// </summary>
         private void Grid_DataPasted()
         {
-            SuppressValidation = false;
-            ValidateTable();
+            _operationValidationSuppressed = false;
+            _validationRequestedOnResume = true;
+            TryRunDeferredValidation();
         }
 
         /// <summary>
@@ -505,7 +596,7 @@ namespace GenericControls
         /// <param name="cancel">Reference to a flag that can cancel the delete operation.</param>
         private void Grid_PreviewDeleteRows(List<int> rowindices, ref bool cancel)
         {
-            SuppressValidation = true;
+            _operationValidationSuppressed = true;
         }
 
         /// <summary>
@@ -514,8 +605,9 @@ namespace GenericControls
         /// <param name="rowindices">The indices of the rows that were deleted.</param>
         private void Grid_RowsDeleted(List<int> rowindices)
         {
-            SuppressValidation = false;
-            ValidateTable();
+            _operationValidationSuppressed = false;
+            _validationRequestedOnResume = true;
+            TryRunDeferredValidation();
         }
 
         #endregion
