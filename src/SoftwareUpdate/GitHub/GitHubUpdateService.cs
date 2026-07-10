@@ -45,6 +45,19 @@ namespace SoftwareUpdate.GitHub
         /// </summary>
         private const long MaxDownloadSizeBytes = 500L * 1024 * 1024;
 
+        /// <summary>
+        /// Age after which disposable updater runner directories may be removed.
+        /// </summary>
+        private static readonly TimeSpan StaleRunnerAge = TimeSpan.FromDays(1);
+
+        private static readonly string[] UpdaterPayloadSuffixes =
+        {
+            ".exe",
+            ".dll",
+            ".deps.json",
+            ".runtimeconfig.json"
+        };
+
         private readonly HttpClient _httpClient;
         private readonly object _lock = new object();
         private UpdateState _state = UpdateState.Idle;
@@ -72,6 +85,7 @@ namespace SoftwareUpdate.GitHub
             }
 
             LoadSkippedVersions();
+            CleanupStaleUpdaterRunners();
         }
 
         /// <inheritdoc/>
@@ -297,6 +311,8 @@ namespace SoftwareUpdate.GitHub
 
             try
             {
+                ValidateChecksumMetadata(update, Options.RequireSha256Checksum);
+
                 // Security: Enforce HTTPS on download URL to prevent MITM attacks
                 if (!string.IsNullOrEmpty(update.DownloadUrl))
                 {
@@ -386,17 +402,7 @@ namespace SoftwareUpdate.GitHub
                         // Validate SHA256 checksum if provided
                         if (!string.IsNullOrEmpty(update.Sha256Checksum))
                         {
-                            fileStream.Position = 0;
-                            using (var sha256 = SHA256.Create())
-                            {
-                                var hashBytes = sha256.ComputeHash(fileStream);
-                                var actualChecksum = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-                                if (!string.Equals(actualChecksum, update.Sha256Checksum, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    throw new InvalidOperationException(
-                                        $"Checksum validation failed. Expected: {update.Sha256Checksum}, Actual: {actualChecksum}");
-                                }
-                            }
+                            ValidateDownloadedChecksum(fileStream, update.Sha256Checksum);
                         }
                         else
                         {
@@ -446,6 +452,8 @@ namespace SoftwareUpdate.GitHub
             if (!File.Exists(downloadedFilePath))
                 throw new FileNotFoundException("Downloaded update file not found.", downloadedFilePath);
 
+            Options.Validate();
+
             EnsureState(nameof(InstallUpdateAndRestart), UpdateState.ReadyToInstall);
 
             State = UpdateState.Installing;
@@ -461,7 +469,14 @@ namespace SoftwareUpdate.GitHub
 
             // Security: Validate the updater path resides inside the install directory
             var fullUpdaterPath = Path.GetFullPath(updaterPath);
-            var fullInstallDir = Path.GetFullPath(Options.ResolvedInstallDirectory);
+            var fullInstallDir = Path.TrimEndingDirectorySeparator(
+                Path.GetFullPath(Options.ResolvedInstallDirectory));
+            if ((File.GetAttributes(fullInstallDir) & FileAttributes.ReparsePoint) != 0 ||
+                (File.GetAttributes(fullUpdaterPath) & FileAttributes.ReparsePoint) != 0)
+            {
+                throw new SecurityException("Updater launch paths cannot be reparse points.");
+            }
+
             if (!fullUpdaterPath.StartsWith(fullInstallDir + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(Path.GetDirectoryName(fullUpdaterPath), fullInstallDir, StringComparison.OrdinalIgnoreCase))
             {
@@ -484,6 +499,12 @@ namespace SoftwareUpdate.GitHub
             try
             {
                 var stagedDir = Path.Combine(targetDir, "updates_pending");
+                if (Directory.Exists(stagedDir) &&
+                    (File.GetAttributes(stagedDir) & FileAttributes.ReparsePoint) != 0)
+                {
+                    throw new SecurityException("Update staging directory cannot be a reparse point.");
+                }
+
                 Directory.CreateDirectory(stagedDir);
                 var stagedName = $"update_{Guid.NewGuid():N}{Path.GetExtension(downloadedFilePath)}";
                 stagedZipPath = Path.Combine(stagedDir, stagedName);
@@ -498,10 +519,12 @@ namespace SoftwareUpdate.GitHub
                 stagedZipPath = downloadedFilePath;
             }
 
+            var runnerUpdaterPath = CreateUpdaterRunner(fullUpdaterPath);
+
             // Use ArgumentList for safe argument passing (no manual quoting/escaping)
             var startInfo = new ProcessStartInfo
             {
-                FileName = updaterPath,
+                FileName = runnerUpdaterPath,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -516,15 +539,199 @@ namespace SoftwareUpdate.GitHub
             if (Options.CreateBackup)
                 startInfo.ArgumentList.Add("--backup");
 
-            var process = Process.Start(startInfo);
+            foreach (var preservedPath in Options.AdditionalPreservedRelativePaths)
+            {
+                startInfo.ArgumentList.Add("--preserve");
+                startInfo.ArgumentList.Add(preservedPath);
+            }
+
+            Process? process;
+            try
+            {
+                process = Process.Start(startInfo);
+            }
+            catch
+            {
+                DeleteUpdaterRunner(Path.GetDirectoryName(runnerUpdaterPath));
+                throw;
+            }
+
             if (process == null)
             {
+                DeleteUpdaterRunner(Path.GetDirectoryName(runnerUpdaterPath));
                 throw new InvalidOperationException("Failed to start the updater process.");
             }
 
             // Dispose resources before exiting the current application
             Dispose();
             Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Copies the complete updater payload to a disposable directory outside the installation.
+        /// </summary>
+        /// <param name="updaterPath">The installed updater executable path.</param>
+        /// <returns>The disposable updater executable path.</returns>
+        internal static string CreateUpdaterRunner(string updaterPath)
+        {
+            var fullUpdaterPath = Path.GetFullPath(updaterPath);
+            var sourceDirectory = Path.GetDirectoryName(fullUpdaterPath)
+                ?? throw new InvalidOperationException("The updater executable has no parent directory.");
+            if ((File.GetAttributes(sourceDirectory) & FileAttributes.ReparsePoint) != 0)
+                throw new SecurityException("Updater payload directory cannot be a reparse point.");
+
+            var payloadBaseName = Path.GetFileNameWithoutExtension(fullUpdaterPath);
+            var payloadFiles = UpdaterPayloadSuffixes
+                .Select(suffix => Path.Combine(sourceDirectory, payloadBaseName + suffix))
+                .ToArray();
+
+            foreach (var payloadFile in payloadFiles)
+            {
+                if (!File.Exists(payloadFile))
+                {
+                    throw new FileNotFoundException(
+                        $"Updater payload file not found at '{payloadFile}'. Ensure the complete updater payload is deployed.",
+                        payloadFile);
+                }
+
+                if ((File.GetAttributes(payloadFile) & FileAttributes.ReparsePoint) != 0)
+                    throw new SecurityException($"Updater payload file cannot be a reparse point: '{payloadFile}'.");
+            }
+
+            var runnerRoot = Path.Combine(Path.GetTempPath(), "SoftwareUpdate");
+            Directory.CreateDirectory(runnerRoot);
+            if ((File.GetAttributes(runnerRoot) & FileAttributes.ReparsePoint) != 0)
+                throw new SecurityException("Updater runner root cannot be a reparse point.");
+
+            var runnerDirectory = Path.Combine(runnerRoot, $"runner-{Guid.NewGuid():N}");
+
+            try
+            {
+                Directory.CreateDirectory(runnerDirectory);
+                foreach (var payloadFile in payloadFiles)
+                {
+                    File.Copy(
+                        payloadFile,
+                        Path.Combine(runnerDirectory, Path.GetFileName(payloadFile)),
+                        overwrite: false);
+                }
+
+                return Path.Combine(runnerDirectory, Path.GetFileName(fullUpdaterPath));
+            }
+            catch
+            {
+                DeleteUpdaterRunner(runnerDirectory);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Removes disposable updater runners left by completed updates.
+        /// </summary>
+        internal static void CleanupStaleUpdaterRunners()
+        {
+            var runnerRoot = Path.Combine(Path.GetTempPath(), "SoftwareUpdate");
+            if (!Directory.Exists(runnerRoot))
+                return;
+
+            try
+            {
+                if ((File.GetAttributes(runnerRoot) & FileAttributes.ReparsePoint) != 0)
+                    return;
+
+                foreach (var directory in Directory.GetDirectories(runnerRoot, "runner-*"))
+                {
+                    var name = Path.GetFileName(directory);
+                    if (!Guid.TryParseExact(name.Substring("runner-".Length), "N", out _))
+                        continue;
+
+                    if (Directory.GetLastWriteTimeUtc(directory) <= DateTime.UtcNow - StaleRunnerAge)
+                    {
+                        DeleteUpdaterRunner(directory);
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or SecurityException)
+            {
+                Debug.WriteLine($"[GitHubUpdateService] Failed to clean stale updater runners: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Validates checksum metadata before a download begins.
+        /// </summary>
+        /// <param name="update">The update metadata.</param>
+        /// <param name="checksumRequired">Whether a checksum is required.</param>
+        internal static void ValidateChecksumMetadata(UpdateInfo update, bool checksumRequired)
+        {
+            if (string.IsNullOrWhiteSpace(update.Sha256Checksum))
+            {
+                if (checksumRequired)
+                {
+                    throw new InvalidDataException(
+                        "The selected update does not provide the required SHA256 checksum in its release notes.");
+                }
+
+                return;
+            }
+
+            if (!Regex.IsMatch(update.Sha256Checksum, "^[0-9a-fA-F]{64}$"))
+                throw new InvalidDataException("The selected update provides an invalid SHA256 checksum.");
+        }
+
+        /// <summary>
+        /// Validates downloaded content against an expected SHA256 checksum.
+        /// </summary>
+        /// <param name="stream">The seekable downloaded-content stream.</param>
+        /// <param name="expectedChecksum">The expected hexadecimal checksum.</param>
+        internal static void ValidateDownloadedChecksum(Stream stream, string expectedChecksum)
+        {
+            stream.Position = 0;
+            using var sha256 = SHA256.Create();
+            var hashBytes = sha256.ComputeHash(stream);
+            var actualChecksum = Convert.ToHexString(hashBytes).ToLowerInvariant();
+            if (!string.Equals(actualChecksum, expectedChecksum, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Checksum validation failed. Expected: {expectedChecksum}, Actual: {actualChecksum}");
+            }
+        }
+
+        /// <summary>
+        /// Best-effort deletion restricted to a disposable updater runner directory.
+        /// </summary>
+        /// <param name="directory">The runner directory.</param>
+        internal static void DeleteUpdaterRunner(string? directory)
+        {
+            if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+                return;
+
+            try
+            {
+                var fullDirectory = Path.GetFullPath(directory);
+                var runnerRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "SoftwareUpdate"));
+                if (!string.Equals(
+                        Path.GetDirectoryName(fullDirectory),
+                        runnerRoot,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                var name = Path.GetFileName(directory);
+                if (!name.StartsWith("runner-", StringComparison.OrdinalIgnoreCase) ||
+                    !Guid.TryParseExact(name.Substring("runner-".Length), "N", out _))
+                {
+                    return;
+                }
+
+                var attributes = File.GetAttributes(directory);
+                Directory.Delete(directory, recursive: (attributes & FileAttributes.ReparsePoint) == 0);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or SecurityException)
+            {
+                Debug.WriteLine($"[GitHubUpdateService] Failed to delete updater runner '{directory}': {ex.Message}");
+            }
         }
 
         /// <inheritdoc/>

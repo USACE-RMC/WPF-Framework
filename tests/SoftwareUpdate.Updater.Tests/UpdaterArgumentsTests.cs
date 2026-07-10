@@ -134,6 +134,21 @@ namespace SoftwareUpdate.Updater.Tests
         }
 
         /// <summary>
+        /// Verifies that repeatable preserve arguments are retained in order.
+        /// </summary>
+        [Fact]
+        public void Parse_RepeatablePreserveArguments()
+        {
+            var args = Parse(new[]
+            {
+                "--preserve", "data/user",
+                "--preserve", @"cache\local"
+            });
+
+            Assert.Equal(new[] { "data/user", @"cache\local" }, args.PreservedRelativePaths);
+        }
+
+        /// <summary>
         /// Verifies that argument parsing is case-insensitive.
         /// </summary>
         [Fact]
@@ -406,6 +421,41 @@ namespace SoftwareUpdate.Updater.Tests
             finally
             {
                 File.Delete(tempFile);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that absolute and traversal-based preserved paths are rejected.
+        /// </summary>
+        /// <param name="preservedPath">The invalid preserved path.</param>
+        [Theory]
+        [InlineData(@"C:\settings")]
+        [InlineData("../settings")]
+        [InlineData("data/./settings")]
+        [InlineData("file:stream")]
+        public void Validate_InvalidPreservedPath_ThrowsArgumentException(string preservedPath)
+        {
+            var tempFile = Path.GetTempFileName();
+            var tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(tempDirectory);
+
+            try
+            {
+                var args = new UpdaterArguments
+                {
+                    ProcessId = 1234,
+                    ZipPath = tempFile,
+                    TargetDirectory = tempDirectory,
+                    MainExecutable = "app.exe"
+                };
+                args.PreservedRelativePaths.Add(preservedPath);
+
+                Assert.Throws<ArgumentException>(() => Validate(args));
+            }
+            finally
+            {
+                File.Delete(tempFile);
+                Directory.Delete(tempDirectory);
             }
         }
 

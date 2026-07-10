@@ -211,7 +211,11 @@ namespace SoftwareUpdate.Updater.Tests
         public void CreateBackup_CreatesBackupDirectory()
         {
             var targetDir = CreateSubDir("target");
-            var zipPath = CreateTestZip("update.zip", new[] { ("file.txt", "content") });
+            var zipPath = CreateTestZip("update.zip", new[]
+            {
+                ("existing.txt", "updated"),
+                ("subdir/nested.txt", "updated nested")
+            });
 
             // Create some files in target directory
             File.WriteAllText(Path.Combine(targetDir, "existing.txt"), "original");
@@ -236,10 +240,12 @@ namespace SoftwareUpdate.Updater.Tests
             var backupDirs = Directory.GetDirectories(targetDir, ".backup_*");
             Assert.NotEmpty(backupDirs);
 
-            // Check backup contains original files
+            // Check backup contains only files targeted for replacement
             var backupDir = backupDirs[0];
             Assert.True(File.Exists(Path.Combine(backupDir, "existing.txt")));
             Assert.True(File.Exists(Path.Combine(backupDir, "subdir", "nested.txt")));
+            Assert.Equal("original", File.ReadAllText(Path.Combine(backupDir, "existing.txt")));
+            Assert.Equal("nested", File.ReadAllText(Path.Combine(backupDir, "subdir", "nested.txt")));
         }
 
         /// <summary>
@@ -249,7 +255,7 @@ namespace SoftwareUpdate.Updater.Tests
         public void CreateBackup_SkipsExistingBackupDirectories()
         {
             var targetDir = CreateSubDir("target");
-            var zipPath = CreateTestZip("update.zip", new[] { ("file.txt", "content") });
+            var zipPath = CreateTestZip("update.zip", new[] { ("current.txt", "updated") });
 
             // Create an existing backup directory
             var existingBackup = Path.Combine(targetDir, ".backup_20240101_000000");
@@ -282,6 +288,32 @@ namespace SoftwareUpdate.Updater.Tests
             var newBackup = backupDirs[0];
             Assert.False(Directory.Exists(Path.Combine(newBackup, ".backup_20240101_000000")));
             Assert.True(File.Exists(Path.Combine(newBackup, "current.txt")));
+        }
+
+        /// <summary>
+        /// Verifies that protected settings are neither overwritten nor copied into a targeted backup.
+        /// </summary>
+        [Fact]
+        public void CreateBackup_ExcludesProtectedSettings()
+        {
+            var targetDir = CreateSubDir("target");
+            var settingsDir = Directory.CreateDirectory(Path.Combine(targetDir, "settings")).FullName;
+            File.WriteAllText(Path.Combine(settingsDir, "UserSettings.xml"), "original-settings");
+            File.WriteAllText(Path.Combine(targetDir, "app.dll"), "original-app");
+            var zipPath = CreateTestZip("settings-backup.zip", new[]
+            {
+                ("settings/UserSettings.xml", "malicious-settings"),
+                ("app.dll", "updated-app")
+            });
+            var arguments = CreateArguments(zipPath, targetDir);
+            arguments.CreateBackup = true;
+
+            new InstallationManager(arguments, Log).Execute();
+
+            var backupDir = Assert.Single(Directory.GetDirectories(targetDir, ".backup_*"));
+            Assert.Equal("original-settings", File.ReadAllText(Path.Combine(settingsDir, "UserSettings.xml")));
+            Assert.False(Directory.Exists(Path.Combine(backupDir, "settings")));
+            Assert.Equal("original-app", File.ReadAllText(Path.Combine(backupDir, "app.dll")));
         }
 
         #endregion
@@ -385,6 +417,24 @@ namespace SoftwareUpdate.Updater.Tests
         }
 
         /// <summary>
+        /// Verifies that a known installation root is not mistaken for a release wrapper.
+        /// </summary>
+        [Fact]
+        public void ExtractUpdate_SingleKnownInstallRoot_DoesNotFlattenFiles()
+        {
+            var targetDir = CreateSubDir("target");
+            var zipPath = CreateTestZip("libraries-only.zip", new[]
+            {
+                ("libraries/dependency.dll", "dependency")
+            });
+
+            new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute();
+
+            Assert.True(File.Exists(Path.Combine(targetDir, "libraries", "dependency.dll")));
+            Assert.False(File.Exists(Path.Combine(targetDir, "dependency.dll")));
+        }
+
+        /// <summary>
         /// Verifies that ExtractUpdate skips backup directories found within update archives.
         /// </summary>
         [Fact]
@@ -418,6 +468,288 @@ namespace SoftwareUpdate.Updater.Tests
             // Backup directories should not be created
             Assert.False(Directory.Exists(Path.Combine(targetDir, ".backup_old")));
             Assert.False(Directory.Exists(Path.Combine(targetDir, "subdir", ".backup_test")));
+        }
+
+        #endregion
+
+        #region Hardened Update Transaction Tests
+
+        /// <summary>
+        /// Verifies that built-in runtime paths remain unchanged for direct and wrapped archives.
+        /// </summary>
+        /// <param name="wrapped">Whether entries are nested beneath a release wrapper.</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Execute_BuiltInProtectedPaths_AreNeverOverwritten(bool wrapped)
+        {
+            var targetDir = CreateSubDir("target");
+            var settingsDir = Directory.CreateDirectory(Path.Combine(targetDir, "settings")).FullName;
+            var logsDir = Directory.CreateDirectory(Path.Combine(targetDir, "logs")).FullName;
+            var pendingDir = Directory.CreateDirectory(Path.Combine(targetDir, "updates_pending")).FullName;
+            var backupDir = Directory.CreateDirectory(Path.Combine(targetDir, ".backup_user")).FullName;
+            File.WriteAllText(Path.Combine(settingsDir, "UserSettings.xml"), "settings-original");
+            File.WriteAllText(Path.Combine(logsDir, "history.log"), "log-original");
+            File.WriteAllText(Path.Combine(pendingDir, "keep.dat"), "pending-original");
+            File.WriteAllText(Path.Combine(backupDir, "backup.txt"), "backup-original");
+            File.WriteAllText(Path.Combine(targetDir, "app.dll"), "app-original");
+
+            var prefix = wrapped ? "release\\" : string.Empty;
+            var zipPath = CreateTestZip("protected.zip", new[]
+            {
+                ($"{prefix}SeTtInGs/UserSettings.xml", "settings-malicious"),
+                ($"{prefix}LOGS\\history.log", "log-malicious"),
+                ($"{prefix}updates_pending/keep.dat", "pending-malicious"),
+                ($"{prefix}.backup_user/backup.txt", "backup-malicious"),
+                ($"{prefix}nested/.backup_hidden/file.txt", "hidden-malicious"),
+                ($"{prefix}app.dll", "app-updated")
+            });
+
+            var manager = new InstallationManager(CreateArguments(zipPath, targetDir), Log);
+            manager.Execute();
+
+            Assert.Equal("settings-original", File.ReadAllText(Path.Combine(settingsDir, "UserSettings.xml")));
+            Assert.Equal("log-original", File.ReadAllText(Path.Combine(logsDir, "history.log")));
+            Assert.Equal("pending-original", File.ReadAllText(Path.Combine(pendingDir, "keep.dat")));
+            Assert.Equal("backup-original", File.ReadAllText(Path.Combine(backupDir, "backup.txt")));
+            Assert.False(Directory.Exists(Path.Combine(targetDir, "nested")));
+            Assert.Equal("app-updated", File.ReadAllText(Path.Combine(targetDir, "app.dll")));
+        }
+
+        /// <summary>
+        /// Verifies that caller-supplied preserved paths and descendants remain unchanged.
+        /// </summary>
+        [Fact]
+        public void Execute_AdditionalPreservedPath_IsNeverOverwritten()
+        {
+            var targetDir = CreateSubDir("target");
+            var dataDir = Directory.CreateDirectory(Path.Combine(targetDir, "data", "user")).FullName;
+            File.WriteAllText(Path.Combine(dataDir, "config.json"), "original");
+            var zipPath = CreateTestZip("preserve.zip", new[]
+            {
+                ("data/user/config.json", "malicious"),
+                ("app.dll", "updated")
+            });
+            var arguments = CreateArguments(zipPath, targetDir);
+            arguments.PreservedRelativePaths.Add("data/user");
+
+            new InstallationManager(arguments, Log).Execute();
+
+            Assert.Equal("original", File.ReadAllText(Path.Combine(dataDir, "config.json")));
+            Assert.Equal("updated", File.ReadAllText(Path.Combine(targetDir, "app.dll")));
+        }
+
+        /// <summary>
+        /// Verifies that unsafe absolute, traversal, and alternate-stream paths are rejected.
+        /// </summary>
+        /// <param name="entryPath">The unsafe entry path.</param>
+        [Theory]
+        [InlineData("../escaped.txt")]
+        [InlineData("/absolute.txt")]
+        [InlineData("file.txt:stream")]
+        public void Execute_UnsafeArchivePath_IsRejectedBeforeWrites(string entryPath)
+        {
+            var targetDir = CreateSubDir("target");
+            File.WriteAllText(Path.Combine(targetDir, "app.dll"), "original");
+            var zipPath = CreateTestZip("unsafe.zip", new[]
+            {
+                ("app.dll", "updated"),
+                (entryPath, "malicious")
+            });
+
+            Assert.Throws<SecurityException>(() =>
+                new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute());
+            Assert.Equal("original", File.ReadAllText(Path.Combine(targetDir, "app.dll")));
+        }
+
+        /// <summary>
+        /// Verifies that duplicate case-insensitive destinations are rejected before writes.
+        /// </summary>
+        [Fact]
+        public void Execute_DuplicateDestinations_AreRejectedBeforeWrites()
+        {
+            var targetDir = CreateSubDir("target");
+            var zipPath = CreateTestZip("duplicate.zip", new[]
+            {
+                ("App.dll", "one"),
+                ("app.dll", "two")
+            });
+
+            Assert.Throws<InvalidDataException>(() =>
+                new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute());
+            Assert.False(File.Exists(Path.Combine(targetDir, "app.dll")));
+        }
+
+        /// <summary>
+        /// Verifies that archive file-directory collisions are rejected before writes.
+        /// </summary>
+        [Fact]
+        public void Execute_FileDirectoryCollision_IsRejectedBeforeWrites()
+        {
+            var targetDir = CreateSubDir("target");
+            var zipPath = CreateTestZip("collision.zip", new[]
+            {
+                ("item", "file"),
+                ("item/child.txt", "child")
+            });
+
+            Assert.Throws<InvalidDataException>(() =>
+                new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute());
+            Assert.False(File.Exists(Path.Combine(targetDir, "item")));
+        }
+
+        /// <summary>
+        /// Verifies that an archive file cannot replace an existing installation directory.
+        /// </summary>
+        [Fact]
+        public void Execute_ExistingDirectoryFileCollision_IsRejectedBeforeWrites()
+        {
+            var targetDir = CreateSubDir("target");
+            Directory.CreateDirectory(Path.Combine(targetDir, "app.dll"));
+            var zipPath = CreateTestZip("existing-collision.zip", new[] { ("app.dll", "file") });
+
+            Assert.Throws<InvalidDataException>(() =>
+                new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute());
+            Assert.True(Directory.Exists(Path.Combine(targetDir, "app.dll")));
+        }
+
+        /// <summary>
+        /// Verifies that file-count and uncompressed-size limits are enforced during preflight.
+        /// </summary>
+        [Fact]
+        public void Execute_ArchiveSafetyLimits_AreEnforcedBeforeWrites()
+        {
+            var targetDir = CreateSubDir("target");
+            var countZipPath = CreateTestZip("count.zip", new[]
+            {
+                ("one.txt", "1"),
+                ("two.txt", "2")
+            });
+            var sizeZipPath = CreateTestZip("size.zip", new[] { ("large.txt", "1234") });
+
+            Assert.Throws<InvalidDataException>(() =>
+                new InstallationManager(
+                    CreateArguments(countZipPath, targetDir),
+                    Log,
+                    maximumArchiveFileCount: 1).Execute());
+            Assert.Throws<InvalidDataException>(() =>
+                new InstallationManager(
+                    CreateArguments(sizeZipPath, targetDir),
+                    Log,
+                    maximumUncompressedBytes: 3).Execute());
+            Assert.Empty(Directory.GetFiles(targetDir, "*", SearchOption.AllDirectories));
+        }
+
+        /// <summary>
+        /// Verifies that rollback restores overwritten files and removes newly introduced files.
+        /// </summary>
+        [Fact]
+        public void Execute_MidApplyFailure_RestoresOriginalInstallation()
+        {
+            var targetDir = CreateSubDir("target");
+            var settingsDir = Directory.CreateDirectory(Path.Combine(targetDir, "settings")).FullName;
+            File.WriteAllText(Path.Combine(targetDir, "app.dll"), "original-app");
+            File.WriteAllText(Path.Combine(settingsDir, "UserSettings.xml"), "original-settings");
+            var zipPath = CreateTestZip("rollback.zip", new[]
+            {
+                ("app.dll", "updated-app"),
+                ("newdir/new.txt", "new-file"),
+                ("fail.txt", "trigger"),
+                ("settings/UserSettings.xml", "malicious-settings")
+            });
+            var arguments = CreateArguments(zipPath, targetDir);
+            arguments.CreateBackup = true;
+            var manager = new InstallationManager(
+                arguments,
+                Log,
+                relativePath =>
+                {
+                    if (relativePath == "fail.txt")
+                        throw new IOException("Injected apply failure.");
+                });
+
+            Assert.Throws<IOException>(() => manager.Execute());
+
+            Assert.Equal("original-app", File.ReadAllText(Path.Combine(targetDir, "app.dll")));
+            Assert.Equal("original-settings", File.ReadAllText(Path.Combine(settingsDir, "UserSettings.xml")));
+            Assert.False(File.Exists(Path.Combine(targetDir, "newdir", "new.txt")));
+            Assert.False(Directory.Exists(Path.Combine(targetDir, "newdir")));
+        }
+
+        /// <summary>
+        /// Verifies that successful installation removes updater-owned package staging.
+        /// </summary>
+        [Fact]
+        public void Execute_Success_CleansStagedPackageAndPendingDirectory()
+        {
+            var targetDir = CreateSubDir("target");
+            var pendingDir = Directory.CreateDirectory(Path.Combine(targetDir, "updates_pending")).FullName;
+            var zipPath = CreateTestZipAtPath(Path.Combine(pendingDir, "update.zip"), new[]
+            {
+                ("app.dll", "updated")
+            });
+
+            new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute();
+
+            Assert.Equal("updated", File.ReadAllText(Path.Combine(targetDir, "app.dll")));
+            Assert.False(File.Exists(zipPath));
+            Assert.False(Directory.Exists(pendingDir));
+        }
+
+        /// <summary>
+        /// Verifies that all installed updater payload files can be replaced by an update.
+        /// </summary>
+        [Fact]
+        public void Execute_UpdateContainsUpdaterPayload_ReplacesAllInstalledPayloadFiles()
+        {
+            var targetDir = CreateSubDir("target");
+            var payloadNames = new[]
+            {
+                "SoftwareUpdate.Updater.exe",
+                "SoftwareUpdate.Updater.dll",
+                "SoftwareUpdate.Updater.deps.json",
+                "SoftwareUpdate.Updater.runtimeconfig.json"
+            };
+            foreach (var payloadName in payloadNames)
+            {
+                File.WriteAllText(Path.Combine(targetDir, payloadName), "old");
+            }
+
+            var zipPath = CreateTestZip(
+                "self-update.zip",
+                payloadNames.Select(name => (name, "new")).ToArray());
+
+            new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute();
+
+            foreach (var payloadName in payloadNames)
+            {
+                Assert.Equal("new", File.ReadAllText(Path.Combine(targetDir, payloadName)));
+            }
+        }
+
+        /// <summary>
+        /// Verifies that an existing directory reparse point is rejected before extraction.
+        /// </summary>
+        [Fact]
+        public void Execute_ReparsePointInDestination_IsRejected()
+        {
+            var targetDir = CreateSubDir("target");
+            var outsideDir = CreateSubDir("outside");
+            var linkPath = Path.Combine(targetDir, "linked");
+            try
+            {
+                Directory.CreateSymbolicLink(linkPath, outsideDir);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+            {
+                return;
+            }
+
+            var zipPath = CreateTestZip("reparse.zip", new[] { ("linked/escaped.txt", "malicious") });
+
+            Assert.Throws<SecurityException>(() =>
+                new InstallationManager(CreateArguments(zipPath, targetDir), Log).Execute());
+            Assert.False(File.Exists(Path.Combine(outsideDir, "escaped.txt")));
         }
 
         #endregion
@@ -584,6 +916,19 @@ namespace SoftwareUpdate.Updater.Tests
         {
             var zipPath = Path.Combine(_testDir, name);
 
+            return CreateTestZipAtPath(zipPath, entries);
+        }
+
+        /// <summary>
+        /// Creates a test ZIP archive at an explicit path.
+        /// </summary>
+        /// <param name="zipPath">The output ZIP path.</param>
+        /// <param name="entries">The archive entries.</param>
+        /// <returns>The ZIP path.</returns>
+        private static string CreateTestZipAtPath(string zipPath, (string path, string content)[] entries)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(zipPath)!);
+
             using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
             {
                 foreach (var (entryPath, content) in entries)
@@ -595,6 +940,24 @@ namespace SoftwareUpdate.Updater.Tests
             }
 
             return zipPath;
+        }
+
+        /// <summary>
+        /// Creates standard arguments for an installation test.
+        /// </summary>
+        /// <param name="zipPath">The update package.</param>
+        /// <param name="targetDirectory">The target installation.</param>
+        /// <returns>The updater arguments.</returns>
+        private static UpdaterArguments CreateArguments(string zipPath, string targetDirectory)
+        {
+            return new UpdaterArguments
+            {
+                ProcessId = -1,
+                ZipPath = zipPath,
+                TargetDirectory = targetDirectory,
+                MainExecutable = "missing.exe",
+                CreateBackup = false
+            };
         }
 
         /// <summary>

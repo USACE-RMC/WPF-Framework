@@ -78,6 +78,28 @@ namespace SoftwareUpdate.Tests.Core
         }
 
         /// <summary>
+        /// Verifies that checksum enforcement is opt-in for compatibility.
+        /// </summary>
+        [Fact]
+        public void DefaultInstance_RequireSha256Checksum_IsFalse()
+        {
+            var options = new UpdateOptions();
+
+            Assert.False(options.RequireSha256Checksum);
+        }
+
+        /// <summary>
+        /// Verifies that additional preserved paths are empty by default.
+        /// </summary>
+        [Fact]
+        public void DefaultInstance_AdditionalPreservedRelativePaths_IsEmpty()
+        {
+            var options = new UpdateOptions();
+
+            Assert.Empty(options.AdditionalPreservedRelativePaths);
+        }
+
+        /// <summary>
         /// Verifies that a default instance of <see cref="UpdateOptions"/> has RequestTimeoutSeconds set to 30.
         /// </summary>
         [Fact]
@@ -179,6 +201,29 @@ namespace SoftwareUpdate.Tests.Core
             var options = new UpdateOptions { CreateBackup = false };
 
             Assert.False(options.CreateBackup);
+        }
+
+        /// <summary>
+        /// Verifies that checksum enforcement can be enabled.
+        /// </summary>
+        [Fact]
+        public void RequireSha256Checksum_SetAndGet()
+        {
+            var options = new UpdateOptions { RequireSha256Checksum = true };
+
+            Assert.True(options.RequireSha256Checksum);
+        }
+
+        /// <summary>
+        /// Verifies that additional preserved paths can be configured.
+        /// </summary>
+        [Fact]
+        public void AdditionalPreservedRelativePaths_AddAndGet()
+        {
+            var options = new UpdateOptions();
+            options.AdditionalPreservedRelativePaths.Add("data/user");
+
+            Assert.Equal("data/user", Assert.Single(options.AdditionalPreservedRelativePaths));
         }
 
         /// <summary>
@@ -320,6 +365,28 @@ namespace SoftwareUpdate.Tests.Core
             var exception = Record.Exception(() => options.Validate());
 
             Assert.Null(exception);
+        }
+
+        /// <summary>
+        /// Verifies that unsafe additional preserved paths are rejected.
+        /// </summary>
+        /// <param name="preservedPath">The invalid path.</param>
+        [Theory]
+        [InlineData(@"C:\settings")]
+        [InlineData("../settings")]
+        [InlineData("data/./settings")]
+        [InlineData("file:stream")]
+        public void Validate_InvalidAdditionalPreservedPath_ThrowsArgumentException(string preservedPath)
+        {
+            var options = new UpdateOptions
+            {
+                GitHubOwner = "USACE-RMC",
+                GitHubRepo = "RMC-BestFit",
+                CurrentVersion = new SemanticVersion(1, 0, 0)
+            };
+            options.AdditionalPreservedRelativePaths.Add(preservedPath);
+
+            Assert.Throws<ArgumentException>(() => options.Validate());
         }
 
         /// <summary>

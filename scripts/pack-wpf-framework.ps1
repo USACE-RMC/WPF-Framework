@@ -76,8 +76,22 @@ $expectedEntries = @{
         "lib/net10.0-windows7.0/Xceed.Wpf.AvalonDock.Themes.VS2013.dll")
 }
 
+$expectedReleaseNotes = @{
+    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.1 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.1 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Support" = "Version 1.0.1 protects settings and runtime data during updates, supports transactional rollback, checksum enforcement, and safe replacement of the installed updater payload."
+    "RMC.Wpf.Framework.Controls" = "Version 1.0.1 improves irregular time-series ordering validation and defaults new OxyPlot line annotations to editable text."
+}
+
 foreach ($packageId in $expectedEntries.Keys) {
-    $package = Get-ChildItem -Path $outputPath -Filter "$packageId.*.nupkg" |
+    $packageFilter = if ([string]::IsNullOrWhiteSpace($Version)) {
+        "$packageId.*.nupkg"
+    }
+    else {
+        "$packageId.$Version.nupkg"
+    }
+
+    $package = Get-ChildItem -Path $outputPath -Filter $packageFilter |
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1
 
@@ -91,6 +105,63 @@ foreach ($packageId in $expectedEntries.Keys) {
         foreach ($expectedEntry in $expectedEntries[$packageId]) {
             if ($entries -notcontains $expectedEntry) {
                 throw "$($package.Name) is missing $expectedEntry."
+            }
+        }
+
+        $nuspecEntry = $zip.Entries | Where-Object { $_.FullName -like "*.nuspec" } | Select-Object -First 1
+        if ($nuspecEntry -eq $null) {
+            throw "$($package.Name) is missing its nuspec metadata."
+        }
+
+        $reader = [System.IO.StreamReader]::new($nuspecEntry.Open())
+        try {
+            [xml]$nuspec = $reader.ReadToEnd()
+        }
+        finally {
+            $reader.Dispose()
+        }
+
+        $namespaceManager = [System.Xml.XmlNamespaceManager]::new($nuspec.NameTable)
+        $namespaceManager.AddNamespace("n", $nuspec.DocumentElement.NamespaceURI)
+        $packageVersion = $nuspec.SelectSingleNode("/n:package/n:metadata/n:version", $namespaceManager).InnerText
+        $releaseNotes = $nuspec.SelectSingleNode("/n:package/n:metadata/n:releaseNotes", $namespaceManager).InnerText
+
+        if (-not [string]::IsNullOrWhiteSpace($Version) -and $packageVersion -ne $Version) {
+            throw "$($package.Name) declares version $packageVersion instead of $Version."
+        }
+
+        if ($releaseNotes -ne $expectedReleaseNotes[$packageId]) {
+            throw "$($package.Name) has unexpected NuGet release notes."
+        }
+
+        if ($packageId -eq "RMC.Wpf.Framework.Support") {
+            $numericVersion = ($packageVersion -split '-')[0]
+            $expectedFileVersion = "$numericVersion.0"
+            $payloadBinaryEntries = @(
+                "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.exe",
+                "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.dll")
+            $inspectionDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "wpf-framework-package-$([Guid]::NewGuid().ToString('N'))"
+            New-Item -ItemType Directory -Path $inspectionDirectory | Out-Null
+
+            try {
+                foreach ($payloadEntryName in $payloadBinaryEntries) {
+                    $payloadEntry = $zip.GetEntry($payloadEntryName)
+                    $payloadPath = Join-Path $inspectionDirectory ([System.IO.Path]::GetFileName($payloadEntryName))
+                    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($payloadEntry, $payloadPath, $false)
+                    $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($payloadPath)
+
+                    if ($versionInfo.FileVersion -ne $expectedFileVersion) {
+                        throw "$($package.Name) payload $payloadEntryName has file version $($versionInfo.FileVersion) instead of $expectedFileVersion."
+                    }
+
+                    if ([string]::IsNullOrWhiteSpace($versionInfo.ProductVersion) -or
+                        -not $versionInfo.ProductVersion.StartsWith($packageVersion, [System.StringComparison]::OrdinalIgnoreCase)) {
+                        throw "$($package.Name) payload $payloadEntryName has product version $($versionInfo.ProductVersion) instead of $packageVersion."
+                    }
+                }
+            }
+            finally {
+                Remove-Item -LiteralPath $inspectionDirectory -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
     }
