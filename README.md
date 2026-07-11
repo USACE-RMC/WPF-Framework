@@ -173,12 +173,6 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 This project is licensed under the Zero-Clause BSD (0BSD) license — a permissive license with no attribution or notice requirements. See [LICENSE](LICENSE) for details.
 
-## Authors
-
-- **Haden Smith** — USACE Risk Management Center
-- **Woodrow Fields** — USACE Risk Management Center
-- **Julian Gonzalez** — USACE Risk Management Center
-
 ## Acknowledgments
 
 - [Xceed](https://github.com/xceedsoftware/wpftoolkit) for the AvalonDock docking library (vendored and modified)
