@@ -4369,7 +4369,7 @@ namespace DatabaseControls
             string filters = "comma delimited(*.csv) |*.csv|database(*.dbf) |*.dbf|Excel(*.xlsx) |*.xlsx|Sqlite(*.sqlite) |*.sqlite";
             try
             {
-                var saveFileBrowser = new SaveFileDialog { Filter = filters, FilterIndex = 3 };
+                var saveFileBrowser = new SaveFileDialog { Filter = filters, FilterIndex = 1 };
                 if (saveFileBrowser.ShowDialog() == true)
                 {
                     switch (System.IO.Path.GetExtension(saveFileBrowser.FileName))
