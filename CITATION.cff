@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "WPF Framework"
-version: "1.0.2"
-date-released: "2026-07-10"
+version: "1.0.3"
+date-released: "2026-07-14"
 license: 0BSD
 repository-code: "https://github.com/USACE-RMC/WPF-Framework"
 url: "https://github.com/USACE-RMC/WPF-Framework"

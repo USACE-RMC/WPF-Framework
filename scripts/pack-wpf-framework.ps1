@@ -76,11 +76,33 @@ $expectedEntries = @{
         "lib/net10.0-windows7.0/Xceed.Wpf.AvalonDock.Themes.VS2013.dll")
 }
 
+$expectedVersionedEntries = @{
+    "RMC.Wpf.Framework.Core" = @(
+        "lib/net10.0-windows7.0/FrameworkInterfaces.dll",
+        "lib/net10.0-windows7.0/Themes.dll")
+    "RMC.Wpf.Framework.Models" = @(
+        "lib/net10.0-windows7.0/DAG.dll",
+        "lib/net10.0-windows7.0/DatabaseManager.dll",
+        "lib/net10.0-windows7.0/ExpressionParser.dll")
+    "RMC.Wpf.Framework.Support" = @(
+        "lib/net10.0-windows7.0/SoftwareUpdate.dll",
+        "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.exe",
+        "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.dll")
+    "RMC.Wpf.Framework.Controls" = @(
+        "lib/net10.0-windows7.0/GenericControls.dll",
+        "lib/net10.0-windows7.0/FrameworkUI.dll",
+        "lib/net10.0-windows7.0/DAGControls.dll",
+        "lib/net10.0-windows7.0/DatabaseControls.dll",
+        "lib/net10.0-windows7.0/ExpressionParserControls.dll",
+        "lib/net10.0-windows7.0/NumericControls.dll",
+        "lib/net10.0-windows7.0/OxyPlotControls.dll")
+}
+
 $expectedReleaseNotes = @{
-    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.2 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.2 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Support" = "Version 1.0.2 carries forward protected, transactional self-updates and ships a version-aligned updater payload."
-    "RMC.Wpf.Framework.Controls" = "Version 1.0.2 improves time-series table validation performance, preserves ordering checks after edits, and avoids repeated full-table scans while rebuilding large series."
+    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.3 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.3 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Support" = "Coordinated WPF Framework 1.0.3 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Controls" = "Version 1.0.3 defaults the DatabaseControls TableViewer Export Table dialog to CSV while retaining DBF, Excel, and SQLite options."
 }
 
 foreach ($packageId in $expectedEntries.Keys) {
@@ -134,35 +156,37 @@ foreach ($packageId in $expectedEntries.Keys) {
             throw "$($package.Name) has unexpected NuGet release notes."
         }
 
-        if ($packageId -eq "RMC.Wpf.Framework.Support") {
-            $numericVersion = ($packageVersion -split '-')[0]
-            $expectedFileVersion = "$numericVersion.0"
-            $payloadBinaryEntries = @(
-                "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.exe",
-                "contentFiles/any/net10.0-windows7.0/SoftwareUpdate.Updater.dll")
-            $inspectionDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "wpf-framework-package-$([Guid]::NewGuid().ToString('N'))"
-            New-Item -ItemType Directory -Path $inspectionDirectory | Out-Null
+        $numericVersion = ($packageVersion -split '-')[0]
+        $expectedBinaryVersion = "$numericVersion.0"
+        $inspectionDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "wpf-framework-package-$([Guid]::NewGuid().ToString('N'))"
+        New-Item -ItemType Directory -Path $inspectionDirectory | Out-Null
 
-            try {
-                foreach ($payloadEntryName in $payloadBinaryEntries) {
-                    $payloadEntry = $zip.GetEntry($payloadEntryName)
-                    $payloadPath = Join-Path $inspectionDirectory ([System.IO.Path]::GetFileName($payloadEntryName))
-                    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($payloadEntry, $payloadPath, $false)
-                    $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($payloadPath)
+        try {
+            foreach ($payloadEntryName in $expectedVersionedEntries[$packageId]) {
+                $payloadEntry = $zip.GetEntry($payloadEntryName)
+                $payloadPath = Join-Path $inspectionDirectory ([System.IO.Path]::GetFileName($payloadEntryName))
+                [System.IO.Compression.ZipFileExtensions]::ExtractToFile($payloadEntry, $payloadPath, $false)
+                $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($payloadPath)
 
-                    if ($versionInfo.FileVersion -ne $expectedFileVersion) {
-                        throw "$($package.Name) payload $payloadEntryName has file version $($versionInfo.FileVersion) instead of $expectedFileVersion."
-                    }
+                if ($versionInfo.FileVersion -ne $expectedBinaryVersion) {
+                    throw "$($package.Name) payload $payloadEntryName has file version $($versionInfo.FileVersion) instead of $expectedBinaryVersion."
+                }
 
-                    if ([string]::IsNullOrWhiteSpace($versionInfo.ProductVersion) -or
-                        -not $versionInfo.ProductVersion.StartsWith($packageVersion, [System.StringComparison]::OrdinalIgnoreCase)) {
-                        throw "$($package.Name) payload $payloadEntryName has product version $($versionInfo.ProductVersion) instead of $packageVersion."
+                if ([string]::IsNullOrWhiteSpace($versionInfo.ProductVersion) -or
+                    -not $versionInfo.ProductVersion.StartsWith($packageVersion, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    throw "$($package.Name) payload $payloadEntryName has product version $($versionInfo.ProductVersion) instead of $packageVersion."
+                }
+
+                if ([System.IO.Path]::GetExtension($payloadPath).Equals(".dll", [System.StringComparison]::OrdinalIgnoreCase)) {
+                    $assemblyVersion = [System.Reflection.AssemblyName]::GetAssemblyName($payloadPath).Version.ToString()
+                    if ($assemblyVersion -ne $expectedBinaryVersion) {
+                        throw "$($package.Name) payload $payloadEntryName has assembly version $assemblyVersion instead of $expectedBinaryVersion."
                     }
                 }
             }
-            finally {
-                Remove-Item -LiteralPath $inspectionDirectory -Recurse -Force -ErrorAction SilentlyContinue
-            }
+        }
+        finally {
+            Remove-Item -LiteralPath $inspectionDirectory -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
     finally {
