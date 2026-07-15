@@ -240,7 +240,13 @@ namespace NumericControls
             _isStrictY = strictY;
             _xOrder = orderX;
             _yOrder = orderY;
-            DistributionName = UnivariateDistributionFactory.CreateDistribution(Distribution).DisplayName;
+            if (_data is not null && _data.Count > 0)
+                DistributionName = _data[0].Y.DisplayName;
+            else if (UnivariateDistributionFactory.TryCreateDistribution(Distribution, out var distribution) &&
+                     distribution is not null)
+                DistributionName = distribution.DisplayName;
+            else
+                DistributionName = Distribution.ToString();
             Refresh();
         }
 

@@ -539,8 +539,13 @@ namespace NumericControls
             // 
             var type = UncertainOrderedData.Distribution;
             var itemsToInsert = new List<UncertainOrdinate>();
+            UnivariateDistributionBase distribution;
+            if (UncertainOrderedData.Count > 0)
+                distribution = UncertainOrderedData[0].Y.Clone();
+            else if (!UnivariateDistributionFactory.TryCreateDistribution(type, out distribution) || distribution is null)
+                return;
             for (int i = startRowIndex; i < startRowIndex + nRows; i++)
-                itemsToInsert.Add(new UncertainOrdinate(0d, UnivariateDistributionFactory.CreateDistribution(type)));
+                itemsToInsert.Add(new UncertainOrdinate(0d, distribution.Clone()));
             // Let it update the UI since this is a preview event that is being canceled.
             if (UncertainOrderedData.SuppressCollectionChanged == true)
             {

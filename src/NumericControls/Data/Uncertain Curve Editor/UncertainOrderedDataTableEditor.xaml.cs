@@ -375,7 +375,6 @@ namespace NumericControls
         private static void DistributionOptionsCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UncertainOrderedDataTableEditor thisControl = (UncertainOrderedDataTableEditor)d;
-            UnivariateDistributionBase distribution;
             IList<UnivariateDistributionType> distOptions = e.NewValue as IList<UnivariateDistributionType>;
             if (e.NewValue == null || distOptions == null)
             {
@@ -397,11 +396,11 @@ namespace NumericControls
                 foreach (var dist in distOptions)
                 {
                     if (thisControl._distributions.Any(o => o.Distribution == dist)) continue;
-                    distribution = UnivariateDistributionFactory.CreateDistribution(dist);
-                    if (distribution == null) continue;
+                    if (!UnivariateDistributionFactory.TryCreateDistribution(dist, out var distribution) ||
+                        distribution is null) continue;
                     var ordinates = new List<UncertainOrdinate>();
                     for (int i = 0; i <= 1; i++)
-                        ordinates.Add(new UncertainOrdinate(i, UnivariateDistributionFactory.CreateDistribution(dist)));
+                        ordinates.Add(new UncertainOrdinate(i, distribution.Clone()));
                     var uncertainData = new UncertainOrderedPairedData(ordinates, thisControl.IsStrictX, thisControl.OrderX, thisControl.IsStrictY, thisControl.OrderY, dist);
                     thisControl._distributions.Add(uncertainData);
                 }
@@ -409,9 +408,9 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Currently does not support bivariate, empirical, or kernel density.
+        /// Returns the default distribution types supported by the uncertain curve table editor.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of supported distribution types.</returns>
         public static List<UnivariateDistributionType> DefaultDistributionOptions
         {
             get
@@ -430,6 +429,7 @@ namespace NumericControls
                                                                                                                      (o != UnivariateDistributionType.KernelDensity) &&
                                                                                                                      (o != UnivariateDistributionType.Mixture) &&
                                                                                                                      (o != UnivariateDistributionType.NoncentralT) &&
+                                                                                                                     (o != UnivariateDistributionType.UserDefined) &&
                                                                                                                      (o != UnivariateDistributionType.UniformDiscrete) &&
                                                                                                                      (o != UnivariateDistributionType.Poisson)).ToList();
             }
@@ -504,7 +504,9 @@ namespace NumericControls
             UncertainOrderedPairedData val = value as UncertainOrderedPairedData;
             if (val == null) return "";
             if (val.Count > 0) return val[0].Y.DisplayName;
-            return UnivariateDistributionFactory.CreateDistribution(val.Distribution).DisplayName;
+            if (UnivariateDistributionFactory.TryCreateDistribution(val.Distribution, out var distribution) &&
+                distribution is not null) return distribution.DisplayName;
+            return val.Distribution.ToString();
         }
 
         /// <inheritdoc/>

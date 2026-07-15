@@ -434,7 +434,6 @@ namespace NumericControls
         {
             UncertainOrderedDataSelectorControl thisControl = (UncertainOrderedDataSelectorControl)d;
             thisControl.Distributions.Clear();
-            UnivariateDistributionBase distribution;
             if ((e.NewValue == null) || (e.NewValue.GetType() != typeof(List<UnivariateDistributionType>)))
             {
                 thisControl.DistributionOptions = DefaultDistributionOptions;
@@ -443,8 +442,8 @@ namespace NumericControls
             {
                 foreach (var dist in (List<UnivariateDistributionType>)e.NewValue)
                 {
-                    distribution = UnivariateDistributionFactory.CreateDistribution(dist);
-                    if (distribution == null) continue;
+                    if (!UnivariateDistributionFactory.TryCreateDistribution(dist, out var distribution) ||
+                        distribution is null) continue;
                     // 
                     var ordinates = new List<UncertainOrdinate>();
                     for (int i = 0; i <= 5; i++)
@@ -459,9 +458,9 @@ namespace NumericControls
         }
 
         /// <summary>
-        /// Currently does not support bivariate, univariate, or kernel density.
+        /// Returns the default distribution types supported by the uncertain curve selector.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of supported distribution types.</returns>
         public static List<UnivariateDistributionType> DefaultDistributionOptions
         {
             get
@@ -480,6 +479,7 @@ namespace NumericControls
                                                                                                                      (o != UnivariateDistributionType.KernelDensity) &&
                                                                                                                      (o != UnivariateDistributionType.Mixture) &&
                                                                                                                      (o != UnivariateDistributionType.NoncentralT) &&
+                                                                                                                     (o != UnivariateDistributionType.UserDefined) &&
                                                                                                                      (o != UnivariateDistributionType.UniformDiscrete) &&
                                                                                                                      (o != UnivariateDistributionType.Poisson)).ToList();
             }
@@ -698,8 +698,13 @@ namespace NumericControls
             // 
             DistributionDataItem selectedItem = (DistributionDataItem)CurveUncertaintyComboBox.SelectedItem;
             var type = selectedItem.Data.Distribution;
+            UnivariateDistributionBase distribution;
+            if (selectedItem.Data.Count > 0)
+                distribution = selectedItem.Data[0].Y.Clone();
+            else if (!UnivariateDistributionFactory.TryCreateDistribution(type, out distribution) || distribution is null)
+                return;
             for (int i = startRowIndex; i < startRowIndex + nRows; i++)
-                selectedItem.Data.Insert(i, new UncertainOrdinate(0d, UnivariateDistributionFactory.CreateDistribution(type)));
+                selectedItem.Data.Insert(i, new UncertainOrdinate(0d, distribution.Clone()));
             // Refresh the view
             selectedItem.Refresh(); // MinimumX, MaximumX, MinimumY, MaximumY, IsStrictX, IsStrictY, OrderX, OrderY)
             ValidationGrid.Items.Refresh();
