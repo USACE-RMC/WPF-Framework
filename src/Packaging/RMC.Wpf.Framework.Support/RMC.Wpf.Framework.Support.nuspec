@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/USACE-RMC/WPF-Framework" />
     <readme>README.md</readme>
     <description>Software update services and deployable updater helper for the RMC WPF Framework.</description>
-    <releaseNotes>Coordinated WPF Framework 1.0.3 release; no package-specific functional changes.</releaseNotes>
+    <releaseNotes>Coordinated WPF Framework 1.0.4 release; no package-specific functional changes.</releaseNotes>
     <tags>RMC WPF framework software-update updater</tags>
     <dependencies>
       <group targetFramework="net10.0-windows7.0" />

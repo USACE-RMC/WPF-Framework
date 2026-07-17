@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/USACE-RMC/WPF-Framework" />
     <readme>README.md</readme>
     <description>WPF controls, framework UI, DAG controls, database controls, numeric controls, OxyPlot controls, and AvalonDock assemblies for the RMC WPF Framework.</description>
-    <releaseNotes>Version 1.0.3 defaults the DatabaseControls TableViewer Export Table dialog to CSV while retaining DBF, Excel, and SQLite options.</releaseNotes>
+    <releaseNotes>Version 1.0.4 updates RMC.Numerics to 2.1.4 and improves NumericControls validation and distribution selector compatibility.</releaseNotes>
     <tags>RMC WPF framework controls AvalonDock OxyPlot numeric database DAG</tags>
     <dependencies>
       <group targetFramework="net10.0-windows7.0">

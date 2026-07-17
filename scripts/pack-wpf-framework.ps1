@@ -99,10 +99,16 @@ $expectedVersionedEntries = @{
 }
 
 $expectedReleaseNotes = @{
-    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.3 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.3 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Support" = "Coordinated WPF Framework 1.0.3 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Controls" = "Version 1.0.3 defaults the DatabaseControls TableViewer Export Table dialog to CSV while retaining DBF, Excel, and SQLite options."
+    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.4 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.4 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Support" = "Coordinated WPF Framework 1.0.4 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Controls" = "Version 1.0.4 updates RMC.Numerics to 2.1.4 and improves NumericControls validation and distribution selector compatibility."
+}
+
+$expectedPackageDependencies = @{
+    "RMC.Wpf.Framework.Controls" = @{
+        "RMC.Numerics" = "[2.1.4,3.0.0)"
+    }
 }
 
 foreach ($packageId in $expectedEntries.Keys) {
@@ -154,6 +160,23 @@ foreach ($packageId in $expectedEntries.Keys) {
 
         if ($releaseNotes -ne $expectedReleaseNotes[$packageId]) {
             throw "$($package.Name) has unexpected NuGet release notes."
+        }
+
+        if ($expectedPackageDependencies.ContainsKey($packageId)) {
+            foreach ($dependencyId in $expectedPackageDependencies[$packageId].Keys) {
+                $dependency = $nuspec.SelectSingleNode("/n:package/n:metadata/n:dependencies/n:group/n:dependency[@id='$dependencyId']", $namespaceManager)
+                if ($dependency -eq $null) {
+                    throw "$($package.Name) is missing NuGet dependency $dependencyId."
+                }
+
+                $dependencyVersion = $dependency.Attributes["version"].Value
+                $expectedDependencyVersion = $expectedPackageDependencies[$packageId][$dependencyId]
+                $normalizedDependencyVersion = $dependencyVersion.Replace(" ", "")
+                $normalizedExpectedDependencyVersion = $expectedDependencyVersion.Replace(" ", "")
+                if ($normalizedDependencyVersion -ne $normalizedExpectedDependencyVersion) {
+                    throw "$($package.Name) declares $dependencyId dependency $dependencyVersion instead of $expectedDependencyVersion."
+                }
+            }
         }
 
         $numericVersion = ($packageVersion -split '-')[0]
