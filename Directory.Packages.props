@@ -15,10 +15,10 @@
     <NSubstituteVersion>4.2.1</NSubstituteVersion>
     <NUnitVersion>3.14.0</NUnitVersion>
     <NUnit3TestAdapterVersion>4.5.0</NUnit3TestAdapterVersion>
-    <!-- Restore the latest compatible RMC.Numerics 2.x release for source builds. -->
-    <RmcNumericsVersion>2.*</RmcNumericsVersion>
+    <!-- Restore the released RMC.Numerics package used for WPF Framework validation. -->
+    <RmcNumericsVersion>2.1.4</RmcNumericsVersion>
     <!-- NuGet package dependencies require a valid version range, not a floating wildcard. -->
-    <RmcNumericsPackageDependencyVersion>[2.1.1,3.0.0)</RmcNumericsPackageDependencyVersion>
+    <RmcNumericsPackageDependencyVersion>[2.1.4,3.0.0)</RmcNumericsPackageDependencyVersion>
     <SourceGearSqlite3Version>3.50.4.5</SourceGearSqlite3Version>
     <SystemDataSQLiteVersion>2.0.2</SystemDataSQLiteVersion>
     <XunitVersion>2.9.2</XunitVersion>

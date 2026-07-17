@@ -83,9 +83,9 @@ The packaging projects in `src/Packaging/` create four bundles. Packages should 
 | `RMC.Wpf.Framework.Core` | FrameworkInterfaces, Themes | None |
 | `RMC.Wpf.Framework.Models` | DAG, DatabaseManager, ExpressionParser, OxyPlot, OxyPlot.Wpf, OxyPlot.Wpf.Shared | ClosedXML, DocumentFormat.OpenXml, ExcelNumberFormat, FastMember, SourceGear.sqlite3, System.Data.SQLite |
 | `RMC.Wpf.Framework.Support` | SoftwareUpdate plus SoftwareUpdate.Updater content files | None |
-| `RMC.Wpf.Framework.Controls` | FrameworkUI, GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls, Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | `RMC.Wpf.Framework.Core`, `RMC.Wpf.Framework.Models`, `RMC.Wpf.Framework.Support`, `RMC.Numerics` 2.x |
+| `RMC.Wpf.Framework.Controls` | FrameworkUI, GenericControls, NumericControls, OxyPlotControls, DatabaseControls, ExpressionParserControls, DAGControls, Xceed.Wpf.AvalonDock, Xceed.Wpf.AvalonDock.Themes.VS2013 | `RMC.Wpf.Framework.Core`, `RMC.Wpf.Framework.Models`, `RMC.Wpf.Framework.Support`, `RMC.Numerics` 2.1.4+ |
 
-AvalonDock is a vendored UI dependency and is packaged with `RMC.Wpf.Framework.Controls`, not Core. `RMC.Numerics` is consumed as a NuGet package through central package management and should not be referenced through local `HintPath` DLLs. Source builds use the floating `2.*` version, while packages declare a compatible `[2.1.1,3.0.0)` dependency range.
+AvalonDock is a vendored UI dependency and is packaged with `RMC.Wpf.Framework.Controls`, not Core. `RMC.Numerics` is consumed as a NuGet package through central package management and should not be referenced through local `HintPath` DLLs. Source builds restore `RMC.Numerics` 2.1.4, while packages declare a compatible `[2.1.4,3.0.0)` dependency range.
 
 ## 3. Core Framework
 
@@ -217,7 +217,7 @@ Key additions beyond upstream:
 
 | Dependency | Source | Purpose |
 |-----------|--------|---------|
-| **RMC.Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) NuGet package, latest compatible 2.x | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. |
+| **RMC.Numerics** | [USACE-RMC/Numerics](https://github.com/USACE-RMC/Numerics) NuGet package, 2.1.4 or later compatible 2.x | Statistical distributions, parameter estimation, bootstrap analysis. Required by NumericControls and DatabaseControls. |
 
 All other dependencies are either vendored into the solution (AvalonDock, OxyPlot) or available as NuGet packages (System.Data.SQLite, DocumentFormat.OpenXml, etc.).
 

@@ -393,7 +393,8 @@ namespace NumericControls.Distributions.Univariate
         }
 
         /// <summary>
-        /// Excludes Empirical, KernelDensity, and UserDefined distribution types.
+        /// Returns directly constructible distributions supported by the selector, excluding empirical,
+        /// kernel-density, user-defined, and component-only distribution types.
         /// </summary>
         /// <returns></returns>
         public static List<UnivariateDistributionBase> DefaultDistributions
@@ -406,9 +407,9 @@ namespace NumericControls.Distributions.Univariate
                     if (distributionType == UnivariateDistributionType.Empirical) { continue; }
                     if (distributionType == UnivariateDistributionType.KernelDensity) { continue; }
                     if (distributionType == UnivariateDistributionType.UserDefined) { continue; }
-                    // 
-                    UnivariateDistributionBase distributionToAdd = UnivariateDistributionFactory.CreateDistribution(distributionType);
-                    if (distributionToAdd is not null) { distributions.Add(distributionToAdd); }
+                    if (UnivariateDistributionFactory.TryCreateDistribution(distributionType, out var distributionToAdd) &&
+                        distributionToAdd is not null)
+                        distributions.Add(distributionToAdd);
                 }
                 // 
                 return distributions;
@@ -648,9 +649,10 @@ namespace NumericControls.Distributions.Univariate
                 {
                     _distributions.Add(_selectedDistribution);
                 }
-                else
+                else if (UnivariateDistributionFactory.TryCreateDistribution(d, out var distribution) &&
+                         distribution is not null)
                 {
-                    _distributions.Add(UnivariateDistributionFactory.CreateDistribution(d));
+                    _distributions.Add(distribution);
                 }
             }
             DistributionCombobox.ItemsSource = _distributions;

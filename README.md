@@ -19,7 +19,7 @@ WPF Framework is a free and open-source .NET 10.0 application framework for buil
 
 WPF Framework can be consumed from source project references or packaged into NuGet bundles with `scripts/pack-wpf-framework.ps1`. The package layout follows the internal dependency map: Core, Models, Support, then Controls.
 
-The framework depends on [RMC.Numerics](https://github.com/USACE-RMC/Numerics) through central NuGet package management in `Directory.Packages.props`. Source builds restore the latest compatible 2.x package; NuGet bundles declare compatibility with RMC.Numerics 2.1.1 or later, below 3.0.0.
+The framework depends on [RMC.Numerics](https://github.com/USACE-RMC/Numerics) through central NuGet package management in `Directory.Packages.props`. Source builds restore RMC.Numerics 2.1.4; NuGet bundles declare compatibility with RMC.Numerics 2.1.4 or later, below 3.0.0.
 
 ## Solution Structure
 
@@ -51,7 +51,7 @@ dotnet test WPF-Framework.sln
 ### Build Packages
 
 ```bash
-.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.3
+.\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.4
 ```
 
 This creates and validates the following NuGet packages in `artifacts/packages/`:
@@ -61,7 +61,7 @@ This creates and validates the following NuGet packages in `artifacts/packages/`
 | [`RMC.Wpf.Framework.Core`](https://www.nuget.org/packages/RMC.Wpf.Framework.Core/) | FrameworkInterfaces, Themes | None |
 | [`RMC.Wpf.Framework.Models`](https://www.nuget.org/packages/RMC.Wpf.Framework.Models/) | DAG, DatabaseManager, ExpressionParser, OxyPlot libraries | ClosedXML, DocumentFormat.OpenXml, ExcelNumberFormat, FastMember, SourceGear.sqlite3, System.Data.SQLite |
 | [`RMC.Wpf.Framework.Support`](https://www.nuget.org/packages/RMC.Wpf.Framework.Support/) | SoftwareUpdate and updater content files | None |
-| [`RMC.Wpf.Framework.Controls`](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/) | FrameworkUI, control libraries, AvalonDock fork | Core, Models, Support, RMC.Numerics 2.x |
+| [`RMC.Wpf.Framework.Controls`](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/) | FrameworkUI, control libraries, AvalonDock fork | Core, Models, Support, RMC.Numerics 2.1.4+ |
 
 ### Minimal Application
 
