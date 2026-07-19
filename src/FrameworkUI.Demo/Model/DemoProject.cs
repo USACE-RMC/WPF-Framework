@@ -32,7 +32,7 @@ namespace FrameworkUI.Demo
     /// </remarks>
     [Category("Project")]
     [DisplayName("Demo Project")]
-    [Description("The Demo project includes hazard, response, and consequence input functions.")]
+    [Description("The Demo project showcases a fully implemented hazard function element.")]
     [Browsable(true)]
     public class DemoProject : ProjectBase
     {
@@ -51,15 +51,11 @@ namespace FrameworkUI.Demo
             InitializeMessages();
 
             _hazardFunctions = new HazardElementCollection(this);
-            _responseFunctions = new ResponseElementCollection(this);
-            _consequenceFunctions = new ConsequenceElementCollection(this);
 
             _hazardFunctions.ObjectSaved += ElementCollection_Saved;
-            _responseFunctions.ObjectSaved += ElementCollection_Saved;
-            _consequenceFunctions.ObjectSaved += ElementCollection_Saved;
 
-            _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[] 
-            { _hazardFunctions, _responseFunctions, _consequenceFunctions});
+            _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
+            { _hazardFunctions });
         }
 
         /// <summary>
@@ -101,8 +97,6 @@ namespace FrameworkUI.Demo
 
         private static readonly char[] _InvalidNameCharacters = new List<char>(Path.GetInvalidFileNameChars()) { '\'', '[', ']' }.ToArray();
         private HazardElementCollection _hazardFunctions;
-        private ResponseElementCollection _responseFunctions;
-        private ConsequenceElementCollection _consequenceFunctions;
         private bool _nameValid = false;
         private List<BasicMessageItem> _messages = new List<BasicMessageItem>();
         private Messenger _messenger = Messenger.GetInstance();
@@ -233,7 +227,7 @@ namespace FrameworkUI.Demo
 
             // Load element collections.
             _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
-            { _hazardFunctions, _responseFunctions, _consequenceFunctions});
+            { _hazardFunctions });
 
             Save();
         }
@@ -252,7 +246,7 @@ namespace FrameworkUI.Demo
 
             // Load element collections.
             _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
-            { _hazardFunctions, _responseFunctions, _consequenceFunctions});
+            { _hazardFunctions });
 
             Save();
         }
@@ -270,12 +264,10 @@ namespace FrameworkUI.Demo
 
             // Open element collections.
             _hazardFunctions.Open();
-            _responseFunctions.Open();
-            _consequenceFunctions.Open();
 
             // Load element collections.
             _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
-            { _hazardFunctions, _responseFunctions, _consequenceFunctions});
+            { _hazardFunctions });
 
             NameOnDisk = Name;
             IsUndoEnabled = true;
@@ -289,10 +281,8 @@ namespace FrameworkUI.Demo
         {
             _messenger.Clear(this);
 
-            // Close all project element collections.. 
+            // Close all project element collections.
             _hazardFunctions.Clear();
-            _responseFunctions.Clear();
-            _consequenceFunctions.Clear();
         }
 
         /// <inheritdoc/>
