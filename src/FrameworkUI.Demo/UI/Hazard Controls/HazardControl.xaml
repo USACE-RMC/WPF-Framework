@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:FrameworkUI.Demo.UI"
              xmlns:cntrls="clr-namespace:GenericControls;assembly=GenericControls"
-             xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:oxyCntrls="clr-namespace:OxyPlotControls;assembly=OxyPlotControls"
              xmlns:dbCntrls="clr-namespace:DatabaseControls;assembly=DatabaseControls"
              xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib"
@@ -15,6 +14,8 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="HazardFunctionControl_Loaded"
              Unloaded="HazardFunctionControl_Unloaded"
+             PreviewMouseDown="HazardFunctionControl_PreviewMouseDown"
+             LostFocus="HazardFunctionControl_LostFocus"
              Background="{DynamicResource EnvironmentWindowBackground}"
              Foreground="{DynamicResource EnvironmentWindowText}"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
@@ -35,83 +36,18 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <!--Frequency Plot-->
-                    <oxy:Plot x:Name="Plot" Grid.Column="0" Margin="2,2,0,0"
-                              Title="Hazard Distribution"  
-                              BorderBrush="Black" 
-                              BorderThickness="0" 
-                              Background="Transparent" 
-                              PlotAreaBackground ="White"
-                              LegendBackground="#8CFFFFFF" 
-                              LegendBorder="DarkGray" 
-                              LegendPosition="TopLeft"  >
-                        <oxy:Plot.Axes>
-                            <oxy:LinearAxis 
-                               Title="Discharge"  
-                               Unit="cfs" 
-                               Key="Hazard"
-                               Position="Left"
-                               StringFormat="N0"
-                               AxisTitleDistance="15" 
-                               TitleFontSize="16" 
-                               MajorGridlineStyle="Solid" 
-                               MinorGridlineStyle="Dash" />
-                            <oxy:NormalProbabilityAxis 
-                               Title="Exceedance Probability " 
-                               Unit="P(X &gt; x)"  
-                               Key="Probability"
-                               Position="Bottom"
-                               AxisTitleDistance="15" 
-                               TitleFontSize="16" 
-                               MajorGridlineStyle="Solid" 
-                               MinorGridlineColor="Transparent"
-                               AxislineColor="Black" 
-                               AxislineThickness="1" 
-                               AxislineStyle="Solid">
-                            </oxy:NormalProbabilityAxis>
-                        </oxy:Plot.Axes>
-                        <oxy:Plot.Series>
-                            <oxy:AreaSeries 
-                               Name="ConfidenceInterval"
-                               Title="90% Confidence Interval" 
-                               TrackerFormatString=""
-                               Fill="#4A688CAF" 
-                               Color="#FF353B7A" 
-                               MarkerFill="Transparent" 
-                               StrokeThickness="1" 
-                               ItemsSource="{Binding ConfidencePoints}" 
-                               DataFieldX="X1" 
-                               DataFieldX2="X2" 
-                               DataFieldY="Y1" 
-                               DataFieldY2="Y2"/>
-                            <oxy:LineSeries 
-                               Name="MeanLine" 
-                               Title="Mean" 
-                               Color="Blue" 
-                               MarkerFill="Transparent" 
-                               StrokeThickness="1" 
-                               LineStyle="Dash" 
-                               ItemsSource="{Binding MeanLinePoints}"/>
-                            <oxy:LineSeries 
-                               Name="ModeLine" 
-                               Title="User-Specified" 
-                               Color="Black" 
-                               MarkerFill="Transparent" 
-                               StrokeThickness="1" 
-                               LineStyle="Solid" 
-                               ItemsSource="{Binding ModeLinePoints}">
-                            </oxy:LineSeries>
-                        </oxy:Plot.Series>
-                    </oxy:Plot>
-                    <!--Frequency Plot Toolbar-->
+                    <!--Frequency Plot. The plot object is owned by the hazard element and
+                        hosted here so its visual state can be undone and persisted.-->
+                    <ContentControl x:Name="FrequencyPlotHost" Grid.Column="0" Margin="2,2,0,0"/>
+                    <!--Frequency Plot Toolbar. The toolbar's Plot is assigned in code when
+                        the Element dependency property changes.-->
                     <DockPanel Grid.Column="1">
-                        <oxyCntrls:OxyPlotToolbar 
+                        <oxyCntrls:OxyPlotToolbar
                            DockPanel.Dock="Top"
                            x:Name="PlotToolbar"
                            Background="Transparent"
-                           ToolBarOrientation="Vertical"  
-                           VerticalAlignment="Stretch" 
-                           Plot="{Binding ElementName=Plot, Mode=OneTime}"/>
+                           ToolBarOrientation="Vertical"
+                           VerticalAlignment="Stretch"/>
                     </DockPanel>
                 </Grid>
             </TabItem>

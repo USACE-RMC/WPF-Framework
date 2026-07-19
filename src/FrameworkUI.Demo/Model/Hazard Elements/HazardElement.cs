@@ -1,14 +1,20 @@
-﻿using FrameworkInterfaces;
+﻿using DatabaseManager;
+using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
 using FrameworkInterfaces.Undo;
 using Numerics.Distributions;
 using Numerics.Data;
+using OxyPlot.Wpf;
+using OxyPlot.Wpf.Serialization;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
+using System.Globalization;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Xml.Linq;
 
 namespace FrameworkUI.Demo
 {
@@ -40,39 +46,46 @@ namespace FrameworkUI.Demo
         /// <param name="openFromFile">Optional parameter to open the function from disk upon construction.</param>
         public HazardElement(string name, IElementCollection parentCollection, bool openFromFile = false) : base(name, parentCollection)
         {
-            Name = name;
-            CreationDate = DateTime.Now;
-            LastModified = DateTime.Now;
-
-            ProbabilityOrdinates = new ProbabilityOrdinates();
-        
-
-            // Create the undo bridge for collection changes
-            // Note: Use UndoManager property (not _undoManager field) to ensure lazy initialization
-            _ordinatesBridge = new UndoableCollectionBridge<double>(
-                    ProbabilityOrdinates,
-                () => IsUndoEnabled ? UndoManager : null,
-                "probability ordinates",
-                this
-            );
-
-
-            InitializeMessages();
-
-            if (openFromFile)
+            IsUndoEnabled = false;
+            try
             {
-                Open();
-                _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
-            }
-            else
-            {
-                _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
-                _messenger.Add(_descriptionMsg);
-                _messenger.Add(_estimatedMsg);
-            }
+                Name = name;
+                _nameOnDisk = name;
+                _creationDate = DateTime.Now;
+                _lastModified = DateTime.Now;
 
-            SetElementValidation();
-            SetIsDirty(false);
+                // The default constructor seeds the standard 25 probability ordinates.
+                _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
+
+                // Create the element-owned frequency plot. The plot object lives on the
+                // element so its visual state can be tracked for undo and persisted.
+                _frequencyPlot = CreateDefaultFrequencyPlot();
+
+                InitializeMessages();
+
+                if (openFromFile)
+                {
+                    Open();
+                    _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+                }
+                else
+                {
+                    _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+                    _messenger.Add(_descriptionMsg);
+                    _messenger.Add(_estimatedMsg);
+                }
+
+                SetElementValidation();
+                SetIsDirty(false);
+            }
+            finally
+            {
+                // Open() creates the bridges itself; only create them here when
+                // constructing a fresh element.
+                if (!openFromFile) SetupBridges();
+                IsUndoEnabled = true;
+                ClearUndoHistory();
+            }
         }
 
         /// <summary>
@@ -202,11 +215,11 @@ namespace FrameworkUI.Demo
 
         /// <inheritdoc/>
         [Category("Meta Data"), DisplayName("Creation Date"), Description("The date and time this hazard function was first created."), Browsable(true)]
-        public override DateTime CreationDate { get; }
+        public override DateTime CreationDate => _creationDate;
 
         /// <inheritdoc/>
         [Category("Meta Data"), DisplayName("Last Edited"), Description("The date and time this hazard function was last modified."), Browsable(true)]
-        public override DateTime LastModified { get; }
+        public override DateTime LastModified => _lastModified;
 
         #endregion
 
@@ -221,7 +234,7 @@ namespace FrameworkUI.Demo
         public override bool CanCopyFromExternal => true;
 
         /// <inheritdoc/>
-        public override string NameOnDisk { get; }
+        public override string NameOnDisk => _nameOnDisk;
 
         /// <inheritdoc/>
         public override bool IsValid => _isValid;
@@ -238,7 +251,8 @@ namespace FrameworkUI.Demo
         private ParameterEstimationMethod _estimationMethod = ParameterEstimationMethod.MethodOfMoments;
         private ProbabilityOrdinates _probabilityOrdinates = new ProbabilityOrdinates();
         private UndoableCollectionBridge<double> _ordinatesBridge;
-        private string _plotSettings;
+        private Plot _frequencyPlot;
+        private PlotUndoManager _frequencyPlotUndo;
         private bool _isEstimated = false;
         private bool _minmaxComputed = false;
         private double[] _minmax = new double[2];
@@ -485,40 +499,19 @@ namespace FrameworkUI.Demo
         }
 
         /// <summary>
-        /// Gets and sets the exceedance probability values used for plotting the distribution.
+        /// Gets the exceedance probability values used for plotting the distribution.
+        /// The collection is mutated in place (e.g., via the ordinates table or
+        /// <see cref="Numerics.Data.ProbabilityOrdinates.FromDelimitedString(string, string)"/>);
+        /// edits are recorded for undo through the collection bridge.
         /// </summary>
-        public ProbabilityOrdinates ProbabilityOrdinates
-        {
-            get => _probabilityOrdinates;
-            set
-            {
-                if (_probabilityOrdinates != null)
-                    _probabilityOrdinates.CollectionChanged -= ProbabilityOrdinates_CollectionChanged;
-
-                _probabilityOrdinates = value ?? new ProbabilityOrdinates();
-
-                _probabilityOrdinates.CollectionChanged += ProbabilityOrdinates_CollectionChanged;
-
-                RaisePropertyChange(nameof(ProbabilityOrdinates));
-            }
-        }
+        public ProbabilityOrdinates ProbabilityOrdinates => _probabilityOrdinates;
 
         /// <summary>
-        /// Gets and sets the plot settings.
+        /// Gets the element-owned frequency plot. The view hosts this plot directly, so
+        /// user styling changes are recorded for undo through the plot undo manager and
+        /// persisted with the element.
         /// </summary>
-        public string PlotSettings
-        {
-            get => _plotSettings;
-            set
-            {
-                if (_plotSettings != value)
-                {
-                    var oldValue = _plotSettings;
-                    _plotSettings = value;
-                    RecordPropertyChange(nameof(PlotSettings), oldValue, value);
-                }
-            }
-        }
+        public Plot FrequencyPlot => _frequencyPlot;
 
         /// <summary>
         /// Determines whether the distribution has been bootstrapped.
@@ -565,29 +558,34 @@ namespace FrameworkUI.Demo
         /// <inheritdoc/>
         public override IElement Copy(string newName = null)
         {
-            var element = new HazardElement(newName ?? Name, ParentCollection)
-            {
-                Description = Description,
-                ParentDistribution = ParentDistribution.Clone(),
-                IsUncertain = IsUncertain,
-                EffectiveRecordLength = EffectiveRecordLength,
-                ConfidenceIntervalWidth = ConfidenceIntervalWidth,
-                Realizations = Realizations,
-                PRNGSeed = PRNGSeed,
-                EstimationMethod = EstimationMethod
-            };
+            var element = new HazardElement(newName ?? Name, ParentCollection);
 
-            // Disable undo recording while copying collection data
+            // Disable undo recording while copying data
             element.IsUndoEnabled = false;
-            element._probabilityOrdinates.Clear();
-            foreach (var p in ProbabilityOrdinates)
+            try
             {
-                element._probabilityOrdinates.Add(p);
+                element.Description = Description;
+                element.ParentDistribution = ParentDistribution.Clone();
+                element.IsUncertain = IsUncertain;
+                element.EffectiveRecordLength = EffectiveRecordLength;
+                element.ConfidenceIntervalWidth = ConfidenceIntervalWidth;
+                element.Realizations = Realizations;
+                element.PRNGSeed = PRNGSeed;
+                element.EstimationMethod = EstimationMethod;
+
+                element._probabilityOrdinates.Clear();
+                element._probabilityOrdinates.AddRange(ProbabilityOrdinates);
+                element._isEstimated = false;
+
+                // Copy the plot visual state via an XElement round-trip.
+                PlotSerializer.FromXElement(element._frequencyPlot, PlotSerializer.ToXElement(_frequencyPlot));
             }
-            element._plotSettings = _plotSettings;
-            element._isEstimated = false;
-            element.IsUndoEnabled = true;
-            element.ClearUndoHistory();
+            finally
+            {
+                element.SetupBridges();
+                element.IsUndoEnabled = true;
+                element.ClearUndoHistory();
+            }
 
             return element;
         }
@@ -595,37 +593,188 @@ namespace FrameworkUI.Demo
         /// <inheritdoc/>
         public override IElement CopyFromExternal(string itemName, string fullFileName)
         {
-            // Copy from external file
-            return null;
+            // Create SQLite connection to the external project file
+            var sqlite = new SQLiteManager(fullFileName);
+            var element = new HazardElement(itemName, ParentCollection);
+            element.Open(sqlite);
+            return element;
         }
 
         /// <inheritdoc/>
         public override void Delete()
         {
+            if (Name == null) return;
+            DisposeBridges();
+            SetIsDirty(false);
+
+            var sqlite = new SQLiteManager(ParentCollection.ParentProject.FullFileName);
+            sqlite.Open();
+            try
+            {
+                if (sqlite.TableNames.Contains(ParentCollection.Name))
+                {
+                    var dtView = sqlite.GetTableManager(ParentCollection.Name);
+                    int rowIndex = dtView.SearchColumn(0, dtView.NumberOfRows - 1, "Name", NameOnDisk, true, true);
+                    if (rowIndex >= 0 && rowIndex < dtView.NumberOfRows) dtView.DeleteRow(rowIndex);
+                    dtView.ApplyEdits();
+                }
+            }
+            finally
+            {
+                if (sqlite.DataBaseOpen) sqlite.Close();
+            }
+
             _messenger.Clear(this);
             _undoManager.Clear();
-            _ordinatesBridge?.Dispose();
-            SetIsDirty(false);
-            //
-            // Delete from disk or database
-            //
             RaiseDeleted(this);
         }
 
         /// <inheritdoc/>
         public override void Open()
         {
-            _messenger.Clear(this);
-            IsUndoEnabled =false;
+            Open(new SQLiteManager(ParentCollection.ParentProject.FullFileName));
+        }
 
-            //
-            // Load from disk or database
-            //
+        /// <summary>
+        /// Opens the element from disk using the specified SQLite manager.
+        /// </summary>
+        /// <param name="sqlite">The SQLite manager to use for opening the element.</param>
+        public void Open(SQLiteManager sqlite)
+        {
+            var wasUndoEnabled = IsUndoEnabled;
+            IsUndoEnabled = false;
+            try
+            {
+                _messenger.Clear(this);
 
-            SetElementValidation();
-            IsUndoEnabled = true;
-            ClearUndoHistory();
-            SetIsDirty(false);
+                var wasOpen = sqlite.DataBaseOpen;
+                if (wasOpen == false) sqlite.Open();
+
+                var dtView = sqlite.GetTableManager(ParentCollection.Name);
+                int rowIndex = dtView.SearchColumn(0, dtView.NumberOfRows - 1, "Name", NameOnDisk, true, true);
+                if (rowIndex != -1)
+                {
+                    // Read scalar meta data using backing fields to avoid undo recording.
+                    if (dtView.ColumnNames.Contains(nameof(Name)))
+                    {
+                        _name = dtView.GetCell(nameof(Name), rowIndex).ToString();
+                        foreach (var item in _messages) item.SourceName = _name;
+                        _nameValid = ValidateName(DemoProject.InvalidNameCharacters, 50, "PHF");
+                    }
+                    if (dtView.ColumnNames.Contains(nameof(Description)))
+                    {
+                        _description = dtView.GetCell(nameof(Description), rowIndex).ToString();
+                        if (string.IsNullOrEmpty(_description))
+                            _messenger.Add(_descriptionMsg);
+                        else
+                            _messenger.Remove(_descriptionMsg);
+                    }
+                    if (dtView.ColumnNames.Contains(nameof(CreationDate))) _creationDate = FrameworkInterfaces.Utilities.Tools.DateFromString(dtView.GetCell(nameof(CreationDate), rowIndex).ToString()) ?? DateTime.MinValue;
+                    if (dtView.ColumnNames.Contains(nameof(LastModified))) _lastModified = FrameworkInterfaces.Utilities.Tools.DateFromString(dtView.GetCell(nameof(LastModified), rowIndex).ToString()) ?? DateTime.MinValue;
+
+                    // Load the probability ordinates before the results so the collection
+                    // changed handler (which clears results) cannot wipe restored output.
+                    if (dtView.ColumnNames.Contains(nameof(ProbabilityOrdinates)))
+                    {
+                        ProbabilityOrdinates.FromDelimitedString(
+                            dtView.GetCell(nameof(ProbabilityOrdinates), rowIndex).ToString(), "|");
+                    }
+
+                    // Parent distribution from XML, with a try/catch guard for legacy or
+                    // corrupted files.
+                    if (dtView.ColumnNames.Contains(nameof(ParentDistribution)))
+                    {
+                        try
+                        {
+                            var distXml = dtView.GetCell(nameof(ParentDistribution), rowIndex).ToString();
+                            if (!string.IsNullOrEmpty(distXml))
+                                _parentDistribution = UnivariateDistributionFactory.CreateDistribution(XElement.Parse(distXml));
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Could not deserialize the parent distribution for '{Name}': {ex.Message}");
+                        }
+                    }
+                    _distributionValid = _parentDistribution != null && _parentDistribution.ParametersValid;
+                    if (!_distributionValid) _messenger.Add(_parentDistMsg);
+
+                    // Scalar simulation inputs.
+                    if (dtView.ColumnNames.Contains(nameof(IsUncertain))) bool.TryParse(dtView.GetCell(nameof(IsUncertain), rowIndex).ToString(), out _isUncertain);
+                    if (dtView.ColumnNames.Contains(nameof(EffectiveRecordLength))) int.TryParse(dtView.GetCell(nameof(EffectiveRecordLength), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _effectiveRecordLength);
+                    if (dtView.ColumnNames.Contains(nameof(ConfidenceIntervalWidth))) double.TryParse(dtView.GetCell(nameof(ConfidenceIntervalWidth), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _confidenceIntervalWidth);
+                    if (dtView.ColumnNames.Contains(nameof(Realizations))) int.TryParse(dtView.GetCell(nameof(Realizations), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _realizations);
+                    if (dtView.ColumnNames.Contains(nameof(PRNGSeed))) int.TryParse(dtView.GetCell(nameof(PRNGSeed), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _prngSeed);
+                    if (dtView.ColumnNames.Contains(nameof(EstimationMethod))) Enum.TryParse(dtView.GetCell(nameof(EstimationMethod), rowIndex).ToString(), out _estimationMethod);
+                    if (dtView.ColumnNames.Contains(nameof(IsEstimated))) bool.TryParse(dtView.GetCell(nameof(IsEstimated), rowIndex).ToString(), out _isEstimated);
+
+                    // Bootstrap results from a compressed byte array BLOB.
+                    if (dtView.ColumnNames.Contains(nameof(Results)))
+                    {
+                        try
+                        {
+                            if (dtView.GetCell(nameof(Results), rowIndex) is byte[] bytes && bytes.Length > 0)
+                                Results = ResultsFromByteArray(Numerics.Tools.Decompress(bytes));
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Could not deserialize the results for '{Name}': {ex.Message}");
+                            Results = null;
+                        }
+                    }
+
+                    // Check for corrupted results.
+                    if (_isEstimated && _isUncertain && (Results == null || Results.ParameterSets == null || Results.ParameterSets.Length == 0))
+                    {
+                        _isEstimated = false;
+                        Results = new UncertaintyAnalysisResults();
+                    }
+                    if (Results == null) Results = new UncertaintyAnalysisResults();
+                    if (!_isEstimated) _messenger.Add(_estimatedMsg);
+
+                    // Deserialize the element-owned frequency plot.
+                    if (dtView.ColumnNames.Contains("FrequencyPlotSettings"))
+                    {
+                        var plotXml = dtView.GetCell("FrequencyPlotSettings", rowIndex).ToString();
+                        if (!string.IsNullOrEmpty(plotXml))
+                        {
+                            try
+                            {
+                                PlotSerializer.FromXElement(_frequencyPlot, XElement.Parse(plotXml));
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Could not deserialize the frequency plot for '{Name}': {ex.Message}");
+                            }
+                        }
+                    }
+                }
+
+                if (wasOpen == false) sqlite.Close();
+                SetupBridges();
+
+                ValidateEstimationMethod();
+                SetElementValidation();
+                SetIsDirty(false);
+
+                // Notify bindings for properties loaded via backing fields.
+                RaisePropertyChange(nameof(Name), setDirty: false);
+                RaisePropertyChange(nameof(ProbabilityOrdinates), setDirty: false);
+                RaisePropertyChange(nameof(IsEstimated), setDirty: false);
+            }
+            finally
+            {
+                IsUndoEnabled = wasUndoEnabled;
+                if (wasUndoEnabled) ClearUndoHistory();
+            }
+        }
+
+        /// <summary>
+        /// Raises the PreviewObjectSaved event before saving the element.
+        /// </summary>
+        /// <param name="cancel">Output parameter that determines if the save operation should be canceled.</param>
+        public void RaisePreviewSaved(ref bool cancel)
+        {
+            RaisePreviewObjectSaved(this, ref cancel);
         }
 
         /// <inheritdoc/>
@@ -636,17 +785,156 @@ namespace FrameworkUI.Demo
             RaisePreviewObjectSaved(this, ref cancel);
             if (cancel) return;
 
-            // Update last edited
-            _lastModified = DateTime.Now;
+            // Create SQLite connection
+            var sqlite = new SQLiteManager(ParentCollection.ParentProject.FullFileName);
+            sqlite.Open();
+            DateTime previousLastModified = _lastModified;
+            bool committed = false;
+            try
+            {
+                // Only update last edited if user data actually changed
+                if (IsDirty)
+                {
+                    _lastModified = DateTime.Now;
+                    RaisePropertyChange(nameof(LastModified));
+                }
 
-            //
-            // Save to disk or database
-            //
+                // Create the element collection table if it doesn't exist.
+                CreateTable(sqlite);
 
-            _nameOnDisk = Name;
-            MarkUndoSavePoint();
-            SetIsDirty(false);
-            RaiseObjectSaved(this);
+                var dtView = sqlite.GetTableManager(ParentCollection.Name);
+                int rowIndex = dtView.SearchColumn(0, dtView.NumberOfRows - 1, "Name", NameOnDisk, true, true);
+                if (rowIndex < 0 || rowIndex >= dtView.NumberOfRows)
+                {
+                    dtView.AddRow();
+                    rowIndex = dtView.NumberOfRows - 1;
+                }
+
+                dtView.EditCell(rowIndex, nameof(Name), Name);
+                dtView.EditCell(rowIndex, nameof(Description), Description);
+                dtView.EditCell(rowIndex, nameof(CreationDate), FrameworkInterfaces.Utilities.Tools.DateToUniversalString(CreationDate));
+                dtView.EditCell(rowIndex, nameof(LastModified), FrameworkInterfaces.Utilities.Tools.DateToUniversalString(LastModified));
+                dtView.EditCell(rowIndex, nameof(ParentDistribution), ParentDistribution.ToXElement().ToString());
+                dtView.EditCell(rowIndex, nameof(IsUncertain), IsUncertain);
+                dtView.EditCell(rowIndex, nameof(EffectiveRecordLength), EffectiveRecordLength);
+                dtView.EditCell(rowIndex, nameof(ConfidenceIntervalWidth), ConfidenceIntervalWidth.ToString("G17", CultureInfo.InvariantCulture));
+                dtView.EditCell(rowIndex, nameof(Realizations), Realizations);
+                dtView.EditCell(rowIndex, nameof(PRNGSeed), PRNGSeed);
+                dtView.EditCell(rowIndex, nameof(EstimationMethod), EstimationMethod.ToString());
+                dtView.EditCell(rowIndex, nameof(ProbabilityOrdinates), ProbabilityOrdinates?.ToDelimitedString("|") ?? "");
+                dtView.EditCell(rowIndex, nameof(IsEstimated), IsEstimated);
+                dtView.EditCell(rowIndex, nameof(Results), Numerics.Tools.Compress(ResultsToByteArray()));
+                dtView.EditCell(rowIndex, "FrequencyPlotSettings", _frequencyPlot != null ? PlotSerializer.ToXElement(_frequencyPlot).ToString() : "");
+
+                dtView.ApplyEdits();
+                sqlite.Close();
+                committed = true;
+            }
+            finally
+            {
+                if (sqlite.DataBaseOpen) sqlite.Close();
+                if (!committed && _lastModified != previousLastModified)
+                {
+                    _lastModified = previousLastModified;
+                    RaisePropertyChange(nameof(LastModified));
+                }
+            }
+
+            // Only mark clean / fire ObjectSaved when the commit actually succeeded.
+            if (committed)
+            {
+                SetIsDirty(false);
+                MarkUndoSavePoint();
+                _nameOnDisk = Name;
+                RaiseObjectSaved(this);
+            }
+        }
+
+        #endregion
+
+        #region SQLite Persistence
+
+        /// <summary>
+        /// The required columns for the SQLite table.
+        /// If you want to add a new column, add it to the end of the dictionary.
+        /// </summary>
+        private static Dictionary<string, Type> RequiredColumns { get; } = new Dictionary<string, Type>() {
+            { nameof(Name), typeof(string) },
+            { nameof(Description), typeof(string) },
+            { nameof(CreationDate), typeof(string) },
+            { nameof(LastModified), typeof(string) },
+            { nameof(ParentDistribution), typeof(string) },
+            { nameof(IsUncertain), typeof(bool) },
+            { nameof(EffectiveRecordLength), typeof(int) },
+            { nameof(ConfidenceIntervalWidth), typeof(string) },
+            { nameof(Realizations), typeof(int) },
+            { nameof(PRNGSeed), typeof(int) },
+            { nameof(EstimationMethod), typeof(string) },
+            { nameof(ProbabilityOrdinates), typeof(string) },
+            { nameof(IsEstimated), typeof(bool) },
+            { nameof(Results), typeof(byte[]) },
+            { "FrequencyPlotSettings", typeof(string) } };
+
+        /// <summary>
+        /// Creates or updates the SQLite database table for storing hazard elements.
+        /// </summary>
+        /// <param name="sqlite">The SQLite database manager instance.</param>
+        internal void CreateTable(SQLiteManager sqlite)
+        {
+            if (sqlite.TableNames.Contains(ParentCollection.Name) == false)
+            {
+                // If the table does not exist, then create the table
+                var dataTable = new DataTable(ParentCollection.Name);
+                foreach (KeyValuePair<string, Type> column in RequiredColumns)
+                    dataTable.Columns.Add(column.Key, column.Value);
+                sqlite.SaveDataTable(dataTable);
+            }
+            else
+            {
+                // Add any required columns that don't exist
+                var dt = sqlite.GetTableManager(ParentCollection.Name);
+                int columnIndex;
+                foreach (KeyValuePair<string, Type> column in RequiredColumns)
+                {
+                    columnIndex = Array.IndexOf(dt.ColumnNames, column.Key);
+                    // If the column doesn't exist in the database then create it.
+                    if (columnIndex < 0)
+                    {
+                        dt.AddColumn(column.Key, column.Value);
+                    }
+                    else
+                    {
+                        if (dt.ColumnTypes[columnIndex] != column.Value)
+                        {
+                            dt.DeleteColumn(columnIndex);
+                            dt.AddColumn(column.Key, column.Value);
+                        }
+                    }
+                }
+                dt.ApplyEdits();
+            }
+        }
+
+        /// <summary>
+        /// Converts the bootstrap results to a byte array for BLOB storage. The byte array
+        /// format retains the bootstrap parameter sets, which the XML format does not.
+        /// </summary>
+        /// <returns>The serialized results, or an empty array when there are no results.</returns>
+        private byte[] ResultsToByteArray()
+        {
+            if (Results == null) return Array.Empty<byte>();
+            return UncertaintyAnalysisResults.ToByteArray(Results);
+        }
+
+        /// <summary>
+        /// Reconstructs the bootstrap results from a byte array.
+        /// </summary>
+        /// <param name="bytes">The serialized results.</param>
+        /// <returns>The reconstructed results, or null when the array is empty.</returns>
+        private static UncertaintyAnalysisResults ResultsFromByteArray(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0) return null;
+            return UncertaintyAnalysisResults.FromByteArray(bytes);
         }
 
         #endregion
@@ -998,6 +1286,144 @@ namespace FrameworkUI.Demo
             }
 
             _minmaxComputed = true;
+        }
+
+        #endregion
+
+        #region Plot Factory Methods
+
+        /// <summary>
+        /// Applies the default plot style used for the element-owned plot.
+        /// </summary>
+        /// <param name="plot">The plot to style.</param>
+        private static void ApplyDefaultPlotStyle(Plot plot)
+        {
+            plot.BorderThickness = new System.Windows.Thickness(0);
+            plot.Background = System.Windows.Media.Brushes.Transparent;
+            plot.LegendBackground = (Color)ColorConverter.ConvertFromString("#8CFFFFFF");
+            plot.LegendBorder = Colors.DarkGray;
+            plot.LegendPosition = OxyPlot.Legends.LegendPosition.TopRight;
+            plot.Padding = new System.Windows.Thickness(10, 10, 14, 10);
+            plot.PlotAreaBackground = new SolidColorBrush(Colors.White);
+        }
+
+        /// <summary>
+        /// Creates the default frequency plot with a logarithmic hazard axis and a normal
+        /// probability exceedance axis.
+        /// </summary>
+        /// <returns>A new <see cref="Plot"/> configured for hazard frequency display.</returns>
+        private static Plot CreateDefaultFrequencyPlot()
+        {
+            var plot = new Plot();
+            ApplyDefaultPlotStyle(plot);
+            plot.Title = "Hazard Distribution";
+            plot.LegendPosition = OxyPlot.Legends.LegendPosition.TopLeft;
+            plot.Axes.Add(new LogarithmicAxis
+            {
+                Key = "Yaxis",
+                Position = OxyPlot.Axes.AxisPosition.Left,
+                PowerPadding = true,
+                Title = "Discharge",
+                Unit = "cfs",
+                AxisTitleDistance = 20,
+                TitleFontSize = 16,
+                FontSize = 12,
+                MajorGridlineStyle = OxyPlot.LineStyle.Solid,
+                MinorGridlineStyle = OxyPlot.LineStyle.Dash,
+                StringFormat = "N0"
+            });
+            plot.Axes.Add(new NormalProbabilityAxis
+            {
+                Key = "Xaxis",
+                Title = "Exceedance Probability ",
+                Unit = "P(X > x)",
+                Position = OxyPlot.Axes.AxisPosition.Bottom,
+                AxisTitleDistance = 20,
+                TitleFontSize = 16,
+                FontSize = 12,
+            });
+            return plot;
+        }
+
+        #endregion
+
+        #region Undo Bridge Management
+
+        /// <summary>
+        /// Creates undo bridges for the ordinates collection and the element-owned plot.
+        /// Disposes any existing bridges before creating new ones.
+        /// </summary>
+        private void SetupBridges()
+        {
+            DisposeBridges();
+
+            // Subscribe to UndoManager.StateChanged to revalidate after undo/redo completes.
+            UndoManager.StateChanged += UndoManager_StateChanged;
+
+            // Collection bridge for probability ordinates.
+            // Note: Use UndoManager property (not _undoManager field) to ensure lazy initialization.
+            _ordinatesBridge = new UndoableCollectionBridge<double>(
+                _probabilityOrdinates,
+                () => IsUndoEnabled ? UndoManager : null,
+                "probability ordinates",
+                this);
+
+            // Plot undo manager for the element-owned frequency plot.
+            if (_frequencyPlot != null)
+            {
+                _frequencyPlotUndo = new PlotUndoManager(
+                    _frequencyPlot,
+                    () => IsUndoEnabled ? UndoManager : null,
+                    "frequency plot",
+                    this,
+                    () => SetIsDirty(true));
+            }
+        }
+
+        /// <summary>
+        /// Handles UndoManager.StateChanged to revalidate the element after undo/redo.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void UndoManager_StateChanged(object sender, EventArgs e)
+        {
+            SetElementValidation();
+        }
+
+        /// <summary>
+        /// Disposes all undo bridges and sets their references to null.
+        /// </summary>
+        private void DisposeBridges()
+        {
+            UndoManager.StateChanged -= UndoManager_StateChanged;
+
+            _ordinatesBridge?.Dispose();
+            _ordinatesBridge = null;
+
+            _frequencyPlotUndo?.Dispose();
+            _frequencyPlotUndo = null;
+        }
+
+        /// <summary>
+        /// Suspends the plot undo bridges so that programmatic plot changes (series population,
+        /// plot settings restoration) do not create undo entries.
+        /// </summary>
+        /// <returns>An <see cref="IDisposable"/> that resumes recording when disposed.</returns>
+        public IDisposable SuspendPlotBridges()
+        {
+            var suspensions = new List<IDisposable>();
+            if (_frequencyPlotUndo != null) suspensions.Add(_frequencyPlotUndo.SuspendRecording());
+            return new AggregateDisposable(suspensions);
+        }
+
+        /// <summary>
+        /// Rebuilds series and annotation bridges for the specified plot after a bulk series update.
+        /// Call this after populating series inside a <see cref="SuspendPlotBridges"/> block.
+        /// </summary>
+        /// <param name="plot">The plot whose bridges should be rebuilt.</param>
+        public void RebuildSeriesAndAnnotationBridges(Plot plot)
+        {
+            if (plot == _frequencyPlot) _frequencyPlotUndo?.RebuildSeriesAndAnnotationBridges();
         }
 
         #endregion

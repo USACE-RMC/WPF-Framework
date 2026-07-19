@@ -289,7 +289,6 @@ namespace FrameworkUI.Demo.UI
             if (documentControl as HazardControl != null)
             {
                 var cntrl = (HazardControl)documentControl;
-                //cntrl.Element.UpdatePlotSettings(OxyPlotSettingsSerializer.ToXelement(cntrl.Plot).ToString());
                 cntrl.PlotToolbar.PropertiesCalled -= PlotPropertiesCalled;
                 cntrl.PreviewControlClicked -= DocumentControl_PreviewClicked;
             }

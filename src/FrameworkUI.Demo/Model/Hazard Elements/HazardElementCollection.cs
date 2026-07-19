@@ -1,4 +1,6 @@
-﻿using FrameworkInterfaces;
+using DatabaseManager;
+using FrameworkInterfaces;
+using System;
 
 namespace FrameworkUI.Demo
 {
@@ -25,85 +27,203 @@ namespace FrameworkUI.Demo
         /// Initializes a new instance of the <see cref="HazardElementCollection"/> class.
         /// </summary>
         /// <param name="parentProject">The parent project that contains this collection.</param>
-        public HazardElementCollection(IProject parentProject) : base(parentProject)
-        {
-        }
+        public HazardElementCollection(IProject parentProject) : base(parentProject) { }
 
         /// <summary>
-        /// Gets the name of the collection.
+        /// Gets the name of the collection. This is also the name of the SQLite table
+        /// storing the hazard elements.
         /// </summary>
-        public override string Name
+        public override string Name => "Hazard Functions";
+
+        /// <summary>
+        /// Tracks whether the loaded collection table contained blank or duplicate rows.
+        /// </summary>
+        private bool _needsTableCompaction;
+
+        /// <summary>
+        /// Saves all hazard elements in the collection to disk.
+        /// </summary>
+        /// <remarks>
+        /// This method raises preview events for each element, allowing cancellation, and
+        /// only saves elements that are marked as dirty.
+        /// </remarks>
+        public override void Save()
         {
-            get
+            bool cancel = false;
+            RaisePreviewObjectSaved(this, ref cancel);
+            if (cancel == true) return;
+
+            _savingAll = true;
+            try
             {
-                return "Hazard Functions";
+                if (_needsTableCompaction)
+                {
+                    // The loaded table contained stale rows. Rewrite it from scratch so
+                    // the on-disk table matches the in-memory collection exactly.
+                    for (int i = 0; i < ElementList.Count; i++)
+                    {
+                        ((HazardElement)ElementList[i]).RaisePreviewSaved(ref cancel);
+                        if (cancel == true) return;
+                    }
+
+                    var sqlite = new SQLiteManager(ParentProject.FullFileName);
+                    sqlite.Open();
+                    try
+                    {
+                        if (sqlite.TableNames.Contains(Name))
+                        {
+                            sqlite.DeleteTable(Name);
+                        }
+                    }
+                    finally
+                    {
+                        if (sqlite.DataBaseOpen) sqlite.Close();
+                    }
+
+                    for (int i = 0; i < ElementList.Count; i++)
+                    {
+                        ElementList[i].Save();
+                    }
+
+                    _needsTableCompaction = false;
+                }
+                else
+                {
+                    // Save all elements.
+                    for (int i = 0; i < ElementList.Count; i++)
+                    {
+                        // Always raise preview saved. This allows the plot settings to always be saved.
+                        ((HazardElement)ElementList[i]).RaisePreviewSaved(ref cancel);
+                        if (cancel == true) continue;
+                        // Only save if dirty
+                        if (ElementList[i].IsDirty)
+                            ElementList[i].Save();
+                    }
+                }
+
+                SetIsDirty(false);
+                RaiseObjectSaved();
+            }
+            finally
+            {
+                _savingAll = false;
             }
         }
 
         /// <summary>
-        /// Opens the collection and loads elements from disk.
+        /// Loads all hazard elements from disk into the collection.
         /// </summary>
+        /// <remarks>
+        /// This method reads the SQLite database table and creates a <see cref="HazardElement"/>
+        /// instance for each row found.
+        /// </remarks>
         public override void Open()
         {
             _opening = true;
-            // read from disk
-            _opening = false;
+            var sqlite = new SQLiteManager(ParentProject.FullFileName);
+            sqlite.Open();
+            try
+            {
+                if (sqlite.TableNames.Contains(Name) == true)
+                {
+                    var dtView = sqlite.GetTableManager(Name);
+                    bool needsRewrite;
+                    foreach (string elementName in CollectionPersistenceHelper.BuildSingleTableLoadEntries(dtView, out needsRewrite))
+                    {
+                        var element = new HazardElement(elementName, this, true);
+                        Add(element);
+                    }
+
+                    _needsTableCompaction = needsRewrite;
+                }
+                sqlite.Close();
+                SetIsDirty(_needsTableCompaction);
+            }
+            finally
+            {
+                if (sqlite.DataBaseOpen) sqlite.Close();
+                _opening = false;
+            }
         }
 
         /// <summary>
         /// Adds a hazard element to the collection.
         /// </summary>
         /// <param name="item">The element to add to the collection.</param>
+        /// <remarks>
+        /// This method subscribes to property change and deletion events, saves the element
+        /// to disk if needed, and raises the ElementAdded event.
+        /// </remarks>
         public override void Add(IElement item)
         {
+            item.PropertyChanged += ElementPropertyChanged;
             item.Deleted += ElementDeleted;
-            //item.AddMessage += RaiseAddMessage;
-            //item.RemoveMessage += RaiseRemoveMessage;
             ElementList.Add((HazardElement)item);
-            // Save to disk
             if (_opening == false)
             {
-                //item.IsValid();
+                var sqlite = new SQLiteManager(ParentProject.FullFileName);
+                sqlite.Open();
+                if (CollectionPersistenceHelper.NamedRowExists(sqlite, Name, item.Name) == false)
+                {
+                    item.Save();
+                }
+                sqlite.Close();
                 SetIsDirty(true);
             }
             RaiseElementAddedEvent(item);
         }
 
         /// <summary>
-        /// Inserts a hazard element at the specified index in the collection.
+        /// Inserts a hazard element into the collection at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which the element should be inserted.</param>
-        /// <param name="item">The element to insert.</param>
+        /// <param name="item">The element to insert into the collection.</param>
+        /// <remarks>
+        /// This method subscribes to property change and deletion events, saves the element
+        /// to disk if needed, and raises the ElementAdded event.
+        /// </remarks>
         public override void Insert(int index, IElement item)
         {
+            item.PropertyChanged += ElementPropertyChanged;
             item.Deleted += ElementDeleted;
-            //item.AddMessage += RaiseAddMessage;
-            //item.RemoveMessage += RaiseRemoveMessage;
             ElementList.Insert(index, (HazardElement)item);
-            // save to disk
-            SetIsDirty(true);
+            if (_opening == false)
+            {
+                var sqlite = new SQLiteManager(ParentProject.FullFileName);
+                sqlite.Open();
+                if (CollectionPersistenceHelper.NamedRowExists(sqlite, Name, item.Name) == false)
+                {
+                    item.Save();
+                }
+                sqlite.Close();
+                SetIsDirty(true);
+            }
             RaiseElementAddedEvent(item);
         }
 
         /// <summary>
-        /// Deletes the collection from disk.
+        /// Copies a hazard element from an external project and inserts it into this
+        /// collection at the specified index.
         /// </summary>
-        public override void Delete()
+        /// <param name="index">The zero-based index at which the element should be inserted.</param>
+        /// <param name="elementName">The name of the element to copy.</param>
+        /// <param name="elementType">The fully qualified type name of the element.</param>
+        /// <param name="fullFileName">The full file path to the external project database.</param>
+        public override void InsertFromExternalProject(int index, string elementName, string elementType, string fullFileName)
         {
-            // Delete from disk
+            var element = new HazardElement(elementName, this);
+            Insert(index, element.CopyFromExternal(elementName, fullFileName));
         }
 
         /// <summary>
-        /// Inserts an element from an external project at the specified index.
+        /// Deletes the entire hazard element collection and removes all associated data from disk.
         /// </summary>
-        /// <param name="index">The zero-based index at which the element should be inserted.</param>
-        /// <param name="elementName">The name of the element to insert.</param>
-        /// <param name="elementType">The type of the element.</param>
-        /// <param name="fullFileName">The full path to the external project file.</param>
-        public override void InsertFromExternalProject(int index, string elementName, string elementType, string fullFileName)
+        public override void Delete()
         {
-            Insert(index, new HazardElement(elementName, this));
-            //throw new System.NotImplementedException();
+            var sqlite = new SQLiteManager(ParentProject.FullFileName);
+            sqlite.Open();
+            sqlite.DeleteTable(Name);
+            sqlite.Close();
         }
     }
 }

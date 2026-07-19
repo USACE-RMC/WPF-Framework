@@ -1,5 +1,4 @@
 ﻿using DatabaseManager;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using FrameworkInterfaces;
 using OxyPlot;
 using OxyPlot.Wpf;
@@ -44,11 +43,13 @@ namespace FrameworkUI.Demo.UI
         public HazardControl()
         {
             InitializeComponent();
-            // Update plot series tracker format string
-            ConfidenceInterval.TrackerFormatString = "{0}" + Environment.NewLine + "{1}: {2:0.####E+0}" + Environment.NewLine + "{3}: {4:" + UserSettings.ValueStringFormat + "}";
-            MeanLine.TrackerFormatString = "{0}" + Environment.NewLine + "{1}: {2:0.####E+0}" + Environment.NewLine + "{3}: {4:" + UserSettings.ValueStringFormat + "}";
-            ModeLine.TrackerFormatString = "{0}" + Environment.NewLine + "{1}: {2:0.####E+0}" + Environment.NewLine + "{3}: {4:" + UserSettings.ValueStringFormat + "}";
         }
+
+        /// <summary>
+        /// The tracker format string applied to the frequency curve series.
+        /// </summary>
+        private static readonly string s_trackerFormatString =
+            "{0}" + Environment.NewLine + "{1}: {2:0.####E+0}" + Environment.NewLine + "{3}: {4:" + UserSettings.ValueStringFormat + "}";
 
         #endregion
 
@@ -133,6 +134,8 @@ namespace FrameworkUI.Demo.UI
                 if (oldElement != null)
                 {
                     oldElement.PropertyChanged -= thisControl.HazardFunctionPropertyChanged;
+                    thisControl.FrequencyPlotHost.Content = null;
+                    thisControl.PlotToolbar.Plot = null;
                 }
             }
 
@@ -143,7 +146,14 @@ namespace FrameworkUI.Demo.UI
 
             newElement.PropertyChanged += thisControl.HazardFunctionPropertyChanged;
 
-            thisControl.LoadPlotSettings();
+            // Host the element-owned plot. Suspend the plot undo bridges so the
+            // programmatic hookup does not create undo entries.
+            using (newElement.SuspendPlotBridges())
+            {
+                thisControl.FrequencyPlotHost.Content = newElement.FrequencyPlot;
+                thisControl.PlotToolbar.Plot = newElement.FrequencyPlot;
+            }
+
             thisControl.UpdatePlot();
         }
 
@@ -159,6 +169,12 @@ namespace FrameworkUI.Demo.UI
             set => SetValue(ElementProperty, value);
         }
 
+        /// <summary>
+        /// Gets the element-owned frequency plot hosted by this control, or null when no
+        /// element is bound.
+        /// </summary>
+        public Plot Plot => Element?.FrequencyPlot;
+
         #endregion
 
         #region Methods
@@ -172,7 +188,6 @@ namespace FrameworkUI.Demo.UI
         {
             if (!_isLoaded)
             {
-                LoadPlotSettings();
                 UpdatePlot();
                 SetColumnStringFormats();
                 BindFrequencyCurveTable();
@@ -240,6 +255,15 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the property name.</param>
         private void HazardFunctionPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            // Property changes can arrive on a worker thread (e.g., after a background
+            // estimation completes). Marshal to the UI thread before touching the plot
+            // or the data grids.
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.BeginInvoke(new Action(() => HazardFunctionPropertyChanged(sender, e)));
+                return;
+            }
+
             if (e.PropertyName == nameof(Element.IsEstimated))
             {
                 UpdatePlot();
@@ -287,119 +311,113 @@ namespace FrameworkUI.Demo.UI
 
         #region Plot Methods
 
-        private bool _probabilityOnX = true;
-
-        /// <summary>
-        /// Loads and applies the saved plot settings from the element's chart settings.
-        /// </summary>
-        /// <remarks>
-        /// This method restores axis configurations, bindings, and series settings from XML.
-        /// It also handles backward compatibility for logarithmic axis conversion.
-        /// </remarks>
-        private void LoadPlotSettings()
-        {
-            try
-            {
-                // This is a hack to make the log-scale plot behave when the series data is negative
-                // Without this hack, when the axis is later changed to linear, the negative values will not render correctly
-                // We need to fix this in OxyPlot later
-                OxyPlot.Wpf.Axis oldAxis = null;
-                OxyPlot.Wpf.Axis newAxis = null;
-
-                foreach (var axis in Plot.Axes)
-                {
-                    if (axis.Key == "Hazard")
-                    {
-                        oldAxis = axis;
-                        newAxis = AxisControl.ConvertAxisToLogarithmicAxis(oldAxis);
-                        break;
-                    }
-                }
-
-                Plot.Axes.Remove(oldAxis);
-                Plot.Axes.Add(newAxis);
-                Plot.InvalidatePlot();
-
-                if (Element == null || Element.PlotSettings == null) return;
-
-               // OxyPlotControls.FromXElement(Plot, System.Xml.Linq.XElement.Parse(Element.ChartSettings));
-
-                foreach (var series in Plot.Series)
-                {
-                    if (series.Name == ModeLine.Name) series.ItemsSource = ModeLinePoints;
-                    if (series.Name == MeanLine.Name) series.ItemsSource = MeanLinePoints;
-                    if (series.Name == ConfidenceInterval.Name) series.ItemsSource = ConfidencePoints;
-
-                    if (_probabilityOnX)
-                    {
-                        series.TrackerFormatString = "{0}" + Environment.NewLine + "{1}: {2:0.####E+0}" + Environment.NewLine + "{3}: {4:" + UserSettings.ValueStringFormat + "}";
-                    }
-                    else
-                    {
-                        series.TrackerFormatString = "{0}" + Environment.NewLine + "{1}: {2:" + UserSettings.ValueStringFormat + "}" + Environment.NewLine + "{3}: {4:0.####E+0}";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                // Couldn't parse the chart settings xml. It doesn't necessarily mean an error since it could have never been set.
-            }
-        }
-
         /// <summary>
         /// Updates the plot with the current hazard function results.
         /// </summary>
         /// <remarks>
-        /// This method clears existing series data and repopulates the plot with:
-        /// <list type="bullet">
-        ///     <item><description>Confidence interval area (if uncertainty is enabled)</description></item>
-        ///     <item><description>Mean curve line (if uncertainty is enabled)</description></item>
-        ///     <item><description>Mode (user-specified) curve line</description></item>
-        /// </list>
-        /// The axis orientation is determined by the <c>ProbabilityAxisCheckBox</c> state.
+        /// <para>
+        /// Series are looked up by name and only created when missing, so user-customized
+        /// styling survives Save/Open round trips. Series are populated inside a
+        /// <see cref="HazardElement.SuspendPlotBridges"/> scope so the bulk update does not
+        /// create undo entries, and the bridges are rebuilt afterwards so the new series
+        /// objects are tracked.
+        /// </para>
+        /// <para>
+        /// The plot shows the confidence interval area and mean curve (when uncertainty is
+        /// enabled) plus the mode (user-specified) curve.
+        /// </para>
         /// </remarks>
         public void UpdatePlot()
         {
-            if (Plot == null) return;
-
-            Plot.Series.Clear();
-            ConfidencePoints.Clear();
-            MeanLinePoints.Clear();
-            ModeLinePoints.Clear();
-
             // Element can be null during the swap-out phase of ElementPropertyChanged if
             // the DP callback fires between the old value being nulled and the new value
             // being assigned. Bail instead of NRE'ing on Element.Results below.
-            if (Element == null || Element.Results == null) return;
+            var plot = Element?.FrequencyPlot;
+            if (plot == null) return;
 
-            if (Element.IsEstimated)
-            {
-                for (int i = 0; i < Element.ProbabilityOrdinates.Count; i++)
+            // Lookup-or-create named series so user-customized styling survives Save/Open.
+            var confidenceInterval = plot.Series.OfType<OxyPlot.Wpf.AreaSeries>().FirstOrDefault(s => s.Name == "ConfidenceInterval")
+                ?? new OxyPlot.Wpf.AreaSeries
                 {
-                    double aep = Element.ProbabilityOrdinates[i];
+                    Name = "ConfidenceInterval",
+                    Title = "90% Confidence Interval",
+                    Fill = (Color)ColorConverter.ConvertFromString("#4A688CAF"),
+                    Color = (Color)ColorConverter.ConvertFromString("#FF353B7A"),
+                    MarkerFill = Colors.Transparent,
+                    StrokeThickness = 1,
+                    DataFieldX = nameof(AreaPoint.X1),
+                    DataFieldX2 = nameof(AreaPoint.X2),
+                    DataFieldY = nameof(AreaPoint.Y1),
+                    DataFieldY2 = nameof(AreaPoint.Y2),
+                };
+            var meanLine = plot.Series.OfType<OxyPlot.Wpf.LineSeries>().FirstOrDefault(s => s.Name == "MeanLine")
+                ?? new OxyPlot.Wpf.LineSeries
+                {
+                    Name = "MeanLine",
+                    Title = "Mean",
+                    Color = Colors.Blue,
+                    MarkerFill = Colors.Transparent,
+                    StrokeThickness = 1,
+                    LineStyle = OxyPlot.LineStyle.Dash,
+                };
+            var modeLine = plot.Series.OfType<OxyPlot.Wpf.LineSeries>().FirstOrDefault(s => s.Name == "ModeLine")
+                ?? new OxyPlot.Wpf.LineSeries
+                {
+                    Name = "ModeLine",
+                    Title = "User-Specified",
+                    Color = Colors.Black,
+                    MarkerFill = Colors.Transparent,
+                    StrokeThickness = 1,
+                    LineStyle = OxyPlot.LineStyle.Solid,
+                };
+
+            // Always rewire the item sources and tracker formats; deserialized series
+            // restore visual styling only.
+            confidenceInterval.ItemsSource = ConfidencePoints;
+            confidenceInterval.TrackerFormatString = s_trackerFormatString;
+            meanLine.ItemsSource = MeanLinePoints;
+            meanLine.TrackerFormatString = s_trackerFormatString;
+            modeLine.ItemsSource = ModeLinePoints;
+            modeLine.TrackerFormatString = s_trackerFormatString;
+
+            using (Element.SuspendPlotBridges())
+            {
+                plot.Series.Clear();
+                ConfidencePoints.Clear();
+                MeanLinePoints.Clear();
+                ModeLinePoints.Clear();
+
+                if (Element.IsEstimated && Element.Results != null)
+                {
+                    for (int i = 0; i < Element.ProbabilityOrdinates.Count; i++)
+                    {
+                        double aep = Element.ProbabilityOrdinates[i];
+
+                        if (Element.IsUncertain)
+                        {
+                            ConfidencePoints.Add(new AreaPoint(
+                                new OxyPlot.DataPoint(aep, Element.Results.ConfidenceIntervals[i, 0]),
+                                new OxyPlot.DataPoint(aep, Element.Results.ConfidenceIntervals[i, 1])));
+                            MeanLinePoints.Add(new OxyPlot.DataPoint(aep, Element.Results.MeanCurve[i]));
+                        }
+                        ModeLinePoints.Add(new OxyPlot.DataPoint(aep, Element.Results.ModeCurve[i]));
+                    }
 
                     if (Element.IsUncertain)
                     {
-                        ConfidencePoints.Add(new AreaPoint(
-                            new OxyPlot.DataPoint(aep, Element.Results.ConfidenceIntervals[i, 0]),
-                            new OxyPlot.DataPoint(aep, Element.Results.ConfidenceIntervals[i, 1])));
-                        MeanLinePoints.Add(new OxyPlot.DataPoint(aep, Element.Results.MeanCurve[i]));
+                        confidenceInterval.Title = (Element.ConfidenceIntervalWidth * 100).ToString("F0", CultureInfo.CurrentCulture) + "% Confidence Interval";
+                        plot.Series.Add(confidenceInterval);
+                        plot.Series.Add(meanLine);
                     }
-                    ModeLinePoints.Add(new OxyPlot.DataPoint(aep, Element.Results.ModeCurve[i]));
+
+                    plot.Series.Add(modeLine);
                 }
 
-                if (Element.IsUncertain)
-                {
-                    ConfidenceInterval.Title = (Element.ConfidenceIntervalWidth * 100).ToString("F0", CultureInfo.CurrentCulture) + "% Confidence Interval";
-                    Plot.Series.Add(ConfidenceInterval);
-                    Plot.Series.Add(MeanLine);
-                }
-
-                Plot.Series.Add(ModeLine);
+                plot.InvalidatePlot(true);
             }
 
-            Plot.InvalidatePlot(true);
+            // Reconnect undo tracking to the new series objects.
+            Element.RebuildSeriesAndAnnotationBridges(plot);
         }
 
         /// <summary>
@@ -409,6 +427,8 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
         private void HazardFunctionControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (Plot == null) return;
+
             var plotHitResult = VisualTreeHelper.HitTest(Plot, e.GetPosition(Plot));
             var toolbarHitResult = VisualTreeHelper.HitTest(PlotToolbar, e.GetPosition(PlotToolbar));
 
