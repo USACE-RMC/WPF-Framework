@@ -226,9 +226,15 @@ namespace FrameworkUI.Demo
         #region IElement Properties
 
         /// <inheritdoc/>
-        private static readonly Lazy<ImageSource> s_icon = new(() => { var img = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")); img.Freeze(); return img; });
-        /// <inheritdoc/>
-        public override ImageSource ElementImage => s_icon.Value;
+        public override ImageSource ElementImage =>
+            System.Windows.Application.Current?.TryFindResource(ElementImageResourceKey) as ImageSource;
+
+        /// <summary>
+        /// Gets the resource key for the theme-aware element icon. The framework's project
+        /// explorer and window menus bind to this key with SetResourceReference so the
+        /// icon re-resolves when the theme changes.
+        /// </summary>
+        public string ElementImageResourceKey => "HazardElementIcon";
 
         /// <inheritdoc/>
         public override bool CanCopyFromExternal => true;
@@ -698,14 +704,15 @@ namespace FrameworkUI.Demo
                     _distributionValid = _parentDistribution != null && _parentDistribution.ParametersValid;
                     if (!_distributionValid) _messenger.Add(_parentDistMsg);
 
-                    // Scalar simulation inputs.
-                    if (dtView.ColumnNames.Contains(nameof(IsUncertain))) bool.TryParse(dtView.GetCell(nameof(IsUncertain), rowIndex).ToString(), out _isUncertain);
-                    if (dtView.ColumnNames.Contains(nameof(EffectiveRecordLength))) int.TryParse(dtView.GetCell(nameof(EffectiveRecordLength), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _effectiveRecordLength);
-                    if (dtView.ColumnNames.Contains(nameof(ConfidenceIntervalWidth))) double.TryParse(dtView.GetCell(nameof(ConfidenceIntervalWidth), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _confidenceIntervalWidth);
-                    if (dtView.ColumnNames.Contains(nameof(Realizations))) int.TryParse(dtView.GetCell(nameof(Realizations), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _realizations);
-                    if (dtView.ColumnNames.Contains(nameof(PRNGSeed))) int.TryParse(dtView.GetCell(nameof(PRNGSeed), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out _prngSeed);
-                    if (dtView.ColumnNames.Contains(nameof(EstimationMethod))) Enum.TryParse(dtView.GetCell(nameof(EstimationMethod), rowIndex).ToString(), out _estimationMethod);
-                    if (dtView.ColumnNames.Contains(nameof(IsEstimated))) bool.TryParse(dtView.GetCell(nameof(IsEstimated), rowIndex).ToString(), out _isEstimated);
+                    // Scalar simulation inputs. Parse into temporaries so a value that
+                    // fails to parse leaves the element's default in place.
+                    if (dtView.ColumnNames.Contains(nameof(IsUncertain)) && bool.TryParse(dtView.GetCell(nameof(IsUncertain), rowIndex).ToString(), out bool isUncertain)) _isUncertain = isUncertain;
+                    if (dtView.ColumnNames.Contains(nameof(EffectiveRecordLength)) && int.TryParse(dtView.GetCell(nameof(EffectiveRecordLength), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out int erl)) _effectiveRecordLength = erl;
+                    if (dtView.ColumnNames.Contains(nameof(ConfidenceIntervalWidth)) && double.TryParse(dtView.GetCell(nameof(ConfidenceIntervalWidth), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double ciWidth)) _confidenceIntervalWidth = ciWidth;
+                    if (dtView.ColumnNames.Contains(nameof(Realizations)) && int.TryParse(dtView.GetCell(nameof(Realizations), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out int realizations)) _realizations = realizations;
+                    if (dtView.ColumnNames.Contains(nameof(PRNGSeed)) && int.TryParse(dtView.GetCell(nameof(PRNGSeed), rowIndex).ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out int seed)) _prngSeed = seed;
+                    if (dtView.ColumnNames.Contains(nameof(EstimationMethod)) && Enum.TryParse(dtView.GetCell(nameof(EstimationMethod), rowIndex).ToString(), out ParameterEstimationMethod method)) _estimationMethod = method;
+                    if (dtView.ColumnNames.Contains(nameof(IsEstimated)) && bool.TryParse(dtView.GetCell(nameof(IsEstimated), rowIndex).ToString(), out bool isEstimated)) _isEstimated = isEstimated;
 
                     // Bootstrap results from a compressed byte array BLOB.
                     if (dtView.ColumnNames.Contains(nameof(Results)))

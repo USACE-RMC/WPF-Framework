@@ -9,6 +9,9 @@
                 <!-- Icon resources -->
                 <ResourceDictionary Source="pack://application:,,,/FrameworkUI;component/Icons/IconDictionary.xaml"/>
 
+                <!-- Demo element icons (theme-aware vector icons) -->
+                <ResourceDictionary Source="pack://application:,,,/FrameworkUI.Demo;component/Resources/IconDictionary.xaml"/>
+
                 <!-- Theme resources are loaded by ThemeService.Initialize() in App.xaml.cs -->
                 <!-- This ensures proper loading order and enables runtime theme switching -->
 
