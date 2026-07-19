@@ -8,6 +8,12 @@
     <AssemblyName>FrameworkUI.Demo</AssemblyName>
     <Description>A demonstration application for the FrameworkUI WPF framework, showcasing project management, AvalonDock layout, theming, and standard controls.</Description>
     <Company>U.S. Army Corps of Engineers</Company>
+    <AssemblyTitle>WPF Framework Demo</AssemblyTitle>
+    <Product>WPF Framework Demo</Product>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <ApplicationIcon>Resources\FrameworkUIDemo.ico</ApplicationIcon>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -47,6 +53,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\*.png" />
+    <Resource Include="Resources\*.ico" />
   </ItemGroup>
 
   <ItemGroup>

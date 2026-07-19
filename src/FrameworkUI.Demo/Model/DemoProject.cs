@@ -193,11 +193,27 @@ namespace FrameworkUI.Demo
         }
 
         /// <inheritdoc/>
-        [Category("Meta Data"), DisplayName("Software Version"), Description("The version of RMC-TotalRisk used to last modify the project file."), Browsable(true)]
-        public override string SoftwareVersion => "1.0";
+        [Category("Meta Data"), DisplayName("Software Version"), Description("The version of WPF Framework Demo used to last modify the project file."), Browsable(true)]
+        public override string SoftwareVersion => "1.0.0";
 
-        /// <inheritdoc/>
-        private static readonly Lazy<ImageSource> s_projectIcon = new(() => { var img = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")); img.Freeze(); return img; });
+        /// <summary>
+        /// Lazy-loaded project icon. Returns null if the icon resource cannot be loaded
+        /// so a missing resource degrades gracefully instead of crashing the explorer tree.
+        /// </summary>
+        private static readonly Lazy<ImageSource> s_projectIcon = new(() =>
+        {
+            try
+            {
+                var img = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/FrameworkUIDemo.ico"));
+                img.Freeze();
+                return img;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        });
+
         /// <inheritdoc/>
         public override ImageSource ProjectImage => s_projectIcon.Value;
 
@@ -301,7 +317,7 @@ namespace FrameworkUI.Demo
 
             if (winExpName != Name && Name != "Blank Project")
             {
-                var newFullFileName = Path.Combine(FileDirectory ?? string.Empty, Name + ".fun");
+                var newFullFileName = Path.Combine(FileDirectory ?? string.Empty, Name + ShellPublicVariables.SoftwareExtension);
                 try
                 {
                     File.Move(winExpFullFileName, newFullFileName);

@@ -104,8 +104,8 @@ namespace FrameworkUI.Demo
             // ThemeManager bridges to ThemeService and loads ProjectUI-specific resources
             FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Light);
 
-            FrameworkUI.ShellPublicVariables.SoftwareVersionDate = "December 2025";
-            FrameworkUI.ShellPublicVariables.SoftwareExtension = ".fun";
+            FrameworkUI.ShellPublicVariables.SoftwareVersionDate = "July 2026";
+            FrameworkUI.ShellPublicVariables.SoftwareExtension = ".demo";
             FrameworkUI.UserSettings.CreateAutoRecoverBackup = false;
 
             // Create the project model. Use TryFindResource so a missing TreeViewItemStyle
