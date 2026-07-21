@@ -219,7 +219,8 @@
                             Grid.ColumnSpan="2"
                             Style="{DynamicResource PropertyExpanderStyle}">
                                 <DockPanel >
-                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding ElementName=HazardProperties, Path=Element.ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                    <numCntrls:ProbabilityOrdinatesControl ProbabilityOrdinates="{Binding ElementName=HazardProperties, Path=Element.ProbabilityOrdinates, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                                                          PreviewMouseLeftButtonDown="ProbabilityOrdinatesControl_PreviewMouseLeftButtonDown" />
                                 </DockPanel>
                             </Expander>
                         </Grid>

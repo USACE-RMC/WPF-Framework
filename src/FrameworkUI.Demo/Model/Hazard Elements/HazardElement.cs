@@ -2,6 +2,7 @@
 using FrameworkInterfaces;
 using FrameworkInterfaces.Messaging;
 using FrameworkInterfaces.Undo;
+using FrameworkInterfaces.Undo.Actions;
 using Numerics.Distributions;
 using Numerics.Data;
 using OxyPlot.Wpf;
@@ -259,6 +260,7 @@ namespace FrameworkUI.Demo
         private UndoableCollectionBridge<double> _ordinatesBridge;
         private Plot _frequencyPlot;
         private PlotUndoManager _frequencyPlotUndo;
+        private XElement _distributionSnapshot;
         private bool _isEstimated = false;
         private bool _minmaxComputed = false;
         private double[] _minmax = new double[2];
@@ -300,25 +302,20 @@ namespace FrameworkUI.Demo
             get => _parentDistribution;
             set
             {
-                if (_parentDistribution != value)
-                {
-                    var oldValue = _parentDistribution;
-                    _parentDistribution = value;
+                if (value == null) return;
 
-                    // Validate parent distribution parameters
-                    _distributionValid = true;
-                    _messenger.Remove(_parentDistMsg);
-                    if (!_parentDistribution.ParametersValid)
-                    {
-                        _distributionValid = false;
-                        _messenger.Add(_parentDistMsg);
-                    }
+                var oldSnapshot = _parentDistribution?.ToXElement();
+                var incomingSnapshot = value.ToXElement();
+                if (oldSnapshot != null && XNode.DeepEquals(oldSnapshot, incomingSnapshot)) return;
 
-                    IsEstimated = false;
-                    ClearResults();
-                    ValidateEstimationMethod();
-                    RecordPropertyChange(nameof(ParentDistribution), oldValue, value);
-                }
+                _parentDistribution = value.Clone();
+                IsEstimated = false;
+                ClearResults();
+                ValidateParentDistribution();
+                ValidateEstimationMethod();
+                RecordDistributionUndo(nameof(ParentDistribution), oldSnapshot, _parentDistribution.ToXElement());
+                _distributionSnapshot = _parentDistribution.ToXElement();
+                RaisePropertyChange(nameof(ParentDistribution), setDirty: false);
             }
         }
 
@@ -1002,6 +999,13 @@ namespace FrameworkUI.Demo
             _messenger.Remove(_pmomMsg);
             _messenger.Remove(_lmomMsg);
 
+            if (ParentDistribution == null)
+            {
+                _estimationMethodValid = false;
+                SetElementValidation();
+                return;
+            }
+
             if (IsUncertain && EstimationMethod == ParameterEstimationMethod.MethodOfMoments)
             {
                 if (ParentDistribution.Type == UnivariateDistributionType.GeneralizedNormal ||
@@ -1022,6 +1026,17 @@ namespace FrameworkUI.Demo
             }
 
             SetElementValidation();
+        }
+
+        private void ValidateParentDistribution()
+        {
+            _distributionValid = true;
+            _messenger.Remove(_parentDistMsg);
+            if (_parentDistribution == null || !_parentDistribution.ParametersValid)
+            {
+                _distributionValid = false;
+                _messenger.Add(_parentDistMsg);
+            }
         }
 
         /// <summary>
@@ -1069,29 +1084,36 @@ namespace FrameworkUI.Demo
         /// <param name="parameters">The list of parameters.</param>
         public void SetDistributionParameters(IList<double> parameters)
         {
+            if (parameters == null || ParentDistribution == null) return;
             if (parameters.Count != ParentDistribution.NumberOfParameters) return;
+
+            var oldSnapshot = ParentDistribution.ToXElement();
             var parms = ParentDistribution.GetParameters;
+            bool changed = false;
 
             for (int i = 0; i < ParentDistribution.NumberOfParameters; i++)
             {
                 if (parms[i] != parameters[i])
                 {
-                    IsEstimated = false;
-                    ClearResults();
-                    RaisePropertyChange("Distribution Parameters");
+                    changed = true;
                     break;
                 }
             }
 
             ParentDistribution.SetParameters(parameters);
+            ValidateParentDistribution();
+            ValidateEstimationMethod();
 
-            _distributionValid = true;
-            _messenger.Remove(_parentDistMsg);
-            if (!ParentDistribution.ParametersValid)
+            if (changed)
             {
-                _distributionValid = false;
-                _messenger.Add(_parentDistMsg);
+                IsEstimated = false;
+                ClearResults();
+                RecordDistributionUndo("Distribution Parameters", oldSnapshot, ParentDistribution.ToXElement());
+                _distributionSnapshot = ParentDistribution.ToXElement();
             }
+
+            RaisePropertyChange("Distribution Parameters", setDirty: false);
+            RaisePropertyChange(nameof(ParentDistribution), setDirty: false);
         }
 
         /// <summary>
@@ -1153,6 +1175,8 @@ namespace FrameworkUI.Demo
 
             if (IsUncertain)
             {
+                if (!HasCompatibleCurveResults()) return null;
+
                 var xValues = Results.MeanCurve.ToArray();
                 var pValues = new double[ProbabilityOrdinates.Count];
 
@@ -1179,17 +1203,16 @@ namespace FrameworkUI.Demo
         public IUnivariateDistribution SampleFunction(double percentile)
         {
             if (!IsEstimated) return null;
+            if (double.IsNaN(percentile) || percentile < 0 || percentile > 1) return null;
 
             if (IsUncertain)
             {
-                var distribution = ParentDistribution.Clone();
-                // Get parameter set
-                int i = Math.Min((int)Math.Floor(percentile * Realizations), Realizations - 1);
-                if (Results?.ParameterSets?[i].Values != null)
-                {
-                    distribution.SetParameters(Results.ParameterSets[i].Values);
-                }
-                return distribution;
+                var parameterSets = Results?.ParameterSets;
+                if (parameterSets == null || parameterSets.Length == 0) return null;
+
+                int index = (int)Math.Floor(percentile * parameterSets.Length);
+                if (index >= parameterSets.Length) index = parameterSets.Length - 1;
+                return SampleFunction(index);
             }
             else
             {
@@ -1204,16 +1227,15 @@ namespace FrameworkUI.Demo
         public IUnivariateDistribution SampleFunction(int index)
         {
             if (!IsEstimated) return null;
-            if (index < 0 || index > Realizations - 1) return null;
 
             if (IsUncertain)
             {
+                var parameterSets = Results?.ParameterSets;
+                if (parameterSets == null || index < 0 || index >= parameterSets.Length) return null;
+                if (parameterSets[index].Values == null) return null;
+
                 var distribution = ParentDistribution.Clone();
-                // Get parameter set
-                if (Results?.ParameterSets?[index].Values != null)
-                {
-                    distribution.SetParameters(Results.ParameterSets[index].Values);
-                }
+                distribution.SetParameters(parameterSets[index].Values);
                 return distribution;
             }
             else
@@ -1249,6 +1271,14 @@ namespace FrameworkUI.Demo
         /// </summary>
         private void ComputeMinMax(bool meanOnly)
         {
+            if (ProbabilityOrdinates == null || ProbabilityOrdinates.Count == 0)
+            {
+                _minmax[0] = double.NaN;
+                _minmax[1] = double.NaN;
+                _minmaxComputed = true;
+                return;
+            }
+
             double minP = Numerics.Tools.Min(ProbabilityOrdinates);
             double maxP = Numerics.Tools.Max(ProbabilityOrdinates);
 
@@ -1258,16 +1288,13 @@ namespace FrameworkUI.Demo
                 _minmax[0] = dist == null ? double.NaN : dist.InverseCDF(1 - maxP);
                 _minmax[1] = dist == null ? double.NaN : dist.InverseCDF(1 - minP);
             }
-            else if (!meanOnly && IsUncertain && Results != null)
+            else if (!meanOnly && IsUncertain && Results?.ParameterSets != null && Results.ParameterSets.Length > 0)
             {
-                _minmax[0] = double.MaxValue;
-                _minmax[1] = double.MinValue;
-
                 double localMin = double.MaxValue;
                 double localMax = double.MinValue;
                 object lockObj = new object();
 
-                Parallel.For(0, Realizations, idx =>
+                Parallel.For(0, Results.ParameterSets.Length, idx =>
                 {
                     var dist = ParentDistribution.Clone();
                     if (Results?.ParameterSets?[idx].Values != null)
@@ -1283,8 +1310,8 @@ namespace FrameworkUI.Demo
                     }
                 });
 
-                _minmax[0] = localMin;
-                _minmax[1] = localMax;
+                _minmax[0] = localMin == double.MaxValue ? double.NaN : localMin;
+                _minmax[1] = localMax == double.MinValue ? double.NaN : localMax;
             }
             else
             {
@@ -1293,6 +1320,20 @@ namespace FrameworkUI.Demo
             }
 
             _minmaxComputed = true;
+        }
+
+        private bool HasCompatibleCurveResults()
+        {
+            int count = ProbabilityOrdinates?.Count ?? 0;
+            if (count == 0 || Results?.ModeCurve == null || Results.ModeCurve.Length != count) return false;
+
+            if (IsUncertain)
+            {
+                if (Results.MeanCurve == null || Results.MeanCurve.Length != count) return false;
+                if (Results.ConfidenceIntervals == null || Results.ConfidenceIntervals.GetLength(0) != count || Results.ConfidenceIntervals.GetLength(1) < 2) return false;
+            }
+
+            return true;
         }
 
         #endregion
@@ -1354,6 +1395,42 @@ namespace FrameworkUI.Demo
 
         #endregion
 
+        #region Distribution Undo
+
+        private void RecordDistributionUndo(string propertyName, XElement oldSnapshot, XElement newSnapshot)
+        {
+            var undoManager = IsUndoEnabled ? UndoManager : null;
+            if (undoManager == null || undoManager.IsExecutingAction) return;
+            if (oldSnapshot == null || newSnapshot == null) return;
+            if (XNode.DeepEquals(oldSnapshot, newSnapshot)) return;
+
+            var undoSnapshot = new XElement(oldSnapshot);
+            var redoSnapshot = new XElement(newSnapshot);
+            var action = new DelegateAction(
+                $"Change {propertyName}",
+                () => RestoreDistributionFromSnapshot(redoSnapshot),
+                () => RestoreDistributionFromSnapshot(undoSnapshot),
+                this);
+            undoManager.RecordAction(action);
+            SetIsDirty(true);
+        }
+
+        private void RestoreDistributionFromSnapshot(XElement snapshot)
+        {
+            if (snapshot == null) return;
+
+            _parentDistribution = UnivariateDistributionFactory.CreateDistribution(new XElement(snapshot));
+            IsEstimated = false;
+            ClearResults();
+            ValidateParentDistribution();
+            ValidateEstimationMethod();
+            _distributionSnapshot = _parentDistribution.ToXElement();
+            RaisePropertyChange(nameof(ParentDistribution), setDirty: false);
+            RaisePropertyChange("Distribution Parameters", setDirty: false);
+        }
+
+        #endregion
+
         #region Undo Bridge Management
 
         /// <summary>
@@ -1374,6 +1451,8 @@ namespace FrameworkUI.Demo
                 () => IsUndoEnabled ? UndoManager : null,
                 "probability ordinates",
                 this);
+
+            _distributionSnapshot = _parentDistribution?.ToXElement();
 
             // Plot undo manager for the element-owned frequency plot.
             if (_frequencyPlot != null)
@@ -1409,6 +1488,7 @@ namespace FrameworkUI.Demo
 
             _frequencyPlotUndo?.Dispose();
             _frequencyPlotUndo = null;
+            _distributionSnapshot = null;
         }
 
         /// <summary>

@@ -98,6 +98,7 @@ namespace FrameworkUI.Demo
         private static readonly char[] _InvalidNameCharacters = new List<char>(Path.GetInvalidFileNameChars()) { '\'', '[', ']' }.ToArray();
         private HazardElementCollection _hazardFunctions;
         private bool _nameValid = false;
+        private bool _collectionEventsSubscribed;
         private List<BasicMessageItem> _messages = new List<BasicMessageItem>();
         private Messenger _messenger = Messenger.GetInstance();
         private BasicMessageItem _descriptionMsg;
@@ -265,9 +266,12 @@ namespace FrameworkUI.Demo
         /// </summary>
         private void SubscribeCollectionEvents()
         {
+            if (_collectionEventsSubscribed) return;
+
             _hazardFunctions.ObjectSaved += ElementCollection_Saved;
             _hazardFunctions.ElementIsDirtyChanged += OnElementIsDirtyChanged;
             _hazardFunctions.PropertyChanged += OnCollectionPropertyChanged;
+            _collectionEventsSubscribed = true;
         }
 
         /// <summary>
@@ -275,9 +279,12 @@ namespace FrameworkUI.Demo
         /// </summary>
         private void UnsubscribeCollectionEvents()
         {
+            if (!_collectionEventsSubscribed) return;
+
             _hazardFunctions.ObjectSaved -= ElementCollection_Saved;
             _hazardFunctions.ElementIsDirtyChanged -= OnElementIsDirtyChanged;
             _hazardFunctions.PropertyChanged -= OnCollectionPropertyChanged;
+            _collectionEventsSubscribed = false;
         }
 
         /// <summary>
@@ -397,6 +404,7 @@ namespace FrameworkUI.Demo
                 // Load element collections.
                 _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
                 { _hazardFunctions });
+                SubscribeCollectionEvents();
 
                 Save();
             }
@@ -425,6 +433,7 @@ namespace FrameworkUI.Demo
                 // Load element collections.
                 _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
                 { _hazardFunctions });
+                SubscribeCollectionEvents();
 
                 Save();
             }
@@ -508,6 +517,7 @@ namespace FrameworkUI.Demo
                 // Load element collections.
                 _readOnlyElementCollections = new ReadOnlyCollection<IElementCollection>(new IElementCollection[]
                 { _hazardFunctions });
+                SubscribeCollectionEvents();
 
                 NameOnDisk = Name;
 
@@ -528,6 +538,7 @@ namespace FrameworkUI.Demo
         /// <inheritdoc/>
         public override void Close()
         {
+            UnsubscribeCollectionEvents();
             _messenger.Clear(this);
 
             // Close all project element collections.

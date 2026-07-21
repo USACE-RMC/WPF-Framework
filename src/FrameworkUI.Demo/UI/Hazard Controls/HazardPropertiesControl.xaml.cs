@@ -58,6 +58,7 @@ namespace FrameworkUI.Demo.UI
         private ComboBox _combobox = new ComboBox();
         private string _previousName = string.Empty;
         private ObservableCollection<Parameter> _parameterList = new ObservableCollection<Parameter>();
+        private bool _syncingDistributionSelection;
 
         /// <summary>
         /// Identifies the <see cref="Element"/> dependency property.
@@ -80,32 +81,27 @@ namespace FrameworkUI.Demo.UI
 
             var thisControl = (HazardPropertiesControl)d;
 
-            // Remove any handlers from the old element
-            var oldElement = e.OldValue as HazardElement;
-            if (oldElement != null)
+            if (e.OldValue is HazardElement oldElement)
             {
                 oldElement.PropertyChanged -= thisControl.Element_PropertyChanged;
-                thisControl._combobox.SelectionChanged -= thisControl.DistributionCombobox_SelectionChanged;
             }
 
-            var newElement = e.NewValue as HazardElement;
-            if (newElement != null)
+            thisControl._combobox.SelectionChanged -= thisControl.DistributionCombobox_SelectionChanged;
+            thisControl.ClearParameterRows();
+
+            if (e.NewValue is not HazardElement newElement)
             {
-                for (int i = 0; i < thisControl.DistributionOptions.Length; i++)
-                {
-                    if (thisControl.DistributionOptions[i].Type == newElement.ParentDistribution.Type)
-                    {
-                        thisControl._combobox.SelectedIndex = i;
-                        break;
-                    }
-                }
-
-                newElement.PropertyChanged += thisControl.Element_PropertyChanged;
-                thisControl._combobox.SelectionChanged += thisControl.DistributionCombobox_SelectionChanged;
-                thisControl.UpdateParameterDataGrid();
-                thisControl.SetDataGridStyle();
-                thisControl.ParametersTable.ItemsSource = thisControl._parameterList;
+                thisControl.SyncDistributionSelection(null);
+                thisControl.ParametersTable.ItemsSource = null;
+                return;
             }
+
+            thisControl.SyncDistributionSelection(newElement.ParentDistribution?.Type);
+            newElement.PropertyChanged += thisControl.Element_PropertyChanged;
+            thisControl._combobox.SelectionChanged += thisControl.DistributionCombobox_SelectionChanged;
+            thisControl.PropertyAttributes.GetClassAttributes(newElement);
+            thisControl.UpdateParameterDataGrid();
+            thisControl.SetDataGridStyle();
         }
 
         /// <summary>
@@ -141,30 +137,63 @@ namespace FrameworkUI.Demo.UI
             private set => SetValue(ExistingNamesProperty, value);
         }
 
-        private static readonly UnivariateDistributionBase[] _distributionOptions = new[] {
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Exponential),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GammaDistribution),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GeneralizedExtremeValue),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GeneralizedLogistic),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GeneralizedNormal),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.GeneralizedPareto),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Gumbel),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.KappaFour),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.LnNormal),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.LogNormal),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.LogPearsonTypeIII),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.Normal),
-            UnivariateDistributionFactory.CreateDistribution(UnivariateDistributionType.PearsonTypeIII)
+        private static readonly DistributionOption[] _distributionOptions = new[] {
+            CreateDistributionOption(UnivariateDistributionType.Exponential),
+            CreateDistributionOption(UnivariateDistributionType.GammaDistribution),
+            CreateDistributionOption(UnivariateDistributionType.GeneralizedExtremeValue),
+            CreateDistributionOption(UnivariateDistributionType.GeneralizedLogistic),
+            CreateDistributionOption(UnivariateDistributionType.GeneralizedNormal),
+            CreateDistributionOption(UnivariateDistributionType.GeneralizedPareto),
+            CreateDistributionOption(UnivariateDistributionType.Gumbel),
+            CreateDistributionOption(UnivariateDistributionType.KappaFour),
+            CreateDistributionOption(UnivariateDistributionType.LnNormal),
+            CreateDistributionOption(UnivariateDistributionType.LogNormal),
+            CreateDistributionOption(UnivariateDistributionType.LogPearsonTypeIII),
+            CreateDistributionOption(UnivariateDistributionType.Normal),
+            CreateDistributionOption(UnivariateDistributionType.PearsonTypeIII)
         };
 
         /// <summary>
         /// Gets the available parent distribution options.
         /// </summary>
         /// <value>
-        /// An array of <see cref="UnivariateDistributionBase"/> instances representing
-        /// the supported probability distributions for parametric hazard functions.
+        /// An array of distribution option items representing the supported probability
+        /// distributions for parametric hazard functions.
         /// </value>
-        public UnivariateDistributionBase[] DistributionOptions => _distributionOptions;
+        public DistributionOption[] DistributionOptions => _distributionOptions;
+
+        /// <summary>
+        /// Lightweight distribution choice used by the parent-distribution combo box.
+        /// </summary>
+        public sealed class DistributionOption
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="DistributionOption"/> class.
+            /// </summary>
+            /// <param name="displayName">The display name shown in the combo box.</param>
+            /// <param name="type">The distribution type to create when selected.</param>
+            public DistributionOption(string displayName, UnivariateDistributionType type)
+            {
+                DisplayName = displayName;
+                Type = type;
+            }
+
+            /// <summary>
+            /// Gets the display name shown in the combo box.
+            /// </summary>
+            public string DisplayName { get; }
+
+            /// <summary>
+            /// Gets the distribution type represented by this option.
+            /// </summary>
+            public UnivariateDistributionType Type { get; }
+        }
+
+        private static DistributionOption CreateDistributionOption(UnivariateDistributionType type)
+        {
+            var distribution = UnivariateDistributionFactory.CreateDistribution(type);
+            return new DistributionOption(distribution.DisplayName, type);
+        }
 
         private static readonly ObservableCollection<ConfidenceIntervalItem> _confidenceIntervalWidthList = new ObservableCollection<ConfidenceIntervalItem>(new[]
         {
@@ -342,6 +371,16 @@ namespace FrameworkUI.Demo.UI
         }
 
         /// <summary>
+        /// Handles the PreviewMouseLeftButtonDown event for the ProbabilityOrdinatesControl.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
+        private void ProbabilityOrdinatesControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            PropertyAttributes.SetDefaultAttributes("Probability Ordinates", "The exceedance probabilities used for plotting the probability distribution.");
+        }
+
+        /// <summary>
         /// Handles the PreviewMouseLeftButtonDown event for the TabItem control to display property attributes.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -393,7 +432,9 @@ namespace FrameworkUI.Demo.UI
         {
             if (e.PropertyName == nameof(Element.ParentDistribution))
             {
+                SyncDistributionSelection(Element?.ParentDistribution?.Type);
                 UpdateParameterDataGrid();
+                SetDataGridStyle();
             }
         }
 
@@ -404,9 +445,10 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
         private void DistributionCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_combobox.SelectedIndex != -1)
+            if (_syncingDistributionSelection || Element == null) return;
+            if (_combobox.SelectedItem is DistributionOption option)
             {
-                Element.ParentDistribution = (UnivariateDistributionBase)_combobox.SelectedItem;
+                Element.ParentDistribution = UnivariateDistributionFactory.CreateDistribution(option.Type);
             }
         }
 
@@ -415,7 +457,13 @@ namespace FrameworkUI.Demo.UI
         /// </summary>
         private void UpdateParameterDataGrid()
         {
-            _parameterList.Clear();
+            ClearParameterRows();
+            if (Element?.ParentDistribution == null)
+            {
+                ParametersTable.ItemsSource = null;
+                return;
+            }
+
             var names = Element.ParentDistribution.GetParameterPropertyNames;
             var display = Element.ParentDistribution.ParametersToString;
             var parms = Element.ParentDistribution.GetParameters;
@@ -426,6 +474,8 @@ namespace FrameworkUI.Demo.UI
                 parm.PropertyChanged += ParameterChanged;
                 _parameterList.Add(parm);
             }
+
+            ParametersTable.ItemsSource = _parameterList;
         }
 
         /// <summary>
@@ -442,6 +492,8 @@ namespace FrameworkUI.Demo.UI
                     _parameterList[i].IsValid = true;
                     _parameterList[i].ErrorMessage = null;
                 }
+
+                if (Element == null) return;
 
                 Element.SetDistributionParameters(_parameterList.Select(x => x.Value).ToArray());
 
@@ -473,8 +525,9 @@ namespace FrameworkUI.Demo.UI
         /// </summary>
         private void SetDataGridStyle()
         {
-            NameColumn.CellStyle = (Style)FindResource("Left_CellStyle");
-            ValueColumn.CellStyle = (Style)FindResource("Right_CellStyle");
+            if (TryFindResource("Left_CellStyle") is Style leftStyle) NameColumn.CellStyle = leftStyle;
+            if (TryFindResource("Right_CellStyle") is Style rightStyle) ValueColumn.CellStyle = rightStyle;
+            if (ValueColumn.CellStyle == null) return;
 
             var style = new Style();
             if (style != null)
@@ -507,9 +560,42 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void SimulateButton_Click(object sender, RoutedEventArgs e)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
-            Element.Estimate();
-            Mouse.OverrideCursor = null;
+            if (Element == null) return;
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                Element.Estimate();
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        private void SyncDistributionSelection(UnivariateDistributionType? distributionType)
+        {
+            _syncingDistributionSelection = true;
+            try
+            {
+                _combobox.SelectedItem = distributionType.HasValue
+                    ? DistributionOptions.FirstOrDefault(x => x.Type == distributionType.Value)
+                    : null;
+            }
+            finally
+            {
+                _syncingDistributionSelection = false;
+            }
+        }
+
+        private void ClearParameterRows()
+        {
+            foreach (var parameter in _parameterList)
+            {
+                parameter.PropertyChanged -= ParameterChanged;
+            }
+
+            _parameterList.Clear();
         }
     }
 }

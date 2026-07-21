@@ -55,7 +55,7 @@ namespace FrameworkUI.Demo.UI
 
         #region Members
 
-        private bool _isLoaded = false;
+        private bool _themeSubscribed;
         private List<ParametricDistributionCurveRow> _frequencyCurveList = new List<ParametricDistributionCurveRow>();
         private List<SummaryStatistic> _summaryStatisticsList = new List<SummaryStatistic>();
 
@@ -186,35 +186,19 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void HazardFunctionControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!_isLoaded)
+            UpdatePlot();
+            SetColumnStringFormats();
+            BindFrequencyCurveTable();
+            SetFrequencyCurveTableColumnHeaders();
+            BindSummaryStatisticsDataGrid();
+            BindParameterSetDataGrid();
+            UpdateUncertaintyVisibility();
+
+            if (!_themeSubscribed)
             {
-                UpdatePlot();
-                SetColumnStringFormats();
-                BindFrequencyCurveTable();
-                SetFrequencyCurveTableColumnHeaders();
-                BindSummaryStatisticsDataGrid();
-                BindParameterSetDataGrid();
-
-                if (Element != null && Element.IsUncertain)
-                {
-                    UpperColumn.Visibility = Visibility.Visible;
-                    LowerColumn.Visibility = Visibility.Visible;
-                    PredictiveColumn.Visibility = Visibility.Visible;
-                    ParameterSetsTab.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    ParameterSetsTab.Visibility = Visibility.Collapsed;
-                    UpperColumn.Visibility = Visibility.Collapsed;
-                    LowerColumn.Visibility = Visibility.Collapsed;
-                    PredictiveColumn.Visibility = Visibility.Collapsed;
-                }
-
-                // Subscribe to theme changes to refresh plot when theme changes
                 ThemeService.Instance.ThemeChanged += OnThemeChanged;
+                _themeSubscribed = true;
             }
-
-            _isLoaded = true;
         }
 
         /// <summary>
@@ -224,8 +208,11 @@ namespace FrameworkUI.Demo.UI
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void HazardFunctionControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            // Unsubscribe from theme changes to prevent memory leaks
-            ThemeService.Instance.ThemeChanged -= OnThemeChanged;
+            if (_themeSubscribed)
+            {
+                ThemeService.Instance.ThemeChanged -= OnThemeChanged;
+                _themeSubscribed = false;
+            }
         }
 
         /// <summary>
@@ -290,20 +277,7 @@ namespace FrameworkUI.Demo.UI
 
             if (e.PropertyName == nameof(Element.IsUncertain))
             {
-                if (Element != null && Element.IsUncertain)
-                {
-                    UpperColumn.Visibility = Visibility.Visible;
-                    LowerColumn.Visibility = Visibility.Visible;
-                    PredictiveColumn.Visibility = Visibility.Visible;
-                    ParameterSetsTab.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    ParameterSetsTab.Visibility = Visibility.Collapsed;
-                    UpperColumn.Visibility = Visibility.Collapsed;
-                    LowerColumn.Visibility = Visibility.Collapsed;
-                    PredictiveColumn.Visibility = Visibility.Collapsed;
-                }
+                UpdateUncertaintyVisibility();
             }
         }
 
@@ -387,9 +361,11 @@ namespace FrameworkUI.Demo.UI
                 MeanLinePoints.Clear();
                 ModeLinePoints.Clear();
 
-                if (Element.IsEstimated && Element.Results != null)
+                int resultPointCount = GetCompatibleResultPointCount();
+
+                if (Element.IsEstimated && resultPointCount > 0)
                 {
-                    for (int i = 0; i < Element.ProbabilityOrdinates.Count; i++)
+                    for (int i = 0; i < resultPointCount; i++)
                     {
                         double aep = Element.ProbabilityOrdinates[i];
 
@@ -418,6 +394,33 @@ namespace FrameworkUI.Demo.UI
 
             // Reconnect undo tracking to the new series objects.
             Element.RebuildSeriesAndAnnotationBridges(plot);
+        }
+
+        private int GetCompatibleResultPointCount()
+        {
+            var element = Element;
+            if (element?.Results == null || !element.IsEstimated) return 0;
+
+            int count = element.ProbabilityOrdinates?.Count ?? 0;
+            if (count == 0) return 0;
+            if (element.Results.ModeCurve == null || element.Results.ModeCurve.Length != count) return 0;
+
+            if (element.IsUncertain)
+            {
+                if (element.Results.MeanCurve == null || element.Results.MeanCurve.Length != count) return 0;
+                if (element.Results.ConfidenceIntervals == null || element.Results.ConfidenceIntervals.GetLength(0) != count || element.Results.ConfidenceIntervals.GetLength(1) < 2) return 0;
+            }
+
+            return count;
+        }
+
+        private void UpdateUncertaintyVisibility()
+        {
+            bool showUncertainty = Element != null && Element.IsUncertain;
+            UpperColumn.Visibility = showUncertainty ? Visibility.Visible : Visibility.Collapsed;
+            LowerColumn.Visibility = showUncertainty ? Visibility.Visible : Visibility.Collapsed;
+            PredictiveColumn.Visibility = showUncertainty ? Visibility.Visible : Visibility.Collapsed;
+            ParameterSetsTab.Visibility = showUncertainty ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
@@ -458,6 +461,8 @@ namespace FrameworkUI.Demo.UI
         /// </remarks>
         private void SetFrequencyCurveTableColumnHeaders()
         {
+            if (Element == null) return;
+
             double alpha = (1 - Element.ConfidenceIntervalWidth) / 2;
             UpperColumn.Header = ((1 - alpha) * 100).ToString("F1", CultureInfo.CurrentCulture) + "%-ile";
             LowerColumn.Header = (alpha * 100).ToString("F1", CultureInfo.CurrentCulture) + "%-ile";
@@ -487,11 +492,16 @@ namespace FrameworkUI.Demo.UI
             FrequencyCurveTable.ItemsSource = null;
             _frequencyCurveList.Clear();
 
-            if (Element.Results == null) return;
-
-            if (Element.IsEstimated)
+            if (Element == null)
             {
-                for (int i = 0; i < Element.ProbabilityOrdinates.Count; i++)
+                FrequencyCurveTable.Items.Refresh();
+                return;
+            }
+
+            int resultPointCount = GetCompatibleResultPointCount();
+            if (Element.IsEstimated && resultPointCount > 0)
+            {
+                for (int i = 0; i < resultPointCount; i++)
                 {
                     double aep = Element.ProbabilityOrdinates[i];
 
@@ -568,6 +578,12 @@ namespace FrameworkUI.Demo.UI
         {
             SummaryStatisticsTable.ItemsSource = null;
             _summaryStatisticsList.Clear();
+
+            if (Element == null)
+            {
+                SummaryStatisticsTable.Items.Refresh();
+                return;
+            }
 
             if (Element.IsEstimated)
             {
@@ -648,7 +664,11 @@ namespace FrameworkUI.Demo.UI
         /// </remarks>
         private void BindParameterSetDataGrid()
         {
-            if (Element.Results == null) return;
+            if (Element?.Results == null)
+            {
+                ParameterSetTableViewer.DataView = null;
+                return;
+            }
 
             if (!Element.IsUncertain)
             {

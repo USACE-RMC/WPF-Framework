@@ -163,11 +163,17 @@ namespace FrameworkUI.Demo
             {
                 var sqlite = new SQLiteManager(ParentProject.FullFileName);
                 sqlite.Open();
-                if (CollectionPersistenceHelper.NamedRowExists(sqlite, Name, item.Name) == false)
+                try
                 {
-                    item.Save();
+                    if (CollectionPersistenceHelper.NamedRowExists(sqlite, Name, item.Name) == false)
+                    {
+                        item.Save();
+                    }
                 }
-                sqlite.Close();
+                finally
+                {
+                    if (sqlite.DataBaseOpen) sqlite.Close();
+                }
                 SetIsDirty(true);
             }
             RaiseElementAddedEvent(item);
@@ -191,11 +197,17 @@ namespace FrameworkUI.Demo
             {
                 var sqlite = new SQLiteManager(ParentProject.FullFileName);
                 sqlite.Open();
-                if (CollectionPersistenceHelper.NamedRowExists(sqlite, Name, item.Name) == false)
+                try
                 {
-                    item.Save();
+                    if (CollectionPersistenceHelper.NamedRowExists(sqlite, Name, item.Name) == false)
+                    {
+                        item.Save();
+                    }
                 }
-                sqlite.Close();
+                finally
+                {
+                    if (sqlite.DataBaseOpen) sqlite.Close();
+                }
                 SetIsDirty(true);
             }
             RaiseElementAddedEvent(item);
@@ -212,7 +224,8 @@ namespace FrameworkUI.Demo
         public override void InsertFromExternalProject(int index, string elementName, string elementType, string fullFileName)
         {
             var element = new HazardElement(elementName, this);
-            Insert(index, element.CopyFromExternal(elementName, fullFileName));
+            element.Open(new SQLiteManager(fullFileName));
+            Insert(index, element);
         }
 
         /// <summary>
@@ -222,8 +235,14 @@ namespace FrameworkUI.Demo
         {
             var sqlite = new SQLiteManager(ParentProject.FullFileName);
             sqlite.Open();
-            sqlite.DeleteTable(Name);
-            sqlite.Close();
+            try
+            {
+                sqlite.DeleteTable(Name);
+            }
+            finally
+            {
+                if (sqlite.DataBaseOpen) sqlite.Close();
+            }
         }
     }
 }

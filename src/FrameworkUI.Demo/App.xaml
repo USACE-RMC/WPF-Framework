@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FrameworkUI.Demo"
-             Startup="Application_Startup">
+             Startup="Application_Startup"
+             ShutdownMode="OnMainWindowClose"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,6 +22,9 @@
 
                 <!-- OxyPlotControls Theme Resources (for PropertyExpanderStyle, PropertiesTabItemStyle, etc.) -->
                 <ResourceDictionary Source="pack://application:,,,/OxyPlotControls;component/Themes/OxyPlotControlsTheme.xaml"/>
+
+                <!-- NumericControls Theme Resources (for probability ordinate editing controls) -->
+                <ResourceDictionary Source="pack://application:,,,/NumericControls;component/Themes/NumericControlsTheme.xaml"/>
 
                 <!-- DatabaseControls Theme Resources (for TableViewer styles) -->
                 <ResourceDictionary Source="pack://application:,,,/DatabaseControls;component/Themes/DatabaseControlsTheme.xaml"/>

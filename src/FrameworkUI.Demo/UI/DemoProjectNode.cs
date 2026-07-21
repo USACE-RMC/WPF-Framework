@@ -146,10 +146,11 @@ namespace FrameworkUI.Demo.UI
         /// Creates a new hazard element with a user-specified name.
         /// </summary>
         /// <param name="elementNodes">The element node collection to add the new element to.</param>
-        /// <returns>The newly created hazard element.</returns>
+        /// <returns>The newly created hazard element, or <see langword="null"/> when the dialog is canceled.</returns>
         private HazardElement CreateNewHazardElement(ElementNodeCollection elementNodes)
         {
             string newName = CreateNewNameDialog($"Create New {elementNodes.ElementCollection.Name}...", $"{elementNodes.ElementCollection.Name}_{elementNodes.ElementCollection.Count + 1}", elementNodes.ElementCollection.Select(x => x.Name.ToString()).ToList());
+            if (newName == "") return null;
             var newHazard = new HazardElement(newName, elementNodes.ElementCollection);
             elementNodes.ElementCollection.Add(newHazard);
             return newHazard;

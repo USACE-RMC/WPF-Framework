@@ -2,8 +2,7 @@ using GenericControls;
 using SoftwareUpdate;
 using SoftwareUpdate.GitHub;
 using SoftwareUpdate.Utilities;
-using System;
-using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shell;
@@ -50,23 +49,6 @@ namespace FrameworkUI.Demo
                     System.Windows.Markup.XmlLanguage.GetLanguage(
                         System.Globalization.CultureInfo.CurrentCulture.IetfLanguageTag)));
 
-            // Set up global exception handlers for debugging
-            AppDomain.CurrentDomain.UnhandledException += (s, args) =>
-            {
-                var ex = args.ExceptionObject as Exception;
-                LogException("AppDomain.UnhandledException", ex);
-            };
-
-            DispatcherUnhandledException += (s, args) =>
-            {
-                LogException("Dispatcher.UnhandledException", args.Exception);
-                args.Handled = true; // Prevent immediate crash to see the error
-            };
-
-            TaskScheduler.UnobservedTaskException += (s, args) =>
-            {
-                LogException("TaskScheduler.UnobservedTaskException", args.Exception);
-            };
 
             var jList = new JumpList { ShowRecentCategory = false };
             jList.Apply();
@@ -74,22 +56,17 @@ namespace FrameworkUI.Demo
         }
 
         /// <summary>
-        /// Logs an exception to both debug output and a file for diagnosis.
+        /// Handles dispatcher exceptions that are known to be benign.
         /// </summary>
-        private static void LogException(string source, Exception? ex)
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The dispatcher exception event arguments.</param>
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            var separator = new string('=', 50);
-            var message = $"\n{separator}\n{source}\n{separator}\n{ex}\n";
-            System.Diagnostics.Debug.WriteLine(message);
-
-            // Also write to a file so we can see it
-            try
+            System.Diagnostics.Debug.WriteLine($"Application.DispatcherUnhandledException: {e.Exception}");
+            if (e.Exception is COMException comException && comException.ErrorCode == -2147221040)
             {
-                var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "FrameworkUI_Demo_Error.txt");
-                File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}\n{message}\n\n");
-                GenericControls.MessageBox.Show($"Exception logged to: {logPath}\n\n{ex?.Message}", source, MessageBoxButton.OK, MessageBoxImage.Error);
+                e.Handled = true;
             }
-            catch (Exception logEx) { System.Diagnostics.Debug.WriteLine($"Failed to write exception log: {logEx.Message}"); }
         }
 
         /// <summary>
@@ -139,7 +116,7 @@ namespace FrameworkUI.Demo
             // =================================================================
 
             // Auto-check settings (not part of UpdateOptions, handled locally)
-            bool autoCheckOnStartup = true;
+            bool autoCheckOnStartup = false;
             int autoCheckDelayMs = 5000;  // 5 second delay after startup
 
             // Configure update options for your GitHub repository
