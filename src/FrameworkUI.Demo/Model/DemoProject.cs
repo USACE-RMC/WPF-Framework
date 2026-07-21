@@ -171,9 +171,19 @@ namespace FrameworkUI.Demo
         {
             try
             {
-                var img = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/FrameworkUIDemo.ico"));
-                img.Freeze();
-                return img;
+                var uri = new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/FrameworkUIDemo.ico");
+                var decoder = BitmapDecoder.Create(uri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                BitmapFrame bestFrame = null;
+                foreach (var frame in decoder.Frames)
+                {
+                    if (bestFrame == null || frame.PixelWidth * frame.PixelHeight > bestFrame.PixelWidth * bestFrame.PixelHeight)
+                    {
+                        bestFrame = frame;
+                    }
+                }
+
+                bestFrame?.Freeze();
+                return bestFrame;
             }
             catch (Exception)
             {
