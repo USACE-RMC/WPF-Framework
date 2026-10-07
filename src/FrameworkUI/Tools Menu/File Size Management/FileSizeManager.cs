@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.ExceptionServices;
+using System.Threading;
+using System.Windows;
 using System.Windows.Threading;
 using FrameworkInterfaces;
 
@@ -52,6 +55,11 @@ namespace FrameworkUI
         private static DispatcherTimer? _timer;
         private static FrameworkUI.CompactProgressControl? _progressControl;
         private static BackgroundWorker? _backgroundWorker;
+        private static int _operationActive;
+        private static bool _workerStarted;
+        private static bool _workerCompleted;
+        private static ExceptionDispatchInfo? _workerError;
+        private static DispatcherFrame? _recoveryFrame;
 
         #endregion
 
@@ -73,70 +81,215 @@ namespace FrameworkUI
         #region Public Methods
 
         /// <summary>
-        /// Compact and optimize the project file.
+        /// Compacts and optimizes the project file, returning only after the worker has completed.
         /// </summary>
         /// <param name="project">The project to compact and optimize.</param>
+        /// <exception cref="ArgumentNullException">The project is null.</exception>
+        /// <exception cref="InvalidOperationException">Another compaction is active, or its completion cannot be observed safely.</exception>
+        /// <remarks>Worker errors are rethrown on the caller after owned resources have been released.</remarks>
         public static void CompactAndOptimizeFile(IProject project)
         {
-            // Set the project file
-            _project = project;
-            // Get the 'before' file size text. Guard against a missing file (new / unsaved
-            // project, file moved between open and compact) - FileInfo.Length throws
-            // FileNotFoundException on an absent path, on the UI thread.
-            if (!string.IsNullOrEmpty(_project.FullFileName) && File.Exists(_project.FullFileName))
+            if (Interlocked.CompareExchange(ref _operationActive, 1, 0) != 0)
+                throw new InvalidOperationException("Project compaction is already in progress.");
+
+            ExceptionDispatchInfo? failure = null;
+            string? message = null;
+            try
             {
-                _fileSizeBefore = GetFileSizeText(_project.FullFileName);
+                _project = project ?? throw new ArgumentNullException(nameof(project));
+                ShellPublicVariables.CompactionInProgress = true;
+                _workerStarted = false;
+                _workerCompleted = false;
+                _workerError = null;
+                _fileSizeBefore = !string.IsNullOrEmpty(project.FullFileName) && File.Exists(project.FullFileName)
+                    ? GetFileSizeText(project.FullFileName) : string.Empty;
+
+                _progressControl = new CompactProgressControl();
+                _progressControl.ProgressText.Text = "Analyzing Project File...";
+                _progressControl.ProgressBar.IsIndeterminate = true;
+                _progressControl.ProgressBar.Minimum = 0d;
+                _progressControl.ProgressBar.Maximum = 100d;
+                _progressControl.ProgressBar.Value = 0d;
+                _progressControl.Closing += ProgressControl_Closing;
+                _progressControl.Loaded += ProgressControl_Loaded;
+
+                _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(0.1d) };
+                _timer.Tick += Timer_Tick;
+                _backgroundWorker = new BackgroundWorker { WorkerReportsProgress = true };
+                _backgroundWorker.DoWork += BackgroundWorker_Dowork;
+                _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
+                _backgroundWorker.RunWorkerCompleted += BackgroundWorker_WorkerComplete;
+
+                try
+                {
+                    _progressControl.ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    failure = ExceptionDispatchInfo.Capture(ex);
+                }
+
+                // Hide(), dispatcher shutdown, or a dialog exception must not release a live writer.
+                if (_workerStarted && !_workerCompleted)
+                    WaitForWorkerCompletion();
+
+                if (failure == null && _workerError == null)
+                {
+                    if (!_workerCompleted)
+                        throw new InvalidOperationException("Project compaction did not complete.");
+                    _fileSizeAfter = GetFileSizeText(project.FullFileName);
+                    message = _fileSizeBefore == _fileSizeAfter
+                        ? "The file was optimized. However, there was no unused space to compact in '" + project.Name + "', so the file size remains unchanged at " + _fileSizeAfter + "."
+                        : "The file was compacted and optimized. The project '" + project.Name + "' was compacted from " + _fileSizeBefore + " to " + _fileSizeAfter + ".";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _fileSizeBefore = string.Empty;
+                PreserveFailure(ref failure, ex, "operation");
             }
-
-            // Begin compaction
-            ShellPublicVariables.CompactionInProgress = true;
-
-            // Clean up existing timer if any
-            if (_timer != null)
+            finally
             {
-                _timer.Stop();
-                _timer.Tick -= Timer_Tick;
+                if (_workerError != null) PreserveFailure(ref failure, _workerError.SourceException, "worker");
+                // If recovery itself aborts, retain ownership and the public guard. Callers must
+                // not save or close a project while its completion remains unobserved.
+                if (!_workerStarted || _workerCompleted)
+                {
+                    try { CleanupOperation(); }
+                    catch (Exception ex)
+                    {
+                        PreserveFailure(ref failure, ex, "cleanup");
+                    }
+                }
             }
 
-            // Start the timer
-            _timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(0.1d) };
-            _timer.Tick += Timer_Tick;
-            _timer.IsEnabled = true;
-            _timer.Start();
-
-            // Clean up existing background worker if any
-            if (_backgroundWorker != null)
-            {
-                _backgroundWorker.DoWork -= BackgroundWorker_Dowork;
-                _backgroundWorker.ProgressChanged -= BackgroundWorker_ProgressChanged;
-                _backgroundWorker.RunWorkerCompleted -= BackgroundWorker_WorkerComplete;
-                _backgroundWorker.Dispose();
-            }
-
-            // Create compact background worker
-            _backgroundWorker = new BackgroundWorker();
-            _backgroundWorker.WorkerSupportsCancellation = true;
-            _backgroundWorker.WorkerReportsProgress = true;
-            _backgroundWorker.DoWork += BackgroundWorker_Dowork;
-            _backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
-            _backgroundWorker.RunWorkerCompleted += BackgroundWorker_WorkerComplete;
-            _backgroundWorker.RunWorkerAsync();
-
-            // Open the progress bar control
-            _progressControl = new FrameworkUI.CompactProgressControl();
-            _progressControl.ProgressText.Text = "Analyzing Project File...";
-            _progressControl.ProgressBar.IsIndeterminate = true;
-            _progressControl.ProgressBar.Minimum = 0d;
-            _progressControl.ProgressBar.Maximum = 100d;
-            _progressControl.ProgressBar.Value = 0d;
-            _progressControl.Closing += ProgressControl_Closing;
-            _progressControl.ShowDialog();
+            failure?.Throw();
+            if (message != null) ReportProgress?.Invoke(message);
         }
 
+        /// <summary>Starts the prepared worker once the modal progress window is loaded.</summary>
+        /// <param name="sender">The progress window.</param>
+        /// <param name="e">The loaded event.</param>
+        private static void ProgressControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement progressControl) progressControl.Loaded -= ProgressControl_Loaded;
+            if (_workerStarted || _workerCompleted || _backgroundWorker == null) return;
+            try
+            {
+                _timer?.Start();
+                _workerStarted = true;
+                _backgroundWorker.RunWorkerAsync(_project);
+            }
+            catch (Exception ex)
+            {
+                _workerStarted = false;
+                _workerError = ExceptionDispatchInfo.Capture(ex);
+                _progressControl?.Close();
+            }
+        }
+
+        /// <summary>Preserves modal protection when the progress dialog returns before its worker.</summary>
+        /// <exception cref="InvalidOperationException">The dispatcher stops before completion is observed.</exception>
+        private static void WaitForWorkerCompletion()
+        {
+            var dispatcher = _progressControl!.Dispatcher;
+            var disabledWindows = new List<Window>();
+            try
+            {
+                if (Application.Current != null)
+                {
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window.Dispatcher == dispatcher && window.IsEnabled)
+                        {
+                            disabledWindows.Add(window);
+                            window.SetCurrentValue(UIElement.IsEnabledProperty, false);
+                        }
+                    }
+                }
+                _recoveryFrame = new DispatcherFrame();
+                if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished && !_workerCompleted)
+                    Dispatcher.PushFrame(_recoveryFrame);
+                if (!_workerCompleted)
+                    throw new InvalidOperationException("Project compaction is still running; the project cannot be saved or closed.");
+            }
+            finally
+            {
+                _recoveryFrame = null;
+                if (_workerCompleted)
+                {
+                    ExceptionDispatchInfo? restoreFailure = null;
+                    foreach (Window window in disabledWindows)
+                        AttemptCleanup(() => window.SetCurrentValue(UIElement.IsEnabledProperty, true), ref restoreFailure);
+                    restoreFailure?.Throw();
+                }
+            }
+        }
+
+        /// <summary>Releases the completed operation's handlers, timer, worker, window, and guard.</summary>
+        /// <remarks>Every cleanup step is attempted; the first cleanup error is propagated afterward.</remarks>
+        private static void CleanupOperation()
+        {
+            ExceptionDispatchInfo? failure = null;
+            try
+            {
+                var timer = _timer;
+                if (timer != null)
+                {
+                    AttemptCleanup(timer.Stop, ref failure);
+                    AttemptCleanup(() => timer.Tick -= Timer_Tick, ref failure);
+                }
+                var worker = _backgroundWorker;
+                if (worker != null)
+                {
+                    AttemptCleanup(() => worker.DoWork -= BackgroundWorker_Dowork, ref failure);
+                    AttemptCleanup(() => worker.ProgressChanged -= BackgroundWorker_ProgressChanged, ref failure);
+                    AttemptCleanup(() => worker.RunWorkerCompleted -= BackgroundWorker_WorkerComplete, ref failure);
+                    AttemptCleanup(worker.Dispose, ref failure);
+                }
+                var progressControl = _progressControl;
+                if (progressControl != null)
+                {
+                    AttemptCleanup(() => progressControl.Loaded -= ProgressControl_Loaded, ref failure);
+                    AttemptCleanup(() => progressControl.Closing -= ProgressControl_Closing, ref failure);
+                    AttemptCleanup(progressControl.Close, ref failure);
+                }
+            }
+            finally
+            {
+                _timer = null;
+                _backgroundWorker = null;
+                _progressControl = null;
+                _project = null;
+                _fileSizeBefore = null;
+                _fileSizeAfter = null;
+                _workerError = null;
+                _workerStarted = false;
+                _workerCompleted = false;
+                ShellPublicVariables.CompactionInProgress = false;
+                Interlocked.Exchange(ref _operationActive, 0);
+            }
+            failure?.Throw();
+        }
+
+        /// <summary>Attempts one cleanup action without preventing subsequent cleanup.</summary>
+        /// <param name="cleanup">The resource cleanup or window restoration action.</param>
+        /// <param name="failure">The first failure, if one has already occurred.</param>
+        private static void AttemptCleanup(Action cleanup, ref ExceptionDispatchInfo? failure)
+        {
+            try { cleanup(); }
+            catch (Exception ex) { PreserveFailure(ref failure, ex, "cleanup"); }
+        }
+
+        /// <summary>Preserves the first failure and records secondary diagnostic failures.</summary>
+        /// <param name="failure">The first failure delivered to the caller.</param>
+        /// <param name="error">The newly observed failure.</param>
+        /// <param name="operation">The operation producing this diagnostic.</param>
+        private static void PreserveFailure(ref ExceptionDispatchInfo? failure, Exception error, string operation)
+        {
+            if (failure == null) failure = ExceptionDispatchInfo.Capture(error);
+            else if (!ReferenceEquals(failure.SourceException, error))
+                Debug.WriteLine($"FileSizeManager secondary {operation} failure: {error}");
+        }
         /// <summary>
         /// Background worker for performing file compaction.
         /// </summary>
@@ -144,13 +297,13 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private static void BackgroundWorker_Dowork(object? sender, DoWorkEventArgs e)
         {
-            if (sender is not BackgroundWorker worker || _project == null) return;
+            if (sender is not BackgroundWorker worker || e.Argument is not IProject project) return;
             // Update progress bar to compacting
             worker.ReportProgress(0);
-            _project.Compact();
+            project.Compact();
             // Update progress bar to optimizing
             worker.ReportProgress(100);
-            _project.Optimize();
+            project.Optimize();
         }
 
         /// <summary>
@@ -185,66 +338,26 @@ namespace FrameworkUI
         /// <param name="e">The event arguments.</param>
         private static void BackgroundWorker_WorkerComplete(object? sender, RunWorkerCompletedEventArgs e)
         {
-            // Stop and clean up timer
-            if (_timer != null)
+            if (e.Error != null) _workerError = ExceptionDispatchInfo.Capture(e.Error);
+            else if (e.Cancelled) _workerError = ExceptionDispatchInfo.Capture(new OperationCanceledException("Project compaction was canceled."));
+            _workerCompleted = true;
+            if (_recoveryFrame != null) _recoveryFrame.Continue = false;
+            try { _progressControl?.Close(); }
+            catch (Exception ex)
             {
-                _timer.Stop();
-                _timer.IsEnabled = false;
-                _timer.Tick -= Timer_Tick;
+                _workerError ??= ExceptionDispatchInfo.Capture(ex);
+                Debug.WriteLine($"FileSizeManager progress window close failed: {ex}");
+                _progressControl?.Hide();
             }
-
-            // Stop and clean up worker
-            if (_backgroundWorker != null)
-            {
-                _backgroundWorker.CancelAsync();
-                _backgroundWorker.DoWork -= BackgroundWorker_Dowork;
-                _backgroundWorker.ProgressChanged -= BackgroundWorker_ProgressChanged;
-                _backgroundWorker.RunWorkerCompleted -= BackgroundWorker_WorkerComplete;
-                _backgroundWorker.Dispose();
-                _backgroundWorker = null;
-            }
-
-            if (_progressControl != null)
-            {
-                _progressControl.Closing -= ProgressControl_Closing;
-                _progressControl.Close();
-                _progressControl = null;
-            }
-            if (_timer != null) { _timer.Stop(); _timer.Tick -= Timer_Tick; _timer = null; }
-            ShellPublicVariables.CompactionInProgress = false;
-
-            if (_project == null) return;
-
-            // Get new file size
-            _fileSizeAfter = GetFileSizeText(_project.FullFileName);
-
-            // Report final compression
-            string message;
-            if (_fileSizeBefore == _fileSizeAfter)
-            {
-                message = "The file was optimized. However, there was no unused space to compact in '" + _project.Name + "', so the file size remains unchanged at " + _fileSizeAfter + ".";
-            }
-            else
-            {
-                message = "The file was compacted and optimized. The project '" + _project.Name + "' was compacted from " + _fileSizeBefore + " to " + _fileSizeAfter + ".";
-            }
-
-            ReportProgress?.Invoke(message);
         }
 
-        /// <summary>
-        /// Handles the progress control window closing event.
-        /// Cancels the background worker when the user closes the window.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The event arguments.</param>
+        /// <summary>Vetoes closing while a non-cancelable compaction worker remains active.</summary>
+        /// <param name="sender">The progress window.</param>
+        /// <param name="e">The closing event.</param>
         private static void ProgressControl_Closing(object? sender, CancelEventArgs e)
         {
-            _backgroundWorker?.CancelAsync();
-            if (_timer != null) { _timer.Stop(); _timer.Tick -= Timer_Tick; _timer = null; }
-            ShellPublicVariables.CompactionInProgress = false;
+            if (_workerStarted && !_workerCompleted) e.Cancel = true;
         }
-
         /// <summary>
         /// Timer used to update the progress bar.
         /// </summary>
