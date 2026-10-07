@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -44,8 +45,16 @@ namespace DatabaseManager
         public SQLiteManager(string dataBaseFile, SQLiteConnectionStringBuilder connectionBuilder = null)
         {
             _dataBasePath = dataBaseFile;
-            SetDatabaseConnection(dataBaseFile, connectionBuilder);
-            _tableNames = GetTableNames();
+            try
+            {
+                SetDatabaseConnection(dataBaseFile, connectionBuilder);
+                _tableNames = GetTableNames();
+            }
+            catch
+            {
+                DisposeFailedInitialization();
+                throw;
+            }
         }
 
         /// <summary>
@@ -57,8 +66,30 @@ namespace DatabaseManager
         public SQLiteManager(string dataBaseFile, string databasePassword, SQLiteConnectionStringBuilder connectionBuilder = null)
         {
             _dataBasePath = dataBaseFile;
-            SetDatabaseConnection(dataBaseFile, databasePassword, connectionBuilder);
-            _tableNames = GetTableNames();
+            try
+            {
+                SetDatabaseConnection(dataBaseFile, databasePassword, connectionBuilder);
+                _tableNames = GetTableNames();
+            }
+            catch
+            {
+                DisposeFailedInitialization();
+                throw;
+            }
+        }
+
+        /// <summary>Releases the owned provider after failed initialization without dispatching virtual disposal.</summary>
+        /// <remarks>A cleanup failure is diagnostic only so the original initialization exception retains its stack.</remarks>
+        private void DisposeFailedInitialization()
+        {
+            try
+            {
+                _dbConnection?.Dispose();
+            }
+            catch (Exception cleanupError)
+            {
+                Debug.WriteLine(cleanupError);
+            }
         }
 
         #endregion
@@ -240,20 +271,14 @@ namespace DatabaseManager
         /// </summary>
         public void Vacuum()
         {
-            bool reOpen = _dataBaseOpen;
-            if (_dataBaseOpen == false)
+            WithConnectionOwnership(() =>
             {
-                Open(); 
-            }
-            // vacuum sqlite file
-            using (var command = new SQLiteCommand("vacuum", _dbConnection))
-            {
-                command.ExecuteNonQuery();
-            }
-            if (reOpen == false)
-            { 
-                Close();        
-            }
+                using (var command = new SQLiteCommand("vacuum", _dbConnection))
+                {
+                    command.ExecuteNonQuery();
+                }
+                return true;
+            });
         }
 
         /// <summary>
@@ -263,24 +288,54 @@ namespace DatabaseManager
         /// </summary>
         public void Optimize()
         {
-            bool reOpen = _dataBaseOpen;
-            if (_dataBaseOpen == false)
+            WithConnectionOwnership(() =>
             {
-                Open(); 
-            }
-            // optimize sqlite file
-            using (var command = new SQLiteCommand("PRAGMA optimize", _dbConnection))
-            {
-                command.ExecuteNonQuery();
-            }
-            if (reOpen == false)
-            { 
-                Close();
-            }
+                using (var command = new SQLiteCommand("PRAGMA optimize", _dbConnection))
+                {
+                    command.ExecuteNonQuery();
+                }
+                return true;
+            });
         }
 
 
         #endregion
+
+        /// <summary>Runs an operation while restoring ownership of an initially closed connection.</summary>
+        /// <typeparam name="TResult">The operation result type.</typeparam>
+        /// <param name="operation">The operation to run after opening the connection if needed.</param>
+        /// <returns>The operation result.</returns>
+        /// <remarks>Acquisition is protected because a failed open can acquire provider resources. Borrowed connections remain open. A secondary close failure is logged while the original exception propagates; a cleanup-only failure propagates.</remarks>
+        private TResult WithConnectionOwnership<TResult>(Func<TResult> operation)
+        {
+            bool wasOpen = DataBaseOpen;
+            Exception operationError = null;
+            try
+            {
+                if (!wasOpen)
+                    Open();
+                return operation();
+            }
+            catch (Exception error)
+            {
+                operationError = error;
+                throw;
+            }
+            finally
+            {
+                if (!wasOpen)
+                {
+                    try
+                    {
+                        Close();
+                    }
+                    catch (Exception cleanupError) when (operationError != null)
+                    {
+                        Debug.WriteLine(cleanupError);
+                    }
+                }
+            }
+        }
 
         #region Database Table Management
 
@@ -401,29 +456,22 @@ namespace DatabaseManager
         /// </summary>
         public override string[] GetTableNames()
         {
-            bool wasOpen = _dataBaseOpen;
-            if (_dataBaseOpen == false)
+            var result = WithConnectionOwnership(() =>
             {
-                Open(); 
-            }
-            // 
-            var result = new List<string>();
-            using (var command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", _dbConnection))
-            {
-                using (var reader = command.ExecuteReader())
+                var names = new List<string>();
+                using (var command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", _dbConnection))
                 {
-                    if (reader.HasRows)
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (reader.Read())
-                            result.Add(Convert.ToString(reader[0]));
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                                names.Add(Convert.ToString(reader[0]));
+                        }
                     }
                 }
-            }
-            // 
-            if (wasOpen == false)
-            { 
-                Close(); 
-            }
+                return names;
+            });
             _tableNames = result.ToArray();
             return result.ToArray();
         }
