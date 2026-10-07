@@ -99,7 +99,7 @@ $expectedVersionedEntries = @{
 }
 
 $expectedReleaseNotes = @{
-    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.5 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Core" = "Version 1.0.5 keeps element display names synchronized when names change during undo or redo."
     "RMC.Wpf.Framework.Models" = "Version 1.0.5 releases SQLite connections when initialization or database operations fail."
     "RMC.Wpf.Framework.Support" = "Coordinated WPF Framework 1.0.5 release; no package-specific functional changes."
     "RMC.Wpf.Framework.Controls" = "Version 1.0.5 keeps compaction active until database work completes, reports maintenance errors, and updates FrameworkUI demo workflows."

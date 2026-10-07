@@ -343,6 +343,7 @@ namespace FrameworkInterfaces
         /// Call this method from property setters to enable undo/redo support.
         /// If <see cref="IsUndoEnabled"/> is <c>false</c> or the undo manager is currently
         /// executing an action (during undo/redo), the change will not be recorded.
+        /// Name changes still refresh the display name using the existing dirty state.
         /// </para>
         /// <para>
         /// Example usage in a derived class:
@@ -385,6 +386,9 @@ namespace FrameworkInterfaces
             // not mark the element dirty.
             if (setDirty && IsUndoEnabled && !UndoManager.IsExecutingAction)
                 SetIsDirty(true);
+            else if (propertyName == nameof(Name))
+                // Rename replay still changes the caption; retain the existing dirty policy.
+                SetIsDirty(IsDirty);
         }
 
         /// <summary>
