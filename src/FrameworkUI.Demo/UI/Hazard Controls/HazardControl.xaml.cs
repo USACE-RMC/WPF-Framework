@@ -396,6 +396,8 @@ namespace FrameworkUI.Demo.UI
             Element.RebuildSeriesAndAnnotationBridges(plot);
         }
 
+        /// <summary>Gets the number of result points compatible with the current probability ordinates.</summary>
+        /// <returns>The matching point count, or zero when estimated results are absent or incompatible.</returns>
         private int GetCompatibleResultPointCount()
         {
             var element = Element;
@@ -414,6 +416,7 @@ namespace FrameworkUI.Demo.UI
             return count;
         }
 
+        /// <summary>Shows uncertainty columns and parameter sets only for an uncertain hazard element.</summary>
         private void UpdateUncertaintyVisibility()
         {
             bool showUncertainty = Element != null && Element.IsUncertain;

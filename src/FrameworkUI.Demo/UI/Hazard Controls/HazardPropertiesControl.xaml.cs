@@ -189,6 +189,9 @@ namespace FrameworkUI.Demo.UI
             public UnivariateDistributionType Type { get; }
         }
 
+        /// <summary>Creates a selection option using the distribution factory's display name.</summary>
+        /// <param name="type">The distribution type represented by the option.</param>
+        /// <returns>The display name and type used by the distribution selector.</returns>
         private static DistributionOption CreateDistributionOption(UnivariateDistributionType type)
         {
             var distribution = UnivariateDistributionFactory.CreateDistribution(type);
@@ -573,6 +576,8 @@ namespace FrameworkUI.Demo.UI
             }
         }
 
+        /// <summary>Synchronizes the selected distribution without treating the update as a user edit.</summary>
+        /// <param name="distributionType">The type to select, or null to clear the selection.</param>
         private void SyncDistributionSelection(UnivariateDistributionType? distributionType)
         {
             _syncingDistributionSelection = true;
@@ -588,6 +593,7 @@ namespace FrameworkUI.Demo.UI
             }
         }
 
+        /// <summary>Detaches parameter change handlers before removing the displayed parameter rows.</summary>
         private void ClearParameterRows()
         {
             foreach (var parameter in _parameterList)

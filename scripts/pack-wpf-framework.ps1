@@ -99,10 +99,10 @@ $expectedVersionedEntries = @{
 }
 
 $expectedReleaseNotes = @{
-    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.4 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Models" = "Coordinated WPF Framework 1.0.4 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Support" = "Coordinated WPF Framework 1.0.4 release; no package-specific functional changes."
-    "RMC.Wpf.Framework.Controls" = "Version 1.0.4 updates RMC.Numerics to 2.1.4 and improves NumericControls validation and distribution selector compatibility."
+    "RMC.Wpf.Framework.Core" = "Coordinated WPF Framework 1.0.5 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Models" = "Version 1.0.5 releases SQLite connections when initialization or database operations fail."
+    "RMC.Wpf.Framework.Support" = "Coordinated WPF Framework 1.0.5 release; no package-specific functional changes."
+    "RMC.Wpf.Framework.Controls" = "Version 1.0.5 keeps compaction active until database work completes, reports maintenance errors, and updates FrameworkUI demo workflows."
 }
 
 $expectedPackageDependencies = @{

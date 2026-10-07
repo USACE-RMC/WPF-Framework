@@ -92,6 +92,7 @@ namespace FrameworkUI.Demo.UI
             return img;
         }
 
+        /// <summary>Adds the hazard-element creation command to compatible collection nodes.</summary>
         protected override void DefineProjectExplorerMenuItems()
         {
             for (int i = 0; i < ChildNodes.Count; i++)

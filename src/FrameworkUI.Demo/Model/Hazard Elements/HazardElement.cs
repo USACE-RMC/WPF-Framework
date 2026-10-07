@@ -1028,6 +1028,7 @@ namespace FrameworkUI.Demo
             SetElementValidation();
         }
 
+        /// <summary>Refreshes validation state and messages for the current parent distribution.</summary>
         private void ValidateParentDistribution()
         {
             _distributionValid = true;
@@ -1322,6 +1323,8 @@ namespace FrameworkUI.Demo
             _minmaxComputed = true;
         }
 
+        /// <summary>Checks whether stored curve results match the current probability ordinates and uncertainty mode.</summary>
+        /// <returns>True when every required result array has the expected dimensions.</returns>
         private bool HasCompatibleCurveResults()
         {
             int count = ProbabilityOrdinates?.Count ?? 0;
@@ -1397,6 +1400,10 @@ namespace FrameworkUI.Demo
 
         #region Distribution Undo
 
+        /// <summary>Records a changed distribution snapshot when undo tracking is enabled.</summary>
+        /// <param name="propertyName">The property named in the undo action.</param>
+        /// <param name="oldSnapshot">The distribution state before the change.</param>
+        /// <param name="newSnapshot">The distribution state after the change.</param>
         private void RecordDistributionUndo(string propertyName, XElement oldSnapshot, XElement newSnapshot)
         {
             var undoManager = IsUndoEnabled ? UndoManager : null;
@@ -1415,6 +1422,8 @@ namespace FrameworkUI.Demo
             SetIsDirty(true);
         }
 
+        /// <summary>Restores a distribution snapshot and refreshes validation and dependent result state.</summary>
+        /// <param name="snapshot">The serialized distribution state to restore.</param>
         private void RestoreDistributionFromSnapshot(XElement snapshot)
         {
             if (snapshot == null) return;
