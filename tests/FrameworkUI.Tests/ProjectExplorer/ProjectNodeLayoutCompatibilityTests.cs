@@ -7,8 +7,10 @@ using Xunit;
 
 namespace FrameworkUI.Tests.ProjectExplorer;
 
+/// <summary>Checks compatibility and recovery when loading saved project-explorer layouts.</summary>
 public class ProjectNodeLayoutCompatibilityTests
 {
+    /// <summary>Verifies that a legacy grouped layout preserves group order and node expansion state.</summary>
     [StaFact]
     public void Load_WithLegacyGroupedXml_PreservesGroupsOrderAndExpansion()
     {
@@ -45,6 +47,7 @@ public class ProjectNodeLayoutCompatibilityTests
         Assert.Equal("Univariate Distribution Analysis", analysis.ElementCollection?.Name);
     }
 
+    /// <summary>Verifies that the current layout loads when no previous layout is available.</summary>
     [StaFact]
     public void Load_WithNoPreviousLayout_LoadsCurrentLayoutOnly()
     {
@@ -67,6 +70,7 @@ public class ProjectNodeLayoutCompatibilityTests
         Assert.Contains(input.ChildNodes, child => child is ElementNodeGroup group && group.NodeHeader.HeaderText == "Only Current");
     }
 
+    /// <summary>Verifies that stale elements are omitted while groups and unlisted current elements are retained.</summary>
     [StaFact]
     public void Load_WithStaleElementInsideGroup_KeepsGroupAndBackfillsCurrentElements()
     {
@@ -93,6 +97,7 @@ public class ProjectNodeLayoutCompatibilityTests
         Assert.Contains(input.ChildNodes, child => child is ElementNode element && element.Element.Name == "Root Item");
     }
 
+    /// <summary>Verifies that a newly added collection is appended without removing saved groups.</summary>
     [StaFact]
     public void Load_WithCollectionMissingFromXml_AppendsCollectionWithoutLosingGroups()
     {
@@ -116,6 +121,7 @@ public class ProjectNodeLayoutCompatibilityTests
         Assert.Contains(node.ChildNodes, child => child is ElementNodeCollection collection && collection.ElementCollection?.Name == "Rating Curve Analysis");
     }
 
+    /// <summary>Verifies that previous groups are recovered when the current layout contains only flat elements.</summary>
     [StaFact]
     public void Load_WithCurrentFlatLayoutAndPreviousGroupedLayout_RecoversPreviousGroups()
     {
@@ -153,6 +159,7 @@ public class ProjectNodeLayoutCompatibilityTests
         Assert.Contains(input.ChildNodes, child => child is ElementNodeGroup group && group.NodeHeader.HeaderText == "Recovered");
     }
 
+    /// <summary>Verifies that malformed current layout XML falls back to the previous grouped layout.</summary>
     [StaFact]
     public void Load_WithMalformedCurrentLayout_FallsBackSafely()
     {

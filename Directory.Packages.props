@@ -9,7 +9,7 @@
     <ExcelNumberFormatVersion>1.1</ExcelNumberFormatVersion>
     <FastMemberVersion>1.5.0</FastMemberVersion>
     <MicrosoftNetTestSdkVersion>17.12.0</MicrosoftNetTestSdkVersion>
-    <MicrosoftSourceLinkGitHubVersion>10.0.102</MicrosoftSourceLinkGitHubVersion>
+    <MicrosoftSourceLinkGitHubVersion>10.0.111</MicrosoftSourceLinkGitHubVersion>
     <MSTestTestAdapterVersion>3.5.2</MSTestTestAdapterVersion>
     <MSTestTestFrameworkVersion>3.5.2</MSTestTestFrameworkVersion>
     <NSubstituteVersion>4.2.1</NSubstituteVersion>

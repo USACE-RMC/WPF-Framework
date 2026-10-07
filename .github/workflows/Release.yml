@@ -47,9 +47,18 @@ jobs:
         shell: pwsh
         run: .\scripts\pack-wpf-framework.ps1 -Configuration Release -Version $env:VERSION -OutputDirectory packages -SkipRestore -SkipBuild
 
+      - name: Validate artifact contracts
+        shell: pwsh
+        run: .\scripts\test-release-artifact-contract.ps1
+
+      - name: Write immutable release manifest
+        shell: pwsh
+        run: .\scripts\write-release-manifest.ps1 -Directory packages -Repository $env:GITHUB_REPOSITORY -Tag $env:GITHUB_REF_NAME -Version $env:VERSION -CommitSHA $env:GITHUB_SHA -RunID $env:GITHUB_RUN_ID -RunAttempt $env:GITHUB_RUN_ATTEMPT
+
       - name: Upload packages
         uses: actions/upload-artifact@v4
         with:
-          name: wpf-framework-packages
-          path: packages/*.nupkg
-          retention-days: 30
+          name: wpf-framework-packages-${{ github.run_id }}-${{ github.run_attempt }}
+          path: packages/*
+          if-no-files-found: error
+          retention-days: 90

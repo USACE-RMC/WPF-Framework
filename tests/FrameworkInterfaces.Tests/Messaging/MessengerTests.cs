@@ -279,7 +279,6 @@ namespace FrameworkInterfaces.Tests.Messaging
         /// <summary>
         /// Verifies that Clear with a specific source only removes messages from that source.
         /// </summary>
-        /// <param name="source">The source object to filter messages by.</param>
         [Fact]
         public void Clear_WithSource_RemovesOnlySourceMessages()
         {

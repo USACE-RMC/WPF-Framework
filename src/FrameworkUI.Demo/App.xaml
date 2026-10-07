@@ -2,12 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FrameworkUI.Demo"
-             Startup="Application_Startup">
+             Startup="Application_Startup"
+             ShutdownMode="OnMainWindowClose"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- Icon resources -->
                 <ResourceDictionary Source="pack://application:,,,/FrameworkUI;component/Icons/IconDictionary.xaml"/>
+
+                <!-- Demo element icons (theme-aware vector icons) -->
+                <ResourceDictionary Source="pack://application:,,,/FrameworkUI.Demo;component/Resources/IconDictionary.xaml"/>
 
                 <!-- Theme resources are loaded by ThemeService.Initialize() in App.xaml.cs -->
                 <!-- This ensures proper loading order and enables runtime theme switching -->
@@ -17,6 +22,9 @@
 
                 <!-- OxyPlotControls Theme Resources (for PropertyExpanderStyle, PropertiesTabItemStyle, etc.) -->
                 <ResourceDictionary Source="pack://application:,,,/OxyPlotControls;component/Themes/OxyPlotControlsTheme.xaml"/>
+
+                <!-- NumericControls Theme Resources (for probability ordinate editing controls) -->
+                <ResourceDictionary Source="pack://application:,,,/NumericControls;component/Themes/NumericControlsTheme.xaml"/>
 
                 <!-- DatabaseControls Theme Resources (for TableViewer styles) -->
                 <ResourceDictionary Source="pack://application:,,,/DatabaseControls;component/Themes/DatabaseControlsTheme.xaml"/>

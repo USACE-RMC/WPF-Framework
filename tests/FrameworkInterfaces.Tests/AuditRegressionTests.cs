@@ -39,6 +39,7 @@ namespace FrameworkInterfaces.Tests
                 RaisePropertyChange(propertyName, isDirty);
         }
 
+        /// <summary>Verifies that a notify-only property change preserves an existing dirty state.</summary>
         [Fact]
         public void A001_ElementBaseBuff_RaisePropertyChange_PreservesIsDirty_OnFalse()
         {
@@ -56,6 +57,7 @@ namespace FrameworkInterfaces.Tests
             Assert.True(element.IsDirty);
         }
 
+        /// <summary>Verifies that a property change requesting dirty promotion marks a clean element dirty.</summary>
         [Fact]
         public void A001_ElementBaseBuff_RaisePropertyChange_PromotesIsDirty_OnTrue()
         {
@@ -71,6 +73,7 @@ namespace FrameworkInterfaces.Tests
             Assert.True(element.IsDirty);
         }
 
+        /// <summary>Verifies that a notify-only change still raises the named property notification.</summary>
         [Fact]
         public void A001_ElementBaseBuff_RaisePropertyChange_RaisesPropertyChangedEvent()
         {
@@ -121,6 +124,7 @@ namespace FrameworkInterfaces.Tests
             public override void Delete() { }
         }
 
+        /// <summary>Verifies that moving an element records an undo action restoring the original order.</summary>
         [Fact]
         public void A007_ElementCollectionBase_MoveElement_IsUndoable()
         {
@@ -154,6 +158,7 @@ namespace FrameworkInterfaces.Tests
             Assert.Same(c, collection[2]);
         }
 
+        /// <summary>Verifies that redoing an undone element move restores the moved order.</summary>
         [Fact]
         public void A007_ElementCollectionBase_MoveElement_RedoRestoresMovedOrder()
         {

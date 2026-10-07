@@ -1777,7 +1777,7 @@ namespace FrameworkUI
         /// <param name="e">The cancel event data.</param>
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (ShellPublicVariables.SimulationInProgress == true)
+            if (ShellPublicVariables.SimulationInProgress || ShellPublicVariables.CompactionInProgress)
             {
                 e.Cancel = true;
                 return;
@@ -1795,7 +1795,21 @@ namespace FrameworkUI
             if (UserSettings.CompressProjectFileOnClose == true && ProjectNode?.Project is not null)
             {
                 // Compact and Optimize
-                FileSizeManager.CompactAndOptimizeFile(ProjectNode.Project);
+                try
+                {
+                    FileSizeManager.CompactAndOptimizeFile(ProjectNode.Project);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString());
+                    GenericControls.MessageBox.Show("The project file could not be compacted and optimized. " + ex.Message,
+                        "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if (ShellPublicVariables.CompactionInProgress)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
             }
 
             // Close the current project
@@ -2425,7 +2439,7 @@ namespace FrameworkUI
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.ToString());
-                    GenericControls.MessageBox.Show("There was an unexpected error when trying to compact and optimize the project file.", "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    GenericControls.MessageBox.Show("The project file could not be compacted and optimized. " + ex.Message, "Compact & Optimize Project Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
             }

@@ -78,6 +78,21 @@ namespace FrameworkUI.Demo.UI
         /// run operations for analysis collections. The method disables the default "Create New" context item and
         /// replaces it with custom, type-specific menu items.
         /// </remarks>
+        /// <summary>
+        /// Creates an Image whose Source is bound to a theme-aware icon resource key.
+        /// SetResourceReference keeps the icon live across theme changes, unlike a
+        /// one-time StaticResource lookup.
+        /// </summary>
+        /// <param name="resourceKey">The icon resource key to bind to.</param>
+        /// <returns>An Image bound to the themed icon resource.</returns>
+        private static Image CreateThemedIcon(string resourceKey)
+        {
+            var img = new Image();
+            img.SetResourceReference(Image.SourceProperty, resourceKey);
+            return img;
+        }
+
+        /// <summary>Adds the hazard-element creation command to compatible collection nodes.</summary>
         protected override void DefineProjectExplorerMenuItems()
         {
             for (int i = 0; i < ChildNodes.Count; i++)
@@ -91,7 +106,7 @@ namespace FrameworkUI.Demo.UI
                 // Hazard Element
                 if (elementNodeCollection.ElementCollection.GetType() == typeof(HazardElementCollection))
                 {
-                    MenuItem menuItem = new MenuItem() { Header = "New HazardElement...", Icon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) } };
+                    MenuItem menuItem = new MenuItem() { Header = "New Hazard Element...", Icon = CreateThemedIcon("HazardElementIcon") };
                     menuItem.Click += (object sender, RoutedEventArgs e) => CreateNewHazardElement(elementNodeCollection);
                     elementNodeCollection.CustomContextItems.Add(menuItem);
                 }
@@ -118,7 +133,7 @@ namespace FrameworkUI.Demo.UI
                 // Hazard Element
                 if (collection.GetType() == typeof(HazardElementCollection))
                 {
-                    MenuItem menuItem = new MenuItem() { Header = "New Hazard Element...", Icon = new Image() { Source = new BitmapImage(new Uri("pack://application:,,,/FrameworkUI.Demo;component/Resources/Hazard_Icon.png")) } };
+                    MenuItem menuItem = new MenuItem() { Header = "New Hazard Element...", Icon = CreateThemedIcon("HazardElementIcon") };
                     menuItem.Click += (object sender, RoutedEventArgs e) => CreateNewHazardElement_Click(collection);
                     _projectMenuItems.Add(menuItem);
                 }
@@ -132,10 +147,11 @@ namespace FrameworkUI.Demo.UI
         /// Creates a new hazard element with a user-specified name.
         /// </summary>
         /// <param name="elementNodes">The element node collection to add the new element to.</param>
-        /// <returns>The newly created hazard element.</returns>
+        /// <returns>The newly created hazard element, or <see langword="null"/> when the dialog is canceled.</returns>
         private HazardElement CreateNewHazardElement(ElementNodeCollection elementNodes)
         {
             string newName = CreateNewNameDialog($"Create New {elementNodes.ElementCollection.Name}...", $"{elementNodes.ElementCollection.Name}_{elementNodes.ElementCollection.Count + 1}", elementNodes.ElementCollection.Select(x => x.Name.ToString()).ToList());
+            if (newName == "") return null;
             var newHazard = new HazardElement(newName, elementNodes.ElementCollection);
             elementNodes.ElementCollection.Add(newHazard);
             return newHazard;
@@ -289,7 +305,6 @@ namespace FrameworkUI.Demo.UI
             if (documentControl as HazardControl != null)
             {
                 var cntrl = (HazardControl)documentControl;
-                //cntrl.Element.UpdatePlotSettings(OxyPlotSettingsSerializer.ToXelement(cntrl.Plot).ToString());
                 cntrl.PlotToolbar.PropertiesCalled -= PlotPropertiesCalled;
                 cntrl.PreviewControlClicked -= DocumentControl_PreviewClicked;
             }

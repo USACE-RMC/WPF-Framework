@@ -9,6 +9,7 @@
 
 namespace OxyPlot.Wpf.Tests
 {
+    using System;
     using System.IO;
     using NUnit.Framework;
 
@@ -50,6 +51,17 @@ namespace OxyPlot.Wpf.Tests
                 var diffpath = Path.Combine(DiffDirectory, fileName);
 
                 PngExporter.Export(model, path, 800, 500);
+                if (example.Category == "Z1 Issues" && example.Title == "#758: IntervalLength = 0")
+                {
+                    // This invalid-axis example renders a runtime stack trace whose frames can change with JIT inlining.
+                    // Verify its intended error contract while retaining PNG comparisons for every other example.
+                    var error = model.GetLastPlotException();
+                    Assert.That(error, Is.TypeOf<ArgumentException>(), example.Title);
+                    var argumentError = (ArgumentException)error;
+                    Assert.That(argumentError.ParamName, Is.EqualTo("maxIntervalSize"), example.Title);
+                    Assert.That(argumentError.Message, Does.StartWith("Maximum interval size cannot be zero."), example.Title);
+                    return;
+                }
                 if (File.Exists(baselinePath))
                 {
                     PngAssert.AreEqual(baselinePath, path, example.Title, diffpath);

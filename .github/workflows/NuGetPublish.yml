@@ -1,4 +1,4 @@
-name: Publish to NuGet.org
+name: Publish validated release to NuGet.org
 
 on:
   release:
@@ -6,72 +6,44 @@ on:
 
 permissions:
   contents: read
+  actions: read
   id-token: write
+
+concurrency:
+  group: nuget-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
 
 jobs:
   publish:
+    if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
     runs-on: windows-latest
-    timeout-minutes: 90
-
+    timeout-minutes: 30
     steps:
-      - name: Checkout
+      - name: Checkout release tag
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.release.tag_name }}
           fetch-depth: 0
-
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Extract version from tag
+      - name: Download and validate exact downstream-approved artifact
         shell: pwsh
-        run: |
-          $version = $env:GITHUB_REF_NAME -replace '^v', ''
-          "VERSION=$version" >> $env:GITHUB_ENV
-
-      - name: Restore
-        run: dotnet restore WPF-Framework.sln
-
-      - name: Build
-        shell: pwsh
-        run: dotnet build WPF-Framework.sln -c Release --no-restore /p:Version=$env:VERSION
-
-      - name: Test
         env:
-          VSTEST_CONNECTION_TIMEOUT: '600'
-        run: dotnet test WPF-Framework.sln -c Release --no-build
-
-      - name: Pack
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: .\scripts\download-validated-release.ps1 -Repository $env:GITHUB_REPOSITORY -Tag $env:RELEASE_TAG -Directory validated-packages
+      - name: Verify existing package versions before login
         shell: pwsh
-        run: .\scripts\pack-wpf-framework.ps1 -Configuration Release -Version $env:VERSION -OutputDirectory packages -SkipRestore -SkipBuild
-
+        run: .\scripts\publish-validated-release.ps1 -Directory validated-packages -ReceiptPath downstream-validation.json
       - name: NuGet login
         uses: NuGet/login@v1
         id: login
         with:
           user: USACE-RMC
-
-      - name: Push to NuGet.org
+      - name: Publish validated packages
         shell: pwsh
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
-        run: |
-          $packageIds = @(
-            "RMC.Wpf.Framework.Core",
-            "RMC.Wpf.Framework.Models",
-            "RMC.Wpf.Framework.Support",
-            "RMC.Wpf.Framework.Controls"
-          )
-
-          foreach ($packageId in $packageIds) {
-            $packagePath = Join-Path "packages" "$packageId.$env:VERSION.nupkg"
-            if (-not (Test-Path $packagePath)) {
-              throw "Missing package: $packagePath"
-            }
-
-            dotnet nuget push $packagePath --api-key $env:NUGET_API_KEY --source "https://api.nuget.org/v3/index.json" --skip-duplicate
-            if ($LASTEXITCODE -ne 0) {
-              throw "NuGet push failed for $packagePath."
-            }
-          }
+        run: .\scripts\publish-validated-release.ps1 -Directory validated-packages -ReceiptPath downstream-validation.json -Push
