@@ -4,8 +4,10 @@ using Xunit;
 
 namespace FrameworkUI.Tests.FrameworkUIDemo;
 
+/// <summary>Checks the demo project's packaged icon quality.</summary>
 public class DemoProjectIconTests
 {
+    /// <summary>Verifies that the project image uses a frozen, square, high-resolution icon frame.</summary>
     [Fact]
     public void ProjectImage_LoadsLargestAvailableIconFrame()
     {

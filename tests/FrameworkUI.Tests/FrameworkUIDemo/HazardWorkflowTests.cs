@@ -13,8 +13,10 @@ using Xunit;
 
 namespace FrameworkUI.Tests.FrameworkUIDemo;
 
+/// <summary>Checks hazard editing, undo, validation, and control-binding contracts.</summary>
 public class HazardWorkflowTests
 {
+    /// <summary>Verifies that assigning an element preserves the one-way probability-ordinate binding.</summary>
     [Fact]
     public void SettingElement_OnPropertiesControl_DoesNotThrowAndKeepsProbabilityOrdinatesOneWay()
     {
@@ -38,6 +40,7 @@ public class HazardWorkflowTests
         });
     }
 
+    /// <summary>Verifies that distribution assignment clones its input and undo/redo restores independent snapshots.</summary>
     [Fact]
     public void ParentDistribution_SetterClonesInputAndUndoRedoRestoresSnapshots()
     {
@@ -66,6 +69,7 @@ public class HazardWorkflowTests
         });
     }
 
+    /// <summary>Verifies that parameter edits invalidate estimates and undo/redo restores parameter snapshots.</summary>
     [Fact]
     public void SetDistributionParameters_InvalidatesEstimateAndUndoRedoRestoresSnapshots()
     {
@@ -96,6 +100,7 @@ public class HazardWorkflowTests
         });
     }
 
+    /// <summary>Verifies that empty ordinates and invalid sampling requests return the documented absent-result values.</summary>
     [Fact]
     public void SamplingAndMinMax_HandleEmptyOrdinatesAndInvalidRequests()
     {
@@ -114,6 +119,7 @@ public class HazardWorkflowTests
         });
     }
 
+    /// <summary>Verifies that the hazard control clears plot data when result dimensions no longer match the ordinates.</summary>
     [Fact]
     public void HazardControl_ClearsPlotDataWhenEstimatedResultsDoNotMatchOrdinates()
     {
