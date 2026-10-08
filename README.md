@@ -37,11 +37,13 @@ The framework depends on [RMC.Numerics](https://github.com/USACE-RMC/Numerics) t
 
 ### Prerequisites
 
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
-- Visual Studio 2022 (17.12 or later)
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- Optional IDE: Visual Studio 2026 (18.0 or later), which [supports targeting .NET 10](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs#targeting-and-support-rules)
 - Windows 10 or later
 
 ### Build and Test
+
+Run these commands from the repository root:
 
 ```bash
 dotnet build WPF-Framework.sln
@@ -50,7 +52,7 @@ dotnet test WPF-Framework.sln
 
 ### Build Packages
 
-```bash
+```powershell
 .\scripts\pack-wpf-framework.ps1 -Configuration Release -Version 1.0.5
 ```
 
@@ -63,23 +65,35 @@ This creates and validates the following NuGet packages in `artifacts/packages/`
 | [`RMC.Wpf.Framework.Support`](https://www.nuget.org/packages/RMC.Wpf.Framework.Support/) | SoftwareUpdate and updater content files | None |
 | [`RMC.Wpf.Framework.Controls`](https://www.nuget.org/packages/RMC.Wpf.Framework.Controls/) | FrameworkUI, control libraries, AvalonDock fork | Core, Models, Support, RMC.Numerics 2.1.4+ |
 
-### Minimal Application
+### Application Startup
+
+The shell requires an application-specific `FrameworkInterfaces.IProject` implementation and a concrete subclass of `FrameworkUI.FrameworkUIController`. The controller provides the project tree, menus, and document/property views; it is the value assigned to `MainWindow.ProjectNode`.
+
+Use this helper from your WPF application's `OnStartup` override or `Startup` handler, on the UI thread. Omit `StartupUri` in `App.xaml` so WPF does not create a second window. Supply a factory that creates your controller around an initialized project. The factory runs after theme initialization because controllers can construct WPF controls.
 
 ```csharp
-// In App.xaml.cs — initialize theme before creating any UI
-FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Light);
+public static class ShellStartup
+{
+    public static FrameworkUI.MainWindow Show(
+        System.Func<FrameworkUI.FrameworkUIController> createProjectNode)
+    {
+        FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Light);
+        FrameworkUI.FrameworkUIController projectNode = createProjectNode();
 
-// Create project and controller
-var project = new MyProject();
-var controller = new MyProjectController(project);
-
-// Show the main window
-var mainWindow = new FrameworkUI.MainWindow();
-mainWindow.ProjectNode = controller;
-mainWindow.Show();
+        var mainWindow = new FrameworkUI.MainWindow
+        {
+            ProjectNode = projectNode
+        };
+        System.Windows.Application.Current.MainWindow = mainWindow;
+        mainWindow.Show();
+        return mainWindow;
+    }
+}
 ```
 
-Run `FrameworkUI.Demo` for a complete working example.
+`Application.Current` and the application's resource dictionaries must already exist. Merge the icon and control dictionaries used by your views into `App.xaml`; see the working [demo resources](src/FrameworkUI.Demo/App.xaml). `MainWindow` restores the saved theme preference when it loads user settings, so that preference can override the initial Light theme.
+
+Run `FrameworkUI.Demo` for a complete application. Its [startup handler](src/FrameworkUI.Demo/App.xaml.cs), [project model](src/FrameworkUI.Demo/Model/DemoProject.cs), and [project controller](src/FrameworkUI.Demo/UI/DemoProjectNode.cs) show the host implementations and initialization order.
 
 ## Documentation
 
@@ -104,17 +118,21 @@ Comprehensive documentation is available in the [docs/](docs/index.md) folder:
 
 ### Theme Switching
 
-Three built-in themes with runtime switching — all controls update automatically via `DynamicResource` bindings:
+Three built-in themes support runtime switching through `DynamicResource` bindings. Call this on the UI thread of a running WPF application (for example, in a theme-menu handler):
 
 ```csharp
 FrameworkUI.ThemeManager.SetTheme(FrameworkUI.ThemeColor.Dark);
 ```
 
+This changes the active theme. It does not save a preference; the shell's Options dialog manages persisted theme settings.
+
 ### Undo/Redo
 
-Built-in undo/redo for element properties with automatic change tracking:
+Add the following field and property inside your concrete `FrameworkInterfaces.ElementBase` subclass, alongside its required constructor, metadata, and persistence members. `RecordPropertyChange` is a protected base-class method: it records the edit, raises `PropertyChanged`, and marks the element dirty when undo recording is enabled. No additional notification call is needed.
 
 ```csharp
+private string _customValue = string.Empty;
+
 public string CustomValue
 {
     get => _customValue;
@@ -129,6 +147,8 @@ public string CustomValue
     }
 }
 ```
+
+Use the element's `UndoManager.Undo()` and `UndoManager.Redo()` to replay edits. Set `IsUndoEnabled` to `false` while loading data or applying untracked changes, then restore its previous value.
 
 ### Docking Layout
 
