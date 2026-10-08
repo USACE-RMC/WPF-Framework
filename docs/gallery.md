@@ -1,8 +1,8 @@
 # Control Gallery
 
-This gallery outlines the screenshots used to show the visible controls in the WPF Framework demo applications. Blue theme is the default capture style. Light and Dark screenshots are included only where they show theme coverage.
+Explore the application shell, editors, plotting tools, and graph controls in the WPF Framework demo applications. Each screenshot shows a running demo with its sample data or a small synthetic example.
 
-Screenshots belong in `docs/assets/gallery/` using the filenames shown below.
+Most controls are shown in the Blue theme. The shell comparison also shows Light and Dark; property editors and the expression calculator use Light, and the flow graph uses its demo's default appearance.
 
 ## Contents
 
@@ -63,7 +63,7 @@ See: [Themes](themes.md)
 
 ![FrameworkUI hazard document in blue theme](assets/gallery/frameworkui-hazard-document-blue.png)
 
-Document view with an OxyPlot chart, vertical plot toolbar, tabular results, and properties workflow.
+Hazard document with an OxyPlot chart, vertical plot toolbar, and editable properties. Separate document tabs provide tabular results and parameter sets.
 
 See: [OxyPlot Controls](oxyplot-controls.md), [Generic Controls](generic-controls.md)
 
@@ -89,7 +89,7 @@ See: [Generic Controls](generic-controls.md)
 
 ### Property Editors
 
-![Generic property editors in blue theme](assets/gallery/generic-property-editors-light.png)
+![Generic property editors in light theme](assets/gallery/generic-property-editors-light.png)
 
 Property editors for text, numbers, booleans, fonts, colors, lines, alignment, points, dates, and custom content.
 
@@ -112,7 +112,7 @@ Demo source: `src/NumericControls.Demo/`
 
 ![Numeric distribution selector in blue theme](assets/gallery/numeric-distribution-selector-blue.png)
 
-Distribution selector with fitting options, parameters, plot, and statistics.
+Normal distribution selector with parameters, a density plot and sample histogram, and summary statistics.
 
 See: [Numeric Controls](numeric-controls.md)
 
@@ -120,7 +120,7 @@ See: [Numeric Controls](numeric-controls.md)
 
 ![Numeric uncertain curve editor in blue theme](assets/gallery/numeric-uncertain-curve-editor-blue.png)
 
-Curve editor for ordered data with uncertainty.
+Curve editor for ordered data with uncertainty. This illustrative example uses Normal distributions at six ordinates, with a standard deviation of 1 at each ordinate.
 
 See: [Numeric Controls](numeric-controls.md)
 
@@ -128,7 +128,7 @@ See: [Numeric Controls](numeric-controls.md)
 
 ![Numeric uncertain table editor in blue theme](assets/gallery/numeric-uncertain-table-editor-blue.png)
 
-Table editor for uncertain ordered data.
+Table editor showing the same six illustrative Normal distributions as the uncertain curve example.
 
 See: [Numeric Controls](numeric-controls.md)
 
@@ -152,7 +152,7 @@ See: [Numeric Controls](numeric-controls.md)
 
 ![Numeric time series table in blue theme](assets/gallery/numeric-time-series-blue.png)
 
-Time series table with selectable sample data sets.
+Time series table showing the demo's built-in hourly example, with a constant value of 15 beginning July 30, 1980.
 
 See: [Numeric Controls](numeric-controls.md)
 
@@ -168,7 +168,7 @@ See: [Numeric Controls](numeric-controls.md)
 
 ![Numeric bivariate CDF in blue theme](assets/gallery/numeric-bivariate-cdf-blue.png)
 
-Bivariate empirical CDF control.
+Bivariate empirical CDF control with its Plot tab selected.
 
 See: [Numeric Controls](numeric-controls.md)
 
@@ -180,7 +180,7 @@ Demo source: `src/OxyPlotControls.Demo/`
 
 ![OxyPlot toolbar in blue theme](assets/gallery/oxyplot-toolbar-blue.png)
 
-Plot view with vertical toolbar for pan, zoom, annotation, export, and properties.
+Heat map example with a vertical toolbar for pan, zoom, annotation, export, and properties.
 
 See: [OxyPlot Controls](oxyplot-controls.md)
 
@@ -188,7 +188,7 @@ See: [OxyPlot Controls](oxyplot-controls.md)
 
 ![OxyPlot properties in blue theme](assets/gallery/oxyplot-properties-blue.png)
 
-Properties panel for axes, series, annotations, legends, and layout settings.
+Line-series example beside the properties panel, showing plot title, typography, plot area, and background settings.
 
 See: [OxyPlot Controls](oxyplot-controls.md)
 
@@ -208,7 +208,7 @@ Demo source: `src/DatabaseControls.Demo/`
 
 ![Database table viewer in blue theme](assets/gallery/database-table-viewer-blue.png)
 
-Table viewer with file/table selection, editable cells, row/column/cell selection, autofit columns, and field calculator access.
+Table viewer displaying the [synthetic sample CSV](assets/gallery/samples/synthetic-gallery-sample.csv), with file/table selection, editable cells, row/column/cell selection, autofit columns, and field calculator access.
 
 See: [Database Controls](database-controls.md)
 
@@ -218,9 +218,9 @@ Demo source: `src/ExpressionParserControls.Demo/`
 
 ### Calculator Control
 
-![Expression calculator in blue theme](assets/gallery/expression-calculator-blue.png)
+![Expression calculator in light theme](assets/gallery/expression-calculator-light.png)
 
-Calculator control with expression editor, operator buttons, function browser, expression builder, and result output.
+Calculator control with an expression editor, operator buttons, case sensitivity option, and evaluated result output.
 
 See: [Database Controls](database-controls.md)
 
@@ -230,8 +230,8 @@ Demo source: `src/DAG.Demo/`
 
 ### Flow Graph Canvas
 
-![DAG flow graph canvas in blue theme](assets/gallery/dag-flowgraph-canvas-blue.png)
+![DAG flow graph canvas with sample nodes and input and output connectors](assets/gallery/dag-flowgraph-canvas.png)
 
-Flow graph canvas with nodes, connectors, add-node workflow, and connection feedback.
+Flow graph canvas with sample nodes and their input and output connectors. The demo supports adding nodes from the canvas context menu and arranging them on the grid.
 
 See: [DAG Controls](dag-controls.md)
